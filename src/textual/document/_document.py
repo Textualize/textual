@@ -116,7 +116,7 @@ class Document:
 
         lines = self._lines
 
-        deleted_text = self.get_selected_text(top, bottom)
+        deleted_text = self.get_text_range(top, bottom)
 
         if top_row == bottom_row:
             line = lines[top_row]
@@ -129,7 +129,7 @@ class Document:
 
         return deleted_text
 
-    def get_selected_text(self, start: Location, end: Location) -> str:
+    def get_text_range(self, start: Location, end: Location) -> str:
         """Get the text that falls between the start and end locations.
 
         Args:

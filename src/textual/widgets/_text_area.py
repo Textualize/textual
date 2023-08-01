@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Any, ClassVar
 
 from rich.text import Text
 
@@ -12,7 +12,8 @@ from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Location, Selection
-from textual.geometry import Offset, Region, Size, Spacing, clamp
+from textual.events import MouseEvent
+from textual.geometry import Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -33,7 +34,7 @@ class Edit(Protocol):
     def undo(self, text_area: TextArea) -> object | None:
         """Undo the action."""
 
-    def post_refresh(self, text_area: TextArea) -> None:
+    def post_resize(self, text_area: TextArea) -> None:
         """Code to execute after content size recalculated and repainted."""
 
 
@@ -83,6 +84,8 @@ class Insert:
         else:
             text_area.selection = Selection.cursor(self._edit_end)
 
+        text_area.record_cursor_offset()
+
 
 @dataclass
 class Delete:
@@ -116,6 +119,8 @@ class Delete:
             text_area.selection = Selection.cursor(cursor_destination)
         else:
             text_area.selection = Selection.cursor(self.from_location)
+
+        text_area.record_cursor_offset()
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -207,6 +212,7 @@ TextArea > .text-area--selection {
         disabled: bool = False,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+
         self._document = Document("")
         """The document this widget is currently editing."""
 
@@ -226,6 +232,14 @@ TextArea > .text-area--selection {
 
         self._selecting = False
         """True if we're currently selecting text, otherwise False."""
+
+    def _watch_selection(self) -> None:
+        self.scroll_cursor_visible()
+
+    def _validate_selection(self, selection: Selection) -> Selection:
+        start, end = selection
+        clamp_visitable = self.clamp_visitable
+        return Selection(clamp_visitable(start), clamp_visitable(end))
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor.
@@ -330,13 +344,32 @@ TextArea > .text-area--selection {
         return strip
 
     @property
+    def text(self) -> str:
+        """The entire text content of the document."""
+        return self._document.text
+
+    @property
     def selected_text(self) -> str:
+        """The text between the start and end points of the current selection."""
         start, end = self.selection
+        return self.get_text_range(start, end)
+
+    def get_text_range(self, start: Location, end: Location) -> str:
+        """Get the text between a start and end location.
+
+        Args:
+            start: The start location.
+            end: The end location.
+
+        Returns:
+            The text between start and end.
+        """
         start, end = _fix_direction(start, end)
-        return self._document.get_selected_text(start, end)
+        return self._document.get_text_range(start, end)
 
     @property
     def gutter_width(self) -> int:
+        """The width of the gutter (the left column containing line numbers)."""
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
         gutter_width = (
@@ -346,7 +379,16 @@ TextArea > .text-area--selection {
         )
         return gutter_width
 
-    def edit(self, edit: Edit) -> object | None:
+    def edit(self, edit: Edit) -> Any:
+        """Perform an Edit.
+
+        Args:
+            edit: The Edit to perform.
+
+        Returns:
+            Data relating to the edit that may be useful. The data returned
+            may be different depending on the edit performed.
+        """
         result = edit.do(self)
 
         # TODO: Think about this...
@@ -354,7 +396,7 @@ TextArea > .text-area--selection {
         # self._undo_stack = self._undo_stack[-20:]
 
         self._refresh_size()
-        edit.post_refresh(self)
+        edit.post_resize(self)
 
         return result
 
@@ -379,12 +421,12 @@ TextArea > .text-area--selection {
             start, end = self.selection
             self.insert_text_range(insert, start, end)
 
-    def get_target_document_location(self, offset: Offset) -> Location:
+    def get_target_document_location(self, event: MouseEvent) -> Location:
         scroll_x, scroll_y = self.scroll_offset
-        target_x = offset.x - self.gutter_width + scroll_x - self.gutter.left
+        target_x = event.x - self.gutter_width + scroll_x - self.gutter.left
         target_x = max(target_x, 0)
         target_row = clamp(
-            offset.y + scroll_y - self.gutter.top,
+            event.y + scroll_y - self.gutter.top,
             0,
             self._document.line_count - 1,
         )
@@ -406,13 +448,13 @@ TextArea > .text-area--selection {
     def _on_mouse_up(self, event: events.MouseUp) -> None:
         self._selecting = False
         self.capture_mouse(False)
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def _on_paste(self, event: events.Paste) -> None:
         text = event.text
         if text:
             start, end = self.selection
-            self.insert_text_range(text, start, end, end)
+            self.insert_text_range(text, start, end)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row."""
@@ -424,14 +466,6 @@ TextArea > .text-area--selection {
             if total_cell_offset >= cell_width + 1:
                 return column_index
         return len(line)
-
-    def _watch_selection(self) -> None:
-        self.scroll_cursor_visible()
-
-    def _validate_selection(self, selection: Selection) -> Selection:
-        start, end = selection
-        clamp_visitable = self.clamp_visitable
-        return Selection(clamp_visitable(start), clamp_visitable(end))
 
     # --- Cursor/selection utilities
     def is_visitable(self, location: Location) -> bool:
@@ -474,7 +508,9 @@ TextArea > .text-area--selection {
             Region(x=column_offset, y=row, width=2, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
+            force=True,
         )
+        log.debug("scrolling cursor visible")
 
     @property
     def cursor_at_first_row(self) -> bool:
@@ -520,7 +556,7 @@ TextArea > .text-area--selection {
         else:
             self.selection = Selection.cursor((cursor_row, target_column))
 
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def cursor_to_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line.
@@ -535,7 +571,7 @@ TextArea > .text-area--selection {
         else:
             self.selection = Selection.cursor((cursor_row, 0))
 
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
@@ -546,7 +582,7 @@ TextArea > .text-area--selection {
         """
         target = self.get_cursor_left_location()
         self.selection = Selection.cursor(target)
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def action_cursor_left_select(self):
         """Move the end of the selection one location to the left.
@@ -556,7 +592,7 @@ TextArea > .text-area--selection {
         new_cursor_location = self.get_cursor_left_location()
         selection_start, selection_end = self.selection
         self.selection = Selection(selection_start, new_cursor_location)
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left."""
@@ -575,7 +611,7 @@ TextArea > .text-area--selection {
         """
         target = self.get_cursor_right_location()
         self.selection = Selection.cursor(target)
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def action_cursor_right_select(self):
         """Move the end of the selection one location to the right.
@@ -585,7 +621,7 @@ TextArea > .text-area--selection {
         new_cursor_location = self.get_cursor_right_location()
         selection_start, selection_end = self.selection
         self.selection = Selection(selection_start, new_cursor_location)
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def get_cursor_right_location(self) -> Location:
         """Get the location the cursor will move to if it moves right."""
@@ -677,7 +713,7 @@ TextArea > .text-area--selection {
             cursor_column = 0
 
         self.selection = Selection.cursor((cursor_row, cursor_column))
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def action_cursor_right_word(self) -> None:
         """Move the cursor right by a single word, skipping spaces."""
@@ -703,7 +739,7 @@ TextArea > .text-area--selection {
             cursor_column = len(self._document[cursor_row])
 
         self.selection = Selection.cursor((cursor_row, cursor_column))
-        self._record_last_intentional_cell_width()
+        self.record_cursor_offset()
 
     def action_cursor_page_up(self) -> None:
         height = self.content_size.height
@@ -732,7 +768,7 @@ TextArea > .text-area--selection {
         line = self._document[row]
         return cell_len(line[:column].expandtabs(self.indent_width))
 
-    def _record_last_intentional_cell_width(self) -> None:
+    def record_cursor_offset(self) -> None:
         row, column = self.selection.end
         column_cell_length = self.get_column_cell_width(row, column)
         self._last_intentional_cell_width = column_cell_length
@@ -745,7 +781,6 @@ TextArea > .text-area--selection {
         cursor_destination: Location | None = None,
     ) -> None:
         self.edit(Insert(text, location, location, cursor_destination))
-        self._record_last_intentional_cell_width()
 
     def insert_text_range(
         self,
@@ -755,7 +790,6 @@ TextArea > .text-area--selection {
         cursor_destination: Location | None = None,
     ) -> None:
         self.edit(Insert(text, from_location, to_location, cursor_destination))
-        self._record_last_intentional_cell_width()
 
     def delete_range(
         self,
@@ -766,7 +800,6 @@ TextArea > .text-area--selection {
         """Delete text between from_location and to_location."""
         top, bottom = _fix_direction(from_location, to_location)
         deleted_text = self.edit(Delete(top, bottom, cursor_destination))
-        self._record_last_intentional_cell_width()
         return deleted_text
 
     def clear(self) -> None:
