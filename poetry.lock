@@ -814,7 +814,7 @@ testing = ["fields", "hunter", "process-tests", "pytest-xdist", "six", "virtuale
 
 [[package]]
 name = "pytest-textual-snapshot"
-version = "0.3.0"
+version = "0.2.0"
 description = "Snapshot testing for Textual apps"
 category = "dev"
 optional = false
@@ -1134,7 +1134,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "811fccd3413e15a412c4e4de3ff954851f797a6828dc90fd260dcdab5db88ada"
+content-hash = "bf1b5c8ce33bd98176613966dc6c84eca62502b9d87af80165d6be9e6780cf6f"
 
 [metadata.files]
 aiohttp = [
@@ -1900,8 +1900,8 @@ pytest-cov = [
     {file = "pytest_cov-2.12.1-py2.py3-none-any.whl", hash = "sha256:261bb9e47e65bd099c89c3edf92972865210c36813f80ede5277dceb77a4a62a"},
 ]
 pytest-textual-snapshot = [
-    {file = "pytest_textual_snapshot-0.3.0-py3-none-any.whl", hash = "sha256:21f7775284f5b37d78b07f38d1718b57f94b788b613353a0754bee5ce250d552"},
-    {file = "pytest_textual_snapshot-0.3.0.tar.gz", hash = "sha256:38c4ebc12d6122353069dde9ff0b55ae480c0dfc2dbadf9c4ab9bc577af2453b"},
+    {file = "pytest_textual_snapshot-0.2.0-py3-none-any.whl", hash = "sha256:663fe07bf62181ec0c63139daaeaf50eb8088164037eb30d721f028adc9edc8c"},
+    {file = "pytest_textual_snapshot-0.2.0.tar.gz", hash = "sha256:5e9f8c4b1b011bdae67d4f1129530afd6611f3f8bcf03cf06699402179bc12cf"},
 ]
 python-dateutil = [
     {file = "python-dateutil-2.8.2.tar.gz", hash = "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86"},
