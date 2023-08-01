@@ -132,6 +132,8 @@ class Log(ScrollView, can_focus=True):
         self._update_size(self._updates, new_lines)
         if auto_scroll:
             self.scroll_end(animate=False)
+        else:
+            self.refresh()
         return self
 
     def clear(self) -> Self:
