@@ -76,17 +76,18 @@ class SyntaxAwareDocument(Document):
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
     ) -> tuple[int, int]:
+        top, bottom = _fix_direction(start, end)
+        start_byte = self._location_to_byte_offset(top)
+        old_end_byte = self._location_to_byte_offset(bottom)
+
         end_location = super().insert_range(start, end, text)
 
-        top, bottom = _fix_direction(start, end)
-
-        start_byte = self._location_to_byte_offset(top)
         text_byte_length = len(text.encode("utf-8"))
 
         if self._syntax_tree is not None:
             self._syntax_tree.edit(
                 start_byte=start_byte,
-                old_end_byte=self._location_to_byte_offset(bottom),
+                old_end_byte=old_end_byte,
                 new_end_byte=start_byte + text_byte_length,
                 start_point=top,
                 old_end_point=bottom,
@@ -109,11 +110,12 @@ class SyntaxAwareDocument(Document):
         Returns:
             A string containing the deleted text.
         """
-        deleted_text = super().delete_range(start, end)
 
         top, bottom = _fix_direction(start, end)
         start_byte = self._location_to_byte_offset(top)
         old_end_byte = self._location_to_byte_offset(bottom)
+
+        deleted_text = super().delete_range(start, end)
 
         if self._syntax_tree is not None:
             self._syntax_tree.edit(
@@ -217,7 +219,7 @@ class SyntaxAwareDocument(Document):
 
     def get_line_text(self, line_index: int) -> Text:
         null_style = Style.null()
-        line = Text(self[line_index])
+        line = Text(self[line_index], end="")
 
         if self._highlights:
             highlights = self._highlights[line_index]

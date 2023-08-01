@@ -12,6 +12,7 @@ from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Location, Selection
+from textual.document._syntax_aware_document import SyntaxAwareDocument
 from textual.events import MouseEvent
 from textual.geometry import Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
@@ -192,7 +193,7 @@ TextArea > .text-area--selection {
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
     ]
 
-    language: Reactive[str | None] = reactive(None)
+    language: Reactive[str | None] = reactive(None, always_update=True)
     """The language to use for syntax highlighting (via tree-sitter)."""
 
     selection: Reactive[Selection] = reactive(Selection())
@@ -231,7 +232,7 @@ TextArea > .text-area--selection {
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
         self._selecting = False
-        """True if we're currently selecting text, otherwise False."""
+        """True if we're currently selecting text using the mouse, otherwise False."""
 
     def _watch_selection(self) -> None:
         self.scroll_cursor_visible()
@@ -240,6 +241,22 @@ TextArea > .text-area--selection {
         start, end = selection
         clamp_visitable = self.clamp_visitable
         return Selection(clamp_visitable(start), clamp_visitable(end))
+
+    def _watch_language(self, language: str | None) -> None:
+        """When the language used is updated, update the type of document."""
+        if not language:
+            self._document = Document(self._document.text)
+        else:
+            try:
+                # SyntaxAwareDocument isn't available on Python 3.7.
+                from textual.document._syntax_aware_document import SyntaxAwareDocument
+
+                self._document = SyntaxAwareDocument(self._document.text, language)
+            except ImportError:
+                # Fall back to the standard document.
+                self._document = Document(self._document.text)
+
+        self._refresh_size()
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor.
@@ -254,7 +271,8 @@ TextArea > .text-area--selection {
         """Calculate the size of the document."""
         lines = self._document.lines
         # TODO - this is a prime candidate for optimisation.
-        text_width = max(cell_len(line.expandtabs(self.indent_width)) for line in lines)
+        cell_lengths = [cell_len(line.expandtabs(self.indent_width)) for line in lines]
+        text_width = max(cell_lengths or [1])
         height = len(lines)
         # +1 width to make space for the cursor resting at the end of the line
         self.virtual_size = Size(text_width + self.gutter_width + 1, height)
