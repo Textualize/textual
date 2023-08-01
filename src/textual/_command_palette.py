@@ -6,6 +6,9 @@ from abc import ABC, abstractmethod
 from typing import AsyncIterator, NamedTuple
 
 from rich.align import Align
+from rich.console import RenderableType
+from rich.style import Style
+from rich.table import Table
 from rich.text import Text
 
 from . import on, work
@@ -171,8 +174,33 @@ You can't teach an old dog new tricks.
             await sleep(random() / 10)
             if matcher.match(candidate):
                 yield CommandSourceHit(
-                    matcher.match(candidate), matcher.highlight(candidate), candidate
+                    matcher.match(candidate),
+                    matcher.highlight(candidate),
+                    candidate,
+                    "This is some help; this could be more interesting really",
                 )
+
+
+class Command(Option):
+    """Class that holds a command in the `CommandList`."""
+
+    def __init__(
+        self,
+        prompt: RenderableType,
+        command_text: str,
+        id: str | None = None,
+        disabled: bool = False,
+    ) -> None:
+        """Initialise the option.
+
+        Args:
+            prompt: The prompt for the option.
+            command_text: The text of the command.
+            id: The optional ID for the option.
+            disabled: The initial enabled/disabled state. Enabled by default.
+        """
+        super().__init__(prompt, id, disabled)
+        self.command_text = command_text
 
 
 class CommandList(OptionList, can_focus=False):
@@ -286,7 +314,13 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         command_list = self.query_one(CommandList)
         self._show_busy = True
         async for hit in TotallyFakeCommandSource().hunt_for(search_value):
-            command_list.add_option(hit.match_text)
+            prompt = hit.match_text
+            if hit.command_help:
+                prompt = Table.grid(expand=True)
+                prompt.add_column(no_wrap=True)
+                prompt.add_row(hit.match_text, style=Style(bold=True))
+                prompt.add_row(Align.right(hit.command_help), style=Style(dim=True))
+            command_list.add_option(Command(prompt, hit.command_text))
         self._show_busy = False
         if command_list.option_count == 0:
             command_list.add_option(
@@ -317,7 +351,8 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         event.stop()
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
-            input.value = str(event.option.prompt)
+            assert isinstance(event.option, Command)
+            input.value = str(event.option.command_text)
         input.action_end()
         self._list_visible = False
 
