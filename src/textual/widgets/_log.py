@@ -72,18 +72,6 @@ class Log(ScrollView, can_focus=True):
     def notify_style_update(self) -> None:
         self._render_line_cache.clear()
 
-    @classmethod
-    def _process_line(cls, line: str) -> list[str]:
-        """Process a string so it doesn't have escape sequences or new lines.
-
-        Args:
-            line: A string to add.
-
-        Returns:
-            A list of lines.
-        """
-        return [_sub_escape("�", _line.expandtabs()) for _line in line.splitlines()]
-
     def _update_maximum_width(self, updates: int, size: int) -> None:
         """Update the virtual size width.
 
@@ -135,7 +123,7 @@ class Log(ScrollView, can_focus=True):
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
         new_lines = []
         for line in lines:
-            new_lines.extend(self._process_line(line))
+            new_lines.extend(line.splitlines())
         self.lines.extend(new_lines)
         if self.max_lines is not None and len(self.lines) > self.max_lines:
             del self.lines[: -self.max_lines]
@@ -187,10 +175,13 @@ class Log(ScrollView, can_focus=True):
         if y in self._render_line_cache:
             return self._render_line_cache[y]
 
-        raw_line = self.lines[y]
+        _line = self.lines[y]
+        _line = _sub_escape("�", _line.expandtabs())
 
         if self.highlight:
-            line_text = self.highlighter(Text(raw_line, style=self.rich_style))
+            line_text = self.highlighter(
+                Text(_line, style=self.rich_style, no_wrap=True)
+            )
             line = Strip(line_text.render(self.app.console))
         else:
             line = Strip([Segment(self.lines[y], self.rich_style)])
