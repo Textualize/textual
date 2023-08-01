@@ -21,6 +21,12 @@ from .screen import ModalScreen
 from .widgets import Input, LoadingIndicator, OptionList
 from .widgets.option_list import Option
 
+__all__ = [
+    "CommandPalette",
+    "CommandSource",
+    "CommandSourceHit",
+]
+
 
 class CommandSourceHit(NamedTuple):
     """Holds the details of a single command search hit."""
