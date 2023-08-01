@@ -8,6 +8,7 @@ from rich.style import Style
 from rich.text import Text
 from tree_sitter import Language, Parser, Tree
 from tree_sitter.binding import Query
+from tree_sitter_languages import get_language, get_parser
 
 from textual._fix_direction import _fix_direction
 from textual.document._document import Document
@@ -54,12 +55,11 @@ class SyntaxAwareDocument(Document):
 
         # TODO validate language string
 
-        self._language: Language = Language(LANGUAGES_PATH.resolve(), language)
+        self._language: Language = get_language(language)
         """The tree-sitter Language."""
 
-        self._parser: Parser = Parser()
+        self._parser: Parser = get_parser(language)
         """The tree-sitter Parser"""
-        self._parser.set_language(self._language)
 
         self._syntax_tree = self._build_ast(self._parser)
         """The tree-sitter Tree (syntax tree) built from the document."""
@@ -76,6 +76,16 @@ class SyntaxAwareDocument(Document):
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
     ) -> tuple[int, int]:
+        """Insert text at the given range.
+
+        Args:
+            start: A tuple (row, column) where the edit starts.
+            end: A tuple (row, column) where the edit ends.
+            text: The text to insert between start and end.
+
+        Returns:
+            The new end location after the edit is complete.
+        """
         top, bottom = _fix_direction(start, end)
         start_byte = self._location_to_byte_offset(top)
         old_end_byte = self._location_to_byte_offset(bottom)
@@ -132,6 +142,26 @@ class SyntaxAwareDocument(Document):
             self._prepare_highlights()
 
         return deleted_text
+
+    def get_line_text(self, line_index: int) -> Text:
+        """Apply syntax highlights and return the Text of the line.
+
+        Args:
+            line_index: The index of the line.
+
+        Returns:
+            The syntax highlighted Text of the line.
+        """
+        null_style = Style.null()
+        line = Text(self[line_index], end="")
+
+        if self._highlights:
+            highlights = self._highlights[line_index]
+            for start, end, highlight_name in highlights:
+                node_style = HIGHLIGHT_STYLES.get(highlight_name, null_style)
+                line.stylize(node_style, start, end)
+
+        return line
 
     def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate."""
@@ -220,15 +250,3 @@ class SyntaxAwareDocument(Document):
             return_value = lines[row][column].encode("utf8")
 
         return return_value
-
-    def get_line_text(self, line_index: int) -> Text:
-        null_style = Style.null()
-        line = Text(self[line_index], end="")
-
-        if self._highlights:
-            highlights = self._highlights[line_index]
-            for start, end, highlight_name in highlights:
-                node_style = HIGHLIGHT_STYLES.get(highlight_name, null_style)
-                line.stylize(node_style, start, end)
-
-        return line
