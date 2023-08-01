@@ -161,11 +161,19 @@ class Document:
 
     @property
     def line_count(self) -> int:
-        """Returns the number of lines in the document"""
+        """Returns the number of lines in the document."""
         return len(self._lines)
 
     def get_line_text(self, index: int) -> Text:
-        """Returns the line with the given index from the document"""
+        """Returns the line with the given index from the document.
+
+        Args:
+            index: The index of the line in the document.
+
+        Returns:
+            The Text instance representing the line. When overriding
+            this method, ensure the returned Text instance has `end=""`.
+        """
         line_string = self[index]
         line_string = line_string.replace("\n", "").replace("\r", "")
         return Text(line_string, end="")

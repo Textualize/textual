@@ -138,7 +138,10 @@ class SyntaxAwareDocument(Document):
         lines = self._lines
         row, column = location
         lines_above = lines[:row]
-        bytes_lines_above = sum(len(line.encode("utf-8")) + 1 for line in lines_above)
+        end_of_line_width = len(self.newline)
+        bytes_lines_above = sum(
+            len(line.encode("utf-8")) + end_of_line_width for line in lines_above
+        )
         bytes_this_line_left_of_cursor = len(lines[row][:column].encode("utf-8"))
         return bytes_lines_above + bytes_this_line_left_of_cursor
 
@@ -211,6 +214,7 @@ class SyntaxAwareDocument(Document):
         if row_out_of_bounds or column_out_of_bounds:
             return_value = None
         elif column == len(lines[row]) and row < len(lines):
+            # TODO: Need to handle \r\n case here.
             return_value = "\n".encode("utf8")
         else:
             return_value = lines[row][column].encode("utf8")
