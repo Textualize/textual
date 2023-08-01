@@ -78,6 +78,7 @@ class Command(Option):
         """
         super().__init__(prompt, id, disabled)
         self.command_text = command_text
+        """The plain text version of the command. Used to fill in the `Input`."""
 
 
 class CommandList(OptionList, can_focus=False):
