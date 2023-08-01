@@ -72,7 +72,7 @@ class Insert:
             text_area: The TextArea to undo the insert operation on.
         """
 
-    def post_refresh(self, text_area: TextArea) -> None:
+    def post_resize(self, text_area: TextArea) -> None:
         """Update the cursor location after the widget has been refreshed.
 
         Args:
@@ -113,7 +113,7 @@ class Delete:
     def undo(self, text_area: TextArea) -> None:
         """Undo the delete action."""
 
-    def post_refresh(self, text_area: TextArea) -> None:
+    def post_resize(self, text_area: TextArea) -> None:
         cursor_destination = self.cursor_destination
         if cursor_destination is not None:
             text_area.selection = Selection.cursor(cursor_destination)
@@ -251,16 +251,20 @@ TextArea > .text-area--selection {
         self._refresh_size()
 
     def _refresh_size(self) -> None:
-        # Calculate document
+        """Calculate the size of the document."""
         lines = self._document.lines
+        # TODO - this is a prime candidate for optimisation.
         text_width = max(cell_len(line.expandtabs(self.indent_width)) for line in lines)
         height = len(lines)
+        # +1 width to make space for the cursor resting at the end of the line
         self.virtual_size = Size(text_width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
 
-        line_index = round(self.scroll_y + widget_y)
+        scroll_x, scroll_y = self.scroll_offset
+
+        line_index = widget_y + scroll_y
         out_of_bounds = line_index >= document.line_count
         if out_of_bounds:
             return Strip.blank(self.size.width)
@@ -333,11 +337,9 @@ TextArea > .text-area--selection {
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         virtual_width, virtual_height = self.virtual_size
-        text_crop_start = self.scroll_offset.x
-        text_crop_end = text_crop_start + virtual_width
 
         gutter_strip = Strip(gutter_segments)
-        text_strip = Strip(text_segments).crop(text_crop_start, text_crop_end)
+        text_strip = Strip(text_segments).crop(scroll_x, scroll_x + virtual_width)
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
@@ -510,7 +512,6 @@ TextArea > .text-area--selection {
             animate=False,
             force=True,
         )
-        log.debug("scrolling cursor visible")
 
     @property
     def cursor_at_first_row(self) -> bool:
