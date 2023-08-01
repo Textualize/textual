@@ -40,7 +40,7 @@ class Log(ScrollView, can_focus=True):
 
     def __init__(
         self,
-        highlight: bool = True,
+        highlight: bool = False,
         max_lines: int | None = None,
         auto_scroll: bool = True,
         name: str | None = None,
@@ -184,6 +184,6 @@ class Log(ScrollView, can_focus=True):
             )
             line = Strip(line_text.render(self.app.console))
         else:
-            line = Strip([Segment(self.lines[y], self.rich_style)])
+            line = Strip([Segment(_line, self.rich_style)])
         self._render_line_cache[y] = line
         return line
