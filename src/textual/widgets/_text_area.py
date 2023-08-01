@@ -470,7 +470,7 @@ TextArea > .text-area--selection {
         row, column = self.selection.end
         text = self.cursor_line_text[:column]
         column_offset = cell_len(text.expandtabs(self.indent_width))
-        scrolled_amount = self.scroll_to_region(
+        self.scroll_to_region(
             Region(x=column_offset, y=row, width=1, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
