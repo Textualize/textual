@@ -175,8 +175,7 @@ class Log(ScrollView, can_focus=True):
         if y in self._render_line_cache:
             return self._render_line_cache[y]
 
-        _line = self.lines[y]
-        _line = _sub_escape("�", _line.expandtabs())
+        _line = _sub_escape("�", self.lines[y].expandtabs())
 
         if self.highlight:
             line_text = self.highlighter(
