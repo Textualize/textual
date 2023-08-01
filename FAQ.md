@@ -7,7 +7,7 @@
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
-- [How do I fixed WorkerDeclarationError?](#how-do-i-fixed-workerdeclarationerror)
+- [How do I fix WorkerDeclarationError?](#how-do-i-fix-workerdeclarationerror)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
 - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
 - [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
@@ -145,8 +145,8 @@ if __name__ == "__main__":
     ButtonApp().run()
 ```
 
-<a name="how-do-i-fixed-workerdeclarationerror"></a>
-## How do I fixed WorkerDeclarationError?
+<a name="how-do-i-fix-workerdeclarationerror"></a>
+## How do I fix WorkerDeclarationError?
 
 Textual version 0.31.0 requires that you set `thread=True` on the `@work` decorator if you want to run a threaded worker.
 
@@ -158,7 +158,7 @@ def run_in_background():
     ...
 ```
 
-If you *don't* want a worker, you should make your work function `async`:
+If you *don't* want a threaded worker, you should make your work function `async`:
 
 ```python
 @work():
@@ -166,7 +166,7 @@ async def run_in_background():
     ...
 ```
 
-This change was made because it was easy to accidentally created a threaded worker, which may produce unexpected results.
+This change was made because it was easy to accidentally create a threaded worker, which may produce unexpected results.
 
 <a name="how-do-i-pass-arguments-to-an-app"></a>
 ## How do I pass arguments to an app?
