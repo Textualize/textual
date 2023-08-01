@@ -26,11 +26,13 @@ class LogApp(App):
             yield Log(id="log1", auto_scroll=False)
             yield Log(id="log2", auto_scroll=True)
             yield Log(id="log3")
+            yield Log(id="log4", max_lines=6)
 
     def on_ready(self) -> None:
         self.query_one("#log1", Log).write_line(TEXT)
         self.query_one("#log2", Log).write_line(TEXT)
         self.query_one("#log3", Log).write_line(TEXT)
+        self.query_one("#log4", Log).write_line(TEXT)
 
         self.query_one("#log3", Log).clear()
         self.query_one("#log3", Log).write_line("Hello, World")

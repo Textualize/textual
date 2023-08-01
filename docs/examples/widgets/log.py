@@ -19,7 +19,8 @@ class LogApp(App):
     def on_ready(self) -> None:
         log = self.query_one(Log)
         log.write_line("Hello, World!")
-        log.write_line(TEXT)
+        for _ in range(10):
+            log.write_line(TEXT)
 
 
 if __name__ == "__main__":

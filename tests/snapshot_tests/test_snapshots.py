@@ -166,6 +166,10 @@ def test_richlog_max_lines(snap_compare):
     assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
 
 
+def test_log_write(snap_compare):
+    assert snap_compare("snapshot_apps/log_write.py")
+
+
 def test_fr_units(snap_compare):
     assert snap_compare("snapshot_apps/fr_units.py")
 

@@ -110,7 +110,7 @@ class Log(ScrollView, can_focus=True):
         """Write content on a new line.
 
         Args:
-            data: Data to write.
+            line: String to write to the log.
 
         Returns:
             The `Log` instance.

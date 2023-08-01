@@ -4,6 +4,10 @@ A RichLog is a widget which displays scrollable content that may be appended to 
 
 Call [RichLog.write][textual.widgets.RichLog.write] with a string or [Rich Renderable](https://rich.readthedocs.io/en/latest/protocol.html) to write content to the end of the RichLog. Call [RichLog.clear][textual.widgets.RichLog.clear] to clear the content.
 
+!!! tip
+
+    See also [Log](../widgets/log.md) which is an alternative to `TextLog` but specialized for simple text.
+
 - [X] Focusable
 - [ ] Container
 
