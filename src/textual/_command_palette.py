@@ -308,7 +308,10 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
             indicator = None
         # Now react to the flag, using the above knowledge to decide what to do.
         if self._show_busy and indicator is None:
-            await self.mount(LoadingIndicator(), after=self.query_one(CommandList))
+            # https://github.com/Textualize/textual/issues/2914
+            self.call_after_refresh(
+                self.mount, LoadingIndicator(), after=self.query_one(CommandList)
+            )
         elif indicator is not None:
             await indicator.remove()
 
