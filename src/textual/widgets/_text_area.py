@@ -191,10 +191,10 @@ TextArea > .text-area--selection {
     """The language to use for syntax highlighting (via tree-sitter)."""
 
     selection: Reactive[Selection] = reactive(Selection())
-    """The selection location (zero-based line_index, offset)."""
+    """The selection start and end locations (zero-based line_index, offset)."""
 
     show_line_numbers: Reactive[bool] = reactive(True)
-    """True to show line number gutter, otherwise False."""
+    """True to show the line number column, otherwise False."""
 
     indent_width: Reactive[int] = reactive(4)
     """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
