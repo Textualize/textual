@@ -6,7 +6,7 @@ Call [RichLog.write][textual.widgets.RichLog.write] with a string or [Rich Rende
 
 !!! tip
 
-    See also [Log](../widgets/log.md) which is an alternative to `TextLog` but specialized for simple text.
+    See also [Log](../widgets/log.md) which is an alternative to `RichLog` but specialized for simple text.
 
 - [X] Focusable
 - [ ] Container
