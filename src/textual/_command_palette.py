@@ -148,9 +148,6 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         Binding("enter", "command('select'),", show=False, priority=True),
     ]
 
-    placeholder: var[str] = var("Textual spotlight search", init=False)
-    """The placeholder text for the command palette input."""
-
     _list_visible: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the command list."""
 
@@ -171,12 +168,8 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
 
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
-        yield CommandInput(placeholder=self.placeholder)
+        yield CommandInput(placeholder="Search...")
         yield CommandList()
-
-    def _watch_placeholder(self) -> None:
-        """Pass the new placeholder text down to the `CommandInput`."""
-        self.query_one(CommandInput).placeholder = self.placeholder
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
