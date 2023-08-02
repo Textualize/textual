@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, Iterable, Optional
+from typing import TYPE_CHECKING, Iterable, Optional, Sequence
 
 from rich.cells import cell_len
 from rich.highlighter import ReprHighlighter
@@ -67,14 +67,26 @@ class Log(ScrollView, can_focus=True):
         self.highlight = highlight
         self.max_lines = max_lines
         self.auto_scroll = auto_scroll
-        self.lines: list[str] = []
+        self._lines: list[str] = []
         self._width = 0
         self._updates = 0
         self._render_line_cache: LRUCache[int, Strip] = LRUCache(1024)
         self.highlighter = ReprHighlighter()
+        """The Rich Highlighter object to use, if `highlight=True`"""
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
+    @property
+    def lines(self) -> Sequence[str]:
+        """The raw lines in the TextLog.
+
+        Note that this attribute is read only.
+        Changing the lines will not update the Log's contents.
+
+        """
+        return self._lines
+
     def notify_style_update(self) -> None:
+        """Called by Textual when styles update."""
         self._render_line_cache.clear()
 
     def _update_maximum_width(self, updates: int, size: int) -> None:
@@ -91,8 +103,8 @@ class Log(ScrollView, can_focus=True):
     @property
     def line_count(self) -> int:
         """Number of lines with content."""
-        if self.lines:
-            return len(self.lines) - (self.lines[-1] == "")
+        if self._lines:
+            return len(self._lines) - (self._lines[-1] == "")
         return 0
 
     @classmethod
@@ -136,16 +148,16 @@ class Log(ScrollView, can_focus=True):
         """
 
         if data:
-            if not self.lines:
-                self.lines.append("")
+            if not self._lines:
+                self._lines.append("")
             for line, ending in line_split(data):
-                self.lines[-1] += line
+                self._lines[-1] += line
                 self._width = max(
-                    self._width, cell_len(self._process_line(self.lines[-1]))
+                    self._width, cell_len(self._process_line(self._lines[-1]))
                 )
-                self.refresh_lines(len(self.lines) - 1)
+                self.refresh_lines(len(self._lines) - 1)
                 if ending:
-                    self.lines.append("")
+                    self._lines.append("")
             self.virtual_size = Size(self._width, self.line_count)
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
@@ -183,11 +195,11 @@ class Log(ScrollView, can_focus=True):
         new_lines = []
         for line in lines:
             new_lines.extend(line.splitlines())
-        start_line = len(self.lines)
-        self.lines.extend(new_lines)
-        if self.max_lines is not None and len(self.lines) > self.max_lines:
-            del self.lines[: -self.max_lines]
-        self.virtual_size = Size(self._width, len(self.lines))
+        start_line = len(self._lines)
+        self._lines.extend(new_lines)
+        if self.max_lines is not None and len(self._lines) > self.max_lines:
+            del self._lines[: -self.max_lines]
+        self.virtual_size = Size(self._width, len(self._lines))
         self._update_size(self._updates, new_lines)
         self.refresh_lines(start_line, len(new_lines))
         if auto_scroll and not self.is_vertical_scrollbar_grabbed:
@@ -202,7 +214,7 @@ class Log(ScrollView, can_focus=True):
         Returns:
             The `Log` instance.
         """
-        self.lines.clear()
+        self._lines.clear()
         self._width = 0
         self._render_line_cache.clear()
         self._updates += 1
@@ -234,7 +246,7 @@ class Log(ScrollView, can_focus=True):
             A Strip suitable for rendering.
         """
         rich_style = self.rich_style
-        if y >= len(self.lines):
+        if y >= len(self._lines):
             return Strip.blank(width, rich_style)
 
         line = self._render_line_strip(y, rich_style)
@@ -255,7 +267,7 @@ class Log(ScrollView, can_focus=True):
         if y in self._render_line_cache:
             return self._render_line_cache[y]
 
-        _line = self._process_line(self.lines[y])
+        _line = self._process_line(self._lines[y])
 
         if self.highlight:
             line_text = self.highlighter(Text(_line, style=rich_style, no_wrap=True))
