@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added widgets.Log
+- Added Widget.is_vertical_scroll_end, Widget.is_horizontal_scroll_end, Widget.is_vertical_scrollbar_grabbed, Widget.is_horizontal_scrollbar_grabbed
 
 ### Changed
 

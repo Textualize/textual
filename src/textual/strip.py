@@ -70,6 +70,7 @@ class Strip:
         "_filter_cache",
         "_render_cache",
         "_line_length_cache",
+        "_crop_extend_cache",
         "_link_ids",
     ]
 
@@ -82,9 +83,14 @@ class Strip:
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(16)
         self._style_cache: FIFOCache[Style, Strip] = FIFOCache(16)
         self._filter_cache: FIFOCache[tuple[LineFilter, Color], Strip] = FIFOCache(4)
-        self._line_length_cache: FIFOCache[tuple[int, Style | None], Strip] = FIFOCache(
-            4
-        )
+        self._line_length_cache: FIFOCache[
+            tuple[int, Style | None],
+            Strip,
+        ] = FIFOCache(4)
+        self._crop_extend_cache: FIFOCache[
+            tuple[int, int, Style | None],
+            Strip,
+        ] = FIFOCache(4)
         self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
@@ -324,6 +330,25 @@ class Strip:
             for text, style, control in self._segments
         ]
         return Strip(segments, self._cell_length)
+
+    def crop_extend(self, start: int, end: int, style: Style | None) -> Strip:
+        """Crop between two points, extending the length if required.
+
+        Args:
+            start: Start offset of crop.
+            end: End offset of crop.
+            style: Style of additional padding.
+
+        Returns:
+            New cropped Strip.
+        """
+        cache_key = (start, end, style)
+        cached_result = self._crop_extend_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
+        strip = self.extend_cell_length(end).crop(start, end)
+        self._crop_extend_cache[cache_key] = strip
+        return strip
 
     def crop(self, start: int, end: int | None = None) -> Strip:
         """Crop a strip between two cell positions.

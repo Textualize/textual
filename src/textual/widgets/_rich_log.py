@@ -228,11 +228,7 @@ class RichLog(ScrollView, can_focus=True):
         if key in self._line_cache:
             return self._line_cache[key]
 
-        line = (
-            self.lines[y]
-            .adjust_cell_length(max(self.max_width, width), self.rich_style)
-            .crop(scroll_x, scroll_x + width)
-        )
+        line = self.lines[y].crop_extend(scroll_x, scroll_x + width, self.rich_style)
 
         self._line_cache[key] = line
         return line
