@@ -152,6 +152,8 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         Binding("pagedown", "command('page_down')", show=False),
         Binding("pageup", "command('page_up')", show=False),
         Binding("up", "command('cursor_up')", show=False),
+        Binding("ctrl+home, shift+home", "command('first')", show=False),
+        Binding("ctrl+end, shift+end", "command('last')", show=False),
         Binding("enter", "command('select'),", show=False, priority=True),
     ]
 
