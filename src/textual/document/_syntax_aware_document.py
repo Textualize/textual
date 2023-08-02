@@ -117,6 +117,10 @@ class SyntaxAwareDocument(Document):
         the syntax highlighting data. Calling `get_line` will now return a Text
         object with new highlights corresponding to this change.
 
+        Args:
+            start: The start of the range.
+            end: The end of the range.
+
         Returns:
             A string containing the deleted text.
         """
@@ -172,8 +176,11 @@ class SyntaxAwareDocument(Document):
         bytes_lines_above = sum(
             len(line.encode("utf-8")) + end_of_line_width for line in lines_above
         )
-        bytes_this_line_left_of_cursor = len(lines[row][:column].encode("utf-8"))
-        return bytes_lines_above + bytes_this_line_left_of_cursor
+        if row < len(lines):
+            bytes_on_left = len(lines[row][:column].encode("utf-8"))
+        else:
+            bytes_on_left = 0
+        return bytes_lines_above + bytes_on_left
 
     def _prepare_highlights(
         self,
@@ -181,9 +188,6 @@ class SyntaxAwareDocument(Document):
         end_point: tuple[int, int] = None,
     ) -> None:
         highlights = self._highlights
-        print(self._language.language_id)
-        print(self._language.name)
-        print(self._language.lib)
         query: Query = self._language.query(self._highlights_query)
 
         captures_kwargs = {}
