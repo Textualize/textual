@@ -24,7 +24,6 @@ from rich.text import Text
 from . import on, work
 from .app import ComposeResult
 from .binding import Binding, BindingType
-from .css.query import NoMatches
 from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
