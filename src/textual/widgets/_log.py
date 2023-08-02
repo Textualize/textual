@@ -65,6 +65,7 @@ class Log(ScrollView, can_focus=True):
             disabled: Whether the text log is disabled or not.
         """
         self.highlight = highlight
+        """Enable highlighting."""
         self.max_lines = max_lines
         self.auto_scroll = auto_scroll
         self._lines: list[str] = []
@@ -102,7 +103,7 @@ class Log(ScrollView, can_focus=True):
 
     @property
     def line_count(self) -> int:
-        """Number of lines with content."""
+        """Number of lines of content."""
         if self._lines:
             return len(self._lines) - (self._lines[-1] == "")
         return 0
