@@ -1,5 +1,5 @@
 ---
-title: "How do I fixed WorkerDeclarationError?"
+title: "How do I fix WorkerDeclarationError?"
 alt_titles:
   - "Thread=True on Worker"
   - "Problem with threaded workers"
@@ -15,7 +15,7 @@ def run_in_background():
     ...
 ```
 
-If you *don't* want a worker, you should make your work function `async`:
+If you *don't* want a threaded worker, you should make your work function `async`:
 
 ```python
 @work():
@@ -23,4 +23,4 @@ async def run_in_background():
     ...
 ```
 
-This change was made because it was easy to accidentally created a threaded worker, which may produce unexpected results.
+This change was made because it was too easy to accidentally create a threaded worker, which may produce unexpected results.
