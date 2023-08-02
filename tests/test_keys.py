@@ -52,3 +52,20 @@ async def test_character_bindings():
 
 def test_get_key_display():
     assert _get_key_display("minus") == "-"
+
+
+def test_get_key_display_when_used_in_conjunction():
+    """Test a key display is the same if used in conjunction with another key.
+    For example, "ctrl+right_square_bracket" should display the bracket as "]",
+    the same as it would without the ctrl modifier.
+
+    Regression test for #3035 https://github.com/Textualize/textual/issues/3035
+    """
+
+    right_square_bracket = _get_key_display("right_square_bracket")
+    ctrl_right_square_bracket = _get_key_display("ctrl+right_square_bracket")
+    assert ctrl_right_square_bracket == f"CTRL+{right_square_bracket}"
+
+    left = _get_key_display("left")
+    ctrl_left = _get_key_display("ctrl+left")
+    assert ctrl_left == f"CTRL+{left}"
