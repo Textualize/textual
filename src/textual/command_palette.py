@@ -173,6 +173,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     CommandPalette LoadingIndicator {
         height: auto;
         width: 90%;
+        visibility: hidden;
+    }
+
+    CommandPalette LoadingIndicator.--visible {
+        visibility: visible;
     }
     """
 
@@ -216,6 +221,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """Compose the command palette."""
         yield CommandInput(placeholder="Search...")
         yield CommandList()
+        yield LoadingIndicator()
 
     def _on_click(self, event: Click) -> None:
         """Handle the click event.
@@ -248,19 +254,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         This watcher adds or removes a busy indication depending on the
         flag's state.
         """
-        # First off, figure out if there's an indicator in the DOM.
-        try:
-            indicator = self.query_one(LoadingIndicator)
-        except NoMatches:
-            indicator = None
-        # Now react to the flag, using the above knowledge to decide what to do.
-        if self._show_busy and indicator is None:
-            # https://github.com/Textualize/textual/issues/2914
-            self.call_after_refresh(
-                self.mount, LoadingIndicator(), after=self.query_one(CommandList)
-            )
-        elif indicator is not None:
-            await indicator.remove()
+        self.query_one(LoadingIndicator).set_class(self._show_busy, "--visible")
 
     @staticmethod
     async def _consume(
@@ -284,7 +278,12 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         Yields:
             The hits made amongst the registered command sources.
         """
+
+        # Set up a queue to stream in the command hits from all the sources.
         commands = Queue[CommandSourceHit]()
+
+        # Fire up an instance of each command source, inside a task, and
+        # have them go start looking for matches.
         searches = [
             create_task(
                 self._consume(
@@ -293,13 +292,30 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             )
             for source in self._sources
         ]
+
+        # Now, while there's some task running...
         while any(not search.done() for search in searches):
+            try:
+                # ...briefly wait for something on the stack. If we get
+                # something yield it up to our caller.
+                yield await wait_for(commands.get(), 0.1)
+            except TimeoutError:
+                # A timeout is fine. We're just going to go back round again
+                # and see if anything else has turned up.
+                pass
+            else:
+                # There was no timeout, which means that we managed to yield
+                # up that command; we're done with it so let the queue know.
+                commands.task_done()
+
+        # At this point, if all the sources are pretty fast, it could be
+        # that we've reached this point but the queue isn't empty yet. So
+        # here we flush the queue of anything left.
+        while not commands.empty():
             try:
                 yield await wait_for(commands.get(), 0.1)
             except TimeoutError:
                 pass
-            else:
-                commands.task_done()
 
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
