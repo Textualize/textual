@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- Fixed a bug with key displays when used in conjunction https://github.com/Textualize/textual/issues/3035
+
 ## [0.31.0] - 2023-08-01
 
 ### Added
