@@ -12,7 +12,6 @@ from typing import (
     ClassVar,
     NamedTuple,
     Type,
-    TypeAlias,
 )
 
 from rich.align import Align
@@ -20,6 +19,7 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
+from typing_extensions import TypeAlias
 
 from . import on, work
 from .app import ComposeResult
@@ -279,7 +279,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """
 
         # Set up a queue to stream in the command hits from all the sources.
-        commands = Queue[CommandSourceHit]()
+        commands: Queue[CommandSourceHit] = Queue()
 
         # Fire up an instance of each command source, inside a task, and
         # have them go start looking for matches.
