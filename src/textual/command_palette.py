@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from asyncio import Queue, TimeoutError, create_task, wait_for
 from typing import (
+    Any,
     AsyncIterable,
     AsyncIterator,
     Callable,
@@ -24,20 +25,21 @@ from . import on, work
 from .app import ComposeResult
 from .binding import Binding, BindingType
 from .css.query import NoMatches
-from .events import Click
+from .events import Click, Mount
 from .reactive import var
-from .screen import ModalScreen
+from .screen import ModalScreen, Screen
 from .widgets import Input, LoadingIndicator, OptionList
 from .widgets.option_list import Option
 
 __all__ = [
     "CommandPalette",
+    "CommandPaletteCallable",
     "CommandSource",
     "CommandSourceHit",
 ]
 
 
-CommandPaletteCallable: TypeAlias = Callable[[], None]
+CommandPaletteCallable: TypeAlias = Callable[[], Any]
 """The type of a function that will be called when a command is selected from the command palette."""
 
 
@@ -67,6 +69,19 @@ class CommandSource(ABC):
     [textual.command_palette.CommandSource.hunt_for][`hunt_for`].
     """
 
+    def __init__(self, screen: Screen) -> None:
+        """Initialise the command source.
+
+        Args:
+            screen: A reference to the active screen.
+        """
+        self.__screen = screen
+
+    @property
+    def screen(self) -> Screen:
+        """The currently-active screen in the application."""
+        return self.__screen
+
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
         """A request to hunt for commands relevant to the given user input.
@@ -86,7 +101,7 @@ class Command(Option):
     def __init__(
         self,
         prompt: RenderableType,
-        command_text: str,
+        command: CommandSourceHit,
         id: str | None = None,
         disabled: bool = False,
     ) -> None:
@@ -94,13 +109,13 @@ class Command(Option):
 
         Args:
             prompt: The prompt for the option.
-            command_text: The text of the command.
+            command: The details of the command associated with the option.
             id: The optional ID for the option.
             disabled: The initial enabled/disabled state. Enabled by default.
         """
         super().__init__(prompt, id, disabled)
-        self.command_text = command_text
-        """The plain text version of the command. Used to fill in the [textual.widgets.Input][`Input`]."""
+        self.command = command
+        """The details of the command associated with the option."""
 
 
 class CommandList(OptionList, can_focus=False):
@@ -142,7 +157,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(ModalScreen[None], inherit_css=False):
+class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     """The Textual command palette."""
 
     DEFAULT_CSS = """
@@ -169,7 +184,6 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         Binding("up", "command('cursor_up')", show=False),
         Binding("ctrl+home, shift+home", "command('first')", show=False),
         Binding("ctrl+end, shift+end", "command('last')", show=False),
-        Binding("enter", "command('select'),", show=False, priority=True),
     ]
 
     _list_visible: var[bool] = var(False, init=False)
@@ -178,8 +192,16 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     _show_busy: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the busy indicator."""
 
+    _calling_screen: var[Screen | None] = var(None)
+    """A record of the screen that was active when we were called."""
+
     _sources: set[Type[CommandSource]] = set()
     """The list of command source classes."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._selected_command: CommandSourceHit | None = None
+        """The command that was selected by the user."""
 
     @classmethod
     def register_source(cls, source: Type[CommandSource]) -> None:
@@ -206,6 +228,13 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
             self.dismiss()
+
+    def _on_mount(self, _: Mount) -> None:
+        """Capture the calling screen."""
+        # NOTE: As of the time of writing, during the mount event of a
+        # pushed screen, the screen that was in play during the push is
+        # still the head of the stack.
+        self._calling_screen = self.app.screen_stack[0]
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
@@ -246,8 +275,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         async for hit in source:
             await commands.put(hit)
 
-    @classmethod
-    async def _hunt_for(cls, search_value: str) -> AsyncIterator[CommandSourceHit]:
+    async def _hunt_for(self, search_value: str) -> AsyncIterator[CommandSourceHit]:
         """Hunt for a given search value amongst all of the command sources.
 
         Args:
@@ -258,8 +286,12 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """
         commands = Queue[CommandSourceHit]()
         searches = [
-            create_task(cls._consume(source().hunt_for(search_value), commands))
-            for source in cls._sources
+            create_task(
+                self._consume(
+                    source(self._calling_screen).hunt_for(search_value), commands
+                )
+            )
+            for source in self._sources
         ]
         while any(not search.done() for search in searches):
             try:
@@ -285,7 +317,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
                 prompt.add_column(no_wrap=True)
                 prompt.add_row(hit.match_text, style=Style(bold=True))
                 prompt.add_row(Align.right(hit.command_help), style=Style(dim=True))
-            command_list.add_option(Command(prompt, hit.command_text))
+            command_list.add_option(Command(prompt, hit))
         self._show_busy = False
         if command_list.option_count == 0:
             command_list.add_option(
@@ -317,16 +349,32 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
-            input.value = str(event.option.command_text)
+            input.value = str(event.option.command.command_text)
+            self._selected_command = event.option.command
         input.action_end()
         self._list_visible = False
+
+    @on(Input.Submitted)
+    def _select_or_command(self) -> None:
+        """Depending on context, select or execute a command."""
+        # If the list is visible, that means we're in "pick a command" mode
+        # still and so we should bounce this command off to the command
+        # list.
+        if self._list_visible:
+            self._action_command("select")
+        else:
+            # The list isn't visible, which means that if we have a
+            # command...
+            if self._selected_command is not None:
+                # ...so let's get out of here, saying what we want run.
+                self.dismiss(self._selected_command.command)
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
         if self._list_visible:
             self._list_visible = False
         else:
-            self.dismiss()
+            self.app.pop_screen()
 
     def _action_command(self, action: str) -> None:
         """Pass an action on to the `CommandList`.
