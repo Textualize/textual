@@ -1,3 +1,3 @@
-;From MDeiml/tree-sitter-markdown & Helix
+(heading_content) @heading
 
-(heading_content) @markdown.heading
+(list_marker) @comment

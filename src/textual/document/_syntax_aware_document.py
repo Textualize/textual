@@ -37,7 +37,7 @@ HIGHLIGHT_STYLES = {
     "parameter": Style(color="cyan"),
     "type": Style(color="cyan"),
     "escape": Style(bgcolor="magenta"),
-    "markdown.heading": Style(color="#F92672", bold=True),
+    "heading": Style(color="#F92672", bold=True),
 }
 
 
