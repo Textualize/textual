@@ -11,12 +11,11 @@ from tree_sitter.binding import Query
 from tree_sitter_languages import get_language, get_parser
 
 from textual._fix_direction import _fix_direction
+from textual._languages import VALID_LANGUAGES
 from textual.document._document import Document
 
-# TODO - remove hardcoded python.scm highlight query file
 TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
-LANGUAGES_PATH = TREE_SITTER_PATH / "textual-languages.so"
-HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/python.scm"
+HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"
 
 HIGHLIGHT_STYLES = {
     "string": Style(color="#E6DB74"),
@@ -38,6 +37,7 @@ HIGHLIGHT_STYLES = {
     "parameter": Style(color="cyan"),
     "type": Style(color="cyan"),
     "escape": Style(bgcolor="magenta"),
+    "markdown.heading": Style(color="#F92672", bold=True),
 }
 
 
@@ -50,7 +50,7 @@ class Highlight(NamedTuple):
 
 
 class SyntaxAwareDocument(Document):
-    def __init__(self, text: str, language: str | None = None):
+    def __init__(self, text: str, language: str):
         super().__init__(text)
 
         # TODO validate language string
@@ -64,7 +64,12 @@ class SyntaxAwareDocument(Document):
         self._syntax_tree = self._build_ast(self._parser)
         """The tree-sitter Tree (syntax tree) built from the document."""
 
-        self._highlights_query = Path(HIGHLIGHTS_PATH.resolve()).read_text()
+        if language in VALID_LANGUAGES:
+            highlight_query_path = Path(HIGHLIGHTS_PATH.resolve()) / f"{language}.scm"
+        else:
+            raise RuntimeError(f"Invalid language {language!r}")
+
+        self._highlights_query = highlight_query_path.read_text()
         """The tree-sitter query string for used to fetch highlighted ranges"""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)

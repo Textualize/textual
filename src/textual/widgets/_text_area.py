@@ -12,7 +12,6 @@ from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Location, Selection
-from textual.document._syntax_aware_document import SyntaxAwareDocument
 from textual.events import MouseEvent
 from textual.geometry import Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
@@ -129,6 +128,8 @@ class TextArea(ScrollView, can_focus=True):
 $text-area-active-line-bg: white 8%;
 TextArea {
     background: $panel;
+    width: 1fr;
+    height: 1fr;
 }
 TextArea > .text-area--active-line {
     background: $text-area-active-line-bg;
@@ -196,7 +197,7 @@ TextArea > .text-area--selection {
     language: Reactive[str | None] = reactive(None, always_update=True)
     """The language to use for syntax highlighting (via tree-sitter)."""
 
-    selection: Reactive[Selection] = reactive(Selection())
+    selection: Reactive[Selection] = reactive(Selection(), always_update=True)
     """The selection start and end locations (zero-based line_index, offset)."""
 
     show_line_numbers: Reactive[bool] = reactive(True)

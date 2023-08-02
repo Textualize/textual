@@ -2,6 +2,8 @@ import os
 import shutil
 from pathlib import Path
 
+from textual._languages import VALID_LANGUAGES
+
 # The directory that contains the language folders
 source_dir = Path(__file__).parent / "../../nvim-treesitter/queries"
 # The directory to store the collected highlights files
@@ -16,11 +18,12 @@ for root, dirs, files in os.walk(source_dir):
     if "highlights.scm" in files:
         # Get the name of the current language directory
         language = os.path.basename(root)
-        # Create the full path to the source and target files
-        source_file = os.path.join(root, "highlights.scm")
-        target_file = os.path.join(target_dir, f"{language}.scm")
-        # Copy the file
-        shutil.copyfile(source_file, target_file)
+        if language in VALID_LANGUAGES:
+            # Create the full path to the source and target files
+            source_file = os.path.join(root, "highlights.scm")
+            target_file = os.path.join(target_dir, f"{language}.scm")
+            # Copy the file
+            shutil.copyfile(source_file, target_file)
 
 # Print a success message
 print("Done!")

@@ -1,2 +1,0 @@
-;; General syntax
-;(ERROR) @error
