@@ -16,6 +16,7 @@ from . import on, work
 from .app import ComposeResult
 from .binding import Binding
 from .css.query import NoMatches
+from .events import Click
 from .reactive import var
 from .screen import ModalScreen
 from .widgets import Input, LoadingIndicator, OptionList
@@ -176,6 +177,18 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
         """Compose the command palette."""
         yield CommandInput(placeholder="Search...")
         yield CommandList()
+
+    def _on_click(self, event: Click) -> None:
+        """Handle the click event.
+
+        Args:
+            event: The click event.
+
+        This method is used to allow clicking on the 'background' as a
+        method of dismissing the palette.
+        """
+        if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
+            self.dismiss()
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
