@@ -987,14 +987,14 @@ files = [
 
 [[package]]
 name = "mkdocs"
-version = "1.5.1"
+version = "1.5.2"
 description = "Project documentation with Markdown."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mkdocs-1.5.1-py3-none-any.whl", hash = "sha256:67e889f8d8ba1fe5decdfc59f5f8f21d6a8925a129339e93dede303bdea03a98"},
-    {file = "mkdocs-1.5.1.tar.gz", hash = "sha256:f2f323c62fffdf1b71b84849e39aef56d6852b3f0a5571552bca32cefc650209"},
+    {file = "mkdocs-1.5.2-py3-none-any.whl", hash = "sha256:60a62538519c2e96fe8426654a67ee177350451616118a41596ae7c876bb7eac"},
+    {file = "mkdocs-1.5.2.tar.gz", hash = "sha256:70d0da09c26cff288852471be03c23f0f521fc15cf16ac89c7a3bfb9ae8d24f9"},
 ]
 
 [package.dependencies]
@@ -1916,14 +1916,14 @@ pytest = ">=5.1.0,<8.0.0"
 
 [[package]]
 name = "textual-dev"
-version = "1.1.0a1"
+version = "1.1.0"
 description = "Development tools for working with Textual"
 category = "dev"
 optional = false
 python-versions = ">=3.7,<4.0"
 files = [
-    {file = "textual_dev-1.1.0a1-py3-none-any.whl", hash = "sha256:85f5339a0f3c643f5db51dfac80b13272af8dc8a50a89ec6256746b267c52cf3"},
-    {file = "textual_dev-1.1.0a1.tar.gz", hash = "sha256:12475c53d7e19117b86507596f4def452de81473b5eefd5565628f7f3695d30e"},
+    {file = "textual_dev-1.1.0-py3-none-any.whl", hash = "sha256:c57320636098e31fa5d5c29fc3bc60829bb420da3c76bfed24db6eacf178dbc6"},
+    {file = "textual_dev-1.1.0.tar.gz", hash = "sha256:e2f8ce4e1c18a16b80282f3257cd2feb49a7ede289a78908c9063ce071bb77ce"},
 ]
 
 [package.dependencies]
@@ -2314,4 +2314,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "031f360af7ced188dcba86ef4e18c41340b391f9ba9154858b5900539fc4d4c3"
+content-hash = "7e7e7261c3374b6f52a8f422ce6e07edf19187f041cca4516f0c6d781457d814"
