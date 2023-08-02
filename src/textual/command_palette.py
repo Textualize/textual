@@ -4,7 +4,15 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import Queue, TimeoutError, create_task, wait_for
-from typing import AsyncIterable, AsyncIterator, ClassVar, NamedTuple, Type
+from typing import (
+    AsyncIterable,
+    AsyncIterator,
+    Callable,
+    ClassVar,
+    NamedTuple,
+    Type,
+    TypeAlias,
+)
 
 from rich.align import Align
 from rich.console import RenderableType
@@ -29,6 +37,10 @@ __all__ = [
 ]
 
 
+CommandPaletteCallable: TypeAlias = Callable[[], None]
+"""The type of a function that will be called when a command is selected from the command palette."""
+
+
 class CommandSourceHit(NamedTuple):
     """Holds the details of a single command search hit."""
 
@@ -37,6 +49,9 @@ class CommandSourceHit(NamedTuple):
 
     match_text: Text
     """The [rich.text.Text][`Text`] representation of the hit."""
+
+    command: CommandPaletteCallable
+    """The function to call when the command is chosen."""
 
     command_text: str
     """The command text associated with the hit, as plain text."""
@@ -49,7 +64,7 @@ class CommandSource(ABC):
     """Base class for command palette command sources.
 
     To create a source of commands inherit from this class and implement
-    [CommandSource.hunt_for][`hunt_for`].
+    [textual.command_palette.CommandSource.hunt_for][`hunt_for`].
     """
 
     @abstractmethod
@@ -85,7 +100,7 @@ class Command(Option):
         """
         super().__init__(prompt, id, disabled)
         self.command_text = command_text
-        """The plain text version of the command. Used to fill in the `Input`."""
+        """The plain text version of the command. Used to fill in the [textual.widgets.Input][`Input`]."""
 
 
 class CommandList(OptionList, can_focus=False):
