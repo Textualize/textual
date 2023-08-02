@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import Queue, TimeoutError, create_task, wait_for
-from typing import AsyncIterable, AsyncIterator, NamedTuple, Type
+from typing import AsyncIterable, AsyncIterator, ClassVar, NamedTuple, Type
 
 from rich.align import Align
 from rich.console import RenderableType
@@ -14,7 +14,7 @@ from rich.text import Text
 
 from . import on, work
 from .app import ComposeResult
-from .binding import Binding
+from .binding import Binding, BindingType
 from .css.query import NoMatches
 from .events import Click
 from .reactive import var
@@ -146,7 +146,7 @@ class CommandPalette(ModalScreen[None], inherit_css=False):
     }
     """
 
-    BINDINGS = [
+    BINDINGS: ClassVar[list[BindingType]] = [
         Binding("escape", "escape", "Exit the command palette"),
         Binding("down", "cursor_down", show=False),
         Binding("pagedown", "command('page_down')", show=False),
