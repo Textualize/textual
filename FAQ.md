@@ -162,7 +162,7 @@ def run_in_background():
 If you *don't* want a threaded worker, you should make your work function `async`:
 
 ```python
-@work():
+@work()
 async def run_in_background():
     ...
 ```
