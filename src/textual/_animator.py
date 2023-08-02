@@ -476,9 +476,7 @@ class Animator:
             complete: Should the animation be set to its final value?
 
         Note:
-            If there is no animation running, this is a no-op. If there is
-            an animation running the attribute will be left in the last
-            state it was in before the call to stop.
+            If there is no animation scheduled or running, this is a no-op.
         """
         key = (id(obj), attribute)
         if key in self._scheduled:

@@ -1575,7 +1575,7 @@ class Widget(DOMNode):
             complete: Should the animation be set to its final value?
 
         Note:
-            If there is no animation running, this is a no-op.
+            If there is no animation scheduled or running, this is a no-op.
         """
         await self.app.animator.stop_animation(self, attribute, complete)
 
@@ -2761,8 +2761,9 @@ class Widget(DOMNode):
         if (
             isinstance(renderable, Text)
             and text_justify is not None
-            and renderable.justify is None
+            and renderable.justify != text_justify
         ):
+            renderable = renderable.copy()
             renderable.justify = text_justify
 
         renderable = _Styled(

@@ -132,7 +132,7 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
 
 === "binding01.py"
 
-    ```python title="binding01.py" hl_lines="13-17"
+    ```python title="binding01.py" hl_lines="12-16"
     --8<-- "docs/examples/guide/input/binding01.py"
     ```
 
