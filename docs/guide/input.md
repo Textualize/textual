@@ -23,7 +23,7 @@ The most fundamental way to receive input is via [Key][textual.events.Key] event
     ```{.textual path="docs/examples/guide/input/key01.py", press="T,e,x,t,u,a,l,!"}
     ```
 
-When you press a key, the app will receive the event and write it to a [RichLog](../widgets/text_log.md) widget. Try pressing a few keys to see what happens.
+When you press a key, the app will receive the event and write it to a [RichLog](../widgets/rich_log.md) widget. Try pressing a few keys to see what happens.
 
 !!! tip
 
