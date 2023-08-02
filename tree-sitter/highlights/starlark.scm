@@ -1,6 +1,5 @@
 ;; From tree-sitter-python licensed under MIT License
 ; Copyright (c) 2016 Max Brunsfeld
-; https://github.com/nvim-treesitter/nvim-treesitter/blob/f95ffd09ed35880c3a46ad2b968df361fa592a76/queries/python/highlights.scm
 
 ; Variables
 (identifier) @variable
@@ -30,25 +29,7 @@
 
 ((attribute
     attribute: (identifier) @field)
- (#match? @field "^([A-Z])@!.*$"))
-
-((identifier) @type.builtin
- (#any-of? @type.builtin
-              ;; https://docs.python.org/3/library/exceptions.html
-              "BaseException" "Exception" "ArithmeticError" "BufferError" "LookupError" "AssertionError" "AttributeError"
-              "EOFError" "FloatingPointError" "GeneratorExit" "ImportError" "ModuleNotFoundError" "IndexError" "KeyError"
-              "KeyboardInterrupt" "MemoryError" "NameError" "NotImplementedError" "OSError" "OverflowError" "RecursionError"
-              "ReferenceError" "RuntimeError" "StopIteration" "StopAsyncIteration" "SyntaxError" "IndentationError" "TabError"
-              "SystemError" "SystemExit" "TypeError" "UnboundLocalError" "UnicodeError" "UnicodeEncodeError" "UnicodeDecodeError"
-              "UnicodeTranslateError" "ValueError" "ZeroDivisionError" "EnvironmentError" "IOError" "WindowsError"
-              "BlockingIOError" "ChildProcessError" "ConnectionError" "BrokenPipeError" "ConnectionAbortedError"
-              "ConnectionRefusedError" "ConnectionResetError" "FileExistsError" "FileNotFoundError" "InterruptedError"
-              "IsADirectoryError" "NotADirectoryError" "PermissionError" "ProcessLookupError" "TimeoutError" "Warning"
-              "UserWarning" "DeprecationWarning" "PendingDeprecationWarning" "SyntaxWarning" "RuntimeWarning"
-              "FutureWarning" "ImportWarning" "UnicodeWarning" "BytesWarning" "ResourceWarning"
-              ;; https://docs.python.org/3/library/stdtypes.html
-              "bool" "int" "float" "complex" "list" "tuple" "range" "str"
-              "bytes" "bytearray" "memoryview" "set" "frozenset" "dict" "type"))
+ (#lua-match? @field "^[%l_].*$"))
 
 ((assignment
   left: (identifier) @type.definition
@@ -61,26 +42,7 @@
     function: (identifier) @_func))
  (#any-of? @_func "TypeVar" "NewType"))
 
-; Function calls
-
-(call
-  function: (identifier) @function.call)
-
-(call
-  function: (attribute
-              attribute: (identifier) @method.call))
-
-((call
-   function: (identifier) @constructor)
- (#lua-match? @constructor "^[A-Z]"))
-
-((call
-  function: (attribute
-              attribute: (identifier) @constructor))
- (#lua-match? @constructor "^[A-Z]"))
-
 ;; Decorators
-
 ((decorator "@" @attribute)
  (#set! "priority" 101))
 
@@ -100,19 +62,17 @@
  (#any-of? @attribute.builtin "classmethod" "property"))
 
 ;; Builtin functions
-
 ((call
   function: (identifier) @function.builtin)
  (#any-of? @function.builtin
           "abs" "all" "any" "ascii" "bin" "bool" "breakpoint" "bytearray" "bytes" "callable" "chr" "classmethod"
-          "compile" "complex" "delattr" "dict" "dir" "divmod" "enumerate" "eval" "exec" "filter" "float" "format"
+          "compile" "complex" "delattr" "dict" "dir" "divmod" "enumerate" "eval" "exec" "fail" "filter" "float" "format"
           "frozenset" "getattr" "globals" "hasattr" "hash" "help" "hex" "id" "input" "int" "isinstance" "issubclass"
           "iter" "len" "list" "locals" "map" "max" "memoryview" "min" "next" "object" "oct" "open" "ord" "pow"
           "print" "property" "range" "repr" "reversed" "round" "set" "setattr" "slice" "sorted" "staticmethod" "str"
-          "sum" "super" "tuple" "type" "vars" "zip" "__import__"))
+          "struct" "sum" "super" "tuple" "type" "vars" "zip" "__import__"))
 
 ;; Function definitions
-
 (function_definition
   name: (identifier) @function)
 
@@ -127,6 +87,24 @@
     (_)
     (identifier) @type))
  (#eq? @_isinstance "isinstance"))
+
+((identifier) @type.builtin
+ (#any-of? @type.builtin
+              ;; https://docs.python.org/3/library/exceptions.html
+              "ArithmeticError" "BufferError" "LookupError" "AssertionError" "AttributeError"
+              "EOFError" "FloatingPointError" "ModuleNotFoundError" "IndexError" "KeyError"
+              "KeyboardInterrupt" "MemoryError" "NameError" "NotImplementedError" "OSError" "OverflowError" "RecursionError"
+              "ReferenceError" "RuntimeError" "StopIteration" "StopAsyncIteration" "SyntaxError" "IndentationError" "TabError"
+              "SystemError" "SystemExit" "TypeError" "UnboundLocalError" "UnicodeError" "UnicodeEncodeError" "UnicodeDecodeError"
+              "UnicodeTranslateError" "ValueError" "ZeroDivisionError" "EnvironmentError" "IOError" "WindowsError"
+              "BlockingIOError" "ChildProcessError" "ConnectionError" "BrokenPipeError" "ConnectionAbortedError"
+              "ConnectionRefusedError" "ConnectionResetError" "FileExistsError" "FileNotFoundError" "InterruptedError"
+              "IsADirectoryError" "NotADirectoryError" "PermissionError" "ProcessLookupError" "TimeoutError" "Warning"
+              "UserWarning" "DeprecationWarning" "PendingDeprecationWarning" "SyntaxWarning" "RuntimeWarning"
+              "FutureWarning" "UnicodeWarning" "BytesWarning" "ResourceWarning"
+              ;; https://docs.python.org/3/library/stdtypes.html
+              "bool" "int" "float" "complex" "list" "tuple" "range" "str"
+              "bytes" "bytearray" "memoryview" "set" "frozenset" "dict" "type"))
 
 ;; Normal parameters
 (parameters
@@ -157,7 +135,6 @@
 
 
 ;; Literals
-
 (none) @constant.builtin
 [(true) (false)] @boolean
 ((identifier) @variable.builtin
@@ -171,13 +148,23 @@
 (comment) @comment @spell
 
 ((module . (comment) @preproc)
-  (#match? @preproc "^#!/"))
+  (#lua-match? @preproc "^#!/"))
 
 (string) @string
-(escape_sequence) @string.escape
+[
+  (escape_sequence)
+  "{{"
+  "}}"
+] @string.escape
 
 ; doc-strings
-(expression_statement (string) @spell)
+
+(module . (expression_statement (string) @string.documentation @spell))
+
+(function_definition
+  body:
+    (block
+      . (expression_statement (string) @string.documentation @spell)))
 
 ; Tokens
 
@@ -225,7 +212,6 @@
 [
   "and"
   "in"
-  "is"
   "not"
   "or"
 
@@ -238,12 +224,9 @@
 ] @keyword.function
 
 [
-  "assert"
   "async"
   "await"
-  "class"
   "exec"
-  "global"
   "nonlocal"
   "pass"
   "print"
@@ -252,35 +235,23 @@
 ] @keyword
 
 [
+  "async"
+  "await"
+] @keyword.coroutine
+
+[
   "return"
-  "yield"
 ] @keyword.return
-(yield "from" @keyword.return)
 
-(future_import_statement
-  "from" @include
-  "__future__" @constant.builtin)
-(import_from_statement "from" @include)
-"import" @include
-
-(aliased_import "as" @include)
+((call
+  function: (identifier) @include
+  arguments: (argument_list
+	(string) @conceal))
+  (#eq? @include "load"))
 
 ["if" "elif" "else" "match" "case"] @conditional
 
 ["for" "while" "break" "continue"] @repeat
-
-[
-  "try"
-  "except"
-  "raise"
-  "finally"
-] @exception
-
-(raise_statement "from" @exception)
-
-(try_statement
-  (else_clause
-    "else" @exception))
 
 ["(" ")" "[" "]" "{" "}"] @punctuation.bracket
 
@@ -288,40 +259,42 @@
   "{" @punctuation.special
   "}" @punctuation.special)
 
+(type_conversion) @function.macro
+
 ["," "." ":" ";" (ellipsis)] @punctuation.delimiter
-
-;; Class definitions
-
-(class_definition name: (identifier) @type)
-
-(class_definition
-  body: (block
-          (function_definition
-            name: (identifier) @method)))
-
-(class_definition
-  superclasses: (argument_list
-                  (identifier) @type))
-
-((class_definition
-  body: (block
-          (expression_statement
-            (assignment
-              left: (identifier) @field))))
- (#match? @field "^([A-Z])@!.*$"))
-((class_definition
-  body: (block
-          (expression_statement
-            (assignment
-              left: (_
-                     (identifier) @field)))))
- (#match? @field "^([A-Z])@!.*$"))
-
-((class_definition
-  (block
-    (function_definition
-      name: (identifier) @constructor)))
- (#any-of? @constructor "__new__" "__init__"))
 
 ;; Error
 (ERROR) @error
+
+;; Starlark-specific
+
+;; Assertion calls
+(assert_keyword) @keyword
+
+(assert_builtin) @function.builtin
+
+;; Struct definitions
+((call
+  function: (identifier) @_func
+  arguments: (argument_list
+    (keyword_argument
+	  name: (identifier) @field)))
+  (#eq? @_func "struct"))
+
+;; Function calls
+
+(call
+  function: (identifier) @function.call)
+
+(call
+  function: (attribute
+              attribute: (identifier) @method.call))
+
+((call
+   function: (identifier) @constructor)
+ (#lua-match? @constructor "^[A-Z]"))
+
+((call
+  function: (attribute
+              attribute: (identifier) @constructor))
+ (#lua-match? @constructor "^[A-Z]"))

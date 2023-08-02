@@ -181,6 +181,9 @@ class SyntaxAwareDocument(Document):
         end_point: tuple[int, int] = None,
     ) -> None:
         highlights = self._highlights
+        print(self._language.language_id)
+        print(self._language.name)
+        print(self._language.lib)
         query: Query = self._language.query(self._highlights_query)
 
         captures_kwargs = {}
