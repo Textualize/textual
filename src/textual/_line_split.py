@@ -21,7 +21,3 @@ def line_split(input_string: str) -> list[tuple[str, str]]:
         >>> [('Hello', '\r\n'), ('World', '\n'), ('This is a test', '\r'), ('Last line', '')]
     """
     return LINE_AND_ENDING_PATTERN.findall(input_string)[:-1] if input_string else []
-
-
-if __name__ == "__main__":
-    print(line_split("Hello\r\nWill"))
