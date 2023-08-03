@@ -352,8 +352,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """
         search_value = event.value.strip()
         self._list_visible = bool(search_value)
-        command_list = self.query_one(CommandList)
-        command_list.clear_options()
+        self.query_one(CommandList).clear_options()
         if search_value:
             self._gather_commands(search_value)
 
