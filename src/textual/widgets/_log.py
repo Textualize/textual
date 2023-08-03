@@ -23,9 +23,6 @@ if TYPE_CHECKING:
 _sub_escape = re.compile("[\u0000-\u0014]").sub
 
 
-_LINES_ENDINGS = ("\n", "\r", "\r\n")
-
-
 class Log(ScrollView, can_focus=True):
     """A widget to log text."""
 
@@ -133,6 +130,25 @@ class Log(ScrollView, can_focus=True):
             max_length = max(cell_len(_process_line(line)) for line in lines)
             self.app.call_from_thread(self._update_maximum_width, updates, max_length)
 
+    def _prune_max_lines(self) -> None:
+        """Prune lines if there are more than the maximum."""
+        if self.max_lines is None:
+            return
+        remove_lines = len(self._lines) - self.max_lines
+        if remove_lines > 0:
+            _cache = self._render_line_cache
+            # We've removed some lines, which means the y values in the cache are out of sync
+            # Calculated a new dict of cache values
+            updated_cache = {
+                y - remove_lines: _cache[y] for y in _cache.keys() if y > remove_lines
+            }
+            # Clear the cache
+            _cache.clear()
+            # Update the cache with previously calculated values
+            for y, line in updated_cache.items():
+                _cache[y] = line
+            del self._lines[:remove_lines]
+
     def write(
         self,
         data: str,
@@ -160,6 +176,9 @@ class Log(ScrollView, can_focus=True):
                 if ending:
                     self._lines.append("")
             self.virtual_size = Size(self._width, self.line_count)
+
+        if self.max_lines is not None and len(self._lines) > self.max_lines:
+            self._prune_max_lines()
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
         if auto_scroll and not self.is_vertical_scrollbar_grabbed:
@@ -199,7 +218,7 @@ class Log(ScrollView, can_focus=True):
         start_line = len(self._lines)
         self._lines.extend(new_lines)
         if self.max_lines is not None and len(self._lines) > self.max_lines:
-            del self._lines[: -self.max_lines]
+            self._prune_max_lines()
         self.virtual_size = Size(self._width, len(self._lines))
         self._update_size(self._updates, new_lines)
         self.refresh_lines(start_line, len(new_lines))
