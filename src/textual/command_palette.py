@@ -387,7 +387,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         help_style = self.get_component_rich_style("command-palette--help-text")
         # Here we're pulling out all of the styles *minus* the background.
         # This should probably turn into a utility method on Style
-        # eventually.
+        # eventually. The reason for this is we want the developer to be
+        # able to style the help text with a component class, but we want
+        # the background to always be the background at any given moment in
+        # the context of an OptionList. At the moment this act of copying
+        # sans bgcolor seems to be the only way to achieve this.
         help_style = Style(
             color=help_style.color,
             dim=help_style.dim,
@@ -402,6 +406,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         async for hit in self._hunt_for(search_value):
             prompt = hit.match_text
             if hit.command_help:
+                # Because there's some help for the command, we switch to a
+                # Rich table so we can individually align a couple of rows;
+                # the command will be left-aligned, the help however will be
+                # right-aligned.
                 prompt = Table.grid(expand=True)
                 prompt.add_column(no_wrap=True)
                 prompt.add_row(hit.match_text)
