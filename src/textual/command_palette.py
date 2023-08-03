@@ -162,10 +162,23 @@ class CommandInput(Input):
 class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     """The Textual command palette."""
 
+    COMPONENT_CLASSES: ClassVar[set[str]] = {"command-palette--help-text"}
+    """
+    | Class | Description |
+    | :- | :- |
+    | `command-palette--help-text` | Targets the help text of a matched command. |
+    """
+
     DEFAULT_CSS = """
     CommandPalette {
         background: $background 30%;
         align-horizontal: center;
+    }
+
+    CommandPalette > .command-palette--help-text {
+        color: $text-muted;
+        text-style: italic;
+        background: transparent;
     }
 
     CommandPalette > Vertical {
@@ -350,6 +363,19 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         Args:
             search_value: The value to search for.
         """
+        help_style = self.get_component_rich_style("command-palette--help-text")
+        # Here we're pulling out all of the styles *minus* the background.
+        # This should probably turn into a utility method on Style
+        # eventually.
+        help_style = Style(
+            color=help_style.color,
+            dim=help_style.dim,
+            italic=help_style.italic,
+            overline=help_style.overline,
+            reverse=help_style.reverse,
+            strike=help_style.strike,
+            underline=help_style.underline,
+        )
         command_list = self.query_one(CommandList)
         self._show_busy = True
         async for hit in self._hunt_for(search_value):
@@ -357,8 +383,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             if hit.command_help:
                 prompt = Table.grid(expand=True)
                 prompt.add_column(no_wrap=True)
-                prompt.add_row(hit.match_text, style=Style(bold=True))
-                prompt.add_row(Align.right(hit.command_help), style=Style(dim=True))
+                prompt.add_row(hit.match_text)
+                prompt.add_row(Align.right(Text(hit.command_help, style=help_style)))
             command_list.add_option(Command(prompt, hit))
         self._show_busy = False
         if command_list.option_count == 0:
