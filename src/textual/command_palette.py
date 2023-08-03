@@ -307,9 +307,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 # up that command; we're done with it so let the queue know.
                 commands.task_done()
 
-        # At this point, if all the sources are pretty fast, it could be
-        # that we've reached this point but the queue isn't empty yet. So
-        # here we flush the queue of anything left.
+        # If all the sources are pretty fast it could be that we've reached
+        # this point but the queue isn't empty yet. So here we flush the
+        # queue of anything left. Note though that rather than busy-spin the
+        # queue and just pull items and yield them, we keep using the
+        # await/wait_for so we don't block until we're done. Not doing this
+        # makes typing into the input *very* choppy when you have very fast
+        # sources.
         while not commands.empty():
             try:
                 yield await wait_for(commands.get(), 0.1)
