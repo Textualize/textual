@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.32.0] - 2023-08-03
+
+### Added
+
+- Added widgets.Log
+- Added Widget.is_vertical_scroll_end, Widget.is_horizontal_scroll_end, Widget.is_vertical_scrollbar_grabbed, Widget.is_horizontal_scrollbar_grabbed
+
+### Changed
+
+- Breaking change: Renamed TextLog to RichLog
+
 ## [0.31.0] - 2023-08-01
 
 ### Added
