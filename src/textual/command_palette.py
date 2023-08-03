@@ -261,6 +261,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
         Args:
             source: The class of the source to register.
+
+        If the same source is registered more than once, subsequent
+        registrations are ignored.
         """
         cls._sources.add(source)
 
