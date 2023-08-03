@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added ability to animate offset with tuple or str https://github.com/Textualize/textual/issues/3028
+
 ### Fixed
 
 - Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
