@@ -175,16 +175,16 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         visibility: hidden;
     }
 
-    CommandPalette #-input {
+    CommandPalette #--input {
         height: auto;
         visibility: visible;
     }
 
-    CommandPalette #-input Button {
+    CommandPalette #--input Button {
         min-width: 7;
     }
 
-    CommandPalette #-results {
+    CommandPalette #--results {
         overlay: screen;
         height: auto;
     }
@@ -238,10 +238,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
         with Vertical():
-            with Horizontal(id="-input"):
+            with Horizontal(id="--input"):
                 yield CommandInput(placeholder="Search...")
                 yield Button("\u25b6")
-            with Vertical(id="-results"):
+            with Vertical(id="--results"):
                 yield CommandList()
                 yield LoadingIndicator()
 
