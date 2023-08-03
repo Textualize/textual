@@ -9,7 +9,7 @@ width: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The style `width` needs a [`<scalar>`](../../css_types/scalar) to determine the horizontal length of the width.
-By default, it sets the width of the content area, but if [`box-sizing`](./box_sizing) is set to `border-box` it sets the width of the border area.
+By default, it sets the width of the content area, but if [`box-sizing`](./box_sizing.md) is set to `border-box` it sets the width of the border area.
 
 ## Examples
 
