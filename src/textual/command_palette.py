@@ -285,9 +285,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """Capture the calling screen."""
         # NOTE: As of the time of writing, during the mount event of a
         # pushed screen, the screen that was in play during the push is
-        # still the app's active screen. We save it so we can pass it on to
+        # still at the head of the stack. We save it so we can pass it on to
         # the command providers.
-        self._calling_screen = self.app.screen
+        self._calling_screen = self.app.screen_stack[0]
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
