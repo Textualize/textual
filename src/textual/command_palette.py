@@ -24,10 +24,11 @@ from typing_extensions import TypeAlias
 from . import on, work
 from .app import App, ComposeResult
 from .binding import Binding, BindingType
+from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
-from .widgets import Input, LoadingIndicator, OptionList
+from .widgets import Button, Input, LoadingIndicator, OptionList
 from .widgets.option_list import Option
 
 __all__ = [
@@ -128,8 +129,9 @@ class CommandList(OptionList, can_focus=False):
     DEFAULT_CSS = """
     CommandList {
         visibility: hidden;
-        max-height: 70%;
         border: blank;
+        height: auto;
+        max-height: 70vh;
     }
 
     CommandList:focus {
@@ -150,13 +152,9 @@ class CommandInput(Input):
     """The command palette input control."""
 
     DEFAULT_CSS = """
-    CommandInput {
-        margin-top: 3;
+    CommandInput, CommandInput:focus {
         border: blank;
-    }
-
-    CommandInput:focus {
-        border: blank;
+        width: 1fr;
     }
     """
 
@@ -170,13 +168,29 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         align-horizontal: center;
     }
 
-    CommandPalette > * {
+    CommandPalette > Vertical {
+        margin-top: 3;
         width: 90%;
+        height: 100%;
+        visibility: hidden;
+    }
+
+    CommandPalette #-input {
+        height: auto;
+        visibility: visible;
+    }
+
+    CommandPalette #-input Button {
+        min-width: 7;
+    }
+
+    CommandPalette #-results {
+        overlay: screen;
+        height: auto;
     }
 
     CommandPalette LoadingIndicator {
         height: auto;
-        width: 90%;
         visibility: hidden;
     }
 
@@ -223,9 +237,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     def compose(self) -> ComposeResult:
         """Compose the command palette."""
-        yield CommandInput(placeholder="Search...")
-        yield CommandList()
-        yield LoadingIndicator()
+        with Vertical():
+            with Horizontal(id="-input"):
+                yield CommandInput(placeholder="Search...")
+                yield Button("\u25b6")
+            with Vertical(id="-results"):
+                yield CommandList()
+                yield LoadingIndicator()
 
     def _on_click(self, event: Click) -> None:
         """Handle the click event.
@@ -378,6 +396,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         self._list_visible = False
 
     @on(Input.Submitted)
+    @on(Button.Pressed)
     def _select_or_command(self) -> None:
         """Depending on context, select or execute a command."""
         # If the list is visible, that means we're in "pick a command" mode
