@@ -368,6 +368,24 @@ class ScalarOffset(NamedTuple):
             round(y.resolve(size, viewport)),
         )
 
+    @classmethod
+    def parse(cls, token: str) -> ScalarOffset:
+        """Create a scalar offset from a string.
+
+        Args:
+            token: String to parse (e.g. '1 2' or '1.0 2.0')
+
+        Returns:
+            New offset
+        """
+        x, y = token.split()
+        # fmt: off
+        return cls(
+            Scalar.parse(x, Unit.WIDTH),
+            Scalar.parse(y, Unit.HEIGHT)
+        )
+        # fmt: on
+
 
 NULL_SCALAR = ScalarOffset(Scalar.from_number(0), Scalar.from_number(0))
 
