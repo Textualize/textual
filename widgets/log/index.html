@@ -8,34 +8,34 @@
       
       
       
-        <link rel="canonical" href="https://textual.textualize.io/blog/2023/05/08/textual-0240-adds-a-select-control/">
+        <link rel="canonical" href="https://textual.textualize.io/widgets/log/">
       
       
-        <link rel="prev" href="../../03/textual-0230-improves-message-handling/">
+        <link rel="prev" href="../loading_indicator/">
       
       
-        <link rel="next" href="../../../06/01/textual-adds-sparklines-selection-list-input-validation-and-tool-tips/">
+        <link rel="next" href="../markdown_viewer/">
       
       
         
       
       
-        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../../../../feed_rss_created.xml">
-        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../../../../feed_rss_updated.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
-      <link rel="icon" href="../../../../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
-        <title>Textual 0.24.0 adds a Select control - Textual</title>
+        <title>Log - Textual</title>
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/stylesheets/main.323870f8.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.323870f8.min.css">
       
         
-        <link rel="stylesheet" href="../../../../../assets/stylesheets/palette.6932e648.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.6932e648.min.css">
       
       
 
@@ -51,11 +51,11 @@
       
     
     
-      <link rel="stylesheet" href="../../../../../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
-      <link rel="stylesheet" href="../../../../../stylesheets/custom.css">
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
     
-    <script>__md_scope=new URL("../../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -71,9 +71,9 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@textualizeio">
 <meta name="twitter:creator" content="@willmcgugan">
-<meta property="og:title" content="Textual - Textual 0.24.0 adds a Select control">
+<meta property="og:title" content="Textual - Log">
 <meta property="og:type" content="article">
-<meta property="og:url" content="https://textual.textualize.io/blog/2023/05/08/textual-0240-adds-a-select-control/">
+<meta property="og:url" content="https://textual.textualize.io/widgets/log/">
 <meta property="og:site_name" content="Textual Documentation">
 <meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
 <meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
@@ -111,7 +111,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#textual-0240-adds-a-select-control" class="md-skip">
+        <a href="#log" class="md-skip">
           Skip to content
         </a>
       
@@ -127,7 +127,7 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../../../../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
+    <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -146,7 +146,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Textual 0.24.0 adds a Select control
+              Log
             
           </span>
         </div>
@@ -239,7 +239,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../.." class="md-tabs__link">
+        <a href="../.." class="md-tabs__link">
           
   
     
@@ -257,7 +257,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../../tutorial/" class="md-tabs__link">
+      <a href="../../tutorial/" class="md-tabs__link">
         
   
     
@@ -276,7 +276,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../guide/" class="md-tabs__link">
+        <a href="../../guide/" class="md-tabs__link">
           
   
     
@@ -294,7 +294,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../../widget_gallery/" class="md-tabs__link">
+      <a href="../../widget_gallery/" class="md-tabs__link">
         
   
     
@@ -309,11 +309,13 @@
         
   
   
+    
+  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../reference/" class="md-tabs__link">
+        <a href="../../reference/" class="md-tabs__link md-tabs__link--active">
           
   
     
@@ -333,7 +335,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../api/" class="md-tabs__link">
+        <a href="../../api/" class="md-tabs__link">
           
   
     
@@ -353,7 +355,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../../../../how-to/" class="md-tabs__link">
+        <a href="../../how-to/" class="md-tabs__link">
           
   
     
@@ -371,7 +373,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../../../../roadmap/" class="md-tabs__link">
+      <a href="../../roadmap/" class="md-tabs__link">
         
   
     
@@ -386,13 +388,11 @@
         
   
   
-    
-  
   
     
     
       <li class="md-tabs__item">
-        <a href="../../../../" class="md-tabs__link md-tabs__link--active">
+        <a href="../../blog/" class="md-tabs__link">
           
   
     
@@ -422,9 +422,7 @@
           
             
               
-                
-              
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" hidden>
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
@@ -435,7 +433,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../../../../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
+    <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -487,7 +485,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../.." class="md-nav__link ">
+            <a href="../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -528,7 +526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../getting_started/" class="md-nav__link">
+      <a href="../../getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -554,7 +552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../help/" class="md-nav__link">
+      <a href="../../help/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -587,7 +585,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../tutorial/" class="md-nav__link">
+      <a href="../../tutorial/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -661,7 +659,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../guide/" class="md-nav__link ">
+            <a href="../../guide/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -702,7 +700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/devtools/" class="md-nav__link">
+      <a href="../../guide/devtools/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -728,7 +726,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/app/" class="md-nav__link">
+      <a href="../../guide/app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -754,7 +752,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/styles/" class="md-nav__link">
+      <a href="../../guide/styles/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -780,7 +778,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/CSS/" class="md-nav__link">
+      <a href="../../guide/CSS/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -806,7 +804,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/design/" class="md-nav__link">
+      <a href="../../guide/design/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -832,7 +830,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/queries/" class="md-nav__link">
+      <a href="../../guide/queries/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -858,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/layout/" class="md-nav__link">
+      <a href="../../guide/layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -884,7 +882,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/events/" class="md-nav__link">
+      <a href="../../guide/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -910,7 +908,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/input/" class="md-nav__link">
+      <a href="../../guide/input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -936,7 +934,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/actions/" class="md-nav__link">
+      <a href="../../guide/actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -962,7 +960,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/reactivity/" class="md-nav__link">
+      <a href="../../guide/reactivity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -988,7 +986,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/widgets/" class="md-nav__link">
+      <a href="../../guide/widgets/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1014,7 +1012,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/animation/" class="md-nav__link">
+      <a href="../../guide/animation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1040,7 +1038,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/screens/" class="md-nav__link">
+      <a href="../../guide/screens/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1066,7 +1064,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../guide/workers/" class="md-nav__link">
+      <a href="../../guide/workers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1099,7 +1097,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widget_gallery/" class="md-nav__link">
+      <a href="../../widget_gallery/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1122,6 +1120,8 @@
       
   
   
+    
+  
   
     
     
@@ -1140,18 +1140,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../reference/" class="md-nav__link ">
+            <a href="../../reference/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1173,7 +1173,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -1235,7 +1235,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../css_types/" class="md-nav__link ">
+            <a href="../../css_types/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1276,7 +1276,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/border/" class="md-nav__link">
+      <a href="../../css_types/border/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1302,7 +1302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/color/" class="md-nav__link">
+      <a href="../../css_types/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1328,7 +1328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/horizontal/" class="md-nav__link">
+      <a href="../../css_types/horizontal/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1354,7 +1354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/integer/" class="md-nav__link">
+      <a href="../../css_types/integer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1380,7 +1380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/name/" class="md-nav__link">
+      <a href="../../css_types/name/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1406,7 +1406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/number/" class="md-nav__link">
+      <a href="../../css_types/number/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1432,7 +1432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/overflow/" class="md-nav__link">
+      <a href="../../css_types/overflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1458,7 +1458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/percentage/" class="md-nav__link">
+      <a href="../../css_types/percentage/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1484,7 +1484,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/scalar/" class="md-nav__link">
+      <a href="../../css_types/scalar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1510,7 +1510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/text_align/" class="md-nav__link">
+      <a href="../../css_types/text_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1536,7 +1536,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/text_style/" class="md-nav__link">
+      <a href="../../css_types/text_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1562,7 +1562,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../css_types/vertical/" class="md-nav__link">
+      <a href="../../css_types/vertical/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1661,7 +1661,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../events/" class="md-nav__link ">
+            <a href="../../events/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -1702,7 +1702,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/blur/" class="md-nav__link">
+      <a href="../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1728,7 +1728,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/descendant_blur/" class="md-nav__link">
+      <a href="../../events/descendant_blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1754,7 +1754,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/descendant_focus/" class="md-nav__link">
+      <a href="../../events/descendant_focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1780,7 +1780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/enter/" class="md-nav__link">
+      <a href="../../events/enter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1806,7 +1806,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/focus/" class="md-nav__link">
+      <a href="../../events/focus/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1832,7 +1832,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/hide/" class="md-nav__link">
+      <a href="../../events/hide/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1858,7 +1858,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/key/" class="md-nav__link">
+      <a href="../../events/key/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1884,7 +1884,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/leave/" class="md-nav__link">
+      <a href="../../events/leave/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1910,7 +1910,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/load/" class="md-nav__link">
+      <a href="../../events/load/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1936,7 +1936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mount/" class="md-nav__link">
+      <a href="../../events/mount/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1962,7 +1962,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_capture/" class="md-nav__link">
+      <a href="../../events/mouse_capture/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1988,7 +1988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/click/" class="md-nav__link">
+      <a href="../../events/click/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2014,7 +2014,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_down/" class="md-nav__link">
+      <a href="../../events/mouse_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2040,7 +2040,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_move/" class="md-nav__link">
+      <a href="../../events/mouse_move/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2066,7 +2066,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_release/" class="md-nav__link">
+      <a href="../../events/mouse_release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2092,7 +2092,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_scroll_down/" class="md-nav__link">
+      <a href="../../events/mouse_scroll_down/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2118,7 +2118,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_scroll_up/" class="md-nav__link">
+      <a href="../../events/mouse_scroll_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2144,7 +2144,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/mouse_up/" class="md-nav__link">
+      <a href="../../events/mouse_up/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2170,7 +2170,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/paste/" class="md-nav__link">
+      <a href="../../events/paste/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2196,7 +2196,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/resize/" class="md-nav__link">
+      <a href="../../events/resize/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2222,7 +2222,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/screen_resume/" class="md-nav__link">
+      <a href="../../events/screen_resume/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2248,7 +2248,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/screen_suspend/" class="md-nav__link">
+      <a href="../../events/screen_suspend/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2274,7 +2274,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../events/show/" class="md-nav__link">
+      <a href="../../events/show/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2409,7 +2409,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../styles/" class="md-nav__link ">
+            <a href="../../styles/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2448,7 +2448,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/align/" class="md-nav__link">
+      <a href="../../styles/align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2474,7 +2474,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/background/" class="md-nav__link">
+      <a href="../../styles/background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2500,7 +2500,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border/" class="md-nav__link">
+      <a href="../../styles/border/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2526,7 +2526,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_subtitle_align/" class="md-nav__link">
+      <a href="../../styles/border_subtitle_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2552,7 +2552,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_subtitle_background/" class="md-nav__link">
+      <a href="../../styles/border_subtitle_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2578,7 +2578,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_subtitle_color/" class="md-nav__link">
+      <a href="../../styles/border_subtitle_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2604,7 +2604,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_subtitle_style/" class="md-nav__link">
+      <a href="../../styles/border_subtitle_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2630,7 +2630,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_title_align/" class="md-nav__link">
+      <a href="../../styles/border_title_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2656,7 +2656,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_title_background/" class="md-nav__link">
+      <a href="../../styles/border_title_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2682,7 +2682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_title_color/" class="md-nav__link">
+      <a href="../../styles/border_title_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2708,7 +2708,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/border_title_style/" class="md-nav__link">
+      <a href="../../styles/border_title_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2734,7 +2734,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/box_sizing/" class="md-nav__link">
+      <a href="../../styles/box_sizing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2760,7 +2760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/color/" class="md-nav__link">
+      <a href="../../styles/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2786,7 +2786,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/content_align/" class="md-nav__link">
+      <a href="../../styles/content_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2812,7 +2812,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/display/" class="md-nav__link">
+      <a href="../../styles/display/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2838,7 +2838,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/dock/" class="md-nav__link">
+      <a href="../../styles/dock/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2897,7 +2897,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../styles/grid/" class="md-nav__link ">
+            <a href="../../styles/grid/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -2938,7 +2938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/grid/column_span/" class="md-nav__link">
+      <a href="../../styles/grid/column_span/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2964,7 +2964,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/grid/grid_columns/" class="md-nav__link">
+      <a href="../../styles/grid/grid_columns/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -2990,7 +2990,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/grid/grid_gutter/" class="md-nav__link">
+      <a href="../../styles/grid/grid_gutter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3016,7 +3016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/grid/grid_rows/" class="md-nav__link">
+      <a href="../../styles/grid/grid_rows/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3042,7 +3042,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/grid/grid_size/" class="md-nav__link">
+      <a href="../../styles/grid/grid_size/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3068,7 +3068,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/grid/row_span/" class="md-nav__link">
+      <a href="../../styles/grid/row_span/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3102,7 +3102,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/height/" class="md-nav__link">
+      <a href="../../styles/height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3128,7 +3128,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/layer/" class="md-nav__link">
+      <a href="../../styles/layer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3154,7 +3154,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/layers/" class="md-nav__link">
+      <a href="../../styles/layers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3180,7 +3180,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/layout/" class="md-nav__link">
+      <a href="../../styles/layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3237,7 +3237,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../styles/links/" class="md-nav__link ">
+            <a href="../../styles/links/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -3278,7 +3278,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/links/link_background/" class="md-nav__link">
+      <a href="../../styles/links/link_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3304,7 +3304,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/links/link_color/" class="md-nav__link">
+      <a href="../../styles/links/link_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3330,7 +3330,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/links/link_hover_background/" class="md-nav__link">
+      <a href="../../styles/links/link_hover_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3356,7 +3356,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/links/link_hover_color/" class="md-nav__link">
+      <a href="../../styles/links/link_hover_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3382,7 +3382,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/links/link_hover_style/" class="md-nav__link">
+      <a href="../../styles/links/link_hover_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3408,7 +3408,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/links/link_style/" class="md-nav__link">
+      <a href="../../styles/links/link_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3442,7 +3442,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/margin/" class="md-nav__link">
+      <a href="../../styles/margin/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3468,7 +3468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/max_height/" class="md-nav__link">
+      <a href="../../styles/max_height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3494,7 +3494,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/max_width/" class="md-nav__link">
+      <a href="../../styles/max_width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3520,7 +3520,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/min_height/" class="md-nav__link">
+      <a href="../../styles/min_height/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3546,7 +3546,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/min_width/" class="md-nav__link">
+      <a href="../../styles/min_width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3572,7 +3572,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/offset/" class="md-nav__link">
+      <a href="../../styles/offset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3598,7 +3598,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/opacity/" class="md-nav__link">
+      <a href="../../styles/opacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3624,7 +3624,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/outline/" class="md-nav__link">
+      <a href="../../styles/outline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3650,7 +3650,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/overflow/" class="md-nav__link">
+      <a href="../../styles/overflow/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3676,7 +3676,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/padding/" class="md-nav__link">
+      <a href="../../styles/padding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3735,7 +3735,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../styles/scrollbar_colors/" class="md-nav__link ">
+            <a href="../../styles/scrollbar_colors/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -3776,7 +3776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3802,7 +3802,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3828,7 +3828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3854,7 +3854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3880,7 +3880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3906,7 +3906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3932,7 +3932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
+      <a href="../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3966,7 +3966,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_gutter/" class="md-nav__link">
+      <a href="../../styles/scrollbar_gutter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -3992,7 +3992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/scrollbar_size/" class="md-nav__link">
+      <a href="../../styles/scrollbar_size/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4018,7 +4018,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/text_align/" class="md-nav__link">
+      <a href="../../styles/text_align/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4044,7 +4044,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/text_opacity/" class="md-nav__link">
+      <a href="../../styles/text_opacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4070,7 +4070,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/text_style/" class="md-nav__link">
+      <a href="../../styles/text_style/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4096,7 +4096,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/tint/" class="md-nav__link">
+      <a href="../../styles/tint/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4122,7 +4122,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/visibility/" class="md-nav__link">
+      <a href="../../styles/visibility/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4148,7 +4148,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../styles/width/" class="md-nav__link">
+      <a href="../../styles/width/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4180,6 +4180,8 @@
                 
   
   
+    
+  
   
     
     
@@ -4250,18 +4252,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" checked>
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../widgets/" class="md-nav__link ">
+            <a href="../" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -4283,7 +4285,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -4300,7 +4302,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/button/" class="md-nav__link">
+      <a href="../button/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4326,7 +4328,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/checkbox/" class="md-nav__link">
+      <a href="../checkbox/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4352,7 +4354,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/content_switcher/" class="md-nav__link">
+      <a href="../content_switcher/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4378,7 +4380,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/data_table/" class="md-nav__link">
+      <a href="../data_table/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4404,7 +4406,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/directory_tree/" class="md-nav__link">
+      <a href="../directory_tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4430,7 +4432,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/footer/" class="md-nav__link">
+      <a href="../footer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4456,7 +4458,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/header/" class="md-nav__link">
+      <a href="../header/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4484,7 +4486,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/input/" class="md-nav__link">
+      <a href="../input/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4510,7 +4512,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/label/" class="md-nav__link">
+      <a href="../label/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4536,7 +4538,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/list_item/" class="md-nav__link">
+      <a href="../list_item/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4562,7 +4564,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/list_view/" class="md-nav__link">
+      <a href="../list_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4588,7 +4590,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/loading_indicator/" class="md-nav__link">
+      <a href="../loading_indicator/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4612,9 +4614,35 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../../../../../widgets/log/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    
+  
+    Log
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -4629,6 +4657,219 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Example
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reactive-attributes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Reactive Attributes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#messages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Messages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.Log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Log
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.auto_scroll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auto_scroll
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.highlight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        highlight
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.highlighter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        highlighter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.line_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        line_count
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.max_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max_lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.notify_style_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notify_style_update()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.refresh_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh_lines()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.render_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_line()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.write_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write_line()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.write_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write_lines()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -4640,7 +4881,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/markdown_viewer/" class="md-nav__link">
+      <a href="../markdown_viewer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4666,7 +4907,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/markdown/" class="md-nav__link">
+      <a href="../markdown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4692,7 +4933,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/option_list/" class="md-nav__link">
+      <a href="../option_list/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4718,7 +4959,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/placeholder/" class="md-nav__link">
+      <a href="../placeholder/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4744,7 +4985,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/pretty/" class="md-nav__link">
+      <a href="../pretty/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4770,7 +5011,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/progress_bar/" class="md-nav__link">
+      <a href="../progress_bar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4796,7 +5037,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/radiobutton/" class="md-nav__link">
+      <a href="../radiobutton/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4822,7 +5063,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/radioset/" class="md-nav__link">
+      <a href="../radioset/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4848,7 +5089,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/rich_log/" class="md-nav__link">
+      <a href="../rich_log/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4874,7 +5115,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/select/" class="md-nav__link">
+      <a href="../select/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4900,7 +5141,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/selection_list/" class="md-nav__link">
+      <a href="../selection_list/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4926,7 +5167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/sparkline/" class="md-nav__link">
+      <a href="../sparkline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4952,7 +5193,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/static/" class="md-nav__link">
+      <a href="../static/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -4978,7 +5219,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/switch/" class="md-nav__link">
+      <a href="../switch/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5004,7 +5245,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/tabbed_content/" class="md-nav__link">
+      <a href="../tabbed_content/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5030,7 +5271,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/tabs/" class="md-nav__link">
+      <a href="../tabs/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5056,7 +5297,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../widgets/tree/" class="md-nav__link">
+      <a href="../tree/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5182,7 +5423,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../api/" class="md-nav__link ">
+            <a href="../../api/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -5223,7 +5464,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/app/" class="md-nav__link">
+      <a href="../../api/app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5249,7 +5490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/await_remove/" class="md-nav__link">
+      <a href="../../api/await_remove/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5275,7 +5516,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/binding/" class="md-nav__link">
+      <a href="../../api/binding/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5301,7 +5542,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/color/" class="md-nav__link">
+      <a href="../../api/color/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5327,7 +5568,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/containers/" class="md-nav__link">
+      <a href="../../api/containers/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5353,7 +5594,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/coordinate/" class="md-nav__link">
+      <a href="../../api/coordinate/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5379,7 +5620,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/dom_node/" class="md-nav__link">
+      <a href="../../api/dom_node/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5405,7 +5646,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/events/" class="md-nav__link">
+      <a href="../../api/events/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5431,7 +5672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/errors/" class="md-nav__link">
+      <a href="../../api/errors/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5457,7 +5698,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/filter/" class="md-nav__link">
+      <a href="../../api/filter/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5483,7 +5724,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/geometry/" class="md-nav__link">
+      <a href="../../api/geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5509,7 +5750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/logger/" class="md-nav__link">
+      <a href="../../api/logger/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5535,7 +5776,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/logging/" class="md-nav__link">
+      <a href="../../api/logging/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5561,7 +5802,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/map_geometry/" class="md-nav__link">
+      <a href="../../api/map_geometry/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5587,7 +5828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/message_pump/" class="md-nav__link">
+      <a href="../../api/message_pump/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5613,7 +5854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/message/" class="md-nav__link">
+      <a href="../../api/message/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5639,7 +5880,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/on/" class="md-nav__link">
+      <a href="../../api/on/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5665,7 +5906,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/pilot/" class="md-nav__link">
+      <a href="../../api/pilot/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5691,7 +5932,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/query/" class="md-nav__link">
+      <a href="../../api/query/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5717,7 +5958,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/reactive/" class="md-nav__link">
+      <a href="../../api/reactive/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5743,7 +5984,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/screen/" class="md-nav__link">
+      <a href="../../api/screen/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5769,7 +6010,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/scrollbar/" class="md-nav__link">
+      <a href="../../api/scrollbar/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5795,7 +6036,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/scroll_view/" class="md-nav__link">
+      <a href="../../api/scroll_view/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5821,7 +6062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/strip/" class="md-nav__link">
+      <a href="../../api/strip/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5847,7 +6088,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/suggester/" class="md-nav__link">
+      <a href="../../api/suggester/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5873,7 +6114,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/timer/" class="md-nav__link">
+      <a href="../../api/timer/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5899,7 +6140,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/types/" class="md-nav__link">
+      <a href="../../api/types/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5925,7 +6166,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/validation/" class="md-nav__link">
+      <a href="../../api/validation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5951,7 +6192,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/walk/" class="md-nav__link">
+      <a href="../../api/walk/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -5977,7 +6218,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/widget/" class="md-nav__link">
+      <a href="../../api/widget/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6003,7 +6244,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/work/" class="md-nav__link">
+      <a href="../../api/work/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6029,7 +6270,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/worker/" class="md-nav__link">
+      <a href="../../api/worker/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6055,7 +6296,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../api/worker_manager/" class="md-nav__link">
+      <a href="../../api/worker_manager/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6111,7 +6352,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../../how-to/" class="md-nav__link ">
+            <a href="../../how-to/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -6152,7 +6393,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../how-to/center-things/" class="md-nav__link">
+      <a href="../../how-to/center-things/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6178,7 +6419,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../how-to/design-a-layout/" class="md-nav__link">
+      <a href="../../how-to/design-a-layout/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6211,7 +6452,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../../roadmap/" class="md-nav__link">
+      <a href="../../roadmap/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6234,8 +6475,6 @@
       
   
   
-    
-  
   
     
     
@@ -6250,18 +6489,18 @@
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="../../../../" class="md-nav__link ">
+            <a href="../../blog/" class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -6283,7 +6522,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
             
@@ -6352,7 +6591,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../archive/2023/" class="md-nav__link">
+      <a href="../../blog/archive/2023/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6378,7 +6617,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../archive/2022/" class="md-nav__link">
+      <a href="../../blog/archive/2022/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6464,7 +6703,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../category/devlog/" class="md-nav__link">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6490,7 +6729,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../category/news/" class="md-nav__link">
+      <a href="../../blog/category/news/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6516,7 +6755,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../../category/release/" class="md-nav__link">
+      <a href="../../blog/category/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -6559,8 +6798,6 @@
             
             
               
-                
-              
               <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
@@ -6580,10 +6817,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#new-styles" class="md-nav__link">
+  <a href="#example" class="md-nav__link">
     <span class="md-ellipsis">
       
-        New styles
+        Example
       
     </span>
   </a>
@@ -6591,10 +6828,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#fixes-for-the-on-decorator" class="md-nav__link">
+  <a href="#reactive-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Fixes for the @on decorator
+        Reactive Attributes
       
     </span>
   </a>
@@ -6602,10 +6839,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#other-fixes" class="md-nav__link">
+  <a href="#messages" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Other fixes
+        Messages
       
     </span>
   </a>
@@ -6613,13 +6850,162 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#join-us" class="md-nav__link">
+  <a href="#textual.widgets.Log" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Join us
+        Log
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="Log">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.auto_scroll" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        auto_scroll
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.highlight" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        highlight
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.highlighter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        highlighter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.line_count" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        line_count
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.max_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        max_lines
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.notify_style_update" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        notify_style_update()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.refresh_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh_lines()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.render_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        render_line()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.write" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.write_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write_line()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._log.Log.write_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        write_lines()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -6632,97 +7018,33 @@
             
           
           
-  <div class="md-content md-content--post" data-md-component="content">
-    <div class="md-sidebar md-sidebar--post" data-md-component="sidebar" data-md-type="navigation">
-      <div class="md-sidebar__scrollwrap">
-        <div class="md-sidebar__inner md-post">
-          <nav class="md-nav">
-            <div class="md-post__back">
-              <div class="md-nav__title md-nav__container">
-                <a href="../../../../" class="md-nav__link">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-                  <span class="md-ellipsis">
-                    Back to index
-                  </span>
-                </a>
-              </div>
-            </div>
-            
-              <div class="md-post__authors md-typeset">
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
                 
-                  <div class="md-profile md-post__profile">
-                    <span class="md-author md-author--long">
-                      <img src="https://github.com/willmcgugan.png" alt="Will McGugan">
-                    </span>
-                    <span class="md-profile__description">
-                      <strong>Will McGugan</strong><br>
-                      CEO / code-monkey
-                    </span>
-                  </div>
-                
-              </div>
-            
-            <ul class="md-post__meta md-nav__list">
-              <li class="md-nav__item md-nav__title">
-                <div class="md-nav__link">
-                  <span class="md-ellipsis">
-                    Metadata
-                  </span>
-                </div>
-              </li>
-              <li class="md-nav__item">
-                <div class="md-nav__link">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 19H5V8h14m-3-7v2H8V1H6v2H5c-1.11 0-2 .89-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-1V1m-1 11h-5v5h5v-5Z"/></svg>
-                  <time datetime="2023-05-08 00:00:00" class="md-ellipsis">May 8, 2023</time>
-                </div>
-              </li>
-              
-                <li class="md-nav__item">
-                  <div class="md-nav__link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9 3v15h3V3H9m3 2 4 13 3-1-4-13-3 1M5 5v13h3V5H5M3 19v2h18v-2H3Z"/></svg>
-                    <span class="md-ellipsis">
-                      in
-                      
-                        <a href="../../../../category/release/">Release</a></span>
-                  </div>
-                </li>
-              
-              
-                
-                <li class="md-nav__item">
-                  <div class="md-nav__link">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
-                    <span class="md-ellipsis">
-                      
-                        2 min read
-                      
-                    </span>
-                  </div>
-                </li>
-              
-            </ul>
-            
-          </nav>
-          
-        </div>
-      </div>
-    </div>
-    <article class="md-content__inner md-typeset">
-      
-        
+                  
 
   
   
 
 
-<h1 id="textual-0240-adds-a-select-control">Textual 0.24.0 adds a Select control<a class="headerlink" href="#textual-0240-adds-a-select-control" title="Permanent link">&para;</a></h1>
-<p>Coming just 5 days after the last release, we have version 0.24.0 which we are crowning the King of Textual releases.
-At least until it is deposed by version 0.25.0.</p>
-<!-- more -->
-
-<p>The highlight of this release is the new <a href="/widget_gallery/#select">Select</a> widget: a very familiar control from the web and desktop worlds.
-Here's a screenshot and code:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output (expanded)</label><label for="__tabbed_1_2">select_widget.py</label><label for="__tabbed_1_3">select.css</label></div>
+<h1 id="log">Log<a class="headerlink" href="#log" title="Permanent link">&para;</a></h1>
+<div class="admonition tip">
+<p class="admonition-title">Added in version 0.32.0</p>
+</div>
+<p>A Log widget displays lines of text which may be appended to in realtime.</p>
+<p>Call <a class="autorefs autorefs-internal" href="#textual.widgets._log.Log.write_line">Log.write_line</a> to write a line at a time, or <a class="autorefs autorefs-internal" href="#textual.widgets._log.Log.write_lines">Log.write_lines</a> to write multiple lines at once. Call <a class="autorefs autorefs-internal" href="#textual.widgets._log.Log.clear">Log.clear</a> to clear the Log widget.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>See also <a href="../rich_log/">RichLog</a> which can write more than just text, and supports a number of advanced features.</p>
+</div>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Focusable</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container</li>
+</ul>
+<h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
+<p>The example below shows how to write text to a <code>Log</code> widget:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output</label><label for="__tabbed_1_2">log.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -6746,140 +7068,132 @@ Here's a screenshot and code:</p>
         font-weight: 700;
     }
 
-    .terminal-3094748866-matrix {
+    .terminal-262632689-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-3094748866-title {
+    .terminal-262632689-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-3094748866-r1 { fill: #c5c8c6 }
-.terminal-3094748866-r2 { fill: #e3e3e3 }
-.terminal-3094748866-r3 { fill: #e1e1e1 }
-.terminal-3094748866-r4 { fill: #1e1e1e }
-.terminal-3094748866-r5 { fill: #0178d4 }
-.terminal-3094748866-r6 { fill: #787878 }
-.terminal-3094748866-r7 { fill: #a8a8a8 }
-.terminal-3094748866-r8 { fill: #121212 }
-.terminal-3094748866-r9 { fill: #e2e3e3 }
-.terminal-3094748866-r10 { fill: #96989b }
-.terminal-3094748866-r11 { fill: #ddedf9;font-weight: bold }
+    .terminal-262632689-r1 { fill: #e1e1e1 }
+.terminal-262632689-r2 { fill: #c5c8c6 }
+.terminal-262632689-r3 { fill: #23568b }
     </style>
 
     <defs>
-    <clipPath id="terminal-3094748866-clip-terminal">
+    <clipPath id="terminal-262632689-clip-terminal">
       <rect x="0" y="0" width="975.0" height="584.5999999999999" />
     </clipPath>
-    <clipPath id="terminal-3094748866-line-0">
+    <clipPath id="terminal-262632689-line-0">
     <rect x="0" y="1.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-1">
+<clipPath id="terminal-262632689-line-1">
     <rect x="0" y="25.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-2">
+<clipPath id="terminal-262632689-line-2">
     <rect x="0" y="50.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-3">
+<clipPath id="terminal-262632689-line-3">
     <rect x="0" y="74.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-4">
+<clipPath id="terminal-262632689-line-4">
     <rect x="0" y="99.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-5">
+<clipPath id="terminal-262632689-line-5">
     <rect x="0" y="123.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-6">
+<clipPath id="terminal-262632689-line-6">
     <rect x="0" y="147.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-7">
+<clipPath id="terminal-262632689-line-7">
     <rect x="0" y="172.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-8">
+<clipPath id="terminal-262632689-line-8">
     <rect x="0" y="196.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-9">
+<clipPath id="terminal-262632689-line-9">
     <rect x="0" y="221.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-10">
+<clipPath id="terminal-262632689-line-10">
     <rect x="0" y="245.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-11">
+<clipPath id="terminal-262632689-line-11">
     <rect x="0" y="269.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-12">
+<clipPath id="terminal-262632689-line-12">
     <rect x="0" y="294.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-13">
+<clipPath id="terminal-262632689-line-13">
     <rect x="0" y="318.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-14">
+<clipPath id="terminal-262632689-line-14">
     <rect x="0" y="343.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-15">
+<clipPath id="terminal-262632689-line-15">
     <rect x="0" y="367.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-16">
+<clipPath id="terminal-262632689-line-16">
     <rect x="0" y="391.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-17">
+<clipPath id="terminal-262632689-line-17">
     <rect x="0" y="416.3" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-18">
+<clipPath id="terminal-262632689-line-18">
     <rect x="0" y="440.7" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-19">
+<clipPath id="terminal-262632689-line-19">
     <rect x="0" y="465.1" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-20">
+<clipPath id="terminal-262632689-line-20">
     <rect x="0" y="489.5" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-21">
+<clipPath id="terminal-262632689-line-21">
     <rect x="0" y="513.9" width="976" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3094748866-line-22">
+<clipPath id="terminal-262632689-line-22">
     <rect x="0" y="538.3" width="976" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-3094748866-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">SelectApp</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-262632689-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">LogApp</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-3094748866-clip-terminal)">
-    <rect fill="#282828" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="12.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="24.4" y="1.5" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="85.4" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="97.6" y="1.5" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="414.8" y="1.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="524.6" y="1.5" width="329.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="854" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="866.2" y="1.5" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="866.2" y="1.5" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#282828" x="963.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="122" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="134.2" y="74.7" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="74.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="122" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="134.2" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="158.6" y="99.1" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="231.8" y="99.1" width="561.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="793" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="805.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="817.4" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="99.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="122" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="134.2" y="123.5" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="123.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="147.9" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="147.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="172.3" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="231.8" y="172.3" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="817.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="172.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="196.7" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="353.8" y="196.7" width="463.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="817.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="196.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="146.4" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="158.6" y="221.1" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="451.4" y="221.1" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="817.4" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="221.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="245.5" width="524.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="683.2" y="245.5" width="134.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="817.4" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="245.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="269.9" width="158.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="269.9" width="500.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="817.4" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="269.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="294.3" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="402.6" y="294.3" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="817.4" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="294.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="318.7" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="744.2" y="318.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="817.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="829.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="318.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#121212" x="122" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="343.1" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="854" y="343.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-3094748866-matrix">
-    <text class="terminal-3094748866-r2" x="12.2" y="20" textLength="12.2" clip-path="url(#terminal-3094748866-line-0)">⭘</text><text class="terminal-3094748866-r2" x="414.8" y="20" textLength="109.8" clip-path="url(#terminal-3094748866-line-0)">SelectApp</text><text class="terminal-3094748866-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-3094748866-line-0)">
-</text><text class="terminal-3094748866-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-1)">
-</text><text class="terminal-3094748866-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-2)">
-</text><text class="terminal-3094748866-r4" x="122" y="93.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-3)">▊</text><text class="terminal-3094748866-r5" x="134.2" y="93.2" textLength="707.6" clip-path="url(#terminal-3094748866-line-3)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-3094748866-r5" x="841.8" y="93.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-3)">▎</text><text class="terminal-3094748866-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-3)">
-</text><text class="terminal-3094748866-r4" x="122" y="117.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-4)">▊</text><text class="terminal-3094748866-r6" x="158.6" y="117.6" textLength="73.2" clip-path="url(#terminal-3094748866-line-4)">Select</text><text class="terminal-3094748866-r7" x="805.2" y="117.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-4)">▲</text><text class="terminal-3094748866-r5" x="841.8" y="117.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-4)">▎</text><text class="terminal-3094748866-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-4)">
-</text><text class="terminal-3094748866-r4" x="122" y="142" textLength="12.2" clip-path="url(#terminal-3094748866-line-5)">▊</text><text class="terminal-3094748866-r5" x="134.2" y="142" textLength="707.6" clip-path="url(#terminal-3094748866-line-5)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-3094748866-r5" x="841.8" y="142" textLength="12.2" clip-path="url(#terminal-3094748866-line-5)">▎</text><text class="terminal-3094748866-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-3094748866-line-5)">
-</text><text class="terminal-3094748866-r4" x="122" y="166.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-6)">▊</text><text class="terminal-3094748866-r8" x="134.2" y="166.4" textLength="707.6" clip-path="url(#terminal-3094748866-line-6)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-3094748866-r8" x="841.8" y="166.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-6)">▎</text><text class="terminal-3094748866-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-6)">
-</text><text class="terminal-3094748866-r4" x="122" y="190.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-7)">▊</text><text class="terminal-3094748866-r10" x="158.6" y="190.8" textLength="73.2" clip-path="url(#terminal-3094748866-line-7)">Select</text><text class="terminal-3094748866-r8" x="841.8" y="190.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-7)">▎</text><text class="terminal-3094748866-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-7)">
-</text><text class="terminal-3094748866-r4" x="122" y="215.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-8)">▊</text><text class="terminal-3094748866-r9" x="158.6" y="215.2" textLength="195.2" clip-path="url(#terminal-3094748866-line-8)">I&#160;must&#160;not&#160;fear.</text><text class="terminal-3094748866-r8" x="841.8" y="215.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-8)">▎</text><text class="terminal-3094748866-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-8)">
-</text><text class="terminal-3094748866-r4" x="122" y="239.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-9)">▊</text><text class="terminal-3094748866-r11" x="158.6" y="239.6" textLength="292.8" clip-path="url(#terminal-3094748866-line-9)">Fear&#160;is&#160;the&#160;mind-killer.</text><text class="terminal-3094748866-r8" x="841.8" y="239.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-9)">▎</text><text class="terminal-3094748866-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-9)">
-</text><text class="terminal-3094748866-r4" x="122" y="264" textLength="12.2" clip-path="url(#terminal-3094748866-line-10)">▊</text><text class="terminal-3094748866-r9" x="158.6" y="264" textLength="524.6" clip-path="url(#terminal-3094748866-line-10)">Fear&#160;is&#160;the&#160;little-death&#160;that&#160;brings&#160;total&#160;</text><text class="terminal-3094748866-r8" x="841.8" y="264" textLength="12.2" clip-path="url(#terminal-3094748866-line-10)">▎</text><text class="terminal-3094748866-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-3094748866-line-10)">
-</text><text class="terminal-3094748866-r4" x="122" y="288.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-11)">▊</text><text class="terminal-3094748866-r9" x="158.6" y="288.4" textLength="158.6" clip-path="url(#terminal-3094748866-line-11)">obliteration.</text><text class="terminal-3094748866-r8" x="841.8" y="288.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-11)">▎</text><text class="terminal-3094748866-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-11)">
-</text><text class="terminal-3094748866-r4" x="122" y="312.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-12)">▊</text><text class="terminal-3094748866-r9" x="158.6" y="312.8" textLength="244" clip-path="url(#terminal-3094748866-line-12)">I&#160;will&#160;face&#160;my&#160;fear.</text><text class="terminal-3094748866-r8" x="841.8" y="312.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-12)">▎</text><text class="terminal-3094748866-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-12)">
-</text><text class="terminal-3094748866-r4" x="122" y="337.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-13)">▊</text><text class="terminal-3094748866-r9" x="158.6" y="337.2" textLength="585.6" clip-path="url(#terminal-3094748866-line-13)">I&#160;will&#160;permit&#160;it&#160;to&#160;pass&#160;over&#160;me&#160;and&#160;through&#160;me.</text><text class="terminal-3094748866-r8" x="841.8" y="337.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-13)">▎</text><text class="terminal-3094748866-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-13)">
-</text><text class="terminal-3094748866-r4" x="122" y="361.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-14)">▊</text><text class="terminal-3094748866-r8" x="134.2" y="361.6" textLength="707.6" clip-path="url(#terminal-3094748866-line-14)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-3094748866-r8" x="841.8" y="361.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-14)">▎</text><text class="terminal-3094748866-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-14)">
-</text><text class="terminal-3094748866-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-3094748866-line-15)">
-</text><text class="terminal-3094748866-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-16)">
-</text><text class="terminal-3094748866-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-17)">
-</text><text class="terminal-3094748866-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-3094748866-line-18)">
-</text><text class="terminal-3094748866-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-3094748866-line-19)">
-</text><text class="terminal-3094748866-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-3094748866-line-20)">
-</text><text class="terminal-3094748866-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-3094748866-line-21)">
-</text><text class="terminal-3094748866-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-3094748866-line-22)">
+    <g transform="translate(9, 41)" clip-path="url(#terminal-262632689-clip-terminal)">
+    <rect fill="#1e1e1e" x="0" y="1.5" width="841.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="1.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="1.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="805.2" y="25.9" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="195.2" y="50.3" width="756.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="74.7" width="658.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="683.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="683.2" y="99.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="244" y="123.5" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="147.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="841.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="172.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="805.2" y="196.7" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="195.2" y="221.1" width="756.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="245.5" width="658.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="683.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="683.2" y="269.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="244" y="294.3" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="318.7" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="841.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="343.1" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="805.2" y="367.5" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="195.2" y="391.9" width="756.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="292.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="416.3" width="658.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="683.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="683.2" y="440.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="244" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="244" y="465.1" width="707.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="585.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="585.6" y="489.5" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="841.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="841.8" y="513.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="805.2" y="538.3" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#23568b" x="951.6" y="538.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="0" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="12.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="24.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="36.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="48.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="61" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="73.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="85.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="97.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="109.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="122" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="134.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="146.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="158.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="170.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="183" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="195.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="207.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="219.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="231.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="244" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="256.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="268.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="280.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="292.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="305" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="317.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="329.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="341.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="353.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="366" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="378.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="390.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="402.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="414.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="427" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="439.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="451.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="463.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="475.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="488" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="500.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="512.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="524.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="536.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="549" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="561.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="573.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="585.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="597.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="610" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="622.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="634.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="646.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="658.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="671" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="683.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="695.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="707.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="719.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="732" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="744.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="756.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="768.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="780.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="793" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="805.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="817.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="829.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="841.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="854" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="866.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="878.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="890.6" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="902.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="915" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="927.2" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="939.4" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#14191f" x="951.6" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-262632689-matrix">
+    <text class="terminal-262632689-r1" x="0" y="20" textLength="841.8" clip-path="url(#terminal-262632689-line-0)">And&#160;when&#160;it&#160;has&#160;gone&#160;past,&#160;I&#160;will&#160;turn&#160;the&#160;inner&#160;eye&#160;to&#160;see&#160;its&#160;path.</text><text class="terminal-262632689-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-262632689-line-0)">
+</text><text class="terminal-262632689-r1" x="0" y="44.4" textLength="805.2" clip-path="url(#terminal-262632689-line-1)">Where&#160;the&#160;fear&#160;has&#160;gone&#160;there&#160;will&#160;be&#160;nothing.&#160;Only&#160;I&#160;will&#160;remain.</text><text class="terminal-262632689-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-262632689-line-1)">
+</text><text class="terminal-262632689-r1" x="0" y="68.8" textLength="195.2" clip-path="url(#terminal-262632689-line-2)">I&#160;must&#160;not&#160;fear.</text><text class="terminal-262632689-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-262632689-line-2)">
+</text><text class="terminal-262632689-r1" x="0" y="93.2" textLength="292.8" clip-path="url(#terminal-262632689-line-3)">Fear&#160;is&#160;the&#160;mind-killer.</text><text class="terminal-262632689-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-262632689-line-3)">
+</text><text class="terminal-262632689-r1" x="0" y="117.6" textLength="683.2" clip-path="url(#terminal-262632689-line-4)">Fear&#160;is&#160;the&#160;little-death&#160;that&#160;brings&#160;total&#160;obliteration.</text><text class="terminal-262632689-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-262632689-line-4)">
+</text><text class="terminal-262632689-r1" x="0" y="142" textLength="244" clip-path="url(#terminal-262632689-line-5)">I&#160;will&#160;face&#160;my&#160;fear.</text><text class="terminal-262632689-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-262632689-line-5)">
+</text><text class="terminal-262632689-r1" x="0" y="166.4" textLength="585.6" clip-path="url(#terminal-262632689-line-6)">I&#160;will&#160;permit&#160;it&#160;to&#160;pass&#160;over&#160;me&#160;and&#160;through&#160;me.</text><text class="terminal-262632689-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-262632689-line-6)">
+</text><text class="terminal-262632689-r1" x="0" y="190.8" textLength="841.8" clip-path="url(#terminal-262632689-line-7)">And&#160;when&#160;it&#160;has&#160;gone&#160;past,&#160;I&#160;will&#160;turn&#160;the&#160;inner&#160;eye&#160;to&#160;see&#160;its&#160;path.</text><text class="terminal-262632689-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-262632689-line-7)">
+</text><text class="terminal-262632689-r1" x="0" y="215.2" textLength="805.2" clip-path="url(#terminal-262632689-line-8)">Where&#160;the&#160;fear&#160;has&#160;gone&#160;there&#160;will&#160;be&#160;nothing.&#160;Only&#160;I&#160;will&#160;remain.</text><text class="terminal-262632689-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-262632689-line-8)">
+</text><text class="terminal-262632689-r1" x="0" y="239.6" textLength="195.2" clip-path="url(#terminal-262632689-line-9)">I&#160;must&#160;not&#160;fear.</text><text class="terminal-262632689-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-262632689-line-9)">
+</text><text class="terminal-262632689-r1" x="0" y="264" textLength="292.8" clip-path="url(#terminal-262632689-line-10)">Fear&#160;is&#160;the&#160;mind-killer.</text><text class="terminal-262632689-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-262632689-line-10)">
+</text><text class="terminal-262632689-r1" x="0" y="288.4" textLength="683.2" clip-path="url(#terminal-262632689-line-11)">Fear&#160;is&#160;the&#160;little-death&#160;that&#160;brings&#160;total&#160;obliteration.</text><text class="terminal-262632689-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-262632689-line-11)">
+</text><text class="terminal-262632689-r1" x="0" y="312.8" textLength="244" clip-path="url(#terminal-262632689-line-12)">I&#160;will&#160;face&#160;my&#160;fear.</text><text class="terminal-262632689-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-262632689-line-12)">
+</text><text class="terminal-262632689-r1" x="0" y="337.2" textLength="585.6" clip-path="url(#terminal-262632689-line-13)">I&#160;will&#160;permit&#160;it&#160;to&#160;pass&#160;over&#160;me&#160;and&#160;through&#160;me.</text><text class="terminal-262632689-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-262632689-line-13)">
+</text><text class="terminal-262632689-r1" x="0" y="361.6" textLength="841.8" clip-path="url(#terminal-262632689-line-14)">And&#160;when&#160;it&#160;has&#160;gone&#160;past,&#160;I&#160;will&#160;turn&#160;the&#160;inner&#160;eye&#160;to&#160;see&#160;its&#160;path.</text><text class="terminal-262632689-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-262632689-line-14)">
+</text><text class="terminal-262632689-r1" x="0" y="386" textLength="805.2" clip-path="url(#terminal-262632689-line-15)">Where&#160;the&#160;fear&#160;has&#160;gone&#160;there&#160;will&#160;be&#160;nothing.&#160;Only&#160;I&#160;will&#160;remain.</text><text class="terminal-262632689-r3" x="951.6" y="386" textLength="24.4" clip-path="url(#terminal-262632689-line-15)">▄▄</text><text class="terminal-262632689-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-262632689-line-15)">
+</text><text class="terminal-262632689-r1" x="0" y="410.4" textLength="195.2" clip-path="url(#terminal-262632689-line-16)">I&#160;must&#160;not&#160;fear.</text><text class="terminal-262632689-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-262632689-line-16)">
+</text><text class="terminal-262632689-r1" x="0" y="434.8" textLength="292.8" clip-path="url(#terminal-262632689-line-17)">Fear&#160;is&#160;the&#160;mind-killer.</text><text class="terminal-262632689-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-262632689-line-17)">
+</text><text class="terminal-262632689-r1" x="0" y="459.2" textLength="683.2" clip-path="url(#terminal-262632689-line-18)">Fear&#160;is&#160;the&#160;little-death&#160;that&#160;brings&#160;total&#160;obliteration.</text><text class="terminal-262632689-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-262632689-line-18)">
+</text><text class="terminal-262632689-r1" x="0" y="483.6" textLength="244" clip-path="url(#terminal-262632689-line-19)">I&#160;will&#160;face&#160;my&#160;fear.</text><text class="terminal-262632689-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-262632689-line-19)">
+</text><text class="terminal-262632689-r1" x="0" y="508" textLength="585.6" clip-path="url(#terminal-262632689-line-20)">I&#160;will&#160;permit&#160;it&#160;to&#160;pass&#160;over&#160;me&#160;and&#160;through&#160;me.</text><text class="terminal-262632689-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-262632689-line-20)">
+</text><text class="terminal-262632689-r1" x="0" y="532.4" textLength="841.8" clip-path="url(#terminal-262632689-line-21)">And&#160;when&#160;it&#160;has&#160;gone&#160;past,&#160;I&#160;will&#160;turn&#160;the&#160;inner&#160;eye&#160;to&#160;see&#160;its&#160;path.</text><text class="terminal-262632689-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-262632689-line-21)">
+</text><text class="terminal-262632689-r1" x="0" y="556.8" textLength="805.2" clip-path="url(#terminal-262632689-line-22)">Where&#160;the&#160;fear&#160;has&#160;gone&#160;there&#160;will&#160;be&#160;nothing.&#160;Only&#160;I&#160;will&#160;remain.</text><text class="terminal-262632689-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-262632689-line-22)">
 </text>
     </g>
     </g>
@@ -6887,94 +7201,761 @@ Here's a screenshot and code:</p>
 </p>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">on</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Select</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">LINES</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;I must not fear.</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s2">Fear is the mind-killer.</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="s2">Fear is the little-death that brings total obliteration.</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s2">I will face my fear.</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s2">I will permit it to pass over me and through me.&quot;&quot;&quot;</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Log</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;I must not fear.</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="s2">Fear is the mind-killer.</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s2">Fear is the little-death that brings total obliteration.</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="s2">I will face my fear.</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s2">I will permit it to pass over me and through me.</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s2">And when it has gone past, I will turn the inner eye to see its path.</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s2">Where the fear has gone there will be nothing. Only I will remain.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">class</span> <span class="nc">SelectApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;select.css&quot;</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="k">yield</span> <span class="n">Select</span><span class="p">((</span><span class="n">line</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">LINES</span><span class="p">)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">class</span> <span class="nc">LogApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An app with a simple log.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="k">yield</span> <span class="n">Log</span><span class="p">()</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="nd">@on</span><span class="p">(</span><span class="n">Select</span><span class="o">.</span><span class="n">Changed</span><span class="p">)</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="k">def</span> <span class="nf">select_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Select</span><span class="o">.</span><span class="n">Changed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">SelectApp</span><span class="p">()</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">top</span><span class="err">;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="err">}</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="nt">Select</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">60</span><span class="err">;</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="na">margin</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="err">}</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>    <span class="k">def</span> <span class="nf">on_ready</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="n">log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Log</span><span class="p">)</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="n">log</span><span class="o">.</span><span class="n">write_line</span><span class="p">(</span><span class="s2">&quot;Hello, World!&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>            <span class="n">log</span><span class="o">.</span><span class="n">write_line</span><span class="p">(</span><span class="n">TEXT</span><span class="p">)</span>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">LogApp</span><span class="p">()</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
 </div>
-<h2 id="new-styles">New styles<a class="headerlink" href="#new-styles" title="Permanent link">&para;</a></h2>
-<p>This one required new functionality in Textual itself.
-The "pull-down" overlay with options presented a difficulty with the previous API.
-The overlay needed to appear over any content below it.
-This is possible (using <a href="https://textual.textualize.io/styles/layers/">layers</a>), but there was no simple way of positioning it directly under the parent widget.</p>
-<p>We solved this with a new "overlay" concept, which can considered a special layer for user interactions like this Select, but also pop-up menus, tooltips, etc.
-Widgets styled to use the overlay appear in their natural place in the "document", but on top of everything else.</p>
-<p>A second problem we tackled was ensuring that an overlay widget was never clipped.
-This was also solved with a new rule called "constrain".
-Applying <code>constrain</code> to a widget will keep the widget within the bounds of the screen.
-In the case of <code>Select</code>, if you expand the options while at the bottom of the screen, then the overlay will be moved up so that you can see all the options.</p>
-<p>These new rules are currently undocumented as they are still subject to change, but you can see them in the <a href="https://github.com/Textualize/textual/blob/main/src/textual/widgets/_select.py#L179">Select</a> source if you are interested.</p>
-<p>In a future release these will be finalized and you can confidently use them in your own projects.</p>
-<h2 id="fixes-for-the-on-decorator">Fixes for the @on decorator<a class="headerlink" href="#fixes-for-the-on-decorator" title="Permanent link">&para;</a></h2>
-<p>The new <code>@on</code> decorator is proving popular.
-To recap, it is a more declarative and finely grained way of dispatching messages.
-Here's a snippet from the <a href="https://github.com/Textualize/textual/blob/main/examples/calculator.py">calculator</a> example which uses <code>@on</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>    <span class="nd">@on</span><span class="p">(</span><span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">,</span> <span class="s2">&quot;#plus,#minus,#divide,#multiply&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">def</span> <span class="nf">pressed_op</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">Button</span><span class="o">.</span><span class="n">Pressed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Pressed one of the arithmetic operations.&quot;&quot;&quot;</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">right</span> <span class="o">=</span> <span class="n">Decimal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="ow">or</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">_do_math</span><span class="p">()</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="k">assert</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">operator</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">button</span><span class="o">.</span><span class="n">id</span>
+<h2 id="reactive-attributes">Reactive Attributes<a class="headerlink" href="#reactive-attributes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max_lines</code></td>
+<td><code>int</code></td>
+<td><code>None</code></td>
+<td>Maximum number of lines in the log or <code>None</code> for no maximum.</td>
+</tr>
+<tr>
+<td><code>auto_scroll</code></td>
+<td><code>bool</code></td>
+<td><code>False</code></td>
+<td>Scroll to end of log when new lines are added.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="messages">Messages<a class="headerlink" href="#messages" title="Permanent link">&para;</a></h2>
+<p>This widget sends no messages.</p>
+<hr />
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.widgets.Log" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">textual.widgets.Log</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.widgets.Log" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">highlight</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">max_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">auto_scroll</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
-<p>The decorator arranges for the method to be called when any of the four math operation buttons are pressed.</p>
-<p>In 0.24.0 we've fixed some missing attributes which prevented the decorator from working with some messages.
-We've also extended the decorator to use keywords arguments, so it will match attributes other than <code>control</code>.</p>
-<h2 id="other-fixes">Other fixes<a class="headerlink" href="#other-fixes" title="Permanent link">&para;</a></h2>
-<p>There is a surprising number of fixes in this release for just 5 days. See <a href="https://github.com/Textualize/textual/blob/main/CHANGELOG.md">CHANGELOG.md</a> for details.</p>
-<h2 id="join-us">Join us<a class="headerlink" href="#join-us" title="Permanent link">&para;</a></h2>
-<p>If you want to talk about this update or anything else Textual related, join us on our <a href="https://discord.gg/Enf6Z3qhVr">Discord server</a>.</p>
+
+  <div class="doc doc-contents first">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.scroll_view.ScrollView" href="../../api/scroll_view/#textual.scroll_view.ScrollView">ScrollView</a></code></p>
 
   
-  
-
-
-
+      <p>A widget to log text.</p>
 
   
 
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>highlight</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Enable highlighting.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>max_lines</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+          </td>
+          <td><p>Maximum number of lines to display.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>auto_scroll</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Scroll to end on new lines.</p></td>
+          <td>
+                <code>True</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>name</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The name of the text log.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>id</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The ID of the text log in the DOM.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>classes</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td><p>The CSS classes of the text log.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>disabled</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>Whether the text log is disabled or not.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
 
 
-      
-    </article>
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._log.Log.auto_scroll" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">auto_scroll</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.auto_scroll" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">auto_scroll</span><span class="p">:</span> <span class="n">var</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">auto_scroll</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Automatically scroll to new lines.</p>
   </div>
 
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._log.Log.highlight" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">highlight</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.highlight" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">highlight</span> <span class="o">=</span> <span class="n">highlight</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Enable highlighting.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._log.Log.highlighter" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">highlighter</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.highlighter" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">highlighter</span> <span class="o">=</span> <span class="n">ReprHighlighter</span><span class="p">()</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The Rich Highlighter object to use, if <code>highlight=True</code></p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._log.Log.line_count" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">line_count</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.line_count" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">line_count</span><span class="p">:</span> <span class="nb">int</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Number of lines of content.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._log.Log.lines" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">lines</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.lines" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">lines</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The raw lines in the TextLog.</p>
+<p>Note that this attribute is read only.
+Changing the lines will not update the Log's contents.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._log.Log.max_lines" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">max_lines</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.max_lines" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">max_lines</span><span class="p">:</span> <span class="n">var</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">max_lines</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Maximum number of lines to show</p>
+  </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.clear" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.clear" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear the Log.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>Log</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.notify_style_update" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">notify_style_update</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.notify_style_update" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">notify_style_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Called by Textual when styles update.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.refresh_lines" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">refresh_lines</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.refresh_lines" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">refresh_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_start</span><span class="p">,</span> <span class="n">line_count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Refresh one or more lines.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>y_start</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>First line to refresh.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>line_count</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>Total number of lines to refresh.</p></td>
+          <td>
+                <code>1</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.render_line" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">render_line</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.render_line" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">render_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Render a line of content.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>y</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>Y Coordinate of line.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.strip.Strip" href="../../api/strip/#textual.strip.Strip">Strip</a></code>
+          </td>
+          <td><p>A rendered line.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.write" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">write</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.write" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">scroll_end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Write to the log.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>data</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>Data to write.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>scroll_end</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td><p>Scroll to the end after writing, or <code>None</code> to use <code>self.auto_scroll</code>.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>Log</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.write_line" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">write_line</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.write_line" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">write_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Write content on a new line.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>line</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td><p>String to write to the log.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>Log</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._log.Log.write_lines" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">write_lines</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._log.Log.write_lines" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">write_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">scroll_end</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Write an iterable of lines.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>lines</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
+          </td>
+          <td><p>An iterable of strings to write.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>scroll_end</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td><p>Scroll to the end after writing, or <code>None</code> to use <code>self.auto_scroll</code>.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>Log</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
           
 <script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
@@ -6985,12 +7966,10 @@ We've also extended the decorator to use keywords arguments, so it will match at
   
     
       
-        
-      
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../../03/textual-0230-improves-message-handling/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Textual 0.23.0 improves message handling" rel="prev">
+          <a href="../loading_indicator/" class="md-footer__link md-footer__link--prev" aria-label="Previous: LoadingIndicator" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -6999,20 +7978,20 @@ We've also extended the decorator to use keywords arguments, so it will match at
                 Previous
               </span>
               <div class="md-ellipsis">
-                Textual 0.23.0 improves message handling
+                LoadingIndicator
               </div>
             </div>
           </a>
         
         
           
-          <a href="../../../06/01/textual-adds-sparklines-selection-list-input-validation-and-tool-tips/" class="md-footer__link md-footer__link--next" aria-label="Next: Textual adds Sparklines, Selection list, Input validation, and tool tips" rel="next">
+          <a href="../markdown_viewer/" class="md-footer__link md-footer__link--next" aria-label="Next: MarkdownViewer" rel="next">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Textual adds Sparklines, Selection list, Input validation, and tool tips
+                MarkdownViewer
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -7076,10 +8055,10 @@ We've also extended the decorator to use keywords arguments, so it will match at
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../../../../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../../../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.6c7302c4.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../../assets/javascripts/bundle.a3190745.min.js"></script>
+      <script src="../../assets/javascripts/bundle.a3190745.min.js"></script>
       
     
   </body>

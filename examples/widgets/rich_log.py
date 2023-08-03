@@ -1,13 +1,12 @@
 import csv
 import io
 
-from rich.table import Table
 from rich.syntax import Syntax
+from rich.table import Table
 
-from textual.app import App, ComposeResult
 from textual import events
-from textual.widgets import TextLog
-
+from textual.app import App, ComposeResult
+from textual.widgets import RichLog
 
 CSV = """lane,swimmer,country,time
 4,Joseph Schooling,Singapore,50.39
@@ -37,13 +36,13 @@ def loop_first_last(values: Iterable[T]) -> Iterable[tuple[bool, bool, T]]:
 '''
 
 
-class TextLogApp(App):
+class RichLogApp(App):
     def compose(self) -> ComposeResult:
-        yield TextLog(highlight=True, markup=True)
+        yield RichLog(highlight=True, markup=True)
 
     def on_ready(self) -> None:
         """Called  when the DOM is ready."""
-        text_log = self.query_one(TextLog)
+        text_log = self.query_one(RichLog)
 
         text_log.write(Syntax(CODE, "python", indent_guides=True))
 
@@ -57,10 +56,10 @@ class TextLogApp(App):
 
     def on_key(self, event: events.Key) -> None:
         """Write Key events to log."""
-        text_log = self.query_one(TextLog)
+        text_log = self.query_one(RichLog)
         text_log.write(event)
 
 
 if __name__ == "__main__":
-    app = TextLogApp()
+    app = RichLogApp()
     app.run()

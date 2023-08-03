@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.5+insiders-4.32.4">
+      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.1.5+insiders-4.32.4">
     
     
       
@@ -4244,6 +4244,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4610,6 +4612,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Log
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/markdown_viewer/" class="md-nav__link">
         
   
@@ -4818,6 +4846,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/rich_log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    RichLog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/select/" class="md-nav__link">
         
   
@@ -4981,32 +5035,6 @@
     
   
     Tabs
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../widgets/text_log/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    
-  
-    TextLog
   
 
     
@@ -5877,6 +5905,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.scroll_view.ScrollView.refresh_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh_lines()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.scroll_view.ScrollView.render" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6727,6 +6766,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.scroll_view.ScrollView.refresh_lines" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        refresh_lines()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.scroll_view.ScrollView.render" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7019,6 +7069,63 @@ on the compositor to render children).</p>
 
 
 
+<h3 id="textual.scroll_view.ScrollView.refresh_lines" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">refresh_lines</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.scroll_view.ScrollView.refresh_lines" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">refresh_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_start</span><span class="p">,</span> <span class="n">line_count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Refresh one or more lines.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>y_start</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>First line to refresh.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>line_count</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>Total number of lines to refresh.</p></td>
+          <td>
+                <code>1</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.scroll_view.ScrollView.render" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">render</span>
   
@@ -7170,7 +7277,7 @@ on the compositor to render children).</p>
         <tr>
           <td><code>on_complete</code></td>
           <td>
-                <code>CallbackType | None</code>
+                <code><a class="autorefs autorefs-internal" title="textual._types.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
           <td>
