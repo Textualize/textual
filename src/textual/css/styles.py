@@ -372,6 +372,13 @@ class StylesBase(ABC):
             # If destination is a number, we can convert that to a scalar
             if isinstance(value, (int, float)):
                 value = Scalar(value, Unit.CELLS, Unit.CELLS)
+            # If destination is a pair of numbers, we can convert it to a
+            # scalar offset
+            elif isinstance(value, tuple) and (
+                list(map(type, value)) == [int, int]
+                or list(map(type, value)) == [float, float]
+            ):
+                value = ScalarOffset.from_offset(value)
 
             # We can only animate to Scalar
             if not isinstance(value, (Scalar, ScalarOffset)):

@@ -1,6 +1,10 @@
 from time import perf_counter
 
+import pytest
+
 from textual.app import App, ComposeResult
+from textual.css.scalar import NULL_SCALAR, Scalar, ScalarOffset, Unit
+from textual.geometry import Offset
 from textual.reactive import var
 from textual.widgets import Static
 
@@ -37,6 +41,44 @@ async def test_animate_height() -> None:
         assert elapsed >= 0.5
         # Check the height reached the maximum
         assert static.styles.height.value == 100
+
+
+destinations = [
+    ScalarOffset.from_offset((10, 5)),
+    Offset(10, 5),
+    (10, 5),
+    (10.0, 5.0),
+]
+
+
+@pytest.mark.parametrize("destination", destinations)
+async def test_animate_offset(destination) -> None:
+    """Test animating styles.offset works."""
+    # Styles.offset is a ScalarOffset, which makes it more complicated to animate
+
+    app = AnimApp()
+
+    async with app.run_test() as pilot:
+        static = app.query_one(Static)
+        assert static.offset == Offset(0, 0)
+        assert static.styles.offset == NULL_SCALAR
+
+        static.styles.animate("offset", destination, duration=0.5, easing="linear")
+        start = perf_counter()
+
+        # Wait for the animation to finished
+        await pilot.wait_for_animation()
+        elapsed = perf_counter() - start
+        # Check that the full time has elapsed
+        assert elapsed >= 0.5
+
+        # Check the offset reached the destination
+        # fmt: off
+        assert static.styles.offset == ScalarOffset(
+            Scalar(10, Unit.CELLS, Unit.WIDTH),
+            Scalar(5,  Unit.CELLS, Unit.HEIGHT)
+        )
+        # fmt: on
 
 
 async def test_scheduling_animation() -> None:
