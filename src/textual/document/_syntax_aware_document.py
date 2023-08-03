@@ -136,11 +136,13 @@ class SyntaxAwareDocument(Document):
 
         deleted_text = super().delete_range(start, end)
 
+        deleted_text_byte_length = len(deleted_text.encode("utf-8"))
+
         if self._syntax_tree is not None:
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
-                new_end_byte=old_end_byte - len(deleted_text),
+                new_end_byte=old_end_byte - deleted_text_byte_length,
                 start_point=top,
                 old_end_point=bottom,
                 new_end_point=top,
