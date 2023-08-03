@@ -28,6 +28,7 @@ from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
+from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList
 from .widgets.option_list import Option
 
@@ -76,6 +77,11 @@ class CommandSource(ABC):
             screen: A reference to the active screen.
         """
         self.__screen = screen
+
+    @property
+    def focused(self) -> Widget | None:
+        """The currently-focused widget in the currently-active screen in the application."""
+        return self.__screen.focused
 
     @property
     def screen(self) -> Screen[object]:
