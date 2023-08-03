@@ -77,7 +77,7 @@ class CommandSource(ABC):
         self.__screen = screen
 
     @property
-    def screen(self) -> Screen:
+    def screen(self) -> Screen[object]:
         """The currently-active screen in the application."""
         return self.__screen
 
