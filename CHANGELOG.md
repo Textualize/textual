@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed a bug with key displays when used in conjunction https://github.com/Textualize/textual/issues/3035
 
+## [0.32.0] - 2023-08-03
+
+### Added
+
+- Added widgets.Log
+- Added Widget.is_vertical_scroll_end, Widget.is_horizontal_scroll_end, Widget.is_vertical_scrollbar_grabbed, Widget.is_horizontal_scrollbar_grabbed
+
+### Changed
+
+- Breaking change: Renamed TextLog to RichLog
+
 ## [0.31.0] - 2023-08-01
 
 ### Added

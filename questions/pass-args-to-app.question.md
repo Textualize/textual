@@ -30,7 +30,7 @@ Then the app can be run, passing in various arguments; for example:
 # Running with default arguments.
 Greetings().run()
 
-# Running with a keyword arguyment.
+# Running with a keyword argument.
 Greetings(to_greet="davep").run()
 
 # Running with both positional arguments.
