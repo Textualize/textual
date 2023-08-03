@@ -222,6 +222,16 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         Binding("ctrl+end, shift+end", "command('last')", show=False),
     ]
 
+    run_on_select: ClassVar[bool] = True
+    """A flag to say if a command should be run when selected by the user.
+
+    If `True` then when a user hits `Enter` on a command match in the result
+    list, or if they click on one with the mouse, the command will be
+    selected and run. If set to `False` the input will be filled with the
+    command and then `Enter` should be pressed on the keyboard or the 'go'
+    button should be pressed.
+    """
+
     _list_visible: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the command list."""
 
@@ -253,7 +263,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         with Vertical():
             with Horizontal(id="--input"):
                 yield CommandInput(placeholder="Search...")
-                yield Button("\u25b6")
+                if not self.run_on_select:
+                    yield Button("\u25b6")
             with Vertical(id="--results"):
                 yield CommandList()
                 yield LoadingIndicator()
@@ -420,6 +431,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self._selected_command = event.option.command
         input.action_end()
         self._list_visible = False
+        if self.run_on_select:
+            self._select_or_command()
 
     @on(Input.Submitted)
     @on(Button.Pressed)
