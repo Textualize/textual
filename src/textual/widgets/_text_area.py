@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 
 from rich.text import Text
 
-from textual import events, log
+from textual import events
 from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
@@ -226,7 +226,7 @@ TextArea > .text-area--selection {
 
         self._last_intentional_cell_width: int = 0
         """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
-        visually moves more than the logical characters) the user explicitly navigated to so that we can reset to it
+        visually moves rather than logical characters) the user explicitly navigated to so that we can reset to it
         whenever possible."""
 
         self._undo_stack: list[Edit] = []

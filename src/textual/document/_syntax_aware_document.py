@@ -2,17 +2,25 @@ from __future__ import annotations
 
 from collections import defaultdict
 from pathlib import Path
-from typing import NamedTuple
 
 from rich.style import Style
 from rich.text import Text
-from tree_sitter import Language, Parser, Tree
-from tree_sitter.binding import Query
-from tree_sitter_languages import get_language, get_parser
+from typing_extensions import TYPE_CHECKING
+
+try:
+    from tree_sitter_languages import get_language, get_parser
+
+    if TYPE_CHECKING:
+        from tree_sitter import Language, Parser, Tree
+        from tree_sitter.binding import Query
+
+    TREE_SITTER = True
+except ImportError:
+    TREE_SITTER = False
 
 from textual._fix_direction import _fix_direction
 from textual._languages import VALID_LANGUAGES
-from textual.document._document import Document
+from textual.document._document import Document, Highlight
 
 TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"
@@ -41,42 +49,41 @@ HIGHLIGHT_STYLES = {
 }
 
 
-class Highlight(NamedTuple):
-    """A range to highlight within a single line"""
-
-    start_column: int | None
-    end_column: int | None
-    highlight_name: str | None
-
-
 class SyntaxAwareDocument(Document):
+    """A wrapper around a Document which also maintains a tree-sitter syntax
+    tree when the document is edited."""
+
     def __init__(self, text: str, language: str):
         super().__init__(text)
+        self._language: Language | None = None
+        """The tree-sitter Language or None if tree-sitter unavailable."""
 
-        # TODO validate language string
+        self._parser: Parser | None = None
+        """The tree-sitter Parser or None if tree-sitter unavailable"""
 
-        self._language: Language = get_language(language)
-        """The tree-sitter Language."""
-
-        self._parser: Parser = get_parser(language)
-        """The tree-sitter Parser"""
-
-        self._syntax_tree = self._build_ast(self._parser)
+        self._syntax_tree: Tree | None = None
         """The tree-sitter Tree (syntax tree) built from the document."""
 
-        if language in VALID_LANGUAGES:
-            highlight_query_path = Path(HIGHLIGHTS_PATH.resolve()) / f"{language}.scm"
-        else:
-            raise RuntimeError(f"Invalid language {language!r}")
-
-        self._highlights_query = highlight_query_path.read_text()
+        self._highlights_query: str | None = None
         """The tree-sitter query string for used to fetch highlighted ranges"""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
-
         """Mapping line numbers to the set of cached highlights for that line."""
-        self._build_ast(self._parser)
-        self._prepare_highlights()
+
+        if TREE_SITTER:
+            # TODO validate language string
+            self._language = get_language(language)
+            self._parser = get_parser(language)
+            if language in VALID_LANGUAGES:
+                highlight_query_path = (
+                    Path(HIGHLIGHTS_PATH.resolve()) / f"{language}.scm"
+                )
+                self._highlights_query = highlight_query_path.read_text()
+            else:
+                raise RuntimeError(f"Invalid language {language!r}")
+
+            self._syntax_tree = self._build_ast(self._parser)
+            self._prepare_highlights()
 
     def insert_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
@@ -92,14 +99,16 @@ class SyntaxAwareDocument(Document):
             The new end location after the edit is complete.
         """
         top, bottom = _fix_direction(start, end)
-        start_byte = self._location_to_byte_offset(top)
-        old_end_byte = self._location_to_byte_offset(bottom)
+
+        # An optimisation would be finding the byte offsets as a single operation rather
+        # than doing two passes over the document content.
+        start_byte = self._tree_sitter_byte_offset(top)
+        old_end_byte = self._tree_sitter_byte_offset(bottom)
 
         end_location = super().insert_range(start, end, text)
 
-        text_byte_length = len(text.encode("utf-8"))
-
-        if self._syntax_tree is not None:
+        if TREE_SITTER and self._syntax_tree is not None:
+            text_byte_length = len(text.encode("utf-8"))
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
@@ -131,14 +140,13 @@ class SyntaxAwareDocument(Document):
         """
 
         top, bottom = _fix_direction(start, end)
-        start_byte = self._location_to_byte_offset(top)
-        old_end_byte = self._location_to_byte_offset(bottom)
+        start_byte = self._tree_sitter_byte_offset(top)
+        old_end_byte = self._tree_sitter_byte_offset(bottom)
 
         deleted_text = super().delete_range(start, end)
 
-        deleted_text_byte_length = len(deleted_text.encode("utf-8"))
-
-        if self._syntax_tree is not None:
+        if TREE_SITTER and self._syntax_tree is not None:
+            deleted_text_byte_length = len(deleted_text.encode("utf-8"))
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
@@ -154,6 +162,8 @@ class SyntaxAwareDocument(Document):
 
         return deleted_text
 
+    # TODO - this should return a string and the highlights to apply, the actual highlighting should
+    #  be done inside the TextArea by consulting the Theme object.
     def get_line_text(self, line_index: int) -> Text:
         """Apply syntax highlights and return the Text of the line.
 
@@ -174,8 +184,13 @@ class SyntaxAwareDocument(Document):
 
         return line
 
-    def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
-        """Given a document coordinate, return the byte offset of that coordinate."""
+    def _tree_sitter_byte_offset(self, location: tuple[int, int]) -> int:
+        """Given a document coordinate, return the byte offset of that coordinate.
+        This method only does work if tree-sitter was imported, otherwise it returns 0.
+        """
+        if self._syntax_tree is None:
+            return 0
+
         lines = self._lines
         row, column = location
         lines_above = lines[:row]
@@ -194,6 +209,9 @@ class SyntaxAwareDocument(Document):
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] = None,
     ) -> None:
+        if self._syntax_tree is None:
+            return None
+
         highlights = self._highlights
         query: Query = self._language.query(self._highlights_query)
 

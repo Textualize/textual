@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+from abc import ABC, abstractmethod
 from typing import NamedTuple, Tuple
 
 from rich.text import Text
+from typing_extensions import Protocol, runtime_checkable
 
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, SupportsIndex, get_args
@@ -30,7 +32,39 @@ def _detect_newline_style(text: str) -> Newline:
         return "\n"  # Default to Unix style newline
 
 
-class Document:
+class DocumentBase(ABC):
+    """Describes the minimum functionality a Document implementation must
+    provide in order to be used by the TextArea widget."""
+
+    @abstractmethod
+    def insert_range(self, start: Location, end: Location, text: str) -> Location:
+        """Insert text at the given range.
+
+        Args:
+            start: A tuple (row, column) where the edit starts.
+            end: A tuple (row, column) where the edit ends.
+            text: The text to insert between start and end.
+
+        Returns:
+            The new end location after the edit is complete.
+        """
+
+    @abstractmethod
+    def delete_range(self, start: Location, end: Location) -> str:
+        """Delete the text at the given range.
+
+        Args:
+            start: A tuple (row, column) where the edit starts.
+            end: A tuple (row, column) where the edit ends.
+
+        Returns:
+            The text that was deleted from the document.
+        """
+
+
+class Document(DocumentBase):
+    """A document which can be opened in a TextArea."""
+
     def __init__(self, text: str) -> None:
         self._newline = _detect_newline_style(text)
         """The type of newline used in the text."""
@@ -224,3 +258,11 @@ class Selection(NamedTuple):
         where the minimum point is inclusive and the maximum point is exclusive."""
         start, end = self
         return _fix_direction(start, end)
+
+
+class Highlight(NamedTuple):
+    """A range to highlight within a single line"""
+
+    start_column: int | None
+    end_column: int | None
+    highlight_name: str | None
