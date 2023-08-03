@@ -22,7 +22,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from . import on, work
-from .app import ComposeResult
+from .app import App, ComposeResult
 from .binding import Binding, BindingType
 from .events import Click, Mount
 from .reactive import var
@@ -80,6 +80,11 @@ class CommandSource(ABC):
     def screen(self) -> Screen[object]:
         """The currently-active screen in the application."""
         return self.__screen
+
+    @property
+    def app(self) -> App[object]:
+        """A reference to the application."""
+        return self.__screen.app
 
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
