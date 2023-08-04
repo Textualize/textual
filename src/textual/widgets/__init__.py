@@ -33,6 +33,7 @@ if typing.TYPE_CHECKING:
     from ._rich_log import RichLog
     from ._select import Select
     from ._selection_list import SelectionList
+    from ._rules import HorizontalRule, VerticalRule
     from ._sparkline import Sparkline
     from ._static import Static
     from ._switch import Switch
@@ -51,6 +52,7 @@ __all__ = [
     "DirectoryTree",
     "Footer",
     "Header",
+    "HorizontalRule",
     "Input",
     "Label",
     "ListItem",
@@ -77,6 +79,7 @@ __all__ = [
     "RichLog",
     "Tooltip",
     "Tree",
+    "VerticalRule",
     "Welcome",
 ]
 

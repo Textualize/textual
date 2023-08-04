@@ -23,6 +23,8 @@ from ._radio_set import RadioSet as RadioSet
 from ._rich_log import RichLog as RichLog
 from ._select import Select as Select
 from ._selection_list import SelectionList as SelectionList
+from ._rules import HorizontalRule as HorizontalRule
+from ._rules import VerticalRule as VerticalRule
 from ._sparkline import Sparkline as Sparkline
 from ._static import Static as Static
 from ._switch import Switch as Switch
