@@ -47,6 +47,9 @@ class TabPane(Widget):
         height: auto;
         padding: 1 2;
     }
+    TabPane Vertical, TabPane Horizontal {
+        height: auto;
+    }
     """
 
     def __init__(

@@ -154,6 +154,7 @@ class Tabs(Widget, can_focus=True):
     }
     Tabs > #tabs-scroll {
         overflow: hidden;
+        height: 3;
     }
     Tabs #tabs-list {
        width: auto;
