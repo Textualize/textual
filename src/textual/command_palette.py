@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from asyncio import Queue, TimeoutError, create_task, wait_for
 from typing import (
+    TYPE_CHECKING,
     Any,
     AsyncIterable,
     AsyncIterator,
@@ -22,7 +23,6 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from . import on, work
-from .app import App, ComposeResult
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
@@ -31,6 +31,9 @@ from .screen import ModalScreen, Screen
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList
 from .widgets.option_list import Option
+
+if TYPE_CHECKING:
+    from .app import App, ComposeResult
 
 __all__ = [
     "CommandPalette",

@@ -73,6 +73,7 @@ from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
+from .command_palette import CommandPalette, CommandPaletteCallable
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -318,7 +319,8 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding("ctrl+@", "command_palette", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
@@ -2955,3 +2957,16 @@ class App(Generic[ReturnType], DOMNode):
         """Clear all the current notifications."""
         self._notifications.clear()
         self._refresh_notifications()
+
+    def action_command_palette(self) -> None:
+        """Show the Textual command palette."""
+
+        def run_command(command: CommandPaletteCallable) -> None:
+            """Callback function that runs a chosen command from the command palette.
+
+            Args:
+                command: The command to run.
+            """
+            command()
+
+        self.push_screen(CommandPalette(), callback=run_command)
