@@ -250,7 +250,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     _calling_screen: var[Screen | None] = var(None)
     """A record of the screen that was active when we were called."""
 
-    _sources: set[Type[CommandSource]] = set()
+    _sources: ClassVar[set[Type[CommandSource]]] = set()
     """The list of command source classes."""
 
     def __init__(self) -> None:
