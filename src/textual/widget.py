@@ -1538,7 +1538,9 @@ class Widget(DOMNode):
     @property
     def _has_relative_children_width(self) -> bool:
         """Do any children have a relative width?"""
-        return self.is_container and any(
+        if not self.is_container:
+            return False
+        return any(
             child.styles.is_relative_width
             for child in self.walk_children(with_self=False)
         )
@@ -1546,8 +1548,9 @@ class Widget(DOMNode):
     @property
     def _has_relative_children_height(self) -> bool:
         """Do any children have a relative height?"""
-
-        return self.is_container and any(
+        if not self.is_container:
+            return False
+        return any(
             child.styles.is_relative_height
             for child in self.walk_children(with_self=False)
         )
