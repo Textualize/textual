@@ -103,9 +103,9 @@ class TabbedContent(Widget):
     TabbedContent {
         height: auto;
     }
-    # TabbedContent > ContentSwitcher {
-    #     height: auto;
-    # }
+    TabbedContent > ContentSwitcher {
+        height: auto;
+    }
     """
 
     active: reactive[str] = reactive("", init=False)
