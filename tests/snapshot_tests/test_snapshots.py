@@ -605,3 +605,8 @@ def test_print_capture(snap_compare) -> None:
 
 def test_text_log_blank_write(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "text_log_blank_write.py")
+
+
+def test_nested_fr(snap_compare) -> None:
+    # https://github.com/Textualize/textual/pull/3059
+    assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
