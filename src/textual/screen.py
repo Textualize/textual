@@ -183,7 +183,7 @@ class Screen(Generic[ScreenResultType], Widget):
         from .app import ScreenStackError
 
         try:
-            return self.app.screen is self
+            return self.app.screen is self or self in self.app._background_screens
         except ScreenStackError:
             return False
 
