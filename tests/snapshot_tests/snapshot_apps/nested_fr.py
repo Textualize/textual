@@ -4,6 +4,8 @@ from textual.widgets import Static
 
 
 class AutoApp(App):
+    """The innermost container should push its parents outwards, to fill the screen."""
+
     CSS = """
     #outer {
         background: blue;
