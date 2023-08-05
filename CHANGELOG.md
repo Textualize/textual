@@ -9,11 +9,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
 - Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
 
-### Changed
-
-- TabbedContent now works intuitively https://github.com/Textualize/textual/pull/3059
 
 ## [0.32.0] - 2023-08-03
 
