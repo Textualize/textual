@@ -177,6 +177,21 @@ class LRUCache(Generic[CacheKey, CacheValue]):
     def __contains__(self, key: CacheKey) -> bool:
         return key in self._cache
 
+    def discard(self, key: CacheKey) -> None:
+        """Discard item in cache from key.
+
+        Args:
+            key: Cache key.
+        """
+        link = self._cache.get(key)
+        if link is None:
+            return
+        # Remove link from list
+        link[0][1] = link[1]  # type: ignore[index]
+        link[1][0] = link[0]  # type: ignore[index]
+        # Remove link from cache
+        del self._cache[key]
+
 
 class FIFOCache(Generic[CacheKey, CacheValue]):
     """A simple cache that discards the first added key when full (First In First Out).

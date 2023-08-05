@@ -1,7 +1,7 @@
 from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import Container
-from textual.widgets import Static, TextLog
+from textual.widgets import RichLog, Static
 
 
 class PlayArea(Container):
@@ -9,7 +9,7 @@ class PlayArea(Container):
         self.capture_mouse()
 
     def on_mouse_move(self, event: events.MouseMove) -> None:
-        self.screen.query_one(TextLog).write(event)
+        self.screen.query_one(RichLog).write(event)
         self.query_one(Ball).offset = event.offset - (8, 2)
 
 
@@ -21,7 +21,7 @@ class MouseApp(App):
     CSS_PATH = "mouse01.css"
 
     def compose(self) -> ComposeResult:
-        yield TextLog()
+        yield RichLog()
         yield PlayArea(Ball("Textual"))
 
 

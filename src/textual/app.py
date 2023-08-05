@@ -2335,7 +2335,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         try:
-            if screen is not self.screen or renderable is None:
+            if renderable is None:
                 return
 
             if (
@@ -2344,6 +2344,9 @@ class App(Generic[ReturnType], DOMNode):
                 and not self.is_headless
                 and self._driver is not None
             ):
+                if screen is not self.screen:
+                    self.screen.refresh()
+                    return
                 console = self.console
                 self._begin_update()
                 try:

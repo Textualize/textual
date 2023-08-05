@@ -162,8 +162,16 @@ def test_list_view(snap_compare):
     )
 
 
-def test_textlog_max_lines(snap_compare):
-    assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde"])
+def test_richlog_max_lines(snap_compare):
+    assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
+
+
+def test_log_write_lines(snap_compare):
+    assert snap_compare("snapshot_apps/log_write_lines.py")
+
+
+def test_log_write(snap_compare):
+    assert snap_compare("snapshot_apps/log_write.py")
 
 
 def test_fr_units(snap_compare):
@@ -421,8 +429,8 @@ def test_table_markup(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "table_markup.py")
 
 
-def test_textlog_scroll(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "textlog_scroll.py")
+def test_richlog_scroll(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
 
 
 def test_tabs_invalidate(snap_compare):
