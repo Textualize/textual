@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
+
+### Changed
+
+- TabbedContent now works intuitively https://github.com/Textualize/textual/pull/3059
+
 ## [0.32.0] - 2023-08-03
 
 ### Added

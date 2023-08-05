@@ -1537,23 +1537,36 @@ class Widget(DOMNode):
 
     @property
     def _has_relative_children_width(self) -> bool:
-        """Do any children have a relative width?"""
+        """Do any children (or progeny) have a relative width?"""
         if not self.is_container:
             return False
-        return any(
-            child.styles.is_relative_width
-            for child in self.walk_children(with_self=False)
-        )
+        for child in self.children:
+            styles = child.styles
+            width = styles.width
+            if width is None:
+                continue
+            if styles.is_relative_width:
+                return True
+            if width.is_auto and child._has_relative_children_width:
+                return True
+        return False
 
     @property
     def _has_relative_children_height(self) -> bool:
-        """Do any children have a relative height?"""
+        """Do any children (or progeny) have a relative height?"""
         if not self.is_container:
             return False
-        return any(
-            child.styles.is_relative_height
-            for child in self.walk_children(with_self=False)
-        )
+
+        for child in self.children:
+            styles = child.styles
+            height = styles.height
+            if height is None:
+                continue
+            if styles.is_relative_height:
+                return True
+            if height.is_auto and child._has_relative_children_height:
+                return True
+        return False
 
     def animate(
         self,
