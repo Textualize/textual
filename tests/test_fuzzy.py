@@ -30,11 +30,11 @@ def test_highlight():
     spans = matcher.highlight("foo/egg.bar").spans
     print(spans)
     assert spans == [
-        Span(0, 1, "bold"),
-        Span(1, 2, "bold"),
-        Span(2, 3, "bold"),
-        Span(7, 8, "bold"),
-        Span(8, 9, "bold"),
-        Span(9, 10, "bold"),
-        Span(10, 11, "bold"),
+        Span(0, 1, "reverse"),
+        Span(1, 2, "reverse"),
+        Span(2, 3, "reverse"),
+        Span(7, 8, "reverse"),
+        Span(8, 9, "reverse"),
+        Span(9, 10, "reverse"),
+        Span(10, 11, "reverse"),
     ]
