@@ -1542,11 +1542,13 @@ class Widget(DOMNode):
             return False
         for child in self.children:
             styles = child.styles
+            if styles.display == "none":
+                continue
             width = styles.width
-            if (
-                width is None
-                or styles.is_relative_width
-                or (width.is_auto and child._has_relative_children_height)
+            if width is None:
+                continue
+            if styles.is_relative_width or (
+                width.is_auto and child._has_relative_children_width
             ):
                 return True
         return False
@@ -1554,15 +1556,18 @@ class Widget(DOMNode):
     @property
     def _has_relative_children_height(self) -> bool:
         """Do any children (or progeny) have a relative height?"""
+
         if not self.is_container:
             return False
         for child in self.children:
             styles = child.styles
+            if styles.display == "none":
+                continue
             height = styles.height
-            if (
-                height is None
-                or styles.is_relative_height
-                or (height.is_auto and child._has_relative_children_height)
+            if height is None:
+                continue
+            if styles.is_relative_height or (
+                height.is_auto and child._has_relative_children_height
             ):
                 return True
         return False

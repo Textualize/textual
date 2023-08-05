@@ -19,6 +19,13 @@ class ContentSwitcher(Container):
         Children that have no ID will be hidden and ignored.
     """
 
+    DEFAULT_CSS = """
+    ContentSwitcher {
+        height: auto;
+    }
+
+    """
+
     current: reactive[str | None] = reactive[Optional[str]](None, init=False)
     """The ID of the currently-displayed widget.
 

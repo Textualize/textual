@@ -245,6 +245,7 @@ class Scalar(NamedTuple):
         return cls(float(value), Unit.CELLS, Unit.WIDTH)
 
     @classmethod
+    @lru_cache(maxsize=1024)
     def parse(cls, token: str, percent_unit: Unit = Unit.WIDTH) -> Scalar:
         """Parse a string in to a Scalar
 

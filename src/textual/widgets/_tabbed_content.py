@@ -47,9 +47,6 @@ class TabPane(Widget):
         height: auto;
         padding: 1 2;
     }
-    TabPane Vertical, TabPane Horizontal {
-        height: auto;
-    }
     """
 
     def __init__(
@@ -100,11 +97,12 @@ class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
     DEFAULT_CSS = """
+
     TabbedContent {
         height: auto;
     }
-    TabbedContent > ContentSwitcher {
-        height: auto;
+    TabbedContent Tabs {
+        dock: top;
     }
     """
 
