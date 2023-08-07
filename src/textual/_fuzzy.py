@@ -31,10 +31,10 @@ class Matcher:
         return self._query
 
     def match(self, candidate: str) -> float:
-        """Match the candidate against the query
+        """Match the candidate against the query.
 
         Args:
-            candidate: Candidate string to match against.
+            candidate: Candidate string to match against the query.
 
         Returns:
             Strength of the match from 0 to 1.
@@ -65,10 +65,10 @@ class Matcher:
         """Highlight the candidate with the fuzzy match.
 
         Args:
-            candidate: User candidate.
+            candidate: The candidate string to match against the query.
 
         Returns:
-            A Text object with matched letters in bold.
+            A [rich.text.Text][`Text`] object with highlighted matches.
         """
         match = self._query_regex_compiled.search(candidate)
         text = Text(candidate)
