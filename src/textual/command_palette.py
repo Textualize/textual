@@ -380,14 +380,16 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             except TimeoutError:
                 pass
 
-    @work(exclusive=True)
-    async def _gather_commands(self, search_value: str) -> None:
-        """Gather up all of the commands that match the search value.
+    @staticmethod
+    def _sans_background(style: Style) -> Style:
+        """Returns the given style minus the background color.
 
         Args:
-            search_value: The value to search for.
+            style: The style to remove the color from.
+
+        Returns:
+            The given style, minus its background.
         """
-        help_style = self.get_component_rich_style("command-palette--help-text")
         # Here we're pulling out all of the styles *minus* the background.
         # This should probably turn into a utility method on Style
         # eventually. The reason for this is we want the developer to be
@@ -395,14 +397,25 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # the background to always be the background at any given moment in
         # the context of an OptionList. At the moment this act of copying
         # sans bgcolor seems to be the only way to achieve this.
-        help_style = Style(
-            color=help_style.color,
-            dim=help_style.dim,
-            italic=help_style.italic,
-            overline=help_style.overline,
-            reverse=help_style.reverse,
-            strike=help_style.strike,
-            underline=help_style.underline,
+        return Style(
+            color=style.color,
+            dim=style.dim,
+            italic=style.italic,
+            overline=style.overline,
+            reverse=style.reverse,
+            strike=style.strike,
+            underline=style.underline,
+        )
+
+    @work(exclusive=True)
+    async def _gather_commands(self, search_value: str) -> None:
+        """Gather up all of the commands that match the search value.
+
+        Args:
+            search_value: The value to search for.
+        """
+        help_style = self._sans_background(
+            self.get_component_rich_style("command-palette--help-text")
         )
         command_list = self.query_one(CommandList)
         self._show_busy = True
