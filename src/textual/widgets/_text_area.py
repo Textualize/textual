@@ -2,18 +2,22 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from rich.text import Text
+
+if TYPE_CHECKING:
+    from tree_sitter import Language
 
 from textual import events
 from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
+from textual._syntax_theme import DEFAULT_SYNTAX_THEME, SyntaxTheme
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document._document import Document, Location, Selection
 from textual.events import MouseEvent
-from textual.geometry import Region, Size, Spacing, clamp
+from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
@@ -194,8 +198,24 @@ TextArea > .text-area--selection {
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
     ]
 
-    language: Reactive[str | None] = reactive(None, always_update=True)
-    """The language to use for syntax highlighting (via tree-sitter)."""
+    language: Reactive[str | "Language" | None] = reactive(None, always_update=True)
+    """The language to use.
+
+    This must be set to a valid, non-None value for syntax highlighting to work.
+
+    If the value is a string, a built-in parser will be used.
+
+    If a tree-sitter `Language` object is used,
+    """
+
+    theme: Reactive[str | SyntaxTheme] = reactive(DEFAULT_SYNTAX_THEME)
+    """The theme to syntax highlight with.
+
+    Supply a `SyntaxTheme` object to customise highlighting, or supply a builtin
+    theme name as a string.
+
+    Syntax highlighting is only possible when the `language` attribute is set.
+    """
 
     selection: Reactive[Selection] = reactive(Selection(), always_update=True)
     """The selection start and end locations (zero-based line_index, offset)."""
@@ -243,21 +263,30 @@ TextArea > .text-area--selection {
         clamp_visitable = self.clamp_visitable
         return Selection(clamp_visitable(start), clamp_visitable(end))
 
-    def _watch_language(self, language: str | None) -> None:
-        """When the language used is updated, update the type of document."""
+    def _watch_language(self) -> None:
+        """When the language is updated, update the type of document."""
+        self._reload_document()
+
+    def _watch_theme(self) -> None:
+        """When the theme is updated, update"""
+        self._reload_document()
+
+    def _reload_document(self) -> None:
+        """Recreate the document based on the language and theme currently set."""
+        language = self.language
+        text = self._document.text
         if not language:
-            self._document = Document(self._document.text)
+            # If there's no language set, we don't need to use a SyntaxAwareDocument.
+            self._document = Document(text)
         else:
             try:
-                # SyntaxAwareDocument isn't available on Python 3.7.
                 from textual.document._syntax_aware_document import SyntaxAwareDocument
 
-                self._document = SyntaxAwareDocument(self._document.text, language)
+                self._document = SyntaxAwareDocument(text, language, self.theme)
             except ImportError:
+                # SyntaxAwareDocument isn't available on Python 3.7.
                 # Fall back to the standard document.
-                self._document = Document(self._document.text)
-
-        self._refresh_size()
+                self._document = Document(text)
 
     def load_text(self, text: str) -> None:
         """Load text from a string into the editor.
@@ -324,6 +353,8 @@ TextArea > .text-area--selection {
         if cursor_row == line_index:
             cursor_style = self.get_component_rich_style("text-area--cursor")
             line.stylize(cursor_style, cursor_column, cursor_column + 1)
+
+            # Stylize the line the cursor is currently on.
             active_line_style = self.get_component_rich_style("text-area--active-line")
             line.stylize_before(active_line_style)
 
@@ -345,17 +376,19 @@ TextArea > .text-area--selection {
         else:
             gutter = Text("", end="")
 
+        virtual_width, virtual_height = self.virtual_size
+
         # Render the gutter and the text of this line
         gutter_segments = self.app.console.render(gutter)
         text_segments = self.app.console.render(
-            line, self.app.console.options.update_width(self.virtual_size.width)
+            line, self.app.console.options.update_width(virtual_width)
         )
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
-        virtual_width, virtual_height = self.virtual_size
-
         gutter_strip = Strip(gutter_segments)
-        text_strip = Strip(text_segments).crop(scroll_x, scroll_x + virtual_width)
+        text_strip = Strip(text_segments).crop(
+            scroll_x, scroll_x + virtual_width - self.gutter_width
+        )
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
@@ -387,7 +420,11 @@ TextArea > .text-area--selection {
 
     @property
     def gutter_width(self) -> int:
-        """The width of the gutter (the left column containing line numbers)."""
+        """The width of the gutter (the left column containing line numbers).
+
+        Returns:
+            The cell-width of the line number column. If `show_line_numbers` is `False` returns 0.
+        """
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
         gutter_width = (
@@ -425,6 +462,7 @@ TextArea > .text-area--selection {
 
     # --- Lower level event/key handling
     def _on_key(self, event: events.Key) -> None:
+        """Handle key presses which correspond to document inserts."""
         key = event.key
         insert_values = {
             "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
@@ -440,6 +478,14 @@ TextArea > .text-area--selection {
             self.insert_text_range(insert, start, end)
 
     def get_target_document_location(self, event: MouseEvent) -> Location:
+        """Given a MouseEvent, return the row and column offset of the event in document-space.
+
+        Args:
+            event: The MouseEvent.
+
+        Returns:
+            The location of the mouse event within the document.
+        """
         scroll_x, scroll_y = self.scroll_offset
         target_x = event.x - self.gutter_width + scroll_x - self.gutter.left
         target_x = max(target_x, 0)
@@ -452,30 +498,43 @@ TextArea > .text-area--selection {
         return target_row, target_column
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
+        """Update the cursor position, and begin a selection using the mouse."""
         target = self.get_target_document_location(event)
         self.selection = Selection.cursor(target)
         self._selecting = True
+        # Capture the mouse so that if the cursor moves outside the
+        # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse(True)
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
+        """Handles click and drag to expand and contract the selection."""
         if self._selecting:
             target = self.get_target_document_location(event)
             selection_start, _ = self.selection
             self.selection = Selection(selection_start, target)
 
     def _on_mouse_up(self, event: events.MouseUp) -> None:
+        """Finalise the selection that has been made using the mouse."""
         self._selecting = False
         self.capture_mouse(False)
         self.record_cursor_offset()
 
     def _on_paste(self, event: events.Paste) -> None:
+        """When a paste occurs, insert the text from the paste event into the document."""
         text = event.text
         if text:
-            start, end = self.selection
-            self.insert_text_range(text, start, end)
+            self.insert_text_range(text, *self.selection)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
-        """Return the column that the cell width corresponds to on the given row."""
+        """Return the column that the cell width corresponds to on the given row.
+
+        Args:
+            cell_width: The cell width to convert.
+            row_index: The index of the row to examine.
+
+        Returns:
+            The column corresponding to the cell width on that row.
+        """
         tab_width = self.indent_width
         total_cell_offset = 0
         line = self._document[row_index]
@@ -486,24 +545,6 @@ TextArea > .text-area--selection {
         return len(line)
 
     # --- Cursor/selection utilities
-    def is_visitable(self, location: Location) -> bool:
-        """Return True if the location is somewhere that can naturally be reached by the cursor.
-
-        Generally this means it's at a row within the document, and a column which contains a character,
-        OR at the resting location at the end of a row."""
-        row, column = location
-        document = self._document
-        row_text = document[row]
-        is_valid_row = row < document.line_count
-        is_valid_column = column <= len(row_text)
-        return is_valid_row and is_valid_column
-
-    def is_visitable_selection(self, selection: Selection) -> bool:
-        """Return True if the Selection is valid (start and end in bounds)"""
-        visitable = self.is_visitable
-        start, end = selection
-        return visitable(start) and visitable(end)
-
     def clamp_visitable(self, location: Location) -> Location:
         document = self._document
 
@@ -518,16 +559,22 @@ TextArea > .text-area--selection {
 
         return row, column
 
-    def scroll_cursor_visible(self):
+    def scroll_cursor_visible(self) -> Offset:
+        """Scroll the `TextArea` such that the cursor is visible on screen.
+
+        Returns:
+            The offset that was scrolled to bring the cursor into view.
+        """
         row, column = self.selection.end
         text = self.cursor_line_text[:column]
         column_offset = cell_len(text.expandtabs(self.indent_width))
-        self.scroll_to_region(
+        scroll_offset = self.scroll_to_region(
             Region(x=column_offset, y=row, width=2, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
         )
+        return scroll_offset
 
     @property
     def cursor_at_first_row(self) -> bool:
