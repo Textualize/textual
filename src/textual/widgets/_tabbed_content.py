@@ -97,11 +97,12 @@ class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
     DEFAULT_CSS = """
+
     TabbedContent {
         height: auto;
     }
-    TabbedContent > ContentSwitcher {
-        height: auto;
+    TabbedContent Tabs {
+        dock: top;
     }
     """
 
