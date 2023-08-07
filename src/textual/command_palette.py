@@ -104,16 +104,19 @@ class CommandSource(ABC):
         """The preferred style to use when highlighting matching portions of the `match_text`."""
         return self.__match_style
 
-    def matcher(self, user_input: str) -> Matcher:
+    def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
         """Create a fuzzy matcher for the given user input.
 
         Args:
             user_input: The text that the user has input.
+            case_sensitive: Should match be case sensitive?
 
         Returns:
             A fuzzy matcher object for matching against candidate hits.
         """
-        return Matcher(user_input, match_style=self.match_style)
+        return Matcher(
+            user_input, match_style=self.match_style, case_sensitive=case_sensitive
+        )
 
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:

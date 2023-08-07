@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from re import compile, escape
+from re import IGNORECASE, NOFLAG, compile, escape
 
 import rich.repr
 from rich.style import Style
@@ -13,16 +13,24 @@ from ._cache import LRUCache
 class Matcher:
     """A fuzzy matcher."""
 
-    def __init__(self, query: str, *, match_style: Style | None = None) -> None:
+    def __init__(
+        self,
+        query: str,
+        *,
+        match_style: Style | None = None,
+        case_sensitive: bool = False,
+    ) -> None:
         """
         Args:
             query: A query as typed in by the user.
             match_style: The style to use to highlight matched portions of a string.
+            case_sensitive: Should matching be case sensitive?
         """
         self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
         self._query_regex = compile(
-            ".*?".join(f"({escape(character)})" for character in query)
+            ".*?".join(f"({escape(character)})" for character in query),
+            flags=NOFLAG if case_sensitive else IGNORECASE,
         )
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
 
