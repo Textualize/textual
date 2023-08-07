@@ -19,11 +19,16 @@ class Matcher:
             query: A query as typed in by the user.
             match_style: The style to use to highlight matched portions of a string.
         """
-        self.query = query
+        self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
         self._query_regex = ".*?".join(f"({escape(character)})" for character in query)
         self._query_regex_compiled = compile(self._query_regex)
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
+
+    @property
+    def query(self) -> str:
+        """The query string to look for."""
+        return self._query
 
     def match(self, input: str) -> float:
         """Match the input against the query
