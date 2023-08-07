@@ -32,6 +32,11 @@ class Matcher:
         return self._query
 
     @property
+    def match_style(self) -> Style:
+        """The style that will be used to highlight hits in the matched text."""
+        return self._match_style
+
+    @property
     def query_pattern(self) -> str:
         """The regular expression pattern built from the query."""
         return self._query_regex.pattern
