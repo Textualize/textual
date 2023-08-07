@@ -848,8 +848,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 except NoMatches:
                     pass
                 else:
-                    tooltip.styles.offset = event.screen_offset
-
                     if self._tooltip_widget != widget or not tooltip.display:
                         self._tooltip_widget = widget
                         if self._tooltip_timer is not None:
