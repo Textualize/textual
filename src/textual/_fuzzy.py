@@ -30,19 +30,19 @@ class Matcher:
         """The query string to look for."""
         return self._query
 
-    def match(self, input: str) -> float:
-        """Match the input against the query
+    def match(self, candidate: str) -> float:
+        """Match the candidate against the query
 
         Args:
-            input: Input string to match against.
+            candidate: Candidate string to match against.
 
         Returns:
             Strength of the match from 0 to 1.
         """
-        cached = self._cache.get(input)
+        cached = self._cache.get(candidate)
         if cached is not None:
             return cached
-        match = self._query_regex_compiled.search(input)
+        match = self._query_regex_compiled.search(candidate)
         if match is None:
             score = 0.0
         else:
@@ -57,21 +57,21 @@ class Matcher:
                     group_count += 1
                 last_offset = offset
 
-            score = 1.0 - ((group_count - 1) / len(input))
-        self._cache[input] = score
+            score = 1.0 - ((group_count - 1) / len(candidate))
+        self._cache[candidate] = score
         return score
 
-    def highlight(self, input: str) -> Text:
-        """Highlight the input with the fuzzy match.
+    def highlight(self, candidate: str) -> Text:
+        """Highlight the candidate with the fuzzy match.
 
         Args:
-            input: User input.
+            candidate: User candidate.
 
         Returns:
             A Text object with matched letters in bold.
         """
-        match = self._query_regex_compiled.search(input)
-        text = Text(input)
+        match = self._query_regex_compiled.search(candidate)
+        text = Text(candidate)
         if match is None:
             return text
         assert match.lastindex is not None
