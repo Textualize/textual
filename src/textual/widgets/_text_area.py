@@ -370,11 +370,8 @@ TextArea > .text-area--width-guide {
 
         if self.show_width_guide:
             width_guide_style = self.get_component_rich_style("text-area--width-guide")
-            line.stylize_before(
-                width_guide_style,
-                virtual_width - self.gutter_width - 1,
-                virtual_width - self.gutter_width,
-            )
+            width_column = virtual_width - self.gutter_width
+            line.stylize_before(width_guide_style, width_column - 1, width_column)
 
         # Build the gutter text for this line
         if self.show_line_numbers:
