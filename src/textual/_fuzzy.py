@@ -91,8 +91,49 @@ class Matcher:
 
 
 if __name__ == "__main__":
+    from itertools import permutations
+    from string import ascii_lowercase
+    from time import monotonic
+
     from rich import print
+    from rich.rule import Rule
 
     matcher = Matcher("foo.bar")
-    print(matcher.match("xz foo.bar sdf"))
-    print(matcher.highlight("xz foo.bar sdf"))
+    print(Rule())
+    print("Query is:", matcher.query)
+    print("Rule is:", matcher.query_pattern)
+    print(Rule())
+    candidates = (
+        "foo.bar",
+        " foo.bar ",
+        "Hello foo.bar world",
+        "f o o . b a r",
+        "f o o .bar",
+        "foo. b a r",
+        "Lots of text before the foo.bar",
+        "foo.bar up front and then lots of text afterwards",
+        "This has an o in it but does not have a match",
+        "Let's find one obvious match. But blat around always roughly.",
+    )
+    results = sorted(
+        [
+            (matcher.match(candidate), matcher.highlight(candidate))
+            for candidate in candidates
+        ],
+        key=lambda pair: pair[0],
+        reverse=True,
+    )
+    for score, highlight in results:
+        print(f"{score:.15f} '", highlight, "'", sep="")
+    print(Rule())
+
+    RUNS = 5
+    candidates = [
+        "".join(permutation) for permutation in permutations(ascii_lowercase[:10])
+    ]
+    matcher = Matcher(ascii_lowercase[:10])
+    start = monotonic()
+    for _ in range(RUNS):
+        for candidate in candidates:
+            _ = matcher.match(candidate)
+    print(f"{RUNS * len(candidates)} matches in {monotonic() - start:.5f} seconds")
