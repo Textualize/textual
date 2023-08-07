@@ -350,12 +350,10 @@ TextArea > .text-area--selection {
 
         # Highlight the cursor
         cursor_row, cursor_column = end
+        active_line_style = self.get_component_rich_style("text-area--active-line")
         if cursor_row == line_index:
             cursor_style = self.get_component_rich_style("text-area--cursor")
             line.stylize(cursor_style, cursor_column, cursor_column + 1)
-
-            # Stylize the line the cursor is currently on.
-            active_line_style = self.get_component_rich_style("text-area--active-line")
             line.stylize_before(active_line_style)
 
         # Build the gutter text for this line
@@ -389,6 +387,13 @@ TextArea > .text-area--selection {
         text_strip = Strip(text_segments).crop(
             scroll_x, scroll_x + virtual_width - self.gutter_width
         )
+
+        # Stylize the line the cursor is currently on.
+        if cursor_row == line_index:
+            expanded_length = max(virtual_width, self.size.width)
+            text_strip = text_strip.extend_cell_length(
+                expanded_length, active_line_style
+            )
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
