@@ -3,7 +3,7 @@ from threading import Thread
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.widgets import TextLog
+from textual.widgets import RichLog
 
 
 def test_call_from_thread_app_not_running():
@@ -27,7 +27,7 @@ def test_call_from_thread():
         def run(self) -> None:
             def write_stuff(text: str) -> None:
                 """Write stuff to a widget."""
-                self.app.query_one(TextLog).write(text)
+                self.app.query_one(RichLog).write(text)
 
             self.app.call_from_thread(write_stuff, "Hello")
             # Exit the app with a code we can assert
@@ -37,7 +37,7 @@ def test_call_from_thread():
         """Trivial app with a single widget."""
 
         def compose(self) -> ComposeResult:
-            yield TextLog()
+            yield RichLog()
 
         def on_ready(self) -> None:
             """Launch a thread which will modify the app."""

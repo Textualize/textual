@@ -130,8 +130,8 @@ class OptionList(ScrollView, can_focus=True):
         Binding("end", "last", "Last", show=False),
         Binding("enter", "select", "Select", show=False),
         Binding("home", "first", "First", show=False),
-        Binding("page_down", "page_down", "Page Down", show=False),
-        Binding("page_up", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
         Binding("up", "cursor_up", "Up", show=False),
     ]
     """
@@ -141,8 +141,8 @@ class OptionList(ScrollView, can_focus=True):
     | end | Move the highlight to the last option. |
     | enter | Select the current option. |
     | home | Move the highlight to the first option. |
-    | page_down | Move the highlight down a page of options. |
-    | page_up | Move the highlight up a page of options. |
+    | pagedown | Move the highlight down a page of options. |
+    | pageup | Move the highlight up a page of options. |
     | up | Move the highlight up. |
     """
 
@@ -298,6 +298,7 @@ class OptionList(ScrollView, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        wrap: bool = True,
     ):
         """Initialise the option list.
 
@@ -307,12 +308,19 @@ class OptionList(ScrollView, can_focus=True):
             id: The ID of the option list in the DOM.
             classes: The CSS classes of the option list.
             disabled: Whether the option list is disabled or not.
+            wrap: Should prompts be auto-wrapped?
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         # Internal refresh trackers. For things driven from on_idle.
         self._needs_refresh_content_tracking = False
         self._needs_to_scroll_to_highlight = False
+
+        self._wrap = wrap
+        """Should we auto-wrap options?
+
+        If `False` options wider than the list will be truncated.
+        """
 
         self._contents: list[OptionListContent] = [
             self._make_content(item) for item in content
@@ -449,6 +457,14 @@ class OptionList(ScrollView, can_focus=True):
         # bit.
         self._option_ids.clear()
 
+    def _left_gutter_width(self) -> int:
+        """Returns the size of any left gutter that should be taken into account.
+
+        Returns:
+            The width of the left gutter.
+        """
+        return 0
+
     def _refresh_content_tracking(self, force: bool = False) -> None:
         """Refresh the various forms of option list content tracking.
 
@@ -477,12 +493,17 @@ class OptionList(ScrollView, can_focus=True):
 
         # Set up for doing less property access work inside the loop.
         lines_from = self.app.console.render_lines
-        options = self.app.console.options.update_width(
-            self.scrollable_content_region.width
-        )
         add_span = self._spans.append
         option_ids = self._option_ids
         add_lines = self._lines.extend
+
+        # Adjust the options for our purposes.
+        options = self.app.console.options.update_width(
+            self.scrollable_content_region.width - self._left_gutter_width()
+        )
+        options.no_wrap = not self._wrap
+        if not self._wrap:
+            options.overflow = "ellipsis"
 
         # Create a rule that can be used as a separator.
         separator = Strip(lines_from(Rule(style=""))[0])

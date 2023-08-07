@@ -58,7 +58,7 @@ async def test_run_success() -> None:
     async with app.run_test():
         # Call regular function
         foo_worker: Worker[str] = Worker(
-            app, foo, name="foo", group="foo-group", description="Foo test"
+            app, foo, name="foo", group="foo-group", description="Foo test", thread=True
         )
         # Call coroutine function
         bar_worker: Worker[str] = Worker(
@@ -68,18 +68,39 @@ async def test_run_success() -> None:
         baz_worker: Worker[str] = Worker(
             app, baz(), name="baz", group="baz-group", description="Baz test"
         )
+        # Call coroutine function in a thread
+        bar_thread_worker: Worker[str] = Worker(
+            app, bar, name="bar", group="bar-group", description="Bar test", thread=True
+        )
+        # Call coroutine in a thread.
+        baz_thread_worker: Worker[str] = Worker(
+            app,
+            baz(),
+            name="baz",
+            group="baz-group",
+            description="Baz test",
+            thread=True,
+        )
         assert foo_worker.result is None
         assert bar_worker.result is None
         assert baz_worker.result is None
+        assert bar_thread_worker.result is None
+        assert baz_thread_worker.result is None
         foo_worker._start(app)
         bar_worker._start(app)
         baz_worker._start(app)
+        bar_thread_worker._start(app)
+        baz_thread_worker._start(app)
         assert await foo_worker.wait() == "foo"
         assert await bar_worker.wait() == "bar"
         assert await baz_worker.wait() == "baz"
+        assert await bar_thread_worker.wait() == "bar"
+        assert await baz_thread_worker.wait() == "baz"
         assert foo_worker.result == "foo"
         assert bar_worker.result == "bar"
         assert baz_worker.result == "baz"
+        assert bar_thread_worker.result == "bar"
+        assert baz_thread_worker.result == "baz"
 
 
 async def test_run_error() -> None:

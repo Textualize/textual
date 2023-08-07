@@ -147,22 +147,29 @@ This works well if you are using an async API like `httpx`, but if your API does
 
     Threads are a form of concurrency supplied by your Operating System. Threads allow your code to run more than a single function simultaneously.
 
-You can create threads by applying `run_worker` or the `work` decorator to a plain (non async) method or function.
-The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing threaded code.
+You can create threads by setting `thread=True` on the `run_worker` method or the `work` decorator.
+The API for thread workers is identical to async workers, but there are a few differences you need to be aware of when writing code for thread workers.
 
 The first difference is that you should avoid calling methods on your UI directly, or setting reactive variables.
 You can work around this with the [App.call_from_thread][textual.app.App.call_from_thread] method which schedules a call in the main thread.
 
 The second difference is that you can't cancel threads in the same way as coroutines, but you *can* manually check if the worker was cancelled.
 
-Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in the standard library). The `urllib` module is not async aware, so we will need to use threads:
+Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in the standard library).
+The `urllib` module is not async aware, so we will need to use threads:
 
 ```python title="weather05.py" hl_lines="1 26-43"
 --8<-- "docs/examples/guide/workers/weather05.py"
 ```
 
-The `update_weather` function doesn't have the `async` keyword, so the `@work` decorator will create a thread worker.
+In this example, the `update_weather` is not asynchronous (i.e. a regular function).
+The `@work` decorator has `thread=True` which makes it a thread worker.
 Note the use of [get_current_worker][textual.worker.get_current_worker] which the function uses to check if it has been cancelled or not.
+
+!!! important
+
+    Textual will raise an exception if you add the `work` decorator to a regular function without `thread=True`.
+
 
 #### Posting messages
 

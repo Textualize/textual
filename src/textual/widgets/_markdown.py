@@ -628,22 +628,20 @@ class Markdown(Widget):
         if self._markdown is not None:
             self.update(self._markdown)
 
-    async def load(self, path: Path) -> bool:
+    async def load(self, path: Path) -> None:
         """Load a new Markdown document.
 
         Args:
             path: Path to the document.
 
-        Returns:
-            True on success, or False if the document could not be read.
-        """
-        try:
-            markdown = path.read_text(encoding="utf-8")
-        except Exception:
-            return False
+        Raises:
+            OSError: If there was some form of error loading the document.
 
-        await self.update(markdown)
-        return True
+        Note:
+            The exceptions that can be raised by this method are all of
+            those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
+        """
+        await self.update(path.read_text(encoding="utf-8"))
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
         """Process an unhandled token.

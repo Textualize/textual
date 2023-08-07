@@ -220,6 +220,22 @@ class TestVariableReferenceSubstitution:
         with pytest.raises(UnresolvedVariableError):
             list(substitute_references(tokenize(css, "")))
 
+    def test_empty_variable(self):
+        css = "$x:\n* { background:$x; }"
+        result = list(substitute_references(tokenize(css, "")))
+        assert [(t.name, t.value) for t in result] == [
+            ("variable_name", "$x:"),
+            ("variable_value_end", "\n"),
+            ("selector_start_universal", "*"),
+            ("whitespace", " "),
+            ("declaration_set_start", "{"),
+            ("whitespace", " "),
+            ("declaration_name", "background:"),
+            ("declaration_end", ";"),
+            ("whitespace", " "),
+            ("declaration_set_end", "}"),
+        ]
+
     def test_transitive_reference(self):
         css = "$x: 1\n$y: $x\n.thing { border: $y }"
         assert list(substitute_references(tokenize(css, ""))) == [

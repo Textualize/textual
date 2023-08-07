@@ -225,7 +225,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Is the node is attached to the app via the DOM?"""
+        """Is the node attached to the app via the DOM?"""
         from .app import App
 
         node = self
@@ -718,6 +718,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
             `True` if the messages was processed, `False` if it wasn't.
         """
         _rich_traceback_omit = True
+        if not hasattr(message, "_prevent"):
+            # Catch a common error (forgetting to call super)
+            raise RuntimeError(
+                "Message is missing attributes; did you forget to call super().__init__() ?"
+            )
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):

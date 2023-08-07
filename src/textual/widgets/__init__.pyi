@@ -11,6 +11,7 @@ from ._label import Label as Label
 from ._list_item import ListItem as ListItem
 from ._list_view import ListView as ListView
 from ._loading_indicator import LoadingIndicator as LoadingIndicator
+from ._log import Log as Log
 from ._markdown import Markdown as Markdown
 from ._markdown import MarkdownViewer as MarkdownViewer
 from ._option_list import OptionList as OptionList
@@ -19,6 +20,7 @@ from ._pretty import Pretty as Pretty
 from ._progress_bar import ProgressBar as ProgressBar
 from ._radio_button import RadioButton as RadioButton
 from ._radio_set import RadioSet as RadioSet
+from ._rich_log import RichLog as RichLog
 from ._select import Select as Select
 from ._selection_list import SelectionList as SelectionList
 from ._sparkline import Sparkline as Sparkline
@@ -29,7 +31,6 @@ from ._tabbed_content import TabPane as TabPane
 from ._tabs import Tab as Tab
 from ._tabs import Tabs as Tabs
 from ._text_area import TextArea as TextArea
-from ._text_log import TextLog as TextLog
 from ._tooltip import Tooltip as Tooltip
 from ._tree import Tree as Tree
 from ._welcome import Welcome as Welcome

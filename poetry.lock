@@ -475,7 +475,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "mkdocs"
-version = "1.5.1"
+version = "1.5.2"
 description = "Project documentation with Markdown."
 category = "dev"
 optional = false
@@ -723,7 +723,7 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "pygments"
-version = "2.15.1"
+version = "2.16.1"
 description = "Pygments is a syntax highlighting package written in Python."
 category = "main"
 optional = false
@@ -972,7 +972,7 @@ pytest = ">=5.1.0,<8.0.0"
 
 [[package]]
 name = "textual-dev"
-version = "1.0.1"
+version = "1.1.0"
 description = "Development tools for working with Textual"
 category = "dev"
 optional = false
@@ -982,7 +982,7 @@ python-versions = ">=3.7,<4.0"
 aiohttp = ">=3.8.1"
 click = ">=8.1.2"
 msgpack = ">=1.0.3"
-textual = ">=0.29.0"
+textual = ">=0.32.0"
 typing-extensions = ">=4.4.0,<5.0.0"
 
 [[package]]
@@ -1145,7 +1145,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "faffc64aa9c2ff4fa595d3a6481c2d6456f88253edbd46795048fc8d760e87d1"
+content-hash = "6310dfc187fa28cd8b2b686f02eb0167c1d5cc3c31a7d5445410b546c3f853d3"
 
 [metadata.files]
 aiohttp = [
@@ -1659,8 +1659,8 @@ mergedeep = [
     {file = "mergedeep-1.3.4.tar.gz", hash = "sha256:0096d52e9dad9939c3d975a774666af186eda617e6ca84df4c94dec30004f2a8"},
 ]
 mkdocs = [
-    {file = "mkdocs-1.5.1-py3-none-any.whl", hash = "sha256:67e889f8d8ba1fe5decdfc59f5f8f21d6a8925a129339e93dede303bdea03a98"},
-    {file = "mkdocs-1.5.1.tar.gz", hash = "sha256:f2f323c62fffdf1b71b84849e39aef56d6852b3f0a5571552bca32cefc650209"},
+    {file = "mkdocs-1.5.2-py3-none-any.whl", hash = "sha256:60a62538519c2e96fe8426654a67ee177350451616118a41596ae7c876bb7eac"},
+    {file = "mkdocs-1.5.2.tar.gz", hash = "sha256:70d0da09c26cff288852471be03c23f0f521fc15cf16ac89c7a3bfb9ae8d24f9"},
 ]
 mkdocs-autorefs = [
     {file = "mkdocs-autorefs-0.4.1.tar.gz", hash = "sha256:70748a7bd025f9ecd6d6feeba8ba63f8e891a1af55f48e366d6d6e78493aba84"},
@@ -1887,8 +1887,8 @@ pre-commit = [
     {file = "pre_commit-2.21.0.tar.gz", hash = "sha256:31ef31af7e474a8d8995027fefdfcf509b5c913ff31f2015b4ec4beb26a6f658"},
 ]
 pygments = [
-    {file = "Pygments-2.15.1-py3-none-any.whl", hash = "sha256:db2db3deb4b4179f399a09054b023b6a586b76499d36965813c71aa8ed7b5fd1"},
-    {file = "Pygments-2.15.1.tar.gz", hash = "sha256:8ace4d3c1dd481894b2005f560ead0f9f19ee64fe983366be1a21e171d12775c"},
+    {file = "Pygments-2.16.1-py3-none-any.whl", hash = "sha256:13fc09fa63bc8d8671a6d247e1eb303c4b343eaee81d861f3404db2935653692"},
+    {file = "Pygments-2.16.1.tar.gz", hash = "sha256:1daff0494820c69bc8941e407aa20f577374ee88364ee10a98fdbe0aece96e29"},
 ]
 pymdown-extensions = [
     {file = "pymdown_extensions-10.1-py3-none-any.whl", hash = "sha256:ef25dbbae530e8f67575d222b75ff0649b1e841e22c2ae9a20bad9472c2207dc"},
@@ -2091,8 +2091,8 @@ syrupy = [
     {file = "syrupy-3.0.6.tar.gz", hash = "sha256:583aa5ca691305c27902c3e29a1ce9da50ff9ab5f184c54b1dc124a16e4a6cf4"},
 ]
 textual-dev = [
-    {file = "textual_dev-1.0.1-py3-none-any.whl", hash = "sha256:419fc426c120f04f89ab0cb1aa88f7873dd7cdb9c21618e709175c8eaff6b566"},
-    {file = "textual_dev-1.0.1.tar.gz", hash = "sha256:9f4c40655cbb56af7ee92805ef14fa24ae98ff8b0ae778c59de7222f1caa7281"},
+    {file = "textual_dev-1.1.0-py3-none-any.whl", hash = "sha256:c57320636098e31fa5d5c29fc3bc60829bb420da3c76bfed24db6eacf178dbc6"},
+    {file = "textual_dev-1.1.0.tar.gz", hash = "sha256:e2f8ce4e1c18a16b80282f3257cd2feb49a7ede289a78908c9063ce071bb77ce"},
 ]
 time-machine = [
     {file = "time_machine-2.10.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:2d5e93c14b935d802a310c1d4694a9fe894b48a733ebd641c9a570d6f9e1f667"},

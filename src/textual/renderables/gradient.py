@@ -75,7 +75,7 @@ class LinearGradient:
         get_color = color_gradient.get_color
         from_color = Style.from_color
 
-        @lru_cache
+        @lru_cache(maxsize=None)
         def get_rich_color(color_offset: int) -> RichColor:
             """Get a Rich color in the gradient.
 
@@ -88,19 +88,42 @@ class LinearGradient:
             return get_color(color_offset / 255).rich_color
 
         for line_y in range(height):
-            y = float(line_y) * 2
-            for x in range(width):
-                point_x = x - center_x
-                point_y = y - center_y
-                rx1 = center_x + (point_x * cos_angle - point_y * sin_angle)
-                rx2 = center_x + (point_x * cos_angle - (point_y + 1.0) * sin_angle)
+            point_y = float(line_y) * 2 - center_y
+            point_x = 0 - center_x
+
+            x1 = (center_x + (point_x * cos_angle - point_y * sin_angle)) / width * 255
+            x2 = (
+                (center_x + (point_x * cos_angle - (point_y + 1.0) * sin_angle))
+                / width
+                * 255
+            )
+            point_x = width - center_x
+            end_x1 = (
+                (center_x + (point_x * cos_angle - point_y * sin_angle)) / width * 255
+            )
+            delta_x = (end_x1 - x1) / width
+
+            if abs(delta_x) < 0.0001:
+                # Special case for verticals
                 yield _Segment(
-                    "▀",
+                    "▀" * width,
                     from_color(
-                        get_rich_color(int(rx1 / width * 255)),
-                        get_rich_color(int(rx2 / width * 255)),
+                        get_rich_color(int(x1)),
+                        get_rich_color(int(x2)),
                     ),
                 )
+
+            else:
+                yield from [
+                    _Segment(
+                        "▀",
+                        from_color(
+                            get_rich_color(int(x1 + x * delta_x)),
+                            get_rich_color(int(x2 + x * delta_x)),
+                        ),
+                    )
+                    for x in range(width)
+                ]
 
             yield new_line
 
@@ -125,4 +148,36 @@ if __name__ == "__main__":
 
     stops = [(i / (len(COLORS) - 1), Color.parse(c)) for i, c in enumerate(COLORS)]
 
-    print(LinearGradient(45, stops))
+    print(LinearGradient(25, stops))
+
+    from time import time
+
+    from textual.app import App, ComposeResult
+    from textual.widgets import Static
+
+    class GradientApp(App):
+        CSS = """
+        Screen {
+            background: transparent;
+            align: center middle;
+        }
+
+        Static {
+            padding: 2 4;
+            background: $panel;
+            width: 50;
+        }
+
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Static("Gradients are fast now :-) ")
+
+        def render(self):
+            return LinearGradient(time() * 90, stops)
+
+        def on_mount(self) -> None:
+            self.set_interval(1 / 30, self.refresh)
+
+    app = GradientApp()
+    app.run()

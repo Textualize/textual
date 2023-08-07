@@ -4,7 +4,7 @@ Builtin events sent by Textual.
 
 Events may be marked as "Bubbles" and "Verbose".
 See the [events guide](/guide/events/#bubbling) for an explanation of bubbling.
-Verbose events are excluded from the textual console, unless you explicit request them with the `-v` switch as follows:
+Verbose events are excluded from the textual console, unless you explicitly request them with the `-v` switch as follows:
 
 ```
 textual console -v
@@ -613,3 +613,22 @@ class ScreenSuspend(Event, bubble=False):
     - [ ] Bubbles
     - [ ] Verbose
     """
+
+
+@rich.repr.auto
+class Print(Event, bubble=False):
+    """Sent to a widget that is capturing prints.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    Args:
+        text: Text that was printed.
+        stderr: True if the print was to stderr, or False for stdout.
+
+    """
+
+    def __init__(self, text: str, stderr: bool = False) -> None:
+        super().__init__()
+        self.text = text
+        self.stderr = stderr

@@ -36,7 +36,6 @@ from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
 from .geometry import Offset, Region, Size
-from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
@@ -184,7 +183,7 @@ class Screen(Generic[ScreenResultType], Widget):
         from .app import ScreenStackError
 
         try:
-            return self.app.screen is self
+            return self.app.screen is self or self in self.app._background_screens
         except ScreenStackError:
             return False
 
@@ -562,6 +561,21 @@ class Screen(Generic[ScreenResultType], Widget):
 
         await self._invoke_and_clear_callbacks()
 
+    def _compositor_refresh(self) -> None:
+        """Perform a compositor refresh."""
+        if self is self.app.screen:
+            # Top screen
+            update = self._compositor.render_update(
+                screen_stack=self.app._background_screens
+            )
+            self.app._display(self, update)
+            self._dirty_widgets.clear()
+        elif self in self.app._background_screens and self._compositor._dirty_regions:
+            # Background screen
+            self.app.screen.refresh(*self._compositor._dirty_regions)
+            self._compositor._dirty_regions.clear()
+            self._dirty_widgets.clear()
+
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         self._update_timer.pause()
@@ -582,11 +596,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
             if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
-                update = self._compositor.render_update(
-                    screen_stack=self.app._background_screens
-                )
-                self.app._display(self, update)
-                self._dirty_widgets.clear()
+                self._compositor_refresh()
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)
@@ -703,10 +713,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self.app._handle_exception(error)
             return
         if self.is_current:
-            display_update = self._compositor.render_update(
-                full=full, screen_stack=self.app._background_screens
-            )
-            self.app._display(self, display_update)
+            self._compositor_refresh()
 
         if not self.app._dom_ready:
             self.app.post_message(events.Ready())
@@ -841,8 +848,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 except NoMatches:
                     pass
                 else:
-                    tooltip.styles.offset = event.screen_offset
-
                     if self._tooltip_widget != widget or not tooltip.display:
                         self._tooltip_widget = widget
                         if self._tooltip_timer is not None:
@@ -940,29 +945,24 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         self.dismiss(result)
 
-    def notify(
-        self,
-        message: str,
-        *,
-        title: str = "",
-        severity: SeverityLevel = "information",
-        timeout: float = Notification.timeout,
-    ) -> Notification:
-        """Create a notification.
+    def can_view(self, widget: Widget) -> bool:
+        """Check if a given widget is in the current view (scrollable area).
+
+        Note: This doesn't necessarily equate to a widget being visible.
+        There are other reasons why a widget may not be visible.
 
         Args:
-            message: The message for the notification.
-            title: The title for the notification.
-            severity: The severity of the notification.
-            timeout: The timeout for the notification.
+            widget: A widget that is a descendant of self.
 
         Returns:
-            The new notification.
-
-        See [`App.notify`][textual.app.App.notify] for the full
-        documentation for this method.
+            True if the entire widget is in view, False if it is partially visible or not in view.
         """
-        return self.app.notify(message, title=title, severity=severity, timeout=timeout)
+        # If the widget is one that overlays the screen...
+        if widget.styles.overlay == "screen":
+            # ...simply check if it's within the screen's region.
+            return widget.region in self.region
+        # Failing that fall back to normal checking.
+        return super().can_view(widget)
 
 
 @rich.repr.auto

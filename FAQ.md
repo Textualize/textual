@@ -7,7 +7,9 @@
 - [How can I select and copy text in a Textual app?](#how-can-i-select-and-copy-text-in-a-textual-app)
 - [How can I set a translucent app background?](#how-can-i-set-a-translucent-app-background)
 - [How do I center a widget in a screen?](#how-do-i-center-a-widget-in-a-screen)
+- [How do I fix WorkerDeclarationError?](#how-do-i-fix-workerdeclarationerror)
 - [How do I pass arguments to an app?](#how-do-i-pass-arguments-to-an-app)
+- [No widget called TextLog](#no-widget-called-textlog)
 - [Why do some key combinations never make it to my app?](#why-do-some-key-combinations-never-make-it-to-my-app)
 - [Why doesn't Textual look good on macOS?](#why-doesn't-textual-look-good-on-macos)
 - [Why doesn't Textual support ANSI themes?](#why-doesn't-textual-support-ansi-themes)
@@ -144,6 +146,29 @@ if __name__ == "__main__":
     ButtonApp().run()
 ```
 
+<a name="how-do-i-fix-workerdeclarationerror"></a>
+## How do I fix WorkerDeclarationError?
+
+Textual version 0.31.0 requires that you set `thread=True` on the `@work` decorator if you want to run a threaded worker.
+
+If you want a threaded worker, you would declare it in the following way:
+
+```python
+@work(thread=True)
+def run_in_background():
+    ...
+```
+
+If you *don't* want a threaded worker, you should make your work function `async`:
+
+```python
+@work()
+async def run_in_background():
+    ...
+```
+
+This change was made because it was too easy to accidentally create a threaded worker, which may produce unexpected results.
+
 <a name="how-do-i-pass-arguments-to-an-app"></a>
 ## How do I pass arguments to an app?
 
@@ -171,11 +196,24 @@ Then the app can be run, passing in various arguments; for example:
 # Running with default arguments.
 Greetings().run()
 
-# Running with a keyword arguyment.
+# Running with a keyword argument.
 Greetings(to_greet="davep").run()
 
 # Running with both positional arguments.
 Greetings("Well hello", "there").run()
+```
+
+<a name="no-widget-called-textlog"></a>
+## No widget called TextLog
+
+The `TextLog` widget was renamed to `RichLog` in Textual 0.32.0.
+You will need to replace all references to `TextLog` in your code, with `RichLog`.
+Most IDEs will have a search and replace function which will help you do this.
+
+Here's how you should import RichLog:
+
+```python
+from textual.widgets import RichLog
 ```
 
 <a name="why-do-some-key-combinations-never-make-it-to-my-app"></a>
@@ -264,6 +302,8 @@ There is currently a light and dark version of the design system, but more are p
 If scrolling in your `DataTable` is _apparently_ broken, it may be because your `DataTable` is using the default value of `height: auto`.
 This means that the table will be sized to fit its rows without scrolling, which may cause the *container* (typically the screen) to scroll.
 If you would like the table itself to scroll, set the height to something other than `auto`, like `100%`.
+
+**NOTE:** As of Textual v0.31.0 the `max-height` of a `DataTable` is set to `100%`, this will mean that the above is no longer the default experience.
 
 <hr>
 
