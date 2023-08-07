@@ -17,6 +17,7 @@ class Matcher:
         """
         Args:
             query: A query as typed in by the user.
+            match_style: The style to use to highlight matched portions of a string.
         """
         self.query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
