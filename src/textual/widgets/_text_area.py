@@ -38,7 +38,7 @@ class Edit(Protocol):
     def undo(self, text_area: TextArea) -> object | None:
         """Undo the action."""
 
-    def post_resize(self, text_area: TextArea) -> None:
+    def post_edit(self, text_area: TextArea) -> None:
         """Code to execute after content size recalculated and repainted."""
 
 
@@ -76,7 +76,7 @@ class Insert:
             text_area: The TextArea to undo the insert operation on.
         """
 
-    def post_resize(self, text_area: TextArea) -> None:
+    def post_edit(self, text_area: TextArea) -> None:
         """Update the cursor location after the widget has been refreshed.
 
         Args:
@@ -117,7 +117,7 @@ class Delete:
     def undo(self, text_area: TextArea) -> None:
         """Undo the delete action."""
 
-    def post_resize(self, text_area: TextArea) -> None:
+    def post_edit(self, text_area: TextArea) -> None:
         cursor_destination = self.cursor_destination
         if cursor_destination is not None:
             text_area.selection = Selection.cursor(cursor_destination)
@@ -149,9 +149,11 @@ TextArea > .text-area--cursor {
     color: $text;
     background: white 80%;
 }
-
 TextArea > .text-area--selection {
     background: $primary;
+}
+TextArea > .text-area--width-guide {
+    background: white 4%;
 }
 """
 
@@ -161,6 +163,7 @@ TextArea > .text-area--selection {
         "text-area--gutter",
         "text-area--cursor",
         "text-area--selection",
+        "text-area--width-guide",
     }
 
     BINDINGS = [
@@ -225,6 +228,9 @@ TextArea > .text-area--selection {
 
     indent_width: Reactive[int] = reactive(4)
     """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
+
+    show_width_guide: Reactive[bool] = reactive(False)
+    """If True, a vertical line will indicate the width of the document."""
 
     def __init__(
         self,
@@ -348,6 +354,8 @@ TextArea > .text-area--selection {
                 else:
                     line.stylize_before(selection_style, end=line_character_count)
 
+        virtual_width, virtual_height = self.virtual_size
+
         # Highlight the cursor
         cursor_row, cursor_column = end
         active_line_style = self.get_component_rich_style("text-area--active-line")
@@ -355,6 +363,14 @@ TextArea > .text-area--selection {
             cursor_style = self.get_component_rich_style("text-area--cursor")
             line.stylize(cursor_style, cursor_column, cursor_column + 1)
             line.stylize_before(active_line_style)
+
+        if self.show_width_guide:
+            width_guide_style = self.get_component_rich_style("text-area--width-guide")
+            line.stylize_before(
+                width_guide_style,
+                virtual_width - self.gutter_width - 1,
+                virtual_width - self.gutter_width,
+            )
 
         # Build the gutter text for this line
         if self.show_line_numbers:
@@ -373,8 +389,6 @@ TextArea > .text-area--selection {
             )
         else:
             gutter = Text("", end="")
-
-        virtual_width, virtual_height = self.virtual_size
 
         # Render the gutter and the text of this line
         gutter_segments = self.app.console.render(gutter)
@@ -456,7 +470,7 @@ TextArea > .text-area--selection {
         # self._undo_stack = self._undo_stack[-20:]
 
         self._refresh_size()
-        edit.post_resize(self)
+        edit.post_edit(self)
 
         return result
 
