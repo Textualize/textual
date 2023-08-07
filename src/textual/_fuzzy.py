@@ -21,14 +21,20 @@ class Matcher:
         """
         self._query = query
         self._match_style = Style(reverse=True) if match_style is None else match_style
-        self._query_regex = ".*?".join(f"({escape(character)})" for character in query)
-        self._query_regex_compiled = compile(self._query_regex)
+        self._query_regex = compile(
+            ".*?".join(f"({escape(character)})" for character in query)
+        )
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
 
     @property
     def query(self) -> str:
         """The query string to look for."""
         return self._query
+
+    @property
+    def query_pattern(self) -> str:
+        """The regular expression pattern built from the query."""
+        return self._query_regex.pattern
 
     def match(self, candidate: str) -> float:
         """Match the candidate against the query.
@@ -42,7 +48,7 @@ class Matcher:
         cached = self._cache.get(candidate)
         if cached is not None:
             return cached
-        match = self._query_regex_compiled.search(candidate)
+        match = self._query_regex.search(candidate)
         if match is None:
             score = 0.0
         else:
@@ -70,7 +76,7 @@ class Matcher:
         Returns:
             A [rich.text.Text][`Text`] object with highlighted matches.
         """
-        match = self._query_regex_compiled.search(candidate)
+        match = self._query_regex.search(candidate)
         text = Text(candidate)
         if match is None:
             return text
