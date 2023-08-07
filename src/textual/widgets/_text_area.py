@@ -274,10 +274,11 @@ TextArea > .text-area--width-guide {
         self._reload_document()
 
     def _watch_theme(self) -> None:
-        """When the theme is updated, update"""
+        """When the theme is updated, update the document."""
         self._reload_document()
 
     def _watch_show_line_numbers(self) -> None:
+        """The line number gutter contributes to virtual size, so recalculate."""
         self._refresh_size()
 
     def _reload_document(self) -> None:
