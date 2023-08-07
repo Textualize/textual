@@ -398,12 +398,20 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # the context of an OptionList. At the moment this act of copying
         # sans bgcolor seems to be the only way to achieve this.
         return Style(
+            blink2=style.blink2,
+            blink=style.blink,
+            bold=style.bold,
             color=style.color,
+            conceal=style.conceal,
             dim=style.dim,
+            encircle=style.encircle,
+            frame=style.frame,
             italic=style.italic,
+            link=style.link,
             overline=style.overline,
             reverse=style.reverse,
             strike=style.strike,
+            underline2=style.underline2,
             underline=style.underline,
         )
 
