@@ -23,7 +23,7 @@ BUILTIN_THEMES = {
         # "constant": Style(color="#AE81FF"),
         "variable": Style(color="white"),
         "parameter": Style(color="cyan"),
-        "type": Style(color="cyan"),
+        # "type": Style(color="cyan"),
         "escape": Style(bgcolor="magenta"),
         "heading": Style(color="#F92672", bold=True),
     }
@@ -62,7 +62,7 @@ class SyntaxTheme:
     highlight_query: str = ""
     """The tree-sitter query to use for highlighting.
 
-    See `*.scm` files in this repo for examples."""
+    See `*.scm` files in this repo for examples, as well as the tree-sitter docs."""
 
     @classmethod
     def get_theme(cls, theme_name: str) -> "SyntaxTheme":
