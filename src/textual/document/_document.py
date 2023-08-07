@@ -4,10 +4,11 @@ from abc import ABC, abstractmethod
 from typing import NamedTuple, Tuple
 
 from rich.text import Text
-from typing_extensions import Protocol, runtime_checkable
 
+from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, SupportsIndex, get_args
+from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
 VALID_NEWLINES = set(get_args(Newline))
@@ -61,6 +62,50 @@ class DocumentBase(ABC):
             The text that was deleted from the document.
         """
 
+    @property
+    @abstractmethod
+    def text(self) -> str:
+        """The text from the document as a string."""
+
+    @abstractmethod
+    def get_line_text(self, index: int) -> Text:
+        """Returns the line with the given index from the document.
+
+        This is used in rendering lines, and will be called by the
+        TextArea for each line that is rendered.
+
+        Args:
+            index: The index of the line in the document.
+
+        Returns:
+            The Text instance representing the line. When overriding
+            this method, ensure the returned Text instance has `end=""`.
+        """
+
+    @abstractmethod
+    def get_text_range(self, start: Location, end: Location) -> str:
+        """Get the text that falls between the start and end locations.
+
+        Args:
+            start: The start location of the selection.
+            end: The end location of the selection.
+
+        Returns:
+            The text between start (inclusive) and end (exclusive).
+        """
+
+    @abstractmethod
+    def get_size(self, indent_width: int) -> Size:
+        """Get the size of the document.
+
+        The height will generally be the number of lines, and the width
+        will be the maximum cell length of all the lines."""
+
+    @property
+    @abstractmethod
+    def line_count(self) -> int:
+        """Returns the number of lines in the document."""
+
 
 class Document(DocumentBase):
     """A document which can be opened in a TextArea."""
@@ -73,7 +118,7 @@ class Document(DocumentBase):
 
         If there's a newline at the end of the file, the final line is an empty string.
         """
-        if text.endswith(tuple(VALID_NEWLINES)):
+        if text.endswith(tuple(VALID_NEWLINES)) or not text:
             self._lines.append("")
 
     @property
@@ -95,6 +140,13 @@ class Document(DocumentBase):
     def newline(self) -> Newline:
         """Get the Newline used in this document (e.g. '\r\n', '\n'. etc.)"""
         return self._newline
+
+    def get_size(self, indent_width: int) -> Size:
+        lines = self._lines
+        cell_lengths = [cell_len(line.expandtabs(indent_width)) for line in lines]
+        max_cell_length = max(cell_lengths or [1])
+        height = len(lines)
+        return Size(max_cell_length, height)
 
     def insert_range(self, start: Location, end: Location, text: str) -> Location:
         """Insert text at the given range.

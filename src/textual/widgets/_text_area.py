@@ -270,13 +270,10 @@ TextArea > .text-area--selection {
 
     def _refresh_size(self) -> None:
         """Calculate the size of the document."""
-        lines = self._document.lines
+        width, height = self._document.get_size(self.indent_width)
         # TODO - this is a prime candidate for optimisation.
-        cell_lengths = [cell_len(line.expandtabs(self.indent_width)) for line in lines]
-        text_width = max(cell_lengths or [1])
-        height = len(lines)
         # +1 width to make space for the cursor resting at the end of the line
-        self.virtual_size = Size(text_width + self.gutter_width + 1, height)
+        self.virtual_size = Size(width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         document = self._document
