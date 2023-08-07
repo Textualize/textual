@@ -220,11 +220,15 @@ class Reactive(Generic[ReactiveType]):
             obj.post_message(events.Callback(callback=partial(Reactive._compute, obj)))
 
         def invoke_watcher(
-            watch_function: Callable, old_value: object, value: object
+            watcher_object: Reactable,
+            watch_function: Callable,
+            old_value: object,
+            value: object,
         ) -> None:
             """Invoke a watch function.
 
             Args:
+                watcher_object: The object watching for the changes.
                 watch_function: A watch function, which may be sync or async.
                 old_value: The old value of the attribute.
                 value: The new value of the attribute.
@@ -239,17 +243,17 @@ class Reactive(Generic[ReactiveType]):
                 watch_result = watch_function()
             if isawaitable(watch_result):
                 # Result is awaitable, so we need to await it within an async context
-                obj.post_message(
+                watcher_object.post_message(
                     events.Callback(callback=partial(await_watcher, watch_result))
                 )
 
         private_watch_function = getattr(obj, f"_watch_{name}", None)
         if callable(private_watch_function):
-            invoke_watcher(private_watch_function, old_value, value)
+            invoke_watcher(obj, private_watch_function, old_value, value)
 
         public_watch_function = getattr(obj, f"watch_{name}", None)
         if callable(public_watch_function):
-            invoke_watcher(public_watch_function, old_value, value)
+            invoke_watcher(obj, public_watch_function, old_value, value)
 
         # Process "global" watchers
         watchers: list[tuple[Reactable, Callable]]
@@ -263,7 +267,7 @@ class Reactive(Generic[ReactiveType]):
             ]
             for reactable, callback in watchers:
                 with reactable.prevent(*obj._prevent_message_types_stack[-1]):
-                    invoke_watcher(callback, old_value, value)
+                    invoke_watcher(reactable, callback, old_value, value)
 
     @classmethod
     def _compute(cls, obj: Reactable) -> None:
