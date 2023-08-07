@@ -379,12 +379,10 @@ class ScalarOffset(NamedTuple):
             New offset
         """
         x, y = token.split()
-        # fmt: off
         return cls(
             Scalar.parse(x, Unit.WIDTH),
-            Scalar.parse(y, Unit.HEIGHT)
+            Scalar.parse(y, Unit.HEIGHT),
         )
-        # fmt: on
 
 
 NULL_SCALAR = ScalarOffset(Scalar.from_number(0), Scalar.from_number(0))

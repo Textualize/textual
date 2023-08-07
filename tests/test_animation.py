@@ -65,7 +65,7 @@ async def test_animate_offset(destination) -> None:
         assert static.offset == Offset(0, 0)
         assert static.styles.offset == NULL_SCALAR
 
-        static.styles.animate("offset", destination, duration=0.5, easing="linear")
+        static.styles.animate("offset", destination, duration=0.5)
         start = perf_counter()
 
         # Wait for the animation to finished
@@ -75,12 +75,10 @@ async def test_animate_offset(destination) -> None:
         assert elapsed >= 0.5
 
         # Check the offset reached the destination
-        # fmt: off
         assert static.styles.offset == ScalarOffset(
             Scalar(10, Unit.CELLS, Unit.WIDTH),
-            Scalar(5,  Unit.CELLS, Unit.HEIGHT)
+            Scalar(5, Unit.CELLS, Unit.HEIGHT),
         )
-        # fmt: on
 
 
 async def test_scheduling_animation() -> None:
