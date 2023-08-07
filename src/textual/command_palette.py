@@ -113,7 +113,7 @@ class CommandSource(ABC):
         Returns:
             A fuzzy matcher object for matching against candidate hits.
         """
-        return Matcher(user_input, self.match_style)
+        return Matcher(user_input, match_style=self.match_style)
 
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:

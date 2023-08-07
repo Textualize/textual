@@ -13,7 +13,7 @@ from ._cache import LRUCache
 class Matcher:
     """A fuzzy matcher."""
 
-    def __init__(self, query: str, match_style: Style | None = None) -> None:
+    def __init__(self, query: str, *, match_style: Style | None = None) -> None:
         """
         Args:
             query: A query as typed in by the user.
