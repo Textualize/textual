@@ -23,6 +23,7 @@ from rich.text import Text
 from typing_extensions import TypeAlias
 
 from . import on, work
+from ._fuzzy import Matcher
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
@@ -40,6 +41,7 @@ __all__ = [
     "CommandPaletteCallable",
     "CommandSource",
     "CommandSourceHit",
+    "Matcher",
 ]
 
 
@@ -101,6 +103,17 @@ class CommandSource(ABC):
     def match_style(self) -> Style | None:
         """The preferred style to use when highlighting matching portions of the `match_text`."""
         return self.__match_style
+
+    def matcher(self, user_input: str) -> Matcher:
+        """Create a fuzzy matcher for the given user input.
+
+        Args:
+            user_input: The text that the user has input.
+
+        Returns:
+            A fuzzy matcher object for matching against candidate hits.
+        """
+        return Matcher(user_input, self.match_style)
 
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
