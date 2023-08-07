@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from re import compile, escape
 
 import rich.repr
+from rich.style import Style
 from rich.text import Text
 
 from ._cache import LRUCache
@@ -10,12 +13,13 @@ from ._cache import LRUCache
 class Matcher:
     """A fuzzy matcher."""
 
-    def __init__(self, query: str) -> None:
+    def __init__(self, query: str, match_style: Style | None = None) -> None:
         """
         Args:
             query: A query as typed in by the user.
         """
         self.query = query
+        self._match_style = Style(reverse=True) if match_style is None else match_style
         self._query_regex = ".*?".join(f"({escape(character)})" for character in query)
         self._query_regex_compiled = compile(self._query_regex)
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
@@ -69,7 +73,7 @@ class Matcher:
             match.span(group_no)[0] for group_no in range(1, match.lastindex + 1)
         ]
         for offset in offsets:
-            text.stylize("reverse", offset, offset + 1)
+            text.stylize(self._match_style, offset, offset + 1)
 
         return text
 
