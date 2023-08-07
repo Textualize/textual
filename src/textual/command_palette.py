@@ -73,13 +73,14 @@ class CommandSource(ABC):
     [textual.command_palette.CommandSource.hunt_for][`hunt_for`].
     """
 
-    def __init__(self, screen: Screen) -> None:
+    def __init__(self, screen: Screen, match_style: Style | None = None) -> None:
         """Initialise the command source.
 
         Args:
             screen: A reference to the active screen.
         """
         self.__screen = screen
+        self.__match_style = match_style
 
     @property
     def focused(self) -> Widget | None:
@@ -95,6 +96,11 @@ class CommandSource(ABC):
     def app(self) -> App[object]:
         """A reference to the application."""
         return self.__screen.app
+
+    @property
+    def match_style(self) -> Style | None:
+        """The preferred style to use when highlighting matching portions of the `match_text`."""
+        return self.__match_style
 
     @abstractmethod
     async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
@@ -171,7 +177,10 @@ class CommandInput(Input):
 class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     """The Textual command palette."""
 
-    COMPONENT_CLASSES: ClassVar[set[str]] = {"command-palette--help-text"}
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "command-palette--help-text",
+        "command-palette--highlight",
+    }
     """
     | Class | Description |
     | :- | :- |
@@ -188,6 +197,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         color: $text-muted;
         text-style: italic;
         background: transparent;
+    }
+
+    CommandPalette > .command-palette--highlight {
+        text-style: reverse;
     }
 
     CommandPalette > Vertical {
@@ -338,6 +351,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             The hits made amongst the registered command sources.
         """
 
+        # Get the style for highlighted which parts of a hit match.
+        match_style = self._sans_background(
+            self.get_component_rich_style("command-palette--highlight")
+        )
+
         # Set up a queue to stream in the command hits from all the sources.
         commands: Queue[CommandSourceHit] = Queue()
 
@@ -346,7 +364,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         searches = [
             create_task(
                 self._consume(
-                    source(self._calling_screen).hunt_for(search_value), commands
+                    source(self._calling_screen, match_style).hunt_for(search_value),
+                    commands,
                 )
             )
             for source in self._sources
