@@ -185,6 +185,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     | Class | Description |
     | :- | :- |
     | `command-palette--help-text` | Targets the help text of a matched command. |
+    | `command-palette--highlight` | Targets the highlights of a matched command. |
     """
 
     DEFAULT_CSS = """
