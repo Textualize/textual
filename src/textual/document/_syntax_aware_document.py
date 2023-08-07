@@ -107,7 +107,7 @@ class SyntaxAwareDocument(Document):
 
         end_location = super().insert_range(start, end, text)
 
-        if TREE_SITTER and self._syntax_tree is not None:
+        if TREE_SITTER:
             text_byte_length = len(text.encode("utf-8"))
             self._syntax_tree.edit(
                 start_byte=start_byte,
@@ -145,7 +145,7 @@ class SyntaxAwareDocument(Document):
 
         deleted_text = super().delete_range(start, end)
 
-        if TREE_SITTER and self._syntax_tree is not None:
+        if TREE_SITTER:
             deleted_text_byte_length = len(deleted_text.encode("utf-8"))
             self._syntax_tree.edit(
                 start_byte=start_byte,
@@ -188,7 +188,7 @@ class SyntaxAwareDocument(Document):
         """Given a document coordinate, return the byte offset of that coordinate.
         This method only does work if tree-sitter was imported, otherwise it returns 0.
         """
-        if self._syntax_tree is None:
+        if not TREE_SITTER:
             return 0
 
         lines = self._lines
@@ -209,7 +209,7 @@ class SyntaxAwareDocument(Document):
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] = None,
     ) -> None:
-        if self._syntax_tree is None:
+        if not TREE_SITTER:
             return None
 
         highlights = self._highlights
