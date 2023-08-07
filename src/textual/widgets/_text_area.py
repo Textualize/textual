@@ -277,6 +277,9 @@ TextArea > .text-area--width-guide {
         """When the theme is updated, update"""
         self._reload_document()
 
+    def _watch_show_line_numbers(self) -> None:
+        self._refresh_size()
+
     def _reload_document(self) -> None:
         """Recreate the document based on the language and theme currently set."""
         language = self.language
