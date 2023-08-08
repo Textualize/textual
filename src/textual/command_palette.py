@@ -57,8 +57,8 @@ class CommandSourceHit(NamedTuple):
     match_value: float
     """The match value of the command hit."""
 
-    match_text: Text
-    """The [rich.text.Text][`Text`] representation of the hit."""
+    match_display: RenderableType
+    """The [rich.console.RenderableType][renderable] representation of the hit."""
 
     command: CommandPaletteCallable
     """The function to call when the command is chosen."""
@@ -113,7 +113,7 @@ class CommandSource(ABC):
 
     @property
     def match_style(self) -> Style | None:
-        """The preferred style to use when highlighting matching portions of the `match_text`."""
+        """The preferred style to use when highlighting matching portions of the `match_display`."""
         return self.__match_style
 
     def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
@@ -526,7 +526,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         command_id = 0
         self._show_busy = True
         async for hit in self._hunt_for(search_value):
-            prompt = hit.match_text
+            prompt = hit.match_display
             if hit.command_help:
                 # Because there's some help for the command, we switch to a
                 # Rich table so we can individually align a couple of rows;
@@ -534,7 +534,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 # right-aligned.
                 prompt = Table.grid(expand=True)
                 prompt.add_column(no_wrap=True)
-                prompt.add_row(hit.match_text)
+                prompt.add_row(hit.match_display)
                 prompt.add_row(Align.right(Text(hit.command_help, style=help_style)))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
             self._refresh_command_list(command_list, gathered_commands)
