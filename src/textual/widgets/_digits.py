@@ -5,8 +5,6 @@ from typing import cast
 from rich.align import Align, AlignMethod
 from rich.console import RenderableType
 
-from textual.geometry import Size
-
 from ..geometry import Size
 from ..renderables.digits import Digits as DigitsRenderable
 from ..widget import Widget
