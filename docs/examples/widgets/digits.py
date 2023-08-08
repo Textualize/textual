@@ -17,5 +17,6 @@ class DigitApp(App):
         yield Digits("3.141,592,653,5897", id="pi")
 
 
-app = DigitApp()
-app.run()
+if __name__ == "__main__":
+    app = DigitApp()
+    app.run()

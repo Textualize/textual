@@ -5,7 +5,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-DIGITS = r" 0123456789+-.%ex,^"
+DIGITS = " 0123456789+-^x:"
 DIGITS3X3 = """\
 
 
@@ -46,27 +46,16 @@ DIGITS3X3 = """\
 
 ╺━╸
 
-
-
-.
-
- %
+ ^
 
 
 
-e
-
-x
+ ×
 
 
-
-,
-^
-
-
+ :
 
 """.splitlines()
-DIGIT_WIDTHS = {".": 1, "x": 1, "e": 1, ",": 1, "^": 1}
 
 
 class Digits:
@@ -75,15 +64,6 @@ class Digits:
     def __init__(self, text: str, style: StyleType = "") -> None:
         self._text = text
         self._style = style
-
-    @classmethod
-    def _filter_text(cls, text: str) -> str:
-        """Remove any unsupported characters."""
-        return "".join(
-            (character if character in DIGITS else " ")
-            for character in text
-            if character in DIGITS
-        )
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -98,35 +78,33 @@ class Digits:
             style: Rich Style
 
         """
-        segments: list[list[Segment]] = [[], [], []]
-        _Segment = Segment
+        segments: list[list[str]] = [[], [], []]
         row1 = segments[0].append
         row2 = segments[1].append
         row3 = segments[2].append
 
-        for character in self._filter_text(self._text):
+        for character in self._text:
             try:
                 position = DIGITS.index(character) * 3
             except ValueError:
-                continue
-            width = DIGIT_WIDTHS.get(character, 3)
-            line1, line2, line3 = [
-                line.ljust(width) for line in DIGITS3X3[position : position + 3]
-            ]
-            row1(_Segment(line1, style))
-            row2(_Segment(line2, style))
-            row3(_Segment(line3, style))
+                row1(" ")
+                row2(" ")
+                row3(character)
+            else:
+                width = 3 if character in DIGITS else 1
+                row1(DIGITS3X3[position].ljust(width))
+                row2(DIGITS3X3[position + 1].ljust(width))
+                row3(DIGITS3X3[position + 2].ljust(width))
 
         new_line = Segment.line()
         for line in segments:
-            yield from line
+            yield Segment("".join(line), style)
             yield new_line
 
     @classmethod
     def get_width(cls, text: str) -> int:
         """Calculate the width without rendering."""
-        text = cls._filter_text(text)
-        width = sum(DIGIT_WIDTHS.get(character, 3) for character in text)
+        width = sum(3 if character in DIGITS else 1 for character in text)
         return width
 
     def __rich_measure__(

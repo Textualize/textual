@@ -17,8 +17,8 @@ class DigitApp(App):
 
     def compose(self) -> ComposeResult:
         yield Digits("3.1427", id="digits1")
-        yield Digits(" 0123456789+-.%ex,", id="digits2")
-        yield Digits("1,2,3,4,5,6,7,8,9", id="digits3")
+        yield Digits(" 0123456789+-.,", id="digits2")
+        yield Digits("3x10^4", id="digits3")
 
 
 app = DigitApp()

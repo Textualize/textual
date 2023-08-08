@@ -15,7 +15,15 @@ from ..widget import Widget
 
 
 class Digits(Widget):
-    """A widget to display numerical values using a 3x3 grid of unicode characters."""
+    """A widget to display numerical values using a 3x3 grid of unicode characters.
+
+    Args:
+        name: The name of the widget.
+        id: The ID of the widget in the DOM.
+        classes: The CSS classes of the widget.
+        disabled: Whether the widget is disabled or not.
+
+    """
 
     DEFAULT_CSS = """
     Digits {
@@ -36,22 +44,12 @@ class Digits(Widget):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Initialize digits
-
-        Args:
-            label: The text that appears within the button.
-            variant: The variant of the button.
-            name: The name of the button.
-            id: The ID of the button in the DOM.
-            classes: The CSS classes of the button.
-            disabled: Whether the button is disabled or not.
-        """
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if not isinstance(value, str):
             raise TypeError("value must be a str")
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.value = value
 
-    def update(self, value: str | float) -> None:
+    def update(self, value: str) -> None:
         """Update the Digits with a new value.
 
         Args:
@@ -97,27 +95,3 @@ class Digits(Widget):
             The height of the content.
         """
         return 3  # Always 3 lines
-
-
-if __name__ == "__main__":
-    from time import time
-
-    from textual.app import App, ComposeResult
-
-    class DigitApp(App):
-        def on_ready(self) -> None:
-            digits = self.query_one(Digits)
-            number = 2**32
-
-            def update():
-                nonlocal number
-                number += 1
-                digits.update("123,232.23")
-
-            self.set_interval(1 / 10, update)
-
-        def compose(self) -> ComposeResult:
-            yield Digits()
-
-    app = DigitApp()
-    app.run()
