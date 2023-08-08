@@ -6,6 +6,7 @@ The `Screen` class is a special widget which represents the content in the termi
 from __future__ import annotations
 
 from functools import partial
+from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
     Awaitable,
@@ -293,7 +294,10 @@ class Screen(Generic[ScreenResultType], Widget):
 
         widgets: list[Widget] = []
         add_widget = widgets.append
-        stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
+        focus_sorter = attrgetter("_focus_sort_key")
+        stack: list[Iterator[Widget]] = [
+            iter(sorted(self.displayed_children, key=focus_sorter))
+        ]
         pop = stack.pop
         push = stack.append
 
@@ -303,7 +307,10 @@ class Screen(Generic[ScreenResultType], Widget):
                 pop()
             else:
                 if node.is_container and node.can_focus_children:
-                    push(iter(node.focusable_children))
+                    sorted_displayed_children = sorted(
+                        node.displayed_children, key=focus_sorter
+                    )
+                    push(iter(sorted_displayed_children))
                 if node.focusable:
                     add_widget(node)
 
