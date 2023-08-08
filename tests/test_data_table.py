@@ -507,6 +507,21 @@ async def test_get_row_at():
         assert table.get_row_at(1) == [2, 4, 1]
 
 
+async def test_get_row_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_columns("A", "B", "C")
+        table.add_row((0, 1, 2), key="R0")
+        table.add_row((3, 4, 5), key="R1")
+        row_key0 = table.get_row_key(0)
+        row_key1 = table.get_row_key(1)
+        assert isinstance(row_key0, RowKey)
+        assert isinstance(row_key1, RowKey)
+        assert row_key0.value == "R0"
+        assert row_key1.value == "R1"
+
+
 @pytest.mark.parametrize("index", (-1, 2))
 async def test_get_row_at_invalid_index(index):
     app = DataTableApp()
@@ -616,6 +631,20 @@ async def test_get_column_index_invalid_column_key():
         with pytest.raises(ColumnDoesNotExist):
             index = table.get_column_index('InvalidCol')
 
+
+async def test_get_column_key():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_column("Column2", key="C2")
+        table.add_column("Column3", key="C3")
+        column_key_1 = table.get_column_key(0)
+        column_key_2 = table.get_column_key(1)
+        assert isinstance(column_key_1, ColumnKey)
+        assert isinstance(column_key_2, ColumnKey)
+        assert column_key_1.value == "C1"
+        assert column_key_2.value == "C2"
 
 
 async def test_update_cell_cell_exists():

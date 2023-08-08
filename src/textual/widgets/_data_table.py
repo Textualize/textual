@@ -887,6 +887,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             raise RowDoesNotExist(f"No row exists for row_key={row_key!r}")
         return self._row_locations.get(row_key)
 
+    def get_row_key(self, row_index: int) -> RowKey:
+        """Return the row key for the row identified by row_index.
+
+        Args:
+            row_index: The index of the row.
+
+        Returns:
+            The current row key of the specified row index
+
+        Raises:
+            RowDoesNotExist: If there is no row with the given index.
+        """
+        if not self.is_valid_row_index(row_index):
+            raise RowDoesNotExist(f"Row index {row_index!r} is not valid.")
+        return self._row_locations.get_key(row_index)
+
     def get_column(self, column_key: ColumnKey | str) -> Iterable[CellType]:
         """Get the values from the column identified by the given column key.
 
@@ -940,6 +956,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if column_key not in self._column_locations:
             raise ColumnDoesNotExist(f"No column exists for column_key={column_key!r}")
         return self._column_locations.get(column_key)
+
+    def get_column_key(self, column_index: int) -> ColumnKey:
+        """Return the current key for the column identified by column_index.
+
+        Args:
+            column_index: The index of the column.
+
+        Returns:
+            The current column key of the specified column index
+
+        Raises:
+            ColumnDoesNotExist: If there is no column with the given index.
+        """
+        if not self.is_valid_column_index(column_index):
+            raise ColumnDoesNotExist(
+                f"Column index {column_index!r} is not valid.")
+        return self._column_locations.get_key(column_index)
 
     def _clear_caches(self) -> None:
         self._row_render_cache.clear()
