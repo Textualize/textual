@@ -1,8 +1,10 @@
 import pytest
 
 from textual.app import App
+from textual.containers import Container
 from textual.screen import Screen
 from textual.widget import Widget
+from textual.widgets import Button
 
 
 class Focusable(Widget, can_focus=True):
@@ -201,3 +203,41 @@ def test_focus_next_and_previous_with_str_selector_without_self(screen: Screen):
     assert screen.focus_previous(".a").id == "foo"
     assert screen.focus_previous(".a").id == "foo"
     assert screen.focus_previous(".b").id == "baz"
+
+
+async def test_focus_does_not_move_to_invisible_widgets():
+    """Make sure invisible widgets don't get focused by accident.
+
+    This is kind of a regression test for https://github.com/Textualize/textual/issues/3053,
+    but not really.
+    """
+
+    class MyApp(App):
+        CSS = "#inv { visibility: hidden; }"
+
+        def compose(self):
+            yield Button("one", id="one")
+            yield Button("two", id="inv")
+            yield Button("three", id="three")
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.focused.id == "one"
+        assert app.screen.focus_next().id == "three"
+
+
+async def test_focus_moves_to_visible_widgets_inside_invisible_containers():
+    """Regression test for https://github.com/Textualize/textual/issues/3053."""
+
+    class MyApp(App):
+        CSS = "#inv { visibility: hidden; }"
+
+        def compose(self):
+            yield Button(id="one")
+            with Container(id="inv"):
+                yield Button(id="three")
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.focused.id == "one"
+        assert app.screen.focus_next().id == "three"
