@@ -519,6 +519,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         )
         gathered_commands: list[Command] = []
         command_list = self.query_one(CommandList)
+        command_id = 0
         self._show_busy = True
         async for hit in self._hunt_for(search_value):
             prompt = hit.match_text
@@ -531,8 +532,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 prompt.add_column(no_wrap=True)
                 prompt.add_row(hit.match_text)
                 prompt.add_row(Align.right(Text(hit.command_help, style=help_style)))
-            gathered_commands.append(Command(prompt, hit))
+            gathered_commands.append(Command(prompt, hit, id=str(command_id)))
             self._refresh_command_list(command_list, gathered_commands)
+            command_id += 1
         self._show_busy = False
         if command_list.option_count == 0:
             command_list.add_option(
