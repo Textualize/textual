@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import Queue, TimeoutError, create_task, wait_for
+from functools import total_ordering
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -49,6 +50,7 @@ CommandPaletteCallable: TypeAlias = Callable[[], Any]
 """The type of a function that will be called when a command is selected from the command palette."""
 
 
+@total_ordering
 class CommandSourceHit(NamedTuple):
     """Holds the details of a single command search hit."""
 
@@ -66,6 +68,12 @@ class CommandSourceHit(NamedTuple):
 
     command_help: str | None = None
     """Optional help text for the command."""
+
+    def __lt__(self, other: CommandSourceHit) -> bool:
+        return self.match_value < other.match_value
+
+    def __eq__(self, other: CommandSourceHit) -> bool:
+        return self.match_value == other.match_value
 
 
 class CommandSource(ABC):
@@ -131,6 +139,7 @@ class CommandSource(ABC):
         raise NotImplemented
 
 
+@total_ordering
 class Command(Option):
     """Class that holds a command in the `CommandList`."""
 
@@ -152,6 +161,12 @@ class Command(Option):
         super().__init__(prompt, id, disabled)
         self.command = command
         """The details of the command associated with the option."""
+
+    def __lt__(self, other: Command) -> bool:
+        return self.command < other.command
+
+    def __eq__(self, other: Command) -> bool:
+        return self.command == other.command
 
 
 class CommandList(OptionList, can_focus=False):
