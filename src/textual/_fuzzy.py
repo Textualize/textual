@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from re import IGNORECASE, NOFLAG, compile, escape
+from re import IGNORECASE, compile, escape
 
 import rich.repr
 from rich.style import Style
@@ -30,7 +30,7 @@ class Matcher:
         self._match_style = Style(reverse=True) if match_style is None else match_style
         self._query_regex = compile(
             ".*?".join(f"({escape(character)})" for character in query),
-            flags=NOFLAG if case_sensitive else IGNORECASE,
+            flags=0 if case_sensitive else IGNORECASE,
         )
         self._cache: LRUCache[str, float] = LRUCache(1024 * 4)
 
