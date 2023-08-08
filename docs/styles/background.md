@@ -8,7 +8,7 @@ The `background` style sets the background color of a widget.
 background: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `background` style requires a [`<color>`](../../css_types/color) optionally followed by [`<percentage>`](../../css_types/percentage) to specify the color's opacity (clamped between `0%` and `100%`).
+The `background` style requires a [`<color>`](../css_types/color.md) optionally followed by [`<percentage>`](../css_types/percentage.md) to specify the color's opacity (clamped between `0%` and `100%`).
 
 ## Examples
 
