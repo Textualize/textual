@@ -47,19 +47,22 @@ class Digits(Widget):
             disabled: Whether the button is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        if not isinstance(value, str):
+            raise TypeError("value must be a str")
         self.value = value
 
-    def update(self, new_value: str) -> None:
+    def update(self, value: str | float) -> None:
         """Update the Digits with a new value.
 
         Args:
-            new_value: New value to display.
+            value: New value to display.
         """
-        layout_required = len(new_value) != len(self.value) or (
-            DigitsRenderable.get_width(self.value)
-            != DigitsRenderable.get_width(new_value)
+        if not isinstance(value, str):
+            raise TypeError("value must be a str")
+        layout_required = len(value) != len(self.value) or (
+            DigitsRenderable.get_width(self.value) != DigitsRenderable.get_width(value)
         )
-        self.value = new_value
+        self.value = value
         self.refresh(layout=layout_required)
 
     def render(self) -> RenderableType:
