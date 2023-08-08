@@ -23,7 +23,6 @@ class BoxSizing(App):
         self.widget2.styles.background = "darkgreen"
         self.widget1.styles.width = 30
         self.widget2.styles.width = 30
-        self.widget2.styles.height = 6
         self.widget1.styles.height = 6
         self.widget2.styles.height = 6
         self.widget1.styles.border = ("heavy", "white")

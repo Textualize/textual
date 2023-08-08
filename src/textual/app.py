@@ -47,7 +47,7 @@ from typing import (
     cast,
     overload,
 )
-from weakref import WeakSet
+from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
@@ -100,6 +100,8 @@ from .widgets._toast import ToastRack
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, TypeAlias
+
+    from ._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
@@ -203,6 +205,37 @@ class _NullFile:
         pass
 
     def isatty(self) -> bool:
+        return True
+
+
+class _PrintCapture:
+    """A file-like which captures output."""
+
+    def __init__(self, app: App, stderr: bool = False) -> None:
+        """
+
+        Args:
+            app: App instance.
+            stderr: Write from stderr.
+        """
+        self.app = app
+        self.stderr = stderr
+
+    def write(self, text: str) -> None:
+        """Called when writing to stdout or stderr.
+
+        Args:
+            text: Text that was "printed".
+        """
+        self.app._print(text, stderr=self.stderr)
+
+    def flush(self) -> None:
+        """Called when stdout or stderr was flushed."""
+        self.app._flush(stderr=self.stderr)
+
+    def isatty(self) -> bool:
+        """Pretend we're a terminal."""
+        # TODO: should this be configurable?
         return True
 
 
@@ -432,14 +465,17 @@ class App(Generic[ReturnType], DOMNode):
         self._composed: list[list[Widget]] = []
 
         self.devtools: DevtoolsClient | None = None
+        self._devtools_redirector: StdoutRedirector | None = None
         if "devtools" in self.features:
             try:
                 from textual_dev.client import DevtoolsClient
+                from textual_dev.redirect_output import StdoutRedirector
             except ImportError:
                 # Dev dependencies not installed
                 pass
             else:
                 self.devtools = DevtoolsClient()
+                self._devtools_redirector = StdoutRedirector(self.devtools)
 
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None
@@ -456,9 +492,16 @@ class App(Generic[ReturnType], DOMNode):
         self._dom_lock = asyncio.Lock()
         self._dom_ready = False
         self._batch_count = 0
+        self._notifications = Notifications()
+
+        self._capture_print: WeakKeyDictionary[
+            MessageTarget, tuple[bool, bool]
+        ] = WeakKeyDictionary()
+        self._capture_stdout = _PrintCapture(self, stderr=False)
+        self._capture_stderr = _PrintCapture(self, stderr=True)
+
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
-        self._notifications = Notifications()
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -557,6 +600,18 @@ class App(Generic[ReturnType], DOMNode):
             easing=easing,
             on_complete=on_complete,
         )
+
+    async def stop_animation(self, attribute: str, complete: bool = True) -> None:
+        """Stop an animation on an attribute.
+
+        Args:
+            attribute: Name of the attribute whose animation should be stopped.
+            complete: Should the animation be set to its final value?
+
+        Note:
+            If there is no animation scheduled or running, this is a no-op.
+        """
+        await self._animator.stop_animation(self, attribute, complete)
 
     @property
     def debug(self) -> bool:
@@ -1025,6 +1080,54 @@ class App(Generic[ReturnType], DOMNode):
                 await wait_for_idle(0)
                 await app._animator.wait_until_complete()
                 await wait_for_idle(0)
+
+    def _flush(self, stderr: bool = False) -> None:
+        """Called when stdout or stderr is flushed.
+
+        Args:
+            stderr: True if the print was to stderr, or False for stdout.
+
+        """
+        if self._devtools_redirector is not None:
+            self._devtools_redirector.flush()
+
+    def _print(self, text: str, stderr: bool = False) -> None:
+        """Called with capture print.
+
+        Args:
+            text: Text that has been printed.
+            stderr: True if the print was to stderr, or False for stdout.
+        """
+        if self._devtools_redirector is not None:
+            self._devtools_redirector.write(text)
+        for target, (_stdout, _stderr) in self._capture_print.items():
+            if (_stderr and stderr) or (_stdout and not stderr):
+                target.post_message(events.Print(text, stderr=stderr))
+
+    def begin_capture_print(
+        self, target: MessageTarget, stdout: bool = True, stderr: bool = True
+    ) -> None:
+        """Capture content that is printed (or written to stdout / stderr).
+
+        If printing is captured, the `target` will be send an [events.Print][textual.events.Print] message.
+
+        Args:
+            target: The widget where print content will be sent.
+            stdout: Capture stdout.
+            stderr: Capture stderr.
+        """
+        if not stdout and not stderr:
+            self.end_capture_print(target)
+        else:
+            self._capture_print[target] = (stdout, stderr)
+
+    def end_capture_print(self, target: MessageTarget) -> None:
+        """End capturing of prints.
+
+        Args:
+            target: The widget that was capturing prints.
+        """
+        self._capture_print.pop(target)
 
     @asynccontextmanager
     async def run_test(
@@ -1972,24 +2075,9 @@ class App(Generic[ReturnType], DOMNode):
             if not self._exit:
                 driver.start_application_mode()
                 try:
-                    if headless:
-                        await run_process_messages()
-                    else:
-                        if self.devtools is not None:
-                            devtools = self.devtools
-                            assert devtools is not None
-                            from textual_dev.redirect_output import StdoutRedirector
-
-                            redirector = StdoutRedirector(devtools)
-                            with redirect_stderr(redirector):
-                                with redirect_stdout(redirector):  # type: ignore
-                                    await run_process_messages()
-                        else:
-                            with open(os.devnull, "w") as null_file:
-                                with redirect_stdout(null_file), redirect_stderr(
-                                    null_file
-                                ):
-                                    await run_process_messages()
+                    with redirect_stdout(self._capture_stdout):
+                        with redirect_stderr(self._capture_stderr):
+                            await run_process_messages()
 
                 finally:
                     driver.stop_application_mode()
@@ -2245,7 +2333,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         try:
-            if screen is not self.screen or renderable is None:
+            if renderable is None:
                 return
 
             if (
@@ -2715,6 +2803,10 @@ class App(Generic[ReturnType], DOMNode):
     async def action_pop_screen(self) -> None:
         """An [action](/guide/actions) to remove the topmost screen and makes the new topmost screen active."""
         self.pop_screen()
+
+    async def action_switch_mode(self, mode: str) -> None:
+        """An [action](/guide/actions) that switches to the given mode.."""
+        self.switch_mode(mode)
 
     async def action_back(self) -> None:
         """An [action](/guide/actions) to go back to the previous screen (pop the current screen).

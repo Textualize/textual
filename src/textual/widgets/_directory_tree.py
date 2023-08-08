@@ -299,7 +299,7 @@ class DirectoryTree(Tree[DirEntry]):
         except PermissionError:
             pass
 
-    @work
+    @work(thread=True)
     def _load_directory(self, node: TreeNode[DirEntry]) -> list[Path]:
         """Load the directory contents for a given node.
 

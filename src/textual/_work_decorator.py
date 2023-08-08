@@ -7,6 +7,7 @@ A decorator used to create [workers](/guide/workers).
 from __future__ import annotations
 
 from functools import partial, wraps
+from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
 
 from typing_extensions import ParamSpec, TypeAlias
@@ -30,22 +31,48 @@ Decorator: TypeAlias = Callable[
 ]
 
 
+class WorkerDeclarationError(Exception):
+    """An error in the declaration of a worker method."""
+
+
 @overload
 def work(
-    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
+    *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
+    thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, ReturnType]
+    method: Callable[FactoryParamSpec, ReturnType],
+    *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
+    thread: bool = False,
 ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
     ...
 
 
 @overload
-def work(*, exclusive: bool = False) -> Decorator[..., ReturnType]:
+def work(
+    *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
+    thread: bool = False,
+) -> Decorator[..., ReturnType]:
     ...
 
 
@@ -59,6 +86,7 @@ def work(
     exit_on_error: bool = True,
     exclusive: bool = False,
     description: str | None = None,
+    thread: bool = False,
 ) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
     """A decorator used to create [workers](/guide/workers).
 
@@ -71,6 +99,7 @@ def work(
         description: Readable description of the worker for debugging purposes.
             By default, it uses a string representation of the decorated method
             and its arguments.
+        thread: Mark the method as a thread worker.
     """
 
     def decorator(
@@ -80,6 +109,13 @@ def work(
         )
     ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
+
+        # Methods that aren't async *must* be marked as being a thread
+        # worker.
+        if not iscoroutinefunction(method) and not thread:
+            raise WorkerDeclarationError(
+                "Can not create a worker from a non-async function unless `thread=True` is set on the work decorator."
+            )
 
         @wraps(method)
         def decorated(
@@ -112,6 +148,7 @@ def work(
                     description=debug_description,
                     exclusive=exclusive,
                     exit_on_error=exit_on_error,
+                    thread=thread,
                 ),
             )
             return worker

@@ -5,14 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.31.0] - Unreleased
+## Unreleased
+
+### Fixed
+
+- Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
+- Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
+- Fixed background refresh https://github.com/Textualize/textual/issues/3055
+- `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+
+## [0.32.0] - 2023-08-03
+
+### Added
+
+- Added widgets.Log
+- Added Widget.is_vertical_scroll_end, Widget.is_horizontal_scroll_end, Widget.is_vertical_scrollbar_grabbed, Widget.is_horizontal_scrollbar_grabbed
+
+### Changed
+
+- Breaking change: Renamed TextLog to RichLog
+
+## [0.31.0] - 2023-08-01
+
+### Added
+
+- Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
+- Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
+- Added `App.stop_animation` https://github.com/Textualize/textual/issues/2786
+- Added `Widget.stop_animation` https://github.com/Textualize/textual/issues/2786
+
+### Changed
+
+- Breaking change: Creating a thread worker now requires that a `thread=True` keyword argument is passed https://github.com/Textualize/textual/pull/2938
+- Breaking change: `Markdown.load` no longer captures all errors and returns a `bool`, errors now propagate https://github.com/Textualize/textual/issues/2956
+- Breaking change: the default style of a `DataTable` now has `max-height: 100%` https://github.com/Textualize/textual/issues/2959
 
 ### Fixed
 
 - Fixed a crash when a `SelectionList` had a prompt wider than itself https://github.com/Textualize/textual/issues/2900
 - Fixed a bug where `Click` events were bubbling up from `Switch` widgets https://github.com/Textualize/textual/issues/2366
 - Fixed a crash when using empty CSS variables https://github.com/Textualize/textual/issues/1849
-- `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+- Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
+- Fixed a bug with `DataTable` hover highlighting https://github.com/Textualize/textual/issues/2909
 
 ## [0.30.0] - 2023-07-17
 
@@ -1127,6 +1161,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.31.0]: https://github.com/Textualize/textual/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/Textualize/textual/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/Textualize/textual/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/Textualize/textual/compare/v0.28.0...v0.28.1

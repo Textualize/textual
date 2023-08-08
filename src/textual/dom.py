@@ -241,6 +241,7 @@ class DOMNode(MessagePump):
         exit_on_error: bool = True,
         start: bool = True,
         exclusive: bool = False,
+        thread: bool = False,
     ) -> Worker[ResultType]:
         """Run work in a worker.
 
@@ -254,6 +255,7 @@ class DOMNode(MessagePump):
             exit_on_error: Exit the app if the worker raises an error. Set to `False` to suppress exceptions.
             start: Start the worker immediately.
             exclusive: Cancel all workers in the same group.
+            thread: Mark the worker as a thread worker.
 
         Returns:
             New Worker instance.
@@ -267,6 +269,7 @@ class DOMNode(MessagePump):
             exit_on_error=exit_on_error,
             start=start,
             exclusive=exclusive,
+            thread=thread,
         )
         return worker
 

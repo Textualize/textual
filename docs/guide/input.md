@@ -23,7 +23,7 @@ The most fundamental way to receive input is via [Key][textual.events.Key] event
     ```{.textual path="docs/examples/guide/input/key01.py", press="T,e,x,t,u,a,l,!"}
     ```
 
-When you press a key, the app will receive the event and write it to a [TextLog](../widgets/text_log.md) widget. Try pressing a few keys to see what happens.
+When you press a key, the app will receive the event and write it to a [RichLog](../widgets/rich_log.md) widget. Try pressing a few keys to see what happens.
 
 !!! tip
 
@@ -105,7 +105,7 @@ The following example shows how focus works in practice.
     ```{.textual path="docs/examples/guide/input/key03.py", press="H,e,l,l,o,tab,W,o,r,l,d,!"}
     ```
 
-The app splits the screen in to quarters, with a `TextLog` widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that the widget has focus. Key events will be sent to the focused widget only.
+The app splits the screen in to quarters, with a `RichLog` widget in each quarter. If you click any of the text logs, you should see that it is highlighted to show that the widget has focus. Key events will be sent to the focused widget only.
 
 !!! tip
 
@@ -132,7 +132,7 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
 
 === "binding01.py"
 
-    ```python title="binding01.py" hl_lines="13-17"
+    ```python title="binding01.py" hl_lines="12-16"
     --8<-- "docs/examples/guide/input/binding01.py"
     ```
 

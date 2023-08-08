@@ -1137,3 +1137,25 @@ async def test_move_cursor():
         assert table.cursor_coordinate == Coordinate(3, 6)
         table.move_cursor(column=3)
         assert table.cursor_coordinate == Coordinate(3, 3)
+
+
+async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
+    """When there isn't a table cell under the mouse cursor, there should be no
+    hover highlighting.
+
+    Regression test for #2909 https://github.com/Textualize/textual/issues/2909
+    """
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("ABC")
+        table.add_row("123")
+        await pilot.pause()
+        assert table.hover_coordinate == Coordinate(0, 0)
+        # Hover over a cell, and the hover cursor is visible
+        await pilot.hover(DataTable, offset=Offset(1, 1))
+        assert table._show_hover_cursor
+        # Move our cursor so it is outside any table cells but still within
+        # the widget, and the hover cursor is hidden
+        await pilot.hover(DataTable, offset=Offset(42, 1))
+        assert not table._show_hover_cursor

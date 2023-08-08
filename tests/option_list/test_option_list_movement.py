@@ -33,7 +33,7 @@ async def test_cleared_movement_does_nothing() -> None:
         option_list = pilot.app.query_one(OptionList)
         option_list.clear_options()
         assert option_list.highlighted is None
-        await pilot.press("tab", "down", "up", "page_down", "page_up", "home", "end")
+        await pilot.press("tab", "down", "up", "pagedown", "pageup", "home", "end")
         assert option_list.highlighted is None
 
 
@@ -90,7 +90,7 @@ async def test_move_home() -> None:
 async def test_page_down_from_start_short_list() -> None:
     """Doing a page down from the start of a short list should move to the end."""
     async with OptionListApp().run_test() as pilot:
-        await pilot.press("tab", "page_down")
+        await pilot.press("tab", "pagedown")
         assert pilot.app.query_one(OptionList).highlighted == 5
 
 
@@ -101,7 +101,7 @@ async def test_page_up_from_end_short_list() -> None:
         assert option_list.highlighted == 0
         option_list.highlighted = 5
         assert option_list.highlighted == 5
-        await pilot.press("tab", "page_up")
+        await pilot.press("tab", "pageup")
         assert option_list.highlighted == 0
 
 
@@ -112,14 +112,14 @@ async def test_page_down_from_end_short_list() -> None:
         assert option_list.highlighted == 0
         option_list.highlighted = 5
         assert option_list.highlighted == 5
-        await pilot.press("tab", "page_down")
+        await pilot.press("tab", "pagedown")
         assert option_list.highlighted == 5
 
 
 async def test_page_up_from_start_short_list() -> None:
     """Doing a page up from the start of a short list go nowhere."""
     async with OptionListApp().run_test() as pilot:
-        await pilot.press("tab", "page_up")
+        await pilot.press("tab", "pageup")
         assert pilot.app.query_one(OptionList).highlighted == 0
 
 
@@ -135,7 +135,7 @@ async def test_empty_list_movement() -> None:
     async with EmptyOptionListApp().run_test() as pilot:
         option_list = pilot.app.query_one(OptionList)
         await pilot.press("tab")
-        for movement in ("up", "down", "home", "end", "page_up", "page_down"):
+        for movement in ("up", "down", "home", "end", "pageup", "pagedown"):
             await pilot.press(movement)
             assert option_list.highlighted is None
 
@@ -147,8 +147,8 @@ async def test_no_highlight_movement() -> None:
         ("down", 0),
         ("home", 0),
         ("end", 99),
-        ("page_up", 0),
-        ("page_down", 99),
+        ("pageup", 0),
+        ("pagedown", 99),
     ):
         async with EmptyOptionListApp().run_test() as pilot:
             option_list = pilot.app.query_one(OptionList)

@@ -18,9 +18,9 @@ from textual.widgets import (
     OptionList,
     RadioButton,
     RadioSet,
+    RichLog,
     Select,
     Switch,
-    TextLog,
     Tree,
 )
 
@@ -37,7 +37,7 @@ class DisableApp(App[None]):
             Input(),
             ListView(),
             Switch(),
-            TextLog(),
+            RichLog(),
             Tree("Test"),
             Markdown(),
             MarkdownViewer(),

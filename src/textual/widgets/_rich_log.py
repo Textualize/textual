@@ -22,11 +22,11 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class TextLog(ScrollView, can_focus=True):
+class RichLog(ScrollView, can_focus=True):
     """A widget for logging text."""
 
     DEFAULT_CSS = """
-    TextLog{
+    RichLog{
         background: $surface;
         color: $text;
         overflow-y: scroll;
@@ -54,7 +54,7 @@ class TextLog(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Create a TextLog widget.
+        """Create a RichLog widget.
 
         Args:
             max_lines: Maximum number of lines in the log or `None` for no maximum.
@@ -91,6 +91,34 @@ class TextLog(ScrollView, can_focus=True):
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
+    def _make_renderable(self, content: RenderableType | object) -> RenderableType:
+        """Make content renderable.
+
+        Args:
+            content: Content to render.
+
+        Returns:
+            A Rich renderable.
+        """
+        renderable: RenderableType
+        if not is_renderable(content):
+            renderable = Pretty(content)
+        else:
+            if isinstance(content, str):
+                if self.markup:
+                    renderable = Text.from_markup(content)
+                else:
+                    renderable = Text(content)
+                if self.highlight:
+                    renderable = self.highlighter(renderable)
+            else:
+                renderable = cast(RenderableType, content)
+
+        if isinstance(renderable, Text):
+            renderable.expand_tabs()
+
+        return renderable
+
     def write(
         self,
         content: RenderableType | object,
@@ -109,27 +137,15 @@ class TextLog(ScrollView, can_focus=True):
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
         Returns:
-            The `TextLog` instance.
+            The `RichLog` instance.
         """
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
 
-        renderable: RenderableType
-        if not is_renderable(content):
-            renderable = Pretty(content)
-        else:
-            if isinstance(content, str):
-                if self.markup:
-                    renderable = Text.from_markup(content)
-                else:
-                    renderable = Text(content)
-                if self.highlight:
-                    renderable = self.highlighter(renderable)
-            else:
-                renderable = cast(RenderableType, content)
-
         console = self.app.console
         render_options = console.options
+
+        renderable = self._make_renderable(content)
 
         if isinstance(renderable, Text) and not self.wrap:
             render_options = render_options.update(overflow="ignore", no_wrap=True)
@@ -151,21 +167,21 @@ class TextLog(ScrollView, can_focus=True):
         )
         lines = list(Segment.split_lines(segments))
         if not lines:
-            return self
+            self.lines.append(Strip.blank(render_width))
+        else:
+            self.max_width = max(
+                self.max_width,
+                max(sum([segment.cell_length for segment in _line]) for _line in lines),
+            )
+            strips = Strip.from_lines(lines)
+            for strip in strips:
+                strip.adjust_cell_length(render_width)
+            self.lines.extend(strips)
 
-        self.max_width = max(
-            self.max_width,
-            max(sum([segment.cell_length for segment in _line]) for _line in lines),
-        )
-        strips = Strip.from_lines(lines)
-        for strip in strips:
-            strip.adjust_cell_length(render_width)
-        self.lines.extend(strips)
-
-        if self.max_lines is not None and len(self.lines) > self.max_lines:
-            self._start_line += len(self.lines) - self.max_lines
-            self.refresh()
-            self.lines = self.lines[-self.max_lines :]
+            if self.max_lines is not None and len(self.lines) > self.max_lines:
+                self._start_line += len(self.lines) - self.max_lines
+                self.refresh()
+                self.lines = self.lines[-self.max_lines :]
         self.virtual_size = Size(self.max_width, len(self.lines))
         if auto_scroll:
             self.scroll_end(animate=False)
@@ -176,7 +192,7 @@ class TextLog(ScrollView, can_focus=True):
         """Clear the text log.
 
         Returns:
-            The `TextLog` instance.
+            The `RichLog` instance.
         """
         self.lines.clear()
         self._line_cache.clear()
@@ -199,7 +215,7 @@ class TextLog(ScrollView, can_focus=True):
             crop: Region within visible area to.
 
         Returns:
-            A list of list of segments
+            A list of list of segments.
         """
         lines = self._styles_cache.render_widget(self, crop)
         return lines
@@ -212,11 +228,7 @@ class TextLog(ScrollView, can_focus=True):
         if key in self._line_cache:
             return self._line_cache[key]
 
-        line = (
-            self.lines[y]
-            .adjust_cell_length(max(self.max_width, width), self.rich_style)
-            .crop(scroll_x, scroll_x + width)
-        )
+        line = self.lines[y].crop_extend(scroll_x, scroll_x + width, self.rich_style)
 
         self._line_cache[key] = line
         return line

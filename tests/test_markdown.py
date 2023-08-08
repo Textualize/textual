@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Iterator
 
 import pytest
@@ -107,11 +108,20 @@ URL](https://example.com)\
         assert isinstance(paragraph, MD.MarkdownParagraph)
         assert paragraph._text.plain == "My site has this URL"
         expected_spans = [
-            Span(0, 8, Style()),
             Span(8, 11, Style(meta={"@click": "link('https://example.com')"})),
             Span(11, 12, Style(meta={"@click": "link('https://example.com')"})),
             Span(12, 16, Style(meta={"@click": "link('https://example.com')"})),
             Span(16, 17, Style(meta={"@click": "link('https://example.com')"})),
             Span(17, 20, Style(meta={"@click": "link('https://example.com')"})),
         ]
-        assert paragraph._text.spans == expected_spans
+
+    assert paragraph._text.spans == expected_spans
+
+
+async def test_load_non_existing_file() -> None:
+    """Loading a file that doesn't exist should result in the obvious error."""
+    async with MarkdownApp("").run_test() as pilot:
+        with pytest.raises(FileNotFoundError):
+            await pilot.app.query_one(Markdown).load(
+                Path("---this-does-not-exist---.it.is.not.a.md")
+            )
