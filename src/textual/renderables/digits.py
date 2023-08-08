@@ -91,10 +91,9 @@ class Digits:
                 row2(" ")
                 row3(character)
             else:
-                width = 3 if character in DIGITS else 1
-                row1(DIGITS3X3[position].ljust(width))
-                row2(DIGITS3X3[position + 1].ljust(width))
-                row3(DIGITS3X3[position + 2].ljust(width))
+                row1(DIGITS3X3[position].ljust(3))
+                row2(DIGITS3X3[position + 1].ljust(3))
+                row3(DIGITS3X3[position + 2].ljust(3))
 
         new_line = Segment.line()
         for line in digit_pieces:
