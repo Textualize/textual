@@ -305,6 +305,7 @@ TextArea > .text-area--width-guide {
             text: The text to load into the editor.
         """
         self._document = Document(text)
+        self._reload_document()
         self._refresh_size()
 
     def _refresh_size(self) -> None:

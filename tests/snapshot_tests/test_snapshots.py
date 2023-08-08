@@ -2,6 +2,10 @@ from pathlib import Path
 
 import pytest
 
+from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual._languages import VALID_LANGUAGES
+from textual.widgets import TextArea
+
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
@@ -610,3 +614,23 @@ def test_text_log_blank_write(snap_compare) -> None:
 def test_nested_fr(snap_compare) -> None:
     # https://github.com/Textualize/textual/pull/3059
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
+
+
+@pytest.mark.parametrize("language", VALID_LANGUAGES)
+def test_text_area_language_rendering(language, snap_compare):
+    # This test will fail if we're missing a snapshot test for a valid
+    # language. We should have a snapshot test for each language we support
+    # as the syntax highlighting will be completely different for each of them.
+
+    snippet = SNIPPETS.get(language)
+
+    def setup_language(pilot) -> None:
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(snippet)
+        text_area.language = language
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_languages.py",
+        run_before=setup_language,
+        terminal_size=(80, snippet.count("\n") + 2),
+    )

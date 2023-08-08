@@ -76,7 +76,6 @@ __all__ = [
     "TabPane",
     "Tabs",
     "TextArea",
-    "TextLog",
     "RichLog",
     "Tooltip",
     "Tree",
