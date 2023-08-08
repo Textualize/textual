@@ -29,7 +29,7 @@ _MONOKAI = {
 
 BUILTIN_THEMES = {
     "monokai": _MONOKAI,
-    "blue": {**_MONOKAI, "string": Style.parse("on blue")},
+    "bluokai": {**_MONOKAI, "string": Style.parse("cyan")},
 }
 
 
@@ -38,7 +38,7 @@ NULL_STYLE = Style.null()
 
 @dataclass
 class SyntaxTheme:
-    """Maps tree-sitter names to Rich styles for syntax-highlighting with `TextArea`.
+    """Maps tree-sitter names to Rich styles for syntax-highlighting in `TextArea`.
 
     For example, consider the following snippet from the `markdown.scm` highlight
     query file. We've assigned the `heading_content` token type to the name `heading`.
@@ -65,7 +65,12 @@ class SyntaxTheme:
     highlight_query: str = ""
     """The tree-sitter query to use for highlighting.
 
-    See `*.scm` files in this repo for examples, as well as the tree-sitter docs."""
+    See `*.scm` files in this repo for examples, as well as the tree-sitter docs.
+
+    Note that the `highlight_query` must only refer to nodes which are defined in the
+    tree-sitter language/parser currently being used. If the query refers to nodes
+    that the parser does not declare, tree-sitter will raise an exception.
+    """
 
     @classmethod
     def get_theme(cls, theme_name: str) -> "SyntaxTheme":
