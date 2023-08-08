@@ -244,3 +244,69 @@ async def test_focus_moves_to_visible_widgets_inside_invisible_containers():
     async with app.run_test():
         assert app.focused.id == "one"
         assert app.screen.focus_next().id == "three"
+
+
+async def test_focus_chain_handles_inherited_visibility():
+    """Regression test for https://github.com/Textualize/textual/issues/3053
+
+    This is more or less a test for the interactions between #3053 and #3071.
+    We want to make sure that the focus chain is computed correctly when going through
+    a DOM with containers with all sorts of visibilities set.
+    """
+
+    class W(Widget):
+        can_focus = True
+
+    w1 = W(id="one")
+    c2 = Container(id="two")
+    w3 = W(id="three")
+    c4 = Container(id="four")
+    w5 = W(id="five")
+    c6 = Container(id="six")
+    w7 = W(id="seven")
+    c8 = Container(id="eight")
+    w9 = W(id="nine")
+    w10 = W(id="ten")
+    w11 = W(id="eleven")
+    w12 = W(id="twelve")
+    w13 = W(id="thirteen")
+
+    class InheritedVisibilityApp(App[None]):
+        CSS = """
+        #four, #eight, #ten {
+            visibility: visible;
+        }
+
+        #six {
+            visibility: hidden;
+        }
+        """
+
+        def compose(self):
+            yield w1  # visible, inherited
+            with c2:  # visible, inherited
+                yield w3  # visible, inherited
+                with c4:  # visible, set
+                    yield w5  # visible, inherited
+                    with c6:  # hidden, set
+                        yield w7  # hidden, inherited
+                        with c8:  # visible, set
+                            yield w9  # visible, inherited
+                        yield w10  # visible, set
+                    yield w11  # visible, inherited
+                yield w12  # visible, inherited
+            yield w13  # visible, inherited
+
+    app = InheritedVisibilityApp()
+    async with app.run_test():
+        focus_chain = app.screen.focus_chain
+        assert focus_chain == [
+            w1,
+            w3,
+            w5,
+            w9,
+            w10,
+            w11,
+            w12,
+            w13,
+        ]
