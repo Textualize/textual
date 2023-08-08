@@ -9,7 +9,7 @@ Other characters will be displayed in a regular size font.
 
 You can set the text to be displayed in the constructor, or call [`update()`][textual.widgets.Digits.update] to change the text after the widget has been mounted.
 
-!!! note Note that this widget will respect the [text-align](../styles/text_align.md) rule.
+!!! note "This widget will respect the [text-align](../styles/text_align.md) rule."
 
 - [ ] Focusable
 - [ ] Container
