@@ -308,7 +308,7 @@ Let's look at an example which looks up word definitions from an [api](https://d
 
 === "dictionary.py"
 
-    ```python title="dictionary.py" hl_lines="27"
+    ```python title="dictionary.py" hl_lines="28"
     --8<-- "docs/examples/events/dictionary.py"
     ```
 === "dictionary.css"

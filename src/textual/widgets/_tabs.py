@@ -150,7 +150,7 @@ class Tabs(Widget, can_focus=True):
     DEFAULT_CSS = """
     Tabs {
         width: 100%;
-        height:3;
+        height: 3;
     }
     Tabs > #tabs-scroll {
         overflow: hidden;

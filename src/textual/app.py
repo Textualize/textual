@@ -2333,7 +2333,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         try:
-            if screen is not self.screen or renderable is None:
+            if renderable is None:
                 return
 
             if (
