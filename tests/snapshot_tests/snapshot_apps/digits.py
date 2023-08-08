@@ -21,5 +21,6 @@ class DigitApp(App):
         yield Digits("3x10^4", id="digits3")
 
 
-app = DigitApp()
-app.run()
+if __name__ == "__main__":
+    app = DigitApp()
+    app.run()
