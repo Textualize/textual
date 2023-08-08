@@ -483,7 +483,7 @@ TextArea > .text-area--width-guide {
     #         action.undo(self)
 
     # --- Lower level event/key handling
-    def _on_key(self, event: events.Key) -> None:
+    async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
         key = event.key
         insert_values = {

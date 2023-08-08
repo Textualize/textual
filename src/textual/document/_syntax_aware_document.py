@@ -52,6 +52,8 @@ class SyntaxAwareDocument(Document):
 
         if TREE_SITTER:
             if isinstance(language, str):
+                if self._language.name not in VALID_LANGUAGES:
+                    raise RuntimeError(f"Invalid language {language!r}")
                 self._language = get_language(language)
                 self._parser = get_parser(language)
             else:
@@ -59,18 +61,15 @@ class SyntaxAwareDocument(Document):
                 self._parser = Parser()
                 self._parser.set_language(language)
 
-            if self._language.name in VALID_LANGUAGES:
-                highlight_query_path = (
-                    Path(HIGHLIGHTS_PATH.resolve()) / f"{language}.scm"
-                )
-                if isinstance(syntax_theme, SyntaxTheme):
-                    self._syntax_theme = syntax_theme
-                else:
-                    self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
+            highlight_query_path = (
+                Path(HIGHLIGHTS_PATH.resolve()) / f"{self._language.name}.scm"
+            )
+            if isinstance(syntax_theme, SyntaxTheme):
+                self._syntax_theme = syntax_theme
+            else:
+                self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
 
                 self._syntax_theme.highlight_query = highlight_query_path.read_text()
-            else:
-                raise RuntimeError(f"Invalid language {language!r}")
 
             self._syntax_tree = self._build_ast(self._parser)
             self._prepare_highlights()
