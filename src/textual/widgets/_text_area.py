@@ -536,7 +536,7 @@ TextArea > .text-area--width-guide {
     def _on_mouse_up(self, event: events.MouseUp) -> None:
         """Finalise the selection that has been made using the mouse."""
         self._selecting = False
-        self.capture_mouse(False)
+        self.release_mouse()
         self.record_cursor_offset()
 
     def _on_paste(self, event: events.Paste) -> None:
