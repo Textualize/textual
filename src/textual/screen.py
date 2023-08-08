@@ -295,23 +295,51 @@ class Screen(Generic[ScreenResultType], Widget):
         widgets: list[Widget] = []
         add_widget = widgets.append
         focus_sorter = attrgetter("_focus_sort_key")
-        stack: list[Iterator[Widget]] = [
+        node_stack: list[Iterator[Widget]] = [
             iter(sorted(self.displayed_children, key=focus_sorter))
         ]
-        pop = stack.pop
-        push = stack.append
+        pop_node = node_stack.pop
+        push_node = node_stack.append
 
-        while stack:
-            node = next(stack[-1], None)
+        # Instead of relying on the property `DOMNode.visible`, we manually keep track
+        # of the visibility of the DOM to save on DOM traversals inside `.visible`.
+        visibility_stack: list[bool] = [self.visible]
+        pop_visibility = visibility_stack.pop
+        push_visibility = visibility_stack.append
+
+        while node_stack:
+            node = next(node_stack[-1], None)
             if node is None:
-                pop()
+                pop_node()
+                pop_visibility()
             else:
+                node_visibility = node.styles.get_rule("visibility")
                 if node.is_container and node.can_focus_children:
                     sorted_displayed_children = sorted(
                         node.displayed_children, key=focus_sorter
                     )
-                    push(iter(sorted_displayed_children))
-                if node.focusable:
+                    push_node(iter(sorted_displayed_children))
+                    # When we push a new container to the stack, we need to update
+                    # the visibility stack.
+                    if node_visibility is None:
+                        # If the node doesn't have explicit visibility set, we inherit
+                        # it from the stack, unless we're at the top of the stack,
+                        # in which case we must compute the node visibility.
+                        push_visibility(
+                            visibility_stack[-1] if visibility_stack else node.visible
+                        )
+                    else:
+                        push_visibility(node_visibility != "hidden")
+                node_is_visible = (
+                    node_visibility != "hidden"
+                    if node_visibility
+                    else visibility_stack[-1]
+                )
+                if (  # Same as `if node.focusable`, but we cache inherited visibility.
+                    node_is_visible
+                    and node.can_focus
+                    and not node._self_or_ancestors_disabled
+                ):
                     add_widget(node)
 
         return widgets
