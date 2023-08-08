@@ -694,3 +694,12 @@ class SelectionList(Generic[SelectionType], OptionList):
             SelectionError: If the selection option is of the wrong form.
         """
         return self.add_options([item])
+
+    def clear_options(self) -> Self:
+        """Clear the content of the selection list.
+
+        Returns:
+            The `SelectionList` instance.
+        """
+        self._selected.clear()
+        return super().clear_options()
