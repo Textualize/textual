@@ -6,9 +6,11 @@ from rich.style import Style
 
 _MONOKAI = {
     "string": Style(color="#E6DB74"),
-    "string.documentation": Style(color="yellow"),
+    "string.documentation": Style(color="#E6DB74"),
     "comment": Style(color="#75715E"),
     "keyword": Style(color="#F92672"),
+    "repeat": Style(color="#F92672"),
+    "exception": Style(color="#F92672"),
     "include": Style(color="#F92672"),
     "keyword.function": Style(color="#F92672"),
     "keyword.return": Style(color="#F92672"),
@@ -23,7 +25,7 @@ _MONOKAI = {
     "variable": Style(color="white"),
     "parameter": Style(color="cyan"),
     # "type": Style(color="cyan"),
-    "escape": Style(bgcolor="magenta"),
+    # "escape": Style(bgcolor="magenta"),
     "heading": Style(color="#F92672", bold=True),
 }
 
