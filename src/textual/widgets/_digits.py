@@ -7,9 +7,7 @@ from rich.console import RenderableType
 
 from textual.geometry import Size
 
-from ..css.types import AlignHorizontal
 from ..geometry import Size
-from ..reactive import reactive
 from ..renderables.digits import Digits as DigitsRenderable
 from ..widget import Widget
 
@@ -37,7 +35,7 @@ class Digits(Widget):
 
     def __init__(
         self,
-        value: str = "0",
+        value: str = "",
         *,
         name: str | None = None,
         id: str | None = None,
