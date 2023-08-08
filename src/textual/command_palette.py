@@ -497,7 +497,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # we'll remember where we were, clear the commands in the list,
             # add the sorted set back and apply the highlight again.
             #
-            # TODO: Highlight the same command, not the same index.
+            # TODO: Highlight the same command, not the same index. To make
+            # this happen I really need
+            # https://github.com/Textualize/textual/pull/2985 to be merged
+            # into Textual as it already has a method in there that I'd be
+            # otherwise adding to OptionList to enable that.
             highlighted = command_list.highlighted
             command_list.clear_options()
             command_list.add_options(sorted_commands)
