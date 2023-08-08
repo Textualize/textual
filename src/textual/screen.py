@@ -860,22 +860,13 @@ class Screen(Generic[ScreenResultType], Widget):
 
         else:
             self.app._set_mouse_over(widget)
-            mouse_event = events.MouseMove(
-                event.x - region.x,
-                event.y - region.y,
-                event.delta_x,
-                event.delta_y,
-                event.button,
-                event.shift,
-                event.meta,
-                event.ctrl,
-                screen_x=event.screen_x,
-                screen_y=event.screen_y,
-                style=event.style,
-            )
             widget.hover_style = event.style
-            mouse_event._set_forwarded()
-            widget._forward_event(mouse_event)
+            if widget is self:
+                self.post_message(event)
+            else:
+                mouse_event = self._translate_mouse_move_event(event, region)
+                mouse_event._set_forwarded()
+                widget._forward_event(mouse_event)
 
             if not self.app._disable_tooltips:
                 try:
@@ -895,6 +886,28 @@ class Screen(Generic[ScreenResultType], Widget):
                         )
                     else:
                         tooltip.display = False
+
+    @staticmethod
+    def _translate_mouse_move_event(
+        event: events.MouseMove, region: Region
+    ) -> events.MouseMove:
+        """
+        Returns a mouse move event whose relative coordinates are translated to
+        the origin of the specified region.
+        """
+        return events.MouseMove(
+            event.x - region.x,
+            event.y - region.y,
+            event.delta_x,
+            event.delta_y,
+            event.button,
+            event.shift,
+            event.meta,
+            event.ctrl,
+            screen_x=event.screen_x,
+            screen_y=event.screen_y,
+            style=event.style,
+        )
 
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:
