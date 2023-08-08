@@ -17,7 +17,7 @@ You can set the text to be displayed in the constructor, or call [`update()`][te
 
 ## Example
 
-Here's a simple examples to display a few digits of PI:
+The following example displays a few digits of Pi:
 
 === "Output"
 
