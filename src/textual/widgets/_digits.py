@@ -14,6 +14,7 @@ class Digits(Widget):
     """A widget to display numerical values using a 3x3 grid of unicode characters.
 
     Args:
+        value: Value to display in widget.
         name: The name of the widget.
         id: The ID of the widget in the DOM.
         classes: The CSS classes of the widget.
