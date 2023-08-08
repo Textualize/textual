@@ -466,6 +466,43 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             underline=style.underline,
         )
 
+    def _refresh_command_list(
+        self, command_list: CommandList, commands: list[Command]
+    ) -> None:
+        """Refresh the command list.
+
+        Args:
+            command_list: The widget that shows the list of commands.
+            commands: The commands to show in the widget.
+        """
+        # For the moment, this is a fairly naive approach to populating the
+        # command list with a sorted list of commands. Every time we add a
+        # new one we're nuking the list of options and populating them
+        # again. If this turns out to not be a great approach, we may try
+        # and get a lot smarter with this (ideally OptionList will grow a
+        # method to sort its content in an efficient way; but for now we'll
+        # go with "worse is better" wisdom).
+
+        # First off, we sort the commands, best to worst.
+        sorted_commands = sorted(commands, reverse=True)
+
+        # If the newly-appended command is still at the end after we've
+        # sorted...
+        if sorted_commands[-1] == commands[-1]:
+            # ...we can just add the command to the option list without
+            # further fuss.
+            command_list.add_option(commands[-1])
+        else:
+            # Nope, it's slotting in somewhere other than at the end, so
+            # we'll remember where we were, clear the commands in the list,
+            # add the sorted set back and apply the highlight again.
+            #
+            # TODO: Highlight the same command, not the same index.
+            highlighted = command_list.highlighted
+            command_list.clear_options()
+            command_list.add_options(sorted_commands)
+            command_list.highlighted = highlighted
+
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
@@ -476,6 +513,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         help_style = self._sans_background(
             self.get_component_rich_style("command-palette--help-text")
         )
+        gathered_commands: list[Command] = []
         command_list = self.query_one(CommandList)
         self._show_busy = True
         async for hit in self._hunt_for(search_value):
@@ -489,7 +527,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 prompt.add_column(no_wrap=True)
                 prompt.add_row(hit.match_text)
                 prompt.add_row(Align.right(Text(hit.command_help, style=help_style)))
-            command_list.add_option(Command(prompt, hit))
+            gathered_commands.append(Command(prompt, hit))
+            self._refresh_command_list(command_list, gathered_commands)
         self._show_busy = False
         if command_list.option_count == 0:
             command_list.add_option(
