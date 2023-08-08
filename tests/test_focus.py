@@ -277,7 +277,7 @@ async def test_focus_chain_handles_inherited_visibility():
             visibility: visible;
         }
 
-        #six {
+        #six, #thirteen {
             visibility: hidden;
         }
         """
@@ -295,7 +295,7 @@ async def test_focus_chain_handles_inherited_visibility():
                         yield w10  # visible, set
                     yield w11  # visible, inherited
                 yield w12  # visible, inherited
-            yield w13  # visible, inherited
+            yield w13  # invisible, set
 
     app = InheritedVisibilityApp()
     async with app.run_test():
@@ -308,5 +308,4 @@ async def test_focus_chain_handles_inherited_visibility():
             w10,
             w11,
             w12,
-            w13,
         ]
