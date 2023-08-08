@@ -8,7 +8,6 @@ from functools import total_ordering
 from typing import (
     TYPE_CHECKING,
     Any,
-    AsyncIterable,
     AsyncIterator,
     Callable,
     ClassVar,
@@ -38,6 +37,7 @@ if TYPE_CHECKING:
     from .app import App, ComposeResult
 
 __all__ = [
+    "CommandMatches",
     "CommandPalette",
     "CommandPaletteCallable",
     "CommandSource",
@@ -74,6 +74,10 @@ class CommandSourceHit(NamedTuple):
 
     def __eq__(self, other: CommandSourceHit) -> bool:
         return self.match_value == other.match_value
+
+
+CommandMatches: TypeAlias = AsyncIterator[CommandSourceHit]
+"""Return type for the command source match hunting method."""
 
 
 class CommandSource(ABC):
@@ -127,7 +131,7 @@ class CommandSource(ABC):
         )
 
     @abstractmethod
-    async def hunt_for(self, user_input: str) -> AsyncIterator[CommandSourceHit]:
+    async def hunt_for(self, user_input: str) -> CommandMatches:
         """A request to hunt for commands relevant to the given user input.
 
         Args:
@@ -362,7 +366,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     @staticmethod
     async def _consume(
-        source: AsyncIterable[CommandSourceHit], commands: Queue[CommandSourceHit]
+        source: CommandMatches, commands: Queue[CommandSourceHit]
     ) -> None:
         """Consume a source of matching commands, feeding the given command queue.
 
@@ -373,7 +377,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         async for hit in source:
             await commands.put(hit)
 
-    async def _hunt_for(self, search_value: str) -> AsyncIterator[CommandSourceHit]:
+    async def _hunt_for(self, search_value: str) -> CommandMatches:
         """Hunt for a given search value amongst all of the command sources.
 
         Args:
