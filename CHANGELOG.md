@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 
+### Changed
+
+- Breaking change: `DOMNode.visible` now takes into account full DOM to report whether a node is visible or not.
+
+
 ### Removed
 
 - Property `Widget.focusable_children` https://github.com/Textualize/textual/pull/3070
