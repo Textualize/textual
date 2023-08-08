@@ -5,7 +5,7 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-DIGITS = r" 0123456789+-.%ex,"
+DIGITS = r" 0123456789+-.%ex,^"
 DIGITS3X3 = """\
 
 
@@ -61,8 +61,12 @@ x
 
 
 ,
+^
+
+
+
 """.splitlines()
-DIGIT_WIDTHS = {".": 1, "x": 1, "e": 1, ",": 1}
+DIGIT_WIDTHS = {".": 1, "x": 1, "e": 1, ",": 1, "^": 1}
 
 
 class Digits:

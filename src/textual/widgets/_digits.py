@@ -20,9 +20,10 @@ class Digits(Widget):
     DEFAULT_CSS = """
     Digits {
         width: 1fr;
-        height: 3;
+        height: auto;
         text-align: left;
         text-style: bold;
+        box-sizing: border-box;
     }
     """
 
