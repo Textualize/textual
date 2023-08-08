@@ -230,7 +230,10 @@ async def test_focus_moves_to_visible_widgets_inside_invisible_containers():
     """Regression test for https://github.com/Textualize/textual/issues/3053."""
 
     class MyApp(App):
-        CSS = "#inv { visibility: hidden; }"
+        CSS = """
+        #inv { visibility: hidden; }
+        #three { visibility: visible; }
+        """
 
         def compose(self):
             yield Button(id="one")
