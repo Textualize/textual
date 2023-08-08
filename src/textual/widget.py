@@ -3187,7 +3187,7 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be send an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
 
         Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
 

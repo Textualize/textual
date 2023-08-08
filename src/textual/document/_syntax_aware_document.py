@@ -31,7 +31,9 @@ class SyntaxAwareDocument(Document):
     """A wrapper around a Document which also maintains a tree-sitter syntax
     tree when the document is edited."""
 
-    def __init__(self, text: str, language: str | Language, syntax_theme: SyntaxTheme):
+    def __init__(
+        self, text: str, language: str | Language, syntax_theme: str | SyntaxTheme
+    ):
         super().__init__(text)
         self._language: Language | None = None
         """The tree-sitter Language or None if tree-sitter is unavailable."""
@@ -42,7 +44,7 @@ class SyntaxAwareDocument(Document):
         self._syntax_tree: Tree | None = None
         """The tree-sitter Tree (syntax tree) built from the document."""
 
-        self._syntax_theme: SyntaxTheme = syntax_theme
+        self._syntax_theme: SyntaxTheme | None = None
         """The syntax highlighting theme to use."""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
@@ -61,6 +63,11 @@ class SyntaxAwareDocument(Document):
                 highlight_query_path = (
                     Path(HIGHLIGHTS_PATH.resolve()) / f"{language}.scm"
                 )
+                if isinstance(syntax_theme, SyntaxTheme):
+                    self._syntax_theme = syntax_theme
+                else:
+                    self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
+
                 self._syntax_theme.highlight_query = highlight_query_path.read_text()
             else:
                 raise RuntimeError(f"Invalid language {language!r}")

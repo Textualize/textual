@@ -4,29 +4,32 @@ from dataclasses import dataclass, field
 
 from rich.style import Style
 
+_MONOKAI = {
+    "string": Style(color="#E6DB74"),
+    "string.documentation": Style(color="yellow"),
+    "comment": Style(color="#75715E"),
+    "keyword": Style(color="#F92672"),
+    "include": Style(color="#F92672"),
+    "keyword.function": Style(color="#F92672"),
+    "keyword.return": Style(color="#F92672"),
+    "conditional": Style(color="#F92672"),
+    "number": Style(color="#AE81FF"),
+    "class": Style(color="#A6E22E"),
+    "function": Style(color="#A6E22E"),
+    "function.call": Style(color="#A6E22E"),
+    "method": Style(color="#A6E22E"),
+    "method.call": Style(color="#A6E22E"),
+    # "constant": Style(color="#AE81FF"),
+    "variable": Style(color="white"),
+    "parameter": Style(color="cyan"),
+    # "type": Style(color="cyan"),
+    "escape": Style(bgcolor="magenta"),
+    "heading": Style(color="#F92672", bold=True),
+}
+
 BUILTIN_THEMES = {
-    "monokai": {
-        "string": Style(color="#E6DB74"),
-        "string.documentation": Style(color="yellow"),
-        "comment": Style(color="#75715E"),
-        "keyword": Style(color="#F92672"),
-        "include": Style(color="#F92672"),
-        "keyword.function": Style(color="#F92672"),
-        "keyword.return": Style(color="#F92672"),
-        "conditional": Style(color="#F92672"),
-        "number": Style(color="#AE81FF"),
-        "class": Style(color="#A6E22E"),
-        "function": Style(color="#A6E22E"),
-        "function.call": Style(color="#A6E22E"),
-        "method": Style(color="#A6E22E"),
-        "method.call": Style(color="#A6E22E"),
-        # "constant": Style(color="#AE81FF"),
-        "variable": Style(color="white"),
-        "parameter": Style(color="cyan"),
-        # "type": Style(color="cyan"),
-        "escape": Style(bgcolor="magenta"),
-        "heading": Style(color="#F92672", bold=True),
-    }
+    "monokai": _MONOKAI,
+    "blue": {**_MONOKAI, "string": Style.parse("on blue")},
 }
 
 
@@ -70,6 +73,10 @@ class SyntaxTheme:
 
     def get_highlight(self, name: str) -> Style:
         return self.style_mapping.get(name, NULL_STYLE)
+
+    @classmethod
+    def available_themes(cls) -> list[SyntaxTheme]:
+        return [SyntaxTheme(name, mapping) for name, mapping in BUILTIN_THEMES.items()]
 
 
 DEFAULT_SYNTAX_THEME = SyntaxTheme.get_theme("monokai")

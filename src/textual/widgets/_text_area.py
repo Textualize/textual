@@ -524,7 +524,7 @@ TextArea > .text-area--width-guide {
         self._selecting = True
         # Capture the mouse so that if the cursor moves outside the
         # TextArea widget while selecting, the widget still scrolls.
-        self.capture_mouse(True)
+        self.capture_mouse()
 
     def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
