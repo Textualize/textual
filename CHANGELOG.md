@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
 
+### Added
+- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603 
 
 ## [0.32.0] - 2023-08-03
 
