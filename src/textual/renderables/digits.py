@@ -78,10 +78,10 @@ class Digits:
             style: Rich Style
 
         """
-        segments: list[list[str]] = [[], [], []]
-        row1 = segments[0].append
-        row2 = segments[1].append
-        row3 = segments[2].append
+        digit_pieces: list[list[str]] = [[], [], []]
+        row1 = digit_pieces[0].append
+        row2 = digit_pieces[1].append
+        row3 = digit_pieces[2].append
 
         for character in self._text:
             try:
@@ -97,7 +97,7 @@ class Digits:
                 row3(DIGITS3X3[position + 2].ljust(width))
 
         new_line = Segment.line()
-        for line in segments:
+        for line in digit_pieces:
             yield Segment("".join(line), style)
             yield new_line
 
