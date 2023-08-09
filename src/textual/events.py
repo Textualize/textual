@@ -534,7 +534,7 @@ class Leave(Event, bubble=False, verbose=True):
 class Focus(Event, bubble=False):
     """Sent when a widget is focussed.
 
-    - [X] Bubbles
+    - [ ] Bubbles
     - [ ] Verbose
     """
 
@@ -542,7 +542,7 @@ class Focus(Event, bubble=False):
 class Blur(Event, bubble=False):
     """Sent when a widget is blurred (un-focussed).
 
-    - [X] Bubbles
+    - [ ] Bubbles
     - [ ] Verbose
     """
 

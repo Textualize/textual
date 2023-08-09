@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Updated documentation for `events.Focus` and `events.Blur` to reflect the the default class parameters.
+
 ### Fixed
 
 - Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
