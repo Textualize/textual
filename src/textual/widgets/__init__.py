@@ -45,6 +45,7 @@ if typing.TYPE_CHECKING:
 __all__ = [
     "Button",
     "Checkbox",
+    "Collapsible",
     "ContentSwitcher",
     "DataTable",
     "DirectoryTree",
@@ -76,7 +77,6 @@ __all__ = [
     "Tooltip",
     "Tree",
     "Welcome",
-    "Collapsible",
 ]
 
 _WIDGETS_LAZY_LOADING_CACHE: dict[str, type[Widget]] = {}
