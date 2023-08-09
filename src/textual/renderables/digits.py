@@ -81,7 +81,7 @@ class Digits:
         """Render with the given style
 
         Args:
-            style: Rich Style
+            style: Rich Style.
 
         Returns:
             Result of render.
@@ -126,9 +126,3 @@ class Digits:
     ) -> Measurement:
         width = self.get_width(self._text)
         return Measurement(width, width)
-
-
-if __name__ == "__main__":
-    from rich import print
-
-    print(Digits("3x10e4%", "white on blue"))
