@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603 
+- Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
 
 ## [0.32.0] - 2023-08-03
 
@@ -36,7 +37,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
 - Added `App.stop_animation` https://github.com/Textualize/textual/issues/2786
 - Added `Widget.stop_animation` https://github.com/Textualize/textual/issues/2786
-- Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
 
 ### Changed
 
