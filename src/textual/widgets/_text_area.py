@@ -281,6 +281,10 @@ TextArea > .text-area--width-guide {
         """The line number gutter contributes to virtual size, so recalculate."""
         self._refresh_size()
 
+    def _watch_indent_width(self) -> None:
+        """Changing width of tabs will change document display width."""
+        self._refresh_size()
+
     def _reload_document(self) -> None:
         """Recreate the document based on the language and theme currently set."""
         language = self.language
