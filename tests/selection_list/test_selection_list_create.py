@@ -99,6 +99,7 @@ async def test_add_non_selections() -> None:
             selections.add_option(("Nope", 0, False, 23))
 
 async def test_clear_options() -> None:
+    """Clearing the options should also clear the selections."""
     async with SelectionListApp().run_test() as pilot:
         selections = pilot.app.query_one(SelectionList)
         selections.clear_options()
