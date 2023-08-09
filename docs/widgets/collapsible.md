@@ -53,7 +53,7 @@ def compose(self) -> ComposeResult:
 
 ## Collapse/Expand
 
-If can set the initial status of `collapsed` by `collapsed` argument of the constructor:
+Initial status of `collapsed` can be set by the `collapsed` argument of the constructor:
 
 ```python
 def compose(self) -> ComposeResult:
