@@ -504,17 +504,18 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         else:
             # Nope, it's slotting in somewhere other than at the end, so
             # we'll remember where we were, clear the commands in the list,
-            # add the sorted set back and apply the highlight again.
-            #
-            # TODO: Highlight the same command, not the same index. To make
-            # this happen I really need
-            # https://github.com/Textualize/textual/pull/2985 to be merged
-            # into Textual as it already has a method in there that I'd be
-            # otherwise adding to OptionList to enable that.
-            highlighted = command_list.highlighted
+            # add the sorted set back and apply the highlight again. Note
+            # that remembering where we were is remembering the option we
+            # were on, not the index.
+            highlighted = (
+                command_list.get_option_at_index(command_list.highlighted)
+                if command_list.highlighted is not None
+                else None
+            )
             command_list.clear_options()
             command_list.add_options(sorted_commands)
-            command_list.highlighted = highlighted
+            if highlighted is not None:
+                command_list.highlighted = command_list.get_option_index(highlighted.id)
 
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
