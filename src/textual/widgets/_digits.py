@@ -44,26 +44,34 @@ class Digits(Widget):
         if not isinstance(value, str):
             raise TypeError("value must be a str")
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.value = value
+        self._value = value
+
+    @property
+    def value(self) -> str:
+        """The current value displayed in the Digits."""
+        return self._value
 
     def update(self, value: str) -> None:
         """Update the Digits with a new value.
 
         Args:
             value: New value to display.
+
+        Raises:
+            ValueError: If the value isn't a `str`.
         """
         if not isinstance(value, str):
             raise TypeError("value must be a str")
-        layout_required = len(value) != len(self.value) or (
-            DigitsRenderable.get_width(self.value) != DigitsRenderable.get_width(value)
+        layout_required = len(value) != len(self._value) or (
+            DigitsRenderable.get_width(self._value) != DigitsRenderable.get_width(value)
         )
-        self.value = value
+        self._value = value
         self.refresh(layout=layout_required)
 
     def render(self) -> RenderableType:
         """Render digits."""
         rich_style = self.rich_style
-        digits = DigitsRenderable(self.value, rich_style)
+        digits = DigitsRenderable(self._value, rich_style)
         text_align = self.styles.text_align
         align = "left" if text_align not in {"left", "center", "right"} else text_align
         return Align(digits, cast(AlignMethod, align), rich_style)
@@ -78,7 +86,7 @@ class Digits(Widget):
         Returns:
             The optimal width of the content.
         """
-        return DigitsRenderable.get_width(self.value)
+        return DigitsRenderable.get_width(self._value)
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         """Called by Textual to get the height of the content area.

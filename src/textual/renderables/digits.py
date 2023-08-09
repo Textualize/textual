@@ -59,7 +59,13 @@ DIGITS3X3 = """\
 
 
 class Digits:
-    """Renders a 3X3 unicode 'font' for numerical values."""
+    """Renders a 3X3 unicode 'font' for numerical values.
+
+    Args:
+        text: Text to display.
+        style: Style to apply to the digits.
+
+    """
 
     def __init__(self, text: str, style: StyleType = "") -> None:
         self._text = text
@@ -77,6 +83,8 @@ class Digits:
         Args:
             style: Rich Style
 
+        Returns:
+            Result of render.
         """
         digit_pieces: list[list[str]] = [[], [], []]
         row1 = digit_pieces[0].append
@@ -102,7 +110,14 @@ class Digits:
 
     @classmethod
     def get_width(cls, text: str) -> int:
-        """Calculate the width without rendering."""
+        """Calculate the width without rendering.
+
+        Args:
+            text: Text which may be displayed in the `Digits` widget.
+
+        Returns:
+            width of the text (in cells).
+        """
         width = sum(3 if character in DIGITS else 1 for character in text)
         return width
 
