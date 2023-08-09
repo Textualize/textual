@@ -1,6 +1,6 @@
 # Collapsible
 
-<!-- !!! tip "Added in version .." -->
+!!! tip "Added in version 0.33"
 
 Collapsible contents with title.
 
