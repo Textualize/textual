@@ -5,7 +5,7 @@ The `layer` style defines the layer a widget belongs to.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-layer: <a href="../css_types/name.md">&lt;name&gt;</a>;
+layer: <a href="../../css_types/name">&lt;name&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The `layer` style accepts a [`<name>`](../css_types/name.md) that defines the layer this widget belongs to.
