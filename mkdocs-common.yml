@@ -87,7 +87,6 @@ plugins:
             - "!^render_lines$"
             - "!^get_content_width$"
             - "!^get_content_height$"
-            - "!^on_mount$"
     watch:
       - mkdocs-common.yml
       - mkdocs-nav.yml
