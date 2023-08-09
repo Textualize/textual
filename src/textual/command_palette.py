@@ -303,6 +303,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     """The list of command source classes."""
 
     def __init__(self) -> None:
+        """Initialise the command palette."""
         super().__init__()
         self._selected_command: CommandSourceHit | None = None
         """The command that was selected by the user."""
