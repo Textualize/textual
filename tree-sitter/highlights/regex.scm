@@ -11,7 +11,7 @@
  "]"
  "{"
  "}"
-] @punctuation.bracket
+] @regex.punctuation.bracket
 
 (group_name) @property
 
@@ -31,4 +31,4 @@
  (non_boundary_assertion)
 ] @string.escape
 
-[ "*" "+" "?" "|" "=" "!" ] @operator
+[ "*" "+" "?" "|" "=" "!" ] @regex.operator

@@ -4,6 +4,8 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
 
+from rich.segment import Segment
+from rich.style import Style
 from rich.text import Text
 
 if TYPE_CHECKING:
@@ -190,7 +192,7 @@ TextArea > .text-area--width-guide {
         Binding(
             "ctrl+w", "delete_word_left", "delete left to start of word", show=False
         ),
-        Binding("ctrl+d", "delete_right", "delete right", show=False),
+        Binding("delete,ctrl+d", "delete_right", "delete right", show=False),
         Binding(
             "ctrl+f", "delete_word_right", "delete right to start of word", show=False
         ),
@@ -341,28 +343,35 @@ TextArea > .text-area--width-guide {
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
+        # Selection styling
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
             # If this row intersects with the selection range
             selection_style = self.get_component_rich_style("text-area--selection")
-            if line_index == selection_top_row == selection_bottom_row:
-                # Selection within a single line
-                line.stylize_before(
-                    selection_style,
-                    start=selection_top_column,
-                    end=selection_bottom_column,
-                )
+            if line_character_count == 0 and line_index != end:
+                # A simple highlight to show empty lines are included in the selection
+                line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
             else:
-                # Selection spanning multiple lines
-                if line_index == selection_top_row:
+                if line_index == selection_top_row == selection_bottom_row:
+                    # Selection within a single line
                     line.stylize_before(
                         selection_style,
                         start=selection_top_column,
-                        end=line_character_count,
+                        end=selection_bottom_column,
                     )
-                elif line_index == selection_bottom_row:
-                    line.stylize_before(selection_style, end=selection_bottom_column)
                 else:
-                    line.stylize_before(selection_style, end=line_character_count)
+                    # Selection spanning multiple lines
+                    if line_index == selection_top_row:
+                        line.stylize_before(
+                            selection_style,
+                            start=selection_top_column,
+                            end=line_character_count,
+                        )
+                    elif line_index == selection_bottom_row:
+                        line.stylize_before(
+                            selection_style, end=selection_bottom_column
+                        )
+                    else:
+                        line.stylize_before(selection_style, end=line_character_count)
 
         virtual_width, virtual_height = self.virtual_size
 
@@ -400,7 +409,8 @@ TextArea > .text-area--width-guide {
         # Render the gutter and the text of this line
         gutter_segments = self.app.console.render(gutter)
         text_segments = self.app.console.render(
-            line, self.app.console.options.update_width(virtual_width)
+            line,
+            self.app.console.options.update_width(virtual_width),
         )
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
@@ -418,7 +428,7 @@ TextArea > .text-area--width-guide {
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
-        return strip
+        return strip.apply_style(self.rich_style)
 
     @property
     def text(self) -> str:

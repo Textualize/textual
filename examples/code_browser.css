@@ -3,24 +3,25 @@ Screen {
 }
 
 #tree-view {
-    display: none; 
+    color: red;
+    display: none;
     scrollbar-gutter: stable;
-    overflow: auto;    
-    width: auto;    
-    height: 100%;            
-    dock: left;       
+    overflow: auto;
+    width: auto;
+    height: 100%;
+    dock: left;
 }
 
 CodeBrowser.-show-tree #tree-view {
-    display: block;        
+    display: block;
     max-width: 50%;
 }
 
 
 #code-view {
-    overflow: auto scroll;  
-    min-width: 100%;        
+    overflow: auto scroll;
+    min-width: 100%;
 }
 #code {
-    width: auto;    
+    width: auto;
 }

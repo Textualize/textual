@@ -99,14 +99,15 @@ async def test_cursor_selection_right():
         assert text_area.selection == Selection((0, 0), (0, 3))
 
 
-async def test_cursor_selection_right():
+async def test_cursor_selection_right_to_previous_line():
     """When you press shift+right resulting in the cursor moving to the next line,
     the selection is updated correctly."""
     app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
-        await pilot.press(*["shift+right"] * 3)
-        assert text_area.selection == Selection((0, 0), (0, 3))
+        text_area.selection = Selection.cursor((0, 15))
+        await pilot.press(*["shift+right"] * 4)
+        assert text_area.selection == Selection((0, 15), (1, 2))
 
 
 async def test_cursor_selection_left():

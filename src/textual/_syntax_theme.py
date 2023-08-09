@@ -27,6 +27,8 @@ _MONOKAI = {
     # "type": Style(color="cyan"),
     # "escape": Style(bgcolor="magenta"),
     "heading": Style(color="#F92672", bold=True),
+    "regex.punctuation.bracket": Style(color="#F92672"),
+    "regex.operator": Style(color="#F92672"),
 }
 
 BUILTIN_THEMES = {
