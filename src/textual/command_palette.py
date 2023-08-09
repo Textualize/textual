@@ -321,7 +321,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         cls._sources.add(source)
 
     def compose(self) -> ComposeResult:
-        """Compose the command palette."""
+        """Compose the command palette.
+
+        Returns:
+            The content of the screen.
+        """
         with Vertical():
             with Horizontal(id="--input"):
                 yield CommandInput(placeholder="Search...")
