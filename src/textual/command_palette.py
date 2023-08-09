@@ -179,9 +179,13 @@ class CommandList(OptionList, can_focus=False):
     DEFAULT_CSS = """
     CommandList {
         visibility: hidden;
-        border: blank;
+        border-top: blank;
+        border-bottom: hkey $accent;
+        border-left: blank;
+        border-right: blank;
         height: auto;
         max-height: 70vh;
+        background: $panel;
     }
 
     CommandList:focus {
@@ -205,6 +209,7 @@ class CommandInput(Input):
     CommandInput, CommandInput:focus {
         border: blank;
         width: 1fr;
+        background: $panel;
     }
     """
 
@@ -249,6 +254,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     CommandPalette #--input {
         height: auto;
         visibility: visible;
+        border: hkey $accent;
+        background: $panel;
     }
 
     CommandPalette #--input Button {
