@@ -4,6 +4,7 @@
 
 Collapsible contents with title.
 
+- [ ] Focusable
 - [x] Container
 
 This widget wraps other widgets as `Contents` and control the visibility.
