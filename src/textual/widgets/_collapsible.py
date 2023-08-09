@@ -8,7 +8,7 @@ from ..containers import Container, Horizontal
 from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
-from ._label import Label
+from ..widgets import Label
 
 __all__ = ["Collapsible"]
 
