@@ -5,7 +5,7 @@ from textual.widgets import Digits
 class DigitApp(App):
     CSS = """
     #digits1 {
-    text-align: left;    
+        text-align: left;
     }
     #digits2 {
         text-align:center;
