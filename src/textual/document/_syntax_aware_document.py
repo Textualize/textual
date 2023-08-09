@@ -52,7 +52,7 @@ class SyntaxAwareDocument(Document):
 
         if TREE_SITTER:
             if isinstance(language, str):
-                if self._language.name not in VALID_LANGUAGES:
+                if language not in VALID_LANGUAGES:
                     raise RuntimeError(f"Invalid language {language!r}")
                 self._language = get_language(language)
                 self._parser = get_parser(language)
@@ -69,8 +69,7 @@ class SyntaxAwareDocument(Document):
             else:
                 self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
 
-                self._syntax_theme.highlight_query = highlight_query_path.read_text()
-
+            self._syntax_theme.highlight_query = highlight_query_path.read_text()
             self._syntax_tree = self._build_ast(self._parser)
             self._prepare_highlights()
 
