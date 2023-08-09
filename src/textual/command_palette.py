@@ -512,8 +512,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 if command_list.highlighted is not None
                 else None
             )
-            command_list.clear_options()
-            command_list.add_options(sorted_commands)
+            command_list.clear_options().add_options(sorted_commands)
             if highlighted is not None:
                 command_list.highlighted = command_list.get_option_index(highlighted.id)
 
