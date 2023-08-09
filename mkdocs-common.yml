@@ -78,6 +78,16 @@ plugins:
             - "!^_"
             - "^__init__$"
             - "!^can_replace$"
+            # Hide some methods that Widget subclasses implement but that we don't want
+            # to be shown in the docs.
+            # This is then overridden in widget.md so that it shows in the base class.
+            - "!^compose$"
+            - "!^render$"
+            - "!^render_line$"
+            - "!^render_lines$"
+            - "!^get_content_width$"
+            - "!^get_content_height$"
+            - "!^on_mount$"
     watch:
       - mkdocs-common.yml
       - mkdocs-nav.yml
