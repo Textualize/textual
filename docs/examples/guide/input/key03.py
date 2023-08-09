@@ -1,9 +1,9 @@
-from textual.app import App, ComposeResult
-from textual.widgets import TextLog
 from textual import events
+from textual.app import App, ComposeResult
+from textual.widgets import RichLog
 
 
-class KeyLogger(TextLog):
+class KeyLogger(RichLog):
     def on_key(self, event: events.Key) -> None:
         self.write(event)
 

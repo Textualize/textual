@@ -434,7 +434,7 @@ You should find that if you move the mouse over the widget now, it will highligh
 The following builtin widgets use the Line API. If you are building advanced widgets, it may be worth looking through the code for inspiration!
 
 - [DataTable](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_data_table.py)
-- [TextLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_text_log.py)
+- [RichLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_rich_log.py)
 - [Tree](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_tree.py)
 
 ## Compound widgets

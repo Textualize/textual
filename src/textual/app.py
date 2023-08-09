@@ -609,7 +609,7 @@ class App(Generic[ReturnType], DOMNode):
             complete: Should the animation be set to its final value?
 
         Note:
-            If there is no animation running, this is a no-op.
+            If there is no animation scheduled or running, this is a no-op.
         """
         await self._animator.stop_animation(self, attribute, complete)
 
@@ -2333,7 +2333,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         try:
-            if screen is not self.screen or renderable is None:
+            if renderable is None:
                 return
 
             if (

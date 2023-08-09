@@ -131,7 +131,7 @@ Screen>Container {
     overflow: hidden;
 }
 
-TextLog {
+RichLog {
     background: $surface;
     color: $text;
     height: 50vh;
@@ -144,11 +144,11 @@ TextLog {
 }
 
 
-TextLog:focus {
+RichLog:focus {
     offset: 0 0 !important;
 }
 
-TextLog.-hidden {
+RichLog.-hidden {
     offset-y: 100%;
 }
 

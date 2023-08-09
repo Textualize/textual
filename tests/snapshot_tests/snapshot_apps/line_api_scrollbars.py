@@ -3,7 +3,7 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import VerticalScroll
 from textual.widget import Widget
-from textual.widgets import TextLog
+from textual.widgets import RichLog
 
 
 class MyWidget(Widget):
@@ -22,7 +22,7 @@ class ScrollViewApp(App):
         align: center middle;
     }
 
-    TextLog {
+    RichLog {
         width:13;
         height:10;
     }
@@ -41,11 +41,11 @@ class ScrollViewApp(App):
     """
 
     def compose(self) -> ComposeResult:
-        yield TextLog()
+        yield RichLog()
         yield VerticalScroll(MyWidget())
 
     def on_ready(self) -> None:
-        self.query_one(TextLog).write("\n".join(f"{n} 0123456789" for n in range(20)))
+        self.query_one(RichLog).write("\n".join(f"{n} 0123456789" for n in range(20)))
         self.query_one(VerticalScroll).scroll_end(animate=False)
 
 

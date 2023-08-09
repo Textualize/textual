@@ -1147,6 +1147,26 @@ class Widget(DOMNode):
         )
 
     @property
+    def is_vertical_scroll_end(self) -> bool:
+        """Is the vertical scroll position at the maximum?"""
+        return self.scroll_offset.y == self.max_scroll_y
+
+    @property
+    def is_horizontal_scroll_end(self) -> bool:
+        """Is the horizontal scroll position at the maximum?"""
+        return self.scroll_offset.x == self.max_scroll_x
+
+    @property
+    def is_vertical_scrollbar_grabbed(self) -> bool:
+        """Is the user dragging the vertical scrollbar?"""
+        return bool(self._vertical_scrollbar and self._vertical_scrollbar.grabbed)
+
+    @property
+    def is_horizontal_scrollbar_grabbed(self) -> bool:
+        """Is the user dragging the vertical scrollbar?"""
+        return bool(self._horizontal_scrollbar and self._horizontal_scrollbar.grabbed)
+
+    @property
     def scrollbar_corner(self) -> ScrollBarCorner:
         """The scrollbar corner.
 
@@ -1517,17 +1537,40 @@ class Widget(DOMNode):
 
     @property
     def _has_relative_children_width(self) -> bool:
-        """Do any children have a relative width?"""
+        """Do any children (or progeny) have a relative width?"""
         if not self.is_container:
             return False
-        return any(widget.styles.is_relative_width for widget in self.children)
+        for child in self.children:
+            styles = child.styles
+            if styles.display == "none":
+                continue
+            width = styles.width
+            if width is None:
+                continue
+            if styles.is_relative_width or (
+                width.is_auto and child._has_relative_children_width
+            ):
+                return True
+        return False
 
     @property
     def _has_relative_children_height(self) -> bool:
-        """Do any children have a relative height?"""
+        """Do any children (or progeny) have a relative height?"""
+
         if not self.is_container:
             return False
-        return any(widget.styles.is_relative_height for widget in self.children)
+        for child in self.children:
+            styles = child.styles
+            if styles.display == "none":
+                continue
+            height = styles.height
+            if height is None:
+                continue
+            if styles.is_relative_height or (
+                height.is_auto and child._has_relative_children_height
+            ):
+                return True
+        return False
 
     def animate(
         self,
@@ -1575,7 +1618,7 @@ class Widget(DOMNode):
             complete: Should the animation be set to its final value?
 
         Note:
-            If there is no animation running, this is a no-op.
+            If there is no animation scheduled or running, this is a no-op.
         """
         await self.app.animator.stop_animation(self, attribute, complete)
 
@@ -2761,8 +2804,9 @@ class Widget(DOMNode):
         if (
             isinstance(renderable, Text)
             and text_justify is not None
-            and renderable.justify is None
+            and renderable.justify != text_justify
         ):
+            renderable = renderable.copy()
             renderable.justify = text_justify
 
         renderable = _Styled(

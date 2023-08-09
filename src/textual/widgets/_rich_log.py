@@ -22,11 +22,11 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 
-class TextLog(ScrollView, can_focus=True):
+class RichLog(ScrollView, can_focus=True):
     """A widget for logging text."""
 
     DEFAULT_CSS = """
-    TextLog{
+    RichLog{
         background: $surface;
         color: $text;
         overflow-y: scroll;
@@ -54,7 +54,7 @@ class TextLog(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Create a TextLog widget.
+        """Create a RichLog widget.
 
         Args:
             max_lines: Maximum number of lines in the log or `None` for no maximum.
@@ -137,7 +137,7 @@ class TextLog(ScrollView, can_focus=True):
             scroll_end: Enable automatic scroll to end, or `None` to use `self.auto_scroll`.
 
         Returns:
-            The `TextLog` instance.
+            The `RichLog` instance.
         """
 
         auto_scroll = self.auto_scroll if scroll_end is None else scroll_end
@@ -192,7 +192,7 @@ class TextLog(ScrollView, can_focus=True):
         """Clear the text log.
 
         Returns:
-            The `TextLog` instance.
+            The `RichLog` instance.
         """
         self.lines.clear()
         self._line_cache.clear()
@@ -215,7 +215,7 @@ class TextLog(ScrollView, can_focus=True):
             crop: Region within visible area to.
 
         Returns:
-            A list of list of segments
+            A list of list of segments.
         """
         lines = self._styles_cache.render_widget(self, crop)
         return lines
@@ -228,11 +228,7 @@ class TextLog(ScrollView, can_focus=True):
         if key in self._line_cache:
             return self._line_cache[key]
 
-        line = (
-            self.lines[y]
-            .adjust_cell_length(max(self.max_width, width), self.rich_style)
-            .crop(scroll_x, scroll_x + width)
-        )
+        line = self.lines[y].crop_extend(scroll_x, scroll_x + width, self.rich_style)
 
         self._line_cache[key] = line
         return line

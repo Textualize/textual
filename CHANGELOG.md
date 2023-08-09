@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
+- Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
+- Fixed background refresh https://github.com/Textualize/textual/issues/3055
+- `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+
+### Added
+- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603 
+
+## [0.32.0] - 2023-08-03
+
+### Added
+
+- Added widgets.Log
+- Added Widget.is_vertical_scroll_end, Widget.is_horizontal_scroll_end, Widget.is_vertical_scrollbar_grabbed, Widget.is_horizontal_scrollbar_grabbed
+
+### Changed
+
+- Breaking change: Renamed TextLog to RichLog
+
+## [0.31.0] - 2023-08-01
+
 ### Added
 
 - Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
@@ -1142,6 +1165,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.31.0]: https://github.com/Textualize/textual/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/Textualize/textual/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/Textualize/textual/compare/v0.28.1...v0.29.0
 [0.28.1]: https://github.com/Textualize/textual/compare/v0.28.0...v0.28.1
