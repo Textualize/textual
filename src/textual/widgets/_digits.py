@@ -11,16 +11,7 @@ from ..widget import Widget
 
 
 class Digits(Widget):
-    """A widget to display numerical values using a 3x3 grid of unicode characters.
-
-    Args:
-        value: Value to display in widget.
-        name: The name of the widget.
-        id: The ID of the widget in the DOM.
-        classes: The CSS classes of the widget.
-        disabled: Whether the widget is disabled or not.
-
-    """
+    """A widget to display numerical values using a 3x3 grid of unicode characters."""
 
     DEFAULT_CSS = """
     Digits {
@@ -41,6 +32,15 @@ class Digits(Widget):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """
+        Args:
+            value: Value to display in widget.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes of the widget.
+            disabled: Whether the widget is disabled or not.
+
+        """
         if not isinstance(value, str):
             raise TypeError("value must be a str")
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
