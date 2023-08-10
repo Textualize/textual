@@ -23,6 +23,23 @@ def test_default_selection():
     assert text_area.selection == Selection.cursor((0, 0))
 
 
+async def test_cursor_location_get():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.selection = Selection((1, 1), (2, 2))
+        assert text_area.cursor_location == (2, 2)
+
+
+async def test_cursor_location_set():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.selection = Selection((1, 1), (2, 2))
+        text_area.cursor_location = (2, 3)
+        assert text_area.selection == Selection((1, 1), (2, 3))
+
+
 async def test_selected_text_forward():
     """Selecting text from top to bottom results in the correct selected_text."""
     app = TextAreaApp()
