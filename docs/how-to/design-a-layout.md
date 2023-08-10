@@ -199,4 +199,4 @@ The following tips will help you get started.
 
 ---
 
-If you need further help, we are here to [help](/help/).
+If you need further help, we are here to [help](../help.md).

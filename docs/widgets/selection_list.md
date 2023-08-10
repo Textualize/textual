@@ -30,7 +30,7 @@ my_selection_list: SelectionList[int] =  SelectionList(*selections)
 ## Examples
 
 A selection list is designed to be built up of single-line prompts (which
-can be [Rich renderables](/guide/widgets/#rich-renderables)) and an
+can be [Rich renderables](../guide/widgets.md#rich-renderables)) and an
 associated unique value.
 
 ### Selections as tuples

@@ -12,7 +12,7 @@ The `link-hover-style` style sets the text style for the link text when the mous
 link-hover-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`link-hover-style` applies its [`<text-style>`](../../../css_types/text_style) to the text of Textual action links when the mouse pointer is over them.
+`link-hover-style` applies its [`<text-style>`](../../css_types/text_style.md) to the text of Textual action links when the mouse pointer is over them.
 
 ### Defaults
 
