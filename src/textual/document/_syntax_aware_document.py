@@ -136,16 +136,14 @@ class SyntaxAwareDocument(Document):
 
         if TREE_SITTER:
             deleted_text_byte_length = len(deleted_text.encode("utf-8"))
-            edit_args = {
-                "start_byte": start_byte,
-                "old_end_byte": old_end_byte,
-                "new_end_byte": old_end_byte - deleted_text_byte_length,
-                "start_point": top,
-                "old_end_point": bottom,
-                "new_end_point": top,
-            }
-            print(f"edit = {edit_args!r}")
-            self._syntax_tree.edit(**edit_args)
+            self._syntax_tree.edit(
+                start_byte=start_byte,
+                old_end_byte=old_end_byte,
+                new_end_byte=old_end_byte - deleted_text_byte_length,
+                start_point=top,
+                old_end_point=bottom,
+                new_end_point=top,
+            )
             new_tree = self._parser.parse(self._read_callable, self._syntax_tree)
             self._syntax_tree = new_tree
             self._prepare_highlights()
