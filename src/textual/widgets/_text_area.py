@@ -613,6 +613,21 @@ TextArea > .text-area--width-guide {
         return scroll_offset
 
     @property
+    def cursor_location(self) -> Location:
+        """The current location of the cursor in the document."""
+        return self.selection.end
+
+    @cursor_location.setter
+    def cursor_location(self, new_location: Location) -> Location:
+        """Set the cursor_location to a new location.
+
+        If a selection is in progress, the anchor point will remain.
+        """
+        start, end = self.selection
+        self.selection = Selection(start, new_location)
+        return self.selection.end
+
+    @property
     def cursor_at_first_row(self) -> bool:
         return self.selection.end[0] == 0
 
@@ -877,9 +892,11 @@ TextArea > .text-area--width-guide {
     def insert_text(
         self,
         text: str,
-        location: Location,
+        location: Location | None = None,
         cursor_destination: Location | None = None,
     ) -> None:
+        if location is None:
+            location = self.selection.end
         self.edit(Insert(text, location, location, cursor_destination))
 
     def insert_text_range(
