@@ -950,9 +950,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         if self._markdown is not None:
             self.document.update(self._markdown)
 
-    async def go(self, location: str | PurePath) -> bool:
+    async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""
-        return await self.document.load(self.navigator.go(location))
+        await self.document.load(self.navigator.go(location))
 
     async def back(self) -> None:
         """Go back one level in the history."""

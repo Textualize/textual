@@ -183,4 +183,4 @@ Keep the following in mind when you want to center content in Textual:
 
 ---
 
-If you need further help, we are here to [help](/help/).
+If you need further help, we are here to [help](../help.md).

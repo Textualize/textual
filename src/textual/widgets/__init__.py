@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
     from ._checkbox import Checkbox
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
+    from ._digits import Digits
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
     from ._header import Header
@@ -49,6 +50,7 @@ __all__ = [
     "Checkbox",
     "ContentSwitcher",
     "DataTable",
+    "Digits",
     "DirectoryTree",
     "Footer",
     "Header",

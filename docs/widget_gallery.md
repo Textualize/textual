@@ -52,6 +52,15 @@ A powerful data table, with configurable cursors.
 ```{.textual path="docs/examples/widgets/data_table.py"}
 ```
 
+## Digits
+
+Display numbers in tall characters.
+
+[Digits reference](./widgets/digits.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/digits.py"}
+```
+
 ## DirectoryTree
 
 A tree view of files and folders.
