@@ -13,7 +13,7 @@ display a message when using Textual's built-in notification system.
 
 ## Styling
 
-You can customize the style of Toasts by targeting the `Toast` [CSS type](/guide/CSS/#type-selector).
+You can customize the style of Toasts by targeting the `Toast` [CSS type](../guide/CSS.md#type-selector).
 For example:
 
 
@@ -24,7 +24,7 @@ Toast {
 ```
 
 The three severity levels also have corresponding
-[classes](/guide/CSS/#class-name-selector), allowing you to target the
+[classes](../guide/CSS.md#class-name-selector), allowing you to target the
 different styles of notification. They are:
 
 - `-information`

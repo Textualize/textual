@@ -230,7 +230,7 @@ Textual will send a [MouseCapture](../events/mouse_capture.md) event when the mo
 
 ### Enter and Leave events
 
-Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave) event when the cursor moves off a widget.
+Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave.md) event when the cursor moves off a widget.
 
 ### Click events
 
@@ -240,7 +240,7 @@ If you want your app to respond to a mouse click you should prefer the Click eve
 
 ### Scroll events
 
-Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseScrollDown](../events/mouse_scroll_down.md) and [MouseScrollUp](../events/mouse_scroll_up) if you want build your own scrolling functionality.
+Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseScrollDown](../events/mouse_scroll_down.md) and [MouseScrollUp](../events/mouse_scroll_up.md) if you want build your own scrolling functionality.
 
 !!! information
 
