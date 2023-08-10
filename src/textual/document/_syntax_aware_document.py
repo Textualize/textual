@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from functools import lru_cache
 from pathlib import Path
 
 from rich.text import Text
@@ -160,16 +161,18 @@ class SyntaxAwareDocument(Document):
         Returns:
             The syntax highlighted Text of the line.
         """
+        line_bytes = self[line_index].encode("utf-8")
+        byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
         line = Text(self[line_index], end="")
         if self._highlights:
             highlights = self._highlights[line_index]
-            print(line_index)
-            print(line)
-            print(highlights)
-            print("---")
             for start, end, highlight_name in highlights:
                 node_style = self._syntax_theme.get_highlight(highlight_name)
-                line.stylize(node_style, start, end)
+                line.stylize(
+                    node_style,
+                    byte_to_codepoint.get(start, 0),
+                    byte_to_codepoint.get(end),
+                )
 
         return line
 
@@ -275,8 +278,45 @@ class SyntaxAwareDocument(Document):
             if row < len(lines) - 1:
                 row_text += self.newline
 
-        column_out_of_bounds = column >= len(row_text)
+        encoded_row = row_text.encode("utf-8")
+        column_out_of_bounds = column >= len(encoded_row)
         if column_out_of_bounds:
             return None
         else:
-            return row_text[column].encode("utf-8")
+            return encoded_row[column:]
+
+
+@lru_cache(maxsize=128)
+def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
+    byte_to_codepoint = {}
+    current_byte_offset = 0
+    code_point_offset = 0
+
+    while current_byte_offset < len(data):
+        # Save the mapping before incrementing the byte offset
+        byte_to_codepoint[current_byte_offset] = code_point_offset
+
+        first_byte = data[current_byte_offset]
+
+        # Single-byte character
+        if (first_byte & 0b10000000) == 0:
+            current_byte_offset += 1
+        # 2-byte character
+        elif (first_byte & 0b11100000) == 0b11000000:
+            current_byte_offset += 2
+        # 3-byte character
+        elif (first_byte & 0b11110000) == 0b11100000:
+            current_byte_offset += 3
+        # 4-byte character
+        elif (first_byte & 0b11111000) == 0b11110000:
+            current_byte_offset += 4
+        else:
+            raise ValueError(f"Invalid UTF-8 byte: {first_byte}")
+
+        # Increment the code-point counter
+        code_point_offset += 1
+
+    # Mapping for the end of the string
+    byte_to_codepoint[current_byte_offset] = code_point_offset
+
+    return byte_to_codepoint
