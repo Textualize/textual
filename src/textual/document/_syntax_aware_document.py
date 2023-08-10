@@ -273,6 +273,6 @@ class SyntaxAwareDocument(Document):
         if row_out_of_bounds or column_out_of_bounds:
             return_value = None
         else:
-            return_value = row_text[column:].encode("utf8")
+            return_value = row_text[column].encode("utf8")
 
         return return_value
