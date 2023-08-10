@@ -135,17 +135,18 @@ class SyntaxAwareDocument(Document):
 
         if TREE_SITTER:
             deleted_text_byte_length = len(deleted_text.encode("utf-8"))
-            self._syntax_tree.edit(
-                start_byte=start_byte,
-                old_end_byte=old_end_byte,
-                new_end_byte=old_end_byte - deleted_text_byte_length,
-                start_point=top,
-                old_end_point=bottom,
-                new_end_point=top,
-            )
-            self._syntax_tree = self._parser.parse(
-                self._read_callable, self._syntax_tree
-            )
+            edit_args = {
+                "start_byte": start_byte,
+                "old_end_byte": old_end_byte,
+                "new_end_byte": old_end_byte - deleted_text_byte_length,
+                "start_point": top,
+                "old_end_point": bottom,
+                "new_end_point": top,
+            }
+            print(f"edit = {edit_args!r}")
+            self._syntax_tree.edit(**edit_args)
+            new_tree = self._parser.parse(self._read_callable, self._syntax_tree)
+            self._syntax_tree = new_tree
             self._prepare_highlights()
 
         return deleted_text
@@ -162,6 +163,10 @@ class SyntaxAwareDocument(Document):
         line = Text(self[line_index], end="")
         if self._highlights:
             highlights = self._highlights[line_index]
+            print(line_index)
+            print(line)
+            print(highlights)
+            print("---")
             for start, end, highlight_name in highlights:
                 node_style = self._syntax_theme.get_highlight(highlight_name)
                 line.stylize(node_style, start, end)
@@ -186,7 +191,8 @@ class SyntaxAwareDocument(Document):
             bytes_on_left = len(lines[row][:column].encode("utf-8"))
         else:
             bytes_on_left = 0
-        return bytes_lines_above + bytes_on_left
+        byte_offset = bytes_lines_above + bytes_on_left
+        return byte_offset
 
     def _prepare_highlights(
         self,
@@ -258,7 +264,9 @@ class SyntaxAwareDocument(Document):
         lines = self._lines
 
         row_out_of_bounds = row >= len(lines)
-        if not row_out_of_bounds:
+        if row_out_of_bounds:
+            return None
+        else:
             row_text = lines[row]
             # If it's not the last row, add a newline.
             # We could optimise this by not concatenating and just returning
@@ -266,13 +274,9 @@ class SyntaxAwareDocument(Document):
             # hot function.
             if row < len(lines) - 1:
                 row_text += self.newline
-        else:
-            row_text = ""
 
         column_out_of_bounds = column >= len(row_text)
-        if row_out_of_bounds or column_out_of_bounds:
-            return_value = None
+        if column_out_of_bounds:
+            return None
         else:
-            return_value = row_text[column].encode("utf8")
-
-        return return_value
+            return row_text[column].encode("utf-8")

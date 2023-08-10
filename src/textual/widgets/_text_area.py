@@ -934,14 +934,14 @@ TextArea > .text-area--width-guide {
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
 
         If there's a selection, then the selected range is deleted."""
-        if self.cursor_at_end_of_document:
-            return
 
         selection = self.selection
         start, end = selection
         end_row, end_column = end
 
         if selection.is_empty:
+            if self.cursor_at_end_of_document:
+                return
             if self.cursor_at_end_of_row:
                 end = (end_row + 1, 0)
             else:
