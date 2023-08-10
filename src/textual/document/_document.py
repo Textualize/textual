@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from functools import lru_cache
 from typing import NamedTuple, Tuple
 
 from rich.text import Text
@@ -12,6 +13,12 @@ from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
 VALID_NEWLINES = set(get_args(Newline))
+
+
+@lru_cache(maxsize=1024)
+def _utf8_encode(text: str) -> bytes:
+    """Encode the input text as utf-8 bytes."""
+    return text.encode("utf-8")
 
 
 def _detect_newline_style(text: str) -> Newline:

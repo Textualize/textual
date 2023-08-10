@@ -4,7 +4,6 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
 
-from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 

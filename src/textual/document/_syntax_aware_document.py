@@ -22,7 +22,7 @@ except ImportError:
 
 from textual._fix_direction import _fix_direction
 from textual._languages import VALID_LANGUAGES
-from textual.document._document import Document, Highlight
+from textual.document._document import Document, Highlight, _utf8_encode
 
 TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"
@@ -97,7 +97,7 @@ class SyntaxAwareDocument(Document):
         end_location = super().insert_range(start, end, text)
 
         if TREE_SITTER:
-            text_byte_length = len(text.encode("utf-8"))
+            text_byte_length = len(_utf8_encode(text))
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
@@ -135,7 +135,7 @@ class SyntaxAwareDocument(Document):
         deleted_text = super().delete_range(start, end)
 
         if TREE_SITTER:
-            deleted_text_byte_length = len(deleted_text.encode("utf-8"))
+            deleted_text_byte_length = len(_utf8_encode(deleted_text))
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
@@ -159,7 +159,7 @@ class SyntaxAwareDocument(Document):
         Returns:
             The syntax highlighted Text of the line.
         """
-        line_bytes = self[line_index].encode("utf-8")
+        line_bytes = _utf8_encode(self[line_index])
         byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
         line = Text(self[line_index], end="")
         if self._highlights:
@@ -186,10 +186,10 @@ class SyntaxAwareDocument(Document):
         lines_above = lines[:row]
         end_of_line_width = len(self.newline)
         bytes_lines_above = sum(
-            len(line.encode("utf-8")) + end_of_line_width for line in lines_above
+            len(_utf8_encode(line)) + end_of_line_width for line in lines_above
         )
         if row < len(lines):
-            bytes_on_left = len(lines[row][:column].encode("utf-8"))
+            bytes_on_left = len(_utf8_encode(lines[row][:column]))
         else:
             bytes_on_left = 0
         byte_offset = bytes_lines_above + bytes_on_left
@@ -214,6 +214,7 @@ class SyntaxAwareDocument(Document):
         if end_point is not None:
             captures_kwargs["end_point"] = end_point
 
+        # We could optimise by only preparing highlights for a subset of lines here.
         captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
 
         highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
@@ -264,24 +265,26 @@ class SyntaxAwareDocument(Document):
         row, column = point
         lines = self._lines
 
+        newline = self.newline
+
         row_out_of_bounds = row >= len(lines)
         if row_out_of_bounds:
             return None
         else:
             row_text = lines[row]
-            # If it's not the last row, add a newline.
-            # We could optimise this by not concatenating and just returning
-            # the appropriate character. This might be worth it since it's a very
-            # hot function.
-            if row < len(lines) - 1:
-                row_text += self.newline
 
-        encoded_row = row_text.encode("utf-8")
-        column_out_of_bounds = column >= len(encoded_row)
-        if column_out_of_bounds:
-            return None
+        encoded_row = _utf8_encode(row_text)
+        encoded_row_length = len(encoded_row)
+
+        if column < encoded_row_length:
+            return encoded_row[column:] + _utf8_encode(newline)
+        elif column == encoded_row_length:
+            return _utf8_encode(newline[0])
+        elif column == encoded_row_length + 1:
+            if newline == "\r\n":
+                return b"\n"
         else:
-            return encoded_row[column:]
+            return None
 
 
 @lru_cache(maxsize=128)
