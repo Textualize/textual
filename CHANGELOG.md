@@ -16,8 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
 
 ### Added
-- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603 
+- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603
 - Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
+
+### Changed
+- The `DataTable` widget now takes the `by` argument instead of `columns`, allowing the table to also be sorted using a custom function (or other callable). This is a breaking change since it requires all calls to the `sort` method to include an iterable of key(s) (or a singular function/callable). https://github.com/Textualize/textual/issues/2261
 
 ## [0.32.0] - 2023-08-03
 

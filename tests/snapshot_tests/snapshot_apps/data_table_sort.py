@@ -36,7 +36,7 @@ class TableApp(App):
 
     def action_sort(self):
         table = self.query_one(DataTable)
-        table.sort("time", "lane")
+        table.sort(["time", "lane"])
 
 
 app = TableApp()

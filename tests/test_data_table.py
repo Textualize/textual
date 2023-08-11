@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from operator import itemgetter
+
 import pytest
 from rich.text import Text
 
@@ -417,11 +419,11 @@ async def test_get_cell_coordinate_returns_coordinate():
         table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
         table.add_row("ValR3C1", "ValR3C2", "ValR3C3", key="R3")
 
-        assert table.get_cell_coordinate('R1', 'C1') == Coordinate(0, 0)
-        assert table.get_cell_coordinate('R2', 'C2') == Coordinate(1, 1)
-        assert table.get_cell_coordinate('R1', 'C3') == Coordinate(0, 2)
-        assert table.get_cell_coordinate('R3', 'C1') == Coordinate(2, 0)
-        assert table.get_cell_coordinate('R3', 'C2') == Coordinate(2, 1)
+        assert table.get_cell_coordinate("R1", "C1") == Coordinate(0, 0)
+        assert table.get_cell_coordinate("R2", "C2") == Coordinate(1, 1)
+        assert table.get_cell_coordinate("R1", "C3") == Coordinate(0, 2)
+        assert table.get_cell_coordinate("R3", "C1") == Coordinate(2, 0)
+        assert table.get_cell_coordinate("R3", "C2") == Coordinate(2, 1)
 
 
 async def test_get_cell_coordinate_invalid_row_key():
@@ -432,7 +434,7 @@ async def test_get_cell_coordinate_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate('INVALID_ROW', 'C1')
+            coordinate = table.get_cell_coordinate("INVALID_ROW", "C1")
 
 
 async def test_get_cell_coordinate_invalid_column_key():
@@ -443,7 +445,7 @@ async def test_get_cell_coordinate_invalid_column_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate('R1', 'INVALID_COLUMN')
+            coordinate = table.get_cell_coordinate("R1", "INVALID_COLUMN")
 
 
 async def test_get_cell_at_returns_value_at_cell():
@@ -476,7 +478,7 @@ async def test_get_row():
         assert table.get_row(second_row) == [3, 2, 1]
 
         # Even if row positions change, keys should always refer to same rows.
-        table.sort(b)
+        table.sort([b])
         assert table.get_row(first_row) == [2, 4, 1]
         assert table.get_row(second_row) == [3, 2, 1]
 
@@ -500,7 +502,7 @@ async def test_get_row_at():
         assert table.get_row_at(1) == [3, 2, 1]
 
         # If we sort, then the rows present at the indices *do* change!
-        table.sort(b)
+        table.sort([b])
 
         # Since we sorted on column "B", the rows at indices 0 and 1 are swapped.
         assert table.get_row_at(0) == [3, 2, 1]
@@ -529,9 +531,9 @@ async def test_get_row_index_returns_index():
         table.add_row("ValR2C1", "ValR2C2", key="R2")
         table.add_row("ValR3C1", "ValR3C2", key="R3")
 
-        assert table.get_row_index('R1') == 0
-        assert table.get_row_index('R2') == 1
-        assert table.get_row_index('R3') == 2
+        assert table.get_row_index("R1") == 0
+        assert table.get_row_index("R2") == 1
+        assert table.get_row_index("R3") == 2
 
 
 async def test_get_row_index_invalid_row_key():
@@ -542,7 +544,7 @@ async def test_get_row_index_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(RowDoesNotExist):
-            index = table.get_row_index('InvalidRow')
+            index = table.get_row_index("InvalidRow")
 
 
 async def test_get_column():
@@ -589,6 +591,7 @@ async def test_get_column_at_invalid_index(index):
         with pytest.raises(ColumnDoesNotExist):
             list(table.get_column_at(index))
 
+
 async def test_get_column_index_returns_index():
     app = DataTableApp()
     async with app.run_test():
@@ -596,12 +599,12 @@ async def test_get_column_index_returns_index():
         table.add_column("Column1", key="C1")
         table.add_column("Column2", key="C2")
         table.add_column("Column3", key="C3")
-        table.add_row("ValR1C1", "ValR1C2", "ValR1C3",  key="R1")
-        table.add_row("ValR2C1", "ValR2C2", "ValR2C3",  key="R2")
+        table.add_row("ValR1C1", "ValR1C2", "ValR1C3", key="R1")
+        table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
 
-        assert table.get_column_index('C1') == 0
-        assert table.get_column_index('C2') == 1
-        assert table.get_column_index('C3') == 2
+        assert table.get_column_index("C1") == 0
+        assert table.get_column_index("C2") == 1
+        assert table.get_column_index("C3") == 2
 
 
 async def test_get_column_index_invalid_column_key():
@@ -611,11 +614,10 @@ async def test_get_column_index_invalid_column_key():
         table.add_column("Column1", key="C1")
         table.add_column("Column2", key="C2")
         table.add_column("Column3", key="C3")
-        table.add_row("TargetValue1", "TargetValue2", "TargetValue3",  key="R1")
+        table.add_row("TargetValue1", "TargetValue2", "TargetValue3", key="R1")
 
         with pytest.raises(ColumnDoesNotExist):
-            index = table.get_column_index('InvalidCol')
-
+            index = table.get_column_index("InvalidCol")
 
 
 async def test_update_cell_cell_exists():
@@ -876,7 +878,7 @@ async def test_sort_coordinate_and_key_access():
         assert table.get_cell_at(Coordinate(1, 0)) == 1
         assert table.get_cell_at(Coordinate(2, 0)) == 2
 
-        table.sort(column)
+        table.sort([column])
 
         # The keys still refer to the same cells...
         assert table.get_cell(row_one, column) == 1
@@ -909,7 +911,7 @@ async def test_sort_reverse_coordinate_and_key_access():
         assert table.get_cell_at(Coordinate(1, 0)) == 1
         assert table.get_cell_at(Coordinate(2, 0)) == 2
 
-        table.sort(column, reverse=True)
+        table.sort([column], reverse=True)
 
         # The keys still refer to the same cells...
         assert table.get_cell(row_one, column) == 1
@@ -1159,3 +1161,135 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
         # the widget, and the hover cursor is hidden
         await pilot.hover(DataTable, offset=Offset(42, 1))
         assert not table._show_hover_cursor
+
+
+async def test_sort_by_multiple_columns():
+    """Test sorting a `DataTable` my multiple columns."""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(1, 3, 8)
+        table.add_row(2, 9, 5)
+        table.add_row(1, 1, 9)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [2, 9, 5]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+        table.sort([a, b, c])
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort([a, c, b])
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [1, 1, 9]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort([c, a, b], reverse=True)
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort([a, c])
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [1, 1, 9]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+
+async def test_sort_by_function_sum():
+    """Test sorting a `DataTable` using a custom sort function."""
+
+    def custom_sort(row):
+        _, row_data = row
+        return sum(row_data.values())
+
+    row_data = (
+        [1, 3, 8],  # SUM=12
+        [2, 9, 5],  # SUM=16
+        [1, 1, 9],  # SUM=11
+    )
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+
+        for i, row in enumerate(row_data):
+            table.add_row(*row)
+            assert table.get_row_at(i) == row
+            assert sum(table.get_row_at(i)) == sum(row)
+
+        table.sort(custom_sort)
+        sorted_row_data = sorted(row_data, key=sum)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        table.sort(custom_sort, reverse=True)
+        sorted_row_data = sorted(row_data, key=sum, reverse=True)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+
+async def test_sort_by_function_sum_lambda():
+    """Test sorting a `DataTable` using a custom sort lambda."""
+    row_data = (
+        [1, 3, 8],  # SUM=12
+        [2, 9, 5],  # SUM=16
+        [1, 1, 9],  # SUM=11
+    )
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+
+        for i, row in enumerate(row_data):
+            table.add_row(*row)
+            assert table.get_row_at(i) == row
+            assert sum(table.get_row_at(i)) == sum(row)
+
+        table.sort(lambda row: sum(row[1].values()))
+        sorted_row_data = sorted(row_data, key=sum)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        table.sort(lambda row: sum(row[1].values()), reverse=True)
+        sorted_row_data = sorted(row_data, key=sum, reverse=True)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+
+async def test_sort_by_function_date():
+    """Test sorting a `DataTable` by date when an abnormal date format is used.
+    Based on a question in the Discourse 'Help Wanted' section.
+
+    Example: 26/07/23 == 2023-07-26
+    """
+
+    def custom_sort(row):
+        _, row_data = row
+        result = itemgetter(birthdate)(row_data)
+        d, m, y = result.split("/")
+        return f"{y}{m}{d}"
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        _, birthdate = table.add_columns("Name", "Birthdate")
+        table.add_row("Doug Johnson", "26/07/23")
+        table.add_row("Albert Douglass", "16/07/23")
+        table.add_row("Jane Doe", "25/12/22")
+        assert table.get_row_at(0) == ["Doug Johnson", "26/07/23"]
+        assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
+        assert table.get_row_at(2) == ["Jane Doe", "25/12/22"]
+
+        table.sort(custom_sort)
+        assert table.get_row_at(0) == ["Jane Doe", "25/12/22"]
+        assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
+        assert table.get_row_at(2) == ["Doug Johnson", "26/07/23"]
+
+        table.sort(custom_sort, reverse=True)
+        assert table.get_row_at(0) == ["Doug Johnson", "26/07/23"]
+        assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
+        assert table.get_row_at(2) == ["Jane Doe", "25/12/22"]

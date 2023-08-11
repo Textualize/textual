@@ -4,7 +4,7 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -2107,13 +2107,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def sort(
         self,
-        *columns: ColumnKey | str,
+        by: Iterable[ColumnKey | str] | Callable,
         reverse: bool = False,
     ) -> Self:
-        """Sort the rows in the `DataTable` by one or more column keys.
+        """Sort the rows in the `DataTable` by one or more column keys or a
+        key function (or other callable).
 
         Args:
-            columns: One or more columns to sort by the values in.
+            by: One or more columns to sort by the values by, or a function
+            (or other callable) that returns a key to use for sorting purposes.
             reverse: If True, the sort order will be reversed.
 
         Returns:
@@ -2124,12 +2126,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: tuple[RowKey, dict[ColumnKey | str, CellType]]
         ) -> Any:
             _, row_data = row
-            result = itemgetter(*columns)(row_data)
+            result = itemgetter(*by)(row_data)
             return result
 
-        ordered_rows = sorted(
-            self._data.items(), key=sort_by_column_keys, reverse=reverse
-        )
+        key = by if isinstance(by, Callable) else sort_by_column_keys
+        ordered_rows = sorted(self._data.items(), key=key, reverse=reverse)
         self._row_locations = TwoWayDict(
             {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
         )
