@@ -2205,9 +2205,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_page_down(self) -> None:
         """Move the cursor one page down."""
         self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            height = self.size.height - self.header_height if self.show_header else 0
+        if self.show_cursor and self.cursor_type in ("cell", "row"):
+            height = self.size.height - (self.header_height if self.show_header else 0)
 
             # Determine how many rows constitutes a "page"
             offset = 0
@@ -2228,9 +2227,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_page_up(self) -> None:
         """Move the cursor one page up."""
         self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            height = self.size.height - self.header_height if self.show_header else 0
+        if self.show_cursor and self.cursor_type in ("cell", "row"):
+            height = self.size.height - (self.header_height if self.show_header else 0)
 
             # Determine how many rows constitutes a "page"
             offset = 0

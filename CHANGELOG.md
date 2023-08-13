@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False`
+
 ### Fixed
 
 - Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
