@@ -657,6 +657,7 @@ TextArea > .text-area--width-guide {
             animate=False,
             force=True,
         )
+        # TODO - need a move_cursor method so we can do center=True etc.
         return scroll_offset
 
     @property
