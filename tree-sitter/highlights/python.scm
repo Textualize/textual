@@ -1,5 +1,6 @@
 ;; From tree-sitter-python licensed under MIT License
 ; Copyright (c) 2016 Max Brunsfeld
+; Adapted for Textual from:
 ; https://github.com/nvim-treesitter/nvim-treesitter/blob/f95ffd09ed35880c3a46ad2b968df361fa592a76/queries/python/highlights.scm
 
 ; Variables
@@ -281,14 +282,6 @@
 (try_statement
   (else_clause
     "else" @exception))
-
-["(" ")" "[" "]" "{" "}"] @punctuation.bracket
-
-(interpolation
-  "{" @punctuation.special
-  "}" @punctuation.special)
-
-["," "." ":" ";" (ellipsis)] @punctuation.delimiter
 
 ;; Class definitions
 

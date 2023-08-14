@@ -29,15 +29,16 @@ _MONOKAI = {
     "heading": Style(color="#F92672", bold=True),
     "regex.punctuation.bracket": Style(color="#F92672"),
     "regex.operator": Style(color="#F92672"),
+    "error": Style(color="black", bgcolor="red"),
 }
 
-BUILTIN_THEMES = {
+_BUILTIN_THEMES = {
     "monokai": _MONOKAI,
     "bluokai": {**_MONOKAI, "string": Style.parse("cyan")},
 }
 
 
-NULL_STYLE = Style.null()
+_NULL_STYLE = Style.null()
 
 
 @dataclass
@@ -64,7 +65,7 @@ class SyntaxTheme:
     """The name of the theme."""
 
     style_mapping: dict[str, Style] = field(default_factory=dict)
-    """The mapping of names from the `highlight_query` to Rich styles."""
+    """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
     highlight_query: str = ""
     """The tree-sitter query to use for highlighting.
@@ -78,14 +79,30 @@ class SyntaxTheme:
 
     @classmethod
     def get_theme(cls, theme_name: str) -> "SyntaxTheme":
-        return cls(theme_name, BUILTIN_THEMES.get(theme_name, {}))
+        """Get a `SyntaxTheme` by name.
+
+        Given a `theme_name` return the corresponding `SyntaxTheme` object.
+
+        Check the available `SyntaxTheme`s by calling `SyntaxTheme.available_themes()`.
+
+        Args:
+            theme_name: The name of the theme.
+
+        Returns:
+            The `SyntaxTheme` corresponding to the name.
+        """
+        return cls(theme_name, _BUILTIN_THEMES.get(theme_name, {}))
 
     def get_highlight(self, name: str) -> Style:
-        return self.style_mapping.get(name, NULL_STYLE)
+        """Return the Rich style corresponding to the name defined in the tree-sitter
+        highlight query for the current theme."""
+        return self.style_mapping.get(name, _NULL_STYLE)
 
     @classmethod
     def available_themes(cls) -> list[SyntaxTheme]:
-        return [SyntaxTheme(name, mapping) for name, mapping in BUILTIN_THEMES.items()]
+        """A list of all available SyntaxThemes."""
+        return [SyntaxTheme(name, mapping) for name, mapping in _BUILTIN_THEMES.items()]
 
 
 DEFAULT_SYNTAX_THEME = SyntaxTheme.get_theme("monokai")
+"""The default syntax highlighting theme used by Textual."""

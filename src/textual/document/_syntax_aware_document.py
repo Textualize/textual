@@ -177,6 +177,12 @@ class SyntaxAwareDocument(Document):
     def _tree_sitter_byte_offset(self, location: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate.
         This method only does work if tree-sitter was imported, otherwise it returns 0.
+
+        Args:
+            location: The location to convert.
+
+        Returns:
+            An integer byte offset for the given location.
         """
         if not TREE_SITTER:
             return 0
@@ -200,8 +206,12 @@ class SyntaxAwareDocument(Document):
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] = None,
     ) -> None:
-        """Query the tree for ranges to highlights, and update the internal
-        highlights mapping."""
+        """Query the tree for ranges to highlights, and update the internal highlights mapping.
+
+        Args:
+            start_point: The point to start looking for highlights from.
+            end_point: The point to look for highlights to.
+        """
         if not TREE_SITTER:
             return None
 

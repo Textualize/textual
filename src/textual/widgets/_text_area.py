@@ -230,7 +230,7 @@ TextArea > .text-area--width-guide {
     indent_width: Reactive[int] = reactive(4)
     """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
 
-    show_width_guide: Reactive[bool] = reactive(False)
+    _show_width_guide: Reactive[bool] = reactive(False)
     """If True, a vertical line will indicate the width of the document."""
 
     def __init__(
@@ -382,7 +382,8 @@ TextArea > .text-area--width-guide {
             line.stylize(cursor_style, cursor_column, cursor_column + 1)
             line.stylize_before(active_line_style)
 
-        if self.show_width_guide:
+        # The width guide is a visual indicator showing the virtual width of the TextArea widget.
+        if self._show_width_guide:
             width_guide_style = self.get_component_rich_style("text-area--width-guide")
             width_column = virtual_width - self.gutter_width
             line.stylize_before(width_guide_style, width_column - 1, width_column)

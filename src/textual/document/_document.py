@@ -12,12 +12,23 @@ from textual._types import Literal, SupportsIndex, get_args
 from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
+"""The type representing valid line separators."""
 VALID_NEWLINES = set(get_args(Newline))
+"""The set of valid line separator strings."""
 
 
 @lru_cache(maxsize=1024)
 def _utf8_encode(text: str) -> bytes:
-    """Encode the input text as utf-8 bytes."""
+    """Encode the input text as utf-8 bytes.
+
+    The returned encoded bytes may be retrieved from a cache.
+
+    Args:
+        text: The text to encode.
+
+    Returns:
+        The utf-8 bytes representing the input string.
+    """
     return text.encode("utf-8")
 
 
@@ -148,9 +159,17 @@ class Document(DocumentBase):
         """Get the Newline used in this document (e.g. '\r\n', '\n'. etc.)"""
         return self._newline
 
-    def get_size(self, indent_width: int) -> Size:
+    def get_size(self, tab_width: int) -> Size:
+        """The Size of the document, taking into account the tab rendering width.
+
+        Args:
+            tab_width: The width to use for tab indents.
+
+        Returns:
+            The size (width, height) of the document.
+        """
         lines = self._lines
-        cell_lengths = [cell_len(line.expandtabs(indent_width)) for line in lines]
+        cell_lengths = [cell_len(line.expandtabs(tab_width)) for line in lines]
         max_cell_length = max(cell_lengths or [1])
         height = len(lines)
         return Size(max_cell_length, height)
@@ -225,6 +244,11 @@ class Document(DocumentBase):
     def get_text_range(self, start: Location, end: Location) -> str:
         """Get the text that falls between the start and end locations.
 
+        Returns the text between `start` and `end`, including the appropriate
+        line separator character as specified by `Document._newline`. Note that
+        `_newline` is set automatically to the first line separator character
+        found in the document.
+
         Args:
             start: The start location of the selection.
             end: The end location of the selection.
@@ -271,8 +295,16 @@ class Document(DocumentBase):
         line_string = line_string.replace("\n", "").replace("\r", "")
         return Text(line_string, end="")
 
-    def __getitem__(self, item: SupportsIndex | slice) -> str:
-        return self._lines[item]
+    def __getitem__(self, line_index: SupportsIndex | slice) -> str | list[str]:
+        """Return the content of a line as a string, excluding newline characters.
+
+        Args:
+            line_index: The index or slice of the line(s) to retrieve.
+
+        Returns:
+            The line or list of lines requested.
+        """
+        return self._lines[line_index]
 
 
 Location = Tuple[int, int]
