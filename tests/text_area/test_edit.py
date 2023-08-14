@@ -1,3 +1,6 @@
+"""Tests some edit operations in the TextArea - note that more
+extensive testing for editing is done at the Document level."""
+
 from textual.app import App, ComposeResult
 from textual.widgets import TextArea
 
