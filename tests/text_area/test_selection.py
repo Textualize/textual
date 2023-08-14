@@ -244,3 +244,27 @@ async def test_get_cursor_down_location(start, end):
         # last location navigated to (0, 0)
         text_area.record_cursor_offset()
         assert text_area.get_cursor_down_location() == end
+
+
+async def test_cursor_page_down():
+    """Pagedown moves the cursor down 1 page, retaining column index."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("XXX\n" * 200)
+        text_area.selection = Selection.cursor((0, 1))
+        await pilot.press("pagedown")
+        assert text_area.selection == Selection.cursor((app.console.height - 1, 1))
+
+
+async def test_cursor_page_up():
+    """Pageup moves the cursor up 1 page, retaining column index."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("XXX\n" * 200)
+        text_area.selection = Selection.cursor((100, 1))
+        await pilot.press("pageup")
+        assert text_area.selection == Selection.cursor(
+            (100 - app.console.height + 1, 1)
+        )
