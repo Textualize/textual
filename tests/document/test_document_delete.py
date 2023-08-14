@@ -1,6 +1,6 @@
 import pytest
 
-from textual.document._document import Document
+from textual.document import Document
 
 TEXT = """I must not fear.
 Fear is the mind-killer.

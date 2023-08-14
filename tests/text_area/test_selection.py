@@ -1,5 +1,7 @@
+import pytest
+
 from textual.app import App, ComposeResult
-from textual.document._document import Selection
+from textual.document import Selection
 from textual.geometry import Offset
 from textual.widgets import TextArea
 
@@ -149,3 +151,96 @@ async def test_cursor_selection_left_to_previous_line():
         # The cursor jumps up to the end of the line above.
         end_of_previous_line = len(TEXT.splitlines()[1])
         assert text_area.selection == Selection((2, 2), (1, end_of_previous_line))
+
+
+async def test_cursor_to_line_end():
+    """You can use the keyboard to jump the cursor to the end of the current line."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.selection = Selection.cursor((2, 2))
+        await pilot.press("end")
+        eol_index = len(TEXT.splitlines()[2])
+        assert text_area.cursor_location == (2, eol_index)
+        assert text_area.selection.is_empty
+
+
+async def test_cursor_to_line_home():
+    """You can use the keyboard to jump the cursor to the start of the current line."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.selection = Selection.cursor((2, 2))
+        await pilot.press("home")
+        assert text_area.cursor_location == (2, 0)
+        assert text_area.selection.is_empty
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        ((0, 0), (0, 0)),
+        ((0, 4), (0, 3)),
+        ((1, 0), (0, 16)),
+    ],
+)
+async def test_get_cursor_left_location(start, end):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.cursor_location = start
+        assert text_area.get_cursor_left_location() == end
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        ((0, 0), (0, 1)),
+        ((0, 16), (1, 0)),
+        ((3, 20), (4, 0)),
+    ],
+)
+async def test_get_cursor_right_location(start, end):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.cursor_location = start
+        assert text_area.get_cursor_right_location() == end
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        ((0, 4), (0, 0)),  # jump to start
+        ((1, 2), (0, 2)),  # go to column above
+        ((2, 56), (1, 24)),  # snap to end of row above
+    ],
+)
+async def test_get_cursor_up_location(start, end):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.cursor_location = start
+        # This is required otherwise the cursor will snap back to the
+        # last location navigated to (0, 0)
+        text_area.record_cursor_offset()
+        assert text_area.get_cursor_up_location() == end
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        ((3, 4), (4, 0)),  # jump to end
+        ((1, 2), (2, 2)),  # go to column above
+        ((2, 56), (3, 20)),  # snap to end of row below
+    ],
+)
+async def test_get_cursor_down_location(start, end):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.cursor_location = start
+        # This is required otherwise the cursor will snap back to the
+        # last location navigated to (0, 0)
+        text_area.record_cursor_offset()
+        assert text_area.get_cursor_down_location() == end

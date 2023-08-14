@@ -677,7 +677,10 @@ TextArea > .text-area--width-guide {
         If a selection is in progress, the anchor point will remain.
         """
         start, end = self.selection
-        self.selection = Selection(start, new_location)
+        if start != end:
+            self.selection = Selection(start, new_location)
+        else:
+            self.selection = Selection.cursor(new_location)
 
     @property
     def cursor_at_first_row(self) -> bool:

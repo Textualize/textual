@@ -3,8 +3,7 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual._languages import VALID_LANGUAGES
-from textual.document._document import Selection
+from textual.document import Selection, VALID_LANGUAGES
 from textual.widgets import TextArea
 
 # These paths should be relative to THIS directory.
