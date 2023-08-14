@@ -15,13 +15,7 @@ from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.document import (
-    DEFAULT_SYNTAX_THEME,
-    Document,
-    Location,
-    Selection,
-    SyntaxTheme,
-)
+from textual.document import Document, Location, Selection, SyntaxTheme
 from textual.events import MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
@@ -247,7 +241,7 @@ TextArea > .text-area--width-guide {
     tree-sitter `Language` object directly rather than the string language name.
     """
 
-    theme: Reactive[str | SyntaxTheme] = reactive(DEFAULT_SYNTAX_THEME)
+    theme: Reactive[str | SyntaxTheme] = reactive(SyntaxTheme.default())
     """The theme to syntax highlight with.
 
     Supply a `SyntaxTheme` object to customise highlighting, or supply a builtin
