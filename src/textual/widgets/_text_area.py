@@ -500,11 +500,14 @@ TextArea > .text-area--width-guide {
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
         key = event.key
+
+        if key == "escape":
+            self.app.action_focus_next()
+
         insert_values = {
             "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
             "enter": "\n",
         }
-
         if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
