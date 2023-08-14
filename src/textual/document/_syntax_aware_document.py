@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections import defaultdict
 from functools import lru_cache
 from pathlib import Path
+from typing import Optional, Tuple
 
 from rich.text import Text
 from typing_extensions import TYPE_CHECKING
@@ -22,10 +23,15 @@ except ImportError:
 
 from textual._fix_direction import _fix_direction
 from textual._languages import VALID_LANGUAGES
-from textual.document._document import Document, Highlight, _utf8_encode
+from textual.document._document import Document, _utf8_encode
 
 TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"
+
+StartColumn = Optional[int]
+EndColumn = Optional[int]
+HighlightName = Optional[str]
+Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 
 
 class SyntaxAwareDocument(Document):
@@ -236,25 +242,21 @@ class SyntaxAwareDocument(Document):
             node_end_row, node_end_column = node.end_point
 
             if node_start_row == node_end_row:
-                highlight = Highlight(
-                    node_start_column, node_end_column, highlight_name
-                )
+                highlight = (node_start_column, node_end_column, highlight_name)
                 highlight_updates[node_start_row].append(highlight)
             else:
                 # Add the first line of the node range
                 highlight_updates[node_start_row].append(
-                    Highlight(node_start_column, None, highlight_name)
+                    (node_start_column, None, highlight_name)
                 )
 
                 # Add the middle lines - entire row of this node is highlighted
                 for node_row in range(node_start_row + 1, node_end_row):
-                    highlight_updates[node_row].append(
-                        Highlight(0, None, highlight_name)
-                    )
+                    highlight_updates[node_row].append((0, None, highlight_name))
 
                 # Add the last line of the node range
                 highlight_updates[node_end_row].append(
-                    Highlight(0, node_end_column, highlight_name)
+                    (0, node_end_column, highlight_name)
                 )
 
         for line_index, updated_highlights in highlight_updates.items():

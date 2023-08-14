@@ -349,11 +349,3 @@ class Selection(NamedTuple):
         where the minimum point is inclusive and the maximum point is exclusive."""
         start, end = self
         return _fix_direction(start, end)
-
-
-class Highlight(NamedTuple):
-    """A range to highlight within a single line"""
-
-    start_column: int | None
-    end_column: int | None
-    highlight_name: str | None
