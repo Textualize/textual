@@ -20,7 +20,7 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.table import Table
 from rich.text import Text
-from typing_extensions import TypeAlias
+from typing_extensions import Final, TypeAlias
 
 from . import on, work
 from ._fuzzy import Matcher
@@ -320,26 +320,32 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     _calling_screen: var[Screen | None] = var(None)
     """A record of the screen that was active when we were called."""
 
-    _sources: ClassVar[set[Type[CommandSource]]] = set()
-    """The list of command source classes."""
+    _PALETTE_ID: Final[str] = "--command-palette"
+    """The internal ID for the command palette."""
 
     def __init__(self) -> None:
         """Initialise the command palette."""
-        super().__init__(id="--command-palette")
+        super().__init__(id=self._PALETTE_ID)
         self._selected_command: CommandSourceHit | None = None
         """The command that was selected by the user."""
 
-    @classmethod
-    def register_source(cls, source: Type[CommandSource]) -> None:
-        """Register a source of commands for the command palette.
+    @staticmethod
+    def is_open(app: App) -> bool:
+        """Is the command palette current open?
 
         Args:
-            source: The class of the source to register.
-
-        If the same source is registered more than once, subsequent
-        registrations are ignored.
+            app: The app to test.
         """
-        cls._sources.add(source)
+        return app.screen.id == CommandPalette._PALETTE_ID
+
+    @property
+    def _sources(self) -> set[type[CommandSource]]:
+        """The command sources."""
+        if self._calling_screen is None:
+            return set()
+        if self._calling_screen.id == "_default":
+            return self.app.COMMAND_SOURCES
+        return self._calling_screen.COMMAND_SOURCES
 
     def compose(self) -> ComposeResult:
         """Compose the command palette.

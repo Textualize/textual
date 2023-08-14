@@ -85,6 +85,8 @@ class CodeBrowser(App):
 
     show_tree = var(True)
 
+    COMMAND_SOURCES = {FileNameSource}
+
     def watch_show_tree(self, show_tree: bool) -> None:
         """Called when show_tree is modified."""
         self.set_class(show_tree, "-show-tree")
@@ -100,7 +102,6 @@ class CodeBrowser(App):
         yield Footer()
 
     def on_mount(self) -> None:
-        CommandPalette.register_source(FileNameSource)
         self.query_one(DirectoryTree).focus()
 
     def _view(self, code_file: Path) -> None:

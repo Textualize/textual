@@ -73,7 +73,7 @@ from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
-from .command_palette import CommandPalette, CommandPaletteCallable
+from .command_palette import CommandPalette, CommandPaletteCallable, CommandSource
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -317,6 +317,9 @@ class App(Generic[ReturnType], DOMNode):
 
     To update the sub-title while the app is running, you can set the [sub_title][textual.app.App.sub_title] attribute.
     """
+
+    COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = set()
+    """The command sources for the default screen."""
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
@@ -2969,4 +2972,5 @@ class App(Generic[ReturnType], DOMNode):
             """
             command()
 
-        self.push_screen(CommandPalette(), callback=run_command)
+        if not CommandPalette.is_open(self):
+            self.push_screen(CommandPalette(), callback=run_command)
