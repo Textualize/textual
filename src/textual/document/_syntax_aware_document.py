@@ -72,6 +72,9 @@ class SyntaxAwareDocument(Document):
 
             self._syntax_theme.highlight_query = highlight_query_path.read_text()
             self._syntax_tree = self._build_ast(self._parser)
+            self._query: Query = self._language.query(
+                self._syntax_theme.highlight_query
+            )
             self._prepare_highlights()
 
     def insert_range(
@@ -216,7 +219,6 @@ class SyntaxAwareDocument(Document):
             return None
 
         highlights = self._highlights
-        query: Query = self._language.query(self._syntax_theme.highlight_query)
 
         captures_kwargs = {}
         if start_point is not None:
@@ -225,7 +227,7 @@ class SyntaxAwareDocument(Document):
             captures_kwargs["end_point"] = end_point
 
         # We could optimise by only preparing highlights for a subset of lines here.
-        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
+        captures = self._query.captures(self._syntax_tree.root_node, **captures_kwargs)
 
         highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
         for capture in captures:
