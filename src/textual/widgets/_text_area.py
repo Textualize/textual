@@ -7,16 +7,23 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from rich.style import Style
 from rich.text import Text
 
+from textual._languages import VALID_LANGUAGES
+
 if TYPE_CHECKING:
     from tree_sitter import Language
 
 from textual import events, log
 from textual._cells import cell_len
 from textual._fix_direction import _fix_direction
-from textual._syntax_theme import DEFAULT_SYNTAX_THEME, SyntaxTheme
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.document._document import Document, Location, Selection
+from textual.document import (
+    DEFAULT_SYNTAX_THEME,
+    Document,
+    Location,
+    Selection,
+    SyntaxTheme,
+)
 from textual.events import MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
@@ -208,9 +215,12 @@ TextArea > .text-area--width-guide {
 
     This must be set to a valid, non-None value for syntax highlighting to work.
 
+    Check valid languages using the `TextArea.valid_languages` property.
+
     If the value is a string, a built-in parser will be used.
 
-    If a tree-sitter `Language` object is used,
+    If you wish to add support for an unsupported language, you'll have to pass in the
+    tree-sitter `Language` object directly rather than the string language name.
     """
 
     theme: Reactive[str | SyntaxTheme] = reactive(DEFAULT_SYNTAX_THEME)
@@ -223,7 +233,16 @@ TextArea > .text-area--width-guide {
     """
 
     selection: Reactive[Selection] = reactive(Selection(), always_update=True)
-    """The selection start and end locations (zero-based line_index, offset)."""
+    """The selection start and end locations (zero-based line_index, offset).
+
+    This represents the cursor location and the current selection.
+
+    The `Selection.end` always refers to the cursor location.
+
+    If no text is selected, then `Selection.end == Selection.start`.
+
+    The text selected in the document is available via the `TextArea.selected_text` property.
+    """
 
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show the line number column, otherwise False."""
@@ -314,6 +333,11 @@ TextArea > .text-area--width-guide {
         self._document = Document(text)
         self._reload_document()
         self._refresh_size()
+
+    @property
+    def valid_languages(self) -> list[str]:
+        """The list of valid language names."""
+        return VALID_LANGUAGES
 
     def _refresh_size(self) -> None:
         """Calculate the size of the document."""

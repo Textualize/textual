@@ -103,6 +103,15 @@ class SyntaxTheme:
         """A list of all available SyntaxThemes."""
         return [SyntaxTheme(name, mapping) for name, mapping in _BUILTIN_THEMES.items()]
 
+    @classmethod
+    def default(cls) -> SyntaxTheme:
+        """Get the default syntax theme.
+
+        Returns:
+            The default SyntaxTheme (probably Monokai).
+        """
+        return DEFAULT_SYNTAX_THEME
+
 
 DEFAULT_SYNTAX_THEME = SyntaxTheme.get_theme("monokai")
 """The default syntax highlighting theme used by Textual."""
