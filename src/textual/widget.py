@@ -45,7 +45,6 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
 from ._cache import FIFOCache
-from ._callback import invoke
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -256,6 +255,12 @@ class Widget(DOMNode):
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
+    BORDER_TITLE: ClassVar[str] = ""
+    """Initial value for border_title attribute."""
+
+    BORDER_SUBTITLE: ClassVar[str] = ""
+    """Initial value for border_subtitle attribute."""
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -349,6 +354,10 @@ class Widget(DOMNode):
 
         self._add_children(*children)
         self.disabled = disabled
+        if self.BORDER_TITLE:
+            self.border_title = self.BORDER_TITLE
+        if self.BORDER_SUBTITLE:
+            self.border_subtitle = self.BORDER_SUBTITLE
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
