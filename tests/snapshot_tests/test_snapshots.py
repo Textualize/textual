@@ -4,6 +4,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual._languages import VALID_LANGUAGES
+from textual.document._document import Selection
 from textual.widgets import TextArea
 
 # These paths should be relative to THIS directory.
@@ -633,7 +634,7 @@ def test_nested_fr(snap_compare) -> None:
     # https://github.com/Textualize/textual/pull/3059
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
-    
+
 @pytest.mark.parametrize("language", VALID_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -654,6 +655,36 @@ def test_text_area_language_rendering(language, snap_compare):
     )
 
 
+@pytest.mark.parametrize(
+    "selection",
+    [
+        Selection((0, 0), (2, 8)),
+        Selection((1, 0), (0, 0)),
+        Selection((5, 2), (0, 0)),
+        Selection((0, 0), (4, 20)),
+        Selection.cursor((1, 0)),
+        Selection.cursor((2, 6)),
+    ],
+)
+def test_text_area_selection_rendering(snap_compare, selection):
+    text = """I am a line.
+
+I am another line.
+
+I am the final line."""
+
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.selection = selection
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_languages.py",
+        run_before=setup_selection,
+        terminal_size=(30, text.count("\n") + 1),
+    )
+
+
 def test_digits(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
-
