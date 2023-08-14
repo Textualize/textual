@@ -278,14 +278,25 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("escape", "escape", "Exit the command palette"),
+        Binding("ctrl+end, shift+end", "command('last')", show=False),
+        Binding("ctrl+home, shift+home", "command('first')", show=False),
         Binding("down", "cursor_down", show=False),
+        Binding("escape", "escape", "Exit the command palette"),
         Binding("pagedown", "command('page_down')", show=False),
         Binding("pageup", "command('page_up')", show=False),
         Binding("up", "command('cursor_up')", show=False),
-        Binding("ctrl+home, shift+home", "command('first')", show=False),
-        Binding("ctrl+end, shift+end", "command('last')", show=False),
     ]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | ctrl+end, shift+end | Jump to the last available commands. |
+    | ctrl+home, shift+home | Jump to the first available commands. |
+    | down | Navigate down through the available commands. |
+    | escape | Exit the command palette. |
+    | pagedown | Navigate down a page through the available commands. |
+    | pageup | Navigate up a page through the available commands. |
+    | up | Navigate up through the available commands. |
+    """
 
     run_on_select: ClassVar[bool] = True
     """A flag to say if a command should be run when selected by the user.
