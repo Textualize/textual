@@ -325,7 +325,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     def __init__(self) -> None:
         """Initialise the command palette."""
-        super().__init__()
+        super().__init__(id="--command-palette")
         self._selected_command: CommandSourceHit | None = None
         """The command that was selected by the user."""
 
