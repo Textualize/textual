@@ -5,15 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from asyncio import Queue, TimeoutError, create_task, wait_for
 from functools import total_ordering
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    AsyncIterator,
-    Callable,
-    ClassVar,
-    NamedTuple,
-    Type,
-)
+from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
 
 from rich.align import Align
 from rich.console import RenderableType
