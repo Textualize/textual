@@ -1,4 +1,5 @@
 from ._document import Document, Location, Selection
+from ._languages import VALID_LANGUAGES
 from ._syntax_aware_document import (
     EndColumn,
     Highlight,
@@ -18,4 +19,5 @@ __all__ = [
     "StartColumn",
     "SyntaxAwareDocument",
     "SyntaxTheme",
+    "VALID_LANGUAGES",
 ]

@@ -8,8 +8,6 @@ from typing import Optional, Tuple
 from rich.text import Text
 from typing_extensions import TYPE_CHECKING
 
-from textual._syntax_theme import SyntaxTheme
-
 try:
     from tree_sitter_languages import get_language, get_parser
 
@@ -22,8 +20,9 @@ except ImportError:
     TREE_SITTER = False
 
 from textual._fix_direction import _fix_direction
-from textual._languages import VALID_LANGUAGES
 from textual.document._document import Document, _utf8_encode
+from textual.document._languages import VALID_LANGUAGES
+from textual.document._syntax_theme import SyntaxTheme
 
 TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"

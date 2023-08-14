@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from rich.style import Style
 from rich.text import Text
 
-from textual._languages import VALID_LANGUAGES
-
 if TYPE_CHECKING:
     from tree_sitter import Language
 
@@ -209,6 +207,32 @@ TextArea > .text-area--width-guide {
         ),
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
     ]
+    """
+    | Key(s)                 | Description                                  |
+    | :-                     | :-                                           |
+    | escape                 | Focus on the next item.                      |
+    | up                     | Move the cursor up.                          |
+    | down                   | Move the cursor down.                        |
+    | left                   | Move the cursor left.                        |
+    | ctrl+left              | Move the cursor to the start of the word.    |
+    | right                  | Move the cursor right.                       |
+    | ctrl+right             | Move the cursor to the end of the word.      |
+    | home,ctrl+a            | Move the cursor to the start of the line.    |
+    | end,ctrl+e             | Move the cursor to the end of the line.      |
+    | pageup                 | Move the cursor one page up.                 |
+    | pagedown               | Move the cursor one page down.               |
+    | shift+up               | Select while moving the cursor up.           |
+    | shift+down             | Select while moving the cursor down.         |
+    | shift+left             | Select while moving the cursor left.         |
+    | shift+right            | Select while moving the cursor right.        |
+    | backspace              | Delete character to the left of cursor.      |
+    | ctrl+w                 | Delete from cursor to start of the word.     |
+    | delete,ctrl+d          | Delete character to the right of cursor.     |
+    | ctrl+f                 | Delete from cursor to end of the word.       |
+    | ctrl+x                 | Delete the current line.                     |
+    | ctrl+u                 | Delete from cursor to the start of the line. |
+    | ctrl+k                 | Delete from cursor to the end of the line.   |
+    """
 
     language: Reactive[str | "Language" | None] = reactive(None, always_update=True)
     """The language to use.
@@ -245,10 +269,16 @@ TextArea > .text-area--width-guide {
     """
 
     show_line_numbers: Reactive[bool] = reactive(True)
-    """True to show the line number column, otherwise False."""
+    """True to show the line number column on the left edge, otherwise False.
+
+    Changing this value will immediately re-render the `TextArea`."""
 
     indent_width: Reactive[int] = reactive(4)
-    """The width of tabs or the number of spaces to insert on pressing the `tab` key."""
+    """The width of tabs or the number of spaces to insert on pressing the `tab` key.
+
+    If the document currently open contains tabs that are currently visible on screen,
+    altering this value will immediately change the display width of the visible tabs.
+    """
 
     _show_width_guide: Reactive[bool] = reactive(False)
     """If True, a vertical line will indicate the width of the document."""
@@ -333,11 +363,6 @@ TextArea > .text-area--width-guide {
         self._document = Document(text)
         self._reload_document()
         self._refresh_size()
-
-    @property
-    def valid_languages(self) -> list[str]:
-        """The list of valid language names."""
-        return VALID_LANGUAGES
 
     def _refresh_size(self) -> None:
         """Calculate the size of the document."""
@@ -606,6 +631,10 @@ TextArea > .text-area--width-guide {
 
     # --- Cursor/selection utilities
     def clamp_visitable(self, location: Location) -> Location:
+        """Clamp the given location to the nearest visitable location.
+
+        Clamps the given location the nearest location which could be navigated to
+        """
         document = self._document
 
         row, column = location
