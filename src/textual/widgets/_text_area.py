@@ -618,14 +618,13 @@ TextArea > .text-area--width-guide {
         return self.selection.end
 
     @cursor_location.setter
-    def cursor_location(self, new_location: Location) -> Location:
+    def cursor_location(self, new_location: Location) -> None:
         """Set the cursor_location to a new location.
 
         If a selection is in progress, the anchor point will remain.
         """
         start, end = self.selection
         self.selection = Selection(start, new_location)
-        return self.selection.end
 
     @property
     def cursor_at_first_row(self) -> bool:
