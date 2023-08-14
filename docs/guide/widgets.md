@@ -144,11 +144,11 @@ If you run this example you will see that the greeting has been underlined, whic
 
 ## Border title and subtitle
 
-Widgets have a [`border_title`][textual.widgets.Widget.border_title] and [`border_subtitle`][textual.widgets.Widget.border_subtitle] attribute.
+Every widget has a [`border_title`][textual.widgets.Widget.border_title] attribute and a [`border_subtitle`][textual.widgets.Widget.border_subtitle] attribute.
 Setting `border_title` will display text within the top border, and setting `border_subtitle` will display text within the bottom border.
 
 The default value for these attributes is empty string, which disables the title.
-You can change the default for the title attributes with the [`BORDER_TITLE`][textual.widget.Widget.BORDER_TITLE] and [`BORDER_SUBTITLE`][textual.widget.Widget.BORDER_SUBTITLE] class variables.
+You can change the default value for the title attributes with the [`BORDER_TITLE`][textual.widget.Widget.BORDER_TITLE] and [`BORDER_SUBTITLE`][textual.widget.Widget.BORDER_SUBTITLE] class variables.
 
 Let's demonstrate setting a title, both as a class variable and a instance variable:
 
@@ -172,6 +172,9 @@ Let's demonstrate setting a title, both as a class variable and a instance varia
 
     ```{.textual path="docs/examples/guide/widgets/hello06.py"}
     ```
+
+Note that titles are limited to a single line of text.
+If the supplied text is too long to fit within the widget, it will be cropped (and an ellipsis added).
 
 There are a number of styles that influence how titles are displayed (color and alignment).
 See the [style reference](../styles/index.md) for details.
