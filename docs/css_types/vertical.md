@@ -4,7 +4,7 @@ The `<vertical>` CSS type represents a position along the vertical axis.
 
 ## Syntax
 
-The [`<vertical>`](/css_types/vertical) type can take any of the following values:
+The [`<vertical>`](./vertical.md) type can take any of the following values:
 
 | Value           | Description                                |
 | --------------- | ------------------------------------------ |
