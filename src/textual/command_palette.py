@@ -270,6 +270,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     CommandPalette LoadingIndicator {
         height: auto;
         visibility: hidden;
+        background: $panel;
+        padding-top: 1;
+        border-bottom: hkey $accent;
     }
 
     CommandPalette LoadingIndicator.--visible {
