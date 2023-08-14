@@ -75,3 +75,23 @@ async def test_screen_command_sources() -> None:
             pilot.app.query_one(CommandPalette)._sources
             == ScreenWithSources.COMMAND_SOURCES
         )
+
+
+class AnotherCommandSource(ExampleCommandSource):
+    pass
+
+
+class CombinedSourceApp(App[None]):
+    COMMAND_SOURCES = {AnotherCommandSource}
+
+    def on_mount(self) -> None:
+        self.push_screen(ScreenWithSources())
+
+
+async def test_app_and_screen_command_sources_combine() -> None:
+    """If an app and the screen have command sources they should combine."""
+    async with CombinedSourceApp().run_test() as pilot:
+        assert (
+            pilot.app.query_one(CommandPalette)._sources
+            == CombinedSourceApp.COMMAND_SOURCES | ScreenWithSources.COMMAND_SOURCES
+        )
