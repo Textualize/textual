@@ -74,6 +74,7 @@ class Collapsible(Widget):
 
         async def _on_click(self, event: events.Click) -> None:
             """Inform ancestor we want to toggle."""
+            event.stop()
             self.post_message(self.Toggle())
 
         def compose(self) -> ComposeResult:
