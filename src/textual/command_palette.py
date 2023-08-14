@@ -335,6 +335,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
         Args:
             app: The app to test.
+
+        Returns:
+            `True` if the command palette is currently open, `False` if not.
         """
         return app.screen.id == CommandPalette._PALETTE_ID
 
