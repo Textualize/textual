@@ -338,9 +338,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """The command sources."""
         if self._calling_screen is None:
             return set()
-        if self._calling_screen.id == "_default":
-            return self.app.COMMAND_SOURCES
-        return self._calling_screen.COMMAND_SOURCES
+        sources = self.app.COMMAND_SOURCES
+        if self._calling_screen.id != "_default":
+            sources |= self._calling_screen.COMMAND_SOURCES
+        return sources
 
     def compose(self) -> ComposeResult:
         """Compose the command palette.
