@@ -78,4 +78,4 @@ async def test_delete_right():
         text_area.load_text("Hello, world!")
         text_area.cursor_location = (0, 13)
         await pilot.press("delete")
-        assert text_area.text == "Hello, world"
+        assert text_area.text == "Hello, world!"
