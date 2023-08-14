@@ -605,7 +605,7 @@ TextArea > .text-area--width-guide {
         text = self.cursor_line_text[:column]
         column_offset = cell_len(text.expandtabs(self.indent_width))
         scroll_offset = self.scroll_to_region(
-            Region(x=column_offset, y=row, width=2, height=1),
+            Region(x=column_offset, y=row, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
