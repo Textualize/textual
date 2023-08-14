@@ -168,6 +168,7 @@ TextArea > .text-area--width-guide {
     }
 
     BINDINGS = [
+        Binding("escape", "screen.focus_next", "focus next", show=False),
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
@@ -500,10 +501,6 @@ TextArea > .text-area--width-guide {
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
         key = event.key
-
-        if key == "escape":
-            self.app.action_focus_next()
-
         insert_values = {
             "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
             "enter": "\n",
