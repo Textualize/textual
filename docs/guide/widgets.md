@@ -142,10 +142,14 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 If you run this example you will see that the greeting has been underlined, which indicates it is clickable. If you click on the greeting it will run the `next_word` action which updates the next word.
 
 
-## Border title and subtitle
+## Border titles
 
-Every widget has a [`border_title`][textual.widgets.Widget.border_title] attribute and a [`border_subtitle`][textual.widgets.Widget.border_subtitle] attribute.
+Every widget has a [`border_title`][textual.widgets.Widget.border_title] and [`border_subtitle`][textual.widgets.Widget.border_subtitle] attribute.
 Setting `border_title` will display text within the top border, and setting `border_subtitle` will display text within the bottom border.
+
+!!! note
+
+    Border titles will only display if the widget has a [border](../styles/border.md) enabled.
 
 The default value for these attributes is empty string, which disables the title.
 You can change the default value for the title attributes with the [`BORDER_TITLE`][textual.widget.Widget.BORDER_TITLE] and [`BORDER_SUBTITLE`][textual.widget.Widget.BORDER_SUBTITLE] class variables.
@@ -155,12 +159,12 @@ Let's demonstrate setting a title, both as a class variable and a instance varia
 
 === "hello06.py"
 
-    ```python title="hello06.py"  hl_lines="27 31"
+    ```python title="hello06.py"  hl_lines="26 30"
     --8<-- "docs/examples/guide/widgets/hello06.py"
     ```
 
     1. Setting the default for the `title` attribute via class variable.
-    2. Setting `subtitle`` via an instance attribute.
+    2. Setting `subtitle` via an instance attribute.
 
 === "hello06.css"
 
