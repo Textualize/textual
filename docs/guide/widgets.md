@@ -230,8 +230,6 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 
 Note that we've added `expand=True` to tell the `Table` to expand beyond the optimal width, so that it fills the 50 characters returned by `get_content_width`.
 
-
-
 ## Tooltips
 
 Widgets can have *tooltips* which is content displayed when the user hovers the mouse over the widget.
