@@ -59,7 +59,7 @@ httpx = "^0.23.1"
 types-setuptools = "^67.2.0.1"
 textual-dev = "^1.1.0"
 pytest-asyncio = "*"
-pytest-textual-snapshot = "0.2.0"
+pytest-textual-snapshot = "*"
 
 [tool.black]
 includes = "src"
