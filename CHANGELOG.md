@@ -21,6 +21,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added widgets.Digit https://github.com/Textualize/textual/pull/3073
 - Added `BORDER_TITLE` and `BORDER_SUBTITLE` classvars to Widget https://github.com/Textualize/textual/pull/3097
 
+### Changed
+- DescendantBlur and DescendantFocus can now be used with @on decorator
+
 ## [0.32.0] - 2023-08-03
 
 ### Added
