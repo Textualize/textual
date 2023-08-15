@@ -13,6 +13,7 @@ textual console -v
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -547,6 +548,7 @@ class Blur(Event, bubble=False):
     """
 
 
+@dataclass
 class DescendantFocus(Event, bubble=True, verbose=True):
     """Sent when a child widget is focussed.
 
@@ -554,13 +556,18 @@ class DescendantFocus(Event, bubble=True, verbose=True):
     - [X] Verbose
     """
 
+    control: Widget
 
+
+@dataclass
 class DescendantBlur(Event, bubble=True, verbose=True):
     """Sent when a child widget is blurred.
 
     - [X] Bubbles
     - [X] Verbose
     """
+
+    control: Widget
 
 
 @rich.repr.auto

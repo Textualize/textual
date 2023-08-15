@@ -3281,12 +3281,12 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.post_message(events.DescendantFocus())
+        self.post_message(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.post_message(events.DescendantBlur())
+        self.post_message(events.DescendantBlur(self))
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:
