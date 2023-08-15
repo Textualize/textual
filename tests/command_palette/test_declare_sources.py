@@ -8,6 +8,11 @@ from textual.command_palette import (
 from textual.screen import Screen
 
 
+async def test_sources_with_no_known_screen() -> None:
+    """A command palette with no known screen should have an empty source set."""
+    assert CommandPalette()._sources == set()
+
+
 class ExampleCommandSource(CommandSource):
     async def hunt_for(self, _: str) -> CommandMatches:
         def gndn() -> None:
