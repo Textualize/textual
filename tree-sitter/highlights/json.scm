@@ -3,18 +3,18 @@
  (false)
 ] @boolean
 
-(null) @constant.builtin
+(null) @json.null
 
 (number) @number
 
-(pair key: (string) @label)
+(pair key: (string) @json.label)
 (pair value: (string) @string)
 
 (array (string) @string)
 
 (string_content) @spell
 
-(ERROR) @error
+(ERROR) @json.error
 
 ["," ":"] @punctuation.delimiter
 

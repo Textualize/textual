@@ -23,6 +23,7 @@ _MONOKAI = {
     "method": Style(color="#A6E22E"),
     "method.call": Style(color="#A6E22E"),
     "boolean": Style(color="#66D9EF", italic=True),
+    "json.null": Style(color="#66D9EF", italic=True),
     # "constant": Style(color="#AE81FF"),
     "variable": Style(color="white"),
     "parameter": Style(color="cyan"),
@@ -32,9 +33,11 @@ _MONOKAI = {
     "regex.punctuation.bracket": Style(color="#F92672"),
     "regex.operator": Style(color="#F92672"),
     "error": Style(color="black", bgcolor="red"),
+    "json.error": None,
     "html.end_tag_error": Style(color="black", bgcolor="red"),
     "tag": Style(color="#F92672"),
     "yaml.field": Style(color="#F92672", bold=True),
+    "json.label": Style(color="#F92672", bold=True),
     "toml.type": Style(color="#F92672"),
 }
 

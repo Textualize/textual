@@ -310,7 +310,6 @@ class SyntaxAwareDocument(Document):
     def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes | None:
         row, column = point
         lines = self._lines
-
         newline = self.newline
 
         row_out_of_bounds = row >= len(lines)
