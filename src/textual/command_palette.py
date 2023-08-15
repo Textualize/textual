@@ -338,7 +338,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """The command sources."""
         if self._calling_screen is None:
             return set()
-        sources = self.app.COMMAND_SOURCES
+        sources = self.app.COMMAND_SOURCES.copy()
         if self._calling_screen.id != "_default":
             sources |= self._calling_screen.COMMAND_SOURCES
         return sources
