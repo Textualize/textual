@@ -16,6 +16,7 @@ _MONOKAI = {
     "keyword.return": Style(color="#F92672"),
     "conditional": Style(color="#F92672"),
     "number": Style(color="#AE81FF"),
+    "float": Style(color="#AE81FF"),
     "class": Style(color="#A6E22E"),
     "function": Style(color="#A6E22E"),
     "function.call": Style(color="#A6E22E"),
