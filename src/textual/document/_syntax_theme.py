@@ -30,6 +30,7 @@ _MONOKAI = {
     "regex.punctuation.bracket": Style(color="#F92672"),
     "regex.operator": Style(color="#F92672"),
     "error": Style(color="black", bgcolor="red"),
+    "html.end_tag_error": Style(color="black", bgcolor="red"),
     "tag": Style(color="#F92672"),
 }
 

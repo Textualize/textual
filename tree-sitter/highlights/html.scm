@@ -1,5 +1,5 @@
 (tag_name) @tag
-(erroneous_end_tag_name) @error
+(erroneous_end_tag_name) @html.end_tag_error
 (comment) @comment
 (attribute_name) @tag.attribute
 (attribute
