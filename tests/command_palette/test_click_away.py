@@ -5,7 +5,6 @@ from textual.command_palette import (
     CommandSource,
     CommandSourceHit,
 )
-from textual.screen import Screen
 
 
 class SimpleSource(CommandSource):
