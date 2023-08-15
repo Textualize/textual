@@ -46,7 +46,7 @@ async def test_delete_left():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.load_text("Hello, world!")
-        text_area.cursor_location = (0, 6)
+        text_area.move_cursor((0, 6))
         await pilot.press("backspace")
         assert text_area.text == "Hello world!"
         assert text_area.selection == Selection.cursor((0, 5))
@@ -67,18 +67,32 @@ async def test_delete_left_end():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.load_text("Hello, world!")
-        text_area.cursor_location = (0, 13)
+        text_area.move_cursor((0, 13))
         await pilot.press("backspace")
         assert text_area.text == "Hello, world"
         assert text_area.selection == Selection.cursor((0, 12))
 
 
 async def test_delete_right():
+    """Pressing 'delete' deletes the character to the right of the cursor."""
     app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.load_text("Hello, world!")
-        text_area.cursor_location = (0, 13)
+        text_area.move_cursor((0, 13))
         await pilot.press("delete")
         assert text_area.text == "Hello, world!"
         assert text_area.selection == Selection.cursor((0, 13))
+
+
+async def test_delete_right_end_of_line():
+    """Pressing 'delete' at the end of the line merges this line with the line below."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("hello\nworld!")
+        end_of_line = text_area.get_cursor_line_end_location()
+        text_area.move_cursor(end_of_line)
+        await pilot.press("delete")
+        assert text_area.selection == Selection.cursor((0, 5))
+        assert text_area.text == "helloworld!"

@@ -38,7 +38,7 @@ async def test_cursor_location_set():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.selection = Selection((1, 1), (2, 2))
-        text_area.cursor_location = (2, 3)
+        text_area.move_cursor((2, 3))
         assert text_area.selection == Selection((1, 1), (2, 3))
 
 
@@ -188,7 +188,7 @@ async def test_get_cursor_left_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.cursor_location = start
+        text_area.move_cursor(start)
         assert text_area.get_cursor_left_location() == end
 
 
@@ -204,7 +204,7 @@ async def test_get_cursor_right_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.cursor_location = start
+        text_area.move_cursor(start)
         assert text_area.get_cursor_right_location() == end
 
 
@@ -220,7 +220,7 @@ async def test_get_cursor_up_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.cursor_location = start
+        text_area.move_cursor(start)
         # This is required otherwise the cursor will snap back to the
         # last location navigated to (0, 0)
         text_area.record_cursor_offset()
@@ -239,7 +239,7 @@ async def test_get_cursor_down_location(start, end):
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.cursor_location = start
+        text_area.move_cursor(start)
         # This is required otherwise the cursor will snap back to the
         # last location navigated to (0, 0)
         text_area.record_cursor_offset()

@@ -99,7 +99,7 @@ async def test_insert_multiline_text():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.cursor_location = (2, 5)
+        text_area.move_cursor((2, 5))
         text_area.insert_text("Hello,\nworld!")
         expected_content = """\
 I must not fear.
@@ -116,7 +116,7 @@ async def test_insert_multiline_text_move_cursor():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.cursor_location = (2, 5)
+        text_area.move_cursor((2, 5))
         text_area.insert_text("Hello,\nworld!", move_cursor=True)
         expected_content = """\
 I must not fear.

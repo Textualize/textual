@@ -644,8 +644,11 @@ TextArea > .text-area--width-guide {
 
         return row, column
 
-    def scroll_cursor_visible(self) -> Offset:
+    def scroll_cursor_visible(self, center: bool = False) -> Offset:
         """Scroll the `TextArea` such that the cursor is visible on screen.
+
+        Args:
+            center: True if the cursor should be scrolled to the center.
 
         Returns:
             The offset that was scrolled to bring the cursor into view.
@@ -658,26 +661,25 @@ TextArea > .text-area--width-guide {
             spacing=Spacing(right=self.gutter_width),
             animate=False,
             force=True,
+            center=center,
         )
-        # TODO - need a move_cursor method so we can do center=True etc.
         return scroll_offset
 
     @property
     def cursor_location(self) -> Location:
-        """The current location of the cursor in the document."""
+        """The current location of the cursor in the document.
+
+        This is a utility for accessing the `end` of `TextArea.selection`.
+        """
         return self.selection.end
 
     @cursor_location.setter
-    def cursor_location(self, new_location: Location) -> None:
+    def cursor_location(self, location: Location) -> None:
         """Set the cursor_location to a new location.
 
         If a selection is in progress, the anchor point will remain.
         """
-        start, end = self.selection
-        if start != end:
-            self.selection = Selection(start, new_location)
-        else:
-            self.selection = Selection.cursor(new_location)
+        self.move_cursor(location, select=not self.selection.is_empty)
 
     @property
     def cursor_at_first_row(self) -> bool:
@@ -707,39 +709,6 @@ TextArea > .text-area--width-guide {
         """True if the cursor is at the very end of the document."""
         return self.cursor_at_last_row and self.cursor_at_end_of_row
 
-    def cursor_to_line_end(self, select: bool = False) -> None:
-        """Move the cursor to the end of the line.
-
-        Args:
-            select: Select the text between the old and new cursor locations.
-        """
-
-        start, end = self.selection
-        cursor_row, cursor_column = end
-        target_column = len(self._document[cursor_row])
-
-        if select:
-            self.selection = Selection(start, target_column)
-        else:
-            self.selection = Selection.cursor((cursor_row, target_column))
-
-        self.record_cursor_offset()
-
-    def cursor_to_line_start(self, select: bool = False) -> None:
-        """Move the cursor to the start of the line.
-
-        Args:
-            select: Select the text between the old and new cursor locations.
-        """
-        start, end = self.selection
-        cursor_row, cursor_column = end
-        if select:
-            self.selection = Selection(start, (cursor_row, 0))
-        else:
-            self.selection = Selection.cursor((cursor_row, 0))
-
-        self.record_cursor_offset()
-
     # ------ Cursor movement actions
     def action_cursor_left(self) -> None:
         """Move the cursor one location to the left.
@@ -762,7 +731,11 @@ TextArea > .text-area--width-guide {
         self.record_cursor_offset()
 
     def get_cursor_left_location(self) -> Location:
-        """Get the location the cursor will move to if it moves left."""
+        """Get the location the cursor will move to if it moves left.
+
+        Returns:
+            The location of the cursor if it moves left.
+        """
         if self.cursor_at_start_of_document:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
@@ -771,13 +744,41 @@ TextArea > .text-area--width-guide {
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
         return target_row, target_column
 
+    def move_cursor(
+        self,
+        location: Location,
+        select: bool = False,
+        center: bool = False,
+        record_width: bool = True,
+    ) -> None:
+        """Move the cursor to a location, optionally selecting text on the way.
+
+        Args:
+            location: The location to move the cursor to.
+            select: If True, select text between the old and new location.
+            center: If True, scroll such that the cursor is centered.
+            record_width: If True, record the cursor column cell width so that we
+                jump to a corresponding location when moving between rows.
+        """
+        if not select:
+            self.selection = Selection.cursor(location)
+        else:
+            start, end = self.selection
+            self.selection = Selection(start, location)
+
+        if record_width:
+            self.record_cursor_offset()
+
+        if center:
+            self.scroll_cursor_visible(center)
+
     def action_cursor_right(self) -> None:
         """Move the cursor one location to the right.
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
         """
         target = self.get_cursor_right_location()
-        self.selection = Selection.cursor(target)
+        self.move_cursor(target)
         self.record_cursor_offset()
 
     def action_cursor_right_select(self):
@@ -785,10 +786,8 @@ TextArea > .text-area--width-guide {
 
         This will expand or contract the selection.
         """
-        new_cursor_location = self.get_cursor_right_location()
-        selection_start, selection_end = self.selection
-        self.selection = Selection(selection_start, new_cursor_location)
-        self.record_cursor_offset()
+        target = self.get_cursor_right_location()
+        self.move_cursor(target, select=True)
 
     def get_cursor_right_location(self) -> Location:
         """Get the location the cursor will move to if it moves right."""
@@ -802,13 +801,12 @@ TextArea > .text-area--width-guide {
     def action_cursor_down(self) -> None:
         """Move the cursor down one cell."""
         target = self.get_cursor_down_location()
-        self.selection = Selection.cursor(target)
+        self.move_cursor(target, record_width=False)
 
     def action_cursor_down_select(self) -> None:
         """Move the cursor down one cell, selecting the range between the old and new locations."""
         target = self.get_cursor_down_location()
-        start, end = self.selection
-        self.selection = Selection(start, target)
+        self.move_cursor(target, select=True, record_width=False)
 
     def get_cursor_down_location(self):
         """Get the location the cursor will move to if it moves down."""
@@ -827,13 +825,12 @@ TextArea > .text-area--width-guide {
     def action_cursor_up(self) -> None:
         """Move the cursor up one cell."""
         target = self.get_cursor_up_location()
-        self.selection = Selection.cursor(target)
+        self.move_cursor(target, record_width=False)
 
     def action_cursor_up_select(self) -> None:
         """Move the cursor up one cell, selecting the range between the old and new locations."""
         target = self.get_cursor_up_location()
-        start, end = self.selection
-        self.selection = Selection(start, target)
+        self.move_cursor(target, select=True, record_width=False)
 
     def get_cursor_up_location(self) -> Location:
         """Get the location the cursor will move to if it moves up."""
@@ -850,24 +847,52 @@ TextArea > .text-area--width-guide {
 
     def action_cursor_line_end(self) -> None:
         """Move the cursor to the end of the line."""
-        self.cursor_to_line_end()
+        location = self.get_cursor_line_end_location()
+        self.move_cursor(location)
+
+    def get_cursor_line_end_location(self) -> Location:
+        """Get the location of the end of the current line.
+
+        Returns:
+            The (row, column) location of the end of the cursors current line.
+        """
+        start, end = self.selection
+        cursor_row, cursor_column = end
+        target_column = len(self._document[cursor_row])
+        return cursor_row, target_column
 
     def action_cursor_line_start(self) -> None:
         """Move the cursor to the start of the line."""
-        self.cursor_to_line_start()
+        target = self.get_cursor_line_start_location()
+        self.move_cursor(target)
+
+    def get_cursor_line_start_location(self) -> Location:
+        """Get the location of the end of the current line.
+
+        Returns:
+            The (row, column) location of the end of the cursors current line.
+        """
+        _start, end = self.selection
+        cursor_row, _cursor_column = end
+        return cursor_row, 0
 
     def action_cursor_left_word(self) -> None:
         """Move the cursor left by a single word, skipping spaces."""
-
         if self.cursor_at_start_of_document:
             return
+        target = self.get_cursor_left_word_location()
+        self.move_cursor(target)
 
-        cursor_row, cursor_column = self.selection.end
+    def get_cursor_left_word_location(self) -> Location:
+        """Get the location the cursor will jump to if it goes 1 word left.
 
+        Returns:
+            The location the cursor will jump on "jump word left".
+        """
+        cursor_row, cursor_column = self.cursor_location
         # Check the current line for a word boundary
         line = self._document[cursor_row][:cursor_column]
         matches = list(re.finditer(self.word_pattern, line))
-
         if matches:
             # If a word boundary is found, move the cursor there
             cursor_column = matches[-1].start()
@@ -878,9 +903,7 @@ TextArea > .text-area--width-guide {
         else:
             # If we're already on the first line and no word boundary is found, move to the start of the line
             cursor_column = 0
-
-        self.selection = Selection.cursor((cursor_row, cursor_column))
-        self.record_cursor_offset()
+        return cursor_row, cursor_column
 
     def action_cursor_right_word(self) -> None:
         """Move the cursor right by a single word, skipping spaces."""
@@ -888,12 +911,19 @@ TextArea > .text-area--width-guide {
         if self.cursor_at_end_of_document:
             return
 
-        cursor_row, cursor_column = self.selection.end
+        target = self.get_cursor_right_word_location()
+        self.move_cursor(target)
 
+    def get_cursor_right_word_location(self):
+        """Get the location the cursor will jump to if it goes 1 word right.
+
+        Returns:
+            The location the cursor will jump on "jump word right".
+        """
+        cursor_row, cursor_column = self.selection.end
         # Check the current line for a word boundary
         line = self._document[cursor_row][cursor_column:]
         matches = list(re.finditer(self.word_pattern, line))
-
         if matches:
             # If a word boundary is found, move the cursor there
             cursor_column += matches[0].end()
@@ -904,25 +934,23 @@ TextArea > .text-area--width-guide {
         else:
             # If we're already on the last line and no word boundary is found, move to the end of the line
             cursor_column = len(self._document[cursor_row])
-
-        self.selection = Selection.cursor((cursor_row, cursor_column))
-        self.record_cursor_offset()
+        return cursor_row, cursor_column
 
     def action_cursor_page_up(self) -> None:
         height = self.content_size.height
         _, cursor_location = self.selection
         row, column = cursor_location
         target = (row - height, column)
-        self.scroll_y -= height
-        self.selection = Selection.cursor(target)
+        self.scroll_relative(y=-height, animate=False)
+        self.move_cursor(target)
 
     def action_cursor_page_down(self) -> None:
         height = self.content_size.height
         _, cursor_location = self.selection
         row, column = cursor_location
         target = (row + height, column)
-        self.scroll_y += height
-        self.selection = Selection.cursor(target)
+        self.scroll_relative(y=height, animate=False)
+        self.move_cursor(target)
 
     @property
     def cursor_line_text(self) -> str:
