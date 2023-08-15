@@ -37,8 +37,11 @@ async def test_with_run_on_select_on() -> None:
         assert isinstance(pilot.app, CommandPaletteRunOnSelectApp)
         pilot.app.action_command_palette()
         await pilot.press("0")
+        await pilot.pause()
         await pilot.press("down")
+        await pilot.pause()
         await pilot.press("enter")
+        await pilot.pause()
         assert pilot.app.selection is not None
         assert pilot.app.selection == 99
 
@@ -55,10 +58,14 @@ async def test_with_run_on_select_off() -> None:
         assert isinstance(pilot.app, CommandPaletteDoNotRunOnSelectApp)
         pilot.app.action_command_palette()
         await pilot.press("0")
+        await pilot.pause()
         await pilot.press("down")
+        await pilot.pause()
         await pilot.press("enter")
+        await pilot.pause()
         assert pilot.app.selection is None
         assert pilot.app.query_one(Input).value == "99"
         await pilot.press("enter")
+        await pilot.pause()
         assert pilot.app.selection is not None
         assert pilot.app.selection == 99
