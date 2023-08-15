@@ -555,7 +555,6 @@ TextArea > .text-area--width-guide {
             event.stop()
             event.prevent_default()
             insert = insert_values.get(key, event.character)
-            assert event.character is not None
             start, end = self.selection
             self.insert_text_range(insert, start, end, True)
 
