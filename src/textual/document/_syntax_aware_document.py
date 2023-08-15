@@ -20,7 +20,7 @@ except ImportError:
     TREE_SITTER = False
 
 from textual._fix_direction import _fix_direction
-from textual.document._document import Document, _utf8_encode
+from textual.document._document import Document, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
 from textual.document._syntax_theme import SyntaxTheme
 
@@ -109,21 +109,22 @@ class SyntaxAwareDocument(Document):
 
         # An optimisation would be finding the byte offsets as a single operation rather
         # than doing two passes over the document content.
-        start_byte = self._tree_sitter_byte_offset(top)
-        old_end_byte = self._tree_sitter_byte_offset(bottom)
+        start_byte = self._location_to_byte_offset(top)
+        start_point = self._location_to_point(top)
+        old_end_byte = self._location_to_byte_offset(bottom)
+        old_end_point = self._location_to_point(bottom)
 
         end_location = super().insert_range(start, end, text)
 
-        # TODO: columns in tree-sitter points appear to be byte-offsets
         if TREE_SITTER:
             text_byte_length = len(_utf8_encode(text))
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
                 new_end_byte=start_byte + text_byte_length,
-                start_point=top,
-                old_end_point=bottom,
-                new_end_point=end_location,
+                start_point=start_point,
+                old_end_point=old_end_point,
+                new_end_point=self._location_to_point(end_location),
             )
             self._syntax_tree = self._parser.parse(
                 self._read_callable, self._syntax_tree
@@ -148,8 +149,10 @@ class SyntaxAwareDocument(Document):
         """
 
         top, bottom = _fix_direction(start, end)
-        start_byte = self._tree_sitter_byte_offset(top)
-        old_end_byte = self._tree_sitter_byte_offset(bottom)
+        start_point = self._location_to_point(top)
+        old_end_point = self._location_to_point(bottom)
+        start_byte = self._location_to_byte_offset(top)
+        old_end_byte = self._location_to_byte_offset(bottom)
 
         deleted_text = super().delete_range(start, end)
 
@@ -159,9 +162,9 @@ class SyntaxAwareDocument(Document):
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
                 new_end_byte=old_end_byte - deleted_text_byte_length,
-                start_point=top,
-                old_end_point=bottom,
-                new_end_point=top,
+                start_point=start_point,
+                old_end_point=old_end_point,
+                new_end_point=self._location_to_point(top),
             )
             new_tree = self._parser.parse(self._read_callable, self._syntax_tree)
             self._syntax_tree = new_tree
@@ -201,7 +204,7 @@ class SyntaxAwareDocument(Document):
 
         return list(captures)
 
-    def _tree_sitter_byte_offset(self, location: tuple[int, int]) -> int:
+    def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate.
         This method only does work if tree-sitter was imported, otherwise it returns 0.
 
@@ -227,6 +230,17 @@ class SyntaxAwareDocument(Document):
             bytes_on_left = 0
         byte_offset = bytes_lines_above + bytes_on_left
         return byte_offset
+
+    def _location_to_point(self, location: Location) -> tuple[int, int]:
+        """Convert a document location (row_index, column_index) to a tree-sitter
+        point (row_index, byte_offset_from_start_of_row)."""
+        lines = self._lines
+        row, column = location
+        if row < len(lines):
+            bytes_on_left = len(_utf8_encode(lines[row][:column]))
+        else:
+            bytes_on_left = 0
+        return row, bytes_on_left
 
     def _prepare_highlights(
         self,

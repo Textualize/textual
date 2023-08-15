@@ -283,6 +283,14 @@
   (else_clause
     "else" @exception))
 
+["(" ")" "[" "]" "{" "}"] @punctuation.bracket
+
+(interpolation
+  "{" @punctuation.special
+  "}" @punctuation.special)
+
+["," "." ":" ";" (ellipsis)] @punctuation.delimiter
+
 ;; Class definitions
 
 (class_definition name: (identifier) @type)
