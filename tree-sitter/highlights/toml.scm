@@ -1,7 +1,7 @@
 ; Properties
 ;-----------
 
-(bare_key) @type
+(bare_key) @toml.type
 (quoted_key) @string
 (pair (bare_key)) @property
 

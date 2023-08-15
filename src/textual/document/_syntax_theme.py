@@ -34,6 +34,7 @@ _MONOKAI = {
     "html.end_tag_error": Style(color="black", bgcolor="red"),
     "tag": Style(color="#F92672"),
     "yaml.field": Style(color="#F92672", bold=True),
+    "toml.type": Style(color="#F92672"),
 }
 
 _BUILTIN_THEMES = {
