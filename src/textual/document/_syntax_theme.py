@@ -39,6 +39,7 @@ _MONOKAI = {
     "yaml.field": Style(color="#F92672", bold=True),
     "json.label": Style(color="#F92672", bold=True),
     "toml.type": Style(color="#F92672"),
+    "toml.datetime": Style(color="#AE81FF"),
 }
 
 _BUILTIN_THEMES = {

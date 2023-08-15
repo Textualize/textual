@@ -13,10 +13,10 @@
 (string) @string
 (integer) @number
 (float) @float
-(offset_date_time) @string.special
-(local_date_time) @string.special
-(local_date) @string.special
-(local_time) @string.special
+(offset_date_time) @toml.datetime
+(local_date_time) @toml.datetime
+(local_date) @toml.datetime
+(local_time) @toml.datetime
 
 ; Punctuation
 ;------------
