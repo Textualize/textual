@@ -21,6 +21,7 @@ _MONOKAI = {
     "function.call": Style(color="#A6E22E"),
     "method": Style(color="#A6E22E"),
     "method.call": Style(color="#A6E22E"),
+    "boolean": Style(color="#66D9EF", italic=True),
     # "constant": Style(color="#AE81FF"),
     "variable": Style(color="white"),
     "parameter": Style(color="cyan"),
@@ -32,6 +33,7 @@ _MONOKAI = {
     "error": Style(color="black", bgcolor="red"),
     "html.end_tag_error": Style(color="black", bgcolor="red"),
     "tag": Style(color="#F92672"),
+    "yaml.field": Style(color="#F92672", bold=True),
 }
 
 _BUILTIN_THEMES = {

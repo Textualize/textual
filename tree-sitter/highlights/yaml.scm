@@ -20,14 +20,14 @@
 ] @preproc
 
 (block_mapping_pair
-  key: (flow_node [(double_quote_scalar) (single_quote_scalar)] @field))
+  key: (flow_node [(double_quote_scalar) (single_quote_scalar)] @yaml.field))
 (block_mapping_pair
-  key: (flow_node (plain_scalar (string_scalar) @field)))
+  key: (flow_node (plain_scalar (string_scalar) @yaml.field)))
 
 (flow_mapping
-  (_ key: (flow_node [(double_quote_scalar) (single_quote_scalar)] @field)))
+  (_ key: (flow_node [(double_quote_scalar) (single_quote_scalar)] @yaml.field)))
 (flow_mapping
-  (_ key: (flow_node (plain_scalar (string_scalar) @field))))
+  (_ key: (flow_node (plain_scalar (string_scalar) @yaml.field))))
 
 [
  ","
