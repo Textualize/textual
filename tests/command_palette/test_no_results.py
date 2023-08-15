@@ -1,25 +1,9 @@
 from textual.app import App
-from textual.command_palette import (
-    CommandMatches,
-    CommandPalette,
-    CommandSource,
-    CommandSourceHit,
-)
+from textual.command_palette import CommandPalette
 from textual.widgets import OptionList
 
 
-class SimpleSource(CommandSource):
-    async def hunt_for(self, user_input: str) -> CommandMatches:
-        def gndn() -> None:
-            pass
-
-        if user_input == "this will never happen in this test":
-            yield CommandSourceHit(1, user_input, gndn, user_input)
-
-
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = {SimpleSource}
-
     def on_mount(self) -> None:
         self.action_command_palette()
 
