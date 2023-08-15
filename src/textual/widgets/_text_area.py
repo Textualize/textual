@@ -131,15 +131,16 @@ class Delete:
 class TextArea(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
 $text-area-active-line-bg: white 8%;
+
 TextArea {
     background: $panel;
     width: 1fr;
     height: 1fr;
 }
-TextArea > .text-area--active-line {
+TextArea > .text-area--cursor-line {
     background: $text-area-active-line-bg;
 }
-TextArea > .text-area--active-line-gutter {
+TextArea > .text-area--cursor-line-gutter {
     color: $text;
     background: $text-area-active-line-bg;
 }
@@ -159,13 +160,22 @@ TextArea > .text-area--width-guide {
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "text-area--active-line",
-        "text-area--active-line-gutter",
-        "text-area--gutter",
         "text-area--cursor",
+        "text-area--gutter",
+        "text-area--cursor-line",
+        "text-area--cursor-line-gutter",
         "text-area--selection",
         "text-area--width-guide",
     }
+    """| Class                           | Description                                      |
+|:--------------------------------|:-------------------------------------------------|
+| `text-area--cursor`             | Targets the cursor.                              |
+| `text-area--gutter`             | Targets the gutter (line number column).         |
+| `text-area--cursor-line`        | Targets the line of text the cursor is on.       |
+| `text-area--cursor-line-gutter` | Targets the gutter of the line the cursor is on. |
+| `text-area--selection`          | Targets the selected text.                       |
+| `text-area--width-guide`        | Targets the width guide.                         |
+ """
 
     BINDINGS = [
         Binding("escape", "screen.focus_next", "focus next", show=False),
@@ -423,7 +433,7 @@ TextArea > .text-area--width-guide {
 
         # Highlight the cursor
         cursor_row, cursor_column = end
-        active_line_style = self.get_component_rich_style("text-area--active-line")
+        active_line_style = self.get_component_rich_style("text-area--cursor-line")
         if cursor_row == line_index:
             cursor_style = self.get_component_rich_style("text-area--cursor")
             line.stylize(cursor_style, cursor_column, cursor_column + 1)
@@ -439,7 +449,7 @@ TextArea > .text-area--width-guide {
         if self.show_line_numbers:
             if cursor_row == line_index:
                 gutter_style = self.get_component_rich_style(
-                    "text-area--active-line-gutter"
+                    "text-area--cursor-line-gutter"
                 )
             else:
                 gutter_style = self.get_component_rich_style("text-area--gutter")
@@ -501,22 +511,6 @@ TextArea > .text-area--width-guide {
         start, end = _fix_direction(start, end)
         return self._document.get_text_range(start, end)
 
-    @property
-    def gutter_width(self) -> int:
-        """The width of the gutter (the left column containing line numbers).
-
-        Returns:
-            The cell-width of the line number column. If `show_line_numbers` is `False` returns 0.
-        """
-        # The longest number in the gutter plus two extra characters: `│ `.
-        gutter_margin = 2
-        gutter_width = (
-            len(str(self._document.line_count + 1)) + gutter_margin
-            if self.show_line_numbers
-            else 0
-        )
-        return gutter_width
-
     def edit(self, edit: Edit) -> Any:
         """Perform an Edit.
 
@@ -538,12 +532,6 @@ TextArea > .text-area--width-guide {
 
         return result
 
-    # def undo(self) -> None:
-    #     if self._undo_stack:
-    #         action = self._undo_stack.pop()
-    #         action.undo(self)
-
-    # --- Lower level event/key handling
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
         key = event.key
@@ -558,6 +546,12 @@ TextArea > .text-area--width-guide {
             start, end = self.selection
             self.insert_text_range(insert, start, end, True)
 
+    # def undo(self) -> None:
+    #     if self._undo_stack:
+    #         action = self._undo_stack.pop()
+    #         action.undo(self)
+
+    # --- Lower level event/key handling
     def get_target_document_location(self, event: MouseEvent) -> Location:
         """Given a MouseEvent, return the row and column offset of the event in document-space.
 
@@ -577,6 +571,22 @@ TextArea > .text-area--width-guide {
         )
         target_column = self.cell_width_to_column_index(target_x, target_row)
         return target_row, target_column
+
+    @property
+    def gutter_width(self) -> int:
+        """The width of the gutter (the left column containing line numbers).
+
+        Returns:
+            The cell-width of the line number column. If `show_line_numbers` is `False` returns 0.
+        """
+        # The longest number in the gutter plus two extra characters: `│ `.
+        gutter_margin = 2
+        gutter_width = (
+            len(str(self._document.line_count + 1)) + gutter_margin
+            if self.show_line_numbers
+            else 0
+        )
+        return gutter_width
 
     def _on_mouse_down(self, event: events.MouseDown) -> None:
         """Update the cursor position, and begin a selection using the mouse."""
@@ -625,7 +635,6 @@ TextArea > .text-area--width-guide {
                 return column_index
         return len(line)
 
-    # --- Cursor/selection utilities
     def clamp_visitable(self, location: Location) -> Location:
         """Clamp the given location to the nearest visitable location.
 
@@ -644,6 +653,7 @@ TextArea > .text-area--width-guide {
 
         return row, column
 
+    # --- Cursor/selection utilities
     def scroll_cursor_visible(self, center: bool = False) -> Offset:
         """Scroll the `TextArea` such that the cursor is visible on screen.
 
@@ -664,6 +674,34 @@ TextArea > .text-area--width-guide {
             center=center,
         )
         return scroll_offset
+
+    def move_cursor(
+        self,
+        location: Location,
+        select: bool = False,
+        center: bool = False,
+        record_width: bool = True,
+    ) -> None:
+        """Move the cursor to a location, optionally selecting text on the way.
+
+        Args:
+            location: The location to move the cursor to.
+            select: If True, select text between the old and new location.
+            center: If True, scroll such that the cursor is centered.
+            record_width: If True, record the cursor column cell width so that we
+                jump to a corresponding location when moving between rows.
+        """
+        if not select:
+            self.selection = Selection.cursor(location)
+        else:
+            start, end = self.selection
+            self.selection = Selection(start, location)
+
+        if record_width:
+            self.record_cursor_offset()
+
+        if center:
+            self.scroll_cursor_visible(center)
 
     @property
     def cursor_location(self) -> Location:
@@ -743,34 +781,6 @@ TextArea > .text-area--width-guide {
         target_row = cursor_row if cursor_column != 0 else cursor_row - 1
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
         return target_row, target_column
-
-    def move_cursor(
-        self,
-        location: Location,
-        select: bool = False,
-        center: bool = False,
-        record_width: bool = True,
-    ) -> None:
-        """Move the cursor to a location, optionally selecting text on the way.
-
-        Args:
-            location: The location to move the cursor to.
-            select: If True, select text between the old and new location.
-            center: If True, scroll such that the cursor is centered.
-            record_width: If True, record the cursor column cell width so that we
-                jump to a corresponding location when moving between rows.
-        """
-        if not select:
-            self.selection = Selection.cursor(location)
-        else:
-            start, end = self.selection
-            self.selection = Selection(start, location)
-
-        if record_width:
-            self.record_cursor_offset()
-
-        if center:
-            self.scroll_cursor_visible(center)
 
     def action_cursor_right(self) -> None:
         """Move the cursor one location to the right.
