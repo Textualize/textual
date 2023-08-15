@@ -124,6 +124,12 @@ class DocumentBase(ABC):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
 
+    @abstractmethod
+    def tree_query(self, tree_query: str) -> list[object]:
+        """Query the syntax tree, if available for the current
+        document. If no syntax tree is available, the returned
+        list will be empty."""
+
 
 class Document(DocumentBase):
     """A document which can be opened in a TextArea."""
@@ -294,6 +300,9 @@ class Document(DocumentBase):
         line_string = self[index]
         line_string = line_string.replace("\n", "").replace("\r", "")
         return Text(line_string, end="")
+
+    def tree_query(self, tree_query: str) -> list[object]:
+        return []
 
     def __getitem__(self, line_index: SupportsIndex | slice) -> str | list[str]:
         """Return the content of a line as a string, excluding newline characters.

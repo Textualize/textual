@@ -35,7 +35,17 @@ Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 
 class SyntaxAwareDocument(Document):
     """A wrapper around a Document which also maintains a tree-sitter syntax
-    tree when the document is edited."""
+    tree when the document is edited.
+
+    The primary reason for this split is actually to keep tree-sitter stuff separate,
+    since it isn't supported in Python 3.7. By having the tree-sitter code
+    isolated in this subclass, it makes it easier to conditionally import. However,
+    it does come with other design flaws (e.g. Document is required to have methods
+    which only really make sense on SyntaxAwareDocument).
+
+    If you're reading this and Python 3.7 is no longer supported by Textual,
+    consider merging this subclass into the `Document` superclass.
+    """
 
     def __init__(
         self, text: str, language: str | Language, syntax_theme: str | SyntaxTheme
@@ -104,6 +114,7 @@ class SyntaxAwareDocument(Document):
 
         end_location = super().insert_range(start, end, text)
 
+        # TODO: columns in tree-sitter points appear to be byte-offsets
         if TREE_SITTER:
             text_byte_length = len(_utf8_encode(text))
             self._syntax_tree.edit(
@@ -181,6 +192,14 @@ class SyntaxAwareDocument(Document):
                 )
 
         return line
+
+    def tree_query(self, tree_query: str) -> list[object]:
+        """Query the syntax tree."""
+        query = self._language.query(tree_query)
+
+        captures = query.captures(self._syntax_tree.root_node)
+
+        return list(captures)
 
     def _tree_sitter_byte_offset(self, location: tuple[int, int]) -> int:
         """Given a document coordinate, return the byte offset of that coordinate.
