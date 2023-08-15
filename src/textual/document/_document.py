@@ -170,7 +170,7 @@ class Document(DocumentBase):
         """
         lines = self._lines
         cell_lengths = [cell_len(line.expandtabs(tab_width)) for line in lines]
-        max_cell_length = max(cell_lengths or [1])
+        max_cell_length = max(cell_lengths or [0])
         height = len(lines)
         return Size(max_cell_length, height)
 
