@@ -16,9 +16,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
 
 ### Added
-- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603 
+- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603
 - Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
 - Added widgets.Digit https://github.com/Textualize/textual/pull/3073
+
+### Changed
+- DescendantBlur and DescendantFocus can now be used with @on decorator
 
 ## [0.32.0] - 2023-08-03
 

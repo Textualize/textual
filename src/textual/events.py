@@ -556,7 +556,13 @@ class DescendantFocus(Event, bubble=True, verbose=True):
     - [X] Verbose
     """
 
-    control: Widget
+    widget: Widget
+    """The widget that was focused."""
+
+    @property
+    def control(self) -> Widget:
+        """The widget that was focused (alias of `widget`)."""
+        return self.widget
 
 
 @dataclass
@@ -567,7 +573,13 @@ class DescendantBlur(Event, bubble=True, verbose=True):
     - [X] Verbose
     """
 
-    control: Widget
+    widget: Widget
+    """The widget that was blurred."""
+
+    @property
+    def control(self) -> Widget:
+        """The widget that was blurred (alias of `widget`)."""
+        return self.widget
 
 
 @rich.repr.auto
