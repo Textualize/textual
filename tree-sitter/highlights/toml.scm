@@ -33,4 +33,4 @@
 "{" @punctuation.bracket
 "}" @punctuation.bracket
 
-(ERROR) @error
+(ERROR) @toml.error

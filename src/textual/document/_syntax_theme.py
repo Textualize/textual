@@ -40,6 +40,7 @@ _MONOKAI = {
     "json.label": Style(color="#F92672", bold=True),
     "toml.type": Style(color="#F92672"),
     "toml.datetime": Style(color="#AE81FF"),
+    "toml.error": None,
 }
 
 _BUILTIN_THEMES = {
