@@ -4201,6 +4201,8 @@
         
       
         
+      
+        
           
         
       
@@ -4387,6 +4389,32 @@
     
   
     DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Digits
   
 
     
@@ -5183,6 +5211,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._option_list.OptionList.get_option_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_option_index()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._option_list.OptionList.remove_option" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5205,10 +5244,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._option_list.OptionList.render_line" class="md-nav__link">
+  <a href="#textual.widgets._option_list.OptionList.replace_option_prompt" class="md-nav__link">
     <span class="md-ellipsis">
       
-        render_line()
+        replace_option_prompt()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._option_list.OptionList.replace_option_prompt_at_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        replace_option_prompt_at_index()
       
     </span>
   </a>
@@ -5314,6 +5364,17 @@
     <span class="md-ellipsis">
       
         prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._option_list.Option.set_prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_prompt()
       
     </span>
   </a>
@@ -7651,6 +7712,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._option_list.OptionList.get_option_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_option_index()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._option_list.OptionList.remove_option" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7673,10 +7745,21 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._option_list.OptionList.render_line" class="md-nav__link">
+  <a href="#textual.widgets._option_list.OptionList.replace_option_prompt" class="md-nav__link">
     <span class="md-ellipsis">
       
-        render_line()
+        replace_option_prompt()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._option_list.OptionList.replace_option_prompt_at_index" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        replace_option_prompt_at_index()
       
     </span>
   </a>
@@ -7782,6 +7865,17 @@
     <span class="md-ellipsis">
       
         prompt
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._option_list.Option.set_prompt" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_prompt()
       
     </span>
   </a>
@@ -8906,8 +9000,8 @@ tables</a>:</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.DEFAULT_CSS" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10045,7 +10139,71 @@ message will be posted.</p>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._option_list.OptionDoesNotExist" href="#textual.widgets.option_list.OptionDoesNotExist">OptionDoesNotExist</a></code>
           </td>
-          <td><p>If there is no option with the index.</p></td>
+          <td><p>If there is no option with the given index.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._option_list.OptionList.get_option_index" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_option_index</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._option_list.OptionList.get_option_index" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_option_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_id</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get the index of the option with the given ID.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>option_id</code></td>
+          <td>
+          </td>
+          <td><p>The ID of the option to get the index of.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._option_list.OptionDoesNotExist" href="#textual.widgets.option_list.OptionDoesNotExist">OptionDoesNotExist</a></code>
+          </td>
+          <td><p>If no option has the given ID.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10224,20 +10382,20 @@ message will be posted.</p>
 
 
 
-<h3 id="textual.widgets._option_list.OptionList.render_line" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">render_line</span>
+<h3 id="textual.widgets._option_list.OptionList.replace_option_prompt" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">replace_option_prompt</span>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-method"><code>method</code></small>
   </span>
 
-<a href="#textual.widgets._option_list.OptionList.render_line" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">render_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a href="#textual.widgets._option_list.OptionList.replace_option_prompt" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">replace_option_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">option_id</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Render a single line in the option list.</p>
+      <p>Replace the prompt of the option with the given ID.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -10251,11 +10409,21 @@ message will be posted.</p>
     </thead>
     <tbody>
         <tr>
-          <td><code>y</code></td>
+          <td><code>option_id</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The Y offset of the line to render.</p></td>
+          <td><p>The ID of the option to replace the prompt of.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>prompt</code></td>
+          <td>
+                <code><span title="rich.console.RenderableType">RenderableType</span></code>
+          </td>
+          <td><p>The new prompt for the option.</p></td>
           <td>
               <em>required</em>
           </td>
@@ -10274,9 +10442,120 @@ message will be posted.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.strip.Strip" href="../../api/strip/#textual.strip.Strip">Strip</a></code>
+                <code><span title="typing_extensions.Self">Self</span></code>
           </td>
-          <td><p>A <code>Strip</code> instance for the caller to render.</p></td>
+          <td><p>The <code>OptionList</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._option_list.OptionDoesNotExist" href="#textual.widgets.option_list.OptionDoesNotExist">OptionDoesNotExist</a></code>
+          </td>
+          <td><p>If no option has the given ID.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._option_list.OptionList.replace_option_prompt_at_index" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">replace_option_prompt_at_index</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._option_list.OptionList.replace_option_prompt_at_index" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">replace_option_prompt_at_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Replace the prompt of the option at the given index.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>index</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>The index of the option to replace the prompt of.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>prompt</code></td>
+          <td>
+                <code><span title="rich.console.RenderableType">RenderableType</span></code>
+          </td>
+          <td><p>The new prompt for the option.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>OptionList</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._option_list.OptionDoesNotExist" href="#textual.widgets.option_list.OptionDoesNotExist">OptionDoesNotExist</a></code>
+          </td>
+          <td><p>If there is no option with the given index.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10587,6 +10866,53 @@ we need to recalculate all the lines that make up the list.</p>
 </div>
 
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._option_list.Option.set_prompt" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">set_prompt</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._option_list.Option.set_prompt" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">set_prompt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prompt</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Set the prompt for the option.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>prompt</code></td>
+          <td>
+                <code><span title="rich.console.RenderableType">RenderableType</span></code>
+          </td>
+          <td><p>The new prompt for the option.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 
 

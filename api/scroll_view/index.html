@@ -4197,6 +4197,8 @@
         
       
         
+      
+        
           
         
       
@@ -4383,6 +4385,32 @@
     
   
     DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Digits
   
 
     
@@ -5883,43 +5911,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.scroll_view.ScrollView.get_content_height" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_height()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.scroll_view.ScrollView.get_content_width" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_width()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.scroll_view.ScrollView.refresh_lines" class="md-nav__link">
     <span class="md-ellipsis">
       
         refresh_lines()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.scroll_view.ScrollView.render" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        render()
       
     </span>
   </a>
@@ -6744,43 +6739,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.scroll_view.ScrollView.get_content_height" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_height()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.scroll_view.ScrollView.get_content_width" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        get_content_width()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#textual.scroll_view.ScrollView.refresh_lines" class="md-nav__link">
     <span class="md-ellipsis">
       
         refresh_lines()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.scroll_view.ScrollView.render" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        render()
       
     </span>
   </a>
@@ -6909,166 +6871,6 @@ on the compositor to render children).</p>
 
 
 
-<h3 id="textual.scroll_view.ScrollView.get_content_height" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">get_content_height</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method"><code>method</code></small>
-  </span>
-
-<a href="#textual.scroll_view.ScrollView.get_content_height" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_content_height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container</span><span class="p">,</span> <span class="n">viewport</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Gets the height (number of lines) in the content area.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>container</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>Size of the container (immediate parent) widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>viewport</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>Size of the viewport.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>width</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>Width of renderable.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The height of the content.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.scroll_view.ScrollView.get_content_width" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">get_content_width</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method"><code>method</code></small>
-  </span>
-
-<a href="#textual.scroll_view.ScrollView.get_content_width" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_content_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container</span><span class="p">,</span> <span class="n">viewport</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Gets the width of the content area.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>container</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>Size of the container (immediate parent) widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-        <tr>
-          <td><code>viewport</code></td>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
-          </td>
-          <td><p>Size of the viewport.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The optimal width of the content.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
 <h3 id="textual.scroll_view.ScrollView.refresh_lines" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">refresh_lines</span>
   
@@ -7114,47 +6916,6 @@ on the compositor to render children).</p>
           <td>
                 <code>1</code>
           </td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.scroll_view.ScrollView.render" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">render</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method"><code>method</code></small>
-  </span>
-
-<a href="#textual.scroll_view.ScrollView.render" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Render the scrollable region (if <code>render_lines</code> is not implemented).</p>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><span title="rich.console.RenderableType">RenderableType</span></code>
-          </td>
-          <td><p>Renderable object.</p></td>
         </tr>
     </tbody>
   </table>

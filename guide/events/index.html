@@ -4440,6 +4440,8 @@
         
       
         
+      
+        
           
         
       
@@ -4626,6 +4628,32 @@
     
   
     DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Digits
   
 
     
@@ -8126,9 +8154,9 @@ Messages from builtin controls will have this attribute, but you may need to add
 <a id="__codelineno-11-24" name="__codelineno-11-24" href="#__codelineno-11-24"></a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_input_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="n">Input</span><span class="o">.</span><span class="n">Changed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-11-25" name="__codelineno-11-25" href="#__codelineno-11-25"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;A coroutine to handle a text changed message.&quot;&quot;&quot;</span>
 <a id="__codelineno-11-26" name="__codelineno-11-26" href="#__codelineno-11-26"></a>        <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a><span class="hll">            <span class="c1"># Look up the word in the background</span>
-</span><a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a>            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_word</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
-<a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>        <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-11-27" name="__codelineno-11-27" href="#__codelineno-11-27"></a>            <span class="c1"># Look up the word in the background</span>
+<a id="__codelineno-11-28" name="__codelineno-11-28" href="#__codelineno-11-28"></a><span class="hll">            <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lookup_word</span><span class="p">(</span><span class="n">message</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+</span><a id="__codelineno-11-29" name="__codelineno-11-29" href="#__codelineno-11-29"></a>        <span class="k">else</span><span class="p">:</span>
 <a id="__codelineno-11-30" name="__codelineno-11-30" href="#__codelineno-11-30"></a>            <span class="c1"># Clear the results</span>
 <a id="__codelineno-11-31" name="__codelineno-11-31" href="#__codelineno-11-31"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#results&quot;</span><span class="p">,</span> <span class="n">Static</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 <a id="__codelineno-11-32" name="__codelineno-11-32" href="#__codelineno-11-32"></a>

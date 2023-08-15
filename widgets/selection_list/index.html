@@ -4201,6 +4201,8 @@
         
       
         
+      
+        
           
         
       
@@ -4387,6 +4389,32 @@
     
   
     DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Digits
   
 
     
@@ -5254,6 +5282,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._selection_list.SelectionList.clear_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_options()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._selection_list.SelectionList.deselect" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5291,17 +5330,6 @@
     <span class="md-ellipsis">
       
         get_option_at_index()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._selection_list.SelectionList.render_line" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        render_line()
       
     </span>
   </a>
@@ -7399,6 +7427,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._selection_list.SelectionList.clear_options" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_options()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._selection_list.SelectionList.deselect" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7436,17 +7475,6 @@
     <span class="md-ellipsis">
       
         get_option_at_index()
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#textual.widgets._selection_list.SelectionList.render_line" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        render_line()
       
     </span>
   </a>
@@ -7630,7 +7658,7 @@ follows:</p>
 </div>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <p>A selection list is designed to be built up of single-line prompts (which
-can be <a href="/guide/widgets/#rich-renderables">Rich renderables</a>) and an
+can be <a href="../../guide/widgets/#rich-renderables">Rich renderables</a>) and an
 associated unique value.</p>
 <h3 id="selections-as-tuples">Selections as tuples<a class="headerlink" href="#selections-as-tuples" title="Permanent link">&para;</a></h3>
 <p>A selection list can be built with tuples, either of two or three values in
@@ -8624,8 +8652,8 @@ makes use of the following component classes:</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._selection_list.SelectionList.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9264,6 +9292,47 @@ selected values.</p>
 
 
 
+<h3 id="textual.widgets._selection_list.SelectionList.clear_options" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear_options</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._selection_list.SelectionList.clear_options" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear the content of the selection list.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>SelectionList</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widgets._selection_list.SelectionList.deselect" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">deselect</span>
   
@@ -9524,71 +9593,6 @@ selected values.</p>
                 <code>OptionDoesNotExist</code>
           </td>
           <td><p>If there is no selection option with the index.</p></td>
-        </tr>
-    </tbody>
-  </table>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="textual.widgets._selection_list.SelectionList.render_line" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">render_line</span>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method"><code>method</code></small>
-  </span>
-
-<a href="#textual.widgets._selection_list.SelectionList.render_line" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">render_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-</code></pre></div>
-
-  <div class="doc doc-contents ">
-  
-      <p>Render a line in the display.</p>
-
-  <h5>Parameters</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
-        <th>Default</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td><code>y</code></td>
-          <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
-          </td>
-          <td><p>The line to render.</p></td>
-          <td>
-              <em>required</em>
-          </td>
-        </tr>
-    </tbody>
-  </table>
-
-  <h5>Returns</h5>
-  <table>
-    <thead>
-      <tr>
-        <th>Type</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr>
-          <td>
-                <code><a class="autorefs autorefs-internal" title="textual.strip.Strip" href="../../api/strip/#textual.strip.Strip">Strip</a></code>
-          </td>
-          <td><p>A <a class="autorefs autorefs-internal" href="../../api/strip/#textual.strip.Strip"><code>Strip</code></a> that is the line to render.</p></td>
         </tr>
     </tbody>
   </table>

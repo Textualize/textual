@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://textual.textualize.io/widgets/directory_tree/">
       
       
-        <link rel="prev" href="../data_table/">
+        <link rel="prev" href="../digits/">
       
       
         <link rel="next" href="../footer/">
@@ -4201,6 +4201,8 @@
         
       
         
+      
+        
           
         
       
@@ -4387,6 +4389,32 @@
     
   
     DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Digits
   
 
     
@@ -4625,6 +4653,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.clear_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_node()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._directory_tree.DirectoryTree.filter_paths" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4658,10 +4697,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.reload_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reload_node()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._directory_tree.DirectoryTree.render_label" class="md-nav__link">
     <span class="md-ellipsis">
       
         render_label()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.reset_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset_node()
       
     </span>
   </a>
@@ -7017,6 +7078,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.clear_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear_node()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._directory_tree.DirectoryTree.filter_paths" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7050,10 +7122,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.reload_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reload_node()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._directory_tree.DirectoryTree.render_label" class="md-nav__link">
     <span class="md-ellipsis">
       
         render_label()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._directory_tree.DirectoryTree.reset_node" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        reset_node()
       
     </span>
   </a>
@@ -7572,8 +7666,8 @@ and directories:</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._directory_tree.DirectoryTree.PATH" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7775,6 +7869,47 @@ the value will always be a <code>pathlib.Path</code> object.</p>
 
 
 
+<h3 id="textual.widgets._directory_tree.DirectoryTree.clear_node" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear_node</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._directory_tree.DirectoryTree.clear_node" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear all nodes under the given node.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>Tree</code> instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widgets._directory_tree.DirectoryTree.filter_paths" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">filter_paths</span>
   
@@ -7931,6 +8066,53 @@ version of this method.</p>
 
 
 
+<h3 id="textual.widgets._directory_tree.DirectoryTree.reload_node" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">reload_node</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._directory_tree.DirectoryTree.reload_node" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">reload_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Reload the given node's contents.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>node</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._tree.TreeNode" href="../tree/#textual.widgets.tree.TreeNode">TreeNode</a>[<span title="textual.widgets._directory_tree.DirEntry">DirEntry</span>]</code>
+          </td>
+          <td><p>The node to reload.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widgets._directory_tree.DirectoryTree.render_label" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">render_label</span>
   
@@ -8004,6 +8186,81 @@ version of this method.</p>
                 <code><a class="autorefs autorefs-external" title="rich.text.Text" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.Text">Text</a></code>
           </td>
           <td><p>A Rich Text object containing the label.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._directory_tree.DirectoryTree.reset_node" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">reset_node</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._directory_tree.DirectoryTree.reset_node" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">reset_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear the subtree and reset the given node.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>label</code></td>
+          <td>
+                <code><span title="rich.text.TextType">TextType</span></code>
+          </td>
+          <td><p>The label for the node.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+        <tr>
+          <td><code>data</code></td>
+          <td>
+                <code><span title="textual.widgets._directory_tree.DirEntry">DirEntry</span> | None</code>
+          </td>
+          <td><p>Optional data for the node.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>The <code>Tree</code> instance.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8137,7 +8394,7 @@ the new value as the root.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../data_table/" class="md-footer__link md-footer__link--prev" aria-label="Previous: DataTable" rel="prev">
+          <a href="../digits/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Digits" rel="prev">
             <div class="md-footer__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
             </div>
@@ -8146,7 +8403,7 @@ the new value as the root.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                DataTable
+                Digits
               </div>
             </div>
           </a>

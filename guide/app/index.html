@@ -4435,6 +4435,8 @@
         
       
         
+      
+        
           
         
       
@@ -4621,6 +4623,32 @@
     
   
     DataTable
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Digits
   
 
     
@@ -7414,7 +7442,7 @@
 <p>Widgets are self-contained components responsible for generating the output for a portion of the screen. Widgets respond to events in much the same way as the App. Most apps that do anything interesting will contain at least one (and probably many) widgets which together form a User Interface.</p>
 <p>Widgets can be as simple as a piece of text, a button, or a fully-fledged component like a text editor or file browser (which may contain widgets of their own).</p>
 <h3 id="composing">Composing<a class="headerlink" href="#composing" title="Permanent link">&para;</a></h3>
-<p>To add widgets to your app implement a <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.compose"><code>compose()</code></a> method which should return an iterable of <code>Widget</code> instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
+<p>To add widgets to your app implement a [<code>compose()</code>][textual.app.App.compose] method which should return an iterable of <code>Widget</code> instances. A list would work, but it is convenient to yield widgets, making the method a <em>generator</em>.</p>
 <p>The following example imports a builtin <code>Welcome</code> widget and yields it from <code>App.compose()</code>.</p>
 <div class="highlight"><span class="filename">widgets01.py</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Welcome</span>
