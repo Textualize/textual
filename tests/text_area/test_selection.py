@@ -38,7 +38,7 @@ async def test_cursor_location_set():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.selection = Selection((1, 1), (2, 2))
-        text_area.move_cursor((2, 3))
+        text_area.move_cursor((2, 3), select=True)
         assert text_area.selection == Selection((1, 1), (2, 3))
 
 

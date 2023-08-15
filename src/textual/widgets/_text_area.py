@@ -86,11 +86,9 @@ class Insert:
             text_area: The TextArea this operation was performed on.
         """
         if self.move_cursor:
-            text_area.selection = Selection.cursor(self._edit_end)
+            text_area.move_cursor(self._edit_end)
         else:
             text_area.refresh()
-
-        text_area.record_cursor_offset()
 
 
 @dataclass
@@ -121,11 +119,9 @@ class Delete:
 
     def post_edit(self, text_area: TextArea) -> None:
         if self.move_cursor:
-            text_area.selection = Selection.cursor(self.from_location)
+            text_area.move_cursor(self.from_location)
         else:
             text_area.refresh()
-
-        text_area.record_cursor_offset()
 
 
 class TextArea(ScrollView, can_focus=True):
