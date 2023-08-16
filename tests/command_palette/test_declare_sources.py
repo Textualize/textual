@@ -33,7 +33,7 @@ class AppWithNoSources(AppWithActiveCommandPalette):
 async def test_no_app_command_sources() -> None:
     """An app with no sources declared should work fine."""
     async with AppWithNoSources().run_test() as pilot:
-        assert pilot.app.query_one(CommandPalette)._sources == set()
+        assert pilot.app.query_one(CommandPalette)._sources == App.COMMAND_SOURCES
 
 
 class AppWithSources(AppWithActiveCommandPalette):
@@ -66,7 +66,7 @@ class ScreenWithNoSources(Screen[None]):
 async def test_no_screen_command_sources() -> None:
     """An app with a screen with no sources declared should work fine."""
     async with AppWithInitialScreen(ScreenWithNoSources()).run_test() as pilot:
-        assert pilot.app.query_one(CommandPalette)._sources == set()
+        assert pilot.app.query_one(CommandPalette)._sources == App.COMMAND_SOURCES
 
 
 class ScreenWithSources(ScreenWithNoSources):
@@ -78,7 +78,7 @@ async def test_screen_command_sources() -> None:
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
         assert (
             pilot.app.query_one(CommandPalette)._sources
-            == ScreenWithSources.COMMAND_SOURCES
+            == App.COMMAND_SOURCES | ScreenWithSources.COMMAND_SOURCES
         )
 
 
