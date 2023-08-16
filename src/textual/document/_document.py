@@ -191,9 +191,6 @@ class Document(DocumentBase):
         Returns:
             The new end location after the edit is complete.
         """
-        if not text:
-            return end
-
         top, bottom = _sort_ascending(start, end)
         top_row, top_column = top
         bottom_row, bottom_column = bottom
@@ -208,9 +205,13 @@ class Document(DocumentBase):
         before_selection = lines[top_row][:top_column]
         after_selection = lines[bottom_row][bottom_column:]
 
-        insert_lines[0] = before_selection + insert_lines[0]
-        destination_column = len(insert_lines[-1])
-        insert_lines[-1] = insert_lines[-1] + after_selection
+        if insert_lines:
+            insert_lines[0] = before_selection + insert_lines[0]
+            destination_column = len(insert_lines[-1])
+            insert_lines[-1] = insert_lines[-1] + after_selection
+        else:
+            destination_column = len(before_selection)
+            insert_lines = [before_selection + after_selection]
 
         lines[top_row : bottom_row + 1] = insert_lines
         destination_row = top_row + len(insert_lines) - 1

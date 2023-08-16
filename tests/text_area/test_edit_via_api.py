@@ -25,19 +25,26 @@ class TextAreaApp(App):
 
 
 async def test_insert_text_start():
+    """The cursor is in the middle of the line, and we programmatically insert
+    some text at the start of the document -> the cursor location should shift
+    such that it stays above the same character."""
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("Hello")
+        text_area.move_cursor((0, 5))
+        text_area.insert_text("Hello", location=(0, 0))
         assert text_area.text == "Hello" + TEXT
-        assert text_area.cursor_location == (0, 0)
+        assert text_area.cursor_location == (0, 10)
 
 
 async def test_insert_text_start_move_cursor():
+    """When move_cursor=True, the cursor will automatically jump to the end
+    location of the edit operation."""
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("Hello", move_cursor=True)
+        text_area.move_cursor((0, 5))
+        text_area.insert_text("Hello", location=(0, 0), sticky_cursor=True)
         assert text_area.text == "Hello" + TEXT
         assert text_area.cursor_location == (0, 5)
 
@@ -48,6 +55,7 @@ async def test_insert_newlines_start():
         text_area = app.query_one(TextArea)
         text_area.insert_text("\n\n\n")
         assert text_area.text == "\n\n\n" + TEXT
+        assert text_area.selection == Selection.cursor((3, 0))
 
 
 async def test_insert_newlines_end():
@@ -90,7 +98,7 @@ async def test_insert_text_non_cursor_location_move_cursor():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("Hello", location=(4, 0), move_cursor=True)
+        text_area.insert_text("Hello", location=(4, 0), sticky_cursor=True)
         assert text_area.text == TEXT + "Hello"
         assert text_area.selection == Selection.cursor((4, 5))
 
@@ -117,7 +125,7 @@ async def test_insert_multiline_text_move_cursor():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((2, 5))
-        text_area.insert_text("Hello,\nworld!", move_cursor=True)
+        text_area.insert_text("Hello,\nworld!", sticky_cursor=True)
         expected_content = """\
 I must not fear.
 Fear is the mind-killer.
@@ -157,7 +165,7 @@ async def test_insert_range_multiline_text_move_cursor():
             "Hello,\nworld!\n",
             from_location=(1, 0),
             to_location=(3, 0),
-            move_cursor=True,
+            sticky_cursor=True,
         )
         expected_content = """\
 I must not fear.
@@ -191,7 +199,7 @@ async def test_delete_range_within_line_move_cursor():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        deleted_text = text_area.delete_range((0, 6), (0, 10), move_cursor=True)
+        deleted_text = text_area.delete_range((0, 6), (0, 10), sticky_cursor=True)
         assert deleted_text == " not"
         expected_text = """\
 I must fear.
