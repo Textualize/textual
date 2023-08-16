@@ -7,7 +7,7 @@ execute commands.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import Queue, TimeoutError, create_task, wait_for
+from asyncio import Queue, TimeoutError, wait_for
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
 
@@ -19,6 +19,7 @@ from rich.text import Text
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
+from ._asyncio import create_task
 from ._fuzzy import Matcher
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
