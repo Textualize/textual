@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- grid-columns and grid-rows now accept an `auto` token to detect the optimal size.
+- grid-columns and grid-rows now accept an `auto` token to detect the optimal size https://github.com/Textualize/textual/pull/3107
 
 ## [0.33.0] - 2023-08-15
 
