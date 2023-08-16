@@ -1,4 +1,8 @@
-"""The Textual command palette."""
+"""The Textual command palette.
+
+Provides a 'command palette' facility, allowing the user to search for and
+execute commands.
+"""
 
 from __future__ import annotations
 
@@ -47,7 +51,10 @@ class CommandSourceHit(NamedTuple):
     """Holds the details of a single command search hit."""
 
     match_value: float
-    """The match value of the command hit."""
+    """The match value of the command hit.
+
+    The value should be between 0 (no match) and 1 (complete match).
+    """
 
     match_display: RenderableType
     """The [rich.console.RenderableType][renderable] representation of the hit."""
@@ -56,7 +63,12 @@ class CommandSourceHit(NamedTuple):
     """The function to call when the command is chosen."""
 
     command_text: str
-    """The command text associated with the hit, as plain text."""
+    """The command text associated with the hit, as plain text.
+
+    This is the text that will be placed into the `Input` field of the
+    [command palette][`textual.command_palette.CommandPalette] when a
+    selection is made.
+    """
 
     command_help: str | None = None
     """Optional help text for the command."""
@@ -76,7 +88,7 @@ class CommandSource(ABC):
     """Base class for command palette command sources.
 
     To create a source of commands inherit from this class and implement
-    [textual.command_palette.CommandSource.hunt_for][`hunt_for`].
+    [`hunt_for`][textual.command_palette.CommandSource.hunt_for].
     """
 
     def __init__(self, screen: Screen, match_style: Style | None = None) -> None:
@@ -90,7 +102,10 @@ class CommandSource(ABC):
 
     @property
     def focused(self) -> Widget | None:
-        """The currently-focused widget in the currently-active screen in the application."""
+        """The currently-focused widget in the currently-active screen in the application.
+
+        If no widget has focus this will be `None`.
+        """
         return self.__screen.focused
 
     @property
@@ -130,14 +145,14 @@ class CommandSource(ABC):
             user_input: The user input to be matched.
 
         Yields:
-            Instances of [CommandSourceHit][`CommandSourceHit`].
+            Instances of [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
         """
         raise NotImplemented
 
 
 @total_ordering
 class Command(Option):
-    """Class that holds a command in the `CommandList`."""
+    """Class that holds a command in the [`CommandList`][textual.command_palette.CommandList]."""
 
     def __init__(
         self,
@@ -636,10 +651,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self.app.pop_screen()
 
     def _action_command_list(self, action: str) -> None:
-        """Pass an action on to the `CommandList`.
+        """Pass an action on to the [`CommandList`][textual.command_palette.CommandList].
 
         Args:
-            action: The action to pass on to the `CommandList`.
+            action: The action to pass on to the [`CommandList`][textual.command_palette.CommandList].
         """
         try:
             command_action = getattr(self.query_one(CommandList), f"action_{action}")
