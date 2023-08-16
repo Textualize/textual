@@ -632,3 +632,7 @@ def test_nested_fr(snap_compare) -> None:
 
 def test_digits(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
+
+
+def test_auto_grid(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid.py")
