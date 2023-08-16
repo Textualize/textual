@@ -33,6 +33,7 @@ class CommandPaletteRunOnSelectApp(App[None]):
 
 async def test_with_run_on_select_on() -> None:
     """With run on select on, the callable should be instantly run."""
+    save = CommandPalette.run_on_select
     async with CommandPaletteRunOnSelectApp().run_test() as pilot:
         assert isinstance(pilot.app, CommandPaletteRunOnSelectApp)
         pilot.app.action_command_palette()
@@ -40,6 +41,7 @@ async def test_with_run_on_select_on() -> None:
         await pilot.press("down")
         await pilot.press("enter")
         assert pilot.app.selection is not None
+    CommandPalette.run_on_select = save
 
 
 class CommandPaletteDoNotRunOnSelectApp(CommandPaletteRunOnSelectApp):
@@ -50,6 +52,7 @@ class CommandPaletteDoNotRunOnSelectApp(CommandPaletteRunOnSelectApp):
 
 async def test_with_run_on_select_off() -> None:
     """With run on select off, the callable should not be instantly run."""
+    save = CommandPalette.run_on_select
     async with CommandPaletteDoNotRunOnSelectApp().run_test() as pilot:
         assert isinstance(pilot.app, CommandPaletteDoNotRunOnSelectApp)
         pilot.app.action_command_palette()
@@ -60,3 +63,4 @@ async def test_with_run_on_select_off() -> None:
         assert pilot.app.query_one(Input).value != ""
         await pilot.press("enter")
         assert pilot.app.selection is not None
+    CommandPalette.run_on_select = save
