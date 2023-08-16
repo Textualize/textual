@@ -273,13 +273,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+end, shift+end", "command('last')", show=False),
-        Binding("ctrl+home, shift+home", "command('first')", show=False),
+        Binding("ctrl+end, shift+end", "command_list('last')", show=False),
+        Binding("ctrl+home, shift+home", "command_list('first')", show=False),
         Binding("down", "cursor_down", show=False),
         Binding("escape", "escape", "Exit the command palette"),
-        Binding("pagedown", "command('page_down')", show=False),
-        Binding("pageup", "command('page_up')", show=False),
-        Binding("up", "command('cursor_up')", show=False),
+        Binding("pagedown", "command_list('page_down')", show=False),
+        Binding("pageup", "command_list('page_up')", show=False),
+        Binding("up", "command_list('cursor_up')", show=False),
     ]
     """
     | Key(s) | Description |
@@ -605,11 +605,17 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     @on(Button.Pressed)
     def _select_or_command(self) -> None:
         """Depending on context, select or execute a command."""
-        # If the list is visible, that means we're in "pick a command" mode
-        # still and so we should bounce this command off to the command
-        # list.
+        # If the list is visible, that means we're in "pick a command"
+        # mode...
         if self._list_visible:
-            self._action_command("select")
+            # ...so if nothing in the list is highlighted yet...
+            if self.query_one(CommandList).highlighted is None:
+                # ...cause the first completion to be highlighted.
+                self._action_cursor_down()
+            else:
+                # The list is visible, something is highlighted, the user
+                # made a selection "gesture"; let's go select it!
+                self._action_command_list("select")
         else:
             # The list isn't visible, which means that if we have a
             # command...
@@ -625,7 +631,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         else:
             self.app.pop_screen()
 
-    def _action_command(self, action: str) -> None:
+    def _action_command_list(self, action: str) -> None:
         """Pass an action on to the `CommandList`.
 
         Args:
@@ -648,4 +654,4 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self._list_visible = True
             self.query_one(CommandList).highlighted = 0
         else:
-            self._action_command("cursor_down")
+            self._action_command_list("cursor_down")
