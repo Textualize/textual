@@ -28,6 +28,7 @@ from .screen import ModalScreen, Screen
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList
 from .widgets.option_list import Option
+from .worker import get_current_worker
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
@@ -387,6 +388,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         method of dismissing the palette.
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
+            self.workers.cancel_all()
             self.dismiss()
 
     def _on_mount(self, _: Mount) -> None:
@@ -567,6 +569,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         gathered_commands: list[Command] = []
         command_list = self.query_one(CommandList)
         command_id = 0
+        worker = get_current_worker()
         self._show_busy = True
         async for hit in self._hunt_for(search_value):
             prompt = hit.match_display
@@ -580,10 +583,12 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 prompt.add_row(hit.match_display)
                 prompt.add_row(Align.right(Text(hit.command_help, style=help_style)))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
+            if worker.is_cancelled:
+                break
             self._refresh_command_list(command_list, gathered_commands)
             command_id += 1
         self._show_busy = False
-        if command_list.option_count == 0:
+        if command_list.option_count == 0 and not worker.is_cancelled:
             command_list.add_option(
                 Option(Align.center(Text("No matches found")), disabled=True)
             )
@@ -641,6 +646,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             if self._selected_command is not None:
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
+                self.workers.cancel_all()
                 self.dismiss(self._selected_command.command)
 
     def _action_escape(self) -> None:
@@ -648,7 +654,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         if self._list_visible:
             self._list_visible = False
         else:
-            self.app.pop_screen()
+            self.workers.cancel_all()
+            self.dismiss()
 
     def _action_command_list(self, action: str) -> None:
         """Pass an action on to the [`CommandList`][textual.command_palette.CommandList].
