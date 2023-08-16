@@ -335,7 +335,12 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     @property
     def _sources(self) -> set[type[CommandSource]]:
-        """The command sources."""
+        """The currently available command sources.
+
+        This is a combination of the command sources defined [in the
+        application][textual.app.App.COMMAND_SOURCES] and those [defined in
+        the current screen][textual.screen.Screen.COMMAND_SOURCES].
+        """
         return (
             set()
             if self._calling_screen is None
