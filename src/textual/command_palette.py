@@ -639,7 +639,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # The list isn't visible, which means that if we have a
             # command...
             if self._selected_command is not None:
-                # ...we should run return it to the parent screen and let it
+                # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
                 self.dismiss(self._selected_command.command)
 
