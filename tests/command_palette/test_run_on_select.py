@@ -18,7 +18,7 @@ class SimpleSource(CommandSource):
 
         for n in range(100):
             yield CommandSourceHit(
-                n / 100, str(n), partial(gndn, n), str(n), f"This is help for {n}"
+                n + 1 / 100, str(n), partial(gndn, n), str(n), f"This is help for {n}"
             )
 
 
