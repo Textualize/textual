@@ -436,6 +436,14 @@ class App(Generic[ReturnType], DOMNode):
         The new value is always converted to string.
         """
 
+        self.use_command_palette: bool = True
+        """A flag to say if the application should use the command palette.
+
+        If set to `False` any call to
+        [`action_command_palette`][textual.app.App.action_command_palette]
+        will be ignored.
+        """
+
         self._logger = Logger(self._log)
 
         self._refresh_required = False
@@ -2972,5 +2980,5 @@ class App(Generic[ReturnType], DOMNode):
             """
             command()
 
-        if not CommandPalette.is_open(self):
+        if self.use_command_palette and not CommandPalette.is_open(self):
             self.push_screen(CommandPalette(), callback=run_command)
