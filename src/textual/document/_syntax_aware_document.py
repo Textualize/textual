@@ -19,7 +19,7 @@ try:
 except ImportError:
     TREE_SITTER = False
 
-from textual._fix_direction import _fix_direction
+from textual._fix_direction import _sort_ascending
 from textual.document._document import Document, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
 from textual.document._syntax_theme import SyntaxTheme
@@ -105,7 +105,7 @@ class SyntaxAwareDocument(Document):
         Returns:
             The new end location after the edit is complete.
         """
-        top, bottom = _fix_direction(start, end)
+        top, bottom = _sort_ascending(start, end)
 
         # An optimisation would be finding the byte offsets as a single operation rather
         # than doing two passes over the document content.
@@ -148,7 +148,7 @@ class SyntaxAwareDocument(Document):
             A string containing the deleted text.
         """
 
-        top, bottom = _fix_direction(start, end)
+        top, bottom = _sort_ascending(start, end)
         start_point = self._location_to_point(top)
         old_end_point = self._location_to_point(bottom)
         start_byte = self._location_to_byte_offset(top)

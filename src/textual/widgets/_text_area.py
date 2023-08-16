@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 from textual import events, log
 from textual._cells import cell_len
-from textual._fix_direction import _fix_direction
+from textual._fix_direction import _sort_ascending
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document import Document, Location, Selection, SyntaxTheme
@@ -54,7 +54,7 @@ class Insert:
     """The end location of the insert"""
     move_cursor: bool = False
     """True if the cursor should move to the end of the inserted text."""
-    _edit_end: Location | None = field(init=False, default=None)
+    _updated_selection: Location | None = field(init=False, default=None)
     """Computed location to move the cursor to if `move_cursor` is True."""
 
     def do(self, text_area: TextArea) -> None:
@@ -66,10 +66,45 @@ class Insert:
         # TODO: For undo to work, we'll need to record the text that was replaced.
         #  We can use TextArea.get_text_range to do this, or perform it inside
         #  document.insert_range and return a compound object.
-        self._edit_end = text_area._document.insert_range(
-            self.from_location,
-            self.to_location,
-            self.text,
+
+        # Get the offset between Selection.end and _edit_end (the new bottom).
+        # Apply these offsets to the Selection start and end
+        # ->  we might need to adjust the offset in the case of overlap.
+        text = self.text
+
+        edit_from = self.from_location
+        edit_to = self.to_location
+
+        edit_top, edit_bottom = _sort_ascending(edit_from, edit_to)
+        edit_bottom_row, edit_bottom_column = edit_bottom
+
+        selection_start, selection_end = text_area.selection
+        selection_start_row, selection_start_column = selection_start
+        selection_end_row, selection_end_column = selection_end
+
+        new_edit_bottom = text_area._document.insert_range(edit_from, edit_to, text)
+        self._edit_end = new_edit_bottom
+        new_edit_to_row, new_edit_to_column = new_edit_bottom
+
+        column_offset = new_edit_to_column - edit_bottom_column
+        target_selection_start_column = (
+            selection_start_column + column_offset
+            if edit_bottom_row == selection_start_row
+            else selection_start_column
+        )
+        target_selection_end_column = (
+            selection_end_column + column_offset
+            if edit_bottom_row == selection_end_row
+            else selection_end_column
+        )
+
+        row_offset = new_edit_to_row - edit_bottom_row
+        target_selection_start_row = selection_start_row + row_offset
+        target_selection_end_row = selection_end_row + row_offset
+
+        self._updated_selection = Selection(
+            start=(target_selection_start_row, target_selection_start_column),
+            end=(target_selection_end_row, target_selection_end_column),
         )
 
     def undo(self, text_area: TextArea) -> None:
@@ -88,7 +123,7 @@ class Insert:
         if self.move_cursor:
             text_area.move_cursor(self._edit_end)
         else:
-            text_area.refresh()
+            text_area.selection = self._updated_selection
 
 
 @dataclass
@@ -504,7 +539,7 @@ TextArea > .text-area--width-guide {
         Returns:
             The text between start and end.
         """
-        start, end = _fix_direction(start, end)
+        start, end = _sort_ascending(start, end)
         return self._document.get_text_range(start, end)
 
     def edit(self, edit: Edit) -> Any:
@@ -1024,7 +1059,7 @@ TextArea > .text-area--width-guide {
         move_cursor: bool = False,
     ) -> str:
         """Delete text between from_location and to_location."""
-        top, bottom = _fix_direction(from_location, to_location)
+        top, bottom = _sort_ascending(from_location, to_location)
         deleted_text = self.edit(Delete(top, bottom, move_cursor))
         return deleted_text
 

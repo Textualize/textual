@@ -7,7 +7,7 @@ from typing import NamedTuple, Tuple
 from rich.text import Text
 
 from textual._cells import cell_len
-from textual._fix_direction import _fix_direction
+from textual._fix_direction import _sort_ascending
 from textual._types import Literal, SupportsIndex, get_args
 from textual.geometry import Size
 
@@ -194,7 +194,7 @@ class Document(DocumentBase):
         if not text:
             return end
 
-        top, bottom = _fix_direction(start, end)
+        top, bottom = _sort_ascending(start, end)
         top_row, top_column = top
         bottom_row, bottom_column = bottom
 
@@ -228,7 +228,7 @@ class Document(DocumentBase):
         Returns:
             The text that was deleted from the document.
         """
-        top, bottom = _fix_direction(start, end)
+        top, bottom = _sort_ascending(start, end)
         top_row, top_column = top
         bottom_row, bottom_column = bottom
 
@@ -262,7 +262,7 @@ class Document(DocumentBase):
         Returns:
             The text between start (inclusive) and end (exclusive).
         """
-        top, bottom = _fix_direction(start, end)
+        top, bottom = _sort_ascending(start, end)
         top_row, top_column = top
         bottom_row, bottom_column = bottom
         lines = self._lines
@@ -357,4 +357,4 @@ class Selection(NamedTuple):
         """Return the Selection as a "standard" range, from top to bottom i.e. (minimum point, maximum point)
         where the minimum point is inclusive and the maximum point is exclusive."""
         start, end = self
-        return _fix_direction(start, end)
+        return _sort_ascending(start, end)
