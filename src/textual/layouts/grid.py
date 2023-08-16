@@ -109,23 +109,59 @@ class GridLayout(Layout):
                     continue
             cell_coord = next_coord()
 
-        # Resolve columns / rows
-        columns = resolve(
-            repeat_scalars(column_scalars, table_size_columns),
-            size.width,
-            gutter_vertical,
-            size,
-            viewport,
+        column_scalars = repeat_scalars(column_scalars, table_size_columns)
+        row_scalars = repeat_scalars(
+            row_scalars, table_size_rows if table_size_rows else row + 1
         )
-        rows = resolve(
-            repeat_scalars(
-                row_scalars, table_size_rows if table_size_rows else row + 1
-            ),
-            size.height,
-            gutter_horizontal,
-            size,
-            viewport,
-        )
+
+        # Handle any auto columns
+        for column, scalar in enumerate(column_scalars):
+            if scalar.is_auto:
+                width = 0.0
+                for row in range(len(row_scalars)):
+                    coord = (column, row)
+                    try:
+                        widget, _ = cell_map[coord]
+                    except KeyError:
+                        pass
+                    else:
+                        if widget.styles.column_span != 1:
+                            continue
+                        width = max(
+                            width,
+                            widget.get_content_width(size, viewport)
+                            + widget.styles.gutter.width,
+                        )
+                column_scalars[column] = Scalar.from_number(width)
+
+        columns = resolve(column_scalars, size.width, gutter_vertical, size, viewport)
+
+        # Handle any auto rows
+        for row, scalar in enumerate(row_scalars):
+            if scalar.is_auto:
+                height = 0.0
+                for column in range(len(column_scalars)):
+                    coord = (column, row)
+                    try:
+                        widget, _ = cell_map[coord]
+                    except KeyError:
+                        pass
+                    else:
+                        if widget.styles.row_span != 1:
+                            continue
+                        column_width = columns[column][1]
+                        widget_height = (
+                            widget.get_content_height(
+                                size,
+                                viewport,
+                                column_width - parent.styles.grid_gutter_vertical,
+                            )
+                            + widget.styles.gutter.height
+                        )
+                        height = max(height, widget_height)
+                row_scalars[row] = Scalar.from_number(height)
+
+        rows = resolve(row_scalars, size.height, gutter_horizontal, size, viewport)
 
         placements: list[WidgetPlacement] = []
         add_placement = placements.append
