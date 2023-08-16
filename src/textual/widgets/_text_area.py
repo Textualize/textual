@@ -678,7 +678,7 @@ TextArea > .text-area--width-guide {
         center: bool = False,
         record_width: bool = True,
     ) -> None:
-        """Move the cursor to a location, optionally selecting text on the way.
+        """Move the cursor to a location.
 
         Args:
             location: The location to move the cursor to.
@@ -687,17 +687,40 @@ TextArea > .text-area--width-guide {
             record_width: If True, record the cursor column cell width so that we
                 jump to a corresponding location when moving between rows.
         """
-        if not select:
-            self.selection = Selection.cursor(location)
-        else:
+        if select:
             start, end = self.selection
             self.selection = Selection(start, location)
+        else:
+            self.selection = Selection.cursor(location)
 
         if record_width:
             self.record_cursor_offset()
 
         if center:
             self.scroll_cursor_visible(center)
+
+    def move_cursor_relative(
+        self,
+        rows: int = 0,
+        columns: int = 0,
+        select: bool = False,
+        center: bool = False,
+        record_width: bool = True,
+    ):
+        """Move the cursor relative to its current location.
+
+        Args:
+            location: The location to move the cursor to.
+            select: If True, select text between the old and new location.
+            center: If True, scroll such that the cursor is centered.
+            record_width: If True, record the cursor column cell width so that we
+                jump to a corresponding location when moving between rows.
+        """
+        clamp_visitable = self.clamp_visitable
+        start, end = self.selection
+        current_row, current_column = end
+        target = clamp_visitable(Location(current_row + rows, current_column + columns))
+        self.move_cursor(target, select, center, record_width)
 
     @property
     def cursor_location(self) -> Location:
