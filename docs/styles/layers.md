@@ -8,9 +8,9 @@ The `layers` style allows you to define an ordered set of layers.
 layers: <a href="../../css_types/name">&lt;name&gt;</a>+;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `layers` style accepts one or more [`<name>`](../../css_types/name) that define the layers that the widget is aware of, and the order in which they will be painted on the screen.
+The `layers` style accepts one or more [`<name>`](../css_types/name.md) that define the layers that the widget is aware of, and the order in which they will be painted on the screen.
 
-The values used here can later be referenced using the [`layer`](../layer) property.
+The values used here can later be referenced using the [`layer`](./layer.md) property.
 The layers defined first in the list are drawn under the layers that are defined later in the list.
 
 More information on layers can be found in the [guide](../guide/layout.md#layers).

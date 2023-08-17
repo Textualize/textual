@@ -8,7 +8,7 @@ The `max-width` style sets a maximum width for a widget.
 max-width: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `max-width` style accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`width`](./width) of a widget.
+The `max-width` style accepts a [`<scalar>`](../css_types/scalar.md) that defines an upper bound for the [`width`](./width.md) of a widget.
 That is, the width of a widget is never allowed to exceed `max-width`.
 
 ## Example

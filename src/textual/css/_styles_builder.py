@@ -921,6 +921,8 @@ class StylesBuilder:
                 scalars.append(Scalar.from_number(float(token.value)))
             elif token.name == "scalar":
                 scalars.append(Scalar.parse(token.value, percent_unit=percent_unit))
+            elif token.name == "token" and token.value == "auto":
+                scalars.append(Scalar.parse("auto"))
             else:
                 self.error(
                     name,
