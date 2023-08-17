@@ -16,7 +16,7 @@ class SystemCommand(NamedTuple):
 
     name: str
     """The name for the command; the string that will be matched."""
-    call: Callable[[], None]
+    run: Callable[[], None]
     """The code to run when the command is selected."""
     help: str
     """Help text for the command."""
@@ -67,7 +67,7 @@ class SystemCommandSource(CommandSource):
                 yield CommandSourceHit(
                     match,
                     matcher.highlight(command.name),
-                    command.call,
+                    command.run,
                     command.name,
                     command.help,
                 )
