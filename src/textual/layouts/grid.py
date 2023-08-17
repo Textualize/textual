@@ -114,6 +114,52 @@ class GridLayout(Layout):
             row_scalars, table_size_rows if table_size_rows else row + 1
         )
 
+        def apply_width_limits(widget: Widget, width: int) -> int:
+            """Apply min and max widths to dimension.
+
+            Args:
+                widget: A Widget.
+                width: A width.
+
+            Returns:
+                New width.
+            """
+            styles = widget.styles
+            if styles.min_width is not None:
+                width = max(
+                    width,
+                    int(styles.min_width.resolve(size, viewport, Fraction(width))),
+                )
+            if styles.max_width is not None:
+                width = min(
+                    width,
+                    int(styles.max_width.resolve(size, viewport, Fraction(width))),
+                )
+            return width
+
+        def apply_height_limits(widget: Widget, height: int) -> int:
+            """Apply min and max height to a dimension.
+
+            Args:
+                widget: A widget.
+                height: A height.
+
+            Returns:
+                New height
+            """
+            styles = widget.styles
+            if styles.min_height is not None:
+                height = max(
+                    height,
+                    int(styles.min_height.resolve(size, viewport, Fraction(height))),
+                )
+            if styles.max_height is not None:
+                height = min(
+                    height,
+                    int(styles.max_height.resolve(size, viewport, Fraction(height))),
+                )
+            return height
+
         # Handle any auto columns
         for column, scalar in enumerate(column_scalars):
             if scalar.is_auto:
@@ -129,8 +175,11 @@ class GridLayout(Layout):
                             continue
                         width = max(
                             width,
-                            widget.get_content_width(size, viewport)
-                            + widget.styles.gutter.width,
+                            apply_width_limits(
+                                widget,
+                                widget.get_content_width(size, viewport)
+                                + widget.styles.gutter.width,
+                            ),
                         )
                 column_scalars[column] = Scalar.from_number(width)
 
@@ -150,13 +199,14 @@ class GridLayout(Layout):
                         if widget.styles.row_span != 1:
                             continue
                         column_width = columns[column][1]
-                        widget_height = (
+                        widget_height = apply_height_limits(
+                            widget,
                             widget.get_content_height(
                                 size,
                                 viewport,
                                 column_width - parent.styles.grid_gutter_vertical,
                             )
-                            + widget.styles.gutter.height
+                            + widget.styles.gutter.height,
                         )
                         height = max(height, widget_height)
                 row_scalars[row] = Scalar.from_number(height)
