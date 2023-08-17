@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from functools import lru_cache
 from typing import NamedTuple, Tuple
 
@@ -15,6 +16,14 @@ Newline = Literal["\r\n", "\n", "\r"]
 """The type representing valid line separators."""
 VALID_NEWLINES = set(get_args(Newline))
 """The set of valid line separator strings."""
+
+
+@dataclass
+class EditResult:
+    end_location: Location
+    """The new end Location after the selection is complete."""
+    replaced_text: str
+    """The text that was replaced."""
 
 
 @lru_cache(maxsize=1024)
@@ -56,8 +65,8 @@ class DocumentBase(ABC):
     provide in order to be used by the TextArea widget."""
 
     @abstractmethod
-    def insert_range(self, start: Location, end: Location, text: str) -> Location:
-        """Insert text at the given range.
+    def replace_range(self, start: Location, end: Location, text: str) -> Location:
+        """Replace the text at the given range.
 
         Args:
             start: A tuple (row, column) where the edit starts.
@@ -66,18 +75,6 @@ class DocumentBase(ABC):
 
         Returns:
             The new end location after the edit is complete.
-        """
-
-    @abstractmethod
-    def delete_range(self, start: Location, end: Location) -> str:
-        """Delete the text at the given range.
-
-        Args:
-            start: A tuple (row, column) where the edit starts.
-            end: A tuple (row, column) where the edit ends.
-
-        Returns:
-            The text that was deleted from the document.
         """
 
     @property
@@ -180,8 +177,8 @@ class Document(DocumentBase):
         height = len(lines)
         return Size(max_cell_length, height)
 
-    def insert_range(self, start: Location, end: Location, text: str) -> Location:
-        """Insert text at the given range.
+    def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
+        """Replace text at the given range.
 
         Args:
             start: A tuple (row, column) where the edit starts.
@@ -189,7 +186,8 @@ class Document(DocumentBase):
             text: The text to insert between start and end.
 
         Returns:
-            The new end location after the edit is complete.
+            The EditResult containing information about the completed
+                replace operation.
         """
         top, bottom = _sort_ascending(start, end)
         top_row, top_column = top
@@ -202,8 +200,16 @@ class Document(DocumentBase):
 
         lines = self._lines
 
-        before_selection = lines[top_row][:top_column]
-        after_selection = lines[bottom_row][bottom_column:]
+        replaced_text = self.get_text_range(top, bottom)
+        if bottom_row >= len(lines):
+            after_selection = ""
+        else:
+            after_selection = lines[bottom_row][bottom_column:]
+
+        if top_row >= len(lines):
+            before_selection = ""
+        else:
+            before_selection = lines[top_row][:top_column]
 
         if insert_lines:
             insert_lines[0] = before_selection + insert_lines[0]
@@ -216,37 +222,8 @@ class Document(DocumentBase):
         lines[top_row : bottom_row + 1] = insert_lines
         destination_row = top_row + len(insert_lines) - 1
 
-        end_point = destination_row, destination_column
-        return end_point
-
-    def delete_range(self, start: Location, end: Location) -> str:
-        """Delete the text at the given range.
-
-        Args:
-            start: A tuple (row, column) where the edit starts.
-            end: A tuple (row, column) where the edit ends.
-
-        Returns:
-            The text that was deleted from the document.
-        """
-        top, bottom = _sort_ascending(start, end)
-        top_row, top_column = top
-        bottom_row, bottom_column = bottom
-
-        lines = self._lines
-
-        deleted_text = self.get_text_range(top, bottom)
-
-        if top_row == bottom_row:
-            line = lines[top_row]
-            lines[top_row] = line[:top_column] + line[bottom_column:]
-        else:
-            start_line = lines[top_row]
-            end_line = lines[bottom_row] if bottom_row <= self.line_count - 1 else ""
-            lines[top_row] = start_line[:top_column] + end_line[bottom_column:]
-            del lines[top_row + 1 : bottom_row + 1]
-
-        return deleted_text
+        end_location = (destination_row, destination_column)
+        return EditResult(end_location, replaced_text)
 
     def get_text_range(self, start: Location, end: Location) -> str:
         """Get the text that falls between the start and end locations.
@@ -263,6 +240,9 @@ class Document(DocumentBase):
         Returns:
             The text between start (inclusive) and end (exclusive).
         """
+        if start == end:
+            return ""
+
         top, bottom = _sort_ascending(start, end)
         top_row, top_column = top
         bottom_row, bottom_column = bottom

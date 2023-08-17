@@ -20,7 +20,7 @@ except ImportError:
     TREE_SITTER = False
 
 from textual._fix_direction import _sort_ascending
-from textual.document._document import Document, Location, _utf8_encode
+from textual.document._document import Document, EditResult, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
 from textual.document._syntax_theme import SyntaxTheme
 
@@ -92,9 +92,9 @@ class SyntaxAwareDocument(Document):
             )
             self._prepare_highlights()
 
-    def insert_range(
+    def replace_range(
         self, start: tuple[int, int], end: tuple[int, int], text: str
-    ) -> tuple[int, int]:
+    ) -> EditResult:
         """Insert text at the given range.
 
         Args:
@@ -114,10 +114,11 @@ class SyntaxAwareDocument(Document):
         old_end_byte = self._location_to_byte_offset(bottom)
         old_end_point = self._location_to_point(bottom)
 
-        end_location = super().insert_range(start, end, text)
+        replace_result = super().replace_range(start, end, text)
 
         if TREE_SITTER:
             text_byte_length = len(_utf8_encode(text))
+            end_location = replace_result.end_location
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
@@ -131,46 +132,7 @@ class SyntaxAwareDocument(Document):
             )
             self._prepare_highlights()
 
-        return end_location
-
-    def delete_range(self, start: tuple[int, int], end: tuple[int, int]) -> str:
-        """Delete text between `start` and `end`.
-
-        This will update the internal syntax tree of the document, refreshing
-        the syntax highlighting data. Calling `get_line` will now return a Text
-        object with new highlights corresponding to this change.
-
-        Args:
-            start: The start of the range.
-            end: The end of the range.
-
-        Returns:
-            A string containing the deleted text.
-        """
-
-        top, bottom = _sort_ascending(start, end)
-        start_point = self._location_to_point(top)
-        old_end_point = self._location_to_point(bottom)
-        start_byte = self._location_to_byte_offset(top)
-        old_end_byte = self._location_to_byte_offset(bottom)
-
-        deleted_text = super().delete_range(start, end)
-
-        if TREE_SITTER:
-            deleted_text_byte_length = len(_utf8_encode(deleted_text))
-            self._syntax_tree.edit(
-                start_byte=start_byte,
-                old_end_byte=old_end_byte,
-                new_end_byte=old_end_byte - deleted_text_byte_length,
-                start_point=start_point,
-                old_end_point=old_end_point,
-                new_end_point=self._location_to_point(top),
-            )
-            new_tree = self._parser.parse(self._read_callable, self._syntax_tree)
-            self._syntax_tree = new_tree
-            self._prepare_highlights()
-
-        return deleted_text
+        return replace_result
 
     def get_line_text(self, line_index: int) -> Text:
         """Apply syntax highlights and return the Text of the line.

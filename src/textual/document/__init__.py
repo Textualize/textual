@@ -1,4 +1,4 @@
-from ._document import Document, Location, Selection
+from ._document import Document, EditResult, Location, Selection
 from ._languages import VALID_LANGUAGES
 from ._syntax_aware_document import (
     EndColumn,
@@ -15,6 +15,7 @@ __all__ = [
     "Highlight",
     "HighlightName",
     "Location",
+    "EditResult",
     "Selection",
     "StartColumn",
     "SyntaxAwareDocument",
