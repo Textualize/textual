@@ -320,7 +320,15 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
-    """The command sources for the default screen."""
+    """The command sources for the default screen.
+
+    This is the collection of [command
+    sources][textual.command_palette.CommandSource] that provide matched
+    commands to the [command palette][textual.command_palette.CommandPalette].
+
+    The default Textual command palette source is
+    [the Textual system-wide command source][textual._system_commands_source.SystemCommandSource].
+    """
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
