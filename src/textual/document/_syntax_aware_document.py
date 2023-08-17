@@ -31,6 +31,7 @@ StartColumn = Optional[int]
 EndColumn = Optional[int]
 HighlightName = Optional[str]
 Highlight = Tuple[StartColumn, EndColumn, HighlightName]
+"""A tuple representing a syntax highlight within one line."""
 
 
 class SyntaxAwareDocument(Document):
@@ -89,7 +90,7 @@ class SyntaxAwareDocument(Document):
                 self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
 
             self._syntax_theme.highlight_query = highlight_query_path.read_text()
-            self._syntax_tree = self._build_ast(self._parser)
+            self._syntax_tree = self._parser.parse(self._read_callable)
             self._query: Query = self._language.query(
                 self._syntax_theme.highlight_query
             )
@@ -128,6 +129,7 @@ class SyntaxAwareDocument(Document):
                 old_end_point=old_end_point,
                 new_end_point=self._location_to_point(end_location),
             )
+            # Incrementally parse the document.
             self._syntax_tree = self._parser.parse(
                 self._read_callable, self._syntax_tree
             )
@@ -147,16 +149,17 @@ class SyntaxAwareDocument(Document):
         line_bytes = _utf8_encode(self[line_index])
         byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
         line = Text(self[line_index], end="")
-        if self._highlights:
-            highlights = self._highlights[line_index]
+        highlights = self._highlights
+        get_highlight_from_theme = self._syntax_theme.get_highlight
+        if highlights:
+            highlights = highlights[line_index]
             for start, end, highlight_name in highlights:
-                node_style = self._syntax_theme.get_highlight(highlight_name)
+                node_style = get_highlight_from_theme(highlight_name)
                 line.stylize(
                     node_style,
                     byte_to_codepoint.get(start, 0),
                     byte_to_codepoint.get(end),
                 )
-
         return line
 
     def _location_to_byte_offset(self, location: Location) -> int:
@@ -189,7 +192,6 @@ class SyntaxAwareDocument(Document):
     def _location_to_point(self, location: Location) -> tuple[int, int]:
         """Convert a document location (row_index, column_index) to a tree-sitter
         point (row_index, byte_offset_from_start_of_row).
-
 
         Args:
             location: A location (row index, column codepoint offset)
@@ -257,23 +259,6 @@ class SyntaxAwareDocument(Document):
         for line_index, updated_highlights in highlight_updates.items():
             highlights[line_index] = updated_highlights
 
-    def _build_ast(
-        self,
-        parser: Parser,
-    ) -> Tree:
-        """Fully parse the document and build the abstract syntax tree for it.
-
-        Returns None if there's no parser available (e.g. when no language is selected).
-
-        Args:
-            parser: The tree-sitter Parser to parse the document with.
-
-        Returns:
-            A tree-sitter concrete syntax Tree representing the document, or None
-                if there's no
-        """
-        return parser.parse(self._read_callable)
-
     def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes | None:
         """A callable which informs tree-sitter about the document content.
 
@@ -329,9 +314,7 @@ def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
     code_point_offset = 0
 
     while current_byte_offset < len(data):
-        # Save the mapping before incrementing the byte offset
         byte_to_codepoint[current_byte_offset] = code_point_offset
-
         first_byte = data[current_byte_offset]
 
         # Single-byte character
@@ -349,10 +332,8 @@ def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
         else:
             raise ValueError(f"Invalid UTF-8 byte: {first_byte}")
 
-        # Increment the code-point counter
         code_point_offset += 1
 
     # Mapping for the end of the string
     byte_to_codepoint[current_byte_offset] = code_point_offset
-
     return byte_to_codepoint

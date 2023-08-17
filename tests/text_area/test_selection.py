@@ -223,7 +223,7 @@ async def test_get_cursor_up_location(start, end):
         text_area.move_cursor(start)
         # This is required otherwise the cursor will snap back to the
         # last location navigated to (0, 0)
-        text_area.record_cursor_offset()
+        text_area.record_cursor_width()
         assert text_area.get_cursor_up_location() == end
 
 
@@ -242,7 +242,7 @@ async def test_get_cursor_down_location(start, end):
         text_area.move_cursor(start)
         # This is required otherwise the cursor will snap back to the
         # last location navigated to (0, 0)
-        text_area.record_cursor_offset()
+        text_area.record_cursor_width()
         assert text_area.get_cursor_down_location() == end
 
 

@@ -623,7 +623,7 @@ TextArea > .text-area--width-guide {
         """Finalise the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
-        self.record_cursor_offset()
+        self.record_cursor_width()
 
     def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
@@ -653,7 +653,11 @@ TextArea > .text-area--width-guide {
     def clamp_visitable(self, location: Location) -> Location:
         """Clamp the given location to the nearest visitable location.
 
-        Clamps the given location the nearest location which could be navigated to
+        Args:
+            location: The location to clamp.
+
+        Returns:
+            The nearest location that we could conceivably navigate to using the cursor.
         """
         document = self.document
 
@@ -669,22 +673,25 @@ TextArea > .text-area--width-guide {
         return row, column
 
     # --- Cursor/selection utilities
-    def scroll_cursor_visible(self, center: bool = False) -> Offset:
+    def scroll_cursor_visible(
+        self, center: bool = False, animate: bool = False
+    ) -> Offset:
         """Scroll the `TextArea` such that the cursor is visible on screen.
 
         Args:
             center: True if the cursor should be scrolled to the center.
+            animate: True if we should animate while scrolling.
 
         Returns:
             The offset that was scrolled to bring the cursor into view.
         """
         row, column = self.selection.end
-        text = self.cursor_line_text[:column]
+        text = self.document[row][:column]
         column_offset = cell_len(text.expandtabs(self.indent_width))
         scroll_offset = self.scroll_to_region(
             Region(x=column_offset, y=row, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
-            animate=False,
+            animate=animate,
             force=True,
             center=center,
         )
@@ -703,8 +710,9 @@ TextArea > .text-area--width-guide {
             location: The location to move the cursor to.
             select: If True, select text between the old and new location.
             center: If True, scroll such that the cursor is centered.
-            record_width: If True, record the cursor column cell width so that we
-                jump to a corresponding location when moving between rows.
+            record_width: If True, record the cursor column cell width after navigating
+                so that we jump back to the same width the next time we move to a row
+                that is wide enough.
         """
         if select:
             start, end = self.selection
@@ -713,7 +721,7 @@ TextArea > .text-area--width-guide {
             self.selection = Selection.cursor(location)
 
         if record_width:
-            self.record_cursor_offset()
+            self.record_cursor_width()
 
         if center:
             self.scroll_cursor_visible(center)
@@ -725,15 +733,17 @@ TextArea > .text-area--width-guide {
         select: bool = False,
         center: bool = False,
         record_width: bool = True,
-    ):
+    ) -> None:
         """Move the cursor relative to its current location.
 
         Args:
-            location: The location to move the cursor to.
+            rows: The number of rows to move down by (negative to move up)
+            columns:  The number of columns to move right by (negative to move left)
             select: If True, select text between the old and new location.
             center: If True, scroll such that the cursor is centered.
-            record_width: If True, record the cursor column cell width so that we
-                jump to a corresponding location when moving between rows.
+            record_width: If True, record the cursor column cell width after navigating
+                so that we jump back to the same width the next time we move to a row
+                that is wide enough.
         """
         clamp_visitable = self.clamp_visitable
         start, end = self.selection
@@ -759,18 +769,22 @@ TextArea > .text-area--width-guide {
 
     @property
     def cursor_at_first_row(self) -> bool:
+        """True if and only if the cursor is on the first row."""
         return self.selection.end[0] == 0
 
     @property
     def cursor_at_last_row(self) -> bool:
+        """True if and only if the cursor is on the last row."""
         return self.selection.end[0] == self.document.line_count - 1
 
     @property
     def cursor_at_start_of_row(self) -> bool:
+        """True if and only if the cursor is at column 0."""
         return self.selection.end[1] == 0
 
     @property
     def cursor_at_end_of_row(self) -> bool:
+        """True if and only if the cursor is at the end of a row."""
         cursor_row, cursor_column = self.selection.end
         row_length = len(self.document[cursor_row])
         cursor_at_end = cursor_column == row_length
@@ -778,11 +792,12 @@ TextArea > .text-area--width-guide {
 
     @property
     def cursor_at_start_of_document(self) -> bool:
-        return self.cursor_at_first_row and self.cursor_at_start_of_row
+        """True if and only if the cursor is at location (0, 0)"""
+        return self.selection.end == (0, 0)
 
     @property
     def cursor_at_end_of_document(self) -> bool:
-        """True if the cursor is at the very end of the document."""
+        """True if and only if the cursor is at the very end of the document."""
         return self.cursor_at_last_row and self.cursor_at_end_of_row
 
     # ------ Cursor movement actions
@@ -794,7 +809,7 @@ TextArea > .text-area--width-guide {
         """
         target = self.get_cursor_left_location()
         self.selection = Selection.cursor(target)
-        self.record_cursor_offset()
+        self.record_cursor_width()
 
     def action_cursor_left_select(self):
         """Move the end of the selection one location to the left.
@@ -804,7 +819,7 @@ TextArea > .text-area--width-guide {
         new_cursor_location = self.get_cursor_left_location()
         selection_start, selection_end = self.selection
         self.selection = Selection(selection_start, new_cursor_location)
-        self.record_cursor_offset()
+        self.record_cursor_width()
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left.
@@ -827,18 +842,19 @@ TextArea > .text-area--width-guide {
         """
         target = self.get_cursor_right_location()
         self.move_cursor(target)
-        self.record_cursor_offset()
+        self.record_cursor_width()
 
     def action_cursor_right_select(self):
-        """Move the end of the selection one location to the right.
-
-        This will expand or contract the selection.
-        """
+        """Move the end of the selection one location to the right."""
         target = self.get_cursor_right_location()
         self.move_cursor(target, select=True)
 
     def get_cursor_right_location(self) -> Location:
-        """Get the location the cursor will move to if it moves right."""
+        """Get the location the cursor will move to if it moves right.
+
+        Returns:
+            the location the cursor will move to if it moves right.
+        """
         if self.cursor_at_end_of_document:
             return self.selection.end
         cursor_row, cursor_column = self.selection.end
@@ -856,8 +872,12 @@ TextArea > .text-area--width-guide {
         target = self.get_cursor_down_location()
         self.move_cursor(target, select=True, record_width=False)
 
-    def get_cursor_down_location(self):
-        """Get the location the cursor will move to if it moves down."""
+    def get_cursor_down_location(self) -> Location:
+        """Get the location the cursor will move to if it moves down.
+
+        Returns:
+            the location the cursor will move to if it moves down.
+        """
         cursor_row, cursor_column = self.selection.end
         if self.cursor_at_last_row:
             return cursor_row, len(self.document[cursor_row])
@@ -881,7 +901,11 @@ TextArea > .text-area--width-guide {
         self.move_cursor(target, select=True, record_width=False)
 
     def get_cursor_up_location(self) -> Location:
-        """Get the location the cursor will move to if it moves up."""
+        """Get the location the cursor will move to if it moves up.
+
+        Returns:
+            the location the cursor will move to if it moves up.
+        """
         if self.cursor_at_first_row:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
@@ -915,10 +939,10 @@ TextArea > .text-area--width-guide {
         self.move_cursor(target)
 
     def get_cursor_line_start_location(self) -> Location:
-        """Get the location of the end of the current line.
+        """Get the location of the start of the current line.
 
         Returns:
-            The (row, column) location of the end of the cursors current line.
+            The (row, column) location of the start of the cursors current line.
         """
         _start, end = self.selection
         cursor_row, _cursor_column = end
@@ -985,6 +1009,7 @@ TextArea > .text-area--width-guide {
         return cursor_row, cursor_column
 
     def action_cursor_page_up(self) -> None:
+        """Move the cursor and scroll up one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
         row, column = cursor_location
@@ -993,6 +1018,7 @@ TextArea > .text-area--width-guide {
         self.move_cursor(target)
 
     def action_cursor_page_down(self) -> None:
+        """Move the cursor and scroll down one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
         row, column = cursor_location
@@ -1000,20 +1026,29 @@ TextArea > .text-area--width-guide {
         self.scroll_relative(y=height, animate=False)
         self.move_cursor(target)
 
-    @property
-    def cursor_line_text(self) -> str:
-        return self.document[self.selection.end[0]]
+    def get_column_width(self, row: int, column: int) -> int:
+        """Get the cell offset of the column from the start of the row.
 
-    def get_column_cell_width(self, row: int, column: int) -> int:
-        """Given a row and column index within the editor, return the cell offset
-        of the column from the start of the row (the left edge of the editor content area).
+        Args:
+            row: The row index.
+            column: The column index (codepoint offset from start of row).
+
+        Returns:
+            The cell width of the column relative to the start of the row.
         """
         line = self.document[row]
         return cell_len(line[:column].expandtabs(self.indent_width))
 
-    def record_cursor_offset(self) -> None:
+    def record_cursor_width(self) -> None:
+        """Record the current cell width of the cursor.
+
+        This is used where we navigate up and down through rows.
+        If we're in the middle of a row, and go down to a row with no
+        content, then we go down to another row, we want our cursor to
+        jump back to the same offset that we were originally at.
+        """
         row, column = self.selection.end
-        column_cell_length = self.get_column_cell_width(row, column)
+        column_cell_length = self.get_column_width(row, column)
         self._last_intentional_cell_width = column_cell_length
 
     # --- Editor operations
