@@ -802,7 +802,7 @@ TextArea > .text-area--width-guide {
         """Get the location the cursor will move to if it moves up.
 
         Returns:
-            the location the cursor will move to if it moves up.
+            The location the cursor will move to if it moves up.
         """
         if self.cursor_at_first_row:
             return 0, 0
@@ -1222,6 +1222,7 @@ class Edit:
                 start=(target_selection_start_row, target_selection_start_column),
                 end=(target_selection_end_row, target_selection_end_column),
             )
+            text_area.record_cursor_width()
         else:
             self._updated_selection = Selection.cursor(replace_result.end_location)
 
