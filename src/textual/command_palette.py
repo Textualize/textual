@@ -151,12 +151,15 @@ class CommandSource(ABC):
         """
         raise NotImplemented
 
-    def run(self, callback: Callable[..., Any], *args: Any) -> Callable[..., Any]:
+    def run(
+        self, callback: Callable[..., Any], *args: Any, **kwargs: Any
+    ) -> Callable[..., Any]:
         """Create a runnable callback for use with a command.
 
         Args:
             callback: The function or method to call.
             args: The arguments to use in the call.
+            kwargs: The keyword arguments to use in the call.
 
         Returns:
             The callback for the command.
@@ -167,8 +170,8 @@ class CommandSource(ABC):
         correctly run the code.
         """
         if iscoroutinefunction(callback):
-            return partial(self.app.call_next, callback, *args)
-        return partial(callback, *args)
+            return partial(self.app.call_next, callback, *args, **kwargs)
+        return partial(callback, *args, **kwargs)
 
 
 @total_ordering
