@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from rich.style import Style
 from rich.text import Text
 
+from textual.document._document import DocumentBase
+
 if TYPE_CHECKING:
     from tree_sitter import Language
 
@@ -83,7 +85,7 @@ class Edit:
         selection_start_row, selection_start_column = selection_start
         selection_end_row, selection_end_column = selection_end
 
-        replace_result = text_area._document.replace_range(edit_from, edit_to, text)
+        replace_result = text_area.document.replace_range(edit_from, edit_to, text)
         self._replace_result = replace_result
 
         new_edit_to_row, new_edit_to_column = replace_result.end_location
@@ -301,7 +303,7 @@ TextArea > .text-area--width-guide {
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self._document = Document("")
+        self.document = Document("")
         """The document this widget is currently editing."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
@@ -350,47 +352,67 @@ TextArea > .text-area--width-guide {
     def _reload_document(self) -> None:
         """Recreate the document based on the language and theme currently set."""
         language = self.language
-        text = self._document.text
+        text = self.document.text
         if not language:
             # If there's no language set, we don't need to use a SyntaxAwareDocument.
-            self._document = Document(text)
+            self.document = Document(text)
         else:
             try:
                 from textual.document._syntax_aware_document import SyntaxAwareDocument
 
-                self._document = SyntaxAwareDocument(text, language, self.theme)
+                self.document = SyntaxAwareDocument(text, language, self.theme)
             except ImportError:
                 # SyntaxAwareDocument isn't available on Python 3.7.
                 # Fall back to the standard document.
                 log.warning("Syntax highlighting isn't available on Python 3.7.")
-                self._document = Document(text)
+                self.document = Document(text)
 
     def load_text(self, text: str) -> None:
-        """Load text from a string into the editor.
+        """Load text from a string into the TextArea.
 
         Args:
-            text: The text to load into the editor.
+            text: The text to load into the TextArea.
         """
-        self._document = Document(text)
+        self.document = Document(text)
         self._reload_document()
         self._refresh_size()
 
+    def load_document(self, document: DocumentBase) -> None:
+        """Load a document into the TextArea.
+
+        Args:
+            document: The document to load into the TextArea.
+        """
+        self.document = document
+        self._refresh_size()
+
     def _refresh_size(self) -> None:
-        """Calculate the size of the document."""
-        width, height = self._document.get_size(self.indent_width)
+        """Update the virtual size of the TextArea."""
+        width, height = self.document.get_size(self.indent_width)
         # +1 width to make space for the cursor resting at the end of the line
         self.virtual_size = Size(width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
-        document = self._document
+        """Render a single line of the TextArea. Called by Textual.
 
+        Args:
+            widget_y: Y Coordinate of line relative to the widget region.
+
+        Returns:
+            A rendered line.
+        """
+        document = self.document
         scroll_x, scroll_y = self.scroll_offset
 
+        # Account for how much the TextArea is scrolled.
         line_index = widget_y + scroll_y
+
+        # Render the lines beyond the valid line numbers
         out_of_bounds = line_index >= document.line_count
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
+        # Get the (possibly highlighted) line from the Document.
         line = document.get_line_text(line_index)
         line_character_count = len(line)
         line.tab_size = self.indent_width
@@ -406,7 +428,8 @@ TextArea > .text-area--width-guide {
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
             # If this row intersects with the selection range
             selection_style = self.get_component_rich_style("text-area--selection")
-            if line_character_count == 0 and line_index != end:
+            cursor_row, _ = end
+            if line_character_count == 0 and line_index != cursor_row:
                 # A simple highlight to show empty lines are included in the selection
                 line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
             else:
@@ -493,7 +516,7 @@ TextArea > .text-area--width-guide {
     @property
     def text(self) -> str:
         """The entire text content of the document."""
-        return self._document.text
+        return self.document.text
 
     @property
     def selected_text(self) -> str:
@@ -512,7 +535,7 @@ TextArea > .text-area--width-guide {
             The text between start and end.
         """
         start, end = _sort_ascending(start, end)
-        return self._document.get_text_range(start, end)
+        return self.document.get_text_range(start, end)
 
     def edit(self, edit: Edit) -> Any:
         """Perform an Edit.
@@ -559,7 +582,7 @@ TextArea > .text-area--width-guide {
         target_row = clamp(
             event.y + scroll_y - self.gutter.top,
             0,
-            self._document.line_count - 1,
+            self.document.line_count - 1,
         )
         target_column = self.cell_width_to_column_index(target_x, target_row)
         return target_row, target_column
@@ -574,7 +597,7 @@ TextArea > .text-area--width-guide {
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
         gutter_width = (
-            len(str(self._document.line_count + 1)) + gutter_margin
+            len(str(self.document.line_count + 1)) + gutter_margin
             if self.show_line_numbers
             else 0
         )
@@ -620,7 +643,7 @@ TextArea > .text-area--width-guide {
         """
         tab_width = self.indent_width
         total_cell_offset = 0
-        line = self._document[row_index]
+        line = self.document[row_index]
         for column_index, character in enumerate(line):
             total_cell_offset += cell_len(character.expandtabs(tab_width))
             if total_cell_offset >= cell_width + 1:
@@ -632,7 +655,7 @@ TextArea > .text-area--width-guide {
 
         Clamps the given location the nearest location which could be navigated to
         """
-        document = self._document
+        document = self.document
 
         row, column = location
         try:
@@ -740,7 +763,7 @@ TextArea > .text-area--width-guide {
 
     @property
     def cursor_at_last_row(self) -> bool:
-        return self.selection.end[0] == self._document.line_count - 1
+        return self.selection.end[0] == self.document.line_count - 1
 
     @property
     def cursor_at_start_of_row(self) -> bool:
@@ -749,7 +772,7 @@ TextArea > .text-area--width-guide {
     @property
     def cursor_at_end_of_row(self) -> bool:
         cursor_row, cursor_column = self.selection.end
-        row_length = len(self._document[cursor_row])
+        row_length = len(self.document[cursor_row])
         cursor_at_end = cursor_column == row_length
         return cursor_at_end
 
@@ -792,7 +815,7 @@ TextArea > .text-area--width-guide {
         if self.cursor_at_start_of_document:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
-        length_of_row_above = len(self._document[cursor_row - 1])
+        length_of_row_above = len(self.document[cursor_row - 1])
         target_row = cursor_row if cursor_column != 0 else cursor_row - 1
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
         return target_row, target_column
@@ -837,14 +860,14 @@ TextArea > .text-area--width-guide {
         """Get the location the cursor will move to if it moves down."""
         cursor_row, cursor_column = self.selection.end
         if self.cursor_at_last_row:
-            return cursor_row, len(self._document[cursor_row])
+            return cursor_row, len(self.document[cursor_row])
 
-        target_row = min(self._document.line_count - 1, cursor_row + 1)
+        target_row = min(self.document.line_count - 1, cursor_row + 1)
         # Attempt to snap last intentional cell length
         target_column = self.cell_width_to_column_index(
             self._last_intentional_cell_width, target_row
         )
-        target_column = clamp(target_column, 0, len(self._document[target_row]))
+        target_column = clamp(target_column, 0, len(self.document[target_row]))
         return target_row, target_column
 
     def action_cursor_up(self) -> None:
@@ -867,7 +890,7 @@ TextArea > .text-area--width-guide {
         target_column = self.cell_width_to_column_index(
             self._last_intentional_cell_width, target_row
         )
-        target_column = clamp(target_column, 0, len(self._document[target_row]))
+        target_column = clamp(target_column, 0, len(self.document[target_row]))
         return target_row, target_column
 
     def action_cursor_line_end(self) -> None:
@@ -883,7 +906,7 @@ TextArea > .text-area--width-guide {
         """
         start, end = self.selection
         cursor_row, cursor_column = end
-        target_column = len(self._document[cursor_row])
+        target_column = len(self.document[cursor_row])
         return cursor_row, target_column
 
     def action_cursor_line_start(self) -> None:
@@ -916,7 +939,7 @@ TextArea > .text-area--width-guide {
         """
         cursor_row, cursor_column = self.cursor_location
         # Check the current line for a word boundary
-        line = self._document[cursor_row][:cursor_column]
+        line = self.document[cursor_row][:cursor_column]
         matches = list(re.finditer(self.word_pattern, line))
         if matches:
             # If a word boundary is found, move the cursor there
@@ -924,7 +947,7 @@ TextArea > .text-area--width-guide {
         elif cursor_row > 0:
             # If no word boundary is found, and we're not on the first line, move to the end of the previous line
             cursor_row -= 1
-            cursor_column = len(self._document[cursor_row])
+            cursor_column = len(self.document[cursor_row])
         else:
             # If we're already on the first line and no word boundary is found, move to the start of the line
             cursor_column = 0
@@ -947,18 +970,18 @@ TextArea > .text-area--width-guide {
         """
         cursor_row, cursor_column = self.selection.end
         # Check the current line for a word boundary
-        line = self._document[cursor_row][cursor_column:]
+        line = self.document[cursor_row][cursor_column:]
         matches = list(re.finditer(self.word_pattern, line))
         if matches:
             # If a word boundary is found, move the cursor there
             cursor_column += matches[0].end()
-        elif cursor_row < self._document.line_count - 1:
+        elif cursor_row < self.document.line_count - 1:
             # If no word boundary is found and we're not on the last line, move to the start of the next line
             cursor_row += 1
             cursor_column = 0
         else:
             # If we're already on the last line and no word boundary is found, move to the end of the line
-            cursor_column = len(self._document[cursor_row])
+            cursor_column = len(self.document[cursor_row])
         return cursor_row, cursor_column
 
     def action_cursor_page_up(self) -> None:
@@ -979,13 +1002,13 @@ TextArea > .text-area--width-guide {
 
     @property
     def cursor_line_text(self) -> str:
-        return self._document[self.selection.end[0]]
+        return self.document[self.selection.end[0]]
 
     def get_column_cell_width(self, row: int, column: int) -> int:
         """Given a row and column index within the editor, return the cell offset
         of the column from the start of the row (the left edge of the editor content area).
         """
-        line = self._document[row]
+        line = self.document[row]
         return cell_len(line[:column].expandtabs(self.indent_width))
 
     def record_cursor_offset(self) -> None:
@@ -1064,7 +1087,7 @@ TextArea > .text-area--width-guide {
 
     def clear(self) -> None:
         """Delete all text from the document."""
-        document = self._document
+        document = self.document
         last_line = document[-1]
         document_end = (document.line_count, len(last_line))
         self.delete((0, 0), document_end, maintain_selection_offset=False)
@@ -1084,7 +1107,7 @@ TextArea > .text-area--width-guide {
                 return
 
             if self.cursor_at_start_of_row:
-                end = (end_row - 1, len(self._document[end_row - 1]))
+                end = (end_row - 1, len(self.document[end_row - 1]))
             else:
                 end = (end_row, end_column - 1)
 
@@ -1131,7 +1154,7 @@ TextArea > .text-area--width-guide {
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
         cursor_row, cursor_column = from_location
-        to_location = (cursor_row, len(self._document[cursor_row]))
+        to_location = (cursor_row, len(self.document[cursor_row]))
         self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_word_left(self) -> None:
@@ -1148,7 +1171,7 @@ TextArea > .text-area--width-guide {
         cursor_row, cursor_column = end
 
         # Check the current line for a word boundary
-        line = self._document[cursor_row][:cursor_column]
+        line = self.document[cursor_row][:cursor_column]
         matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
@@ -1156,7 +1179,7 @@ TextArea > .text-area--width-guide {
             from_location = (cursor_row, matches[-1].start())
         elif cursor_row > 0:
             # If no word boundary is found, and we're not on the first line, delete to the end of the previous line
-            from_location = (cursor_row - 1, len(self._document[cursor_row - 1]))
+            from_location = (cursor_row - 1, len(self.document[cursor_row - 1]))
         else:
             # If we're already on the first line and no word boundary is found, delete to the start of the line
             from_location = (cursor_row, 0)
@@ -1175,17 +1198,17 @@ TextArea > .text-area--width-guide {
         cursor_row, cursor_column = end
 
         # Check the current line for a word boundary
-        line = self._document[cursor_row][cursor_column:]
+        line = self.document[cursor_row][cursor_column:]
         matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
             # If a word boundary is found, delete the word
             to_location = (cursor_row, cursor_column + matches[0].end())
-        elif cursor_row < self._document.line_count - 1:
+        elif cursor_row < self.document.line_count - 1:
             # If no word boundary is found, and we're not on the last line, delete to the start of the next line
             to_location = (cursor_row + 1, 0)
         else:
             # If we're already on the last line and no word boundary is found, delete to the end of the line
-            to_location = (cursor_row, len(self._document[cursor_row]))
+            to_location = (cursor_row, len(self.document[cursor_row]))
 
         self.delete(end, to_location, maintain_selection_offset=False)

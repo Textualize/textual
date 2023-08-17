@@ -50,6 +50,9 @@ class SyntaxAwareDocument(Document):
     def __init__(
         self, text: str, language: str | Language, syntax_theme: str | SyntaxTheme
     ):
+        if not TREE_SITTER:
+            raise RuntimeError("SyntaxAwareDocument is unavailable on Python 3.7.")
+
         super().__init__(text)
         self._language: Language | None = None
         """The tree-sitter Language or None if tree-sitter is unavailable."""
@@ -92,10 +95,8 @@ class SyntaxAwareDocument(Document):
             )
             self._prepare_highlights()
 
-    def replace_range(
-        self, start: tuple[int, int], end: tuple[int, int], text: str
-    ) -> EditResult:
-        """Insert text at the given range.
+    def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
+        """Replace text at the given range.
 
         Args:
             start: A tuple (row, column) where the edit starts.
@@ -158,15 +159,7 @@ class SyntaxAwareDocument(Document):
 
         return line
 
-    def tree_query(self, tree_query: str) -> list[object]:
-        """Query the syntax tree."""
-        query = self._language.query(tree_query)
-
-        captures = query.captures(self._syntax_tree.root_node)
-
-        return list(captures)
-
-    def _location_to_byte_offset(self, location: tuple[int, int]) -> int:
+    def _location_to_byte_offset(self, location: Location) -> int:
         """Given a document coordinate, return the byte offset of that coordinate.
         This method only does work if tree-sitter was imported, otherwise it returns 0.
 
@@ -195,7 +188,15 @@ class SyntaxAwareDocument(Document):
 
     def _location_to_point(self, location: Location) -> tuple[int, int]:
         """Convert a document location (row_index, column_index) to a tree-sitter
-        point (row_index, byte_offset_from_start_of_row)."""
+        point (row_index, byte_offset_from_start_of_row).
+
+
+        Args:
+            location: A location (row index, column codepoint offset)
+
+        Returns:
+            The point corresponding to that location (row index, column byte offset).
+        """
         lines = self._lines
         row, column = location
         if row < len(lines):
@@ -259,17 +260,36 @@ class SyntaxAwareDocument(Document):
     def _build_ast(
         self,
         parser: Parser,
-    ) -> Tree | None:
+    ) -> Tree:
         """Fully parse the document and build the abstract syntax tree for it.
 
         Returns None if there's no parser available (e.g. when no language is selected).
+
+        Args:
+            parser: The tree-sitter Parser to parse the document with.
+
+        Returns:
+            A tree-sitter concrete syntax Tree representing the document, or None
+                if there's no
         """
-        if parser:
-            return parser.parse(self._read_callable)
-        else:
-            return None
+        return parser.parse(self._read_callable)
 
     def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes | None:
+        """A callable which informs tree-sitter about the document content.
+
+        This is passed to tree-sitter which will call it frequently to retrieve
+        the bytes from the document.
+
+        Args:
+            byte_offset: The number of (utf-8) bytes from the start of the document.
+            point: A tuple (row index, column *byte* offset). Note that this differs
+                from our Location tuple which is (row_index, column codepoint offset).
+
+        Returns:
+            All the utf-8 bytes between the byte_offset/point and the end of the current
+                line _including_ the line separator character(s). Returns None if the
+                offset/point requested by tree-sitter doesn't correspond to a byte.
+        """
         row, column = point
         lines = self._lines
         newline = self.newline
@@ -296,6 +316,14 @@ class SyntaxAwareDocument(Document):
 
 @lru_cache(maxsize=128)
 def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
+    """Build a mapping of utf-8 byte offsets to codepoint offsets for the given data.
+
+    Args:
+        data: utf-8 bytes.
+
+    Returns:
+        A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
+    """
     byte_to_codepoint = {}
     current_byte_offset = 0
     code_point_offset = 0
