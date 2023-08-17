@@ -7,8 +7,6 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from rich.style import Style
 from rich.text import Text
 
-from textual.document._document import DocumentBase
-
 if TYPE_CHECKING:
     from tree_sitter import Language
 
@@ -17,7 +15,14 @@ from textual._cells import cell_len
 from textual._fix_direction import _sort_ascending
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.document import Document, EditResult, Location, Selection, SyntaxTheme
+from textual.document import (
+    Document,
+    DocumentBase,
+    EditResult,
+    Location,
+    Selection,
+    SyntaxTheme,
+)
 from textual.events import MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive

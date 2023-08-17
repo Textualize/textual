@@ -1,4 +1,4 @@
-from ._document import Document, EditResult, Location, Selection
+from ._document import Document, DocumentBase, EditResult, Location, Selection
 from ._languages import VALID_LANGUAGES
 from ._syntax_aware_document import (
     EndColumn,
@@ -11,6 +11,7 @@ from ._syntax_theme import DEFAULT_SYNTAX_THEME, SyntaxTheme
 
 __all__ = [
     "Document",
+    "DocumentBase",
     "EndColumn",
     "Highlight",
     "HighlightName",
