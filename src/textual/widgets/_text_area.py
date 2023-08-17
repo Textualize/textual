@@ -1000,6 +1000,19 @@ TextArea > .text-area--width-guide {
         location: Location | None = None,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
+        """Insert text into the document.
+
+        Args:
+            text: The text to insert.
+            location: The location to insert text, or None to use the cursor location.
+            maintain_selection_offset: If True, the active Selection will be updated
+                such that the same text is selected before and after the selection,
+                if possible. Otherwise, the cursor will jump to the end point of the
+                edit.
+
+        Returns:
+            An EditResult containing information about the edit.
+        """
         if location is None:
             location = self.cursor_location
         return self.edit(Edit(text, location, location, maintain_selection_offset))
@@ -1010,7 +1023,19 @@ TextArea > .text-area--width-guide {
         end: Location,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
-        """Delete text between from_location and to_location."""
+        """Delete the text between two locations in the document.
+
+        Args:
+            start: The start location.
+            end: The end location.
+            maintain_selection_offset: If True, the active Selection will be updated
+                such that the same text is selected before and after the selection,
+                if possible. Otherwise, the cursor will jump to the end point of the
+                edit.
+
+        Returns:
+            An EditResult containing information about the edit.
+        """
         top, bottom = _sort_ascending(start, end)
         return self.edit(Edit("", top, bottom, maintain_selection_offset))
 
@@ -1021,14 +1046,28 @@ TextArea > .text-area--width-guide {
         end: Location,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
+        """Replace text in the document with new text.
+
+        Args:
+            insert: The text to insert.
+            start: The start location
+            end: The end location.
+            maintain_selection_offset: If True, the active Selection will be updated
+                such that the same text is selected before and after the selection,
+                if possible. Otherwise, the cursor will jump to the end point of the
+                edit.
+
+        Returns:
+            An EditResult containing information about the edit.
+        """
         return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
     def clear(self) -> None:
-        """Clear the document."""
+        """Delete all text from the document."""
         document = self._document
         last_line = document[-1]
-        document_end_location = (document.line_count, len(last_line))
-        self.delete((0, 0), document_end_location, maintain_selection_offset=False)
+        document_end = (document.line_count, len(last_line))
+        self.delete((0, 0), document_end, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location.
