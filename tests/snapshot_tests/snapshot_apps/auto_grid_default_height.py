@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Type
 from textual.app import App, ComposeResult
 from textual.containers import Container, Horizontal, Vertical, Grid
