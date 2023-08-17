@@ -1,8 +1,4 @@
-"""The Textual command palette.
-
-Provides a 'command palette' facility, allowing the user to search for and
-execute commands.
-"""
+"""The Textual command palette."""
 
 from __future__ import annotations
 
