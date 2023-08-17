@@ -20,7 +20,8 @@ class Matcher:
         match_style: Style | None = None,
         case_sensitive: bool = False,
     ) -> None:
-        """
+        """Initialise the fuzzy matching object.
+
         Args:
             query: A query as typed in by the user.
             match_style: The style to use to highlight matched portions of a string.
