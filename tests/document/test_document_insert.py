@@ -21,13 +21,10 @@ def test_insert_empty_string():
     assert document.lines == ["I must not fear.", "Fear is the mind-killer."]
 
 
-@pytest.mark.xfail(reason="undecided on behaviour")
 def test_insert_invalid_column():
-    # TODO - what is the correct behaviour here?
-    #  right now it appends to the end of the line if the column is too large.
     document = Document(TEXT)
     document.replace_range((0, 999), (0, 999), " really")
-    assert document.lines == ["I must not fear.", "Fear is the mind-killer."]
+    assert document.lines == ["I must not fear. really", "Fear is the mind-killer."]
 
 
 def test_insert_invalid_row_and_column():
