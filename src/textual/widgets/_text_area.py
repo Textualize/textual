@@ -38,7 +38,7 @@ class Undoable(Protocol):
     def undo(self, text_area: TextArea) -> object | None:
         """Undo the action."""
 
-    def post_edit(self, text_area: TextArea) -> None:
+    def after(self, text_area: TextArea) -> None:
         """Code to execute after content size recalculated and repainted."""
 
 
@@ -73,6 +73,12 @@ class Edit:
         edit_from = self.from_location
         edit_to = self.to_location
 
+        # This code is mostly handling how we adjust TextArea.selection
+        # when an edit is made to the document programmatically.
+        # We want a user who is typing away to maintain their relative
+        # position in the document even if an insert happens before
+        # their cursor position.
+
         edit_top, edit_bottom = _sort_ascending(edit_from, edit_to)
         edit_bottom_row, edit_bottom_column = edit_bottom
 
@@ -82,8 +88,11 @@ class Edit:
 
         replace_result = text_area._document.replace_range(edit_from, edit_to, text)
         self._replace_result = replace_result
+
         new_edit_to_row, new_edit_to_column = replace_result.end_location
 
+        # TODO: We could maybe improve the situation where the selection
+        #  and the edit range overlap with each other.
         column_offset = new_edit_to_column - edit_bottom_column
         target_selection_start_column = (
             selection_start_column + column_offset
@@ -117,7 +126,7 @@ class Edit:
             text_area: The TextArea to undo the insert operation on.
         """
 
-    def post_edit(self, text_area: TextArea) -> None:
+    def after(self, text_area: TextArea) -> None:
         """Possibly update the cursor location after the widget has been refreshed.
 
         Args:
@@ -509,7 +518,7 @@ TextArea > .text-area--width-guide {
         start, end = _sort_ascending(start, end)
         return self._document.get_text_range(start, end)
 
-    def edit(self, edit: Undoable) -> Any:
+    def perform_action(self, edit: Undoable) -> Any:
         """Perform an Edit.
 
         Args:
@@ -526,7 +535,7 @@ TextArea > .text-area--width-guide {
         # self._undo_stack = self._undo_stack[-20:]
 
         self._refresh_size()
-        edit.post_edit(self)
+        edit.after(self)
 
         return result
 
@@ -1008,7 +1017,9 @@ TextArea > .text-area--width-guide {
     ) -> EditResult:
         if location is None:
             location = self.cursor_location
-        return self.edit(Edit(text, location, location, maintain_selection_offset))
+        return self.perform_action(
+            Edit(text, location, location, maintain_selection_offset)
+        )
 
     def insert_text_range(
         self,
@@ -1017,7 +1028,7 @@ TextArea > .text-area--width-guide {
         to_location: Location,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
-        return self.edit(
+        return self.perform_action(
             Edit(text, from_location, to_location, maintain_selection_offset)
         )
 
@@ -1029,7 +1040,7 @@ TextArea > .text-area--width-guide {
     ) -> EditResult:
         """Delete text between from_location and to_location."""
         top, bottom = _sort_ascending(from_location, to_location)
-        return self.edit(Edit("", top, bottom, maintain_selection_offset))
+        return self.perform_action(Edit("", top, bottom, maintain_selection_offset))
 
     def clear(self) -> None:
         """Clear the document."""

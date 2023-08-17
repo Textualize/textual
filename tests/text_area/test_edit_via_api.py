@@ -5,6 +5,7 @@ than going via bindings.
 
 Note that more extensive testing for editing is done at the Document level.
 """
+import pytest
 
 from textual.app import App, ComposeResult
 from textual.document import EditResult, Selection
@@ -15,6 +16,15 @@ I must not fear.
 Fear is the mind-killer.
 Fear is the little-death that brings total obliteration.
 I will face my fear.
+"""
+
+SIMPLE_TEXT = """\
+ABCDE
+FGHIJ
+KLMNO
+PQRST
+UVWXY
+Z
 """
 
 
@@ -98,8 +108,22 @@ async def test_insert_text_non_cursor_location_dont_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("Hello", location=(4, 0), maintain_selection_offset=False)
+        text_area.selection = Selection((2, 3), (3, 5))
+
+        result = text_area.insert_text(
+            "Hello",
+            location=(4, 0),
+            maintain_selection_offset=False,
+        )
+
+        assert result == EditResult(
+            end_location=(4, 5),
+            replaced_text="",
+        )
         assert text_area.text == TEXT + "Hello"
+
+        # Since maintain_selection_offset is False, the selection
+        # is reset to a cursor and goes to the end of the insert.
         assert text_area.selection == Selection.cursor((4, 5))
 
 
@@ -125,7 +149,17 @@ async def test_insert_multiline_text_maintain_offset():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((2, 5))
-        text_area.insert_text("Hello,\nworld!")
+        result = text_area.insert_text("Hello,\nworld!")
+
+        assert result == EditResult(
+            end_location=(3, 6),
+            replaced_text="",
+        )
+
+        # The insert happens at the cursor (default location)
+        # Offset is maintained - we inserted 1 line so cursor shifts
+        # down 1 line, and along by the length of the last insert line.
+        assert text_area.cursor_location == (3, 6)
         expected_content = """\
 I must not fear.
 Fear is the mind-killer.
@@ -133,10 +167,6 @@ Fear Hello,
 world!is the little-death that brings total obliteration.
 I will face my fear.
 """
-        # The insert happens at the cursor (default location)
-        # Offset is maintained - we inserted 1 line so cursor shifts
-        # down 1 line, and along by the length of the last insert line.
-        assert text_area.cursor_location == (3, 6)
         assert text_area.text == expected_content
 
 
@@ -146,9 +176,18 @@ async def test_insert_range_multiline_text():
         text_area = app.query_one(TextArea)
         # replace "Fear is the mind-killer\nFear is the little death...\n"
         # with "Hello,\nworld!\n"
-        text_area.insert_text_range(
+        result = text_area.insert_text_range(
             "Hello,\nworld!\n", from_location=(1, 0), to_location=(3, 0)
         )
+        expected_replaced_text = """\
+Fear is the mind-killer.
+Fear is the little-death that brings total obliteration.
+"""
+        assert result == EditResult(
+            end_location=(3, 0),
+            replaced_text=expected_replaced_text,
+        )
+
         expected_content = """\
 I must not fear.
 Hello,
@@ -296,3 +335,125 @@ async def test_clear_empty_document():
         text_area = app.query_one(TextArea)
         text_area.load_text("")
         text_area.clear()
+
+
+@pytest.mark.parametrize(
+    "select_from,select_to",
+    [
+        [(0, 3), (2, 1)],
+        [(2, 1), (0, 3)],  # Ensuring independence from selection direction.
+    ],
+)
+async def test_insert_text_multiline_selection_top(select_from, select_to):
+    """
+    An example to attempt to explain what we're testing here...
+
+    X = edit range, * = character in TextArea, S = selection
+
+    *********XX
+    XXXXX***SSS
+    SSSSSSSSSSS
+    SSSS*******
+
+    If an edit happens at XXXX, we need to ensure that the SSS on the
+    same line is adjusted appropriately so that it's still highlighting
+    the same characters as before.
+    """
+    app = TextAreaApp()
+    async with app.run_test():
+        # ABCDE
+        # FGHIJ
+        # KLMNO
+        # PQRST
+        # UVWXY
+        # Z
+        text_area = app.query_one(TextArea)
+        text_area.load_text(SIMPLE_TEXT)
+        text_area.selection = Selection(select_from, select_to)
+
+        # Check what text is selected.
+        expected_selected_text = "DE\nFGHIJ\nK"
+        assert text_area.selected_text == expected_selected_text
+
+        result = text_area.insert_text_range(
+            "Hello",
+            from_location=(0, 0),
+            to_location=(0, 2),
+        )
+
+        assert result == EditResult(end_location=(0, 5), replaced_text="AB")
+
+        # The edit range has grown from width 2 to width 5, so the
+        # top line of the selection was adjusted (column+=3) such that the
+        # same characters are highlighted:
+        # ... the selection is not changed after programmatic insert
+        # ... the same text is selected as before.
+        assert text_area.selected_text == expected_selected_text
+
+        # The resulting text in the TextArea is correct.
+        assert text_area.text == "HelloCDE\nFGHIJ\nKLMNO\nPQRST\nUVWXY\nZ\n"
+
+
+@pytest.mark.parametrize(
+    "select_from,select_to",
+    [
+        [(0, 3), (2, 5)],
+        [(2, 5), (0, 3)],  # Ensuring independence from selection direction.
+    ],
+)
+async def test_insert_text_multiline_selection_bottom(select_from, select_to):
+    """
+    The edited text is within the selected text on the bottom line
+    of the selection. The bottom of the selection should be adjusted
+    such that any text that was previously selected is still selected.
+    """
+    app = TextAreaApp()
+    async with app.run_test():
+        # ABCDE
+        # FGHIJ
+        # KLMNO
+        # PQRST
+        # UVWXY
+        # Z
+
+        text_area = app.query_one(TextArea)
+        text_area.load_text(SIMPLE_TEXT)
+        text_area.selection = Selection(select_from, select_to)
+
+        # Check what text is selected.
+        assert text_area.selected_text == "DE\nFGHIJ\nKLMNO"
+
+        result = text_area.insert_text_range(
+            "*",
+            from_location=(2, 0),
+            to_location=(2, 3),
+        )
+        assert result == EditResult(end_location=(2, 1), replaced_text="KLM")
+
+        # The 'NO' from the selection is still available on the
+        # bottom selection line, however the 'KLM' is replaced
+        # with '*'. Since 'NO' is still available, it's maintained
+        # within the selection.
+        assert text_area.selected_text == "DE\nFGHIJ\n*NO"
+
+        # The resulting text in the TextArea is correct.
+        # 'KLM' replaced with '*'
+        assert text_area.text == "ABCDE\nFGHIJ\n*NO\nPQRST\nUVWXY\nZ\n"
+
+
+async def test_delete_fully_within_selection():
+    """User-facing selection should be best-effort adjusted when a programmatic
+    replacement is made to the document."""
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+        text_area.selection = Selection((0, 2), (0, 7))
+        assert text_area.selected_text == "23456"
+
+        result = text_area.delete_range((0, 4), (0, 6))
+        assert result == EditResult(
+            replaced_text="45",
+            end_location=(0, 4),
+        )
+        assert text_area.selected_text == "01236"
