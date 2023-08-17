@@ -38,9 +38,6 @@ class Undoable(Protocol):
     def undo(self, text_area: TextArea) -> object | None:
         """Undo the action."""
 
-    def after(self, text_area: TextArea) -> None:
-        """Code to execute after content size recalculated and repainted."""
-
 
 @dataclass
 class Edit:
@@ -381,7 +378,6 @@ TextArea > .text-area--width-guide {
     def _refresh_size(self) -> None:
         """Calculate the size of the document."""
         width, height = self._document.get_size(self.indent_width)
-        # TODO - this is a prime candidate for optimisation.
         # +1 width to make space for the cursor resting at the end of the line
         self.virtual_size = Size(width + self.gutter_width + 1, height)
 
@@ -518,7 +514,7 @@ TextArea > .text-area--width-guide {
         start, end = _sort_ascending(start, end)
         return self._document.get_text_range(start, end)
 
-    def perform_action(self, edit: Undoable) -> Any:
+    def edit(self, edit: Edit) -> Any:
         """Perform an Edit.
 
         Args:
@@ -529,14 +525,8 @@ TextArea > .text-area--width-guide {
             may be different depending on the edit performed.
         """
         result = edit.do(self)
-
-        # TODO: Think about this...
-        # self._undo_stack.append(edit)
-        # self._undo_stack = self._undo_stack[-20:]
-
         self._refresh_size()
         edit.after(self)
-
         return result
 
     async def _on_key(self, event: events.Key) -> None:
@@ -551,12 +541,7 @@ TextArea > .text-area--width-guide {
             event.prevent_default()
             insert = insert_values.get(key, event.character)
             start, end = self.selection
-            self.insert_text_range(insert, start, end, False)
-
-    # def undo(self) -> None:
-    #     if self._undo_stack:
-    #         action = self._undo_stack.pop()
-    #         action.undo(self)
+            self.replace(insert, start, end, False)
 
     # --- Lower level event/key handling
     def get_target_document_location(self, event: MouseEvent) -> Location:
@@ -621,7 +606,7 @@ TextArea > .text-area--width-guide {
         """When a paste occurs, insert the text from the paste event into the document."""
         text = event.text
         if text:
-            self.insert_text_range(text, *self.selection)
+            self.replace(text, *self.selection)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.
@@ -1009,7 +994,7 @@ TextArea > .text-area--width-guide {
         self._last_intentional_cell_width = column_cell_length
 
     # --- Editor operations
-    def insert_text(
+    def insert(
         self,
         text: str,
         location: Location | None = None,
@@ -1017,39 +1002,33 @@ TextArea > .text-area--width-guide {
     ) -> EditResult:
         if location is None:
             location = self.cursor_location
-        return self.perform_action(
-            Edit(text, location, location, maintain_selection_offset)
-        )
+        return self.edit(Edit(text, location, location, maintain_selection_offset))
 
-    def insert_text_range(
+    def delete(
         self,
-        text: str,
-        from_location: Location,
-        to_location: Location,
-        maintain_selection_offset: bool = True,
-    ) -> EditResult:
-        return self.perform_action(
-            Edit(text, from_location, to_location, maintain_selection_offset)
-        )
-
-    def delete_range(
-        self,
-        from_location: Location,
-        to_location: Location,
+        start: Location,
+        end: Location,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Delete text between from_location and to_location."""
-        top, bottom = _sort_ascending(from_location, to_location)
-        return self.perform_action(Edit("", top, bottom, maintain_selection_offset))
+        top, bottom = _sort_ascending(start, end)
+        return self.edit(Edit("", top, bottom, maintain_selection_offset))
+
+    def replace(
+        self,
+        insert: str,
+        start: Location,
+        end: Location,
+        maintain_selection_offset: bool = True,
+    ) -> EditResult:
+        return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
     def clear(self) -> None:
         """Clear the document."""
         document = self._document
         last_line = document[-1]
         document_end_location = (document.line_count, len(last_line))
-        self.delete_range(
-            (0, 0), document_end_location, maintain_selection_offset=False
-        )
+        self.delete((0, 0), document_end_location, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location.
@@ -1070,7 +1049,7 @@ TextArea > .text-area--width-guide {
             else:
                 end = (end_row, end_column - 1)
 
-        self.delete_range(start, end, maintain_selection_offset=False)
+        self.delete(start, end, maintain_selection_offset=False)
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
@@ -1089,7 +1068,7 @@ TextArea > .text-area--width-guide {
             else:
                 end = (end_row, end_column + 1)
 
-        self.delete_range(start, end, maintain_selection_offset=False)
+        self.delete(start, end, maintain_selection_offset=False)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
@@ -1100,21 +1079,21 @@ TextArea > .text-area--width-guide {
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
 
-        self.delete_range(from_location, to_location, maintain_selection_offset=False)
+        self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
         from_location = self.selection.end
         cursor_row, cursor_column = from_location
         to_location = (cursor_row, 0)
-        self.delete_range(from_location, to_location, maintain_selection_offset=False)
+        self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
         cursor_row, cursor_column = from_location
         to_location = (cursor_row, len(self._document[cursor_row]))
-        self.delete_range(from_location, to_location, maintain_selection_offset=False)
+        self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""
@@ -1125,7 +1104,7 @@ TextArea > .text-area--width-guide {
         # deletes the characters within the selection range, ignoring word boundaries.
         start, end = self.selection
         if start != end:
-            self.delete_range(start, end, maintain_selection_offset=False)
+            self.delete(start, end, maintain_selection_offset=False)
 
         cursor_row, cursor_column = end
 
@@ -1143,9 +1122,7 @@ TextArea > .text-area--width-guide {
             # If we're already on the first line and no word boundary is found, delete to the start of the line
             from_location = (cursor_row, 0)
 
-        self.delete_range(
-            from_location, self.selection.end, maintain_selection_offset=False
-        )
+        self.delete(from_location, self.selection.end, maintain_selection_offset=False)
 
     def action_delete_word_right(self) -> None:
         """Deletes the word to the right of the cursor and keeps the cursor at the same location."""
@@ -1154,7 +1131,7 @@ TextArea > .text-area--width-guide {
 
         start, end = self.selection
         if start != end:
-            self.delete_range(start, end, maintain_selection_offset=False)
+            self.delete(start, end, maintain_selection_offset=False)
 
         cursor_row, cursor_column = end
 
@@ -1172,4 +1149,4 @@ TextArea > .text-area--width-guide {
             # If we're already on the last line and no word boundary is found, delete to the end of the line
             to_location = (cursor_row, len(self._document[cursor_row]))
 
-        self.delete_range(end, to_location, maintain_selection_offset=False)
+        self.delete(end, to_location, maintain_selection_offset=False)

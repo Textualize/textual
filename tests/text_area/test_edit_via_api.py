@@ -42,7 +42,7 @@ async def test_insert_text_start_maintain_selection_offset():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((0, 5))
-        text_area.insert_text("Hello", location=(0, 0))
+        text_area.insert("Hello", location=(0, 0))
         assert text_area.text == "Hello" + TEXT
         assert text_area.selection == Selection.cursor((0, 10))
 
@@ -54,7 +54,7 @@ async def test_insert_text_start():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((0, 5))
-        text_area.insert_text("Hello", location=(0, 0), maintain_selection_offset=False)
+        text_area.insert("Hello", location=(0, 0), maintain_selection_offset=False)
         assert text_area.text == "Hello" + TEXT
         assert text_area.selection == Selection.cursor((0, 5))
 
@@ -63,7 +63,7 @@ async def test_insert_newlines_start():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("\n\n\n")
+        text_area.insert("\n\n\n")
         assert text_area.text == "\n\n\n" + TEXT
         assert text_area.selection == Selection.cursor((3, 0))
 
@@ -72,7 +72,7 @@ async def test_insert_newlines_end():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("\n\n\n", location=(4, 0))
+        text_area.insert("\n\n\n", location=(4, 0))
         assert text_area.text == TEXT + "\n\n\n"
 
 
@@ -83,7 +83,7 @@ async def test_insert_windows_newlines():
         # Although we're inserting windows newlines, the configured newline on
         # the Document inside the TextArea will be "\n", so when we check TextArea.text
         # we expect to see "\n".
-        text_area.insert_text("\r\n\r\n\r\n")
+        text_area.insert("\r\n\r\n\r\n")
         assert text_area.text == "\n\n\n" + TEXT
 
 
@@ -91,7 +91,7 @@ async def test_insert_old_mac_newlines():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("\r\r\r")
+        text_area.insert("\r\r\r")
         assert text_area.text == "\n\n\n" + TEXT
 
 
@@ -99,7 +99,7 @@ async def test_insert_text_non_cursor_location():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.insert_text("Hello", location=(4, 0))
+        text_area.insert("Hello", location=(4, 0))
         assert text_area.text == TEXT + "Hello"
         assert text_area.selection == Selection.cursor((0, 0))
 
@@ -110,7 +110,7 @@ async def test_insert_text_non_cursor_location_dont_maintain_offset():
         text_area = app.query_one(TextArea)
         text_area.selection = Selection((2, 3), (3, 5))
 
-        result = text_area.insert_text(
+        result = text_area.insert(
             "Hello",
             location=(4, 0),
             maintain_selection_offset=False,
@@ -132,7 +132,7 @@ async def test_insert_multiline_text():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((2, 5))
-        text_area.insert_text("Hello,\nworld!", maintain_selection_offset=False)
+        text_area.insert("Hello,\nworld!", maintain_selection_offset=False)
         expected_content = """\
 I must not fear.
 Fear is the mind-killer.
@@ -149,7 +149,7 @@ async def test_insert_multiline_text_maintain_offset():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.move_cursor((2, 5))
-        result = text_area.insert_text("Hello,\nworld!")
+        result = text_area.insert("Hello,\nworld!")
 
         assert result == EditResult(
             end_location=(3, 6),
@@ -176,9 +176,7 @@ async def test_insert_range_multiline_text():
         text_area = app.query_one(TextArea)
         # replace "Fear is the mind-killer\nFear is the little death...\n"
         # with "Hello,\nworld!\n"
-        result = text_area.insert_text_range(
-            "Hello,\nworld!\n", from_location=(1, 0), to_location=(3, 0)
-        )
+        result = text_area.replace("Hello,\nworld!\n", start=(1, 0), end=(3, 0))
         expected_replaced_text = """\
 Fear is the mind-killer.
 Fear is the little-death that brings total obliteration.
@@ -210,10 +208,10 @@ async def test_insert_range_multiline_text_maintain_selection():
         # Text is inserted via the API in a way that shifts
         # the start and end locations of the word "face" in
         # both the horizontal and vertical directions.
-        text_area.insert_text_range(
+        text_area.replace(
             "Hello,\nworld!\n123\n456",
-            from_location=(1, 0),
-            to_location=(3, 0),
+            start=(1, 0),
+            end=(3, 0),
         )
         expected_content = """\
 I must not fear.
@@ -240,7 +238,7 @@ async def test_delete_range_within_line():
         assert text_area.selected_text == "fear"
 
         # Delete some text before the selection location.
-        result = text_area.delete_range((0, 6), (0, 10))
+        result = text_area.delete((0, 6), (0, 10))
 
         # Even though the word has 'shifted' left, it's still selected.
         assert text_area.selection == Selection((0, 7), (0, 11))
@@ -265,7 +263,7 @@ async def test_delete_range_within_line_dont_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
-        text_area.delete_range((0, 6), (0, 10), maintain_selection_offset=False)
+        text_area.delete((0, 6), (0, 10), maintain_selection_offset=False)
     expected_text = """\
 I must fear.
 Fear is the mind-killer.
@@ -286,7 +284,7 @@ async def test_delete_range_multiple_lines_selection_above():
         assert text_area.selected_text == "must"
 
         # Some lines below are deleted...
-        result = text_area.delete_range((1, 0), (3, 0))
+        result = text_area.delete((1, 0), (3, 0))
 
         # The selection is not affected at all.
         assert text_area.selection == Selection((0, 2), (0, 6))
@@ -317,7 +315,7 @@ async def test_delete_range_empty_document():
     async with app.run_test():
         text_area = app.query_one(TextArea)
         text_area.load_text("")
-        result = text_area.delete_range((0, 0), (1, 0))
+        result = text_area.delete((0, 0), (1, 0))
         assert result.replaced_text == ""
         assert text_area.text == ""
 
@@ -375,10 +373,10 @@ async def test_insert_text_multiline_selection_top(select_from, select_to):
         expected_selected_text = "DE\nFGHIJ\nK"
         assert text_area.selected_text == expected_selected_text
 
-        result = text_area.insert_text_range(
+        result = text_area.replace(
             "Hello",
-            from_location=(0, 0),
-            to_location=(0, 2),
+            start=(0, 0),
+            end=(0, 2),
         )
 
         assert result == EditResult(end_location=(0, 5), replaced_text="AB")
@@ -423,10 +421,10 @@ async def test_insert_text_multiline_selection_bottom(select_from, select_to):
         # Check what text is selected.
         assert text_area.selected_text == "DE\nFGHIJ\nKLMNO"
 
-        result = text_area.insert_text_range(
+        result = text_area.replace(
             "*",
-            from_location=(2, 0),
-            to_location=(2, 3),
+            start=(2, 0),
+            end=(2, 3),
         )
         assert result == EditResult(end_location=(2, 1), replaced_text="KLM")
 
@@ -451,7 +449,7 @@ async def test_delete_fully_within_selection():
         text_area.selection = Selection((0, 2), (0, 7))
         assert text_area.selected_text == "23456"
 
-        result = text_area.delete_range((0, 4), (0, 6))
+        result = text_area.delete((0, 4), (0, 6))
         assert result == EditResult(
             replaced_text="45",
             end_location=(0, 4),
