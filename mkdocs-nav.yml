@@ -189,6 +189,7 @@ nav:
               - "api/scroll_view.md"
               - "api/strip.md"
               - "api/suggester.md"
+              - "api/system_commands_source.md"
               - "api/timer.md"
               - "api/types.md"
               - "api/validation.md"
