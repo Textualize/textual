@@ -160,6 +160,11 @@ class CommandSource(ABC):
 
         Returns:
             The callback for the command.
+
+        This method is a convenient wrapper around
+        [`partial`][functools.partial], checking if the passed callback is an
+        async method or not, and then creating the `partial` that will
+        correctly run the code.
         """
         if iscoroutinefunction(callback):
             return partial(self.app.call_next, callback, *args)
