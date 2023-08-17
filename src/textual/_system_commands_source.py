@@ -12,18 +12,28 @@ from .command_palette import CommandMatches, CommandSource, CommandSourceHit
 
 
 class SystemCommand(NamedTuple):
-    """Holds the details of a system-wide command."""
+    """A class for holding the details of a system-wide command.
+
+    Used internally by [`SystemCommandSource`][textual._system_commands_source.SystemCommandSource]
+    """
 
     name: str
-    """The name for the command; the string that will be matched."""
+    """The name for the command.
+
+    This is the string that will be matched."""
+
     run: Callable[[], None]
     """The code to run when the command is selected."""
+
     help: str
     """Help text for the command."""
 
 
 class SystemCommandSource(CommandSource):
-    """A [source][textual.command_palette.CommandSource] of command palette commands that run app-wide tasks."""
+    """A [source][textual.command_palette.CommandSource] of command palette commands that run app-wide tasks.
+
+    Used by default in [`App.COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES].
+    """
 
     async def hunt_for(self, user_input: str) -> CommandMatches:
         """Handle a request to hunt for system commands that match the user input.
