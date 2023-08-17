@@ -55,7 +55,10 @@ class CommandSourceHit(NamedTuple):
     """
 
     match_display: RenderableType
-    """The [rich.console.RenderableType][renderable] representation of the hit."""
+    """The Rich renderable representation of the hit.
+
+    Ideally a [rich Text object][rich.text.Text] object or similar.
+    """
 
     command: CommandPaletteCallable
     """The function to call when the command is chosen."""
@@ -64,7 +67,7 @@ class CommandSourceHit(NamedTuple):
     """The command text associated with the hit, as plain text.
 
     This is the text that will be placed into the `Input` field of the
-    [command palette][`textual.command_palette.CommandPalette] when a
+    [command palette][textual.command_palette.CommandPalette] when a
     selection is made.
     """
 
