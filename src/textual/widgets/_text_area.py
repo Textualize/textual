@@ -25,115 +25,6 @@ from textual.scroll_view import ScrollView
 from textual.strip import Strip
 
 
-@runtime_checkable
-class Undoable(Protocol):
-    """Protocol for actions performed in the text editor which can be done and undone.
-
-    These are typically actions which affect the document (e.g. inserting and deleting
-    text), but they can really be anything.
-
-    To perform an edit operation, pass the Edit to `TextArea.edit()`"""
-
-    def do(self, text_area: TextArea) -> object | None:
-        """Do the action."""
-
-    def undo(self, text_area: TextArea) -> object | None:
-        """Undo the action."""
-
-
-@dataclass
-class Edit:
-    """Implements the Undoable protocol to replace text at some range within a document."""
-
-    text: str
-    """The text to insert. An empty string is equivalent to deletion."""
-    from_location: Location
-    """The start location of the insert."""
-    to_location: Location
-    """The end location of the insert"""
-    maintain_selection_offset: bool
-    """If True, the selection will maintain its offset to the replacement range."""
-    _replace_result: EditResult | None = field(init=False, default=None)
-    """Contains data relating to the replace operation."""
-    _updated_selection: Location | None = field(init=False, default=None)
-    """Where the selection should move to after the replace happens."""
-
-    def do(self, text_area: TextArea) -> EditResult:
-        """Perform the edit operation.
-
-        Args:
-            text_area: The TextArea to perform the edit on.
-
-        Returns:
-            An EditResult containing information about the replace operation.
-        """
-        text = self.text
-
-        edit_from = self.from_location
-        edit_to = self.to_location
-
-        # This code is mostly handling how we adjust TextArea.selection
-        # when an edit is made to the document programmatically.
-        # We want a user who is typing away to maintain their relative
-        # position in the document even if an insert happens before
-        # their cursor position.
-
-        edit_top, edit_bottom = _sort_ascending(edit_from, edit_to)
-        edit_bottom_row, edit_bottom_column = edit_bottom
-
-        selection_start, selection_end = text_area.selection
-        selection_start_row, selection_start_column = selection_start
-        selection_end_row, selection_end_column = selection_end
-
-        replace_result = text_area.document.replace_range(edit_from, edit_to, text)
-        self._replace_result = replace_result
-
-        new_edit_to_row, new_edit_to_column = replace_result.end_location
-
-        # TODO: We could maybe improve the situation where the selection
-        #  and the edit range overlap with each other.
-        column_offset = new_edit_to_column - edit_bottom_column
-        target_selection_start_column = (
-            selection_start_column + column_offset
-            if edit_bottom_row == selection_start_row
-            else selection_start_column
-        )
-        target_selection_end_column = (
-            selection_end_column + column_offset
-            if edit_bottom_row == selection_end_row
-            else selection_end_column
-        )
-
-        row_offset = new_edit_to_row - edit_bottom_row
-        target_selection_start_row = selection_start_row + row_offset
-        target_selection_end_row = selection_end_row + row_offset
-
-        if self.maintain_selection_offset:
-            self._updated_selection = Selection(
-                start=(target_selection_start_row, target_selection_start_column),
-                end=(target_selection_end_row, target_selection_end_column),
-            )
-        else:
-            self._updated_selection = Selection.cursor(replace_result.end_location)
-
-        return replace_result
-
-    def undo(self, text_area: TextArea) -> EditResult:
-        """Undo the Replace operation.
-
-        Args:
-            text_area: The TextArea to undo the insert operation on.
-        """
-
-    def after(self, text_area: TextArea) -> None:
-        """Possibly update the cursor location after the widget has been refreshed.
-
-        Args:
-            text_area: The TextArea this operation was performed on.
-        """
-        text_area.selection = self._updated_selection
-
-
 class TextArea(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
 $text-area-active-line-bg: white 8%;
@@ -1252,3 +1143,112 @@ TextArea > .text-area--width-guide {
             to_location = (cursor_row, len(self.document[cursor_row]))
 
         self.delete(end, to_location, maintain_selection_offset=False)
+
+
+@dataclass
+class Edit:
+    """Implements the Undoable protocol to replace text at some range within a document."""
+
+    text: str
+    """The text to insert. An empty string is equivalent to deletion."""
+    from_location: Location
+    """The start location of the insert."""
+    to_location: Location
+    """The end location of the insert"""
+    maintain_selection_offset: bool
+    """If True, the selection will maintain its offset to the replacement range."""
+    _replace_result: EditResult | None = field(init=False, default=None)
+    """Contains data relating to the replace operation."""
+    _updated_selection: Location | None = field(init=False, default=None)
+    """Where the selection should move to after the replace happens."""
+
+    def do(self, text_area: TextArea) -> EditResult:
+        """Perform the edit operation.
+
+        Args:
+            text_area: The TextArea to perform the edit on.
+
+        Returns:
+            An EditResult containing information about the replace operation.
+        """
+        text = self.text
+
+        edit_from = self.from_location
+        edit_to = self.to_location
+
+        # This code is mostly handling how we adjust TextArea.selection
+        # when an edit is made to the document programmatically.
+        # We want a user who is typing away to maintain their relative
+        # position in the document even if an insert happens before
+        # their cursor position.
+
+        edit_top, edit_bottom = _sort_ascending(edit_from, edit_to)
+        edit_bottom_row, edit_bottom_column = edit_bottom
+
+        selection_start, selection_end = text_area.selection
+        selection_start_row, selection_start_column = selection_start
+        selection_end_row, selection_end_column = selection_end
+
+        replace_result = text_area.document.replace_range(edit_from, edit_to, text)
+        self._replace_result = replace_result
+
+        new_edit_to_row, new_edit_to_column = replace_result.end_location
+
+        # TODO: We could maybe improve the situation where the selection
+        #  and the edit range overlap with each other.
+        column_offset = new_edit_to_column - edit_bottom_column
+        target_selection_start_column = (
+            selection_start_column + column_offset
+            if edit_bottom_row == selection_start_row
+            else selection_start_column
+        )
+        target_selection_end_column = (
+            selection_end_column + column_offset
+            if edit_bottom_row == selection_end_row
+            else selection_end_column
+        )
+
+        row_offset = new_edit_to_row - edit_bottom_row
+        target_selection_start_row = selection_start_row + row_offset
+        target_selection_end_row = selection_end_row + row_offset
+
+        if self.maintain_selection_offset:
+            self._updated_selection = Selection(
+                start=(target_selection_start_row, target_selection_start_column),
+                end=(target_selection_end_row, target_selection_end_column),
+            )
+        else:
+            self._updated_selection = Selection.cursor(replace_result.end_location)
+
+        return replace_result
+
+    def undo(self, text_area: TextArea) -> EditResult:
+        """Undo the Replace operation.
+
+        Args:
+            text_area: The TextArea to undo the insert operation on.
+        """
+
+    def after(self, text_area: TextArea) -> None:
+        """Possibly update the cursor location after the widget has been refreshed.
+
+        Args:
+            text_area: The TextArea this operation was performed on.
+        """
+        text_area.selection = self._updated_selection
+
+
+@runtime_checkable
+class Undoable(Protocol):
+    """Protocol for actions performed in the text editor which can be done and undone.
+
+    These are typically actions which affect the document (e.g. inserting and deleting
+    text), but they can really be anything.
+
+    To perform an edit operation, pass the Edit to `TextArea.edit()`"""
+
+    def do(self, text_area: TextArea) -> object | None:
+        """Do the action."""
+
+    def undo(self, text_area: TextArea) -> object | None:
+        """Undo the action."""
