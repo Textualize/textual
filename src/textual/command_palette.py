@@ -7,8 +7,8 @@ execute commands.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import Queue, TimeoutError, wait_for
-from functools import total_ordering
+from asyncio import Queue, TimeoutError, iscoroutinefunction, wait_for
+from functools import partial, total_ordering
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
 
 from rich.align import Align
@@ -150,6 +150,20 @@ class CommandSource(ABC):
             Instances of [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
         """
         raise NotImplemented
+
+    def run(self, callback: Callable[..., Any], *args: Any) -> Callable[..., Any]:
+        """Create a runnable callback for use with a command.
+
+        Args:
+            callback: The function or method to call.
+            args: The arguments to use in the call.
+
+        Returns:
+            The callback for the command.
+        """
+        if iscoroutinefunction(callback):
+            return partial(self.app.call_next, callback, *args)
+        return partial(callback, *args)
 
 
 @total_ordering
