@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Methods `TabbedContent.disable_tab` and `TabbedContent.enable_tab` https://github.com/Textualize/textual/pull/3112
+- Methods `Tabs.disable` and `Tabs.enable` https://github.com/Textualize/textual/pull/3112
+- Messages `Tab.Disabled`, `Tab.Enabled`, `Tabs.TabDisabled` and `Tabs.Enabled` https://github.com/Textualize/textual/pull/3112
+
 ### Changed
 
 - grid-columns and grid-rows now accept an `auto` token to detect the optimal size https://github.com/Textualize/textual/pull/3107

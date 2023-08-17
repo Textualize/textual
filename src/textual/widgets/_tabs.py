@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import ClassVar
 
 import rich.repr
@@ -104,17 +105,32 @@ class Tab(Static):
     Tab.-active:hover {
         color: $text;
     }
+    Tab:disabled {
+        color: $text-disabled;
+        text-opacity: 50%;
+    }
     """
 
+    @dataclass
     class Clicked(Message):
         """A tab was clicked."""
 
         tab: Tab
         """The tab that was clicked."""
 
-        def __init__(self, tab: Tab) -> None:
-            self.tab = tab
-            super().__init__()
+    @dataclass
+    class Disabled(Message):
+        """A tab was disabled."""
+
+        tab: Tab
+        """The tab that was disabled."""
+
+    @dataclass
+    class Enabled(Message):
+        """A tab was enabled."""
+
+        tab: Tab
+        """The tab that was enabled."""
 
     def __init__(
         self,
@@ -142,6 +158,10 @@ class Tab(Static):
     def _on_click(self):
         """Inform the message that the tab was clicked."""
         self.post_message(self.Clicked(self))
+
+    def _watch_disabled(self, disabled: bool) -> None:
+        """Notify the parent `Tabs` that a tab was enabled/disabled."""
+        self.post_message(self.Disabled(self) if disabled else self.Enabled(self))
 
 
 class Tabs(Widget, can_focus=True):
@@ -184,8 +204,8 @@ class Tabs(Widget, can_focus=True):
     class TabError(Exception):
         """Exception raised when there is an error relating to tabs."""
 
-    class TabActivated(Message):
-        """Sent when a new tab is activated."""
+    class TabMessage(Message):
+        """Parent class for all messages that have to do with a specific tab."""
 
         ALLOW_SELECTOR_MATCH = {"tab"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
@@ -195,26 +215,35 @@ class Tabs(Widget, can_focus=True):
 
             Args:
                 tabs: The Tabs widget.
-                tab: The tab that was activated.
+                tab: The tab that is the object of this message.
             """
             self.tabs: Tabs = tabs
             """The tabs widget containing the tab."""
             self.tab: Tab = tab
-            """The tab that was activated."""
+            """The tab that is the object of this message."""
             super().__init__()
 
         @property
         def control(self) -> Tabs:
-            """The tabs widget containing the tab that was activated.
+            """The tabs widget containing the tab that is the object of this message.
 
-            This is an alias for [`TabActivated.tabs`][textual.widgets.Tabs.TabActivated.tabs]
-            which is used by the [`on`][textual.on] decorator.
+            This is an alias for the attribute `tabs` and is used by the
+            [`on`][textual.on] decorator.
             """
             return self.tabs
 
         def __rich_repr__(self) -> rich.repr.Result:
             yield self.tabs
             yield self.tab
+
+    class TabActivated(TabMessage):
+        """Sent when a new tab is activated."""
+
+    class TabDisabled(TabMessage):
+        """Sent when a tab is disabled."""
+
+    class TabEnabled(TabMessage):
+        """Sent when a tab is enabled."""
 
     class Cleared(Message):
         """Sent when there are no active tabs."""
@@ -302,7 +331,12 @@ class Tabs(Widget, can_focus=True):
     @property
     def _next_active(self) -> Tab | None:
         """Next tab to make active if the active tab is removed."""
-        tabs = list(self.query("#tabs-list > Tab").results(Tab))
+        active_tab = self.active_tab
+        tabs = [
+            tab
+            for tab in self.query("#tabs-list > Tab").results(Tab)
+            if (not tab.disabled or tab is active_tab)
+        ]
         if self.active_tab is None:
             return None
         try:
@@ -590,10 +624,68 @@ class Tabs(Widget, can_focus=True):
         active_tab = self.active_tab
         if active_tab is None:
             return
-        tabs = list(self.query(Tab))
+        tabs = list(
+            tab for tab in self.query(Tab) if (not tab.disabled or tab is active_tab)
+        )
         if not tabs:
             return
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
         self._scroll_active_tab()
+
+    def _on_tab_disabled(self, event: Tab.Disabled) -> None:
+        """Re-post the disabled message."""
+        event.stop()
+        self.post_message(self.TabDisabled(self, event.tab))
+
+    def _on_tab_enabled(self, event: Tab.Enabled) -> None:
+        """Re-post the enabled message."""
+        event.stop()
+        self.post_message(self.TabEnabled(self, event.tab))
+
+    def disable(self, tab_id: str) -> Tab:
+        """Disable the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to disable.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_disable = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(
+                f"There is no tab with ID {tab_id!r} to disable."
+            ) from None
+
+        tab_to_disable.disabled = True
+        return tab_to_disable
+
+    def enable(self, tab_id: str) -> Tab:
+        """Enable the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to enable.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_enable = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(
+                f"There is no tab with ID {tab_id!r} to enable."
+            ) from None
+
+        tab_to_enable.disabled = False
+        return tab_to_enable
