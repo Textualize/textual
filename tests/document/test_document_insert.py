@@ -1,5 +1,3 @@
-import pytest
-
 from textual.document import Document
 
 TEXT = """I must not fear.
