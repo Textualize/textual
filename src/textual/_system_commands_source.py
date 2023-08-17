@@ -6,7 +6,6 @@ actions available via the [command palette][textual.command_palette.CommandPalet
 
 from __future__ import annotations
 
-from functools import partial
 from typing import Callable, NamedTuple
 
 from .command_palette import CommandMatches, CommandSource, CommandSourceHit
@@ -44,22 +43,22 @@ class SystemCommandSource(CommandSource):
         for command in (
             SystemCommand(
                 "Toggle light/dark mode",
-                partial(self.app.action_toggle_dark),
+                self.run(self.app.action_toggle_dark),
                 "Toggle the application between light and dark mode",
             ),
             SystemCommand(
                 "Save a screenshot",
-                partial(self.app.action_screenshot),
+                self.run(self.app.action_screenshot),
                 "Save a SVG file to storage that contains the contents of the current screen",
             ),
             SystemCommand(
                 "Quit the application",
-                partial(self.app.call_next, self.app.action_quit),
+                self.run(self.app.action_quit),
                 "Quit the application as soon as possible",
             ),
             SystemCommand(
                 "Ring the bell",
-                partial(self.app.call_next, self.app.action_bell),
+                self.run(self.app.action_bell),
                 "Ring the terminal's 'bell'",
             ),
         ):
