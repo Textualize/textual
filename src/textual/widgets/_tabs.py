@@ -412,7 +412,7 @@ class Tabs(Widget, can_focus=True):
         """Remove a tab.
 
         Args:
-            tab_or_id: The Tab's id.
+            tab_or_id: The Tab to remove or its id.
 
         Returns:
             An awaitable object that waits for the tab to be removed.
