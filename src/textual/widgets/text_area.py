@@ -1,3 +1,6 @@
-from ._text_area import Highlight
+from textual.widgets._text_area import Edit, Undoable
 
-__all__ = ["Highlight"]
+__all__ = [
+    "Edit",
+    "Undoable",
+]

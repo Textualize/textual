@@ -60,10 +60,10 @@ class Edit:
     """Where the selection should move to after the replace happens."""
 
     def do(self, text_area: TextArea) -> EditResult:
-        """Perform the Insert operation.
+        """Perform the edit operation.
 
         Args:
-            text_area: The TextArea to perform the insert on.
+            text_area: The TextArea to perform the edit on.
 
         Returns:
             An EditResult containing information about the replace operation.
