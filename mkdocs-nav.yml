@@ -167,6 +167,7 @@ nav:
               - "api/await_remove.md"
               - "api/binding.md"
               - "api/color.md"
+              - "api/command_palette.md"
               - "api/containers.md"
               - "api/coordinate.md"
               - "api/dom_node.md"

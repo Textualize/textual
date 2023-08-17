@@ -1,0 +1,1 @@
+::: textual.command_palette
