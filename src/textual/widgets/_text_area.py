@@ -199,7 +199,7 @@ TextArea > .text-area--width-guide {
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self.document = Document("")
+        self.document: DocumentBase = Document("")
         """The document this widget is currently editing."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
@@ -461,6 +461,9 @@ TextArea > .text-area--width-guide {
             event.stop()
             event.prevent_default()
             insert = insert_values.get(key, event.character)
+            # `insert` is not None because event.character cannot be
+            # None because we've checked that it's printable.
+            assert insert is not None
             start, end = self.selection
             self.replace(insert, start, end, False)
 

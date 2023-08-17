@@ -121,6 +121,17 @@ class DocumentBase(ABC):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
 
+    @abstractmethod
+    def __getitem__(self, line_index: SupportsIndex | slice) -> str | list[str]:
+        """Return the content of a line as a string, excluding newline characters.
+
+        Args:
+            line_index: The index or slice of the line(s) to retrieve.
+
+        Returns:
+            The line or list of lines requested.
+        """
+
 
 class Document(DocumentBase):
     """A document which can be opened in a TextArea."""
