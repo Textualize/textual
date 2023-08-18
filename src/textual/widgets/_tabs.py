@@ -109,6 +109,9 @@ class Tab(Static):
         color: $text-disabled;
         text-opacity: 50%;
     }
+    Tab.-hidden {
+        display: none;
+    }
     """
 
     @dataclass
@@ -245,6 +248,12 @@ class Tabs(Widget, can_focus=True):
     class TabEnabled(TabMessage):
         """Sent when a tab is enabled."""
 
+    class TabHidden(TabMessage):
+        """Sent when a tab is hidden."""
+
+    class TabShown(TabMessage):
+        """Sent when a tab is shown."""
+
     class Cleared(Message):
         """Sent when there are no active tabs."""
 
@@ -329,14 +338,23 @@ class Tabs(Widget, can_focus=True):
         return len(self.query("#tabs-list > Tab"))
 
     @property
+    def _potentially_active_tabs(self) -> list[Tab]:
+        """List of all tabs that could be active.
+
+        This list is comprised of all tabs that are shown and enabled,
+        plus the active tab in case it is disabled.
+        """
+        return [
+            tab
+            for tab in self.query("#tabs-list > Tab").results(Tab)
+            if ((not tab.disabled or tab is self.active_tab) and tab.display)
+        ]
+
+    @property
     def _next_active(self) -> Tab | None:
         """Next tab to make active if the active tab is removed."""
         active_tab = self.active_tab
-        tabs = [
-            tab
-            for tab in self.query("#tabs-list > Tab").results(Tab)
-            if (not tab.disabled or tab is active_tab)
-        ]
+        tabs = self._potentially_active_tabs
         if self.active_tab is None:
             return None
         try:
@@ -624,9 +642,7 @@ class Tabs(Widget, can_focus=True):
         active_tab = self.active_tab
         if active_tab is None:
             return
-        tabs = list(
-            tab for tab in self.query(Tab) if (not tab.disabled or tab is active_tab)
-        )
+        tabs = self._potentially_active_tabs
         if not tabs:
             return
         tab_count = len(tabs)
@@ -689,3 +705,54 @@ class Tabs(Widget, can_focus=True):
 
         tab_to_enable.disabled = False
         return tab_to_enable
+
+    def hide(self, tab_id: str) -> Tab:
+        """Hide the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to hide.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_hide = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(f"There is no tab with ID {tab_id!r} to hide.")
+
+        if tab_to_hide.has_class("-active"):
+            next_tab = self._next_active
+            self.active = next_tab.id or "" if next_tab else ""
+        tab_to_hide.add_class("-hidden")
+        self.post_message(self.TabHidden(self, tab_to_hide))
+        self.call_after_refresh(self._highlight_active)
+        return tab_to_hide
+
+    def show(self, tab_id: str) -> Tab:
+        """Show the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to show.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_show = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(f"There is no tab with ID {tab_id!r} to show.")
+
+        tab_to_show.remove_class("-hidden")
+        self.post_message(self.TabShown(self, tab_to_show))
+        if not self.active:
+            self._activate_tab(tab_to_show)
+        self.call_after_refresh(self._highlight_active)
+        return tab_to_show

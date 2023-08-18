@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Methods `TabbedContent.disable_tab` and `TabbedContent.enable_tab` https://github.com/Textualize/textual/pull/3112
 - Methods `Tabs.disable` and `Tabs.enable` https://github.com/Textualize/textual/pull/3112
 - Messages `Tab.Disabled`, `Tab.Enabled`, `Tabs.TabDisabled` and `Tabs.Enabled` https://github.com/Textualize/textual/pull/3112
+- Methods `TabbedContent.hide_tab` and `TabbedContent.show_tab` https://github.com/Textualize/textual/pull/3112
+- Methods `Tabs.hide` and `Tabs.show` https://github.com/Textualize/textual/pull/3112
+- Messages `Tabs.TabHidden` and `Tabs.TabShown` https://github.com/Textualize/textual/pull/3112
 
 ### Changed
 

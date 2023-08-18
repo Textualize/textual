@@ -417,3 +417,27 @@ class TabbedContent(Widget):
         """
 
         self.query_one(Tabs).enable(tab_id)
+
+    def hide_tab(self, tab_id: str) -> None:
+        """Hides the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to hide.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.query_one(Tabs).hide(tab_id)
+
+    def show_tab(self, tab_id: str) -> None:
+        """Shows the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to show.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.query_one(Tabs).show(tab_id)
