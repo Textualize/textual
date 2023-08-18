@@ -7,6 +7,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.json import JSON
 from rich.markdown import Markdown
+from rich.markup import escape
 from rich.pretty import Pretty
 from rich.syntax import Syntax
 from rich.table import Table
@@ -382,7 +383,7 @@ class DemoApp(App[None]):
         """
         self.bell()
         path = self.save_screenshot(filename, path)
-        message = f"Screenshot saved to [bold green]'{path}'[/]"
+        message = f"Screenshot saved to [bold green]'{escape(str(path))}'[/]"
         self.add_note(Text.from_markup(message))
         self.notify(message)
 
