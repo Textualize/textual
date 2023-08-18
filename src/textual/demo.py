@@ -277,7 +277,7 @@ class DemoApp(App[None]):
         ("ctrl+t", "app.toggle_dark", "Toggle Dark mode"),
         ("ctrl+s", "app.screenshot()", "Screenshot"),
         ("f1", "app.toggle_class('RichLog', '-hidden')", "Notes"),
-        Binding("ctrl+c,ctrl+q", "app.quit", "Quit", show=True),
+        Binding("ctrl+q", "app.quit", "Quit", show=True),
     ]
 
     show_sidebar = reactive(False)
