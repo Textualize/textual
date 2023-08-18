@@ -269,14 +269,6 @@ class SubTitle(Static):
     pass
 
 
-class Notification(Static):
-    def on_mount(self) -> None:
-        self.set_timer(3, self.remove)
-
-    def on_click(self) -> None:
-        self.remove()
-
-
 class DemoApp(App[None]):
     CSS_PATH = "demo.css"
     TITLE = "Textual Demo"
@@ -390,9 +382,9 @@ class DemoApp(App[None]):
         """
         self.bell()
         path = self.save_screenshot(filename, path)
-        message = Text.assemble("Screenshot saved to ", (f"'{path}'", "bold green"))
-        self.add_note(message)
-        self.screen.mount(Notification(message))
+        message = f"Screenshot saved to [bold green]'{path}'[/]"
+        self.add_note(Text.from_markup(message))
+        self.notify(message)
 
 
 app = DemoApp()
