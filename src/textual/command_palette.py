@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedT
 
 from rich.align import Align
 from rich.console import Group, RenderableType
+from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -21,6 +22,7 @@ from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
+from .strip import Strip
 from .widget import Widget
 from .widgets import Button, Input, Label, LoadingIndicator, OptionList
 from .widgets.option_list import Option
@@ -218,8 +220,8 @@ class CommandList(OptionList, can_focus=False):
         visibility: hidden;
         border-top: blank;
         border-bottom: hkey $accent;
-        border-left: blank;
-        border-right: blank;
+        border-left: none;
+        border-right: none;
         height: auto;
         max-height: 70vh;
         background: $panel;
@@ -241,6 +243,32 @@ class CommandList(OptionList, can_focus=False):
         background: $accent;
     }
     """
+
+    def _left_gutter_width(self) -> int:
+        """Returns the size of any left gutter that should be taken into account.
+
+        Returns:
+            The width of the left gutter.
+        """
+        return 1
+
+    def render_line(self, y: int) -> Strip:
+        """Render a line in the display.
+
+        Args:
+            y: The line to render.
+
+        Returns:
+            A [`Strip`][textual.strip.Strip] that is the line to render.
+        """
+        # First off, get the underlying prompt from OptionList.
+        prompt = super().render_line(y)
+        # If it looks like the prompt itself is actually an empty line...
+        if not prompt:
+            # ...get out with that. We don't need to do any more here.
+            return prompt
+        # We got something, put a space at the start.
+        return Strip([Segment(" ", style=next(iter(prompt)).style), *prompt])
 
 
 class CommandInput(Input):
