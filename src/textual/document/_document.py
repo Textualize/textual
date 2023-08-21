@@ -122,7 +122,7 @@ class DocumentBase(ABC):
         """Returns the number of lines in the document."""
 
     @overload
-    def __getitem__(self, line_index: SupportsIndex) -> str:
+    def __getitem__(self, line_index: int) -> str:
         ...
 
     @overload
@@ -130,7 +130,7 @@ class DocumentBase(ABC):
         ...
 
     @abstractmethod
-    def __getitem__(self, line_index: SupportsIndex | slice) -> str | list[str]:
+    def __getitem__(self, line_index: int | slice) -> str | list[str]:
         """Return the content of a line as a string, excluding newline characters.
 
         Args:
@@ -294,6 +294,14 @@ class Document(DocumentBase):
         line_string = self[index]
         line_string = line_string.replace("\n", "").replace("\r", "")
         return Text(line_string, end="")
+
+    @overload
+    def __getitem__(self, line_index: int) -> str:
+        ...
+
+    @overload
+    def __getitem__(self, line_index: slice) -> list[str]:
+        ...
 
     def __getitem__(self, line_index: int | slice) -> str | list[str]:
         """Return the content of a line as a string, excluding newline characters.

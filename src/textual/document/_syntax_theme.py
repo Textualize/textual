@@ -4,6 +4,9 @@ from dataclasses import dataclass, field
 
 from rich.style import Style
 
+_NULL_STYLE = Style.null()
+
+
 _MONOKAI = {
     "string": Style(color="#E6DB74"),
     "string.documentation": Style(color="#E6DB74"),
@@ -33,23 +36,20 @@ _MONOKAI = {
     "regex.punctuation.bracket": Style(color="#F92672"),
     "regex.operator": Style(color="#F92672"),
     "error": Style(color="black", bgcolor="red"),
-    "json.error": None,
+    "json.error": _NULL_STYLE,
     "html.end_tag_error": Style(color="black", bgcolor="red"),
     "tag": Style(color="#F92672"),
     "yaml.field": Style(color="#F92672", bold=True),
     "json.label": Style(color="#F92672", bold=True),
     "toml.type": Style(color="#F92672"),
     "toml.datetime": Style(color="#AE81FF"),
-    "toml.error": None,
+    "toml.error": _NULL_STYLE,
 }
 
 _BUILTIN_THEMES = {
     "monokai": _MONOKAI,
     "bluokai": {**_MONOKAI, "string": Style.parse("cyan")},
 }
-
-
-_NULL_STYLE = Style.null()
 
 
 @dataclass

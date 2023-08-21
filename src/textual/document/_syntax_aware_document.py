@@ -260,7 +260,7 @@ class SyntaxAwareDocument(Document):
         for line_index, updated_highlights in highlight_updates.items():
             highlights[line_index] = updated_highlights
 
-    def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes | None:
+    def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes:
         """A callable which informs tree-sitter about the document content.
 
         This is passed to tree-sitter which will call it frequently to retrieve
@@ -282,7 +282,7 @@ class SyntaxAwareDocument(Document):
 
         row_out_of_bounds = row >= len(lines)
         if row_out_of_bounds:
-            return None
+            return b""
         else:
             row_text = lines[row]
 
@@ -297,7 +297,7 @@ class SyntaxAwareDocument(Document):
             if newline == "\r\n":
                 return b"\n"
         else:
-            return None
+            return b""
 
 
 @lru_cache(maxsize=128)
