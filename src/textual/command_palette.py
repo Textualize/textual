@@ -8,9 +8,8 @@ from functools import partial, total_ordering
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
 
 from rich.align import Align
-from rich.console import RenderableType
+from rich.console import Group, RenderableType
 from rich.style import Style
-from rich.table import Table
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
 
@@ -265,13 +264,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     }
 
     CommandPalette > .command-palette--help-text {
-        color: $text-muted;
-        text-style: italic;
+        text-style: dim;
         background: transparent;
     }
 
     CommandPalette > .command-palette--highlight {
-        text-style: reverse;
+        text-style: bold reverse;
+        color: $success;
     }
 
     CommandPalette > Vertical {
@@ -596,14 +595,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         async for hit in self._hunt_for(search_value):
             prompt = hit.match_display
             if hit.command_help:
-                # Because there's some help for the command, we switch to a
-                # Rich table so we can individually align a couple of rows;
-                # the command will be left-aligned, the help however will be
-                # right-aligned.
-                prompt = Table.grid(expand=True)
-                prompt.add_column(no_wrap=True)
-                prompt.add_row(hit.match_display)
-                prompt.add_row(Align.right(Text(hit.command_help, style=help_style)))
+                prompt = Group(
+                    hit.match_display, Text(hit.command_help, style=help_style)
+                )
+
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
             if worker.is_cancelled:
                 break
