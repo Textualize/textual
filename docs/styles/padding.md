@@ -18,11 +18,11 @@ padding-left: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The `padding` specifies spacing around the _content_ of a widget, thus this spacing is added _inside_ the widget.
-The values of the [`<integer>`](../../css_types/integer) determine how much spacing is added and the number of values define what edges get what padding:
+The values of the [`<integer>`](../css_types/integer.md) determine how much spacing is added and the number of values define what edges get what padding:
 
- - 1 [`<integer>`](../../css_types/integer) sets the same padding for the four edges of the widget;
- - 2 [`<integer>`](../../css_types/integer) set padding for top/bottom and left/right edges, respectively.
- - 4 [`<integer>`](../../css_types/integer) set padding for the top, right, bottom, and left edges, respectively.
+ - 1 [`<integer>`](../css_types/integer.md) sets the same padding for the four edges of the widget;
+ - 2 [`<integer>`](../css_types/integer.md) set padding for top/bottom and left/right edges, respectively.
+ - 4 [`<integer>`](../css_types/integer.md) set padding for the top, right, bottom, and left edges, respectively.
 
 !!! tip
 

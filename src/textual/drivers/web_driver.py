@@ -15,12 +15,13 @@ import asyncio
 import json
 import os
 import selectors
+import signal
 import sys
 from codecs import getincrementaldecoder
 from functools import partial
 from threading import Event, Thread
 
-from .. import events, log
+from .. import events, log, messages
 from .._xterm_parser import XTermParser
 from ..app import App
 from ..driver import Driver
@@ -87,6 +88,15 @@ class WebDriver(Driver):
         """Start application mode."""
 
         loop = asyncio.get_running_loop()
+
+        def do_exit() -> None:
+            """Callback to force exit."""
+            asyncio.run_coroutine_threadsafe(
+                self._app._post_message(messages.ExitApp()), loop=loop
+            )
+
+        for _signal in (signal.SIGINT, signal.SIGTERM):
+            loop.add_signal_handler(_signal, do_exit)
 
         self.write("\x1b[?1049h")  # Alt screen
         self._enable_mouse_support()

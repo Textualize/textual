@@ -142,6 +142,47 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 If you run this example you will see that the greeting has been underlined, which indicates it is clickable. If you click on the greeting it will run the `next_word` action which updates the next word.
 
 
+## Border titles
+
+Every widget has a [`border_title`][textual.widgets.Widget.border_title] and [`border_subtitle`][textual.widgets.Widget.border_subtitle] attribute.
+Setting `border_title` will display text within the top border, and setting `border_subtitle` will display text within the bottom border.
+
+!!! note
+
+    Border titles will only display if the widget has a [border](../styles/border.md) enabled.
+
+The default value for these attributes is empty string, which disables the title.
+You can change the default value for the title attributes with the [`BORDER_TITLE`][textual.widget.Widget.BORDER_TITLE] and [`BORDER_SUBTITLE`][textual.widget.Widget.BORDER_SUBTITLE] class variables.
+
+Let's demonstrate setting a title, both as a class variable and a instance variable:
+
+
+=== "hello06.py"
+
+    ```python title="hello06.py"  hl_lines="26 30"
+    --8<-- "docs/examples/guide/widgets/hello06.py"
+    ```
+
+    1. Setting the default for the `title` attribute via class variable.
+    2. Setting `subtitle` via an instance attribute.
+
+=== "hello06.css"
+
+    ```sass title="hello06.css"
+    --8<-- "docs/examples/guide/widgets/hello06.css"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/hello06.py"}
+    ```
+
+Note that titles are limited to a single line of text.
+If the supplied text is too long to fit within the widget, it will be cropped (and an ellipsis added).
+
+There are a number of styles that influence how titles are displayed (color and alignment).
+See the [style reference](../styles/index.md) for details.
+
 ## Rich renderables
 
 In previous examples we've set strings as content for Widgets. You can also use special objects called [renderables](https://rich.readthedocs.io/en/latest/protocol.html) for advanced visuals. You can use any renderable defined in [Rich](https://github.com/Textualize/rich) or third party libraries.

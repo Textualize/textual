@@ -17,7 +17,7 @@ outline-bottom: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="
 outline-left: [<a href="../../css_types/border">&lt;border&gt;</a>] [<a href="../../css_types/color">&lt;color&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The style `outline` accepts an optional [`<border>`](../../css_types/border) that sets the visual style of the widget outline and an optional [`<color>`](../../css_types/color) to set the color of the outline.
+The style `outline` accepts an optional [`<border>`](../css_types/border.md) that sets the visual style of the widget outline and an optional [`<color>`](../css_types/color.md) to set the color of the outline.
 
 Unlike the style [`border`](./border.md), the frame of the outline is drawn over the content area of the widget.
 This rule can be useful to add temporary emphasis on the content of a widget, if you want to draw the user's attention to it.
