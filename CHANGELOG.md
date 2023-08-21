@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Add `min-height: 1;` to `LoadingIndicator`'s `DEFAULT_CSS`.
+
 ### Added
 
 - Methods `TabbedContent.disable_tab` and `TabbedContent.enable_tab` https://github.com/Textualize/textual/pull/3112
