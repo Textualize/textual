@@ -287,6 +287,15 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
+## TextArea
+
+A multi-line text area which supports syntax highlighting.
+
+[TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/text_area.py"}
+```
+
 
 ## Tree
 
