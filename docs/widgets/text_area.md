@@ -26,6 +26,19 @@ to Python, and selects some text.
     --8<-- "docs/examples/widgets/text_area.py"
     ```
 
+### Styling the `TextArea`
+
+You can use component classes to customise the look and feel of the `TextArea` widget.
+
+TODO
+
+### Adding support for custom languages
+
+### Syntax highlighting themes
+
+### Building on top of `TextArea`
+
+
 
 ## Reactive attributes
 

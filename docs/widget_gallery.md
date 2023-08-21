@@ -296,7 +296,6 @@ A multi-line text area which supports syntax highlighting.
 ```{.textual path="docs/examples/widgets/text_area.py"}
 ```
 
-
 ## Tree
 
 A tree control with expandable nodes.
