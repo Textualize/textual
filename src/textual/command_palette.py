@@ -233,6 +233,10 @@ class CommandList(OptionList, can_focus=False):
         visibility: visible;
     }
 
+    CommandList.--populating {
+        border-bottom: none;
+    }
+
     CommandList > .option-list--option-highlighted {
         background: $accent;
     }
@@ -318,7 +322,6 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         height: auto;
         visibility: hidden;
         background: $panel;
-        padding-top: 1;
         border-bottom: hkey $accent;
     }
 
@@ -451,6 +454,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         flag's state.
         """
         self.query_one(LoadingIndicator).set_class(self._show_busy, "--visible")
+        self.query_one(CommandList).set_class(self._show_busy, "--populating")
 
     @staticmethod
     async def _consume(
