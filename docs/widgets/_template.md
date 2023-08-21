@@ -32,6 +32,7 @@ Example app showing the widget:
 
 ## Reactive attributes
 
+## Messages
 
 ## Bindings
 

@@ -229,7 +229,6 @@
   "is"
   "not"
   "or"
-
   "del"
 ] @keyword.operator
 
