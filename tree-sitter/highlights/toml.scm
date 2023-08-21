@@ -24,7 +24,7 @@
 "." @punctuation.delimiter
 "," @punctuation.delimiter
 
-"=" @operator
+"=" @toml.operator
 
 "[" @punctuation.bracket
 "]" @punctuation.bracket
