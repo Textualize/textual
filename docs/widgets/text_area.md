@@ -8,7 +8,9 @@ A widget for editing text which may span multiple lines.
 - [ ] Container
 
 
-## Example
+## Guide
+
+### Basic example
 
 Here's an example app which loads some Python code, sets the syntax highlighting language
 to Python, and selects some text.
