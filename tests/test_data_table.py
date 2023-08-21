@@ -173,11 +173,13 @@ async def test_empty_table_interactions():
         assert app.message_names == []
 
 
-async def test_cursor_movement_with_home_pagedown_etc():
+@pytest.mark.parametrize("show_header", [True, False])
+async def test_cursor_movement_with_home_pagedown_etc(show_header):
     app = DataTableApp()
 
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
+        table.show_header = show_header
         table.add_columns("A", "B")
         table.add_rows(ROWS)
         await pilot.press("right", "pagedown")
