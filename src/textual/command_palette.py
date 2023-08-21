@@ -296,6 +296,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         background: $panel;
     }
 
+    CommandPalette #--input.--list-visible {
+        border-bottom: none;
+    }
+
     CommandPalette #--input Label {
         margin-top: 1;
         margin-left: 1;
@@ -434,6 +438,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
         self.query_one(CommandList).set_class(self._list_visible, "--visible")
+        self.query_one("#--input", Horizontal).set_class(
+            self._list_visible, "--list-visible"
+        )
         if not self._list_visible:
             self._show_busy = False
 
