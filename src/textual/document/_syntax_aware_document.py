@@ -27,9 +27,9 @@ from textual.document._syntax_theme import SyntaxTheme
 TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"
 
-StartColumn = Optional[int]
+StartColumn = int
 EndColumn = Optional[int]
-HighlightName = Optional[str]
+HighlightName = str
 Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 """A tuple representing a syntax highlight within one line."""
 
@@ -90,7 +90,7 @@ class SyntaxAwareDocument(Document):
                 self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
 
             self._syntax_theme.highlight_query = highlight_query_path.read_text()
-            self._syntax_tree = self._parser.parse(self._read_callable)
+            self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
             self._query: Query = self._language.query(
                 self._syntax_theme.highlight_query
             )
@@ -121,6 +121,8 @@ class SyntaxAwareDocument(Document):
         if TREE_SITTER:
             text_byte_length = len(_utf8_encode(text))
             end_location = replace_result.end_location
+            assert self._syntax_tree is not None
+            assert self._parser is not None
             self._syntax_tree.edit(
                 start_byte=start_byte,
                 old_end_byte=old_end_byte,
@@ -131,7 +133,7 @@ class SyntaxAwareDocument(Document):
             )
             # Incrementally parse the document.
             self._syntax_tree = self._parser.parse(
-                self._read_callable, self._syntax_tree
+                self._read_callable, self._syntax_tree  # type: ignore[arg-type]
             )
             self._prepare_highlights()
 
@@ -146,19 +148,23 @@ class SyntaxAwareDocument(Document):
         Returns:
             The syntax highlighted Text of the line.
         """
-        line_bytes = _utf8_encode(self[line_index])
-        byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-        line = Text(self[line_index], end="")
+        line_string = self[line_index]
+        line = Text(line_string, end="")
+        if not TREE_SITTER or self._syntax_theme is None:
+            return line
+
         highlights = self._highlights
-        get_highlight_from_theme = self._syntax_theme.get_highlight
         if highlights:
-            highlights = highlights[line_index]
-            for start, end, highlight_name in highlights:
+            line_bytes = _utf8_encode(line_string)
+            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+            get_highlight_from_theme = self._syntax_theme.get_highlight
+            line_highlights = highlights[line_index]
+            for start, end, highlight_name in line_highlights:
                 node_style = get_highlight_from_theme(highlight_name)
                 line.stylize(
                     node_style,
                     byte_to_codepoint.get(start, 0),
-                    byte_to_codepoint.get(end),
+                    byte_to_codepoint.get(end) if end else None,
                 )
         return line
 
@@ -191,7 +197,8 @@ class SyntaxAwareDocument(Document):
 
     def _location_to_point(self, location: Location) -> tuple[int, int]:
         """Convert a document location (row_index, column_index) to a tree-sitter
-        point (row_index, byte_offset_from_start_of_row).
+        point (row_index, byte_offset_from_start_of_row). If tree-sitter isn't available
+        returns (0, 0).
 
         Args:
             location: A location (row index, column codepoint offset)
@@ -199,6 +206,9 @@ class SyntaxAwareDocument(Document):
         Returns:
             The point corresponding to that location (row index, column byte offset).
         """
+        if not TREE_SITTER:
+            return 0, 0
+
         lines = self._lines
         row, column = location
         if row < len(lines):
@@ -210,7 +220,7 @@ class SyntaxAwareDocument(Document):
     def _prepare_highlights(
         self,
         start_point: tuple[int, int] | None = None,
-        end_point: tuple[int, int] = None,
+        end_point: tuple[int, int] | None = None,
     ) -> None:
         """Query the tree for ranges to highlights, and update the internal highlights mapping.
 
@@ -220,6 +230,8 @@ class SyntaxAwareDocument(Document):
         """
         if not TREE_SITTER:
             return None
+
+        assert self._syntax_tree is not None
 
         highlights = self._highlights
         highlights.clear()
@@ -296,8 +308,8 @@ class SyntaxAwareDocument(Document):
         elif column == encoded_row_length + 1:
             if newline == "\r\n":
                 return b"\n"
-        else:
-            return b""
+
+        return b""
 
 
 @lru_cache(maxsize=128)
