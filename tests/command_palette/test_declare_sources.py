@@ -14,7 +14,7 @@ async def test_sources_with_no_known_screen() -> None:
 
 
 class ExampleCommandSource(CommandSource):
-    async def hunt_for(self, _: str) -> CommandMatches:
+    async def search_for(self, _: str) -> CommandMatches:
         def gndn() -> None:
             pass
 

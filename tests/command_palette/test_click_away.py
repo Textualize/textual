@@ -8,7 +8,7 @@ from textual.command_palette import (
 
 
 class SimpleSource(CommandSource):
-    async def hunt_for(self, user_input: str) -> CommandMatches:
+    async def search_for(self, user_input: str) -> CommandMatches:
         def gndn() -> None:
             pass
 

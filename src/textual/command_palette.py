@@ -81,14 +81,14 @@ class CommandSourceHit(NamedTuple):
 
 
 CommandMatches: TypeAlias = AsyncIterator[CommandSourceHit]
-"""Return type for the command source match hunting method."""
+"""Return type for the command source match searching method."""
 
 
 class CommandSource(ABC):
     """Base class for command palette command sources.
 
     To create a source of commands inherit from this class and implement
-    [`hunt_for`][textual.command_palette.CommandSource.hunt_for].
+    [`search_for`][textual.command_palette.CommandSource.search_for].
     """
 
     def __init__(self, screen: Screen, match_style: Style | None = None) -> None:
@@ -138,8 +138,8 @@ class CommandSource(ABC):
         )
 
     @abstractmethod
-    async def hunt_for(self, user_input: str) -> CommandMatches:
-        """A request to hunt for commands relevant to the given user input.
+    async def search_for(self, user_input: str) -> CommandMatches:
+        """A request to search for commands relevant to the given user input.
 
         Args:
             user_input: The user input to be matched.
@@ -443,8 +443,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         async for hit in source:
             await commands.put(hit)
 
-    async def _hunt_for(self, search_value: str) -> CommandMatches:
-        """Hunt for a given search value amongst all of the command sources.
+    async def _search_for(self, search_value: str) -> CommandMatches:
+        """Search for a given search value amongst all of the command sources.
 
         Args:
             search_value: The value to search for.
@@ -466,7 +466,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         searches = [
             create_task(
                 self._consume(
-                    source(self._calling_screen, match_style).hunt_for(search_value),
+                    source(self._calling_screen, match_style).search_for(search_value),
                     commands,
                 )
             )
@@ -592,7 +592,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         command_id = 0
         worker = get_current_worker()
         self._show_busy = True
-        async for hit in self._hunt_for(search_value):
+        async for hit in self._search_for(search_value):
             prompt = hit.match_display
             if hit.command_help:
                 prompt = Group(

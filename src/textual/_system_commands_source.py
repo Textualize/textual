@@ -35,8 +35,8 @@ class SystemCommandSource(CommandSource):
     Used by default in [`App.COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES].
     """
 
-    async def hunt_for(self, user_input: str) -> CommandMatches:
-        """Handle a request to hunt for system commands that match the user input.
+    async def search_for(self, user_input: str) -> CommandMatches:
+        """Handle a request to search for system commands that match the user input.
 
         Args:
             user_input: The user input to be matched.
