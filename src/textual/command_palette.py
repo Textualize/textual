@@ -22,7 +22,7 @@ from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
 from .widget import Widget
-from .widgets import Button, Input, LoadingIndicator, OptionList
+from .widgets import Button, Input, Label, LoadingIndicator, OptionList
 from .widgets.option_list import Option
 from .worker import get_current_worker
 
@@ -247,6 +247,7 @@ class CommandInput(Input):
         border: blank;
         width: 1fr;
         background: $panel;
+        padding-left: 0;
     }
     """
 
@@ -293,6 +294,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         visibility: visible;
         border: hkey $accent;
         background: $panel;
+    }
+
+    CommandPalette #--input Label {
+        margin-top: 1;
+        margin-left: 1;
     }
 
     CommandPalette #--input Button {
@@ -400,6 +406,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """
         with Vertical():
             with Horizontal(id="--input"):
+                yield Label(Text.from_markup(":magnifying_glass_tilted_right:"))
                 yield CommandInput(placeholder="Search...")
                 if not self.run_on_select:
                     yield Button("\u25b6")
