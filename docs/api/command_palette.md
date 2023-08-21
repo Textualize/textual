@@ -2,10 +2,10 @@
 
 ## Introduction
 
-The command palette provides a system-wide facility with which the user to
-search for and execute commands. These commands can be added by you by
-creating command source classes and declaring them on your application or
-your screens.
+The command palette provides a system-wide facility for searching for and
+executing commands. These commands are added by creating command source
+classes and declaring them on your [application](../../guide/app/) or your
+[screens](../../guide/screens/).
 
 Note that `CommandPalette` itself isn't designed to be used directly in your
 applications; it is instead something that is enabled by default and is made
@@ -21,7 +21,7 @@ creating a class that inherits from
 [`CommandSource`][textual.command_palette.CommandSource]. Your new command
 source class should implement the
 [`hunt_for`][textual.command_palette.CommandSource.hunt_for] method. This
-should be an `async` method which `yield`a instances of
+should be an `async` method which `yield`s instances of
 [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
 
 For example, suppose we wanted to create a command source that would look
@@ -80,7 +80,7 @@ contain the match score (which should be between 0 and 1), a Rich renderable
 (such as a [rich Text object][rich.text.Text]) to illustrate how the command
 was matched (this appears in the drop-down list of the command palette), a
 reference to a function to run when the user selects that command, and the
-plain text version of the comment.
+plain text version of the command.
 
 ## API documentation
 
