@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+- Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
+
 ### Changed
 
 - grid-columns and grid-rows now accept an `auto` token to detect the optimal size https://github.com/Textualize/textual/pull/3107
