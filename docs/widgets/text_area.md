@@ -34,6 +34,10 @@ TODO
 
 ### Adding support for custom languages
 
+    !!! note
+        More built-in languages will be added in the future.
+
+
 ### Syntax highlighting themes
 
 ### Building on top of `TextArea`
