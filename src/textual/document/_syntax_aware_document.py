@@ -222,6 +222,7 @@ class SyntaxAwareDocument(Document):
             return None
 
         highlights = self._highlights
+        highlights.clear()
 
         captures_kwargs = {}
         if start_point is not None:

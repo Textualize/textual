@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import NamedTuple, Tuple
+from typing import NamedTuple, Tuple, overload
 
 from rich.text import Text
 
@@ -65,7 +65,7 @@ class DocumentBase(ABC):
     provide in order to be used by the TextArea widget."""
 
     @abstractmethod
-    def replace_range(self, start: Location, end: Location, text: str) -> Location:
+    def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace the text at the given range.
 
         Args:
@@ -120,6 +120,14 @@ class DocumentBase(ABC):
     @abstractmethod
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
+
+    @overload
+    def __getitem__(self, line_index: SupportsIndex) -> str:
+        ...
+
+    @overload
+    def __getitem__(self, line_index: slice) -> list[str]:
+        ...
 
     @abstractmethod
     def __getitem__(self, line_index: SupportsIndex | slice) -> str | list[str]:
@@ -287,7 +295,7 @@ class Document(DocumentBase):
         line_string = line_string.replace("\n", "").replace("\r", "")
         return Text(line_string, end="")
 
-    def __getitem__(self, line_index: SupportsIndex | slice) -> str | list[str]:
+    def __getitem__(self, line_index: int | slice) -> str | list[str]:
         """Return the content of a line as a string, excluding newline characters.
 
         Args:

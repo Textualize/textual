@@ -62,6 +62,7 @@ types-setuptools = "^67.2.0.1"
 textual-dev = "^1.1.0"
 pytest-asyncio = "*"
 pytest-textual-snapshot = "0.2.0"  # TODO: pinned while while we resolve issue #3042
+types-tree-sitter = "^0.20.1.4"
 
 [tool.black]
 includes = "src"

@@ -504,7 +504,7 @@ TextArea > .text-area--width-guide {
         )
         return gutter_width
 
-    def _on_mouse_down(self, event: events.MouseDown) -> None:
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
         """Update the cursor position, and begin a selection using the mouse."""
         target = self.get_target_document_location(event)
         self.selection = Selection.cursor(target)
@@ -513,20 +513,20 @@ TextArea > .text-area--width-guide {
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
 
-    def _on_mouse_move(self, event: events.MouseMove) -> None:
+    async def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
         if self._selecting:
             target = self.get_target_document_location(event)
             selection_start, _ = self.selection
             self.selection = Selection(selection_start, target)
 
-    def _on_mouse_up(self, event: events.MouseUp) -> None:
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
         """Finalise the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
 
-    def _on_paste(self, event: events.Paste) -> None:
+    async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
         text = event.text
         if text:
@@ -649,7 +649,7 @@ TextArea > .text-area--width-guide {
         clamp_visitable = self.clamp_visitable
         start, end = self.selection
         current_row, current_column = end
-        target = clamp_visitable(Location(current_row + rows, current_column + columns))
+        target = clamp_visitable((current_row + rows, current_column + columns))
         self.move_cursor(target, select, center, record_width)
 
     @property
@@ -1165,9 +1165,7 @@ class Edit:
     """The end location of the insert"""
     maintain_selection_offset: bool
     """If True, the selection will maintain its offset to the replacement range."""
-    _replace_result: EditResult | None = field(init=False, default=None)
-    """Contains data relating to the replace operation."""
-    _updated_selection: Location | None = field(init=False, default=None)
+    _updated_selection: Selection | None = field(init=False, default=None)
     """Where the selection should move to after the replace happens."""
 
     def do(self, text_area: TextArea) -> EditResult:
@@ -1198,7 +1196,6 @@ class Edit:
         selection_end_row, selection_end_column = selection_end
 
         replace_result = text_area.document.replace_range(edit_from, edit_to, text)
-        self._replace_result = replace_result
 
         new_edit_to_row, new_edit_to_column = replace_result.end_location
 
@@ -1237,6 +1234,7 @@ class Edit:
         Args:
             text_area: The TextArea to undo the insert operation on.
         """
+        raise NotImplementedError()
 
     def after(self, text_area: TextArea) -> None:
         """Possibly update the cursor location after the widget has been refreshed.
@@ -1244,7 +1242,8 @@ class Edit:
         Args:
             text_area: The TextArea this operation was performed on.
         """
-        text_area.selection = self._updated_selection
+        if self._updated_selection is not None:
+            text_area.selection = self._updated_selection
 
 
 @runtime_checkable

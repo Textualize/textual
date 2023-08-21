@@ -1048,6 +1048,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "types-tree-sitter"
+version = "0.20.1.4"
+description = "Typing stubs for tree-sitter"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "typing-extensions"
 version = "4.7.1"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -1145,7 +1153,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "6310dfc187fa28cd8b2b686f02eb0167c1d5cc3c31a7d5445410b546c3f853d3"
+content-hash = "1bdcf7f05a06c9d172aa29ac9b7ee47213a00d101ff3ac1bf61451bebabfe5b9"
 
 [metadata.files]
 aiohttp = [
@@ -2256,6 +2264,10 @@ typed-ast = [
 types-setuptools = [
     {file = "types-setuptools-67.8.0.0.tar.gz", hash = "sha256:95c9ed61871d6c0e258433373a4e1753c0a7c3627a46f4d4058c7b5a08ab844f"},
     {file = "types_setuptools-67.8.0.0-py3-none-any.whl", hash = "sha256:6df73340d96b238a4188b7b7668814b37e8018168aef1eef94a3b1872e3f60ff"},
+]
+types-tree-sitter = [
+    {file = "types-tree-sitter-0.20.1.4.tar.gz", hash = "sha256:673730dcc2efe09be6cdbd9795cdc5243c164262b7a539e6d7e7980fd06c0907"},
+    {file = "types_tree_sitter-0.20.1.4-py3-none-any.whl", hash = "sha256:9a38efd62a3cf66f9751c612588b7dbc72340fd6c81fd089c8a0f5877f86b58c"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.7.1-py3-none-any.whl", hash = "sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36"},
