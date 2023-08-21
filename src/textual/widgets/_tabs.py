@@ -115,25 +115,32 @@ class Tab(Static):
     """
 
     @dataclass
-    class Clicked(Message):
+    class TabMessage(Message):
+        """Tab-related messages.
+
+        These are mostly intended for internal use when interacting with `Tabs`.
+        """
+
+        tab: Tab
+        """The tab that is the object of this message."""
+
+        @property
+        def control(self) -> Tab:
+            """The tab that is the object of this message.
+
+            This is an alias for the attribute `tab` and is used by the
+            [`on`][textual.on] decorator.
+            """
+            return self.tab
+
+    class Clicked(TabMessage):
         """A tab was clicked."""
 
-        tab: Tab
-        """The tab that was clicked."""
-
-    @dataclass
-    class Disabled(Message):
+    class Disabled(TabMessage):
         """A tab was disabled."""
 
-        tab: Tab
-        """The tab that was disabled."""
-
-    @dataclass
-    class Enabled(Message):
+    class Enabled(TabMessage):
         """A tab was enabled."""
-
-        tab: Tab
-        """The tab that was enabled."""
 
     def __init__(
         self,
