@@ -125,14 +125,14 @@ class CommandSource(ABC):
         return self.__match_style
 
     def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
-        """Create a fuzzy matcher for the given user input.
+        """Create a [fuzzy matcher][textual._fuzzy.Matcher] for the given user input.
 
         Args:
             user_input: The text that the user has input.
             case_sensitive: Should match be case sensitive?
 
         Returns:
-            A fuzzy matcher object for matching against candidate hits.
+            A [fuzzy matcher][textual._fuzzy.Matcher] object for matching against candidate hits.
         """
         return Matcher(
             user_input, match_style=self.match_style, case_sensitive=case_sensitive
