@@ -21,11 +21,12 @@ Button {
 
 #numbers {
     column-span: 4;
-    content-align: right middle;
     padding: 0 1;
     height: 100%;
     background: $primary-lighten-2;
     color: $text;
+    content-align: center middle;
+    text-align: right;
 }
 
 #number-0 {

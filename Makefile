@@ -28,6 +28,10 @@ format-check:
 clean-screenshot-cache:
 	rm -rf .screenshot_cache
 
+.PHONY: faq
+faq:
+	$(run) faqtory build
+
 .PHONY: docs-offline-nav
 docs-offline-nav:
 	echo "INHERIT: mkdocs-offline.yml" > mkdocs-nav-offline.yml
@@ -66,10 +70,6 @@ clean-offline-docs:
 docs-deploy: clean-screenshot-cache docs-online-nav
 	$(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
 	rm -f mkdocs-nav-online.yml
-
-.PHONY: faq
-faq:
-	$(run) faqtory build
 
 .PHONY: build
 build: docs-build-offline

@@ -183,7 +183,7 @@ class Screen(Generic[ScreenResultType], Widget):
         from .app import ScreenStackError
 
         try:
-            return self.app.screen is self
+            return self.app.screen is self or self in self.app._background_screens
         except ScreenStackError:
             return False
 
@@ -561,6 +561,21 @@ class Screen(Generic[ScreenResultType], Widget):
 
         await self._invoke_and_clear_callbacks()
 
+    def _compositor_refresh(self) -> None:
+        """Perform a compositor refresh."""
+        if self is self.app.screen:
+            # Top screen
+            update = self._compositor.render_update(
+                screen_stack=self.app._background_screens
+            )
+            self.app._display(self, update)
+            self._dirty_widgets.clear()
+        elif self in self.app._background_screens and self._compositor._dirty_regions:
+            # Background screen
+            self.app.screen.refresh(*self._compositor._dirty_regions)
+            self._compositor._dirty_regions.clear()
+            self._dirty_widgets.clear()
+
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         self._update_timer.pause()
@@ -581,11 +596,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
             if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
-                update = self._compositor.render_update(
-                    screen_stack=self.app._background_screens
-                )
-                self.app._display(self, update)
-                self._dirty_widgets.clear()
+                self._compositor_refresh()
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)
@@ -702,10 +713,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self.app._handle_exception(error)
             return
         if self.is_current:
-            display_update = self._compositor.render_update(
-                full=full, screen_stack=self.app._background_screens
-            )
-            self.app._display(self, display_update)
+            self._compositor_refresh()
 
         if not self.app._dom_ready:
             self.app.post_message(events.Ready())
@@ -817,22 +825,13 @@ class Screen(Generic[ScreenResultType], Widget):
 
         else:
             self.app._set_mouse_over(widget)
-            mouse_event = events.MouseMove(
-                event.x - region.x,
-                event.y - region.y,
-                event.delta_x,
-                event.delta_y,
-                event.button,
-                event.shift,
-                event.meta,
-                event.ctrl,
-                screen_x=event.screen_x,
-                screen_y=event.screen_y,
-                style=event.style,
-            )
             widget.hover_style = event.style
-            mouse_event._set_forwarded()
-            widget._forward_event(mouse_event)
+            if widget is self:
+                self.post_message(event)
+            else:
+                mouse_event = self._translate_mouse_move_event(event, region)
+                mouse_event._set_forwarded()
+                widget._forward_event(mouse_event)
 
             if not self.app._disable_tooltips:
                 try:
@@ -840,8 +839,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 except NoMatches:
                     pass
                 else:
-                    tooltip.styles.offset = event.screen_offset
-
                     if self._tooltip_widget != widget or not tooltip.display:
                         self._tooltip_widget = widget
                         if self._tooltip_timer is not None:
@@ -854,6 +851,28 @@ class Screen(Generic[ScreenResultType], Widget):
                         )
                     else:
                         tooltip.display = False
+
+    @staticmethod
+    def _translate_mouse_move_event(
+        event: events.MouseMove, region: Region
+    ) -> events.MouseMove:
+        """
+        Returns a mouse move event whose relative coordinates are translated to
+        the origin of the specified region.
+        """
+        return events.MouseMove(
+            event.x - region.x,
+            event.y - region.y,
+            event.delta_x,
+            event.delta_y,
+            event.button,
+            event.shift,
+            event.meta,
+            event.ctrl,
+            screen_x=event.screen_x,
+            screen_y=event.screen_y,
+            style=event.style,
+        )
 
     def _forward_event(self, event: events.Event) -> None:
         if event.is_forwarded:

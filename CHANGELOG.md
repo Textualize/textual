@@ -7,9 +7,47 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Methods `TabbedContent.disable_tab` and `TabbedContent.enable_tab` https://github.com/Textualize/textual/pull/3112
+- Methods `Tabs.disable` and `Tabs.enable` https://github.com/Textualize/textual/pull/3112
+- Messages `Tab.Disabled`, `Tab.Enabled`, `Tabs.TabDisabled` and `Tabs.Enabled` https://github.com/Textualize/textual/pull/3112
+- Methods `TabbedContent.hide_tab` and `TabbedContent.show_tab` https://github.com/Textualize/textual/pull/3112
+- Methods `Tabs.hide` and `Tabs.show` https://github.com/Textualize/textual/pull/3112
+- Messages `Tabs.TabHidden` and `Tabs.TabShown` https://github.com/Textualize/textual/pull/3112
+- Added `ListView.extend` method to append multiple items https://github.com/Textualize/textual/pull/3012
+
+### Changed
+
+- grid-columns and grid-rows now accept an `auto` token to detect the optimal size https://github.com/Textualize/textual/pull/3107
+- Add `min-height: 1;` to `LoadingIndicator`'s `DEFAULT_CSS`.
+
 ### Fixed
 
+- Fixed auto height container with default grid-rows https://github.com/Textualize/textual/issues/1597
+- Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
 - Fixed a bug with key displays when used in conjunction https://github.com/Textualize/textual/issues/3035
+
+## [0.33.0] - 2023-08-15
+
+### Fixed
+
+- Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
+- Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
+- Fixed background refresh https://github.com/Textualize/textual/issues/3055
+- Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
+- `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+
+### Added
+
+- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603
+- Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
+- Added widgets.Digit https://github.com/Textualize/textual/pull/3073
+- Added `BORDER_TITLE` and `BORDER_SUBTITLE` classvars to Widget https://github.com/Textualize/textual/pull/3097
+
+### Changed
+
+- DescendantBlur and DescendantFocus can now be used with @on decorator
 
 ## [0.32.0] - 2023-08-03
 
@@ -1158,6 +1196,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.33.0]: https://github.com/Textualize/textual/compare/v0.32.0...v0.33.0
+[0.32.0]: https://github.com/Textualize/textual/compare/v0.31.0...v0.32.0
 [0.31.0]: https://github.com/Textualize/textual/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/Textualize/textual/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/Textualize/textual/compare/v0.28.1...v0.29.0

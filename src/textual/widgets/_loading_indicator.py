@@ -18,6 +18,7 @@ class LoadingIndicator(Widget):
     LoadingIndicator {
         width: 100%;
         height: 100%;
+        min-height: 1;
         content-align: center middle;
         color: $accent;
     }
@@ -30,7 +31,7 @@ class LoadingIndicator(Widget):
     def render(self) -> RenderableType:
         elapsed = time() - self._start_time
         speed = 0.8
-        dot = "\u25CF"
+        dot = "\u25cf"
         _, _, background, color = self.colors
 
         gradient = Gradient(
