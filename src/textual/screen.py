@@ -135,7 +135,7 @@ class Screen(Generic[ScreenResultType], Widget):
     """An integer that updates when the screen is resumed."""
 
     COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = set()
-    """The command sources for the screen."""
+    """The [command sources](/api/command_palette/) for the screen."""
 
     BINDINGS = [
         Binding("tab", "focus_next", "Focus Next", show=False),

@@ -320,7 +320,7 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
-    """The command sources for the default screen.
+    """The [command sources](/api/command_palette/) for the default screen.
 
     This is the collection of [command
     sources][textual.command_palette.CommandSource] that provide matched
