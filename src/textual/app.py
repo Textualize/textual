@@ -319,6 +319,9 @@ class App(Generic[ReturnType], DOMNode):
     To update the sub-title while the app is running, you can set the [sub_title][textual.app.App.sub_title] attribute.
     """
 
+    ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
+    """Should the [command palette][textual.command_palette.CommandPalette] be enabled for the application?"""
+
     COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
     """The [command sources](/api/command_palette/) for the default screen.
 
@@ -445,7 +448,7 @@ class App(Generic[ReturnType], DOMNode):
         The new value is always converted to string.
         """
 
-        self.use_command_palette: bool = True
+        self.use_command_palette: bool = self.ENABLE_COMMAND_PALETTE
         """A flag to say if the application should use the command palette.
 
         If set to `False` any call to
