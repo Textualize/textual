@@ -56,6 +56,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added App.begin_capture_print, App.end_capture_print, Widget.begin_capture_print, Widget.end_capture_print https://github.com/Textualize/textual/issues/2952
 - Added the ability to run async methods as thread workers https://github.com/Textualize/textual/pull/2938
+- Added `ListView.extend` method to append multiple items https://github.com/Textualize/textual/pull/3012
 - Added `App.stop_animation` https://github.com/Textualize/textual/issues/2786
 - Added `Widget.stop_animation` https://github.com/Textualize/textual/issues/2786
 
