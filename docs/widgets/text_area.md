@@ -61,6 +61,8 @@ The `TextArea` widget provides the following component classes:
 
 The character(s) inserted when you press tab is controlled by setting the `indent_type` attribute to either `tabs` or `spaces`.
 
+If `indent_type == "spaces"`, pressing ++tab++ will insert `indent_width` spaces.
+
 ### Python 3.7 is not supported
 
 Syntax highlighting is not available on Python 3.7. Highlighting will fail _silently_, so end-users who are running Python 3.7 can still edit text without highlighting, even if a `language` and `syntax_theme` is set.
