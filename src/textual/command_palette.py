@@ -73,11 +73,15 @@ class CommandSourceHit(NamedTuple):
     command_help: str | None = None
     """Optional help text for the command."""
 
-    def __lt__(self, other: CommandSourceHit) -> bool:
-        return self.match_value < other.match_value
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, CommandSourceHit):
+            return self.match_value < other.match_value
+        return NotImplemented
 
-    def __eq__(self, other: CommandSourceHit) -> bool:
-        return self.match_value == other.match_value
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, CommandSourceHit):
+            return self.match_value == other.match_value
+        return NotImplemented
 
 
 CommandMatches: TypeAlias = AsyncIterator[CommandSourceHit]
@@ -195,11 +199,15 @@ class Command(Option):
         self.command = command
         """The details of the command associated with the option."""
 
-    def __lt__(self, other: Command) -> bool:
-        return self.command < other.command
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, Command):
+            return self.command < other.command
+        return NotImplemented
 
-    def __eq__(self, other: Command) -> bool:
-        return self.command == other.command
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Command):
+            return self.command == other.command
+        return NotImplemented
 
 
 class CommandList(OptionList, can_focus=False):
