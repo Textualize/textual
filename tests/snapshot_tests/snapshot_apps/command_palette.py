@@ -7,7 +7,7 @@ class TestSource(CommandSource):
         pass
 
     async def hunt_for(self, user_input: str) -> CommandMatches:
-        matcher = self.matcher.match(user_input)
+        matcher = self.matcher(user_input)
         for n in range(10):
             command = f"This is a test of this code {n}"
             yield CommandSourceHit(
@@ -16,9 +16,10 @@ class TestSource(CommandSource):
 
 class CommandPaletteApp(App[None]):
 
+    COMMAND_SOURCES = {TestSource}
+
     def on_mount(self) -> None:
         self.action_command_palette()
 
 if __name__ == "__main__":
     CommandPaletteApp().run()
-
