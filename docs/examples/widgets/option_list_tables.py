@@ -22,7 +22,7 @@ COLONIES: tuple[tuple[str, str, str, str], ...] = (
 
 
 class OptionListApp(App[None]):
-    CSS_PATH = "option_list.css"
+    CSS_PATH = "option_list.tcss"
 
     @staticmethod
     def colony(name: str, god: str, population: str, capital: str) -> Table:

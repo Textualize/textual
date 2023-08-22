@@ -33,10 +33,10 @@ This example shows three labels, each with a different border subtitle alignment
     --8<-- "docs/examples/styles/border_subtitle_align.py"
     ```
 
-=== "border_subtitle_align.css"
+=== "border_subtitle_align.tcss"
 
     ```sass
-    --8<-- "docs/examples/styles/border_subtitle_align.css"
+    --8<-- "docs/examples/styles/border_subtitle_align.tcss"
     ```
 
 

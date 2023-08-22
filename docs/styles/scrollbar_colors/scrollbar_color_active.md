@@ -27,10 +27,10 @@ The `scrollbar-color-active` style sets the color of the scrollbar when the thum
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
     ```sass hl_lines="6"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS

@@ -4,7 +4,7 @@ from textual.widgets import Label, RadioButton, RadioSet
 
 
 class RadioSetChangedApp(App[None]):
-    CSS_PATH = "radio_set_changed.css"
+    CSS_PATH = "radio_set_changed.tcss"
 
     def compose(self) -> ComposeResult:
         with VerticalScroll():

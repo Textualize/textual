@@ -11,5 +11,5 @@ Label {
 
 .panel {
     scrollbar-size: 10 4;
-    padding: 1 2;        
-}  
+    padding: 1 2;
+}

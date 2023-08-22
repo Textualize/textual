@@ -4,7 +4,7 @@ from textual.widgets import Placeholder
 
 
 class PlaceholderApp(App):
-    CSS_PATH = "placeholder.css"
+    CSS_PATH = "placeholder.tcss"
 
     def compose(self) -> ComposeResult:
         yield VerticalScroll(

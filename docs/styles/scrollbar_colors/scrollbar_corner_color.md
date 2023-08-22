@@ -25,10 +25,10 @@ The example below sets the scrollbar corner (bottom-right corner of the screen) 
     --8<-- "docs/examples/styles/scrollbar_corner_color.py"
     ```
 
-=== "scrollbar_corner_color.css"
+=== "scrollbar_corner_color.tcss"
 
     ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/scrollbar_corner_color.css"
+    --8<-- "docs/examples/styles/scrollbar_corner_color.tcss"
     ```
 
 ## CSS

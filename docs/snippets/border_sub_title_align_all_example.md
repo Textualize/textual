@@ -24,10 +24,10 @@ Open the code tabs to see the details of the code examples.
     10. The title and subtitle are aligned on the right and very long, so they get truncated and we can still see the leftmost character of the border edge.
     11. An auxiliary function to create labels with border title and subtitle.
 
-=== "border_sub_title_align_all.css"
+=== "border_sub_title_align_all.tcss"
 
     ```sass hl_lines="12 16 30 34 41 46"
-    --8<-- "docs/examples/styles/border_sub_title_align_all.css"
+    --8<-- "docs/examples/styles/border_sub_title_align_all.tcss"
     ```
 
     1. The default alignment for the title is `left` and the default alignment for the subtitle is `right`.

@@ -10,7 +10,7 @@ I will permit it to pass over me and through me.""".splitlines()
 
 
 class SelectApp(App):
-    CSS_PATH = "select.css"
+    CSS_PATH = "select.tcss"
 
     def compose(self) -> ComposeResult:
         yield Header()

@@ -68,7 +68,7 @@ class BorderSubTitleAlignAll(App[None]):
             )
 
 
-app = BorderSubTitleAlignAll(css_path="border_sub_title_align_all.css")
+app = BorderSubTitleAlignAll(css_path="border_sub_title_align_all.tcss")
 
 if __name__ == "__main__":
     app.run()

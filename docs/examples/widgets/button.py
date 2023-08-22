@@ -4,7 +4,7 @@ from textual.widgets import Button, Static
 
 
 class ButtonsApp(App[str]):
-    CSS_PATH = "button.css"
+    CSS_PATH = "button.tcss"
 
     def compose(self) -> ComposeResult:
         yield Horizontal(

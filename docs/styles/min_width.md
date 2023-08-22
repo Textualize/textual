@@ -27,10 +27,10 @@ Then, we set `min-width` individually on each placeholder.
     --8<-- "docs/examples/styles/min_width.py"
     ```
 
-=== "min_width.css"
+=== "min_width.tcss"
 
     ```sass hl_lines="13 17 21 25"
-    --8<-- "docs/examples/styles/min_width.css"
+    --8<-- "docs/examples/styles/min_width.tcss"
     ```
 
     1. This won't affect the placeholder because its width is larger than the minimum width.

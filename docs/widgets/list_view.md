@@ -23,10 +23,10 @@ The example below shows an app with a simple `ListView`.
     --8<-- "docs/examples/widgets/list_view.py"
     ```
 
-=== "list_view.css"
+=== "list_view.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/list_view.css"
+    --8<-- "docs/examples/widgets/list_view.tcss"
     ```
 
 ## Reactive Attributes

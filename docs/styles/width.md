@@ -28,10 +28,10 @@ This example adds a widget with 50% width of the screen.
     --8<-- "docs/examples/styles/width.py"
     ```
 
-=== "width.css"
+=== "width.tcss"
 
     ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/width.css"
+    --8<-- "docs/examples/styles/width.tcss"
     ```
 
 ### All width formats
@@ -49,10 +49,10 @@ This example adds a widget with 50% width of the screen.
 
     1. The id of the placeholder identifies which unit will be used to set the width of the widget.
 
-=== "width_comparison.css"
+=== "width_comparison.tcss"
 
     ```sass hl_lines="2 5 8 11 14 17 20 23 26"
-    --8<-- "docs/examples/styles/width_comparison.css"
+    --8<-- "docs/examples/styles/width_comparison.tcss"
     ```
 
     1. This sets the width to 9 columns.

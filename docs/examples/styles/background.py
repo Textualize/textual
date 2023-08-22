@@ -9,4 +9,4 @@ class BackgroundApp(App):
         yield Label("Widget 3", id="static3")
 
 
-app = BackgroundApp(css_path="background.css")
+app = BackgroundApp(css_path="background.tcss")
