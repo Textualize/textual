@@ -134,3 +134,31 @@ async def test_delete_right_end_of_line():
         await pilot.press("delete")
         assert text_area.selection == Selection.cursor((0, 5))
         assert text_area.text == "helloworld!"
+
+
+@pytest.mark.parametrize(
+    "selection,expected_result",
+    [
+        # Cursors
+        (Selection.cursor((0, 0)), "0123456789"),
+        (Selection.cursor((0, 5)), "56789"),
+        (Selection.cursor((0, 9)), "9"),
+        (Selection.cursor((0, 10)), ""),
+        # Selections
+        (Selection((0, 0), (0, 9)), "9"),
+        (Selection((0, 0), (0, 10)), ""),
+        (Selection((0, 2), (0, 5)), "56789"),
+        (Selection((0, 5), (0, 2)), "23456789"),
+    ],
+)
+async def test_delete_to_start_of_line(selection, expected_result):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+u")
+
+        assert text_area.selection == Selection.cursor((0, 0))
+        assert text_area.text == expected_result
