@@ -125,6 +125,51 @@ If you run this now, the content will be centered within the widget:
 ```{.textual path="docs/examples/how-to/center07.py"}
 ```
 
+## Aligning multiple widgets
+
+It's just as easy to align multiple widgets as it is a single widget.
+Applying `align: center middle;` to the parent widget (screen or other container) will align all its children.
+
+Let's create an example with two widgets.
+The following code adds two widgets with auto dimensions:
+
+```python
+--8<-- "docs/examples/how-to/center08.py"
+```
+
+This produces the following output:
+
+```{.textual path="docs/examples/how-to/center08.py"}
+```
+
+We can center both those widgets by applying the `align` rule as before:
+
+```python hl_lines="9-11"
+--8<-- "docs/examples/how-to/center09.py"
+```
+
+Here's the output:
+
+```{.textual path="docs/examples/how-to/center09.py"}
+```
+
+Note how the widgets are aligned as if they are a single group.
+In other words, their position relative to each other didn't change, just their position relative to the screen.
+
+If you do want to center each widget independently, you can place each widget inside its own container, and set `align` for those containers.
+Textual has a builtin [`Center`][textual.containers.Center] container for just this purpose.
+
+Let's wrap our two widgets in a `Center` container:
+
+```python hl_lines="2 22 24"
+--8<-- "docs/examples/how-to/center10.py"
+```
+
+If you run this, you will see that the widgets are centered relative to each other, not just the screen:
+
+```{.textual path="docs/examples/how-to/center10.py"}
+```
+
 ## Summary
 
 Keep the following in mind when you want to center content in Textual:
@@ -133,8 +178,9 @@ Keep the following in mind when you want to center content in Textual:
 - The `align` rule is applied to the *parent* of the widget you want to center (i.e. the widget's container).
 - The `text-align` rule aligns text on a line by line basis.
 - The `content-align` rule aligns content *within* a widget.
+- Use the [`Center`][textual.containers.Center] container if you want to align multiple widgets relative to each other.
 - Add a border if the alignment isn't working as you would expect.
 
 ---
 
-If you need further help, we are here to [help](/help/).
+If you need further help, we are here to [help](../help.md).

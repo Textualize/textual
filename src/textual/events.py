@@ -13,6 +13,7 @@ textual console -v
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -435,10 +436,10 @@ class MouseEvent(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, bubble=False, verbose=True):
+class MouseMove(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse cursor moves.
 
-    - [ ] Bubbles
+    - [X] Bubbles
     - [X] Verbose
     """
 
@@ -534,7 +535,7 @@ class Leave(Event, bubble=False, verbose=True):
 class Focus(Event, bubble=False):
     """Sent when a widget is focussed.
 
-    - [X] Bubbles
+    - [ ] Bubbles
     - [ ] Verbose
     """
 
@@ -542,11 +543,12 @@ class Focus(Event, bubble=False):
 class Blur(Event, bubble=False):
     """Sent when a widget is blurred (un-focussed).
 
-    - [X] Bubbles
+    - [ ] Bubbles
     - [ ] Verbose
     """
 
 
+@dataclass
 class DescendantFocus(Event, bubble=True, verbose=True):
     """Sent when a child widget is focussed.
 
@@ -554,13 +556,30 @@ class DescendantFocus(Event, bubble=True, verbose=True):
     - [X] Verbose
     """
 
+    widget: Widget
+    """The widget that was focused."""
 
+    @property
+    def control(self) -> Widget:
+        """The widget that was focused (alias of `widget`)."""
+        return self.widget
+
+
+@dataclass
 class DescendantBlur(Event, bubble=True, verbose=True):
     """Sent when a child widget is blurred.
 
     - [X] Bubbles
     - [X] Verbose
     """
+
+    widget: Widget
+    """The widget that was blurred."""
+
+    @property
+    def control(self) -> Widget:
+        """The widget that was blurred (alias of `widget`)."""
+        return self.widget
 
 
 @rich.repr.auto

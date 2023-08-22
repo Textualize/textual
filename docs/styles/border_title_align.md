@@ -8,7 +8,7 @@ The `border-title-align` style sets the horizontal alignment for the border titl
 border-title-align: <a href="../../css_types/horizontal">&lt;horizontal&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `border-title-align` style takes a [`<horizontal>`](../../css_types/horizontal) that determines where the border title is aligned along the top edge of the border.
+The `border-title-align` style takes a [`<horizontal>`](../css_types/horizontal.md) that determines where the border title is aligned along the top edge of the border.
 This means that the border corners are always visible.
 
 ### Default

@@ -8,7 +8,7 @@ The `<text-style>` CSS type represents styles that can be applied to text.
 
 ## Syntax
 
-A [`<text-style>`](/css_types/text_style) can be the value `none` for plain text with no styling,
+A [`<text-style>`](./text_style.md) can be the value `none` for plain text with no styling,
 or any _space-separated_ combination of the following values:
 
 | Value       | Description                                                     |
