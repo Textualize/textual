@@ -2983,14 +2983,5 @@ class App(Generic[ReturnType], DOMNode):
 
     def action_command_palette(self) -> None:
         """Show the Textual command palette."""
-
-        def run_command(command: CommandPaletteCallable) -> None:
-            """Callback function that runs a chosen command from the command palette.
-
-            Args:
-                command: The command to run.
-            """
-            self.call_next(command)
-
         if self.use_command_palette and not CommandPalette.is_open(self):
-            self.push_screen(CommandPalette(), callback=run_command)
+            self.push_screen(CommandPalette(), callback=self.call_next)
