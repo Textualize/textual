@@ -139,6 +139,85 @@ async def test_delete_right_end_of_line():
 @pytest.mark.parametrize(
     "selection,expected_result",
     [
+        (Selection.cursor((0, 0)), ""),
+        (Selection.cursor((0, 4)), ""),
+        (Selection.cursor((0, 10)), ""),
+        (Selection((0, 2), (0, 4)), ""),
+        (Selection((0, 4), (0, 2)), ""),
+    ],
+)
+async def test_delete_line(selection, expected_result):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+x")
+
+        assert text_area.selection == Selection.cursor((0, 0))
+        assert text_area.text == expected_result
+
+
+@pytest.mark.parametrize(
+    "selection,expected_result",
+    [
+        # Cursors
+        (Selection.cursor((0, 0)), "345\n678\n9\n"),
+        (Selection.cursor((0, 2)), "345\n678\n9\n"),
+        (Selection.cursor((3, 1)), "012\n345\n678\n"),
+        (Selection.cursor((4, 0)), "012\n345\n678\n9\n"),
+        # Selections
+        (Selection((1, 1), (1, 2)), "012\n678\n9\n"),  # non-empty single line selection
+        (Selection((1, 2), (2, 1)), "012\n9\n"),  # delete lines selection touches
+        (Selection((0, 0), (4, 0)), ""),  # delete all lines
+    ],
+)
+async def test_delete_line_multiline_document(selection, expected_result):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("012\n345\n678\n9\n")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+x")
+
+        cursor_row, _ = text_area.cursor_location
+        assert text_area.selection == Selection.cursor((cursor_row, 0))
+        assert text_area.text == expected_result
+
+
+@pytest.mark.parametrize(
+    "selection,expected_result",
+    [
+        # Cursors
+        (Selection.cursor((0, 0)), ""),
+        (Selection.cursor((0, 5)), "01234"),
+        (Selection.cursor((0, 9)), "012345678"),
+        (Selection.cursor((0, 10)), "0123456789"),
+        # Selections
+        (Selection((0, 0), (0, 9)), "012345678"),
+        (Selection((0, 0), (0, 10)), "0123456789"),
+        (Selection((0, 2), (0, 5)), "01234"),
+        (Selection((0, 5), (0, 2)), "01"),
+    ],
+)
+async def test_delete_to_end_of_line(selection, expected_result):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+k")
+
+        assert text_area.selection == Selection.cursor(selection.end)
+        assert text_area.text == expected_result
+
+
+@pytest.mark.parametrize(
+    "selection,expected_result",
+    [
         # Cursors
         (Selection.cursor((0, 0)), "0123456789"),
         (Selection.cursor((0, 5)), "56789"),
