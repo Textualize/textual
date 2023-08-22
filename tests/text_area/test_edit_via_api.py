@@ -48,7 +48,8 @@ async def test_insert_text_start_maintain_selection_offset():
 
 
 async def test_insert_text_start():
-    """If we don't maintain the selection offset, the cursor jumps
+    """The document is correctly updated on inserting at the start.
+    If we don't maintain the selection offset, the cursor jumps
     to the end of the edit and the selection is empty."""
     app = TextAreaApp()
     async with app.run_test():
@@ -57,6 +58,29 @@ async def test_insert_text_start():
         text_area.insert("Hello", location=(0, 0), maintain_selection_offset=False)
         assert text_area.text == "Hello" + TEXT
         assert text_area.selection == Selection.cursor((0, 5))
+
+
+@pytest.mark.parametrize(
+    "cursor_location,insert_location,cursor_destination",
+    [
+        ((0, 3), (0, 2), (0, 4)),  # API insert just before cursor
+        ((0, 3), (0, 3), (0, 4)),  # API insert at cursor location
+        ((0, 3), (0, 4), (0, 3)),  # API insert just after cursor
+        ((0, 3), (0, 5), (0, 3)),  # API insert just after cursor
+    ],
+)
+async def test_insert_character_near_cursor_maintain_selection_offset(
+    cursor_location,
+    insert_location,
+    cursor_destination,
+):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("012345")
+        text_area.move_cursor(cursor_location)
+        text_area.insert("X", location=insert_location)
+        assert text_area.selection == Selection.cursor(cursor_destination)
 
 
 async def test_insert_newlines_start():
@@ -454,4 +478,5 @@ async def test_delete_fully_within_selection():
             replaced_text="45",
             end_location=(0, 4),
         )
-        assert text_area.selected_text == "01236"
+        # We deleted 45, but the other characters are still available
+        assert text_area.selected_text == "236"
