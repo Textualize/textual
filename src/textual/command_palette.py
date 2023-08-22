@@ -24,7 +24,7 @@ from .reactive import var
 from .screen import ModalScreen, Screen
 from .strip import Strip
 from .widget import Widget
-from .widgets import Button, Input, Label, LoadingIndicator, OptionList
+from .widgets import Button, Input, LoadingIndicator, OptionList, Static
 from .widgets.option_list import Option
 from .worker import get_current_worker
 
@@ -271,6 +271,25 @@ class CommandList(OptionList, can_focus=False):
         return Strip([Segment(" ", style=next(iter(prompt)).style), *prompt])
 
 
+class SearchIcon(Static, inherit_css=False):
+    """Widget for displaying a search icon before the command input."""
+
+    DEFAULT_CSS = """
+    SearchIcon {
+        content-align: center middle;
+        width: 4;
+        height: 3;
+    }
+    """
+
+    icon: var[Text] = var(Text.from_markup(":magnifying_glass_tilted_right:"))
+    """The icon to display."""
+
+    def render(self) -> RenderableType:
+        """Render the icon."""
+        return self.icon
+
+
 class CommandInput(Input):
     """The command palette input control."""
 
@@ -441,7 +460,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """
         with Vertical():
             with Horizontal(id="--input"):
-                yield Label(Text.from_markup(":magnifying_glass_tilted_right:"))
+                yield SearchIcon()
                 yield CommandInput(placeholder="Search...")
                 if not self.run_on_select:
                     yield Button("\u25b6")
