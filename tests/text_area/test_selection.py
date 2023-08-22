@@ -209,25 +209,27 @@ async def test_cursor_selection_down_when_cursor_on_last_line():
         assert text_area.selection == Selection((1, 2), (1, 5))
 
 
-async def test_cursor_to_line_end():
+@pytest.mark.parametrize("key", ["end", "ctrl+e"])
+async def test_cursor_to_line_end(key):
     """You can use the keyboard to jump the cursor to the end of the current line."""
     app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.selection = Selection.cursor((2, 2))
-        await pilot.press("end")
+        await pilot.press(key)
         eol_index = len(TEXT.splitlines()[2])
         assert text_area.cursor_location == (2, eol_index)
         assert text_area.selection.is_empty
 
 
-async def test_cursor_to_line_home():
+@pytest.mark.parametrize("key", ["home", "ctrl+a"])
+async def test_cursor_to_line_home(key):
     """You can use the keyboard to jump the cursor to the start of the current line."""
     app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.selection = Selection.cursor((2, 2))
-        await pilot.press("home")
+        await pilot.press(key)
         assert text_area.cursor_location == (2, 0)
         assert text_area.selection.is_empty
 
