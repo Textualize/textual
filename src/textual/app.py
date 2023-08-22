@@ -323,10 +323,10 @@ class App(Generic[ReturnType], DOMNode):
     """Should the [command palette][textual.command_palette.CommandPalette] be enabled for the application?"""
 
     COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
-    """The [command sources](/api/command_palette/) for the default screen.
+    """The [command sources](/api/command_palette/) for the application.
 
-    This is the collection of [command
-    sources][textual.command_palette.CommandSource] that provide matched
+    This is the collection of [command sources][textual.command_palette.CommandSource]
+    that provide matched
     commands to the [command palette][textual.command_palette.CommandPalette].
 
     The default Textual command palette source is
