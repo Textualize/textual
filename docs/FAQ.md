@@ -8,12 +8,14 @@ hide:
 
 # Frequently Asked Questions
 
+<a name="does-textual-support-images"></a>
 ## Does Textual support images?
 
 Textual doesn't have built-in support for images yet, but it is on the [Roadmap](https://textual.textualize.io/roadmap/).
 
 See also the [rich-pixels](https://github.com/darrenburns/rich-pixels) project for a Rich renderable for images that works with Textual.
 
+<a name="how-can-i-fix-importerror-cannot-import-name-composeresult-from-textualapp-"></a>
 ## How can I fix ImportError cannot import name ComposeResult from textual.app ?
 
 You likely have an older version of Textual. You can install the latest version by adding the `-U` switch which will force pip to upgrade.
@@ -24,6 +26,7 @@ The following should do it:
 pip install textual-dev -U
 ```
 
+<a name="how-can-i-select-and-copy-text-in-a-textual-app"></a>
 ## How can I select and copy text in a Textual app?
 
 Running a Textual app puts your terminal in to *application mode* which disables clicking and dragging to select text.
@@ -36,6 +39,7 @@ may expect from the command line. The exact modifier key depends on the terminal
 
 Refer to the documentation for your terminal emulator, if it is not listed above.
 
+<a name="how-can-i-set-a-translucent-app-background"></a>
 ## How can I set a translucent app background?
 
 Some terminal emulators have a translucent background feature which allows the desktop underneath to be partially visible.
@@ -45,6 +49,7 @@ Textual uses 16.7 million colors where available which enables consistent colors
 
 For more information on ANSI colors in Textual, see [Why no Ansi Themes?](#why-doesnt-textual-support-ansi-themes).
 
+<a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?
 
 To center a widget within a container use
@@ -134,6 +139,7 @@ if __name__ == "__main__":
     ButtonApp().run()
 ```
 
+<a name="how-do-i-fix-workerdeclarationerror"></a>
 ## How do I fix WorkerDeclarationError?
 
 Textual version 0.31.0 requires that you set `thread=True` on the `@work` decorator if you want to run a threaded worker.
@@ -156,6 +162,7 @@ async def run_in_background():
 
 This change was made because it was too easy to accidentally create a threaded worker, which may produce unexpected results.
 
+<a name="how-do-i-pass-arguments-to-an-app"></a>
 ## How do I pass arguments to an app?
 
 When creating your `App` class, override `__init__` as you would when
@@ -189,6 +196,7 @@ Greetings(to_greet="davep").run()
 Greetings("Well hello", "there").run()
 ```
 
+<a name="no-widget-called-textlog"></a>
 ## No widget called TextLog
 
 The `TextLog` widget was renamed to `RichLog` in Textual 0.32.0.
@@ -201,6 +209,7 @@ Here's how you should import RichLog:
 from textual.widgets import RichLog
 ```
 
+<a name="why-do-some-key-combinations-never-make-it-to-my-app"></a>
 ## Why do some key combinations never make it to my app?
 
 Textual can only ever support key combinations that are passed on by your
@@ -230,6 +239,7 @@ If you need to test what [key
 combinations](https://textual.textualize.io/guide/input/#keyboard-input)
 work in different environments you can try them out with `textual keys`.
 
+<a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
 
 You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particuarily when it comes to box characters.
@@ -265,6 +275,7 @@ We recommend any of the following terminals:
 
 <img width="1002" alt="Screenshot 2023-06-19 at 11 00 25" src="https://github.com/Textualize/textual/assets/554369/9a8cde57-5121-49a7-a2e0-5f6fc871b7a6">
 
+<a name="why-doesn't-textual-support-ansi-themes"></a>
 ## Why doesn't Textual support ANSI themes?
 
 Textual will not generate escape sequences for the 16 themeable *ANSI* colors.
@@ -278,6 +289,7 @@ Textual has a design system which guarantees apps will be readable on all platfo
 
 There is currently a light and dark version of the design system, but more are planned. It will also be possible for users to customize the source colors on a per-app or per-system basis. This means that in the future you will be able to modify the core colors to blend in with your chosen terminal theme.
 
+<a name="why-doesn't-the-`datatable`-scroll-programmatically"></a>
 ## Why doesn't the `DataTable` scroll programmatically?
 
 If scrolling in your `DataTable` is _apparently_ broken, it may be because your `DataTable` is using the default value of `height: auto`.
