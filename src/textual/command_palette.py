@@ -23,6 +23,7 @@ from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
 from .strip import Strip
+from .timer import Timer
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
 from .widgets.option_list import Option
@@ -425,6 +426,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         super().__init__(id=self._PALETTE_ID)
         self._selected_command: CommandSourceHit | None = None
         """The command that was selected by the user."""
+        self._busy_timer: Timer | None = None
+        """Keeps track of if there's a busy indication timer in effect."""
 
     @staticmethod
     def is_open(app: App) -> bool:
@@ -484,6 +487,22 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     def _on_mount(self, _: Mount) -> None:
         """Capture the calling screen."""
         self._calling_screen = self.app.screen_stack[-2]
+
+    def _stop_busy_countdown(self) -> None:
+        """Stop any busy countdown that's in effect."""
+        if self._busy_timer is not None:
+            self._busy_timer.stop()
+            self._busy_timer = None
+
+    def _start_busy_countdown(self) -> None:
+        """Start a countdown to showing that we're busy searching."""
+        self._stop_busy_countdown()
+
+        def _become_busy() -> None:
+            if self._list_visible:
+                self._show_busy = True
+
+        self._busy_timer = self._busy_timer = self.set_timer(0.5, _become_busy)
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
@@ -546,6 +565,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             for source in self._sources
         ]
 
+        # Set up a delay for showing that we're busy.
+        self._start_busy_countdown()
+
         # Now, while there's some task running...
         while any(not search.done() for search in searches):
             try:
@@ -560,6 +582,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 # There was no timeout, which means that we managed to yield
                 # up that command; we're done with it so let the queue know.
                 commands.task_done()
+
+        # Having finished the main processing loop, we're not busy any more.
+        # Anything left in the queue (see next) will fall out more or less
+        # instantly.
+        self._stop_busy_countdown()
 
         # If all the sources are pretty fast it could be that we've reached
         # this point but the queue isn't empty yet. So here we flush the
@@ -664,7 +691,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         command_list = self.query_one(CommandList)
         command_id = 0
         worker = get_current_worker()
-        self._show_busy = True
+        self._show_busy = False
         async for hit in self._search_for(search_value):
             prompt = hit.match_display
             if hit.command_help:
