@@ -277,9 +277,9 @@ class SearchIcon(Static, inherit_css=False):
 
     DEFAULT_CSS = """
     SearchIcon {
-        content-align: center middle;
-        width: 4;
-        height: 3;
+        margin-left: 1;
+        margin-top: 1;
+        width: 2;
     }
     """
 
