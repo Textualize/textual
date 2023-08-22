@@ -26,6 +26,7 @@ from .strip import Strip
 from .timer import Timer
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
+from .widgets._option_list import Line
 from .widgets.option_list import Option
 from .worker import get_current_worker
 
@@ -223,31 +224,18 @@ class CommandList(OptionList, can_focus=False):
     }
     """
 
-    def _left_gutter_width(self) -> int:
-        """Returns the size of any left gutter that should be taken into account.
-
-        Returns:
-            The width of the left gutter.
-        """
-        return 1
-
-    def render_line(self, y: int) -> Strip:
-        """Render a line in the display.
+    def _get_line_strip(self, line: Line) -> Strip:
+        """Get the line strip for the given line.
 
         Args:
-            y: The line to render.
+            line: The line to get the strip for.
 
         Returns:
-            A [`Strip`][textual.strip.Strip] that is the line to render.
+            The `Strip` for the line.
         """
-        # First off, get the underlying prompt from OptionList.
-        prompt = super().render_line(y)
-        # If it looks like the prompt itself is actually an empty line...
-        if not prompt:
-            # ...get out with that. We don't need to do any more here.
-            return prompt
-        # We got something, put a space at the start.
-        return Strip([Segment(" ", style=next(iter(prompt)).style), *prompt])
+        # Add a space to the start of each line in the command list, to make
+        # things a wee bit easier on the eye.
+        return Strip([Segment(" "), *super()._get_line_strip(line)])
 
 
 class SearchIcon(Static, inherit_css=False):
@@ -673,9 +661,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         async for hit in self._search_for(search_value):
             prompt = hit.match_display
             if hit.command_help:
-                prompt = Group(
-                    hit.match_display, Text(hit.command_help, style=help_style)
-                )
+                prompt = Group(prompt, Text(hit.command_help, style=help_style))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
             if worker.is_cancelled:
                 break
