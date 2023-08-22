@@ -86,6 +86,21 @@ was matched (this appears in the drop-down list of the command palette), a
 reference to a function to run when the user selects that command, and the
 plain text version of the command.
 
+## Using a command source
+
+Once a command source has been created it can be used either on an `App` or
+a `Screen`; this is done with the [`COMMAND_SOURCES` class variable][textual.app.App.COMMAND_SOURCES]. One or more command sources can
+be given. For example:
+
+```python
+class MyApp(App[None]):
+
+    COMMAND_SOURCES = {MyCommandSource, MyOtherCommandSource}
+```
+
+When the command palette is called by the user, those sources will be used
+to populate the list of search hits.
+
 ## API documentation
 
 ::: textual.command_palette
