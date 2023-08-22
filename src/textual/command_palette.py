@@ -156,28 +156,6 @@ class CommandSource(ABC):
         """
         raise NotImplemented
 
-    def run(
-        self, callback: Callable[..., Any], *args: Any, **kwargs: Any
-    ) -> Callable[..., Any]:
-        """Create a runnable callback for use with a command.
-
-        Args:
-            callback: The function or method to call.
-            args: The arguments to use in the call.
-            kwargs: The keyword arguments to use in the call.
-
-        Returns:
-            The callback for the command.
-
-        This method is a convenient wrapper around
-        [`partial`][functools.partial], checking if the passed callback is an
-        async method or not, and then creating the `partial` that will
-        correctly run the code.
-        """
-        if iscoroutinefunction(callback):
-            return partial(self.app.call_next, callback, *args, **kwargs)
-        return partial(callback, *args, **kwargs)
-
 
 @total_ordering
 class Command(Option):

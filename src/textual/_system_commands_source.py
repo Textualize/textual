@@ -6,7 +6,7 @@ actions available via the [command palette][textual.command_palette.CommandPalet
 
 from __future__ import annotations
 
-from typing import Callable, NamedTuple
+from typing import Any, Callable, NamedTuple
 
 from .command_palette import CommandMatches, CommandSource, CommandSourceHit
 
@@ -22,7 +22,7 @@ class SystemCommand(NamedTuple):
 
     This is the string that will be matched."""
 
-    run: Callable[[], None]
+    run: Callable[[], Any]
     """The code to run when the command is selected."""
 
     help: str
@@ -53,22 +53,22 @@ class SystemCommandSource(CommandSource):
         for command in (
             SystemCommand(
                 "Toggle light/dark mode",
-                self.run(self.app.action_toggle_dark),
+                self.app.action_toggle_dark,
                 "Toggle the application between light and dark mode",
             ),
             SystemCommand(
                 "Save a screenshot",
-                self.run(self.app.action_screenshot),
+                self.app.action_screenshot,
                 "Save a SVG file to storage that contains the contents of the current screen",
             ),
             SystemCommand(
                 "Quit the application",
-                self.run(self.app.action_quit),
+                self.app.action_quit,
                 "Quit the application as soon as possible",
             ),
             SystemCommand(
                 "Ring the bell",
-                self.run(self.app.action_bell),
+                self.app.action_bell,
                 "Ring the terminal's 'bell'",
             ),
         ):

@@ -2990,7 +2990,7 @@ class App(Generic[ReturnType], DOMNode):
             Args:
                 command: The command to run.
             """
-            command()
+            self.call_next(command)
 
         if self.use_command_palette and not CommandPalette.is_open(self):
             self.push_screen(CommandPalette(), callback=run_command)

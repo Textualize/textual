@@ -33,6 +33,10 @@ and code to run).
 The command source might look something like this:
 
 ```python
+from functools import partial
+
+# ...
+
 class PythonGlobalSource(CommandSource):
     """A command palette source for globals in an app."""
 
@@ -56,7 +60,7 @@ class PythonGlobalSource(CommandSource):
                     # notification system and get it to show the
                     # docstring for the chosen item, if there is
                     # one.
-                    self.run(
+                    partial(
                         self.app.notify,
                         value.__doc__ or "[i]Undocumented[/i]",
                         title=name
