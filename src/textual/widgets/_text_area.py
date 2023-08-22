@@ -528,9 +528,7 @@ TextArea > .text-area--width-guide {
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
-        text = event.text
-        if text:
-            self.replace(text, *self.selection)
+        self.replace(event.text, *self.selection)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.

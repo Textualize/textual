@@ -1,4 +1,4 @@
-"""Tests editing the document using the API (insert_range etc.)
+"""Tests editing the document using the API (replace etc.)
 
 The tests in this module directly call the edit APIs on the TextArea rather
 than going via bindings.
@@ -58,6 +58,28 @@ async def test_insert_text_start():
         text_area.insert("Hello", location=(0, 0), maintain_selection_offset=False)
         assert text_area.text == "Hello" + TEXT
         assert text_area.selection == Selection.cursor((0, 5))
+
+
+async def test_insert_empty_string():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+
+        text_area.insert("", location=(0, 3))
+
+        assert text_area.text == "0123456789"
+
+
+async def test_replace_empty_string():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+
+        text_area.replace("", start=(0, 3), end=(0, 7))
+
+        assert text_area.text == "012789"
 
 
 @pytest.mark.parametrize(
@@ -194,7 +216,7 @@ I will face my fear.
         assert text_area.text == expected_content
 
 
-async def test_insert_range_multiline_text():
+async def test_replace_multiline_text():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
@@ -220,7 +242,7 @@ I will face my fear.
         assert text_area.text == expected_content
 
 
-async def test_insert_range_multiline_text_maintain_selection():
+async def test_replace_multiline_text_maintain_selection():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
@@ -254,7 +276,7 @@ world!
         assert text_area.text == expected_content
 
 
-async def test_delete_range_within_line():
+async def test_delete_within_line():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
@@ -283,7 +305,7 @@ I will face my fear.
         assert text_area.text == expected_text
 
 
-async def test_delete_range_within_line_dont_maintain_offset():
+async def test_delete_within_line_dont_maintain_offset():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
@@ -298,7 +320,7 @@ I will face my fear.
     assert text_area.text == expected_text
 
 
-async def test_delete_range_multiple_lines_selection_above():
+async def test_delete_multiple_lines_selection_above():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
@@ -334,7 +356,7 @@ I will face my fear.
         )
 
 
-async def test_delete_range_empty_document():
+async def test_delete_empty_document():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
