@@ -222,20 +222,11 @@ class CommandList(OptionList, can_focus=False):
     CommandList > .option-list--option-highlighted {
         background: $accent;
     }
+
+    CommandList > .option-list--option {
+        padding-left: 1;
+    }
     """
-
-    def _get_line_strip(self, line: Line) -> Strip:
-        """Get the line strip for the given line.
-
-        Args:
-            line: The line to get the strip for.
-
-        Returns:
-            The `Strip` for the line.
-        """
-        # Add a space to the start of each line in the command list, to make
-        # things a wee bit easier on the eye.
-        return Strip([Segment(" "), *super()._get_line_strip(line)])
 
 
 class SearchIcon(Static, inherit_css=False):

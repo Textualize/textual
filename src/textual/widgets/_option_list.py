@@ -841,17 +841,6 @@ class OptionList(ScrollView, can_focus=True):
                 f"There is no option with an ID of '{option_id}'"
             ) from None
 
-    def _get_line_strip(self, line: Line) -> Strip:
-        """Get the line strip for the given line.
-
-        Args:
-            line: The line to get the strip for.
-
-        Returns:
-            The `Strip` for the line.
-        """
-        return line.segments
-
     def render_line(self, y: int) -> Strip:
         """Render a single line in the option list.
 
@@ -881,7 +870,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # Knowing which line we're going to be drawing, we can now go pull
         # the relevant segments for the line of that particular prompt.
-        strip = self._get_line_strip(line)
+        strip = line.segments
 
         # If the line we're looking at isn't associated with an option, it
         # will be a separator, so let's exit early with that.
