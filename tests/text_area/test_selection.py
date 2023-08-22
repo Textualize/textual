@@ -162,6 +162,53 @@ async def test_cursor_selection_left_to_previous_line():
         assert text_area.selection == Selection((2, 2), (1, end_of_previous_line))
 
 
+async def test_cursor_selection_up():
+    """When you press shift+up the selection is updated correctly."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.move_cursor((2, 3))
+
+        await pilot.press("shift+up")
+        assert text_area.selection == Selection((2, 3), (1, 3))
+
+
+async def test_cursor_selection_up_when_cursor_on_first_line():
+    """When you press shift+up the on the first line, it selects to the start."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.move_cursor((0, 4))
+
+        await pilot.press("shift+up")
+        assert text_area.selection == Selection((0, 4), (0, 0))
+        await pilot.press("shift+up")
+        assert text_area.selection == Selection((0, 4), (0, 0))
+
+
+async def test_cursor_selection_down():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.move_cursor((2, 5))
+
+        await pilot.press("shift+down")
+        assert text_area.selection == Selection((2, 5), (3, 5))
+
+
+async def test_cursor_selection_down_when_cursor_on_last_line():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("ABCDEF\nGHIJK")
+        text_area.move_cursor((1, 2))
+
+        await pilot.press("shift+down")
+        assert text_area.selection == Selection((1, 2), (1, 5))
+        await pilot.press("shift+down")
+        assert text_area.selection == Selection((1, 2), (1, 5))
+
+
 async def test_cursor_to_line_end():
     """You can use the keyboard to jump the cursor to the end of the current line."""
     app = TextAreaApp()
