@@ -5,9 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-
-- Add `min-height: 1;` to `LoadingIndicator`'s `DEFAULT_CSS`.
+## [0.34.0] - 2023-08-22
 
 ### Added
 
@@ -22,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - grid-columns and grid-rows now accept an `auto` token to detect the optimal size https://github.com/Textualize/textual/pull/3107
+- LoadingIndicator now has a minimum height of 1 line.
 
 ### Fixed
 
