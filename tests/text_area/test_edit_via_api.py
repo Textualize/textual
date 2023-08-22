@@ -481,3 +481,20 @@ async def test_delete_fully_within_selection():
         # We deleted 45, but the other characters are still available
         assert text_area.selected_text == "236"
         assert text_area.text == "01236789"
+
+
+async def test_replace_fully_within_selection():
+    """Adjust the selection when a replacement happens inside it."""
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123456789")
+        text_area.selection = Selection((0, 2), (0, 7))
+        assert text_area.selected_text == "23456"
+
+        result = text_area.replace("XX", start=(0, 2), end=(0, 5))
+        assert result == EditResult(
+            replaced_text="234",
+            end_location=(0, 4),
+        )
+        assert text_area.selected_text == "XX56"
