@@ -671,7 +671,6 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 prompt = Group(
                     hit.match_display, Text(hit.command_help, style=help_style)
                 )
-
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
             if worker.is_cancelled:
                 break
