@@ -480,3 +480,4 @@ async def test_delete_fully_within_selection():
         )
         # We deleted 45, but the other characters are still available
         assert text_area.selected_text == "236"
+        assert text_area.text == "01236789"
