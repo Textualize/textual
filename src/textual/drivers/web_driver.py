@@ -98,6 +98,8 @@ class WebDriver(Driver):
         for _signal in (signal.SIGINT, signal.SIGTERM):
             loop.add_signal_handler(_signal, do_exit)
 
+        self._write(b"__GANGLION__\n")
+
         self.write("\x1b[?1049h")  # Alt screen
         self._enable_mouse_support()
 
