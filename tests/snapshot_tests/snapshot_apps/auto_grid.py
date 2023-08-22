@@ -16,12 +16,30 @@ class GridApp(App):
         height:auto;
         border: solid green;
     }
+    
+    #c2 Label {
+        min-width: 20;
+    }
+
+    #c3 Label {
+        max-width: 30;
+    }
 
     """
 
     def compose(self) -> ComposeResult:
-        with Container():
+        with Container(id="c1"):
             yield Label("foo")
+            yield Input()
+            yield Label("Longer label")
+            yield Input()
+        with Container(id="c2"):
+            yield Label("foo")
+            yield Input()
+            yield Label("Longer label")
+            yield Input()
+        with Container(id="c3"):
+            yield Label("foo bar " * 10)
             yield Input()
             yield Label("Longer label")
             yield Input()

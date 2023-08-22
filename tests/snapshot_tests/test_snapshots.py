@@ -222,6 +222,11 @@ def test_tabbed_content(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
+def test_tabbed_content_with_modified_tabs(snap_compare):
+    # Tabs enabled and hidden.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "modified_tabs.py")
+
+
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
@@ -646,3 +651,7 @@ def test_digits(snap_compare) -> None:
 
 def test_auto_grid(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid.py")
+
+
+def test_auto_grid_default_height(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid_default_height.py", press=["g"])
