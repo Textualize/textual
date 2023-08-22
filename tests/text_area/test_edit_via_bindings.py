@@ -6,6 +6,7 @@ location.
 
 Note that more extensive testing for editing is done at the Document level.
 """
+import pytest
 
 from textual.app import App, ComposeResult
 from textual.document import Selection
@@ -16,6 +17,14 @@ Fear is the mind-killer.
 Fear is the little-death that brings total obliteration.
 I will face my fear.
 """
+
+SIMPLE_TEXT = """\
+ABCDE
+FGHIJ
+KLMNO
+PQRST
+UVWXY
+Z"""
 
 
 class TextAreaApp(App):
@@ -71,6 +80,35 @@ async def test_delete_left_end():
         await pilot.press("backspace")
         assert text_area.text == "Hello, world"
         assert text_area.selection == Selection.cursor((0, 12))
+
+
+@pytest.mark.parametrize(
+    "key,selection",
+    [
+        ("delete", Selection((1, 2), (3, 4))),
+        ("delete", Selection((3, 4), (1, 2))),
+        ("backspace", Selection((1, 2), (3, 4))),
+        ("backspace", Selection((3, 4), (1, 2))),
+    ],
+)
+async def test_deletion_with_non_empty_selection(key, selection):
+    """When there's a selection, pressing backspace or delete should delete everything
+    that is selected and reset the selection to a cursor at the appropriate location."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text(SIMPLE_TEXT)
+        text_area.selection = selection
+        await pilot.press(key)
+        assert text_area.selection == Selection.cursor((1, 2))
+        assert (
+            text_area.text
+            == """\
+ABCDE
+FGT
+UVWXY
+Z"""
+        )
 
 
 async def test_delete_right():

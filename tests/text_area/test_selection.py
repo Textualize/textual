@@ -1,7 +1,7 @@
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.document import Selection
+from textual.document import Document, Selection
 from textual.geometry import Offset
 from textual.widgets import TextArea
 
@@ -70,6 +70,15 @@ I must not fear.
 Fear is the mind-killer.
 """
         )
+
+
+async def test_selected_text_multibyte():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("こんにちは")
+        text_area.selection = Selection((0, 1), (0, 3))
+        assert text_area.selected_text == "んに"
 
 
 async def test_selection_clamp():
@@ -268,3 +277,24 @@ async def test_cursor_page_up():
         assert text_area.selection == Selection.cursor(
             (100 - app.console.height + 1, 1)
         )
+
+
+async def test_cursor_vertical_movement_visual_alignment_snapping():
+    """When you move the cursor vertically, it should stay vertically
+    aligned even when double-width characters are used."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_document(Document("こんにちは\n012345"))
+        text_area.move_cursor((1, 3), record_width=True)
+
+        # The '3' is aligned with ん at (0, 1)
+        # こんにちは
+        # 012345
+        # Pressing `up` takes us from (1, 3) to (0, 1) because record_width=True.
+        await pilot.press("up")
+        assert text_area.selection == Selection.cursor((0, 1))
+
+        # Pressing `down` takes us from (0, 1) to (1, 3)
+        await pilot.press("down")
+        assert text_area.selection == Selection.cursor((1, 3))
