@@ -4,29 +4,7 @@ This is a simple command source that makes the most obvious application
 actions available via the [command palette][textual.command_palette.CommandPalette].
 """
 
-from __future__ import annotations
-
-from typing import Any, Callable, NamedTuple
-
 from .command_palette import CommandMatches, CommandSource, CommandSourceHit
-
-
-class SystemCommand(NamedTuple):
-    """A class for holding the details of a system-wide command.
-
-    Used internally by [`SystemCommandSource`][textual._system_commands_source.SystemCommandSource]
-    """
-
-    name: str
-    """The name for the command.
-
-    This is the string that will be matched."""
-
-    run: Callable[[], Any]
-    """The code to run when the command is selected."""
-
-    help: str
-    """Help text for the command."""
 
 
 class SystemCommandSource(CommandSource):
@@ -50,34 +28,34 @@ class SystemCommandSource(CommandSource):
 
         # Loop over all applicable commands, find those that match and offer
         # them up to the command palette.
-        for command in (
-            SystemCommand(
+        for name, runnable, help_text in (
+            (
                 "Toggle light/dark mode",
                 self.app.action_toggle_dark,
                 "Toggle the application between light and dark mode",
             ),
-            SystemCommand(
+            (
                 "Save a screenshot",
                 self.app.action_screenshot,
                 "Save a SVG file to storage that contains the contents of the current screen",
             ),
-            SystemCommand(
+            (
                 "Quit the application",
                 self.app.action_quit,
                 "Quit the application as soon as possible",
             ),
-            SystemCommand(
+            (
                 "Ring the bell",
                 self.app.action_bell,
                 "Ring the terminal's 'bell'",
             ),
         ):
-            match = matcher.match(command.name)
+            match = matcher.match(name)
             if match > 0:
                 yield CommandSourceHit(
                     match,
-                    matcher.highlight(command.name),
-                    command.run,
-                    command.name,
-                    command.help,
+                    matcher.highlight(name),
+                    runnable,
+                    name,
+                    help_text,
                 )
