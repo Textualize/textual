@@ -185,7 +185,14 @@ class WebDriver(Driver):
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
-            event = events.Resize(size, size)
-            asyncio.run_coroutine_threadsafe(self._app._post_message(event), self._loop)
+            size_event = events.Resize(size, size)
+            asyncio.run_coroutine_threadsafe(
+                self._app._post_message(size_event),
+                self._loop,
+            )
         elif packet_type == "quit":
-            self._app.post_message(messages.ExitApp())
+            exit_event = messages.ExitApp()
+            asyncio.run_coroutine_threadsafe(
+                self._app._post_message(exit_event),
+                self._loop,
+            )
