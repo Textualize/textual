@@ -56,9 +56,6 @@ TextArea > .text-area--cursor {
 TextArea > .text-area--selection {
     background: $primary;
 }
-TextArea > .text-area--width-guide {
-    background: white 4%;
-}
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -67,7 +64,6 @@ TextArea > .text-area--width-guide {
         "text-area--cursor-line",
         "text-area--cursor-line-gutter",
         "text-area--selection",
-        "text-area--width-guide",
     }
     """| Class                           | Description                                      |
 |:--------------------------------|:-------------------------------------------------|
@@ -208,7 +204,7 @@ TextArea > .text-area--width-guide {
     cursor_blink: Reactive[bool] = reactive(True)
     """True if the cursor should blink."""
 
-    _cursor_blink_visible: Reactive[bool] = reactive(True)
+    _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
     """True if the cursor should be rendered """
 
     def __init__(
