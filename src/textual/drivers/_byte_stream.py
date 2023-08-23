@@ -152,13 +152,6 @@ class ByteStream(ByteStreamParser[Tuple[str, bytes]]):
         from_bytes = int.from_bytes
         while not self.is_eof:
             packet_type = (yield read1()).decode("utf-8", "ignore")
-            if packet_type == "\n":
-                continue
-            if packet_type not in ("D", "M"):
-                while 1:
-                    if (yield read1()) != "\n":
-                        break
-                continue
             size = from_bytes((yield read(4)), "big")
             payload = (yield read(size)) if size else b""
             on_token(BytePacket(packet_type, payload))
