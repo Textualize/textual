@@ -148,6 +148,7 @@ class Tab(Static):
         *,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """Initialise a Tab.
 
@@ -155,9 +156,10 @@ class Tab(Static):
             label: The label to use in the tab.
             id: Optional ID for the widget.
             classes: Space separated list of class names.
+            disabled: Whether the tab is disabled or not.
         """
         self.label = Text.from_markup(label) if isinstance(label, str) else label
-        super().__init__(id=id, classes=classes)
+        super().__init__(id=id, classes=classes, disabled=disabled)
         self.update(label)
 
     @property
