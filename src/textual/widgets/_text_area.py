@@ -1218,7 +1218,6 @@ class Edit:
                 start=(target_selection_start_row, target_selection_start_column),
                 end=(target_selection_end_row, target_selection_end_column),
             )
-            text_area.record_cursor_width()
         else:
             self._updated_selection = Selection.cursor(replace_result.end_location)
 
