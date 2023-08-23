@@ -979,7 +979,7 @@ TextArea > .text-area--width-guide {
         target = self.get_cursor_right_word_location()
         self.move_cursor(target, select=select)
 
-    def get_cursor_right_word_location(self):
+    def get_cursor_right_word_location(self) -> Location:
         """Get the location the cursor will jump to if it goes 1 word right.
 
         Returns:
@@ -989,6 +989,7 @@ TextArea > .text-area--width-guide {
         # Check the current line for a word boundary
         line = self.document[cursor_row][cursor_column:].lstrip()
         matches = list(re.finditer(self._word_pattern, line))
+
         if matches:
             # If a word boundary is found, move the cursor there
             cursor_column += matches[0].end()
@@ -999,6 +1000,7 @@ TextArea > .text-area--width-guide {
         else:
             # If we're already on the last line and no word boundary is found, move to the end of the line
             cursor_column = len(self.document[cursor_row])
+
         return cursor_row, cursor_column
 
     def action_cursor_page_up(self) -> None:
