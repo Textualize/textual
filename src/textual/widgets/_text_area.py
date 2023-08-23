@@ -1166,7 +1166,7 @@ class Edit:
         """Perform the edit operation.
 
         Args:
-            text_area: The TextArea to perform the edit on.
+            text_area: The `TextArea` to perform the edit on.
 
         Returns:
             An `EditResult` containing information about the replace operation.
@@ -1225,10 +1225,10 @@ class Edit:
         return replace_result
 
     def undo(self, text_area: TextArea) -> EditResult:
-        """Undo the Replace operation.
+        """Undo the edit operation.
 
         Args:
-            text_area: The TextArea to undo the insert operation on.
+            text_area: The `TextArea` to undo the insert operation on.
         """
         raise NotImplementedError()
 
@@ -1236,7 +1236,7 @@ class Edit:
         """Possibly update the cursor location after the widget has been refreshed.
 
         Args:
-            text_area: The TextArea this operation was performed on.
+            text_area: The `TextArea` this operation was performed on.
         """
         if self._updated_selection is not None:
             text_area.selection = self._updated_selection
