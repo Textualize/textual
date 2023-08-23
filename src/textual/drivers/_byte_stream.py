@@ -154,7 +154,7 @@ class ByteStream(ByteStreamParser[Tuple[str, bytes]]):
             packet_type = (yield read1()).decode("utf-8", "ignore")
             if packet_type == "\n":
                 continue
-            if packet_type not in (b"D", b"M"):
+            if packet_type not in ("D", "M"):
                 while 1:
                     if (yield read1()) != b"\n":
                         break
