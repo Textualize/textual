@@ -52,11 +52,11 @@ class TabPane(Widget):
     """
 
     @dataclass
-    class Disabled(Message):
-        """Sent when a tab pane is disabled via its reactive `disabled`."""
+    class TabPaneMessage(Message):
+        """Base class for `TabPane` messages."""
 
         tab_pane: TabPane
-        """The `TabPane` that was disabled."""
+        """The `TabPane` that is he object of this message."""
 
         @property
         def control(self) -> TabPane:
@@ -68,20 +68,12 @@ class TabPane(Widget):
             return self.tab_pane
 
     @dataclass
-    class Enabled(Message):
+    class Disabled(TabPaneMessage):
+        """Sent when a tab pane is disabled via its reactive `disabled`."""
+
+    @dataclass
+    class Enabled(TabPaneMessage):
         """Sent when a tab pane is enabled via its reactive `disabled`."""
-
-        tab_pane: TabPane
-        """The `TabPane` that was enabled."""
-
-        @property
-        def control(self) -> TabPane:
-            """The tab pane that is the object of this message.
-
-            This is an alias for the attribute `tab_pane` and is used by the
-            [`on`][textual.on] decorator.
-            """
-            return self.tab_pane
 
     def __init__(
         self,
