@@ -14,6 +14,7 @@ WAIT_FAILED = 0xFFFFFFFF
 WAIT_TIMEOUT = 0x00000102
 WAIT_OBJECT_0 = 0x00000000
 STD_INPUT_HANDLE = -10
+STD_OUTPUT_HANDLE = -11
 
 
 class InputWaiter:
@@ -25,6 +26,7 @@ class InputWaiter:
         Args:
             fileno: File number / handle.
         """
+        self._fileno = fileno
 
     def more_data(self) -> bool:
         """Check if there is data pending."""
@@ -42,7 +44,7 @@ class InputWaiter:
         """
         timeout_milliseconds = int(timeout * 1000)
         result = kernel32.WaitForSingleObject(
-            GetStdHandle(STD_INPUT_HANDLE),
+            GetStdHandle(STD_OUTPUT_HANDLE),
             DWORD(timeout_milliseconds),
         )
         if result == WAIT_TIMEOUT:
