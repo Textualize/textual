@@ -79,7 +79,7 @@ TextArea > .text-area--width-guide {
  """
 
     BINDINGS = [
-        Binding("escape", "screen.focus_next", "unfocus text area"),
+        Binding("escape", "screen.focus_next", "Shift Focus"),
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
