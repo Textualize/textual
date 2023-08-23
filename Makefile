@@ -12,6 +12,10 @@ unit-test:
 test-snapshot-update:
 	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv --snapshot-update
 
+.PHONY: coverage
+coverage:
+	$(run) coverage html
+
 .PHONY: typecheck
 typecheck:
 	$(run) mypy src/textual
@@ -89,3 +93,7 @@ update:
 .PHONY: install-pre-commit
 install-pre-commit:
 	$(run) pre-commit install
+
+.PHONY: demo
+demo:
+	$(run) python -m textual
