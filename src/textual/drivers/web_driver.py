@@ -161,6 +161,7 @@ class WebDriver(Driver):
             while not self.exit_event.is_set():
                 if wait_for_input(0.1):
                     data = read(fileno, 1024)  # raw data
+                    print(data)
                     for packet_type, payload in byte_stream.feed(data):
                         if packet_type == "D":
                             # Treat as stdin
