@@ -704,31 +704,23 @@ async def test_disabling_nested_tabs():
     class TabbedApp(App):
         def compose(self) -> ComposeResult:
             with TabbedContent(id="tabbed-content"):
-                with TabPane("Tab Pane 1", id="first-tab"):
+                with TabPane("Tab Pane 1"):
                     yield Label("foo")
-                with TabPane("Tab Pane 2", id="second-tab"):
+                with TabPane("Tab Pane 2"):
                     yield Label("bar")
-                with TabPane("Tab Pane 3", id="third-tab"):
-                    with TabbedContent(id="another-tabbed-content"):
-                        with TabPane("Inner Pane 1", id="inner-tab-1"):
+                with TabPane("Tab Pane 3"):
+                    with TabbedContent():
+                        with TabPane("Inner Pane 1"):
                             yield Label("fizz")
-                        with TabPane("Inner Pane 2", id="inner-tab-2"):
+                        with TabPane("Inner Pane 2"):
                             yield Label("bang")
-
-        def on_mount(self):
-            # tab_pane = self.query_one("#first-tab", expect_type=TabPane)  # WrongType error: unexpected type of ContentTab
-            # tab_pane = self.query_one("#first-tab")  # TooManyMatches error
-            tabber = self.query_one("#tabbed-content", expect_type=TabbedContent)
-            tabber.hide_tab(
-                "second-tab"
-            )  # TooManyMatches: Call to only_one resulted in more than one matched node
 
     app = TabbedApp()
     async with app.run_test() as pilot:
         tabber = app.query_one("#tabbed-content", expect_type=TabbedContent)
-        tabber.disable_tab("second-tab")
+        tabber.disable_tab("tab-1")
         await pilot.pause()
-        tabber.enable_tab("second-tab")
+        tabber.enable_tab("tab-1")
         await pilot.pause()
 
 
@@ -738,21 +730,21 @@ async def test_hiding_nested_tabs():
     class TabbedApp(App):
         def compose(self) -> ComposeResult:
             with TabbedContent(id="tabbed-content"):
-                with TabPane("Tab Pane 1", id="first-tab"):
+                with TabPane("Tab Pane 1"):
                     yield Label("foo")
-                with TabPane("Tab Pane 2", id="second-tab"):
+                with TabPane("Tab Pane 2"):
                     yield Label("bar")
-                with TabPane("Tab Pane 3", id="third-tab"):
-                    with TabbedContent(id="another-tabbed-content"):
-                        with TabPane("Inner Pane 1", id="inner-tab-1"):
+                with TabPane("Tab Pane 3"):
+                    with TabbedContent():
+                        with TabPane("Inner Pane 1"):
                             yield Label("fizz")
-                        with TabPane("Inner Pane 2", id="inner-tab-2"):
+                        with TabPane("Inner Pane 2"):
                             yield Label("bang")
 
     app = TabbedApp()
     async with app.run_test() as pilot:
         tabber = app.query_one("#tabbed-content", expect_type=TabbedContent)
-        tabber.hide_tab("second-tab")
+        tabber.hide_tab("tab-1")
         await pilot.pause()
-        tabber.show_tab("second-tab")
+        tabber.show_tab("tab-1")
         await pilot.pause()
