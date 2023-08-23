@@ -13,4 +13,4 @@ class MinWidthApp(App):
         )
 
 
-app = MinWidthApp(css_path="min_width.css")
+app = MinWidthApp(css_path="min_width.tcss")

@@ -21,6 +21,6 @@ class ScrollbarApp(App):
         )
 
 
-app = ScrollbarApp(css_path="scrollbar_size2.css")
+app = ScrollbarApp(css_path="scrollbar_size2.tcss")
 if __name__ == "__main__":
     app.run()

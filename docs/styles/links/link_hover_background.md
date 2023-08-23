@@ -44,10 +44,10 @@ It also shows that `link-hover-background` does not affect hyperlinks.
     3. This label has an "action link" that can be styled with `link-hover-background`.
     4. This label has an "action link" that can be styled with `link-hover-background`.
 
-=== "link_hover_background.css"
+=== "link_hover_background.tcss"
 
     ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_hover_background.css"
+    --8<-- "docs/examples/styles/link_hover_background.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.

@@ -34,10 +34,10 @@ When the opacity is zero, all we see is the (black) background.
     --8<-- "docs/examples/styles/opacity.py"
     ```
 
-=== "opacity.css"
+=== "opacity.tcss"
 
     ```sass hl_lines="2 6 10 14 18"
-    --8<-- "docs/examples/styles/opacity.css"
+    --8<-- "docs/examples/styles/opacity.tcss"
     ```
 
 ## CSS

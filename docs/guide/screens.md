@@ -24,10 +24,10 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
     --8<-- "docs/examples/guide/screens/screen01.py"
     ```
 
-=== "screen01.css"
+=== "screen01.tcss"
 
-    ```sass title="screen01.css"
-    --8<-- "docs/examples/guide/screens/screen01.css"
+    ```sass title="screen01.tcss"
+    --8<-- "docs/examples/guide/screens/screen01.tcss"
     ```
 
 === "Output"
@@ -53,10 +53,10 @@ You can also _install_ new named screens dynamically with the [install_screen][t
     --8<-- "docs/examples/guide/screens/screen02.py"
     ```
 
-=== "screen02.css"
+=== "screen02.tcss"
 
-    ```sass title="screen02.css"
-    --8<-- "docs/examples/guide/screens/screen02.css"
+    ```sass title="screen02.tcss"
+    --8<-- "docs/examples/guide/screens/screen02.tcss"
     ```
 
 === "Output"
@@ -169,10 +169,10 @@ From the quit screen you can click either Quit to exit the app immediately, or C
     --8<-- "docs/examples/guide/screens/modal01.py"
     ```
 
-=== "modal01.css"
+=== "modal01.tcss"
 
-    ```sass title="modal01.css"
-    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```sass title="modal01.tcss"
+    --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
 
@@ -211,10 +211,10 @@ Let's see what happens when we use `ModalScreen`.
     --8<-- "docs/examples/guide/screens/modal02.py"
     ```
 
-=== "modal01.css"
+=== "modal01.tcss"
 
-    ```sass title="modal01.css"
-    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```sass title="modal01.tcss"
+    --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
 Now when we press ++q++, the dialog is displayed over the main screen.
@@ -238,10 +238,10 @@ Let's modify the previous example to use `dismiss` rather than an explicit `pop_
 
     1. See below for an explanation of the `[bool]`
 
-=== "modal01.css"
+=== "modal01.tcss"
 
-    ```sass title="modal01.css"
-    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```sass title="modal01.tcss"
+    --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
 In the `on_button_pressed` message handler we call `dismiss` with a boolean that indicates if the user has chosen to quit the app.

@@ -5,6 +5,6 @@ Screen {
 FizzBuzz {
     width: auto;
     height: auto;
-    background: $primary;    
+    background: $primary;
     color: $text;
 }

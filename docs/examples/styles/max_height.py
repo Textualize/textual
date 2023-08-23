@@ -13,4 +13,4 @@ class MaxHeightApp(App):
         )
 
 
-app = MaxHeightApp(css_path="max_height.css")
+app = MaxHeightApp(css_path="max_height.tcss")

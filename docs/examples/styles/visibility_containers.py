@@ -27,4 +27,4 @@ class VisibilityContainersApp(App):
         )
 
 
-app = VisibilityContainersApp(css_path="visibility_containers.css")
+app = VisibilityContainersApp(css_path="visibility_containers.tcss")

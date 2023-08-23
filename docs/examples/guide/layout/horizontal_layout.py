@@ -3,7 +3,7 @@ from textual.widgets import Static
 
 
 class HorizontalLayoutExample(App):
-    CSS_PATH = "horizontal_layout.css"
+    CSS_PATH = "horizontal_layout.tcss"
 
     def compose(self) -> ComposeResult:
         yield Static("One", classes="box")

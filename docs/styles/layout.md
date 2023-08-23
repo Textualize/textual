@@ -36,10 +36,10 @@ To learn more about the grid layout, you can see the [layout guide](../guide/lay
     --8<-- "docs/examples/styles/layout.py"
     ```
 
-=== "layout.css"
+=== "layout.tcss"
 
     ```sass hl_lines="2 8"
-    --8<-- "docs/examples/styles/layout.css"
+    --8<-- "docs/examples/styles/layout.tcss"
     ```
 
 ## CSS

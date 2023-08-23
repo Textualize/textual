@@ -8,4 +8,4 @@ class BoxSizingApp(App):
         yield Static("I'm using content-box!", id="static2")
 
 
-app = BoxSizingApp(css_path="box_sizing.css")
+app = BoxSizingApp(css_path="box_sizing.tcss")

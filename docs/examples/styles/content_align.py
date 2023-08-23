@@ -9,4 +9,4 @@ class ContentAlignApp(App):
         yield Label("...Horizontally [i]and[/] vertically!", id="box3")
 
 
-app = ContentAlignApp(css_path="content_align.css")
+app = ContentAlignApp(css_path="content_align.tcss")

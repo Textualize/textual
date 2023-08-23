@@ -11,4 +11,4 @@ class OpacityApp(App):
         yield Label("opacity: 100%", id="full-opacity")
 
 
-app = OpacityApp(css_path="opacity.css")
+app = OpacityApp(css_path="opacity.tcss")

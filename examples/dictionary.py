@@ -15,7 +15,7 @@ from textual.widgets import Input, Markdown
 class DictionaryApp(App):
     """Searches ab dictionary API as-you-type."""
 
-    CSS_PATH = "dictionary.css"
+    CSS_PATH = "dictionary.tcss"
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")

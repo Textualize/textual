@@ -23,10 +23,10 @@ The example below shows two radio sets, one built using a collection of
     --8<-- "docs/examples/widgets/radio_set.py"
     ```
 
-=== "radio_set.css"
+=== "radio_set.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/radio_set.css"
+    --8<-- "docs/examples/widgets/radio_set.tcss"
     ```
 
 ## Messages
@@ -48,10 +48,10 @@ Here is an example of using the message to react to changes in a `RadioSet`:
     --8<-- "docs/examples/widgets/radio_set_changed.py"
     ```
 
-=== "radio_set_changed.css"
+=== "radio_set_changed.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/radio_set_changed.css"
+    --8<-- "docs/examples/widgets/radio_set_changed.tcss"
     ```
 
 ## See Also

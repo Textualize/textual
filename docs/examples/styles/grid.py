@@ -13,4 +13,4 @@ class GridApp(App):
         yield Static("Grid cell 7", id="static7")
 
 
-app = GridApp(css_path="grid.css")
+app = GridApp(css_path="grid.tcss")

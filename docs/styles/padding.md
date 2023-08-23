@@ -48,10 +48,10 @@ This example adds padding around some text.
     --8<-- "docs/examples/styles/padding.py"
     ```
 
-=== "padding.css"
+=== "padding.tcss"
 
     ```sass hl_lines="7"
-    --8<-- "docs/examples/styles/padding.css"
+    --8<-- "docs/examples/styles/padding.tcss"
     ```
 
 ### All padding settings
@@ -71,10 +71,10 @@ The effect of each padding setting is noticeable in the colored background aroun
     --8<-- "docs/examples/styles/padding_all.py"
     ```
 
-=== "padding_all.css"
+=== "padding_all.tcss"
 
     ```sass hl_lines="16 20 24 28 32 36 40 44"
-    --8<-- "docs/examples/styles/padding_all.css"
+    --8<-- "docs/examples/styles/padding_all.tcss"
     ```
 
 ## CSS

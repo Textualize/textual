@@ -40,10 +40,10 @@ Because there are more rows than scalars in the style definition, the scalars wi
     --8<-- "docs/examples/styles/grid_columns.py"
     ```
 
-=== "grid_columns.css"
+=== "grid_columns.tcss"
 
     ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/grid_columns.css"
+    --8<-- "docs/examples/styles/grid_columns.tcss"
     ```
 
 ## CSS

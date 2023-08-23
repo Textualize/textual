@@ -21,7 +21,7 @@ from textual.widgets import DirectoryTree, Footer, Header, Static
 class CodeBrowser(App):
     """Textual code browser app."""
 
-    CSS_PATH = "code_browser.css"
+    CSS_PATH = "code_browser.tcss"
     BINDINGS = [
         ("f", "toggle_files", "Toggle Files"),
         ("q", "quit", "Quit"),

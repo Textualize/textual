@@ -23,4 +23,5 @@ class AllOutlinesApp(App):
             Label("wide", id="wide"),
         )
 
-app = AllOutlinesApp(css_path="outline_all.css")
+
+app = AllOutlinesApp(css_path="outline_all.tcss")
