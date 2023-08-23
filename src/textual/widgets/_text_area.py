@@ -79,7 +79,7 @@ TextArea > .text-area--width-guide {
  """
 
     BINDINGS = [
-        Binding("escape", "screen.focus_next", "focus next", show=False),
+        Binding("escape", "screen.focus_next", "unfocus text area"),
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
@@ -112,6 +112,9 @@ TextArea > .text-area--width-guide {
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
+        # Binding("f5", "select_word", "select word", show=False),
+        Binding("f6", "select_line", "select line", show=False),
+        Binding("f7", "select_all", "select all", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -138,6 +141,8 @@ TextArea > .text-area--width-guide {
     | ctrl+x                 | Delete the current line.                     |
     | ctrl+u                 | Delete from cursor to the start of the line. |
     | ctrl+k                 | Delete from cursor to the end of the line.   |
+    | f6                     | Select the current line.                     |
+    | f7                     | Select all text in the document.             |
     """
 
     language: Reactive[str | "Language" | None] = reactive(None, always_update=True)
@@ -693,13 +698,23 @@ TextArea > .text-area--width-guide {
         self.move_cursor(target, select, center, record_width)
 
     def select_line(self, index: int) -> None:
-        """Select all the text in the specified line."""
+        """Select all the text in the specified line.
+
+        Args:
+            index: The index of the line to select (starting from 0).
+        """
         try:
             line = self.document[index]
         except IndexError:
             return
         else:
             self.selection = Selection((index, 0), (index, len(line)))
+            self.record_cursor_width()
+
+    def action_select_line(self) -> None:
+        """Select all the text on the current line."""
+        cursor_row, _ = self.cursor_location
+        self.select_line(cursor_row)
 
     def select_all(self) -> None:
         """Select all of the text in the `TextArea`."""
@@ -708,6 +723,11 @@ TextArea > .text-area--width-guide {
         selection_start = (0, 0)
         selection_end = (last_line, length_of_last_line)
         self.selection = Selection(selection_start, selection_end)
+        self.record_cursor_width()
+
+    def action_select_all(self) -> None:
+        """Select all the text in the document."""
+        self.select_all()
 
     @property
     def cursor_location(self) -> Location:
@@ -775,9 +795,7 @@ TextArea > .text-area--width-guide {
         This will expand or contract the selection.
         """
         new_cursor_location = self.get_cursor_left_location()
-        selection_start, selection_end = self.selection
-        self.selection = Selection(selection_start, new_cursor_location)
-        self.record_cursor_width()
+        self.move_cursor(new_cursor_location, select=True)
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left.
@@ -800,7 +818,6 @@ TextArea > .text-area--width-guide {
         """
         target = self.get_cursor_right_location()
         self.move_cursor(target)
-        self.record_cursor_width()
 
     def action_cursor_right_select(self):
         """Move the end of the selection one location to the right."""
