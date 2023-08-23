@@ -6,7 +6,6 @@ from rich.style import Style
 
 _NULL_STYLE = Style.null()
 
-
 _MONOKAI = {
     "string": Style(color="#E6DB74"),
     "string.documentation": Style(color="#E6DB74"),
@@ -108,12 +107,23 @@ class SyntaxTheme:
 
     def get_highlight(self, name: str) -> Style:
         """Return the Rich style corresponding to the name defined in the tree-sitter
-        highlight query for the current theme."""
+        highlight query for the current theme.
+
+        Args:
+            name: The name of the highlight.
+
+        Returns:
+            The `Style` to use for this highlight.
+        """
         return self.style_mapping.get(name, _NULL_STYLE)
 
     @classmethod
     def available_themes(cls) -> list[SyntaxTheme]:
-        """A list of all available SyntaxThemes."""
+        """Get a list of all available SyntaxThemes.
+
+        Returns:
+            A list of all available SyntaxThemes.
+        """
         return [SyntaxTheme(name, mapping) for name, mapping in _BUILTIN_THEMES.items()]
 
     @classmethod

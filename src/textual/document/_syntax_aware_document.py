@@ -51,6 +51,16 @@ class SyntaxAwareDocument(Document):
     def __init__(
         self, text: str, language: str | Language, syntax_theme: str | SyntaxTheme
     ):
+        """Construct a SyntaxAwareDocument.
+
+        Args:
+            text: The initial text contained in the document.
+            language: The language to use. You can pass a string to use a supported
+                language, or pass in your own tree-sitter `Language` object.
+            syntax_theme: The syntax highlighting theme to use. You can pass a string
+                to use a builtin theme,  or construct your own custom SyntaxTheme and
+                provide that.
+        """
         if not TREE_SITTER:
             raise RuntimeError("SyntaxAwareDocument is unavailable on Python 3.7.")
 

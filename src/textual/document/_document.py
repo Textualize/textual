@@ -113,8 +113,15 @@ class DocumentBase(ABC):
     def get_size(self, indent_width: int) -> Size:
         """Get the size of the document.
 
-        The height will generally be the number of lines, and the width
-        will be the maximum cell length of all the lines."""
+        The height is generally be the number of lines, and the width
+        is generally the maximum cell length of all the lines.
+
+        Args:
+            indent_width: The width to use for tab characters.
+
+        Returns:
+            The Size of the document bounding box.
+        """
 
     @property
     @abstractmethod

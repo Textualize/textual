@@ -193,6 +193,15 @@ TextArea > .text-area--width-guide {
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Construct a new `TextArea`.
+
+        Args:
+            name: The name of the `TextArea` widget.
+            id: The ID of the widget, used to refer to it from Textual CSS.
+            classes: One or more Textual CSS compatible class names separated by spaces.
+            disabled: True if the widget is disabled.
+        """
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         self.document: DocumentBase = Document("")
@@ -765,7 +774,7 @@ TextArea > .text-area--width-guide {
         """Get the location the cursor will move to if it moves down.
 
         Returns:
-            the location the cursor will move to if it moves down.
+            The location the cursor will move to if it moves down.
         """
         cursor_row, cursor_column = self.selection.end
         if self.cursor_at_last_row:
@@ -958,7 +967,7 @@ TextArea > .text-area--width-guide {
                 edit.
 
         Returns:
-            An EditResult containing information about the edit.
+            An `EditResult` containing information about the edit.
         """
         if location is None:
             location = self.cursor_location
@@ -981,7 +990,7 @@ TextArea > .text-area--width-guide {
                 edit.
 
         Returns:
-            An EditResult containing information about the edit.
+            An `EditResult` containing information about the edit.
         """
         top, bottom = _sort_ascending(start, end)
         return self.edit(Edit("", top, bottom, maintain_selection_offset))
@@ -1005,7 +1014,7 @@ TextArea > .text-area--width-guide {
                 edit.
 
         Returns:
-            An EditResult containing information about the edit.
+            An `EditResult` containing information about the edit.
         """
         return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
@@ -1160,7 +1169,7 @@ class Edit:
             text_area: The TextArea to perform the edit on.
 
         Returns:
-            An EditResult containing information about the replace operation.
+            An `EditResult` containing information about the replace operation.
         """
         text = self.text
 
@@ -1243,8 +1252,22 @@ class Undoable(Protocol):
 
     To perform an edit operation, pass the Edit to `TextArea.edit()`"""
 
-    def do(self, text_area: TextArea) -> object | None:
-        """Do the action."""
+    def do(self, text_area: TextArea) -> Any:
+        """Do the action.
 
-    def undo(self, text_area: TextArea) -> object | None:
-        """Undo the action."""
+        Args:
+            The `TextArea` to perform the action on.
+
+        Returns:
+            Anything. This protocol doesn't prescribe what is returned.
+        """
+
+    def undo(self, text_area: TextArea) -> Any:
+        """Undo the action.
+
+        Args:
+            The `TextArea` to perform the action on.
+
+        Returns:
+            Anything. This protocol doesn't prescribe what is returned.
+        """
