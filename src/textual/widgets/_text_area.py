@@ -1186,11 +1186,7 @@ class Edit:
         # position in the document even if an insert happens before
         # their cursor position.
 
-        edit_to_row, edit_to_column = edit_to
-        edit_from_row, edit_from_column = edit_from
-
         edit_top, edit_bottom = _sort_ascending(edit_from, edit_to)
-        edit_top_row, edit_top_column = edit_top
         edit_bottom_row, edit_bottom_column = edit_bottom
 
         selection_start, selection_end = text_area.selection
