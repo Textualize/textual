@@ -183,7 +183,7 @@ class WebDriver(Driver):
             self.on_meta(_type, payload_map)
 
     def on_meta(self, packet_type: str, payload: dict) -> None:
-        self.write_meta({"type": "log", "message": "{packet_type} {payload}"})
+        self.write_meta({"type": "log", "message": f"{packet_type} {payload}"})
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
