@@ -44,7 +44,7 @@ class InputWaiter:
         """
         timeout_milliseconds = int(timeout * 1000)
         result = kernel32.WaitForSingleObject(
-            GetStdHandle(STD_OUTPUT_HANDLE),
+            GetStdHandle(STD_INPUT_HANDLE),
             DWORD(timeout_milliseconds),
         )
         if result == WAIT_TIMEOUT:
