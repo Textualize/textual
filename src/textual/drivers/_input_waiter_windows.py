@@ -8,9 +8,12 @@ from ctypes.wintypes import HANDLE
 
 kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 
+GetStdHandle = kernel32.GetStdHandle
+
 WAIT_FAILED = 0xFFFFFFFF
 WAIT_TIMEOUT = 0x00000102
 WAIT_OBJECT_0 = 0x00000000
+STD_INPUT_HANDLE = -10
 
 
 class InputWaiter:
@@ -22,7 +25,6 @@ class InputWaiter:
         Args:
             fileno: File number / handle.
         """
-        self._fileno = fileno
 
     def more_data(self) -> bool:
         """Check if there is data pending."""
@@ -40,9 +42,8 @@ class InputWaiter:
         """
         timeout_milliseconds = int(timeout * 1000)
 
-        result = kernel32.WaitForSingleObject(
-            HANDLE(self._fileno), timeout_milliseconds
-        )
+        hIn = GetStdHandle(STD_INPUT_HANDLE)
+        result = kernel32.WaitForSingleObject(hIn, timeout_milliseconds)
         if result == WAIT_TIMEOUT:
             return False
         if result == WAIT_OBJECT_0:
@@ -61,6 +62,7 @@ if __name__ == "__main__":
     import os
 
     while 1:
+        hIn = GetStdHandle(STD_INPUT_HANDLE)
         result = kernel32.WaitForSingleObject(fileno, 500)
         print(result)
         print(os.read(fileno, 1024))
