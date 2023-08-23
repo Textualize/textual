@@ -304,6 +304,66 @@ async def test_get_cursor_down_location(start, end):
         assert text_area.get_cursor_down_location() == end
 
 
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        ((0, 0), (0, 0)),
+        ((0, 1), (0, 0)),
+        ((0, 2), (0, 0)),
+        ((0, 3), (0, 0)),
+        ((0, 4), (0, 3)),
+        ((0, 5), (0, 3)),
+        ((0, 6), (0, 3)),
+        ((0, 7), (0, 3)),
+        ((0, 10), (0, 7)),
+        ((1, 0), (0, 10)),
+        ((1, 2), (1, 0)),
+        ((1, 4), (1, 0)),
+        ((1, 7), (1, 4)),
+        ((1, 8), (1, 7)),
+        ((1, 13), (1, 11)),
+        ((1, 14), (1, 11)),
+    ],
+)
+async def test_cursor_word_left_location(start, end):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("AB CD  EFG\n    HI\tJK  LM ")
+        text_area.move_cursor(start)
+        assert text_area.get_cursor_word_left_location() == end
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        ((0, 0), (0, 2)),
+        ((0, 1), (0, 2)),
+        ((0, 2), (0, 5)),
+        ((0, 3), (0, 5)),
+        ((0, 4), (0, 5)),
+        ((0, 5), (0, 10)),
+        ((0, 6), (0, 10)),
+        ((0, 7), (0, 10)),
+        ((0, 10), (1, 0)),
+        ((1, 0), (1, 6)),
+        ((1, 2), (1, 6)),
+        ((1, 4), (1, 6)),
+        ((1, 7), (1, 9)),
+        ((1, 8), (1, 9)),
+        ((1, 13), (1, 14)),
+        ((1, 14), (1, 14)),
+    ],
+)
+async def test_cursor_word_right_location(start, end):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text("AB CD  EFG\n    HI\tJK  LM ")
+        text_area.move_cursor(start)
+        assert text_area.get_cursor_word_right_location() == end
+
+
 async def test_cursor_page_down():
     """Pagedown moves the cursor down 1 page, retaining column index."""
     app = TextAreaApp()

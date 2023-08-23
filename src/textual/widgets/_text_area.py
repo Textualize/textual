@@ -84,18 +84,18 @@ TextArea > .text-area--width-guide {
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
-        Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
+        Binding("ctrl+left", "cursor_word_left", "cursor word left", show=False),
         Binding(
             "ctrl+shift+left",
-            "cursor_left_word(True)",
+            "cursor_word_left(True)",
             "cursor left word select",
             show=False,
         ),
         Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
+        Binding("ctrl+right", "cursor_word_right", "cursor word right", show=False),
         Binding(
             "ctrl+shift+right",
-            "cursor_right_word(True)",
+            "cursor_word_right(True)",
             "cursor right word select",
             show=False,
         ),
@@ -937,69 +937,68 @@ TextArea > .text-area--width-guide {
         cursor_row, _cursor_column = end
         return cursor_row, 0
 
-    def action_cursor_left_word(self, select: bool = False) -> None:
-        """Move the cursor left by a single word, skipping spaces.
+    def action_cursor_word_left(self, select: bool = False) -> None:
+        """Move the cursor left by a single word, skipping trailing whitespace.
 
         Args:
             select: Whether to select while moving the cursor.
         """
         if self.cursor_at_start_of_document:
             return
-        target = self.get_cursor_left_word_location()
+        target = self.get_cursor_word_left_location()
         self.move_cursor(target, select=select)
 
-    def get_cursor_left_word_location(self) -> Location:
+    def get_cursor_word_left_location(self) -> Location:
         """Get the location the cursor will jump to if it goes 1 word left.
 
         Returns:
             The location the cursor will jump on "jump word left".
         """
         cursor_row, cursor_column = self.cursor_location
-        # Check the current line for a word boundary
-        line = self.document[cursor_row][:cursor_column].rstrip()
-        matches = list(re.finditer(self._word_pattern, line))
-        if matches:
-            # If a word boundary is found, move the cursor there
-            cursor_column = matches[-1].start()
-        elif cursor_row > 0:
-            # If no word boundary is found, and we're not on the first line, move to the end of the previous line
-            cursor_row -= 1
-            cursor_column = len(self.document[cursor_row])
-        else:
-            # If we're already on the first line and no word boundary is found, move to the start of the line
-            cursor_column = 0
+        if cursor_row > 0 and cursor_column == 0:
+            # Going to the previous row
+            return cursor_row - 1, len(self.document[cursor_row - 1])
+
+        # Staying on the same row
+        line = self.document[cursor_row][:cursor_column]
+        search_string = line.rstrip()
+
+        matches = list(re.finditer(self._word_pattern, search_string))
+        cursor_column = matches[-1].start() if matches else 0
         return cursor_row, cursor_column
 
-    def action_cursor_right_word(self, select: bool = False) -> None:
-        """Move the cursor right by a single word, skipping spaces."""
+    def action_cursor_word_right(self, select: bool = False) -> None:
+        """Move the cursor right by a single word, skipping leading whitespace."""
 
         if self.cursor_at_end_of_document:
             return
 
-        target = self.get_cursor_right_word_location()
+        target = self.get_cursor_word_right_location()
         self.move_cursor(target, select=select)
 
-    def get_cursor_right_word_location(self) -> Location:
+    def get_cursor_word_right_location(self) -> Location:
         """Get the location the cursor will jump to if it goes 1 word right.
 
         Returns:
             The location the cursor will jump on "jump word right".
         """
         cursor_row, cursor_column = self.selection.end
-        # Check the current line for a word boundary
-        line = self.document[cursor_row][cursor_column:].lstrip()
-        matches = list(re.finditer(self._word_pattern, line))
+        line = self.document[cursor_row]
+        if cursor_row < self.document.line_count - 1 and cursor_column == len(line):
+            # Moving to the line below
+            return cursor_row + 1, 0
 
+        # Staying on the same line
+        search_string = line[cursor_column:]
+        pre_strip_length = len(search_string)
+        search_string = search_string.lstrip()
+        strip_offset = pre_strip_length - len(search_string)
+
+        matches = list(re.finditer(self._word_pattern, search_string))
         if matches:
-            # If a word boundary is found, move the cursor there
-            cursor_column += matches[0].end()
-        elif cursor_row < self.document.line_count - 1:
-            # If no word boundary is found and we're not on the last line, move to the start of the next line
-            cursor_row += 1
-            cursor_column = 0
+            cursor_column += matches[0].start() + strip_offset
         else:
-            # If we're already on the last line and no word boundary is found, move to the end of the line
-            cursor_column = len(self.document[cursor_row])
+            cursor_column = len(line)
 
         return cursor_row, cursor_column
 
