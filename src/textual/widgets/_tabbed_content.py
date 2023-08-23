@@ -381,7 +381,7 @@ class TabbedContent(Widget):
         event.stop()
         tab_id = event.tab.id
         try:
-            self.query_one(f"TabPane#{tab_id}").disabled = True
+            self.get_child_by_id(f"TabPane#{tab_id}").disabled = True
         except NoMatches:
             return
 
@@ -390,7 +390,7 @@ class TabbedContent(Widget):
         event.stop()
         tab_id = event.tab.id
         try:
-            self.query_one(f"TabPane#{tab_id}").disabled = False
+            self.get_child_by_id(f"TabPane#{tab_id}").disabled = False
         except NoMatches:
             return
 
@@ -404,7 +404,7 @@ class TabbedContent(Widget):
             Tabs.TabError: If there are any issues with the request.
         """
 
-        self.query_one(Tabs).disable(tab_id)
+        self.get_child_by_type(Tabs).disable(tab_id)
 
     def enable_tab(self, tab_id: str) -> None:
         """Enables the tab with the given ID.
@@ -416,7 +416,7 @@ class TabbedContent(Widget):
             Tabs.TabError: If there are any issues with the request.
         """
 
-        self.query_one(Tabs).enable(tab_id)
+        self.get_child_by_type(Tabs).enable(tab_id)
 
     def hide_tab(self, tab_id: str) -> None:
         """Hides the tab with the given ID.
@@ -428,7 +428,7 @@ class TabbedContent(Widget):
             Tabs.TabError: If there are any issues with the request.
         """
 
-        self.query_one(Tabs).hide(tab_id)
+        self.get_child_by_type(Tabs).hide(tab_id)
 
     def show_tab(self, tab_id: str) -> None:
         """Shows the tab with the given ID.
@@ -440,4 +440,4 @@ class TabbedContent(Widget):
             Tabs.TabError: If there are any issues with the request.
         """
 
-        self.query_one(Tabs).show(tab_id)
+        self.get_child_by_type(Tabs).show(tab_id)
