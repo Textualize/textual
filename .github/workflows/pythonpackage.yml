@@ -54,4 +54,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: snapshot-report-textual
-          path: tests/snapshot_tests/output/snapshot_report.html
+          path: snapshot_report.html
