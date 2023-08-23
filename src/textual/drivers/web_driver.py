@@ -187,9 +187,10 @@ class WebDriver(Driver):
             size = Size(*self._size)
             event = events.Resize(size, size)
             asyncio.run_coroutine_threadsafe(
-                self._app._post_message(event), self._app._loop
+                self._app._post_message(event),
+                asyncio.get_running_loop(),
             )
         elif packet_type == "quit":
             asyncio.run_coroutine_threadsafe(
-                self._app._post_message(messages.ExitApp()), self._app._loop
+                self._app._post_message(messages.ExitApp()), asyncio.get_running_loop()
             )
