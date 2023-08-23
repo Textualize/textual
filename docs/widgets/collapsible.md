@@ -4,8 +4,8 @@
 
 Collapsible contents with title.
 
-- [ ] Focusable
 - [x] Container
+- [ ] Focusable
 
 This widget wraps other widgets as `Contents` and control the visibility.
 
@@ -44,12 +44,17 @@ def compose(self) -> ComposeResult:
 
 `Collapsible` can have different symbol(label)s for each expanded/collapsed status.
 
-```python
-def compose(self) -> ComposeResult:
-    with Collapsible(title="", collapsed_symbol="► Show more", expanded_symbol="▼ Close"):
-        yield Label("Many words.")
 
-```
+=== "Output"
+
+    ```{.textual path="tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"}
+    ```
+
+ === "collapsible_custom_symbol.py"
+
+     ```python
+     --8<-- "tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"
+     ```
 
 ## Collapse/Expand
 
