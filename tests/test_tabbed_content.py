@@ -475,6 +475,38 @@ async def test_disabling_via_tabbed_content():
         assert app.query_one(Tabs).active == "tab-1"
 
 
+async def test_disabling_via_tab_pane():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one("TabPane#tab-2").disabled = True
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+
+
+async def test_creating_disabled_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("first"):
+                    yield Label("hello")
+                with TabPane("second", disabled=True):
+                    yield Label("world")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+
+
 async def test_navigation_around_disabled_tabs():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
@@ -539,6 +571,29 @@ async def test_reenabling_via_tabbed_content():
 
     app = TabbedApp()
     async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+        app.reenable()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-2"
+
+
+async def test_reenabling_via_tab_pane():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one("TabPane#tab-2").disabled = True
+
+        def reenable(self) -> None:
+            self.query_one("TabPane#tab-2").disabled = False
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
         await pilot.click("Tab#tab-2")
         assert app.query_one(Tabs).active == "tab-1"
         app.reenable()
