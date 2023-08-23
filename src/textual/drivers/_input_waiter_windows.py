@@ -4,6 +4,7 @@ Windows InputWaiter, which uses the win32 API for wait for a file.
 """
 
 import ctypes
+from ctypes.wintypes import HANDLE
 
 kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 
@@ -38,7 +39,9 @@ class InputWaiter:
             True if there is data to be read, otherwise False if a timeout occurred.
         """
         timeout_milliseconds = int(timeout * 1000)
-        result = kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
+        result = kernel32.WaitForSingleObject(
+            HANDLE(self._fileno), timeout_milliseconds
+        )
         if result == WAIT_TIMEOUT:
             return False
         if result == WAIT_OBJECT_0:
