@@ -429,7 +429,7 @@ async def test_tabbed_content_clear():
         assert pilot.app.cleared == 1
 
 
-async def test_disabling_does_not_deactivate_tab():
+async def test_disabling_deactivates_tab():
     class TabbedApp(App[None]):
         def compose(self) -> ComposeResult:
             with TabbedContent():
@@ -440,7 +440,48 @@ async def test_disabling_does_not_deactivate_tab():
 
     app = TabbedApp()
     async with app.run_test():
-        assert app.query_one(Tabs).active == "tab-1"
+        assert app.query_one(Tabs).active == ""
+
+
+async def test_disabling_via_tabbed_content_deactivates_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+        def on_mount(self) -> None:
+            self.query_one(TabbedContent).disable_tab("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test():
+        assert app.query_one(Tabs).active == ""
+
+
+async def test_disabling_via_tab_pane_deactivates_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("", disabled=True):
+                    yield Label("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test():
+        assert app.query_one(Tabs).active == ""
+
+
+async def test_disabling_via_tab_pane_disabled_deactivates_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("", disabled=True):
+                    yield Label("tab-1")
+
+        def on_mount(self) -> None:
+            self.query_one(TabPane).disabled = True
+
+    app = TabbedApp()
+    async with app.run_test():
+        assert app.query_one(Tabs).active == ""
 
 
 async def test_disabled_tab_cannot_be_clicked():
@@ -485,7 +526,7 @@ async def test_navigation_around_disabled_tabs():
                 yield Label("tab-4")
 
         def on_mount(self) -> None:
-            self.query_one("Tab#tab-1").disabled = True
+            self.query_one("Tab#tab-2").disabled = True
             self.query_one("Tab#tab-3").disabled = True
 
     app = TabbedApp()
@@ -493,13 +534,13 @@ async def test_navigation_around_disabled_tabs():
         tabs = app.query_one(Tabs)
         assert tabs.active == "tab-1"
         tabs.action_next_tab()
-        assert tabs.active == "tab-2"
-        tabs.action_next_tab()
         assert tabs.active == "tab-4"
         tabs.action_next_tab()
-        assert tabs.active == "tab-2"
+        assert tabs.active == "tab-1"
+        tabs.action_next_tab()
+        assert tabs.active == "tab-4"
         tabs.action_previous_tab()
-        assert tabs.active == "tab-4"
+        assert tabs.active == "tab-1"
 
 
 async def test_reenabling_tab():

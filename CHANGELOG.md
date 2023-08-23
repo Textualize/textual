@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
 
+### Changed
+
+- If the active tab is disabled, the next available tab will be activated instead https://github.com/Textualize/textual/pull/3156
+
 ## [0.34.0] - 2023-08-22
 
 ### Added

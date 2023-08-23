@@ -3,12 +3,6 @@ from textual.widgets import Button, TabbedContent
 
 
 class FiddleWithTabsApp(App[None]):
-    CSS = """
-    TabPane:disabled {
-        background: red;
-    }
-    """
-
     def compose(self) -> ComposeResult:
         with TabbedContent():
             yield Button()
