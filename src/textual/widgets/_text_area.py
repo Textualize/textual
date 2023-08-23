@@ -210,7 +210,7 @@ TextArea > .text-area--width-guide {
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
 
-        self.word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
+        self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
         self._last_intentional_cell_width: int = 0
@@ -879,7 +879,7 @@ TextArea > .text-area--width-guide {
         cursor_row, cursor_column = self.cursor_location
         # Check the current line for a word boundary
         line = self.document[cursor_row][:cursor_column]
-        matches = list(re.finditer(self.word_pattern, line))
+        matches = list(re.finditer(self._word_pattern, line))
         if matches:
             # If a word boundary is found, move the cursor there
             cursor_column = matches[-1].start()
@@ -910,7 +910,7 @@ TextArea > .text-area--width-guide {
         cursor_row, cursor_column = self.selection.end
         # Check the current line for a word boundary
         line = self.document[cursor_row][cursor_column:]
-        matches = list(re.finditer(self.word_pattern, line))
+        matches = list(re.finditer(self._word_pattern, line))
         if matches:
             # If a word boundary is found, move the cursor there
             cursor_column += matches[0].end()
@@ -1123,7 +1123,7 @@ TextArea > .text-area--width-guide {
         cursor_row, cursor_column = end
 
         line = self.document[cursor_row][:cursor_column]
-        matches = list(re.finditer(self.word_pattern, line))
+        matches = list(re.finditer(self._word_pattern, line))
 
         if matches:
             from_location = (cursor_row, matches[-1].start())
@@ -1148,7 +1148,7 @@ TextArea > .text-area--width-guide {
 
         # Check the current line for a word boundary
         line = self.document[cursor_row][cursor_column:]
-        matches = list(re.finditer(self.word_pattern, line))
+        matches = list(re.finditer(self._word_pattern, line))
 
         current_row_length = len(self.document[cursor_row])
         if matches:
