@@ -303,6 +303,36 @@ async def test_delete_word_left_with_tabs(selection, expected_result, final_sele
         assert text_area.selection == final_selection
 
 
+async def test_delete_word_left_to_start_of_line():
+    """If no word boundary found when we 'delete word left', then
+    the deletion happens to the start of the line."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123\n   456789")
+        text_area.selection = Selection.cursor((1, 3))
+
+        await pilot.press("ctrl+w")
+
+        assert text_area.text == "0123\n456789"
+        assert text_area.selection == Selection.cursor((1, 0))
+
+
+async def test_delete_word_left_at_line_start():
+    """If we're at the start of a line and we 'delete word left', the
+    line merges with the line above (if possible)."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("0123\n   456789")
+        text_area.selection = Selection.cursor((1, 0))
+
+        await pilot.press("ctrl+w")
+
+        assert text_area.text == "0123   456789"
+        assert text_area.selection == Selection.cursor((0, 4))
+
+
 @pytest.mark.parametrize(
     "selection,expected_result,final_selection",
     [
@@ -325,3 +355,29 @@ async def test_delete_word_right(selection, expected_result, final_selection):
 
         assert text_area.text == expected_result
         assert text_area.selection == final_selection
+
+
+async def test_delete_word_right_delete_to_end_of_line():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("01234\n56789")
+        text_area.selection = Selection.cursor((0, 3))
+
+        await pilot.press("ctrl+f")
+
+        assert text_area.text == "012\n56789"
+        assert text_area.selection == Selection.cursor((0, 3))
+
+
+async def test_delete_word_right_at_end_of_line():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("01234\n56789")
+        text_area.selection = Selection.cursor((0, 5))
+
+        await pilot.press("ctrl+f")
+
+        assert text_area.text == "0123456789"
+        assert text_area.selection == Selection.cursor((0, 5))

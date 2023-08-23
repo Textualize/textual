@@ -1096,18 +1096,14 @@ TextArea > .text-area--width-guide {
 
         cursor_row, cursor_column = end
 
-        # Check the current line for a word boundary
         line = self.document[cursor_row][:cursor_column]
         matches = list(re.finditer(self.word_pattern, line))
 
         if matches:
-            # If a word boundary is found, delete the word
             from_location = (cursor_row, matches[-1].start())
-        elif cursor_row > 0:
-            # If no word boundary is found, and we're not on the first line, delete to the end of the previous line
+        elif cursor_row > 0 and cursor_column == 0:
             from_location = (cursor_row - 1, len(self.document[cursor_row - 1]))
         else:
-            # If we're already on the first line and no word boundary is found, delete to the start of the line
             from_location = (cursor_row, 0)
 
         self.delete(from_location, self.selection.end, maintain_selection_offset=False)
@@ -1128,15 +1124,16 @@ TextArea > .text-area--width-guide {
         line = self.document[cursor_row][cursor_column:]
         matches = list(re.finditer(self.word_pattern, line))
 
+        current_row_length = len(self.document[cursor_row])
         if matches:
-            # If a word boundary is found, delete the word
             to_location = (cursor_row, cursor_column + matches[0].end())
-        elif cursor_row < self.document.line_count - 1:
-            # If no word boundary is found, and we're not on the last line, delete to the start of the next line
+        elif (
+            cursor_row < self.document.line_count - 1
+            and cursor_column == current_row_length
+        ):
             to_location = (cursor_row + 1, 0)
         else:
-            # If we're already on the last line and no word boundary is found, delete to the end of the line
-            to_location = (cursor_row, len(self.document[cursor_row]))
+            to_location = (cursor_row, current_row_length)
 
         self.delete(end, to_location, maintain_selection_offset=False)
 
@@ -1234,6 +1231,7 @@ class Edit:
         """
         if self._updated_selection is not None:
             text_area.selection = self._updated_selection
+        text_area.record_cursor_width()
 
 
 @runtime_checkable
