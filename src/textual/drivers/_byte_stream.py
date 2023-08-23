@@ -156,7 +156,7 @@ class ByteStream(ByteStreamParser[Tuple[str, bytes]]):
                 continue
             if packet_type not in ("D", "M"):
                 while 1:
-                    if (yield read1()) != b"\n":
+                    if (yield read1()) != "\n":
                         break
                 continue
             size = from_bytes((yield read(4)), "big")
