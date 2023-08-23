@@ -366,3 +366,23 @@ async def test_select_all(content, expected_selection):
         text_area.select_all()
 
         assert text_area.selection == expected_selection
+
+
+@pytest.mark.parametrize(
+    "index,content,expected_selection",
+    [
+        (1, "123\n456\n789\n", Selection((1, 0), (1, 3))),
+        (2, "123\n456\n789\n", Selection((2, 0), (2, 3))),
+        (3, "123\n456\n789\n", Selection((3, 0), (3, 0))),
+        (0, "", Selection((0, 0), (0, 0))),
+    ],
+)
+async def test_select_line(index, content, expected_selection):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text(content)
+
+        text_area.select_line(index)
+
+        assert text_area.selection == expected_selection

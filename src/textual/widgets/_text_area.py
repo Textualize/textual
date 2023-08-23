@@ -649,6 +649,15 @@ TextArea > .text-area--width-guide {
         target = clamp_visitable((current_row + rows, current_column + columns))
         self.move_cursor(target, select, center, record_width)
 
+    def select_line(self, index: int) -> None:
+        """Select all the text in the specified line."""
+        try:
+            line = self.document[index]
+        except IndexError:
+            return
+        else:
+            self.selection = Selection((index, 0), (index, len(line)))
+
     def select_all(self) -> None:
         """Select all of the text in the `TextArea`."""
         last_line = self.document.line_count - 1
