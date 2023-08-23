@@ -1,6 +1,6 @@
 # TextArea
 
-!!! tip "Added in version 0.34.0"
+!!! tip "Added in version 0.35.0"
 
 A widget for editing text which may span multiple lines.
 

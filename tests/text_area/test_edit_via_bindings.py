@@ -253,7 +253,7 @@ async def test_delete_to_start_of_line(selection, expected_result):
             Selection.cursor((0, 6)),
             "   345 6789",
             Selection.cursor((0, 2)),
-            marks=pytest.mark.xfail(reason="Should skip whitespace."),
+            marks=pytest.mark.xfail(reason="Should skip initial whitespace."),
         ),
         (Selection.cursor((0, 14)), "  012 345 ", Selection.cursor((0, 10))),
         # When there's a selection and you "delete word left", it just deletes the selection
@@ -276,17 +276,41 @@ async def test_delete_word_left(selection, expected_result, final_selection):
 @pytest.mark.parametrize(
     "selection,expected_result,final_selection",
     [
-        (Selection.cursor((0, 0)), "  012 345 6789", Selection.cursor((0, 0))),
-        (Selection.cursor((0, 4)), "  2 345 6789", Selection.cursor((0, 2))),
-        (Selection.cursor((0, 5)), "   345 6789", Selection.cursor((0, 2))),
+        (Selection.cursor((0, 0)), "\t012 \t 345\t6789", Selection.cursor((0, 0))),
+        (Selection.cursor((0, 4)), "\t \t 345\t6789", Selection.cursor((0, 1))),
+        (Selection.cursor((0, 5)), "\t012\t 345\t6789", Selection.cursor((0, 4))),
         pytest.param(
             Selection.cursor((0, 6)),
-            "   345 6789",
-            Selection.cursor((0, 2)),
-            marks=pytest.mark.xfail(reason="Should skip whitespace."),
+            "\t 345\t6789",
+            Selection.cursor((0, 1)),
+            marks=pytest.mark.xfail(reason="Should skip initial whitespace."),
         ),
-        (Selection.cursor((0, 14)), "  012 345 ", Selection.cursor((0, 10))),
+        (Selection.cursor((0, 15)), "\t012 \t 345\t", Selection.cursor((0, 11))),
         # When there's a selection and you "delete word left", it just deletes the selection
+        (Selection((0, 4), (0, 11)), "\t0126789", Selection.cursor((0, 4))),
+    ],
+)
+async def test_delete_word_left_with_tabs(selection, expected_result, final_selection):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("\t012 \t 345\t6789")
+        text_area.selection = selection
+
+        await pilot.press("ctrl+w")
+
+        assert text_area.text == expected_result
+        assert text_area.selection == final_selection
+
+
+@pytest.mark.parametrize(
+    "selection,expected_result,final_selection",
+    [
+        (Selection.cursor((0, 0)), "012 345 6789", Selection.cursor((0, 0))),
+        (Selection.cursor((0, 4)), "  01 345 6789", Selection.cursor((0, 4))),
+        (Selection.cursor((0, 5)), "  012345 6789", Selection.cursor((0, 5))),
+        (Selection.cursor((0, 14)), "  012 345 6789", Selection.cursor((0, 14))),
+        # When non-empty selection, "delete word right" just deletes the selection
         (Selection((0, 4), (0, 11)), "  01789", Selection.cursor((0, 4))),
     ],
 )
@@ -297,7 +321,7 @@ async def test_delete_word_right(selection, expected_result, final_selection):
         text_area.load_text("  012 345 6789")
         text_area.selection = selection
 
-        await pilot.press("ctrl+w")
+        await pilot.press("ctrl+f")
 
         assert text_area.text == expected_result
         assert text_area.selection == final_selection
