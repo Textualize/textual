@@ -662,9 +662,6 @@ class Tabs(Widget, can_focus=True):
     def _on_tab_disabled(self, event: Tab.Disabled) -> None:
         """Re-post the disabled message."""
         event.stop()
-        if event.tab.has_class("-active"):
-            next_tab = self._next_active
-            self.active = next_tab.id or "" if next_tab else ""
         self.post_message(self.TabDisabled(self, event.tab))
 
     def _on_tab_enabled(self, event: Tab.Enabled) -> None:
@@ -692,9 +689,6 @@ class Tabs(Widget, can_focus=True):
                 f"There is no tab with ID {tab_id!r} to disable."
             ) from None
 
-        if tab_to_disable.has_class("-active"):
-            next_tab = self._next_active
-            self.active = next_tab.id or "" if next_tab else ""
         tab_to_disable.disabled = True
         return tab_to_disable
 
