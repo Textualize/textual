@@ -22,4 +22,4 @@ class LinkColorApp(App):
         )
 
 
-app = LinkColorApp(css_path="link_color.css")
+app = LinkColorApp(css_path="link_color.tcss")

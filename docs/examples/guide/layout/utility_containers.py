@@ -4,7 +4,7 @@ from textual.widgets import Static
 
 
 class UtilityContainersExample(App):
-    CSS_PATH = "utility_containers.css"
+    CSS_PATH = "utility_containers.tcss"
 
     def compose(self) -> ComposeResult:
         yield Horizontal(

@@ -71,7 +71,7 @@ class Stopwatch(Static):
 class StopwatchApp(App):
     """A Textual app to manage stopwatches."""
 
-    CSS_PATH = "stopwatch.css"
+    CSS_PATH = "stopwatch.tcss"
 
     BINDINGS = [
         ("d", "toggle_dark", "Toggle dark mode"),

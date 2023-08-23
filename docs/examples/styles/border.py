@@ -9,4 +9,4 @@ class BorderApp(App):
         yield Label("My border is tall blue", id="label3")
 
 
-app = BorderApp(css_path="border.css")
+app = BorderApp(css_path="border.tcss")

@@ -40,10 +40,10 @@ This (very simple) custom widget may be [styled](./styles.md) in the same way as
     --8<-- "docs/examples/guide/widgets/hello02.py"
     ```
 
-=== "hello02.css"
+=== "hello02.tcss"
 
-    ```sass title="hello02.css"
-    --8<-- "docs/examples/guide/widgets/hello02.css"
+    ```sass title="hello02.tcss"
+    --8<-- "docs/examples/guide/widgets/hello02.tcss"
     ```
 
 The addition of the CSS has completely transformed our custom widget.
@@ -63,10 +63,10 @@ Let's use Static to create a widget which cycles through "hello" in various lang
     --8<-- "docs/examples/guide/widgets/hello03.py"
     ```
 
-=== "hello03.css"
+=== "hello03.tcss"
 
-    ```sass title="hello03.css"
-    --8<-- "docs/examples/guide/widgets/hello03.css"
+    ```sass title="hello03.tcss"
+    --8<-- "docs/examples/guide/widgets/hello03.tcss"
     ```
 
 === "Output"
@@ -92,10 +92,10 @@ Here's the Hello example again, this time the widget has embedded default CSS:
     --8<-- "docs/examples/guide/widgets/hello04.py"
     ```
 
-=== "hello04.css"
+=== "hello04.tcss"
 
-    ```sass title="hello04.css"
-    --8<-- "docs/examples/guide/widgets/hello04.css"
+    ```sass title="hello04.tcss"
+    --8<-- "docs/examples/guide/widgets/hello04.tcss"
     ```
 
 === "Output"
@@ -128,10 +128,10 @@ Let's use markup links in the hello example so that the greeting becomes a link 
     --8<-- "docs/examples/guide/widgets/hello05.py"
     ```
 
-=== "hello05.css"
+=== "hello05.tcss"
 
-    ```sass title="hello05.css"
-    --8<-- "docs/examples/guide/widgets/hello05.css"
+    ```sass title="hello05.tcss"
+    --8<-- "docs/examples/guide/widgets/hello05.tcss"
     ```
 
 === "Output"
@@ -166,10 +166,10 @@ Let's demonstrate setting a title, both as a class variable and a instance varia
     1. Setting the default for the `title` attribute via class variable.
     2. Setting `subtitle` via an instance attribute.
 
-=== "hello06.css"
+=== "hello06.tcss"
 
-    ```sass title="hello06.css"
-    --8<-- "docs/examples/guide/widgets/hello06.css"
+    ```sass title="hello06.tcss"
+    --8<-- "docs/examples/guide/widgets/hello06.tcss"
     ```
 
 === "Output"
@@ -197,10 +197,10 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
     --8<-- "docs/examples/guide/widgets/fizzbuzz01.py"
     ```
 
-=== "fizzbuzz01.css"
+=== "fizzbuzz01.tcss"
 
-    ```sass title="fizzbuzz01.css" hl_lines="32-35"
-    --8<-- "docs/examples/guide/widgets/fizzbuzz01.css"
+    ```sass title="fizzbuzz01.tcss" hl_lines="32-35"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz01.tcss"
     ```
 
 === "Output"
@@ -221,10 +221,10 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
     --8<-- "docs/examples/guide/widgets/fizzbuzz02.py"
     ```
 
-=== "fizzbuzz02.css"
+=== "fizzbuzz02.tcss"
 
-    ```sass title="fizzbuzz02.css"
-    --8<-- "docs/examples/guide/widgets/fizzbuzz02.css"
+    ```sass title="fizzbuzz02.tcss"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz02.tcss"
     ```
 
 === "Output"

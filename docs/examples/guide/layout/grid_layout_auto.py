@@ -3,7 +3,7 @@ from textual.widgets import Static
 
 
 class GridLayoutExample(App):
-    CSS_PATH = "grid_layout_auto.css"
+    CSS_PATH = "grid_layout_auto.tcss"
 
     def compose(self) -> ComposeResult:
         yield Static("First column", classes="box")

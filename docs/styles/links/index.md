@@ -50,10 +50,10 @@ The second label uses CSS to customize the link color, background, and style.
     --8<-- "docs/examples/styles/links.py"
     ```
 
-=== "links.css"
+=== "links.tcss"
 
     ```sass
-    --8<-- "docs/examples/styles/links.css"
+    --8<-- "docs/examples/styles/links.tcss"
     ```
 
 ## Additional Notes

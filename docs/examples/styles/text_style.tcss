@@ -1,9 +1,9 @@
 Screen {
-    layout: horizontal;    
+    layout: horizontal;
 }
 Label {
     width: 1fr;
-}    
+}
 #lbl1 {
     background: red 30%;
     text-style: bold;

@@ -17,4 +17,4 @@ class BorderTitleAlignApp(App):
         yield lbl
 
 
-app = BorderTitleAlignApp(css_path="border_title_align.css")
+app = BorderTitleAlignApp(css_path="border_title_align.tcss")

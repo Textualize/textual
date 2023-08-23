@@ -30,10 +30,10 @@ In this example, we have 3 widgets with differing offsets.
     --8<-- "docs/examples/styles/offset.py"
     ```
 
-=== "offset.css"
+=== "offset.tcss"
 
     ```sass hl_lines="13 20 27"
-    --8<-- "docs/examples/styles/offset.css"
+    --8<-- "docs/examples/styles/offset.tcss"
     ```
 
 ## CSS

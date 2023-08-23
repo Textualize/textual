@@ -3,7 +3,7 @@ from textual.widgets import Button, Header, Label
 
 
 class MyApp(App[str]):
-    CSS_PATH = "question02.css"
+    CSS_PATH = "question02.tcss"
     TITLE = "A Question App"
     SUB_TITLE = "The most important question"
 

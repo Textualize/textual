@@ -14,6 +14,7 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import platform
 import selectors
 import signal
 import sys
@@ -27,6 +28,8 @@ from ..app import App
 from ..driver import Driver
 from ..geometry import Size
 from ._byte_stream import ByteStream
+
+WINDOWS = platform.system() == "Windows"
 
 
 class WebDriver(Driver):
@@ -95,8 +98,11 @@ class WebDriver(Driver):
                 self._app._post_message(messages.ExitApp()), loop=loop
             )
 
-        for _signal in (signal.SIGINT, signal.SIGTERM):
-            loop.add_signal_handler(_signal, do_exit)
+        if not WINDOWS:
+            for _signal in (signal.SIGINT, signal.SIGTERM):
+                loop.add_signal_handler(_signal, do_exit)
+
+        self._write(b"__GANGLION__\n")
 
         self.write("\x1b[?1049h")  # Alt screen
         self._enable_mouse_support()
@@ -182,4 +188,8 @@ class WebDriver(Driver):
             asyncio.run_coroutine_threadsafe(
                 self._app._post_message(event),
                 loop=self._loop,
+            )
+        elif packet_type == "quit":
+            asyncio.run_coroutine_threadsafe(
+                self._app._post_message(messages.ExitApp()), loop=self._loop
             )

@@ -25,4 +25,4 @@ class AllTextStyleApp(App):
         )
 
 
-app = AllTextStyleApp(css_path="text_style_all.css")
+app = AllTextStyleApp(css_path="text_style_all.tcss")

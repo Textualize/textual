@@ -7,4 +7,4 @@ class WidthApp(App):
         yield Widget()
 
 
-app = WidthApp(css_path="width.css")
+app = WidthApp(css_path="width.tcss")

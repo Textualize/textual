@@ -4,7 +4,7 @@ from textual.widgets import Header, Static
 
 
 class CombiningLayoutsExample(App):
-    CSS_PATH = "combining_layouts.css"
+    CSS_PATH = "combining_layouts.tcss"
 
     def compose(self) -> ComposeResult:
         yield Header()

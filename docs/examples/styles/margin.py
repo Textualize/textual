@@ -15,4 +15,4 @@ class MarginApp(App):
         yield Label(TEXT)
 
 
-app = MarginApp(css_path="margin.css")
+app = MarginApp(css_path="margin.tcss")

@@ -22,4 +22,4 @@ class LinkHoverColorApp(App):
         )
 
 
-app = LinkHoverColorApp(css_path="link_hover_color.css")
+app = LinkHoverColorApp(css_path="link_hover_color.tcss")
