@@ -182,17 +182,18 @@ class WebDriver(Driver):
 
     def on_meta(self, packet_type: str, payload: dict) -> None:
         self.write_meta({"type": "log", "message": f"{packet_type}, {payload}"})
+        assert self._app._loop is not None
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
             size_event = events.Resize(size, size)
             asyncio.run_coroutine_threadsafe(
                 self._app._post_message(size_event),
-                self._loop,
+                self._app._loop,
             )
         elif packet_type == "quit":
             exit_event = messages.ExitApp()
             asyncio.run_coroutine_threadsafe(
                 self._app._post_message(exit_event),
-                self._loop,
+                self._app._loop,
             )
