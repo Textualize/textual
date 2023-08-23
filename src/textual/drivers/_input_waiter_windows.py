@@ -8,6 +8,7 @@ import ctypes
 kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 
 WAIT_FAILED = 0xFFFFFFFF
+WAIT_TIMEOUT = 0x00000102
 
 
 class InputWaiter:
@@ -36,9 +37,9 @@ class InputWaiter:
             True if there is data to be read, otherwise False if a timeout occurred.
         """
         timeout_milliseconds = int(timeout * 1000)
-        return (
-            kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
-            != WAIT_FAILED
+        return kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds) not in (
+            WAIT_FAILED,
+            WAIT_TIMEOUT,
         )
 
     def close(self) -> None:
