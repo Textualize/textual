@@ -466,7 +466,7 @@ TextArea > .text-area--width-guide {
             "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
             "enter": "\n",
         }
-        self._reset_blink()
+        self._restart_blink()
         if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
@@ -525,7 +525,7 @@ TextArea > .text-area--width-guide {
         self._pause_blink_visible()
 
     def _on_focus(self, _: events.Focus) -> None:
-        self._reset_blink()
+        self._restart_blink()
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
@@ -533,13 +533,13 @@ TextArea > .text-area--width-guide {
         cursor_row, _ = self.cursor_location
         self.refresh_lines(cursor_row)
 
-    def _reset_blink(self):
+    def _restart_blink(self) -> None:
         """Reset the cursor blink timer."""
         if self.cursor_blink:
             self._cursor_blink_visible = True
             self.blink_timer.reset()
 
-    def _pause_blink_visible(self):
+    def _pause_blink_visible(self) -> None:
         """Pause the cursor blinking but ensure it stays visible."""
         self._cursor_blink_visible = True
         self.blink_timer.pause()
@@ -566,7 +566,7 @@ TextArea > .text-area--width-guide {
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
-        self._reset_blink()
+        self._restart_blink()
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
