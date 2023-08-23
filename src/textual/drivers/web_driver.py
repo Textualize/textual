@@ -98,7 +98,16 @@ class WebDriver(Driver):
                 self._app._post_message(messages.ExitApp()), loop=loop
             )
 
-        if not WINDOWS:
+        if WINDOWS:
+
+            def exit_handler(signal_handler, stack_frame) -> None:
+                """Signal handler."""
+                do_exit()
+
+            signal.signal(signal.SIGINT, exit_handler)
+            signal.signal(signal.SIGTERM, exit_handler)
+
+        else:
             for _signal in (signal.SIGINT, signal.SIGTERM):
                 loop.add_signal_handler(_signal, do_exit)
 
