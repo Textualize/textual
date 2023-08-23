@@ -85,8 +85,20 @@ TextArea > .text-area--width-guide {
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
         Binding("ctrl+left", "cursor_left_word", "cursor left word", show=False),
+        Binding(
+            "ctrl+shift+left",
+            "cursor_left_word(True)",
+            "cursor left word select",
+            show=False,
+        ),
         Binding("right", "cursor_right", "cursor right", show=False),
         Binding("ctrl+right", "cursor_right_word", "cursor right word", show=False),
+        Binding(
+            "ctrl+shift+right",
+            "cursor_right_word(True)",
+            "cursor right word select",
+            show=False,
+        ),
         Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
         Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
         Binding("pageup", "cursor_page_up", "cursor page up", show=False),
@@ -124,8 +136,10 @@ TextArea > .text-area--width-guide {
     | down                   | Move the cursor down.                        |
     | left                   | Move the cursor left.                        |
     | ctrl+left              | Move the cursor to the start of the word.    |
+    | ctrl+shift+left        | Move the cursor to the start of the word and select.    |
     | right                  | Move the cursor right.                       |
     | ctrl+right             | Move the cursor to the end of the word.      |
+    | ctrl+shift+right       | Move the cursor to the end of the word and select.      |
     | home,ctrl+a            | Move the cursor to the start of the line.    |
     | end,ctrl+e             | Move the cursor to the end of the line.      |
     | pageup                 | Move the cursor one page up.                 |
@@ -923,12 +937,16 @@ TextArea > .text-area--width-guide {
         cursor_row, _cursor_column = end
         return cursor_row, 0
 
-    def action_cursor_left_word(self) -> None:
-        """Move the cursor left by a single word, skipping spaces."""
+    def action_cursor_left_word(self, select: bool = False) -> None:
+        """Move the cursor left by a single word, skipping spaces.
+
+        Args:
+            select: Whether to select while moving the cursor.
+        """
         if self.cursor_at_start_of_document:
             return
         target = self.get_cursor_left_word_location()
-        self.move_cursor(target)
+        self.move_cursor(target, select=select)
 
     def get_cursor_left_word_location(self) -> Location:
         """Get the location the cursor will jump to if it goes 1 word left.
@@ -952,14 +970,14 @@ TextArea > .text-area--width-guide {
             cursor_column = 0
         return cursor_row, cursor_column
 
-    def action_cursor_right_word(self) -> None:
+    def action_cursor_right_word(self, select: bool = False) -> None:
         """Move the cursor right by a single word, skipping spaces."""
 
         if self.cursor_at_end_of_document:
             return
 
         target = self.get_cursor_right_word_location()
-        self.move_cursor(target)
+        self.move_cursor(target, select=select)
 
     def get_cursor_right_word_location(self):
         """Get the location the cursor will jump to if it goes 1 word right.
