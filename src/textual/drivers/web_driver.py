@@ -15,7 +15,6 @@ import asyncio
 import json
 import os
 import platform
-import selectors
 import signal
 import sys
 from codecs import getincrementaldecoder
@@ -28,6 +27,7 @@ from ..app import App
 from ..driver import Driver
 from ..geometry import Size
 from ._byte_stream import ByteStream
+from ._input_waiter import InputWaiter
 
 WINDOWS = platform.system() == "Windows"
 
@@ -132,47 +132,46 @@ class WebDriver(Driver):
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
-        selector = selectors.DefaultSelector()
+        # selector = selectors.DefaultSelector()
         fileno = self.in_fileno
-        selector.register(fileno, selectors.EVENT_READ)
+        # selector.register(fileno, selectors.EVENT_READ)
 
-        def more_data() -> bool:
-            """Check if there is more data to parse."""
-            for key, events in selector.select(0.01):
-                if events:
-                    return True
-            return False
+        input_waiter = InputWaiter(self.in_fileno)
+        wait_for_input = input_waiter.wait
 
-        parser = XTermParser(more_data, debug=self._debug)
+        # def more_data() -> bool:
+        #     """Check if there is more data to parse."""
+        #     for key, events in selector.select(0.01):
+        #         if events:
+        #             return True
+        #     return False
+
+        parser = XTermParser(input_waiter.more_data, debug=self._debug)
         feed = parser.feed
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
-        EVENT_READ = selectors.EVENT_READ
 
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
         # in band data packets.
         byte_stream = ByteStream()
         try:
             while not self.exit_event.is_set():
-                selector_events = selector.select(0.1)
-                for _selector_key, mask in selector_events:
-                    if mask | EVENT_READ:
-                        data = read(fileno, 1024)  # raw data
-
-                        for packet_type, payload in byte_stream.feed(data):
-                            if packet_type == "D":
-                                # Treat as stdin
-                                for event in feed(decode(payload)):
-                                    self.process_event(event)
-                            else:
-                                # Process meta information separately
-                                self._on_meta(packet_type, payload)
+                if wait_for_input(0.1):
+                    data = read(fileno, 1024)  # raw data
+                    for packet_type, payload in byte_stream.feed(data):
+                        if packet_type == "D":
+                            # Treat as stdin
+                            for event in feed(decode(payload)):
+                                self.process_event(event)
+                        else:
+                            # Process meta information separately
+                            self._on_meta(packet_type, payload)
         except Exception as error:
             log(error)
         finally:
-            selector.close()
+            input_waiter.close()
 
     def _on_meta(self, packet_type: str, payload: bytes) -> None:
         payload_map = json.loads(payload)
@@ -186,8 +185,7 @@ class WebDriver(Driver):
             size = Size(*self._size)
             event = events.Resize(size, size)
             asyncio.run_coroutine_threadsafe(
-                self._app._post_message(event),
-                loop=self._loop,
+                self._app._post_message(event), loop=self._loop
             )
         elif packet_type == "quit":
             asyncio.run_coroutine_threadsafe(
