@@ -9,7 +9,7 @@ from rich.text import Text
 
 from textual._cells import cell_len
 from textual._fix_direction import _sort_ascending
-from textual._types import Literal, SupportsIndex, get_args
+from textual._types import Literal, get_args
 from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
