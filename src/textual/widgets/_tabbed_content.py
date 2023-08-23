@@ -379,18 +379,22 @@ class TabbedContent(Widget):
     def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
         """Disable the corresponding tab pane."""
         event.stop()
-        tab_id = event.tab.id
+        tab_id = event.tab.id or ""
         try:
-            self.get_child_by_id(f"TabPane#{tab_id}").disabled = True
+            self.get_child_by_type(ContentSwitcher).get_child_by_id(
+                tab_id, expect_type=TabPane
+            ).disabled = True
         except NoMatches:
             return
 
     def _on_tabs_tab_enabled(self, event: Tabs.TabEnabled) -> None:
         """Enable the corresponding tab pane."""
         event.stop()
-        tab_id = event.tab.id
+        tab_id = event.tab.id or ""
         try:
-            self.get_child_by_id(f"TabPane#{tab_id}").disabled = False
+            self.get_child_by_type(ContentSwitcher).get_child_by_id(
+                tab_id, expect_type=TabPane
+            ).disabled = False
         except NoMatches:
             return
 
