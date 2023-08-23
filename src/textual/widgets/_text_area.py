@@ -186,6 +186,12 @@ TextArea > .text-area--width-guide {
     altering this value will immediately change the display width of the visible tabs.
     """
 
+    cursor_blink: Reactive[bool] = reactive(True)
+    """True if the cursor should blink."""
+
+    _cursor_blink_visible: Reactive[bool] = reactive(True)
+    """True if the cursor should be rendered """
+
     def __init__(
         self,
         name: str | None = None,
@@ -364,8 +370,12 @@ TextArea > .text-area--width-guide {
         cursor_row, cursor_column = end
         active_line_style = self.get_component_rich_style("text-area--cursor-line")
         if cursor_row == line_index:
-            cursor_style = self.get_component_rich_style("text-area--cursor")
-            line.stylize(cursor_style, cursor_column, cursor_column + 1)
+            draw_cursor = not self.cursor_blink or (
+                self.cursor_blink and self._cursor_blink_visible
+            )
+            if draw_cursor:
+                cursor_style = self.get_component_rich_style("text-area--cursor")
+                line.stylize(cursor_style, cursor_column, cursor_column + 1)
             line.stylize_before(active_line_style)
 
         # Build the gutter text for this line
@@ -456,6 +466,7 @@ TextArea > .text-area--width-guide {
             "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
             "enter": "\n",
         }
+        self._reset_blink()
         if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
@@ -466,7 +477,6 @@ TextArea > .text-area--width-guide {
             start, end = self.selection
             self.replace(insert, start, end, False)
 
-    # --- Lower level event/key handling
     def get_target_document_location(self, event: MouseEvent) -> Location:
         """Given a MouseEvent, return the row and column offset of the event in document-space.
 
@@ -487,6 +497,7 @@ TextArea > .text-area--width-guide {
         target_column = self.cell_width_to_column_index(target_x, target_row)
         return target_row, target_column
 
+    # --- Lower level event/key handling
     @property
     def gutter_width(self) -> int:
         """The width of the gutter (the left column containing line numbers).
@@ -503,6 +514,36 @@ TextArea > .text-area--width-guide {
         )
         return gutter_width
 
+    def _on_mount(self, _: events.Mount) -> None:
+        self.blink_timer = self.set_interval(
+            0.5,
+            self._toggle_cursor_blink_visible,
+            pause=not (self.cursor_blink and self.has_focus),
+        )
+
+    def _on_blur(self, _: events.Blur) -> None:
+        self._pause_blink_visible()
+
+    def _on_focus(self, _: events.Focus) -> None:
+        self._reset_blink()
+
+    def _toggle_cursor_blink_visible(self) -> None:
+        """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
+        self._cursor_blink_visible = not self._cursor_blink_visible
+        cursor_row, _ = self.cursor_location
+        self.refresh_lines(cursor_row)
+
+    def _reset_blink(self):
+        """Reset the cursor blink timer."""
+        if self.cursor_blink:
+            self._cursor_blink_visible = True
+            self.blink_timer.reset()
+
+    def _pause_blink_visible(self):
+        """Pause the cursor blinking but ensure it stays visible."""
+        self._cursor_blink_visible = True
+        self.blink_timer.pause()
+
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
         """Update the cursor position, and begin a selection using the mouse."""
         target = self.get_target_document_location(event)
@@ -511,6 +552,7 @@ TextArea > .text-area--width-guide {
         # Capture the mouse so that if the cursor moves outside the
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
+        self._pause_blink_visible()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
@@ -524,6 +566,7 @@ TextArea > .text-area--width-guide {
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
+        self._reset_blink()
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""

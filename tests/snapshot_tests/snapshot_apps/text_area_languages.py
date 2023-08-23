@@ -5,7 +5,9 @@ from textual.widgets import TextArea
 
 class TextAreaSnapshot(App):
     def compose(self) -> ComposeResult:
-        yield TextArea()
+        text_area = TextArea()
+        text_area.cursor_blink = False
+        yield text_area
 
 
 app = TextAreaSnapshot()
