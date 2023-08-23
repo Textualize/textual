@@ -956,7 +956,7 @@ TextArea > .text-area--width-guide {
         """
         cursor_row, cursor_column = self.cursor_location
         # Check the current line for a word boundary
-        line = self.document[cursor_row][:cursor_column]
+        line = self.document[cursor_row][:cursor_column].rstrip()
         matches = list(re.finditer(self._word_pattern, line))
         if matches:
             # If a word boundary is found, move the cursor there
@@ -987,7 +987,7 @@ TextArea > .text-area--width-guide {
         """
         cursor_row, cursor_column = self.selection.end
         # Check the current line for a word boundary
-        line = self.document[cursor_row][cursor_column:]
+        line = self.document[cursor_row][cursor_column:].lstrip()
         matches = list(re.finditer(self._word_pattern, line))
         if matches:
             # If a word boundary is found, move the cursor there
