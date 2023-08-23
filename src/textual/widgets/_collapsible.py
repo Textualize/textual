@@ -20,7 +20,7 @@ class Collapsible(Widget):
 
     DEFAULT_CSS = """
     Collapsible {
-        width: 100%;
+        width: 1fr;
         height: auto;
     }
     """
