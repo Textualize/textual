@@ -1,5 +1,9 @@
+"""
+Windows InputWaiter, which uses the win32 API for wait for a file.
+
+"""
+
 import ctypes
-from ctypes.wintypes import HANDLE, LARGE_INTEGER
 
 kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 
@@ -10,6 +14,11 @@ class InputWaiter:
     """Object to wait for input from a file handle."""
 
     def __init__(self, fileno: int) -> None:
+        """
+
+        Args:
+            fileno: File number / handle.
+        """
         self._fileno = fileno
 
     def more_data(self) -> bool:
@@ -34,4 +43,3 @@ class InputWaiter:
 
     def close(self) -> None:
         """Close the object."""
-        ...

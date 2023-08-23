@@ -5,7 +5,10 @@ class InputWaiter:
     """Object to wait for input from a file handle."""
 
     def __init__(self, fileno: int) -> None:
-        self._fileno = fileno
+        """
+        Args:
+            fileno: File number / handle.
+        """
         self._selector = selectors.DefaultSelector()
         self._selector.register(fileno, selectors.EVENT_READ)
 

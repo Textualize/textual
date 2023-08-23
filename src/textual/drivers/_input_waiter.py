@@ -1,3 +1,10 @@
+"""
+An object to wait for input form a file.
+
+This is a shim to load the appropriate implementation for the OS (Windows versus everything else).
+
+"""
+
 import platform
 
 __all__ = ["InputWaiter"]

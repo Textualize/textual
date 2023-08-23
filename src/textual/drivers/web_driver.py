@@ -98,16 +98,7 @@ class WebDriver(Driver):
                 self._app._post_message(messages.ExitApp()), loop=loop
             )
 
-        if WINDOWS:
-
-            def exit_handler(signal_handler, stack_frame) -> None:
-                """Signal handler."""
-                do_exit()
-
-            signal.signal(signal.SIGINT, exit_handler)
-            signal.signal(signal.SIGTERM, exit_handler)
-
-        else:
+        if not WINDOWS:
             for _signal in (signal.SIGINT, signal.SIGTERM):
                 loop.add_signal_handler(_signal, do_exit)
 
@@ -141,19 +132,11 @@ class WebDriver(Driver):
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
-        # selector = selectors.DefaultSelector()
+
         fileno = self.in_fileno
-        # selector.register(fileno, selectors.EVENT_READ)
 
         input_waiter = InputWaiter(self.in_fileno)
         wait_for_input = input_waiter.wait
-
-        # def more_data() -> bool:
-        #     """Check if there is more data to parse."""
-        #     for key, events in selector.select(0.01):
-        #         if events:
-        #             return True
-        #     return False
 
         parser = XTermParser(input_waiter.more_data, debug=self._debug)
         feed = parser.feed
