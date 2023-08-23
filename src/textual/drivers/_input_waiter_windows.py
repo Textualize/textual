@@ -38,10 +38,8 @@ class InputWaiter:
             True if there is data to be read, otherwise False if a timeout occurred.
         """
         timeout_milliseconds = int(timeout * 1000)
-        return (
-            kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
-            == WAIT_OBJECT_0
-        )
+        result = kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
+        return result != WAIT_TIMEOUT
 
     def close(self) -> None:
         """Close the object."""
