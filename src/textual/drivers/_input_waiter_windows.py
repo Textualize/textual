@@ -39,7 +39,7 @@ class InputWaiter:
         """
         timeout_milliseconds = int(timeout * 1000)
         result = kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
-        return result != WAIT_TIMEOUT
+        return result == WAIT_OBJECT_0
 
     def close(self) -> None:
         """Close the object."""
