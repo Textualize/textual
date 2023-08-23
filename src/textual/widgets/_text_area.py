@@ -76,7 +76,6 @@ TextArea > .text-area--width-guide {
 | `text-area--cursor-line`        | Targets the line of text the cursor is on.       |
 | `text-area--cursor-line-gutter` | Targets the gutter of the line the cursor is on. |
 | `text-area--selection`          | Targets the selected text.                       |
-| `text-area--width-guide`        | Targets the width guide.                         |
  """
 
     BINDINGS = [
@@ -186,9 +185,6 @@ TextArea > .text-area--width-guide {
     If the document currently open contains tabs that are currently visible on screen,
     altering this value will immediately change the display width of the visible tabs.
     """
-
-    _show_width_guide: Reactive[bool] = reactive(False)
-    """If True, a vertical line will indicate the width of the document."""
 
     def __init__(
         self,
@@ -362,12 +358,6 @@ TextArea > .text-area--width-guide {
             cursor_style = self.get_component_rich_style("text-area--cursor")
             line.stylize(cursor_style, cursor_column, cursor_column + 1)
             line.stylize_before(active_line_style)
-
-        # The width guide is a visual indicator showing the virtual width of the TextArea widget.
-        if self._show_width_guide:
-            width_guide_style = self.get_component_rich_style("text-area--width-guide")
-            width_column = virtual_width - self.gutter_width
-            line.stylize_before(width_guide_style, width_column - 1, width_column)
 
         # Build the gutter text for this line
         if self.show_line_numbers:
