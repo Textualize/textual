@@ -56,6 +56,15 @@ class WebDriver(Driver):
         data_bytes = data.encode("utf-8")
         self._write(b"D%s%s" % (len(data_bytes).to_bytes(4, "big"), data_bytes))
 
+    def write_meta(self, data: dict[str, object]) -> None:
+        """Write meta to the controlling process (i.e. textual-web)
+
+        Args:
+            data: Meta dict.
+        """
+        meta_bytes = json.dumps(data).encode("utf-8", errors="ignore")
+        self._write(b"M%s%s" % (len(meta_bytes).to_bytes(4, "big"), meta_bytes))
+
     def flush(self) -> None:
         pass
 
@@ -172,6 +181,7 @@ class WebDriver(Driver):
             self.on_meta(_type, payload_map)
 
     def on_meta(self, packet_type: str, payload: dict) -> None:
+        self.write_meta({"type": "log", "message": f"{packet_type}, {payload}"})
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
