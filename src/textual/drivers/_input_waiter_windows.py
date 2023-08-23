@@ -26,7 +26,7 @@ class InputWaiter:
     def more_data(self) -> bool:
         """Check if there is data pending."""
         ...
-        return False
+        return True
 
     def wait(self, timeout: float = 0.1) -> bool:
         """Wait for input.
@@ -38,10 +38,11 @@ class InputWaiter:
             True if there is data to be read, otherwise False if a timeout occurred.
         """
         timeout_milliseconds = int(timeout * 1000)
-        return (
-            kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
-            == WAIT_OBJECT_0
-        )
+        wait_result = kernel32.WaitForSingleObject(self._fileno, timeout_milliseconds)
+        if wait_result == WAIT_OBJECT_0:
+            return True
+        print(wait_result)
+        return False
 
     def close(self) -> None:
         """Close the object."""
