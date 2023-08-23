@@ -55,10 +55,12 @@ class InputWaiter:
 
 
 if __name__ == "__main__":
-    fileno = self.__stdin__.fileno()
+    import sys
+
+    fileno = sys.__stdin__.fileno()
     import os
 
     while 1:
         result = kernel32.WaitForSingleObject(fileno, 500)
         print(result)
-        print(os.read(fileno))
+        print(os.read(fileno, 1024))
