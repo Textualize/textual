@@ -41,12 +41,13 @@ class InputWaiter:
             True if there is data to be read, otherwise False if a timeout occurred.
         """
         timeout_milliseconds = int(timeout * 1000)
-
-        hIn = GetStdHandle(STD_INPUT_HANDLE)
-        result = kernel32.WaitForSingleObject(hIn, DWORD(timeout_milliseconds))
+        result = kernel32.WaitForSingleObject(
+            GetStdHandle(STD_INPUT_HANDLE),
+            DWORD(timeout_milliseconds),
+        )
         if result == WAIT_TIMEOUT:
             return False
-        return True
+        return result == WAIT_OBJECT_0
 
     def close(self) -> None:
         """Close the object."""
@@ -62,4 +63,6 @@ if __name__ == "__main__":
         hIn = GetStdHandle(STD_INPUT_HANDLE)
         result = kernel32.WaitForSingleObject(fileno, DWORD(500))
         print(result)
+        if result == -1:
+            continue
         print(os.read(fileno, 1024))
