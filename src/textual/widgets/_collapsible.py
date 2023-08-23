@@ -131,7 +131,8 @@ class Collapsible(Widget):
         self.collapsed = collapsed
 
     @on(Title.Toggle)
-    def _update_collapsed(self) -> None:
+    def _on_title_toggle(self, event: Title.Toggle) -> None:
+        event.stop()
         self.collapsed = not self.collapsed
 
     def watch_collapsed(self) -> None:
