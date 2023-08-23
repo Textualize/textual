@@ -3,7 +3,6 @@ Screen {
 }
 
 #tree-view {
-    color: red;
     display: none;
     scrollbar-gutter: stable;
     overflow: auto;

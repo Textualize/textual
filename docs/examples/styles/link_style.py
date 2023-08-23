@@ -22,4 +22,4 @@ class LinkStyleApp(App):
         )
 
 
-app = LinkStyleApp(css_path="link_style.css")
+app = LinkStyleApp(css_path="link_style.tcss")

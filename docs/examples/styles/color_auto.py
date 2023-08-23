@@ -11,4 +11,4 @@ class ColorApp(App):
         yield Label("The quick brown fox jumps over the lazy dog!", id="lbl5")
 
 
-app = ColorApp(css_path="color_auto.css")
+app = ColorApp(css_path="color_auto.tcss")

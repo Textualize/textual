@@ -48,10 +48,10 @@ It also shows that `link-hover-style` does not affect hyperlinks.
     3. This label has an "action link" that can be styled with `link-hover-style`.
     4. This label has an "action link" that can be styled with `link-hover-style`.
 
-=== "link_hover_style.css"
+=== "link_hover_style.tcss"
 
     ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_hover_style.css"
+    --8<-- "docs/examples/styles/link_hover_style.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.

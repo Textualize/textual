@@ -3,7 +3,6 @@ from itertools import cycle
 from textual.app import App, ComposeResult
 from textual.widgets import Static
 
-
 hellos = cycle(
     [
         "Hola",
@@ -48,7 +47,7 @@ class Hello(Static):
 
 
 class CustomApp(App):
-    CSS_PATH = "hello04.css"
+    CSS_PATH = "hello04.tcss"
 
     def compose(self) -> ComposeResult:
         yield Hello()

@@ -4,7 +4,7 @@ from textual.widgets import Button, Header, Input, Label, ProgressBar
 
 
 class FundingProgressApp(App[None]):
-    CSS_PATH = "progress_bar.css"
+    CSS_PATH = "progress_bar.tcss"
 
     TITLE = "Funding tracking"
 

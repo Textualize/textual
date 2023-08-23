@@ -26,10 +26,10 @@ The example below shows each placeholder variant.
     --8<-- "docs/examples/widgets/placeholder.py"
     ```
 
-=== "placeholder.css"
+=== "placeholder.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/placeholder.css"
+    --8<-- "docs/examples/widgets/placeholder.tcss"
     ```
 
 ## Reactive Attributes

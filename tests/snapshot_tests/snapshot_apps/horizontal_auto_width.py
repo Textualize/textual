@@ -7,6 +7,7 @@ class HorizontalAutoWidth(App):
     """
     Checks that the auto width of the parent Horizontal is correct.
     """
+
     def compose(self) -> ComposeResult:
         yield Horizontal(
             Static("Docked left 1", id="dock-1"),
@@ -17,6 +18,6 @@ class HorizontalAutoWidth(App):
         )
 
 
-app = HorizontalAutoWidth(css_path="horizontal_auto_width.css")
-if __name__ == '__main__':
+app = HorizontalAutoWidth(css_path="horizontal_auto_width.tcss")
+if __name__ == "__main__":
     app.run()

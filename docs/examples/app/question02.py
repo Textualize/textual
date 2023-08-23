@@ -1,9 +1,9 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Label, Button
+from textual.widgets import Button, Label
 
 
 class QuestionApp(App[str]):
-    CSS_PATH = "question02.css"
+    CSS_PATH = "question02.tcss"
 
     def compose(self) -> ComposeResult:
         yield Label("Do you love Textual?", id="question")

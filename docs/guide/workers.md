@@ -26,10 +26,10 @@ The following app uses [httpx](https://www.python-httpx.org/) to get the current
     --8<-- "docs/examples/guide/workers/weather01.py"
     ```
 
-=== "weather.css"
+=== "weather.tcss"
 
-    ```sass title="weather.css"
-    --8<-- "docs/examples/guide/workers/weather.css"
+    ```sass title="weather.tcss"
+    --8<-- "docs/examples/guide/workers/weather.tcss"
     ```
 
 === "Output"

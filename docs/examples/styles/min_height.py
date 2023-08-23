@@ -13,4 +13,4 @@ class MinHeightApp(App):
         )
 
 
-app = MinHeightApp(css_path="min_height.css")
+app = MinHeightApp(css_path="min_height.tcss")

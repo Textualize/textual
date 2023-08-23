@@ -35,10 +35,10 @@ The example below employs a common trick to apply visually consistent spacing ar
     --8<-- "docs/examples/styles/grid_gutter.py"
     ```
 
-=== "grid_gutter.css"
+=== "grid_gutter.tcss"
 
     ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/grid_gutter.css"
+    --8<-- "docs/examples/styles/grid_gutter.tcss"
     ```
 
     1. We set the horizontal gutter to be double the vertical gutter because terminal cells are typically two times taller than they are wide. Thus, the result shows visually consistent spacing around grid cells.

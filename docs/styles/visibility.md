@@ -45,10 +45,10 @@ Note that the second widget is hidden while leaving a space where it would have 
     --8<-- "docs/examples/styles/visibility.py"
     ```
 
-=== "visibility.css"
+=== "visibility.tcss"
 
     ```sass hl_lines="14"
-    --8<-- "docs/examples/styles/visibility.css"
+    --8<-- "docs/examples/styles/visibility.tcss"
     ```
 
 ### Overriding container visibility
@@ -72,10 +72,10 @@ The containers all have a white background, and then:
     --8<-- "docs/examples/styles/visibility_containers.py"
     ```
 
-=== "visibility_containers.css"
+=== "visibility_containers.tcss"
 
     ```sass hl_lines="2-3 6 8-10 12-14 16-18"
-    --8<-- "docs/examples/styles/visibility_containers.css"
+    --8<-- "docs/examples/styles/visibility_containers.tcss"
     ```
 
     1. The padding and the white background let us know when the `Horizontal` is visible.

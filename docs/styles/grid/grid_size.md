@@ -35,10 +35,10 @@ In the first example, we create a grid with 2 columns and 5 rows, although we do
     --8<-- "docs/examples/styles/grid_size_both.py"
     ```
 
-=== "grid_size_both.css"
+=== "grid_size_both.tcss"
 
     ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/grid_size_both.css"
+    --8<-- "docs/examples/styles/grid_size_both.tcss"
     ```
 
     1. Create a grid with 2 columns and 4 rows.
@@ -58,10 +58,10 @@ In the second example, we create a grid with 2 columns and however many rows are
     --8<-- "docs/examples/styles/grid_size_columns.py"
     ```
 
-=== "grid_size_columns.css"
+=== "grid_size_columns.tcss"
 
     ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/grid_size_columns.css"
+    --8<-- "docs/examples/styles/grid_size_columns.tcss"
     ```
 
     1. Create a grid with 2 columns and however many rows.

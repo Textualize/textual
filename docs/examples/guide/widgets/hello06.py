@@ -36,7 +36,7 @@ class Hello(Static):
 
 
 class CustomApp(App):
-    CSS_PATH = "hello05.css"
+    CSS_PATH = "hello05.tcss"
 
     def compose(self) -> ComposeResult:
         yield Hello()

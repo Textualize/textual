@@ -22,4 +22,4 @@ class LinkBackgroundApp(App):
         )
 
 
-app = LinkBackgroundApp(css_path="link_background.css")
+app = LinkBackgroundApp(css_path="link_background.tcss")
