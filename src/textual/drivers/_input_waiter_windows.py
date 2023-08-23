@@ -4,7 +4,7 @@ Windows InputWaiter, which uses the win32 API for wait for a file.
 """
 
 import ctypes
-from ctypes.wintypes import HANDLE
+from ctypes.wintypes import DWORD
 
 kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
 
@@ -43,13 +43,10 @@ class InputWaiter:
         timeout_milliseconds = int(timeout * 1000)
 
         hIn = GetStdHandle(STD_INPUT_HANDLE)
-        result = kernel32.WaitForSingleObject(hIn, timeout_milliseconds)
+        result = kernel32.WaitForSingleObject(hIn, DWORD(timeout_milliseconds))
         if result == WAIT_TIMEOUT:
             return False
-        if result == WAIT_OBJECT_0:
-            return True
-        raise RuntimeError("Unexpected return: {result}")
-        return result == WAIT_TIMEOUT
+        return True
 
     def close(self) -> None:
         """Close the object."""
@@ -63,6 +60,6 @@ if __name__ == "__main__":
 
     while 1:
         hIn = GetStdHandle(STD_INPUT_HANDLE)
-        result = kernel32.WaitForSingleObject(fileno, 500)
+        result = kernel32.WaitForSingleObject(fileno, DWORD(500))
         print(result)
         print(os.read(fileno, 1024))
