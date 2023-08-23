@@ -375,3 +375,69 @@ class TabbedContent(Widget):
     def tab_count(self) -> int:
         """Total number of tabs."""
         return self.get_child_by_type(Tabs).tab_count
+
+    def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
+        """Disable the corresponding tab pane."""
+        event.stop()
+        tab_id = event.tab.id
+        try:
+            self.query_one(f"TabPane#{tab_id}").disabled = True
+        except NoMatches:
+            return
+
+    def _on_tabs_tab_enabled(self, event: Tabs.TabEnabled) -> None:
+        """Enable the corresponding tab pane."""
+        event.stop()
+        tab_id = event.tab.id
+        try:
+            self.query_one(f"TabPane#{tab_id}").disabled = False
+        except NoMatches:
+            return
+
+    def disable_tab(self, tab_id: str) -> None:
+        """Disables the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to disable.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.query_one(Tabs).disable(tab_id)
+
+    def enable_tab(self, tab_id: str) -> None:
+        """Enables the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to enable.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.query_one(Tabs).enable(tab_id)
+
+    def hide_tab(self, tab_id: str) -> None:
+        """Hides the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to hide.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.query_one(Tabs).hide(tab_id)
+
+    def show_tab(self, tab_id: str) -> None:
+        """Shows the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to show.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.query_one(Tabs).show(tab_id)

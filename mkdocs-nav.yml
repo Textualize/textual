@@ -201,6 +201,7 @@ nav:
               - "how-to/index.md"
               - "how-to/center-things.md"
               - "how-to/design-a-layout.md"
+      - "FAQ.md"
       - "roadmap.md"
       - "Blog":
               - blog/index.md

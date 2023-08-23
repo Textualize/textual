@@ -326,6 +326,33 @@ If you don't specify enough values in a `grid-columns` or `grid-rows` declaratio
 For example, if your grid has four columns (i.e. `grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
 If it instead had three columns, then `grid-columns: 2 4;` would be equivalent to `grid-columns: 2 4 2;`.
 
+#### Auto rows / columns
+
+The `grid-columns` and `grid-rows` rules can both accept a value of "auto" in place of any of the dimensions, which tells Textual to calculate an optimal size based on the content.
+
+Let's modify the previous example to make the first column an `auto` column.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/grid_layout_auto.py"}
+    ```
+
+=== "grid_layout_auto.py"
+
+    ```python hl_lines="6 9"
+    --8<-- "docs/examples/guide/layout/grid_layout_auto.py"
+    ```
+
+=== "grid_layout_auto.css"
+
+    ```sass hl_lines="4"
+    --8<-- "docs/examples/guide/layout/grid_layout_auto.css"
+    ```
+
+Notice how the first column is just wide enough to fit the content of each cell.
+The layout will adjust accordingly if you update the content for any widget in that column.
+
+
 ### Cell spans
 
 Cells may _span_ multiple rows or columns, to create more interesting grid arrangements.

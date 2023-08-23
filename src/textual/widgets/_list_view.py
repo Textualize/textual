@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Optional
+from typing import ClassVar, Iterable, Optional
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -172,6 +172,21 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         self._scroll_highlighted_region()
         self.post_message(self.Highlighted(self, new_child))
 
+    def extend(self, items: Iterable[ListItem]) -> AwaitMount:
+        """Append multiple new ListItems to the end of the ListView.
+
+        Args:
+            items: The ListItems to append.
+
+        Returns:
+            An awaitable that yields control to the event loop
+                until the DOM has been updated with the new child items.
+        """
+        await_mount = self.mount(*items)
+        if len(self) == 1:
+            self.index = 0
+        return await_mount
+
     def append(self, item: ListItem) -> AwaitMount:
         """Append a new ListItem to the end of the ListView.
 
@@ -182,10 +197,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             An awaitable that yields control to the event loop
                 until the DOM has been updated with the new child item.
         """
-        await_mount = self.mount(item)
-        if len(self) == 1:
-            self.index = 0
-        return await_mount
+        return self.extend([item])
 
     def clear(self) -> AwaitRemove:
         """Clear all items from the ListView.
