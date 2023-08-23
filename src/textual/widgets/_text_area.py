@@ -649,6 +649,14 @@ TextArea > .text-area--width-guide {
         target = clamp_visitable((current_row + rows, current_column + columns))
         self.move_cursor(target, select, center, record_width)
 
+    def select_all(self) -> None:
+        """Select all of the text in the `TextArea`."""
+        last_line = self.document.line_count - 1
+        length_of_last_line = len(self.document[last_line])
+        selection_start = (0, 0)
+        selection_end = (last_line, length_of_last_line)
+        self.selection = Selection(selection_start, selection_end)
+
     @property
     def cursor_location(self) -> Location:
         """The current location of the cursor in the document.

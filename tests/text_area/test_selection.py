@@ -347,3 +347,22 @@ async def test_cursor_vertical_movement_visual_alignment_snapping():
         # Pressing `down` takes us from (0, 1) to (1, 3)
         await pilot.press("down")
         assert text_area.selection == Selection.cursor((1, 3))
+
+
+@pytest.mark.parametrize(
+    "content,expected_selection",
+    [
+        ("123\n456\n789", Selection((0, 0), (2, 3))),
+        ("123\n456\n789\n", Selection((0, 0), (3, 0))),
+        ("", Selection((0, 0), (0, 0))),
+    ],
+)
+async def test_select_all(content, expected_selection):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.load_text(content)
+
+        text_area.select_all()
+
+        assert text_area.selection == expected_selection
