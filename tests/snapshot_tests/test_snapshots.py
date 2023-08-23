@@ -307,12 +307,8 @@ def test_collapsible_nested(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "collapsible_nested.py")
 
 
-def test_collapsible_custom_symbol_collapsed(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "collapsible_custom_symbol.py", press=['c'])
-
-
-def test_collapsible_custom_symbol_expanded(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "collapsible_custom_symbol.py", press=['e'])
+def test_collapsible_custom_symbol(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "collapsible_custom_symbol.py")
 
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
