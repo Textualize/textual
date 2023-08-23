@@ -751,3 +751,55 @@ async def test_showing_first_tab_activates_tab(tab_id: str):
         tabbed_content.show_tab(tab_id)
         await pilot.pause()
         assert tabbed_content.active == tab_id
+
+
+async def test_disabling_nested_tabs():
+    """Regression test for https://github.com/Textualize/textual/issues/3145."""
+
+    class TabbedApp(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(id="tabbed-content"):
+                with TabPane("Tab Pane 1"):
+                    yield Label("foo")
+                with TabPane("Tab Pane 2"):
+                    yield Label("bar")
+                with TabPane("Tab Pane 3"):
+                    with TabbedContent():
+                        with TabPane("Inner Pane 1"):
+                            yield Label("fizz")
+                        with TabPane("Inner Pane 2"):
+                            yield Label("bang")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabber = app.query_one("#tabbed-content", expect_type=TabbedContent)
+        tabber.disable_tab("tab-1")
+        await pilot.pause()
+        tabber.enable_tab("tab-1")
+        await pilot.pause()
+
+
+async def test_hiding_nested_tabs():
+    """Regression test for https://github.com/Textualize/textual/issues/3145."""
+
+    class TabbedApp(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(id="tabbed-content"):
+                with TabPane("Tab Pane 1"):
+                    yield Label("foo")
+                with TabPane("Tab Pane 2"):
+                    yield Label("bar")
+                with TabPane("Tab Pane 3"):
+                    with TabbedContent():
+                        with TabPane("Inner Pane 1"):
+                            yield Label("fizz")
+                        with TabPane("Inner Pane 2"):
+                            yield Label("bang")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabber = app.query_one("#tabbed-content", expect_type=TabbedContent)
+        tabber.hide_tab("tab-1")
+        await pilot.pause()
+        tabber.show_tab("tab-1")
+        await pilot.pause()
