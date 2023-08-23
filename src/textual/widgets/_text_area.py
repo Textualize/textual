@@ -1228,6 +1228,9 @@ class Edit:
 
         Args:
             text_area: The `TextArea` to undo the insert operation on.
+
+        Returns:
+            An `EditResult` containing information about the replace operation.
         """
         raise NotImplementedError()
 
