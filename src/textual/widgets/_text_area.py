@@ -35,26 +35,46 @@ class TextArea(ScrollView, can_focus=True):
 $text-area-active-line-bg: white 8%;
 
 TextArea {
-    background: $panel;
+    background: $panel 70%;
     width: 1fr;
     height: 1fr;
 }
+TextArea:focus {
+    background: $panel;
+}
+TextArea:focus > .text-area--cursor-line {
+    background: $text-area-active-line-bg;
+}
 TextArea > .text-area--cursor-line {
+    background: white 5%;
+}
+TextArea:focus > .text-area--cursor-line-gutter {
+    color: $text;
     background: $text-area-active-line-bg;
 }
 TextArea > .text-area--cursor-line-gutter {
-    color: $text;
+    color: $text 65%;
     background: $text-area-active-line-bg;
 }
-TextArea > .text-area--gutter {
-    color: $text-muted 40%;
+TextArea:focus > .text-area--gutter {
+    color: $text-muted 45%;
 }
-TextArea > .text-area--cursor {
-    color: $text;
+TextArea > .text-area--gutter {
+    color: $text-muted 35%;
+}
+TextArea:focus > .text-area--cursor {
+    color: black 90%;
     background: white 80%;
 }
-TextArea > .text-area--selection {
+TextArea > .text-area--cursor {
+    color: black 90%;
+    background: white 25%;
+}
+TextArea:focus > .text-area--selection {
     background: $primary;
+}
+TextArea > .text-area--selection {
+    background: $primary 65%;
 }
 """
 
@@ -75,7 +95,7 @@ TextArea > .text-area--selection {
  """
 
     BINDINGS = [
-        Binding("escape", "screen.focus_next", "Shift Focus"),
+        Binding("escape", "screen.focus_next", "Shift Focus", show=False),
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
@@ -537,7 +557,7 @@ TextArea > .text-area--selection {
         )
 
     def _on_blur(self, _: events.Blur) -> None:
-        self._pause_blink_visible()
+        self._pause_blink(visible=True)
 
     def _on_focus(self, _: events.Focus) -> None:
         self._restart_blink()
@@ -554,9 +574,9 @@ TextArea > .text-area--selection {
             self._cursor_blink_visible = True
             self.blink_timer.reset()
 
-    def _pause_blink_visible(self) -> None:
+    def _pause_blink(self, visible: bool = True) -> None:
         """Pause the cursor blinking but ensure it stays visible."""
-        self._cursor_blink_visible = True
+        self._cursor_blink_visible = visible
         self.blink_timer.pause()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
@@ -567,7 +587,7 @@ TextArea > .text-area--selection {
         # Capture the mouse so that if the cursor moves outside the
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
-        self._pause_blink_visible()
+        self._pause_blink(visible=True)
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
