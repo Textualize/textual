@@ -243,9 +243,7 @@ class Reactive(Generic[ReactiveType]):
                 watch_result = watch_function()
             if isawaitable(watch_result):
                 # Result is awaitable, so we need to await it within an async context
-                watcher_object.post_message(
-                    events.Callback(callback=partial(await_watcher, watch_result))
-                )
+                watcher_object.call_next(partial(await_watcher, watch_result))
 
         private_watch_function = getattr(obj, f"_watch_{name}", None)
         if callable(private_watch_function):
