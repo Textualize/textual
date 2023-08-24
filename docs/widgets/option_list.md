@@ -25,10 +25,10 @@ options:
     --8<-- "docs/examples/widgets/option_list_strings.py"
     ~~~
 
-=== "option_list.css"
+=== "option_list.tcss"
 
     ~~~python
-    --8<-- "docs/examples/widgets/option_list.css"
+    --8<-- "docs/examples/widgets/option_list.tcss"
     ~~~
 
 ### Options as `Option` instances
@@ -48,10 +48,10 @@ class can be used to add separator lines between options.
     --8<-- "docs/examples/widgets/option_list_options.py"
     ~~~
 
-=== "option_list.css"
+=== "option_list.tcss"
 
     ~~~python
-    --8<-- "docs/examples/widgets/option_list.css"
+    --8<-- "docs/examples/widgets/option_list.tcss"
     ~~~
 
 ### Options as Rich renderables
@@ -73,10 +73,10 @@ tables](https://rich.readthedocs.io/en/latest/tables.html):
     --8<-- "docs/examples/widgets/option_list_tables.py"
     ~~~
 
-=== "option_list.css"
+=== "option_list.tcss"
 
     ~~~python
-    --8<-- "docs/examples/widgets/option_list.css"
+    --8<-- "docs/examples/widgets/option_list.tcss"
     ~~~
 
 ## Reactive Attributes

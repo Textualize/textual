@@ -23,7 +23,7 @@ See the [layout](../guide/layout.md) guide for more information.
 ## Example
 
 Note how the `layout` style affects the arrangement of widgets in the example below.
-To learn more about the grid layout, you can see the [layout guide](../guide/layout.md) or the [grid reference](../grid).
+To learn more about the grid layout, you can see the [layout guide](../guide/layout.md) or the [grid reference](./grid.md).
 
 === "Output"
 
@@ -36,10 +36,10 @@ To learn more about the grid layout, you can see the [layout guide](../guide/lay
     --8<-- "docs/examples/styles/layout.py"
     ```
 
-=== "layout.css"
+=== "layout.tcss"
 
     ```sass hl_lines="2 8"
-    --8<-- "docs/examples/styles/layout.css"
+    --8<-- "docs/examples/styles/layout.tcss"
     ```
 
 ## CSS

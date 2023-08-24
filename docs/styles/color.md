@@ -8,7 +8,7 @@ The `color` style sets the text color of a widget.
 color: (<a href="../../css_types/color">&lt;color&gt;</a> | auto) [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `color` style requires a [`<color>`](../../css_types/color) followed by an optional [`<percentage>`](../../css_types/percentage) to specify the color's opacity.
+The `color` style requires a [`<color>`](../css_types/color.md) followed by an optional [`<percentage>`](../css_types/percentage.md) to specify the color's opacity.
 
 You can also use the special value of `"auto"` in place of a color. This tells Textual to automatically select either white or black text for best contrast against the background.
 
@@ -29,10 +29,10 @@ This example sets a different text color for each of three different widgets.
     --8<-- "docs/examples/styles/color.py"
     ```
 
-=== "color.css"
+=== "color.tcss"
 
     ```sass hl_lines="8 12 16"
-    --8<-- "docs/examples/styles/color.css"
+    --8<-- "docs/examples/styles/color.tcss"
     ```
 
 ### Auto
@@ -50,10 +50,10 @@ The next example shows how `auto` chooses between a lighter or a darker text col
     --8<-- "docs/examples/styles/color_auto.py"
     ```
 
-=== "color_auto.css"
+=== "color_auto.tcss"
 
     ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/color_auto.css"
+    --8<-- "docs/examples/styles/color_auto.tcss"
     ```
 
 ## CSS

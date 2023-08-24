@@ -20,10 +20,10 @@ The example below shows switches in various states.
     --8<-- "docs/examples/widgets/switch.py"
     ```
 
-=== "switch.css"
+=== "switch.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/switch.css"
+    --8<-- "docs/examples/widgets/switch.tcss"
     ```
 
 ## Reactive Attributes

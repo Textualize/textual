@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from asyncio import gather
+from dataclasses import dataclass
 from itertools import zip_longest
 from typing import Generator
 
@@ -26,14 +27,15 @@ __all__ = [
 class ContentTab(Tab):
     """A Tab with an associated content id."""
 
-    def __init__(self, label: Text, content_id: str):
+    def __init__(self, label: Text, content_id: str, disabled: bool = False):
         """Initialize a ContentTab.
 
         Args:
             label: The label to be displayed within the tab.
             content_id: The id of the content associated with the tab.
+            disabled: Is the tab disabled?
         """
-        super().__init__(label, id=content_id)
+        super().__init__(label, id=content_id, disabled=disabled)
 
 
 class TabPane(Widget):
@@ -48,6 +50,30 @@ class TabPane(Widget):
         padding: 1 2;
     }
     """
+
+    @dataclass
+    class TabPaneMessage(Message):
+        """Base class for `TabPane` messages."""
+
+        tab_pane: TabPane
+        """The `TabPane` that is he object of this message."""
+
+        @property
+        def control(self) -> TabPane:
+            """The tab pane that is the object of this message.
+
+            This is an alias for the attribute `tab_pane` and is used by the
+            [`on`][textual.on] decorator.
+            """
+            return self.tab_pane
+
+    @dataclass
+    class Disabled(TabPaneMessage):
+        """Sent when a tab pane is disabled via its reactive `disabled`."""
+
+    @dataclass
+    class Enabled(TabPaneMessage):
+        """Sent when a tab pane is enabled via its reactive `disabled`."""
 
     def __init__(
         self,
@@ -72,6 +98,10 @@ class TabPane(Widget):
         super().__init__(
             *children, name=name, id=id, classes=classes, disabled=disabled
         )
+
+    def _watch_disabled(self, disabled: bool) -> None:
+        """Notify the parent `TabbedContent` that a tab pane was enabled/disabled."""
+        self.post_message(self.Disabled(self) if disabled else self.Enabled(self))
 
 
 class AwaitTabbedContent:
@@ -235,7 +265,8 @@ class TabbedContent(Widget):
         ]
         # Get a tab for each pane
         tabs = [
-            ContentTab(content._title, content.id or "") for content in pane_content
+            ContentTab(content._title, content.id or "", disabled=content.disabled)
+            for content in pane_content
         ]
         # Yield the tabs
         yield Tabs(*tabs, active=self._initial or None)
@@ -375,3 +406,99 @@ class TabbedContent(Widget):
     def tab_count(self) -> int:
         """Total number of tabs."""
         return self.get_child_by_type(Tabs).tab_count
+
+    def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
+        """Disable the corresponding tab pane."""
+        event.stop()
+        tab_id = event.tab.id or ""
+        try:
+            with self.prevent(TabPane.Disabled):
+                self.get_child_by_type(ContentSwitcher).get_child_by_id(
+                    tab_id, expect_type=TabPane
+                ).disabled = True
+        except NoMatches:
+            return
+
+    def _on_tab_pane_disabled(self, event: TabPane.Disabled) -> None:
+        """Disable the corresponding tab."""
+        event.stop()
+        tab_pane_id = event.tab_pane.id or ""
+        try:
+            with self.prevent(Tab.Disabled):
+                self.get_child_by_type(Tabs).query_one(
+                    f"Tab#{tab_pane_id}"
+                ).disabled = True
+        except NoMatches:
+            return
+
+    def _on_tabs_tab_enabled(self, event: Tabs.TabEnabled) -> None:
+        """Enable the corresponding tab pane."""
+        event.stop()
+        tab_id = event.tab.id or ""
+        try:
+            with self.prevent(TabPane.Enabled):
+                self.get_child_by_type(ContentSwitcher).get_child_by_id(
+                    tab_id, expect_type=TabPane
+                ).disabled = False
+        except NoMatches:
+            return
+
+    def _on_tab_pane_enabled(self, event: TabPane.Enabled) -> None:
+        """Enable the corresponding tab."""
+        event.stop()
+        tab_pane_id = event.tab_pane.id or ""
+        try:
+            with self.prevent(Tab.Enabled):
+                self.get_child_by_type(Tabs).query_one(
+                    f"Tab#{tab_pane_id}"
+                ).disabled = False
+        except NoMatches:
+            return
+
+    def disable_tab(self, tab_id: str) -> None:
+        """Disables the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to disable.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.get_child_by_type(Tabs).disable(tab_id)
+
+    def enable_tab(self, tab_id: str) -> None:
+        """Enables the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to enable.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.get_child_by_type(Tabs).enable(tab_id)
+
+    def hide_tab(self, tab_id: str) -> None:
+        """Hides the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to hide.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.get_child_by_type(Tabs).hide(tab_id)
+
+    def show_tab(self, tab_id: str) -> None:
+        """Shows the tab with the given ID.
+
+        Args:
+            tab_id: The ID of the [`TabPane`][textual.widgets.TabPane] to show.
+
+        Raises:
+            Tabs.TabError: If there are any issues with the request.
+        """
+
+        self.get_child_by_type(Tabs).show(tab_id)

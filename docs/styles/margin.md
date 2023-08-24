@@ -18,12 +18,12 @@ margin-bottom: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 margin-left: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `margin` specifies spacing around the four edges of the widget equal to the [`<integer>`](../../css_types/integer) specified.
+The `margin` specifies spacing around the four edges of the widget equal to the [`<integer>`](../css_types/integer.md) specified.
 The number of values given defines what edges get what margin:
 
- - 1 [`<integer>`](../../css_types/integer) sets the same margin for the four edges of the widget;
- - 2 [`<integer>`](../../css_types/integer) set margin for top/bottom and left/right edges, respectively.
- - 4 [`<integer>`](../../css_types/integer) set margin for the top, right, bottom, and left edges, respectively.
+ - 1 [`<integer>`](../css_types/integer.md) sets the same margin for the four edges of the widget;
+ - 2 [`<integer>`](../css_types/integer.md) set margin for top/bottom and left/right edges, respectively.
+ - 4 [`<integer>`](../css_types/integer.md) set margin for the top, right, bottom, and left edges, respectively.
 
 !!! tip
 
@@ -49,10 +49,10 @@ In the example below we add a large margin to a label, which makes it move away 
     --8<-- "docs/examples/styles/margin.py"
     ```
 
-=== "margin.css"
+=== "margin.tcss"
 
     ```sass hl_lines="7"
-    --8<-- "docs/examples/styles/margin.css"
+    --8<-- "docs/examples/styles/margin.tcss"
     ```
 
 ### All margin settings
@@ -71,10 +71,10 @@ In each cell, we have a placeholder that has its margins set in different ways.
     --8<-- "docs/examples/styles/margin_all.py"
     ```
 
-=== "margin_all.css"
+=== "margin_all.tcss"
 
     ```sass hl_lines="25 29 33 37 41 45 49 53"
-    --8<-- "docs/examples/styles/margin_all.css"
+    --8<-- "docs/examples/styles/margin_all.tcss"
     ```
 
 ## CSS

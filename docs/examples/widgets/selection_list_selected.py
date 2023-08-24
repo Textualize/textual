@@ -7,7 +7,7 @@ from textual.widgets.selection_list import Selection
 
 
 class SelectionListApp(App[None]):
-    CSS_PATH = "selection_list_selected.css"
+    CSS_PATH = "selection_list_selected.tcss"
 
     def compose(self) -> ComposeResult:
         yield Header()

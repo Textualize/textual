@@ -148,7 +148,7 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 Here's the CSS file we are applying:
 
 ```sass
---8<-- "docs/examples/guide/dom4.css"
+--8<-- "docs/examples/guide/dom4.tcss"
 ```
 
 The CSS contains a number of rule sets with a selector and a list of rules. You can also add comments with text between `/*` and `*/` which will be ignored by Textual. Add comments to leave yourself reminders or to temporarily disable selectors.

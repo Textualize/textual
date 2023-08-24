@@ -12,7 +12,7 @@ The `link-hover-background` style sets the background color of the link when the
 link-hover-background: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`link-hover-background` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of text enclosed in Textual action links when the mouse pointer is over it.
+`link-hover-background` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of text enclosed in Textual action links when the mouse pointer is over it.
 
 ### Defaults
 
@@ -44,10 +44,10 @@ It also shows that `link-hover-background` does not affect hyperlinks.
     3. This label has an "action link" that can be styled with `link-hover-background`.
     4. This label has an "action link" that can be styled with `link-hover-background`.
 
-=== "link_hover_background.css"
+=== "link_hover_background.tcss"
 
     ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_hover_background.css"
+    --8<-- "docs/examples/styles/link_hover_background.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.

@@ -14,7 +14,7 @@ class Name(Widget):
 
 
 class WatchApp(App):
-    CSS_PATH = "refresh01.css"
+    CSS_PATH = "refresh01.tcss"
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Enter your name")
