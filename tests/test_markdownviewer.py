@@ -11,7 +11,7 @@ class MarkdownViewerApp(App[None]):
 
     async def on_mount(self) -> None:
         self.query_one(MarkdownViewer).show_table_of_contents = False
-        await self.query_one(MarkdownViewer).document.load(
+        await self.query_one(MarkdownViewer).go(
             Path(__file__).with_suffix(".md")
         )
 
