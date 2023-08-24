@@ -680,6 +680,7 @@ I am the final line."""
     def setup_selection(pilot):
         text_area = pilot.app.query_one(TextArea)
         text_area.load_text(text)
+        text_area.show_line_numbers = False
         text_area.selection = selection
 
     assert snap_compare(
