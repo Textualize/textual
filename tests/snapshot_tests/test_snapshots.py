@@ -653,7 +653,7 @@ def test_text_area_language_rendering(language, snap_compare):
         text_area.language = language
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area_languages.py",
+        SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_language,
         terminal_size=(80, snippet.count("\n") + 2),
     )
@@ -684,7 +684,26 @@ I am the final line."""
         text_area.selection = selection
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area_languages.py",
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, text.count("\n") + 1),
+    )
+
+
+def test_text_area_unfocus_rendering(snap_compare):
+    text = """I am a line.
+
+    I am another line.
+
+    I am the final line."""
+
+    async def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.selection = Selection((0, 0), (2, 8))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_unfocus.py",
         run_before=setup_selection,
         terminal_size=(30, text.count("\n") + 1),
     )
