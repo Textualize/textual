@@ -9,4 +9,4 @@ class OffsetApp(App):
         yield Label("Chani (offset 0 -3)", classes="chani")
 
 
-app = OffsetApp(css_path="offset.css")
+app = OffsetApp(css_path="offset.tcss")

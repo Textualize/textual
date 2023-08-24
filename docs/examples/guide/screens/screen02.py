@@ -2,7 +2,6 @@ from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Static
 
-
 ERROR_TEXT = """
 An error has occurred. To continue:
 
@@ -25,7 +24,7 @@ class BSOD(Screen):
 
 
 class BSODApp(App):
-    CSS_PATH = "screen02.css"
+    CSS_PATH = "screen02.tcss"
     BINDINGS = [("b", "push_screen('bsod')", "BSOD")]
 
     def on_mount(self) -> None:

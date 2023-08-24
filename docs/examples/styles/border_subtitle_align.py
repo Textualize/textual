@@ -17,4 +17,4 @@ class BorderSubtitleAlignApp(App):
         yield lbl
 
 
-app = BorderSubtitleAlignApp(css_path="border_subtitle_align.css")
+app = BorderSubtitleAlignApp(css_path="border_subtitle_align.tcss")

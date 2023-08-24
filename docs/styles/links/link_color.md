@@ -12,7 +12,7 @@ The `link-color` style sets the color of the link text.
 link-color: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`link-color` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the color of text enclosed in Textual action links.
+`link-color` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the color of text enclosed in Textual action links.
 
 ## Example
 
@@ -35,10 +35,10 @@ It also shows that `link-color` does not affect hyperlinks.
     3. This label has an "action link" that can be styled with `link-color`.
     4. This label has an "action link" that can be styled with `link-color`.
 
-=== "link_color.css"
+=== "link_color.tcss"
 
     ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_color.css"
+    --8<-- "docs/examples/styles/link_color.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.

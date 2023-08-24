@@ -17,4 +17,4 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="grid_gutter.css")
+app = MyApp(css_path="grid_gutter.tcss")

@@ -69,6 +69,8 @@ class Strip:
         "_style_cache",
         "_filter_cache",
         "_render_cache",
+        "_line_length_cache",
+        "_crop_extend_cache",
         "_link_ids",
     ]
 
@@ -81,6 +83,14 @@ class Strip:
         self._crop_cache: FIFOCache[tuple[int, int], Strip] = FIFOCache(16)
         self._style_cache: FIFOCache[Style, Strip] = FIFOCache(16)
         self._filter_cache: FIFOCache[tuple[LineFilter, Color], Strip] = FIFOCache(4)
+        self._line_length_cache: FIFOCache[
+            tuple[int, Style | None],
+            Strip,
+        ] = FIFOCache(4)
+        self._crop_extend_cache: FIFOCache[
+            tuple[int, int, Style | None],
+            Strip,
+        ] = FIFOCache(4)
         self._render_cache: str | None = None
         self._link_ids: set[str] | None = None
 
@@ -222,6 +232,11 @@ class Strip:
             A new strip with the supplied cell length.
         """
 
+        cache_key = (cell_length, style)
+        cached_strip = self._line_length_cache.get(cache_key)
+        if cached_strip is not None:
+            return cached_strip
+
         new_line: list[Segment]
         line = self._segments
         current_cell_length = self.cell_length
@@ -233,6 +248,7 @@ class Strip:
             new_line = line + [
                 _Segment(" " * (cell_length - current_cell_length), style)
             ]
+            strip = Strip(new_line, cell_length)
 
         elif current_cell_length > cell_length:
             # Cell length is shorter so we need to truncate.
@@ -249,11 +265,14 @@ class Strip:
                     text = set_cell_size(text, cell_length - line_length)
                     append(_Segment(text, segment_style))
                     break
+            strip = Strip(new_line, cell_length)
         else:
             # Strip is already the required cell length, so return self.
-            return self
+            strip = self
 
-        return Strip(new_line, cell_length)
+        self._line_length_cache[cache_key] = strip
+
+        return strip
 
     def simplify(self) -> Strip:
         """Simplify the segments (join segments with same style)
@@ -311,6 +330,25 @@ class Strip:
             for text, style, control in self._segments
         ]
         return Strip(segments, self._cell_length)
+
+    def crop_extend(self, start: int, end: int, style: Style | None) -> Strip:
+        """Crop between two points, extending the length if required.
+
+        Args:
+            start: Start offset of crop.
+            end: End offset of crop.
+            style: Style of additional padding.
+
+        Returns:
+            New cropped Strip.
+        """
+        cache_key = (start, end, style)
+        cached_result = self._crop_extend_cache.get(cache_key)
+        if cached_result is not None:
+            return cached_result
+        strip = self.extend_cell_length(end).crop(start, end)
+        self._crop_extend_cache[cache_key] = strip
+        return strip
 
     def crop(self, start: int, end: int | None = None) -> Strip:
         """Crop a strip between two cell positions.

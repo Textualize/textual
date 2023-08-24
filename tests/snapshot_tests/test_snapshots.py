@@ -162,8 +162,16 @@ def test_list_view(snap_compare):
     )
 
 
-def test_textlog_max_lines(snap_compare):
-    assert snap_compare("snapshot_apps/textlog_max_lines.py", press=[*"abcde"])
+def test_richlog_max_lines(snap_compare):
+    assert snap_compare("snapshot_apps/richlog_max_lines.py", press=[*"abcde"])
+
+
+def test_log_write_lines(snap_compare):
+    assert snap_compare("snapshot_apps/log_write_lines.py")
+
+
+def test_log_write(snap_compare):
+    assert snap_compare("snapshot_apps/log_write.py")
 
 
 def test_fr_units(snap_compare):
@@ -214,6 +222,11 @@ def test_tabbed_content(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
+def test_tabbed_content_with_modified_tabs(snap_compare):
+    # Tabs enabled and hidden.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "modified_tabs.py")
+
+
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
@@ -228,6 +241,24 @@ def test_option_list_tables(snap_compare):
 
 def test_option_list_build(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "option_list.py")
+
+
+def test_option_list_replace_prompt_from_single_line_to_single_line(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "option_list_multiline_options.py", press=["1"]
+    )
+
+
+def test_option_list_replace_prompt_from_single_line_to_two_lines(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "option_list_multiline_options.py", press=["2"]
+    )
+
+
+def test_option_list_replace_prompt_from_two_lines_to_three_lines(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "option_list_multiline_options.py", press=["3"]
+    )
 
 
 def test_progress_bar_indeterminate(snap_compare):
@@ -421,8 +452,8 @@ def test_table_markup(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "table_markup.py")
 
 
-def test_textlog_scroll(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "textlog_scroll.py")
+def test_richlog_scroll(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
 
 
 def test_tabs_invalidate(snap_compare):
@@ -597,3 +628,20 @@ def test_print_capture(snap_compare) -> None:
 
 def test_text_log_blank_write(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "text_log_blank_write.py")
+
+
+def test_nested_fr(snap_compare) -> None:
+    # https://github.com/Textualize/textual/pull/3059
+    assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
+
+
+def test_digits(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
+
+
+def test_auto_grid(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid.py")
+
+
+def test_auto_grid_default_height(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid_default_height.py", press=["g"])

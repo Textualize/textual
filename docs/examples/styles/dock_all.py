@@ -14,4 +14,4 @@ class DockAllApp(App):
         )
 
 
-app = DockAllApp(css_path="dock_all.css")
+app = DockAllApp(css_path="dock_all.tcss")

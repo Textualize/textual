@@ -1,7 +1,6 @@
 from textual.app import App
 from textual.widgets import Label
 
-
 TEXT = """I must not fear.
 Fear is the mind-killer.
 Fear is the little-death that brings total obliteration.
@@ -18,4 +17,4 @@ class OutlineBorderApp(App):
         yield Label(TEXT, classes="outline border")
 
 
-app = OutlineBorderApp(css_path="outline_vs_border.css")
+app = OutlineBorderApp(css_path="outline_vs_border.tcss")

@@ -1,0 +1,15 @@
+Screen {
+    background: white;
+    color: blue 80%;
+    layout: horizontal;
+}
+
+Label {
+    padding: 1 2;
+    width: 200;
+}
+
+.panel {
+    scrollbar-size: 10 4;
+    padding: 1 2;
+}

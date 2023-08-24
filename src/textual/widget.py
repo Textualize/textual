@@ -45,7 +45,6 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
 from ._cache import FIFOCache
-from ._callback import invoke
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -256,6 +255,12 @@ class Widget(DOMNode):
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
+    BORDER_TITLE: ClassVar[str] = ""
+    """Initial value for border_title attribute."""
+
+    BORDER_SUBTITLE: ClassVar[str] = ""
+    """Initial value for border_subtitle attribute."""
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -349,6 +354,10 @@ class Widget(DOMNode):
 
         self._add_children(*children)
         self.disabled = disabled
+        if self.BORDER_TITLE:
+            self.border_title = self.BORDER_TITLE
+        if self.BORDER_SUBTITLE:
+            self.border_subtitle = self.BORDER_SUBTITLE
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
@@ -1147,6 +1156,26 @@ class Widget(DOMNode):
         )
 
     @property
+    def is_vertical_scroll_end(self) -> bool:
+        """Is the vertical scroll position at the maximum?"""
+        return self.scroll_offset.y == self.max_scroll_y
+
+    @property
+    def is_horizontal_scroll_end(self) -> bool:
+        """Is the horizontal scroll position at the maximum?"""
+        return self.scroll_offset.x == self.max_scroll_x
+
+    @property
+    def is_vertical_scrollbar_grabbed(self) -> bool:
+        """Is the user dragging the vertical scrollbar?"""
+        return bool(self._vertical_scrollbar and self._vertical_scrollbar.grabbed)
+
+    @property
+    def is_horizontal_scrollbar_grabbed(self) -> bool:
+        """Is the user dragging the vertical scrollbar?"""
+        return bool(self._horizontal_scrollbar and self._horizontal_scrollbar.grabbed)
+
+    @property
     def scrollbar_corner(self) -> ScrollBarCorner:
         """The scrollbar corner.
 
@@ -1517,17 +1546,40 @@ class Widget(DOMNode):
 
     @property
     def _has_relative_children_width(self) -> bool:
-        """Do any children have a relative width?"""
+        """Do any children (or progeny) have a relative width?"""
         if not self.is_container:
             return False
-        return any(widget.styles.is_relative_width for widget in self.children)
+        for child in self.children:
+            styles = child.styles
+            if styles.display == "none":
+                continue
+            width = styles.width
+            if width is None:
+                continue
+            if styles.is_relative_width or (
+                width.is_auto and child._has_relative_children_width
+            ):
+                return True
+        return False
 
     @property
     def _has_relative_children_height(self) -> bool:
-        """Do any children have a relative height?"""
+        """Do any children (or progeny) have a relative height?"""
+
         if not self.is_container:
             return False
-        return any(widget.styles.is_relative_height for widget in self.children)
+        for child in self.children:
+            styles = child.styles
+            if styles.display == "none":
+                continue
+            height = styles.height
+            if height is None:
+                continue
+            if styles.is_relative_height or (
+                height.is_auto and child._has_relative_children_height
+            ):
+                return True
+        return False
 
     def animate(
         self,
@@ -1575,7 +1627,7 @@ class Widget(DOMNode):
             complete: Should the animation be set to its final value?
 
         Note:
-            If there is no animation running, this is a no-op.
+            If there is no animation scheduled or running, this is a no-op.
         """
         await self.app.animator.stop_animation(self, attribute, complete)
 
@@ -2761,8 +2813,9 @@ class Widget(DOMNode):
         if (
             isinstance(renderable, Text)
             and text_justify is not None
-            and renderable.justify is None
+            and renderable.justify != text_justify
         ):
+            renderable = renderable.copy()
             renderable.justify = text_justify
 
         renderable = _Styled(
@@ -3237,12 +3290,14 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.post_message(events.DescendantFocus())
+        if self.parent is not None:
+            self.parent.post_message(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.post_message(events.DescendantBlur())
+        if self.parent is not None:
+            self.parent.post_message(events.DescendantBlur(self))
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:

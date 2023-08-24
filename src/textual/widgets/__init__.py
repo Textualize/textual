@@ -14,6 +14,7 @@ if typing.TYPE_CHECKING:
     from ._checkbox import Checkbox
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
+    from ._digits import Digits
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
     from ._header import Header
@@ -22,6 +23,7 @@ if typing.TYPE_CHECKING:
     from ._list_item import ListItem
     from ._list_view import ListView
     from ._loading_indicator import LoadingIndicator
+    from ._log import Log
     from ._markdown import Markdown, MarkdownViewer
     from ._option_list import OptionList
     from ._placeholder import Placeholder
@@ -29,6 +31,7 @@ if typing.TYPE_CHECKING:
     from ._progress_bar import ProgressBar
     from ._radio_button import RadioButton
     from ._radio_set import RadioSet
+    from ._rich_log import RichLog
     from ._select import Select
     from ._selection_list import SelectionList
     from ._sparkline import Sparkline
@@ -36,7 +39,6 @@ if typing.TYPE_CHECKING:
     from ._switch import Switch
     from ._tabbed_content import TabbedContent, TabPane
     from ._tabs import Tab, Tabs
-    from ._text_log import TextLog
     from ._tooltip import Tooltip
     from ._tree import Tree
     from ._welcome import Welcome
@@ -47,6 +49,7 @@ __all__ = [
     "Checkbox",
     "ContentSwitcher",
     "DataTable",
+    "Digits",
     "DirectoryTree",
     "Footer",
     "Header",
@@ -55,6 +58,7 @@ __all__ = [
     "ListItem",
     "ListView",
     "LoadingIndicator",
+    "Log",
     "Markdown",
     "MarkdownViewer",
     "OptionList",
@@ -72,7 +76,7 @@ __all__ = [
     "TabbedContent",
     "TabPane",
     "Tabs",
-    "TextLog",
+    "RichLog",
     "Tooltip",
     "Tree",
     "Welcome",

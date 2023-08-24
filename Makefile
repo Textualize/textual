@@ -12,6 +12,10 @@ unit-test:
 test-snapshot-update:
 	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv --snapshot-update
 
+.PHONY: coverage
+coverage:
+	$(run) coverage html
+
 .PHONY: typecheck
 typecheck:
 	$(run) mypy src/textual
@@ -27,6 +31,10 @@ format-check:
 .PHONY: clean-screenshot-cache
 clean-screenshot-cache:
 	rm -rf .screenshot_cache
+
+.PHONY: faq
+faq:
+	$(run) faqtory build
 
 .PHONY: docs-offline-nav
 docs-offline-nav:
@@ -67,10 +75,6 @@ docs-deploy: clean-screenshot-cache docs-online-nav
 	$(run) mkdocs gh-deploy --config-file mkdocs-nav-online.yml
 	rm -f mkdocs-nav-online.yml
 
-.PHONY: faq
-faq:
-	$(run) faqtory build
-
 .PHONY: build
 build: docs-build-offline
 	poetry build
@@ -89,3 +93,7 @@ update:
 .PHONY: install-pre-commit
 install-pre-commit:
 	$(run) pre-commit install
+
+.PHONY: demo
+demo:
+	$(run) python -m textual

@@ -22,4 +22,4 @@ class LinkHoverStyleApp(App):
         )
 
 
-app = LinkHoverStyleApp(css_path="link_hover_style.css")
+app = LinkHoverStyleApp(css_path="link_hover_style.tcss")

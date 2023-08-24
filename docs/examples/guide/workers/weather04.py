@@ -11,7 +11,7 @@ from textual.worker import Worker
 class WeatherApp(App):
     """App to display the current weather."""
 
-    CSS_PATH = "weather.css"
+    CSS_PATH = "weather.tcss"
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Enter a City")

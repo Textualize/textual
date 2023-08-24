@@ -120,7 +120,7 @@ class Placeholder(Widget):
         while next(self._variants_cycle) != self.variant:
             pass
 
-    def on_mount(self) -> None:
+    def _on_mount(self) -> None:
         """Set the color for this placeholder."""
         colors = Placeholder._COLORS.setdefault(
             self.app, cycle(_PLACEHOLDER_BACKGROUND_COLORS)

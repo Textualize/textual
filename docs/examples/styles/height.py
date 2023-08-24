@@ -7,4 +7,4 @@ class HeightApp(App):
         yield Widget()
 
 
-app = HeightApp(css_path="height.css")
+app = HeightApp(css_path="height.tcss")

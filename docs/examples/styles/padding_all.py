@@ -17,4 +17,4 @@ class PaddingAllApp(App):
         )
 
 
-app = PaddingAllApp(css_path="padding_all.css")
+app = PaddingAllApp(css_path="padding_all.tcss")

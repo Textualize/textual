@@ -15,4 +15,4 @@ class PaddingApp(App):
         yield Label(TEXT)
 
 
-app = PaddingApp(css_path="padding.css")
+app = PaddingApp(css_path="padding.tcss")

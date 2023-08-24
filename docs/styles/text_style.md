@@ -27,10 +27,10 @@ Each of the three text panels has a different text style, respectively `bold`, `
     --8<-- "docs/examples/styles/text_style.py"
     ```
 
-=== "text_style.css"
+=== "text_style.tcss"
 
     ```sass hl_lines="9 13 17"
-    --8<-- "docs/examples/styles/text_style.css"
+    --8<-- "docs/examples/styles/text_style.tcss"
     ```
 
 ### All text styles
@@ -48,10 +48,10 @@ The next example shows all different text styles on their own, as well as some c
     --8<-- "docs/examples/styles/text_style_all.py"
     ```
 
-=== "text_style_all.css"
+=== "text_style_all.tcss"
 
     ```sass hl_lines="2 6 10 14 18 22 26 30"
-    --8<-- "docs/examples/styles/text_style_all.css"
+    --8<-- "docs/examples/styles/text_style_all.tcss"
     ```
 
 ## CSS

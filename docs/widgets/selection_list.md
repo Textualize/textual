@@ -30,7 +30,7 @@ my_selection_list: SelectionList[int] =  SelectionList(*selections)
 ## Examples
 
 A selection list is designed to be built up of single-line prompts (which
-can be [Rich renderables](/guide/widgets/#rich-renderables)) and an
+can be [Rich renderables](../guide/widgets.md#rich-renderables)) and an
 associated unique value.
 
 ### Selections as tuples
@@ -52,10 +52,10 @@ optionally contain a flag for the initial selected state of the option.
 
     1. Note that the `SelectionList` is typed as `int`, for the type of the values.
 
-=== "selection_list.css"
+=== "selection_list.tcss"
 
     ~~~python
-    --8<-- "docs/examples/widgets/selection_list.css"
+    --8<-- "docs/examples/widgets/selection_list.tcss"
     ~~~
 
 ### Selections as Selection objects
@@ -76,10 +76,10 @@ Alternatively, selections can be passed in as
 
     1. Note that the `SelectionList` is typed as `int`, for the type of the values.
 
-=== "selection_list.css"
+=== "selection_list.tcss"
 
     ~~~python
-    --8<-- "docs/examples/widgets/selection_list.css"
+    --8<-- "docs/examples/widgets/selection_list.tcss"
     ~~~
 
 ### Handling changes to the selections
@@ -103,10 +103,10 @@ collection of selected values:
 
     1. Note that the `SelectionList` is typed as `str`, for the type of the values.
 
-=== "selection_list.css"
+=== "selection_list.tcss"
 
     ~~~python
-    --8<-- "docs/examples/widgets/selection_list_selected.css"
+    --8<-- "docs/examples/widgets/selection_list_selected.tcss"
     ~~~
 
 ## Reactive Attributes

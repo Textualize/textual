@@ -24,10 +24,10 @@ The example below shows radio buttons, used within a [`RadioSet`](./radioset.md)
     --8<-- "docs/examples/widgets/radio_button.py"
     ```
 
-=== "radio_button.css"
+=== "radio_button.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/radio_button.css"
+    --8<-- "docs/examples/widgets/radio_button.tcss"
     ```
 
 ## Reactive Attributes

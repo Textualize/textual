@@ -15,4 +15,4 @@ class ScrollbarGutterApp(App):
         yield Static(TEXT, id="text-box")
 
 
-app = ScrollbarGutterApp(css_path="scrollbar_gutter.css")
+app = ScrollbarGutterApp(css_path="scrollbar_gutter.tcss")

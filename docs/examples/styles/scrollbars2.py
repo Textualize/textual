@@ -16,4 +16,4 @@ class Scrollbar2App(App):
         yield Label(TEXT * 10)
 
 
-app = Scrollbar2App(css_path="scrollbars2.css")
+app = Scrollbar2App(css_path="scrollbars2.tcss")

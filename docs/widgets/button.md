@@ -23,10 +23,10 @@ Clicking any of the non-disabled buttons in the example app below will result in
     --8<-- "docs/examples/widgets/button.py"
     ```
 
-=== "button.css"
+=== "button.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/button.css"
+    --8<-- "docs/examples/widgets/button.tcss"
     ```
 
 ## Reactive Attributes

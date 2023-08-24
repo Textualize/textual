@@ -692,14 +692,18 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         label = self.render_label(node, NULL_STYLE, NULL_STYLE)
         return label.cell_len
 
+    def _clear_line_cache(self) -> None:
+        """Clear line cache."""
+        self._line_cache.clear()
+        self._tree_lines_cached = None
+
     def clear(self) -> Self:
         """Clear all nodes under root.
 
         Returns:
             The `Tree` instance.
         """
-        self._line_cache.clear()
-        self._tree_lines_cached = None
+        self._clear_line_cache()
         self._current_id = 0
         root_label = self.root._label
         root_data = self.root.data
@@ -798,8 +802,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
 
     def _invalidate(self) -> None:
         """Invalidate caches."""
-        self._line_cache.clear()
-        self._tree_lines_cached = None
+        self._clear_line_cache()
         self._updates += 1
         self.root._reset()
         self.refresh(layout=True)
