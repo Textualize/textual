@@ -10,10 +10,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Ability to enable/disable tabs via the reactive `disabled` in tab panes https://github.com/Textualize/textual/pull/3152
+- `MarkdownViewer` now correctly handles anchors in links https://github.com/Textualize/textual/pull/2941
 
 ### Fixed
 
 - Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
+- Fixed a crash in `MarkdownViewer` when clicking on a link containing an anchor https://github.com/Textualize/textual/issues/3094
 
 ## [0.34.0] - 2023-08-22
 
@@ -100,8 +102,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DataTable.remove_column` method https://github.com/Textualize/textual/pull/2899
 - Added notifications https://github.com/Textualize/textual/pull/2866
 - Added `on_complete` callback to scroll methods https://github.com/Textualize/textual/pull/2903
-- Make `MarkdownViewer` link click handler jump to the anchor position in anchor
-  links.
 
 ### Fixed
 
