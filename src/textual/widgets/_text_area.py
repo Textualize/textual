@@ -1143,18 +1143,10 @@ TextArea > .text-area--selection {
         If there's a selection, then the selected range is deleted."""
 
         selection = self.selection
-
         start, end = selection
-        end_row, end_column = end
 
         if selection.is_empty:
-            if self.cursor_at_start_of_document:
-                return
-
-            if self.cursor_at_start_of_row:
-                end = (end_row - 1, len(self.document[end_row - 1]))
-            else:
-                end = (end_row, end_column - 1)
+            end = self.get_cursor_left_location()
 
         self.delete(start, end, maintain_selection_offset=False)
 
@@ -1165,15 +1157,9 @@ TextArea > .text-area--selection {
 
         selection = self.selection
         start, end = selection
-        end_row, end_column = end
 
         if selection.is_empty:
-            if self.cursor_at_end_of_document:
-                return
-            if self.cursor_at_end_of_row:
-                end = (end_row + 1, 0)
-            else:
-                end = (end_row, end_column + 1)
+            end = self.get_cursor_right_location()
 
         self.delete(start, end, maintain_selection_offset=False)
 
