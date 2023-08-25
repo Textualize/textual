@@ -2284,11 +2284,11 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._dispatch_message(events.Unmount())
 
-        if self.devtools is not None and self.devtools.is_connected:
-            await self._disconnect_devtools()
-
         if self._driver is not None:
             self._driver.close()
+
+        if self.devtools is not None and self.devtools.is_connected:
+            await self._disconnect_devtools()
 
         self._print_error_renderables()
 

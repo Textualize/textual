@@ -28,7 +28,6 @@ from ..driver import Driver
 from ..geometry import Size
 from ._byte_stream import ByteStream
 from ._input_reader_linux import InputReader
-from ._input_waiter import InputWaiter
 
 WINDOWS = platform.system() == "Windows"
 
