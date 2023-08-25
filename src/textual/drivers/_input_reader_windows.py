@@ -1,10 +1,16 @@
 import os
 import sys
-from ctypes import byref, wintypes
+from ctypes.wintypes import DWORD
 from threading import Event
 from typing import Iterator
 
 from . import win32
+
+WAIT_FAILED = 0xFFFFFFFF
+WAIT_TIMEOUT = 0x00000102
+WAIT_OBJECT_0 = 0x00000000
+STD_INPUT_HANDLE = -10
+STD_OUTPUT_HANDLE = -11
 
 
 class InputReader:
@@ -31,30 +37,21 @@ class InputReader:
     def __iter__(self) -> Iterator[bytes]:
         """Read input, yield bytes."""
 
-        stdin = sys.__stdin__
+        timeout_milliseconds = DWORD(int(self.timeout * 1000))
 
-        current_console_mode_in = win32.get_console_mode(stdin)
+        WaitForSingleObject = win32.KERNEL32.WaitForSingleObject
+        GetStdHandle = win32.GetStdHandle
 
-        def restore() -> None:
-            win32.set_console_mode(stdin, current_console_mode_in)
-
-        MAX_EVENTS = 1024
-        KEY_EVENT = 0x0001
-        WINDOW_BUFFER_SIZE_EVENT = 0x0004
-
-        arrtype = win32.INPUT_RECORD * MAX_EVENTS
-        input_records = arrtype()
-
-        ReadConsoleInputW = win32.KERNEL32.ReadConsoleInputW
-        wait_for_handles = win32.wait_for_handles
-        hIn = win32.GetStdHandle(win32.STD_INPUT_HANDLE)
-        exit_requested = self._exit_event.is_set
-        timeout_milliseconds = int(self.timeout * 1000)
-
-        read_count = wintypes.DWORD(0)
-
-        while not exit_requested():
-            if wait_for_handles([hIn], timeout_milliseconds) is None:
+        stdin_handle = GetStdHandle(STD_INPUT_HANDLE)
+        while not self._exit_event.is_set():
+            result = WaitForSingleObject(
+                stdin_handle,
+                timeout_milliseconds,
+            )
+            if result == WAIT_TIMEOUT:
                 continue
-
-            ReadConsoleInputW(hIn, byref(input_records), MAX_EVENTS, byref(read_count))
+            if result == WAIT_OBJECT_0:
+                data = os.read(self._fileno, 1024) or None
+                if data is None:
+                    break
+                yield data
