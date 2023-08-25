@@ -152,7 +152,6 @@ class WebDriver(Driver):
 
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
-        read = os.read
 
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
         # in band data packets.
