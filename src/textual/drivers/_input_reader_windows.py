@@ -43,6 +43,8 @@ class InputReader:
         GetStdHandle = win32.GetStdHandle
 
         stdin_handle = GetStdHandle(STD_INPUT_HANDLE)
+        win32.KERNEL32.FlushConsoleInputBuffer(stdin_handle)
+
         while not self._exit_event.is_set():
             result = WaitForSingleObject(
                 stdin_handle,
