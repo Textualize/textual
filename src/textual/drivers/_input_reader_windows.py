@@ -23,10 +23,10 @@ class InputReader:
 
     def close(self) -> None:
         """Close the reader (will exit the iterator)."""
-        self._exit_event.set()        
+        self._exit_event.set()
 
     def __iter__(self) -> Iterator[bytes]:
-        """Read input, yield bytes."""        
+        """Read input, yield bytes."""
         while not self._exit_event.is_set():
             try:
                 data = os.read(self._fileno, 1024) or None

@@ -32,8 +32,9 @@ from ._input_reader import InputReader
 WINDOWS = platform.system() == "Windows"
 
 
-class  ExitInput(Exception):
+class ExitInput(Exception):
     pass
+
 
 class WebDriver(Driver):
     """A headless driver that may be run remotely."""
@@ -144,16 +145,16 @@ class WebDriver(Driver):
         self.write_meta({"type": "exit"})
 
     def run_input_thread(self) -> None:
-        """Wait for input and dispatch events."""        
+        """Wait for input and dispatch events."""
         input_reader = self._input_reader
-        parser = XTermParser(input_reader.more_data, debug=self._debug)        
-        utf8_decoder = getincrementaldecoder("utf-8")().decode        
-        decode = utf8_decoder        
+        parser = XTermParser(input_reader.more_data, debug=self._debug)
+        utf8_decoder = getincrementaldecoder("utf-8")().decode
+        decode = utf8_decoder
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
         # in band data packets.
-        byte_stream = ByteStream()        
-        try:            
-            for data in input_reader:                
+        byte_stream = ByteStream()
+        try:
+            for data in input_reader:
                 for packet_type, payload in byte_stream.feed(data):
                     if packet_type == "D":
                         # Treat as stdin
@@ -164,8 +165,9 @@ class WebDriver(Driver):
                         self._on_meta(packet_type, payload)
         except ExitInput:
             pass
-        except Exception:            
+        except Exception:
             from traceback import format_exc
+
             log(format_exc())
         finally:
             input_reader.close()
