@@ -2298,6 +2298,7 @@ class App(Generic[ReturnType], DOMNode):
             console.print(Pretty(self._return_value))
 
     async def _on_exit_app(self) -> None:
+        self.log("ON EXIT")
         self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 
