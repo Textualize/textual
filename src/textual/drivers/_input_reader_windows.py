@@ -1,16 +1,7 @@
 import os
 import sys
-from ctypes.wintypes import DWORD
 from threading import Event
 from typing import Iterator
-
-from . import win32
-
-WAIT_FAILED = 0xFFFFFFFF
-WAIT_TIMEOUT = 0x00000102
-WAIT_OBJECT_0 = 0x00000000
-STD_INPUT_HANDLE = -10
-STD_OUTPUT_HANDLE = -11
 
 
 class InputReader:
@@ -32,28 +23,15 @@ class InputReader:
 
     def close(self) -> None:
         """Close the reader (will exit the iterator)."""
-        self._exit_event.set()
+        self._exit_event.set()        
 
     def __iter__(self) -> Iterator[bytes]:
-        """Read input, yield bytes."""
-
-        timeout_milliseconds = DWORD(int(self.timeout * 1000))
-
-        WaitForSingleObject = win32.KERNEL32.WaitForSingleObject
-        GetStdHandle = win32.GetStdHandle
-
-        stdin_handle = GetStdHandle(self._fileno)
-        win32.KERNEL32.FlushConsoleInputBuffer(stdin_handle)
-
+        """Read input, yield bytes."""        
         while not self._exit_event.is_set():
-            result = WaitForSingleObject(
-                stdin_handle,
-                timeout_milliseconds,
-            )
-            if result == WAIT_TIMEOUT:
-                continue
-            if result == WAIT_OBJECT_0:
+            try:
                 data = os.read(self._fileno, 1024) or None
-                if data is None:
-                    break
-                yield data
+            except Exception:
+                break
+            if not data:
+                break
+            yield data

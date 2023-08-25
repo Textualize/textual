@@ -27,10 +27,13 @@ from ..app import App
 from ..driver import Driver
 from ..geometry import Size
 from ._byte_stream import ByteStream
-from ._input_reader_linux import InputReader
+from ._input_reader import InputReader
 
 WINDOWS = platform.system() == "Windows"
 
+
+class  ExitInput(Exception):
+    pass
 
 class WebDriver(Driver):
     """A headless driver that may be run remotely."""
@@ -137,22 +140,29 @@ class WebDriver(Driver):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self.exit_event.set()
-        self.write_meta({"type": "exit"})
         self._input_reader.close()
+        self.write_meta({"type": "exit"})
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
 
+        log("Run input thread")
         input_reader = self._input_reader
+        log("1")
         parser = XTermParser(input_reader.more_data, debug=self._debug)
+        log("2")
         utf8_decoder = getincrementaldecoder("utf-8")().decode
+        log("3")
         decode = utf8_decoder
-
+        log("4")
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
         # in band data packets.
         byte_stream = ByteStream()
+        log("5")
         try:
+            log("6")
             for data in input_reader:
+                log("DATA", data)
                 for packet_type, payload in byte_stream.feed(data):
                     if packet_type == "D":
                         # Treat as stdin
@@ -162,7 +172,9 @@ class WebDriver(Driver):
                         # Process meta information separately
                         self._on_meta(packet_type, payload)
         except Exception as error:
-            log(error)
+            log("ERROR")
+            from traceback import format_exc
+            log(format_exc())
         finally:
             input_reader.close()
 
@@ -191,3 +203,5 @@ class WebDriver(Driver):
             self._app.post_message(events.Resize(size, size))
         elif packet_type == "quit":
             self._app.post_message(messages.ExitApp())
+        elif packet_type == "exit":
+            raise ExitInput()
