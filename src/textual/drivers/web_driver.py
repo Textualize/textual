@@ -144,25 +144,16 @@ class WebDriver(Driver):
         self.write_meta({"type": "exit"})
 
     def run_input_thread(self) -> None:
-        """Wait for input and dispatch events."""
-
-        log("Run input thread")
+        """Wait for input and dispatch events."""        
         input_reader = self._input_reader
-        log("1")
-        parser = XTermParser(input_reader.more_data, debug=self._debug)
-        log("2")
-        utf8_decoder = getincrementaldecoder("utf-8")().decode
-        log("3")
-        decode = utf8_decoder
-        log("4")
+        parser = XTermParser(input_reader.more_data, debug=self._debug)        
+        utf8_decoder = getincrementaldecoder("utf-8")().decode        
+        decode = utf8_decoder        
         # The server sends us a stream of bytes, which contains the equivalent of stdin, plus
         # in band data packets.
-        byte_stream = ByteStream()
-        log("5")
-        try:
-            log("6")
-            for data in input_reader:
-                log("DATA", data)
+        byte_stream = ByteStream()        
+        try:            
+            for data in input_reader:                
                 for packet_type, payload in byte_stream.feed(data):
                     if packet_type == "D":
                         # Treat as stdin
@@ -171,8 +162,9 @@ class WebDriver(Driver):
                     else:
                         # Process meta information separately
                         self._on_meta(packet_type, payload)
-        except Exception as error:
-            log("ERROR")
+        except ExitInput:
+            pass
+        except Exception:            
             from traceback import format_exc
             log(format_exc())
         finally:
