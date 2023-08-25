@@ -137,6 +137,7 @@ class WebDriver(Driver):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self.exit_event.set()
+        self.write_meta({"type": "exit"})
         self._input_reader.close()
 
     def run_input_thread(self) -> None:
