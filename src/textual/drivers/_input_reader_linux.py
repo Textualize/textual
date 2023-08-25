@@ -24,8 +24,10 @@ class InputReader:
 
     def more_data(self) -> bool:
         """Check if there is data pending."""
-        for _ in self._selector.select(self.timeout):
-            return True
+        EVENT_READ = selectors.EVENT_READ
+        for _key, events in self._selector.select(0.01):
+            if events & EVENT_READ:
+                return True
         return False
 
     def close(self) -> None:
@@ -37,9 +39,11 @@ class InputReader:
         fileno = self._fileno
         read = os.read
         exit_set = self._exit_event.is_set
+        EVENT_READ = selectors.EVENT_READ
         while not exit_set():
-            for _ in self._selector.select(self.timeout):
-                data = read(fileno, 1024)
-                if not data:
-                    return
-                yield data
+            for _key, events in self._selector.select(self.timeout):
+                if events & EVENT_READ:
+                    data = read(fileno, 1024)
+                    if not data:
+                        return
+                    yield data

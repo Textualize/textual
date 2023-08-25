@@ -45,6 +45,7 @@ class WebDriver(Driver):
         self._write = partial(os.write, self.fileno)
         self.exit_event = Event()
         self._key_thread: Thread = Thread(target=self.run_input_thread)
+        self._input_reader = InputReader()
 
     def write(self, data: str) -> None:
         """Write data to the output device.
@@ -137,19 +138,13 @@ class WebDriver(Driver):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self.exit_event.set()
-        self._key_thread.join()
+        self._input_reader.close()
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
 
-        input_reader = InputReader()
-
-        # input_waiter = InputWaiter(fileno)
-        # wait_for_input = input_waiter.wait
-
+        input_reader = self._input_reader
         parser = XTermParser(input_reader.more_data, debug=self._debug)
-        feed = parser.feed
-
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
 
@@ -158,11 +153,10 @@ class WebDriver(Driver):
         byte_stream = ByteStream()
         try:
             for data in input_reader:
-                log.info("got data", data)
                 for packet_type, payload in byte_stream.feed(data):
                     if packet_type == "D":
                         # Treat as stdin
-                        for event in feed(decode(payload)):
+                        for event in parser.feed(decode(payload)):
                             self.process_event(event)
                     else:
                         # Process meta information separately
@@ -173,20 +167,27 @@ class WebDriver(Driver):
             input_reader.close()
 
     def _on_meta(self, packet_type: str, payload: bytes) -> None:
+        """Private method to dispatch meta.
+
+        Args:
+            packet_type: Packet type (currently always "M")
+            payload: Meta payload (JSON encoded as bytes).
+        """
         payload_map = json.loads(payload)
         _type = payload_map.get("type")
         if isinstance(payload_map, dict):
             self.on_meta(_type, payload_map)
 
     def on_meta(self, packet_type: str, payload: dict) -> None:
-        # self.write_meta({"type": "log", "message": f"Got meta {packet_type} {payload}"})
+        """Process meta information.
+
+        Args:
+            packet_type: The type of the packet.
+            payload: meta dict.
+        """
         if packet_type == "resize":
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
-            size_event = events.Resize(size, size)
-            self._app.post_message(size_event)
+            self._app.post_message(events.Resize(size, size))
         elif packet_type == "quit":
-            # self.write_meta({"type": "log", "message": "QUIT"})
-            log.info("Posting exit")
             self._app.post_message(messages.ExitApp())
-            log.info("Posted exit")

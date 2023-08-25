@@ -1982,6 +1982,9 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(driver=self.driver_class)
         self.log.system(loop=asyncio.get_running_loop())
         self.log.system(features=self.features)
+        if constants.LOG_FILE is not None:
+            _log_path = os.path.abspath(constants.LOG_FILE)
+            self.log.system(f"Writing logs to {_log_path!r}")
 
         try:
             if self.css_path:
@@ -2298,7 +2301,6 @@ class App(Generic[ReturnType], DOMNode):
             console.print(Pretty(self._return_value))
 
     async def _on_exit_app(self) -> None:
-        self.log("ON EXIT")
         self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 

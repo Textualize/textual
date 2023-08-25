@@ -505,7 +505,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
         while not self._closed:
             try:
                 message = await self._get_message()
-                self.log("APP", message)
             except MessagePumpClosed:
                 break
             except CancelledError:
@@ -529,7 +528,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             try:
                 await self._dispatch_message(message)
             except CancelledError:
-                self.log("CANCELLED")
                 raise
             except Exception as error:
                 self._mounted_event.set()
@@ -557,7 +555,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
                                 self.app._handle_exception(error)
                                 break
                     await self._flush_next_callbacks()
-        self.log("PROCESS MESSAGES DONE")
 
     async def _flush_next_callbacks(self) -> None:
         """Invoke pending callbacks in next callbacks queue."""
@@ -709,7 +706,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             True if the messages was posted successfully, False if the message was not posted
                 (because the message pump was in the process of closing).
         """
-        self.log("POSTING", message)
         return self.post_message(message)
 
     def post_message(self, message: Message) -> bool:
@@ -721,32 +717,25 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Returns:
             `True` if the messages was processed, `False` if it wasn't.
         """
-        self.log("POST", message)
         _rich_traceback_omit = True
         if not hasattr(message, "_prevent"):
             # Catch a common error (forgetting to call super)
             raise RuntimeError(
                 "Message is missing attributes; did you forget to call super().__init__() ?"
             )
-        self.log("A")
         if self._closing or self._closed:
             return False
-        self.log("B")
         if not self.check_message_enabled(message):
             return False
         # Add a copy of the prevented message types to the message
         # This is so that prevented messages are honoured by the event's handler
         message._prevent.update(self._get_prevented_messages())
-        self.log("C")
         if self._thread_id != threading.get_ident() and self.app._loop is not None:
             # If we're not calling from the same thread, make it threadsafe
             loop = self.app._loop
-            self.log("D", message)
             loop.call_soon_threadsafe(self._message_queue.put_nowait, message)
         else:
-            self.log("E")
             self._message_queue.put_nowait(message)
-        self.log("F")
         return True
 
     async def on_callback(self, event: events.Callback) -> None:
