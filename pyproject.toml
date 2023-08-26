@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.34.0"
+version = "0.35.0a1"
 homepage = "https://github.com/Textualize/textual"
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]

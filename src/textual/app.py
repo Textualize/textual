@@ -1983,6 +1983,9 @@ class App(Generic[ReturnType], DOMNode):
         self.log.system(driver=self.driver_class)
         self.log.system(loop=asyncio.get_running_loop())
         self.log.system(features=self.features)
+        if constants.LOG_FILE is not None:
+            _log_path = os.path.abspath(constants.LOG_FILE)
+            self.log.system(f"Writing logs to {_log_path!r}")
 
         try:
             if self.css_path:
@@ -2282,11 +2285,11 @@ class App(Generic[ReturnType], DOMNode):
 
         await self._dispatch_message(events.Unmount())
 
-        if self.devtools is not None and self.devtools.is_connected:
-            await self._disconnect_devtools()
-
         if self._driver is not None:
             self._driver.close()
+
+        if self.devtools is not None and self.devtools.is_connected:
+            await self._disconnect_devtools()
 
         self._print_error_renderables()
 
