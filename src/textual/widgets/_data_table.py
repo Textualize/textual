@@ -35,14 +35,8 @@ from ..widget import PseudoClasses
 CellCacheKey: TypeAlias = (
     "tuple[RowKey, ColumnKey, Style, bool, bool, int, PseudoClasses]"
 )
-LineCacheKey: TypeAlias = (
-    "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int,"
-    " PseudoClasses]"
-)
-RowCacheKey: TypeAlias = (
-    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int,"
-    " PseudoClasses]"
-)
+LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
+RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
 CursorType = Literal["cell", "row", "column", "none"]
 """The legal types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
