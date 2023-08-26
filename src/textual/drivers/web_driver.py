@@ -32,8 +32,8 @@ from ._input_reader import InputReader
 WINDOWS = platform.system() == "Windows"
 
 
-class ExitInput(Exception):
-    pass
+class _ExitInput(Exception):
+    """Internal exception to force exit of input loop."""
 
 
 class WebDriver(Driver):
@@ -163,7 +163,7 @@ class WebDriver(Driver):
                     else:
                         # Process meta information separately
                         self._on_meta(packet_type, payload)
-        except ExitInput:
+        except _ExitInput:
             pass
         except Exception:
             from traceback import format_exc
@@ -198,4 +198,4 @@ class WebDriver(Driver):
         elif packet_type == "quit":
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":
-            raise ExitInput()
+            raise _ExitInput()
