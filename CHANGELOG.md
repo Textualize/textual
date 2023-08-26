@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.35.0]
 
 ### Added
 
 - Ability to enable/disable tabs via the reactive `disabled` in tab panes https://github.com/Textualize/textual/pull/3152
+- Textual-web driver support for Windows
+
 ### Fixed
 
 - Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
