@@ -1207,6 +1207,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/Textualize/textual/compare/v0.33.0...v0.34.0
 [0.33.0]: https://github.com/Textualize/textual/compare/v0.32.0...v0.33.0
 [0.32.0]: https://github.com/Textualize/textual/compare/v0.31.0...v0.32.0
