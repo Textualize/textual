@@ -12,4 +12,4 @@ class LinksApp(App):
         yield Static(TEXT, id="custom")
 
 
-app = LinksApp(css_path="links.css")
+app = LinksApp(css_path="links.tcss")

@@ -19,4 +19,4 @@ class OverflowApp(App):
         )
 
 
-app = OverflowApp(css_path="overflow.css")
+app = OverflowApp(css_path="overflow.tcss")

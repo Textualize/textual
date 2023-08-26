@@ -9,4 +9,4 @@ class ColorApp(App):
         yield Label("I'm hsl(240, 100%, 50%)!", id="label3")
 
 
-app = ColorApp(css_path="color.css")
+app = ColorApp(css_path="color.tcss")

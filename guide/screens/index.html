@@ -373,6 +373,23 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../FAQ/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
         
   
@@ -6486,6 +6503,31 @@
   
   
     <li class="md-nav__item">
+      <a href="../../FAQ/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../roadmap/" class="md-nav__link">
         
   
@@ -6529,7 +6571,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           
@@ -6550,14 +6592,14 @@
 
             </a>
             
-              <label class="md-nav__link " for="__nav_9">
+              <label class="md-nav__link " for="__nav_10">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6589,9 +6631,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
         
-          <label class="md-nav__link" for="__nav_9_2" id="__nav_9_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -6608,8 +6650,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6701,9 +6743,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_3" >
         
-          <label class="md-nav__link" for="__nav_9_3" id="__nav_9_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -6720,8 +6762,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -7097,55 +7139,54 @@
 <h2 id="creating-a-screen">Creating a screen<a class="headerlink" href="#creating-a-screen" title="Permanent link">&para;</a></h2>
 <p>You can create a screen by extending the <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen">Screen</a> class which you can import from <code>textual.screen</code>. The screen may be styled in the same way as other widgets, with the exception that you can't modify the screen's dimensions (as these will always be the size of your terminal).</p>
 <p>Let's look at a simple example of writing a screen class to simulate Window's <a href="https://en.wikipedia.org/wiki/Blue_screen_of_death">blue screen of death</a>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">screen01.py</label><label for="__tabbed_1_2">screen01.css</label><label for="__tabbed_1_3">Output</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">screen01.py</label><label for="__tabbed_1_2">screen01.tcss</label><label for="__tabbed_1_3">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><span class="filename">screen01.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.screen</span> <span class="kn">import</span> <span class="n">Screen</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="n">ERROR_TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="s2">An error has occurred. To continue:</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s2">Press Enter to return to Windows, or</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="s2">Press CTRL+ALT+DEL to restart your computer. If you do this,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="s2">you will lose any unsaved information in all open applications.</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="s2">Error: 0E : 016F : BFF9B3D4</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="n">ERROR_TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s2">An error has occurred. To continue:</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s2">Press Enter to return to Windows, or</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s2">Press CTRL+ALT+DEL to restart your computer. If you do this,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="s2">you will lose any unsaved information in all open applications.</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="s2">Error: 0E : 016F : BFF9B3D4</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="hll"><span class="k">class</span> <span class="nc">BSOD</span><span class="p">(</span><span class="n">Screen</span><span class="p">):</span>
-</span><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="hll">    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="s2">&quot;app.pop_screen&quot;</span><span class="p">,</span> <span class="s2">&quot;Pop screen&quot;</span><span class="p">)]</span>
-</span><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="hll">
-</span><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="hll">    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-</span><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="hll">        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot; Windows &quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
-</span><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="hll">        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="n">ERROR_TEXT</span><span class="p">)</span>
-</span><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="hll">        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Press any key to continue [blink]_[/]&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;any-key&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="k">class</span> <span class="nc">BSOD</span><span class="p">(</span><span class="n">Screen</span><span class="p">):</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="hll">    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="s2">&quot;app.pop_screen&quot;</span><span class="p">,</span> <span class="s2">&quot;Pop screen&quot;</span><span class="p">)]</span>
+</span><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="hll">
+</span><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="hll">    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+</span><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="hll">        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot; Windows &quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="hll">        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="n">ERROR_TEXT</span><span class="p">)</span>
+</span><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="hll">        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Press any key to continue [blink]_[/]&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;any-key&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="hll">
 </span><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="k">class</span> <span class="nc">BSODApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;screen01.css&quot;</span>
-<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="hll">    <span class="n">SCREENS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bsod&quot;</span><span class="p">:</span> <span class="n">BSOD</span><span class="p">()}</span>
-</span><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;push_screen(&#39;bsod&#39;)&quot;</span><span class="p">,</span> <span class="s2">&quot;BSOD&quot;</span><span class="p">)]</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="k">class</span> <span class="nc">BSODApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;screen01.tcss&quot;</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    <span class="n">SCREENS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bsod&quot;</span><span class="p">:</span> <span class="n">BSOD</span><span class="p">()}</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a><span class="hll">    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;push_screen(&#39;bsod&#39;)&quot;</span><span class="p">,</span> <span class="s2">&quot;BSOD&quot;</span><span class="p">)]</span>
+</span><a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>
 <a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">BSODApp</span><span class="p">()</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">BSODApp</span><span class="p">()</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><span class="filename">screen01.css</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">BSOD</span><span class="w"> </span><span class="err">{</span>
+<div class="highlight"><span class="filename">screen01.tcss</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">BSOD</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="err">}</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
 <a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="nt">BSOD</span><span class="o">&gt;</span><span class="nt">Static</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="err">;</span><span class="w">    </span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="err">;</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="err">}</span>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>
 <a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="nn">#title</span><span class="w"> </span><span class="err">{</span>
@@ -7320,57 +7361,56 @@
 <h2 id="named-screens">Named screens<a class="headerlink" href="#named-screens" title="Permanent link">&para;</a></h2>
 <p>You can associate a screen with a name by defining a <code>SCREENS</code> class variable in your app, which should be a <code>dict</code> that maps names on to <code>Screen</code> objects. The name of the screen may be used interchangeably with screen objects in much of the screen API.</p>
 <p>You can also <em>install</em> new named screens dynamically with the <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.install_screen">install_screen</a> method. The following example installs the <code>BSOD</code> screen in a mount handler rather than from the <code>SCREENS</code> variable.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">screen02.py</label><label for="__tabbed_2_2">screen02.css</label><label for="__tabbed_2_3">Output</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">screen02.py</label><label for="__tabbed_2_2">screen02.tcss</label><label for="__tabbed_2_3">Output</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><span class="filename">screen02.py</span><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">textual.screen</span> <span class="kn">import</span> <span class="n">Screen</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="n">ERROR_TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="s2">An error has occurred. To continue:</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="s2">Press Enter to return to Windows, or</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="s2">Press CTRL+ALT+DEL to restart your computer. If you do this,</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="s2">you will lose any unsaved information in all open applications.</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="s2">Error: 0E : 016F : BFF9B3D4</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="n">ERROR_TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s2">An error has occurred. To continue:</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="s2">Press Enter to return to Windows, or</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="s2">Press CTRL+ALT+DEL to restart your computer. If you do this,</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="s2">you will lose any unsaved information in all open applications.</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="s2">Error: 0E : 016F : BFF9B3D4</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
 <a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="k">class</span> <span class="nc">BSOD</span><span class="p">(</span><span class="n">Screen</span><span class="p">):</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="s2">&quot;app.pop_screen&quot;</span><span class="p">,</span> <span class="s2">&quot;Pop screen&quot;</span><span class="p">)]</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot; Windows &quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="n">ERROR_TEXT</span><span class="p">)</span>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Press any key to continue [blink]_[/]&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;any-key&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="k">class</span> <span class="nc">BSOD</span><span class="p">(</span><span class="n">Screen</span><span class="p">):</span>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;escape&quot;</span><span class="p">,</span> <span class="s2">&quot;app.pop_screen&quot;</span><span class="p">,</span> <span class="s2">&quot;Pop screen&quot;</span><span class="p">)]</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot; Windows &quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;title&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="n">ERROR_TEXT</span><span class="p">)</span>
+<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>        <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Press any key to continue [blink]_[/]&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;any-key&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>
 <a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="k">class</span> <span class="nc">BSODApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;screen02.css&quot;</span>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;push_screen(&#39;bsod&#39;)&quot;</span><span class="p">,</span> <span class="s2">&quot;BSOD&quot;</span><span class="p">)]</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>
-<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="hll">    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</span><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">install_screen</span><span class="p">(</span><span class="n">BSOD</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;bsod&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="k">class</span> <span class="nc">BSODApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;screen02.tcss&quot;</span>
+<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;push_screen(&#39;bsod&#39;)&quot;</span><span class="p">,</span> <span class="s2">&quot;BSOD&quot;</span><span class="p">)]</span>
+<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>
+<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>    <span class="k">def</span> <span class="nf">on_mount</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">install_screen</span><span class="p">(</span><span class="n">BSOD</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;bsod&quot;</span><span class="p">)</span>
+</span><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="hll">
 </span><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>
-<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>
-<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">BSODApp</span><span class="p">()</span>
-<a id="__codelineno-2-37" name="__codelineno-2-37" href="#__codelineno-2-37"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">BSODApp</span><span class="p">()</span>
+<a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><span class="filename">screen02.css</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">BSOD</span><span class="w"> </span><span class="err">{</span>
+<div class="highlight"><span class="filename">screen02.tcss</span><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">BSOD</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
 <a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="err">}</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="nt">BSOD</span><span class="o">&gt;</span><span class="nt">Static</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="err">;</span><span class="w">    </span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">70</span><span class="err">;</span>
 <a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="err">}</span>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="nn">#title</span><span class="w"> </span><span class="err">{</span>
@@ -7656,7 +7696,7 @@ For example, if the top-most screen has a background set to <code>rgba(0,0,255,0
 <p>Screens may be used to create modal dialogs, where the main interface is temporarily disabled (but still visible) while the user is entering information.</p>
 <p>The following example pushes a screen when you hit the <span class="keys"><kbd class="key-q">Q</kbd></span> key to ask you if you really want to quit.
 From the quit screen you can click either Quit to exit the app immediately, or Cancel to dismiss the screen and return to the main screen.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Output</label><label for="__tabbed_3_2">Output (after pressing <span class="keys"><kbd class="key-q">Q</kbd></span>)</label><label for="__tabbed_3_3">modal01.py</label><label for="__tabbed_3_4">modal01.css</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Output</label><label for="__tabbed_3_2">Output (after pressing <span class="keys"><kbd class="key-q">Q</kbd></span>)</label><label for="__tabbed_3_3">modal01.py</label><label for="__tabbed_3_4">modal01.tcss</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -8011,7 +8051,7 @@ From the quit screen you can click either Quit to exit the app immediately, or C
 <a id="__codelineno-4-33" name="__codelineno-4-33" href="#__codelineno-4-33"></a><span class="k">class</span> <span class="nc">ModalApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-4-34" name="__codelineno-4-34" href="#__codelineno-4-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An app with a modal dialog.&quot;&quot;&quot;</span>
 <a id="__codelineno-4-35" name="__codelineno-4-35" href="#__codelineno-4-35"></a>
-<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;modal01.css&quot;</span>
+<a id="__codelineno-4-36" name="__codelineno-4-36" href="#__codelineno-4-36"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;modal01.tcss&quot;</span>
 <a id="__codelineno-4-37" name="__codelineno-4-37" href="#__codelineno-4-37"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;request_quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)]</span>
 <a id="__codelineno-4-38" name="__codelineno-4-38" href="#__codelineno-4-38"></a>
 <a id="__codelineno-4-39" name="__codelineno-4-39" href="#__codelineno-4-39"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
@@ -8029,7 +8069,7 @@ From the quit screen you can click either Quit to exit the app immediately, or C
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><span class="filename">modal01.css</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">QuitScreen</span><span class="w"> </span><span class="err">{</span>
+<div class="highlight"><span class="filename">modal01.tcss</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">QuitScreen</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="err">}</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
@@ -8070,7 +8110,7 @@ There is no indication that the main interface is still there, waiting to become
 This screen sub-class will prevent key bindings on the app from being processed.
 It also sets a background with a little alpha to allow the previous screen to show through.</p>
 <p>Let's see what happens when we use <code>ModalScreen</code>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Output</label><label for="__tabbed_4_2">Output (after pressing <span class="keys"><kbd class="key-q">Q</kbd></span>)</label><label for="__tabbed_4_3">modal02.py</label><label for="__tabbed_4_4">modal01.css</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Output</label><label for="__tabbed_4_2">Output (after pressing <span class="keys"><kbd class="key-q">Q</kbd></span>)</label><label for="__tabbed_4_3">modal02.py</label><label for="__tabbed_4_4">modal01.tcss</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
@@ -8431,7 +8471,7 @@ It also sets a background with a little alpha to allow the previous screen to sh
 <a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a><span class="k">class</span> <span class="nc">ModalApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An app with a modal dialog.&quot;&quot;&quot;</span>
 <a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>
-<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;modal01.css&quot;</span>
+<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;modal01.tcss&quot;</span>
 <a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;request_quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)]</span>
 <a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a>
 <a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
@@ -8450,7 +8490,7 @@ It also sets a background with a little alpha to allow the previous screen to sh
 </code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><span class="filename">modal01.css</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">QuitScreen</span><span class="w"> </span><span class="err">{</span>
+<div class="highlight"><span class="filename">modal01.tcss</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">QuitScreen</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="err">}</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
@@ -8487,7 +8527,7 @@ For instance, you may want a screen to show a dialog and have the result of that
 <p>To return data from a screen, call <a class="autorefs autorefs-internal" href="../../api/screen/#textual.screen.Screen.dismiss"><code>dismiss()</code></a> on the screen with the data you wish to return.
 This will pop the screen and invoke a callback set when the screen was pushed (with <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.push_screen"><code>push_screen</code></a>).</p>
 <p>Let's modify the previous example to use <code>dismiss</code> rather than an explicit <code>pop_screen</code>.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">modal03.py</label><label for="__tabbed_5_2">modal01.css</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">modal03.py</label><label for="__tabbed_5_2">modal01.tcss</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <div class="highlight"><span class="filename">modal03.py</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
@@ -8525,7 +8565,7 @@ This will pop the screen and invoke a callback set when the screen was pushed (w
 <a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a><span class="k">class</span> <span class="nc">ModalApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;An app with a modal dialog.&quot;&quot;&quot;</span>
 <a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a>
-<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;modal01.css&quot;</span>
+<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;modal01.tcss&quot;</span>
 <a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;request_quit&quot;</span><span class="p">,</span> <span class="s2">&quot;Quit&quot;</span><span class="p">)]</span>
 <a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a>
 <a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
@@ -8553,7 +8593,7 @@ This will pop the screen and invoke a callback set when the screen was pushed (w
 </ol>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><span class="filename">modal01.css</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">QuitScreen</span><span class="w"> </span><span class="err">{</span>
+<div class="highlight"><span class="filename">modal01.tcss</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">QuitScreen</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="err">}</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>

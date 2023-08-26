@@ -4,7 +4,7 @@ Screen {
     grid-columns: 1fr;
 }
 
-KeyLogger {  
+KeyLogger {
     border: blank;
 }
 

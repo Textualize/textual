@@ -25,4 +25,4 @@ class HeightComparisonApp(App):
         yield Ruler()
 
 
-app = HeightComparisonApp(css_path="height_comparison.css")
+app = HeightComparisonApp(css_path="height_comparison.tcss")

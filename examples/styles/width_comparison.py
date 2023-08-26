@@ -25,6 +25,6 @@ class WidthComparisonApp(App):
         yield Ruler()
 
 
-app = WidthComparisonApp(css_path="width_comparison.css")
+app = WidthComparisonApp(css_path="width_comparison.tcss")
 if __name__ == "__main__":
     app.run()

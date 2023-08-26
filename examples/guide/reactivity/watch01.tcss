@@ -15,7 +15,7 @@ Input {
     border: wide $secondary;
 }
 
-#new {        
+#new {
     height: 100%;
     border: wide $secondary;
 }

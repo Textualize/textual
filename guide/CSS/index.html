@@ -373,6 +373,23 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../FAQ/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
         
   
@@ -6496,6 +6513,31 @@
   
   
     <li class="md-nav__item">
+      <a href="../../FAQ/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../roadmap/" class="md-nav__link">
         
   
@@ -6539,7 +6581,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           
@@ -6560,14 +6602,14 @@
 
             </a>
             
-              <label class="md-nav__link " for="__nav_9">
+              <label class="md-nav__link " for="__nav_10">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6599,9 +6641,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
         
-          <label class="md-nav__link" for="__nav_9_2" id="__nav_9_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -6618,8 +6660,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6711,9 +6753,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_3" >
         
-          <label class="md-nav__link" for="__nav_9_3" id="__nav_9_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -6730,8 +6772,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -7092,10 +7134,12 @@
 
 <h1 id="textual-css">Textual CSS<a class="headerlink" href="#textual-css" title="Permanent link">&para;</a></h1>
 <p>Textual uses CSS to apply style to widgets. If you have any exposure to web development you will have encountered CSS, but don't worry if you haven't: this chapter will get you up to speed.</p>
+<div class="admonition tip">
+<p class="admonition-title">VSCode User?</p>
+<p>The official <a href="https://marketplace.visualstudio.com/items?itemName=Textualize.textual-syntax-highlighter">Textual CSS</a> extension adds syntax highlighting for both external files and inline CSS.</p>
+</div>
 <h2 id="stylesheets">Stylesheets<a class="headerlink" href="#stylesheets" title="Permanent link">&para;</a></h2>
-<p>CSS stands for <em>Cascading Stylesheets</em>. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies <a href="../styles/">styles</a> to widgets, but otherwise it is the same idea.</p>
-<p>When Textual loads CSS it sets attributes on your widgets' <code>style</code> object. The effect is the same as if you had set attributes in Python.</p>
-<p>CSS is typically stored in an external file with the extension <code>.css</code> alongside your Python code.</p>
+<p>CSS stands for <em>Cascading Stylesheet</em>. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies <a href="../styles/">styles</a> to widgets, but otherwise it is the same idea.</p>
 <p>Let's look at some Textual CSS.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Header</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">dock</span><span class="o">:</span><span class="w"> </span><span class="no">top</span><span class="err">;</span>
@@ -7529,10 +7573,7 @@
 <li><code>textual.widgets.Static</code> For simple content.</li>
 <li><code>textual.widgets.Button</code> For a clickable button.</li>
 </ul>
-<div class="tabbed-set tabbed-alternate" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">dom3.py</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<div class="highlight"><span class="filename">dom3.py</span><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Horizontal</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Footer</span><span class="p">,</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Static</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
@@ -7558,9 +7599,6 @@
 <a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">ExampleApp</span><span class="p">()</span>
 <a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-</div>
-</div>
-</div>
 <p>We've added a Container to our DOM which (as the name suggests) is a container for other widgets. The container has a number of other widgets passed as positional arguments which will be added as the children of the container. Not all widgets accept child widgets in this way. A Button widget doesn't require any children, for example.</p>
 <p>Here's the DOM created by the above code:</p>
 <div class="excalidraw">
@@ -7745,15 +7783,19 @@
 <p>You may recognize some elements in the above screenshot, but it doesn't quite look like a dialog. This is because we haven't added a stylesheet.</p>
 <h2 id="css-files">CSS files<a class="headerlink" href="#css-files" title="Permanent link">&para;</a></h2>
 <p>To add a stylesheet set the <code>CSS_PATH</code> classvar to a relative path:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Textual CSS files are typically given the extension <code>.tcss</code> to differentiate them from browser CSS (<code>.css</code>).</p>
+</div>
+<div class="highlight"><span class="filename">dom4.py</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">Horizontal</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Footer</span><span class="p">,</span> <span class="n">Static</span><span class="p">,</span> <span class="n">Button</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Footer</span><span class="p">,</span> <span class="n">Header</span><span class="p">,</span> <span class="n">Static</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">QUESTION</span> <span class="o">=</span> <span class="s2">&quot;Do you want to learn about Textual CSS?&quot;</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
 <a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
 <a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="k">class</span> <span class="nc">ExampleApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="hll">    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;dom4.css&quot;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="hll">    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;dom4.tcss&quot;</span>
 </span><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
 <a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
 <a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>        <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
@@ -7776,7 +7818,7 @@
 <p>You may have noticed that some constructors have additional keyword arguments: <code>id</code> and <code>classes</code>.
 These are used by the CSS to identify parts of the DOM. We will cover these in the next section.</p>
 <p>Here's the CSS file we are applying:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="cm">/* The top level dialog (a Container) */</span>
+<div class="highlight"><span class="filename">dom4.tcss</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="cm">/* The top level dialog (a Container) */</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nn">#dialog</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
 <a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="na">margin</span><span class="o">:</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="mi">8</span><span class="err">;</span>

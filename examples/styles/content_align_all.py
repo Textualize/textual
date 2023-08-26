@@ -15,4 +15,4 @@ class AllContentAlignApp(App):
         yield Label("right bottom", id="right-bottom")
 
 
-app = AllContentAlignApp(css_path="content_align_all.css")
+app = AllContentAlignApp(css_path="content_align_all.tcss")

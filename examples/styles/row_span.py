@@ -16,4 +16,4 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="row_span.css")
+app = MyApp(css_path="row_span.tcss")

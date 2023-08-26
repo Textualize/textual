@@ -373,6 +373,23 @@
   
   
     <li class="md-tabs__item">
+      <a href="../../FAQ/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../../roadmap/" class="md-tabs__link">
         
   
@@ -6475,6 +6492,31 @@
   
   
     <li class="md-nav__item">
+      <a href="../../FAQ/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    FAQ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../roadmap/" class="md-nav__link">
         
   
@@ -6518,7 +6560,7 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
         
           
           
@@ -6539,14 +6581,14 @@
 
             </a>
             
-              <label class="md-nav__link " for="__nav_9">
+              <label class="md-nav__link " for="__nav_10">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6578,9 +6620,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_2" >
         
-          <label class="md-nav__link" for="__nav_9_2" id="__nav_9_2_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10_2" id="__nav_10_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -6597,8 +6639,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_2">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_2">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -6690,9 +6732,9 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10_3" >
         
-          <label class="md-nav__link" for="__nav_9_3" id="__nav_9_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_10_3" id="__nav_10_3_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -6709,8 +6751,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_9_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_9_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_10_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10_3">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -8210,14 +8252,18 @@ This guarantees that by the following line, the Button has been mounted, and we 
 </div>
 <h2 id="css">CSS<a class="headerlink" href="#css" title="Permanent link">&para;</a></h2>
 <p>Textual apps can reference <a href="../CSS/">CSS</a> files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Textual apps typically use the extension <code>.tcss</code> for external CSS files to differentiate them from browser (<code>.css</code>) files.</p>
+</div>
 <p>The chapter on <a href="../CSS/">Textual CSS</a> describes how to use CSS in detail. For now let's look at how your app references external CSS files.</p>
 <p>The following example enables loading of CSS by adding a <code>CSS_PATH</code> class variable:</p>
 <div class="highlight"><span class="filename">question02.py</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">Button</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Button</span><span class="p">,</span> <span class="n">Label</span>
 <a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="k">class</span> <span class="nc">QuestionApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="hll">    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="hll">    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.tcss&quot;</span>
 </span><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
 <a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
 <a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="hll">        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Do you love Textual?&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;question&quot;</span><span class="p">)</span>
@@ -8237,12 +8283,12 @@ This guarantees that by the following line, the Button has been mounted, and we 
 <p class="admonition-title">Note</p>
 <p>We also added an <code>id</code> to the <code>Label</code>, because we want to style it in the CSS.</p>
 </div>
-<p>If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references <code>"question01.css"</code> in the same directory as the Python code. Here is that CSS file:</p>
-<div class="highlight"><span class="filename">question02.css</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
+<p>If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references <code>"question01.tcss"</code> in the same directory as the Python code. Here is that CSS file:</p>
+<div class="highlight"><span class="filename">question02.tcss</span><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Screen</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">    </span><span class="na">layout</span><span class="o">:</span><span class="w"> </span><span class="no">grid</span><span class="err">;</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="w">    </span><span class="na">grid-size</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w"> </span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span><span class="w">   </span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="w">    </span><span class="na">grid-gutter</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
 <a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="err">}</span>
 <a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nn">#question</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
@@ -8250,13 +8296,13 @@ This guarantees that by the following line, the Button has been mounted, and we 
 <a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="w">    </span><span class="na">column-span</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
 <a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a><span class="w">    </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">bottom</span><span class="err">;</span>
 <a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="w">    </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">bold</span><span class="err">;</span>
-<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="err">}</span><span class="w"> </span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a><span class="err">}</span>
 <a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
 <a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
 <a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
 <a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="err">}</span>
 </code></pre></div>
-<p>When <code>"question02.py"</code> runs it will load <code>"question02.css"</code> and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:</p>
+<p>When <code>"question02.py"</code> runs it will load <code>"question02.tcss"</code> and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:</p>
 <p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>
@@ -8467,7 +8513,7 @@ You can change these defaults by defining <code>TITLE</code> and <code>SUB_TITLE
 <a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>
 <a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
 <a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.tcss&quot;</span>
 <a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="hll">    <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;A Question App&quot;</span>
 </span><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a><span class="hll">    <span class="n">SUB_TITLE</span> <span class="o">=</span> <span class="s2">&quot;The most important question&quot;</span>
 </span><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a>
@@ -8654,7 +8700,7 @@ You can change these defaults by defining <code>TITLE</code> and <code>SUB_TITLE
 <a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>
 <a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="k">class</span> <span class="nc">MyApp</span><span class="p">(</span><span class="n">App</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
-<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.css&quot;</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;question02.tcss&quot;</span>
 <a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">TITLE</span> <span class="o">=</span> <span class="s2">&quot;A Question App&quot;</span>
 <a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a>    <span class="n">SUB_TITLE</span> <span class="o">=</span> <span class="s2">&quot;The most important question&quot;</span>
 <a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>

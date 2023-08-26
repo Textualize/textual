@@ -19,4 +19,4 @@ class LayoutApp(App):
         )
 
 
-app = LayoutApp(css_path="layout.css")
+app = LayoutApp(css_path="layout.tcss")
