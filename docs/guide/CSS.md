@@ -8,7 +8,7 @@ Textual uses CSS to apply style to widgets. If you have any exposure to web deve
 
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets, but otherwise it is the same idea.
+CSS stands for _Cascading Stylesheet_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets, but otherwise it is the same idea.
 
 Let's look at some Textual CSS.
 
