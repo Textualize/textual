@@ -70,3 +70,6 @@ SHOW_RETURN: Final[bool] = get_environ_bool("TEXTUAL_SHOW_RETURN")
 
 MAX_FPS: Final[int] = get_environ_int("TEXTUAL_FPS", 60)
 """Maximum frames per second for updates."""
+
+COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", None)
+"""Force color system override"""
