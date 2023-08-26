@@ -20,6 +20,6 @@ class ScrollbarApp(App):
         )
 
 
-app = ScrollbarApp(css_path="scrollbars.css")
+app = ScrollbarApp(css_path="scrollbars.tcss")
 if __name__ == "__main__":
     app.run()

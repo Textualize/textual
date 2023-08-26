@@ -30,7 +30,7 @@ comedic genre films directed by Edgar Wright.
 
 
 class ContentSwitcherApp(App[None]):
-    CSS_PATH = "content_switcher.css"
+    CSS_PATH = "content_switcher.tcss"
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="buttons"):  # (1)!

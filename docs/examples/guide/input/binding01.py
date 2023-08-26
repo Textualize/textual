@@ -8,7 +8,7 @@ class Bar(Static):
 
 
 class BindingApp(App):
-    CSS_PATH = "binding01.css"
+    CSS_PATH = "binding01.tcss"
     BINDINGS = [
         ("r", "add_bar('red')", "Add Red"),
         ("g", "add_bar('green')", "Add Green"),

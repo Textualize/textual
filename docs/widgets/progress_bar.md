@@ -65,10 +65,10 @@ The example below shows a simple app with a progress bar that is keeping track o
 
     1. We create a progress bar with a total of `100` steps and we hide the ETA countdown because we are not keeping track of a continuous, uninterrupted task.
 
-=== "progress_bar.css"
+=== "progress_bar.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/progress_bar.css"
+    --8<-- "docs/examples/widgets/progress_bar.tcss"
     ```
 
 
@@ -98,10 +98,10 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
     --8<-- "docs/examples/widgets/progress_bar_styled.py"
     ```
 
-=== "progress_bar_styled.css"
+=== "progress_bar_styled.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/progress_bar_styled.css"
+    --8<-- "docs/examples/widgets/progress_bar_styled.tcss"
     ```
 
 ## Reactive Attributes

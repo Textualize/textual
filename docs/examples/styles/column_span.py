@@ -16,4 +16,4 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="column_span.css")
+app = MyApp(css_path="column_span.tcss")

@@ -18,7 +18,7 @@ class Ball(Static):
 
 
 class MouseApp(App):
-    CSS_PATH = "mouse01.css"
+    CSS_PATH = "mouse01.tcss"
 
     def compose(self) -> ComposeResult:
         yield RichLog()

@@ -19,7 +19,7 @@ from textual.widgets import Button, Digits
 class CalculatorApp(App):
     """A working 'desktop' calculator."""
 
-    CSS_PATH = "calculator.css"
+    CSS_PATH = "calculator.tcss"
 
     numbers = var("0")
     show_ac = var(True)

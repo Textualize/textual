@@ -19,4 +19,4 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="grid_rows.css")
+app = MyApp(css_path="grid_rows.tcss")

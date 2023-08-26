@@ -271,7 +271,7 @@ class SubTitle(Static):
 
 
 class DemoApp(App[None]):
-    CSS_PATH = "demo.css"
+    CSS_PATH = "demo.tcss"
     TITLE = "Textual Demo"
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "Sidebar"),

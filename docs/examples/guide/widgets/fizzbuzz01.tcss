@@ -6,5 +6,5 @@ FizzBuzz {
     width: auto;
     height: auto;
     background: $primary;
-    color: $text;    
+    color: $text;
 }

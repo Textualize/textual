@@ -371,6 +371,7 @@ class App(Generic[ReturnType], DOMNode):
                 self._filters.append(DimFilter())
 
         self.console = Console(
+            color_system=constants.COLOR_SYSTEM,
             file=_NullFile(),
             markup=True,
             highlight=False,

@@ -6,7 +6,7 @@ from textual.widgets import Input, Static
 
 
 class WatchApp(App):
-    CSS_PATH = "watch01.css"
+    CSS_PATH = "watch01.tcss"
 
     color = reactive(Color.parse("transparent"))  # (1)!
 

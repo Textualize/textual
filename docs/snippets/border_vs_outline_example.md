@@ -14,8 +14,8 @@ This example also shows that a widget cannot contain both a `border` and an `out
     --8<-- "docs/examples/styles/outline_vs_border.py"
     ```
 
-=== "outline_vs_border.css"
+=== "outline_vs_border.tcss"
 
     ```sass hl_lines="5-7 9-11"
-    --8<-- "docs/examples/styles/outline_vs_border.css"
+    --8<-- "docs/examples/styles/outline_vs_border.tcss"
     ```

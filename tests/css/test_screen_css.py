@@ -22,7 +22,7 @@ class ScreenWithCSS(Screen):
     }
     """
 
-    CSS_PATH = "test_screen_css.css"
+    CSS_PATH = "test_screen_css.tcss"
 
     def compose(self):
         yield Label("Hello, world!", id="app-css")

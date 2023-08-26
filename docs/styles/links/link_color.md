@@ -35,10 +35,10 @@ It also shows that `link-color` does not affect hyperlinks.
     3. This label has an "action link" that can be styled with `link-color`.
     4. This label has an "action link" that can be styled with `link-color`.
 
-=== "link_color.css"
+=== "link_color.tcss"
 
     ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_color.css"
+    --8<-- "docs/examples/styles/link_color.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.

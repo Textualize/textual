@@ -33,10 +33,10 @@ terminal window.
     --8<-- "docs/examples/styles/scrollbar_gutter.py"
     ```
 
-=== "scrollbar_gutter.css"
+=== "scrollbar_gutter.tcss"
 
     ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/scrollbar_gutter.css"
+    --8<-- "docs/examples/styles/scrollbar_gutter.tcss"
     ```
 
 ## CSS

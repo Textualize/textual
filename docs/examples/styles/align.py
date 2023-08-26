@@ -8,4 +8,4 @@ class AlignApp(App):
         yield Label("Take note, browsers.", classes="box")
 
 
-app = AlignApp(css_path="align.css")
+app = AlignApp(css_path="align.tcss")

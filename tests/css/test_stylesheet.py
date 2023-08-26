@@ -13,7 +13,7 @@ from textual.widget import Widget
 
 def _make_user_stylesheet(css: str) -> Stylesheet:
     stylesheet = Stylesheet()
-    stylesheet.source["test.css"] = CssSource(css, is_defaults=False)
+    stylesheet.source["test.tcss"] = CssSource(css, is_defaults=False)
     stylesheet.parse()
     return stylesheet
 

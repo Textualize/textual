@@ -9,7 +9,7 @@ data = [random.expovariate(1 / 3) for _ in range(1000)]
 
 
 class SparklineSummaryFunctionApp(App[None]):
-    CSS_PATH = "sparkline.css"
+    CSS_PATH = "sparkline.tcss"
 
     def compose(self) -> ComposeResult:
         yield Sparkline(data, summary_function=max)  # (1)!

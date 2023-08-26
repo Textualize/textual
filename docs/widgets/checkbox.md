@@ -22,10 +22,10 @@ The example below shows check boxes in various states.
     --8<-- "docs/examples/widgets/checkbox.py"
     ```
 
-=== "checkbox.css"
+=== "checkbox.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/checkbox.css"
+    --8<-- "docs/examples/widgets/checkbox.tcss"
     ```
 
 ## Reactive Attributes

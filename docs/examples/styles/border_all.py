@@ -24,4 +24,4 @@ class AllBordersApp(App):
         )
 
 
-app = AllBordersApp(css_path="border_all.css")
+app = AllBordersApp(css_path="border_all.tcss")

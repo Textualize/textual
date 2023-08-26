@@ -52,10 +52,10 @@ The following example presents a `Select` with a number of options.
     --8<-- "docs/examples/widgets/select_widget.py"
     ```
 
-=== "select.css"
+=== "select.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/select.css"
+    --8<-- "docs/examples/widgets/select.tcss"
     ```
 
 ## Messages

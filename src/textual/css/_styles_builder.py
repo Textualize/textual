@@ -723,7 +723,7 @@ class StylesBuilder:
         layers: list[str] = []
         for token in tokens:
             if token.name != "token":
-                self.error(name, token, "{token.name} not expected here")
+                self.error(name, token, f"{token.name} not expected here")
             layers.append(token.value)
         self.styles._rules["layers"] = tuple(layers)
 

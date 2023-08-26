@@ -302,7 +302,7 @@ class Game(Screen):
 class FiveByFive(App[None]):
     """Main 5x5 application class."""
 
-    CSS_PATH = "five_by_five.css"
+    CSS_PATH = "five_by_five.tcss"
     """The name of the stylesheet for the app."""
 
     SCREENS = {"help": Help}

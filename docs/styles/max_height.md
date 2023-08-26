@@ -27,10 +27,10 @@ Then, we set `max-height` individually on each placeholder.
     --8<-- "docs/examples/styles/max_height.py"
     ```
 
-=== "max_height.css"
+=== "max_height.tcss"
 
     ```sass hl_lines="12 16 20 24"
-    --8<-- "docs/examples/styles/max_height.css"
+    --8<-- "docs/examples/styles/max_height.tcss"
     ```
 
     1. This won't affect the placeholder because its height is less than the maximum height.

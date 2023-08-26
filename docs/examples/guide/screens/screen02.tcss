@@ -5,7 +5,7 @@ BSOD {
 }
 
 BSOD>Static {
-    width: 70;    
+    width: 70;
 }
 
 #title {

@@ -19,4 +19,4 @@ class TextAlign(App):
         )
 
 
-app = TextAlign(css_path="text_align.css")
+app = TextAlign(css_path="text_align.tcss")
