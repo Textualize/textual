@@ -42,6 +42,14 @@ class WebDriver(Driver):
     def __init__(
         self, app: App, *, debug: bool = False, size: tuple[int, int] | None = None
     ):
+        if size is None:
+            try:
+                width = int(os.environ.get("COLUMNS", 80))
+                height = int(os.environ.get("ROWS", 24))
+            except ValueError:
+                pass
+            else:
+                size = width, height
         super().__init__(app, debug=debug, size=size)
         self.stdout = sys.__stdout__
         self.fileno = sys.__stdout__.fileno()
