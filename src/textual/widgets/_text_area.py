@@ -951,8 +951,22 @@ TextArea > .text-area--selection {
 
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
-        target = self.get_cursor_line_start_location()
-        self.move_cursor(target, select=select)
+
+        cursor_row, cursor_column = self.cursor_location
+        line = self.document[cursor_row]
+
+        first_non_whitespace = 0
+        for index, code_point in enumerate(line):
+            if not code_point.isspace():
+                first_non_whitespace = index
+                break
+
+        if cursor_column <= first_non_whitespace and cursor_column != 0:
+            target = self.get_cursor_line_start_location()
+            self.move_cursor(target, select=select)
+        else:
+            target = cursor_row, first_non_whitespace
+            self.move_cursor(target, select=select)
 
     def get_cursor_line_start_location(self) -> Location:
         """Get the location of the start of the current line.
@@ -989,7 +1003,7 @@ TextArea > .text-area--selection {
         # Staying on the same row
         line = self.document[cursor_row][:cursor_column]
         search_string = line.rstrip()
-
+        "soet"
         matches = list(re.finditer(self._word_pattern, search_string))
         cursor_column = matches[-1].start() if matches else 0
         return cursor_row, cursor_column

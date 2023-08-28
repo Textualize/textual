@@ -217,7 +217,7 @@ async def test_cursor_to_line_end(key):
 
 
 @pytest.mark.parametrize("key", ["home", "ctrl+a"])
-async def test_cursor_to_line_home(key):
+async def test_cursor_to_line_home_basic_behaviour(key):
     """You can use the keyboard to jump the cursor to the start of the current line."""
     app = TextAreaApp()
     async with app.run_test() as pilot:
@@ -226,6 +226,30 @@ async def test_cursor_to_line_home(key):
         await pilot.press(key)
         assert text_area.cursor_location == (2, 0)
         assert text_area.selection.is_empty
+
+
+@pytest.mark.parametrize(
+    "cursor_start,cursor_destination",
+    [
+        ((0, 0), (0, 4)),
+        ((0, 2), (0, 0)),
+        ((0, 4), (0, 0)),
+        ((0, 5), (0, 4)),
+        ((0, 9), (0, 4)),
+        ((0, 15), (0, 4)),
+    ],
+)
+async def test_cursor_line_home_smart_home(cursor_start, cursor_destination):
+    """If the line begins with whitespace, pressing home firstly goes
+    to the start of the (non-whitespace) content. Pressing it again takes you to column
+    0. If you press it again, it goes back to the first non-whitespace column."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.load_text("    hello world")
+        text_area.move_cursor(cursor_start)
+        await pilot.press("home")
+        assert text_area.selection == Selection.cursor(cursor_destination)
 
 
 async def test_cursor_page_down():
