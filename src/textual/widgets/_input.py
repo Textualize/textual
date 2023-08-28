@@ -221,6 +221,7 @@ class Input(Widget, can_focus=True):
         *,
         suggester: Suggester | None = None,
         validators: Validator | Iterable[Validator] | None = None,
+        prevent_validation_on: Iterable[type[Message]] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -236,6 +237,8 @@ class Input(Widget, can_focus=True):
             suggester: [`Suggester`][textual.suggester.Suggester] associated with this
                 input instance.
             validators: An iterable of validators that the Input value will be checked against.
+            prevent_validation_on: Message types for which validation shouldn't occur.
+                Validation occurs for input changes and submissions, as well as on blur events.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -254,7 +257,16 @@ class Input(Widget, can_focus=True):
         elif validators is None:
             self.validators = []
         else:
-            self.validators = list(validators) or []
+            self.validators = list(validators)
+        self.prevent_validation_on: set[type[Message]] = set(
+            prevent_validation_on or []
+        ) & {self.Changed, self.Submitted, Blur}
+        """Set with events to skip validation on.
+
+        Validation is only performed on blur, when input changes and when it's submitted.
+        Including any of these types of messages in this set will skip validation on
+        these message types.
+        """
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -306,8 +318,11 @@ class Input(Widget, can_focus=True):
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
 
-        validation_result = self.validate(value)
-
+        validation_result = (
+            self.validate(value)
+            if self.Changed not in self.prevent_validation_on
+            else None
+        )
         self.post_message(self.Changed(self, value, validation_result))
 
     def validate(self, value: str) -> ValidationResult | None:
@@ -389,7 +404,8 @@ class Input(Widget, can_focus=True):
 
     def _on_blur(self, _: Blur) -> None:
         self.blink_timer.pause()
-        self.validate(self.value)
+        if Blur not in self.prevent_validation_on:
+            self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
         self.cursor_position = len(self.value)
@@ -579,5 +595,9 @@ class Input(Widget, can_focus=True):
 
         Normally triggered by the user pressing Enter. This will also run any validators.
         """
-        validation_result = self.validate(self.value)
+        validation_result = (
+            self.validate(self.value)
+            if self.Submitted not in self.prevent_validation_on
+            else None
+        )
         self.post_message(self.Submitted(self, self.value, validation_result))
