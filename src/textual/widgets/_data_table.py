@@ -1335,11 +1335,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 regardless of its current location in the DataTable (it could have moved
                 after being added due to sorting/insertion/deletion of other columns).
         """
-        column_key = ColumnKey(key)
+        label = Text.from_markup(label) if isinstance(label, str) else label
+        column_key = ColumnKey(key if key is not None else str(label))
         if column_key in self._column_locations:
             raise DuplicateKey(f"The column key {key!r} already exists.")
         column_index = len(self.columns)
-        label = Text.from_markup(label) if isinstance(label, str) else label
         content_width = measure(self.app.console, label, 1)
         if width is None:
             column = Column(
@@ -1391,7 +1391,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 of its current location in the DataTable (it could have moved after
                 being added due to sorting or insertion/deletion of other rows).
         """
-        row_key = RowKey(key)
+        row_key = RowKey(key if key is not None else cells[0])
         if row_key in self._row_locations:
             raise DuplicateKey(f"The row key {row_key!r} already exists.")
 
