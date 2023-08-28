@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
 - Added `cursor_type` to the `DataTable` constructor.
 
+### Fixed
+
+- Fixed flicker when calling pop_screen multiple times
+
 ## [0.35.1]
 
 ### Fixed
