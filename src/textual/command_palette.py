@@ -724,9 +724,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # Bump the ID.
             command_id += 1
 
-            # Finally, get the get available command from the incoming
-            # queue; note that we send the worker cancelled status down into
-            # the search method.
+            # Finally, get the available command from the incoming queue;
+            # note that we send the worker cancelled status down into the
+            # search method.
             try:
                 hit = await search.asend(worker.is_cancelled)
             except StopAsyncIteration:
