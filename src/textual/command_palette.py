@@ -5,6 +5,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from asyncio import CancelledError, Queue, TimeoutError, wait_for
 from functools import total_ordering
+from time import monotonic
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
 
 from rich.align import Align
@@ -614,30 +615,14 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # and get a lot smarter with this (ideally OptionList will grow a
         # method to sort its content in an efficient way; but for now we'll
         # go with "worse is better" wisdom).
-
-        # First off, we sort the commands, best to worst.
-        sorted_commands = sorted(commands, reverse=True)
-
-        # If the newly-appended command is still at the end after we've
-        # sorted...
-        if sorted_commands[-1] == commands[-1]:
-            # ...we can just add the command to the option list without
-            # further fuss.
-            command_list.add_option(commands[-1])
-        else:
-            # Nope, it's slotting in somewhere other than at the end, so
-            # we'll remember where we were, clear the commands in the list,
-            # add the sorted set back and apply the highlight again. Note
-            # that remembering where we were is remembering the option we
-            # were on, not the index.
-            highlighted = (
-                command_list.get_option_at_index(command_list.highlighted)
-                if command_list.highlighted is not None
-                else None
-            )
-            command_list.clear_options().add_options(sorted_commands)
-            if highlighted is not None:
-                command_list.highlighted = command_list.get_option_index(highlighted.id)
+        highlighted = (
+            command_list.get_option_at_index(command_list.highlighted)
+            if command_list.highlighted is not None
+            else None
+        )
+        command_list.clear_options().add_options(sorted(commands, reverse=True))
+        if highlighted is not None:
+            command_list.highlighted = command_list.get_option_index(highlighted.id)
 
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
@@ -685,6 +670,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # because the user is very quick on the keyboard.
             hit = None
 
+        # We're going to batch updates over time, so start off pretending
+        # we've just done an update.
+        last_update = monotonic()
+
         while hit:
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
@@ -702,7 +691,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
             # Having made it this far, it's safe to update the list of
             # commands that match the input.
-            self._refresh_command_list(command_list, gathered_commands)
+            now = monotonic()
+            if (now - last_update) > 0.25:
+                self._refresh_command_list(command_list, gathered_commands)
+                last_update = now
 
             # Bump the ID.
             command_id += 1
@@ -714,6 +706,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 hit = await search.asend(worker.is_cancelled)
             except StopAsyncIteration:
                 break
+
+        # On the way out, if we're still in play, ensure everything has been
+        # dropped into the command list.
+        if not worker.is_cancelled:
+            self._refresh_command_list(command_list, gathered_commands)
 
         # One way or another, we're not busy any more.
         self._show_busy = False
