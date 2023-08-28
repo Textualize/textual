@@ -1834,7 +1834,6 @@ class App(Generic[ReturnType], DOMNode):
             )
         previous_screen = self._replace_screen(screen_stack.pop())
         previous_screen._pop_result_callback()
-        self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is active")
         return previous_screen
