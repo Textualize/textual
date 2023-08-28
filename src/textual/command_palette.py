@@ -9,7 +9,6 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedT
 
 from rich.align import Align
 from rich.console import Group, RenderableType
-from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -22,11 +21,9 @@ from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .reactive import var
 from .screen import ModalScreen, Screen
-from .strip import Strip
 from .timer import Timer
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
-from .widgets._option_list import Line
 from .widgets.option_list import Option
 from .worker import get_current_worker
 
