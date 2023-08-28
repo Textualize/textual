@@ -831,8 +831,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         it's closed but has options, or if it's open with options just
         cursor through them.
         """
-        if self.query_one(CommandList).option_count and not self._list_visible:
+        commands = self.query_one(CommandList)
+        if commands.option_count and not self._list_visible:
             self._list_visible = True
-            self.query_one(CommandList).highlighted = 0
-        else:
+            commands.highlighted = 0
+        elif commands.option_count and not commands.get_option_at_index(0).disabled:
             self._action_command_list("cursor_down")
