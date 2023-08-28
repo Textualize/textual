@@ -450,6 +450,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self._busy_timer.stop()
             self._busy_timer = None
 
+    _BUSY_COUNTDOWN: Final[float] = 0.5
+    """How many seconds to wait for commands to come in before showing we're busy."""
+
     def _start_busy_countdown(self) -> None:
         """Start a countdown to showing that we're busy searching."""
         self._stop_busy_countdown()
@@ -458,7 +461,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             if self._list_visible:
                 self._show_busy = True
 
-        self._busy_timer = self._busy_timer = self.set_timer(0.5, _become_busy)
+        self._busy_timer = self._busy_timer = self.set_timer(
+            self._BUSY_COUNTDOWN, _become_busy
+        )
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
@@ -624,6 +629,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         if highlighted is not None:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
 
+    _RESULT_BATCH_TIME: Final[float] = 0.25
+    """How long to wait before adding commands to the command list."""
+
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
@@ -690,9 +698,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 break
 
             # Having made it this far, it's safe to update the list of
-            # commands that match the input.
+            # commands that match the input. Note that we batch up the
+            # results and only refresh the list once every so often; this
+            # helps reduce how much UI work needs to be done, but at the
+            # same time we keep the update frequency often enough so that it
+            # looks like things are moving along.
             now = monotonic()
-            if (now - last_update) > 0.25:
+            if (now - last_update) > self._RESULT_BATCH_TIME:
                 self._refresh_command_list(command_list, gathered_commands)
                 last_update = now
 
