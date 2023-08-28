@@ -117,6 +117,15 @@ TextArea > .text-area--selection {
         ),
         Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
         Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
+        Binding(
+            "shift+home",
+            "cursor_line_start(True)",
+            "cursor line start select",
+            show=False,
+        ),
+        Binding(
+            "shift+end", "cursor_line_end(True)", "cursor line end select", show=False
+        ),
         Binding("pageup", "cursor_page_up", "cursor page up", show=False),
         Binding("pagedown", "cursor_page_down", "cursor page down", show=False),
         # Selection with the cursor
@@ -922,10 +931,10 @@ TextArea > .text-area--selection {
         target_column = clamp(target_column, 0, len(self.document[target_row]))
         return target_row, target_column
 
-    def action_cursor_line_end(self) -> None:
+    def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
         location = self.get_cursor_line_end_location()
-        self.move_cursor(location)
+        self.move_cursor(location, select=select)
 
     def get_cursor_line_end_location(self) -> Location:
         """Get the location of the end of the current line.
@@ -938,10 +947,10 @@ TextArea > .text-area--selection {
         target_column = len(self.document[cursor_row])
         return cursor_row, target_column
 
-    def action_cursor_line_start(self) -> None:
+    def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
         target = self.get_cursor_line_start_location()
-        self.move_cursor(target)
+        self.move_cursor(target, select=select)
 
     def get_cursor_line_start_location(self) -> Location:
         """Get the location of the start of the current line.
