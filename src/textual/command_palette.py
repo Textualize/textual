@@ -719,6 +719,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 avoid_flash = self._refresh_command_list(
                     command_list, gathered_commands, avoid_flash
                 )
+                last_update = now
 
             # Bump the ID.
             command_id += 1
