@@ -1182,7 +1182,7 @@ TextArea > .text-area--selection {
 
         # Generally editors will only delete line the end line of the
         # selection if the cursor is not at column 0 of that line.
-        if end_column == 0:
+        if start_row != end_row and end_column == 0 and end_row > 0:
             end_row -= 1
 
         from_location = (start_row, 0)

@@ -170,6 +170,10 @@ async def test_delete_line(selection, expected_result):
         # Selections
         (Selection((1, 1), (1, 2)), "012\n678\n9\n"),  # non-empty single line selection
         (Selection((1, 2), (2, 1)), "012\n9\n"),  # delete lines selection touches
+        (
+            Selection((1, 2), (3, 0)),
+            "012\n9\n",
+        ),  # cursor at column 0 of line 3, should not be deleted!
         (Selection((0, 0), (4, 0)), ""),  # delete all lines
     ],
 )
