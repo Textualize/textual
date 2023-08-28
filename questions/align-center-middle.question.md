@@ -9,6 +9,11 @@ alt_titles:
   - "centre controls"
 ---
 
+!!! tip
+
+    See [*How To Center Things*](https://textual.textualize.io/how-to/center-things/) in the
+    Textual documentation for a more comprensive answer to this question.
+
 To center a widget within a container use
 [`align`](https://textual.textualize.io/styles/align/). But remember that
 `align` works on the *children* of a container, it isn't something you use
