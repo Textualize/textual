@@ -15,7 +15,7 @@ from textual.widgets import Input
 class SimpleSource(CommandSource):
     environment: set[tuple[App, Screen, Widget | None]] = set()
 
-    async def search_for(self, _: str) -> CommandMatches:
+    async def search(self, _: str) -> CommandMatches:
         def gndn() -> None:
             pass
 

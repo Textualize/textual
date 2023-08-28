@@ -6,8 +6,8 @@ class TestSource(CommandSource):
     def gndn(self) -> None:
         pass
 
-    async def search_for(self, user_input: str) -> CommandMatches:
-        matcher = self.matcher(user_input)
+    async def search(self, query: str) -> CommandMatches:
+        matcher = self.matcher(query)
         for n in range(10):
             command = f"This is a test of this code {n}"
             yield CommandSourceHit(

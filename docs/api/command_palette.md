@@ -20,7 +20,7 @@ To add your own command source to the Textual command palette you start by
 creating a class that inherits from
 [`CommandSource`][textual.command_palette.CommandSource]. Your new command
 source class should implement the
-[`search_for`][textual.command_palette.CommandSource.search_for] method. This
+[`search`][textual.command_palette.CommandSource.search] method. This
 should be an `async` method which `yield`s instances of
 [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
 
@@ -40,9 +40,9 @@ from functools import partial
 class PythonGlobalSource(CommandSource):
     """A command palette source for globals in an app."""
 
-    async def search_for(self, user_input: str) -> CommandMatches:
-        # Create a fuzzy matching object for the user input.
-        matcher = self.matcher(user_input)
+    async def search(self, query: str) -> CommandMatches:
+        # Create a fuzzy matching object for the query.
+        matcher = self.matcher(query)
         # Looping throught the available globals...
         for name, value in globals().items():
             # Get a match score for the name.
@@ -73,11 +73,11 @@ class PythonGlobalSource(CommandSource):
 !!! important
 
     The command palette populates itself asynchronously, pulling matches from
-    all of the active sources. Your command source `search_for` method must be
+    all of the active sources. Your command source `search` method must be
     `async`, and must not block in any way; doing so will affect the
     performance of the user's experience while using the command palette.
 
-The key point here is that the `search_for` method should look for matches,
+The key point here is that the `search` method should look for matches,
 given the user input, and yield up a
 [`CommandSourceHit`][textual.command_palette.CommandSourceHit], which will
 contain the match score (which should be between 0 and 1), a Rich renderable

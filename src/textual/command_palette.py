@@ -96,7 +96,7 @@ class CommandSource(ABC):
     """Base class for command palette command sources.
 
     To create a source of commands inherit from this class and implement
-    [`search_for`][textual.command_palette.CommandSource.search_for].
+    [`search`][textual.command_palette.CommandSource.search].
     """
 
     def __init__(self, screen: Screen, match_style: Style | None = None) -> None:
@@ -146,11 +146,11 @@ class CommandSource(ABC):
         )
 
     @abstractmethod
-    async def search_for(self, user_input: str) -> CommandMatches:
-        """A request to search for commands relevant to the given user input.
+    async def search(self, query: str) -> CommandMatches:
+        """A request to search for commands relevant to the given query.
 
         Args:
-            user_input: The user input to be matched.
+            query: The user input to be matched.
 
         Yields:
             Instances of [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
@@ -515,7 +515,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         searches = [
             create_task(
                 self._consume(
-                    source(self._calling_screen, match_style).search_for(search_value),
+                    source(self._calling_screen, match_style).search(search_value),
                     commands,
                 )
             )

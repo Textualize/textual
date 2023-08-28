@@ -13,8 +13,8 @@ class SystemCommandSource(CommandSource):
     Used by default in [`App.COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES].
     """
 
-    async def search_for(self, user_input: str) -> CommandMatches:
-        """Handle a request to search for system commands that match the user input.
+    async def search(self, query: str) -> CommandMatches:
+        """Handle a request to search for system commands that match the query.
 
         Args:
             user_input: The user input to be matched.
@@ -24,7 +24,7 @@ class SystemCommandSource(CommandSource):
         """
         # We're going to use Textual's builtin fuzzy matcher to find
         # matching commands.
-        matcher = self.matcher(user_input)
+        matcher = self.matcher(query)
 
         # Loop over all applicable commands, find those that match and offer
         # them up to the command palette.

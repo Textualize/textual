@@ -11,7 +11,7 @@ from textual.widgets import Input
 
 
 class SimpleSource(CommandSource):
-    async def search_for(self, _: str) -> CommandMatches:
+    async def search(self, _: str) -> CommandMatches:
         def gndn(selection: int) -> None:
             assert isinstance(self.app, CommandPaletteRunOnSelectApp)
             self.app.selection = selection
