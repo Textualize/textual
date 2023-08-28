@@ -389,6 +389,7 @@ class Input(Widget, can_focus=True):
 
     def _on_blur(self, _: Blur) -> None:
         self.blink_timer.pause()
+        self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
         self.cursor_position = len(self.value)
