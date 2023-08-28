@@ -167,6 +167,8 @@ TextArea > .text-area--selection {
     | ctrl+shift+right       | Move the cursor to the end of the word and select.      |
     | home,ctrl+a            | Move the cursor to the start of the line.    |
     | end,ctrl+e             | Move the cursor to the end of the line.      |
+    | shift+home             | Move the cursor to the start of the line and select.      |
+    | shift+end             | Move the cursor to the end of the line and select.      |
     | pageup                 | Move the cursor one page up.                 |
     | pagedown               | Move the cursor one page down.               |
     | shift+up               | Select while moving the cursor up.           |
