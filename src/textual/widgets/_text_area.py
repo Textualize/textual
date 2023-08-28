@@ -1177,12 +1177,13 @@ TextArea > .text-area--selection {
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
         start, end = self.selection
+        start, end = _sort_ascending(start, end)
         start_row, start_column = start
         end_row, end_column = end
 
         # Generally editors will only delete line the end line of the
         # selection if the cursor is not at column 0 of that line.
-        if start_row != end_row and end_column == 0 and end_row > 0:
+        if start_row != end_row and end_column == 0 and end_row >= 0:
             end_row -= 1
 
         from_location = (start_row, 0)
