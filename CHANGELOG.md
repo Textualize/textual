@@ -7,18 +7,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Added
-
-- Ability to enable/disable tabs via the reactive `disabled` in tab panes https://github.com/Textualize/textual/pull/3152
-
-### Fixed
-
-- Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
-
 ### Changed
 
 - Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
+
+## [0.35.0]
+
+### Added
+
+- Ability to enable/disable tabs via the reactive `disabled` in tab panes https://github.com/Textualize/textual/pull/3152
+- Textual-web driver support for Windows
+
+### Fixed
+
+- Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
 
 ## [0.34.0] - 2023-08-22
 
@@ -41,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed auto height container with default grid-rows https://github.com/Textualize/textual/issues/1597
 - Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
+- Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 ## [0.33.0] - 2023-08-15
 
@@ -52,6 +56,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
 - Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+
+### Changed
+
+- Breaking change: `DOMNode.visible` now takes into account full DOM to report whether a node is visible or not.
+
+### Removed
+
+- Property `Widget.focusable_children` https://github.com/Textualize/textual/pull/3070
 
 ### Added
 
@@ -1212,6 +1224,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/Textualize/textual/compare/v0.33.0...v0.34.0
 [0.33.0]: https://github.com/Textualize/textual/compare/v0.32.0...v0.33.0
 [0.32.0]: https://github.com/Textualize/textual/compare/v0.31.0...v0.32.0
