@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
+- Added `cursor_type` to the `DataTable` constructor.
 
 ## [0.35.0]
 
