@@ -174,6 +174,10 @@ async def test_delete_line(selection, expected_result):
             Selection((1, 2), (3, 0)),
             "012\n9\n",
         ),  # cursor at column 0 of line 3, should not be deleted!
+        (
+            Selection((3, 0), (1, 2)),
+            "012\n9\n",
+        ),  # opposite direction
         (Selection((0, 0), (4, 0)), ""),  # delete all lines
     ],
 )
