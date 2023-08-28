@@ -669,18 +669,6 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # Go into a busy mode.
         self._show_busy = False
 
-        # Kick off the search, grabbing the iterator.
-        search = self._search_for(search_value).__aiter__()
-
-        # We've going to be doing the send/await dance in this code, so we
-        # need to grab the first yielded command to start things off.
-        try:
-            hit = await search.__anext__()
-        except StopAsyncIteration:
-            # We've been stopped before we've even really got going, likely
-            # because the user is very quick on the keyboard.
-            hit = None
-
         # Flag to keep track of if we should avoid the flash of the initial
         # clear. Note that the initial clear is needed, as we don't want to
         # be adding to an already-populated OptionList. The initial clear
@@ -692,6 +680,18 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # We're going to batch updates over time, so start off pretending
         # we've just done an update.
         last_update = monotonic()
+
+        # Kick off the search, grabbing the iterator.
+        search = self._search_for(search_value).__aiter__()
+
+        # We've going to be doing the send/await dance in this code, so we
+        # need to grab the first yielded command to start things off.
+        try:
+            hit = await search.__anext__()
+        except StopAsyncIteration:
+            # We've been stopped before we've even really got going, likely
+            # because the user is very quick on the keyboard.
+            hit = None
 
         while hit:
             # Turn the command into something for display, and add it to the
