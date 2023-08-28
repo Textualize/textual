@@ -1003,7 +1003,6 @@ TextArea > .text-area--selection {
         # Staying on the same row
         line = self.document[cursor_row][:cursor_column]
         search_string = line.rstrip()
-        "soet"
         matches = list(re.finditer(self._word_pattern, search_string))
         cursor_column = matches[-1].start() if matches else 0
         return cursor_row, cursor_column
