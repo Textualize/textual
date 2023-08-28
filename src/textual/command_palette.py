@@ -648,35 +648,81 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         Args:
             search_value: The value to search for.
         """
+
+        # We'll potentially use the help text style a lot so let's grab it
+        # the once for use in the loop further down.
         help_style = self._sans_background(
             self.get_component_rich_style("command-palette--help-text")
         )
+
+        # The list to hold on to the commands we've gathered from the
+        # command sources.
         gathered_commands: list[Command] = []
+
+        # Get a reference to the widget that we're going to drop the
+        # (display of) the commands into.
         command_list = self.query_one(CommandList)
+
+        # Each command will receive a sequential ID. This is going to be
+        # used to find commands back again when we update the visible list
+        # and want to settle the selection back on the command it was on.
         command_id = 0
+
+        # We're going to be checking in on the worker as we loop around, so
+        # grab a reference to that.
         worker = get_current_worker()
+
+        # Go into a busy mode.
         self._show_busy = False
+
+        # Kick off the search, grabbing the iterator.
         search = self._search_for(search_value).__aiter__()
+
+        # We've going to be doing the send/await dance in this code, so we
+        # need to grab the first yielded command to start things off.
         try:
             hit = await search.__anext__()
         except StopAsyncIteration:
             # We've been stopped before we've even really got going, likely
             # because the user is very quick on the keyboard.
             hit = None
+
         while hit:
+            # Turn the command into something for display, and add it to the
+            # list of commands that have been gathered so far.
             prompt = hit.match_display
             if hit.command_help:
                 prompt = Group(prompt, Text(hit.command_help, style=help_style))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
+
+            # Before we go making any changes to the UI, we do a quick
+            # double-check that the worker hasn't been cancelled. There's
+            # little point in doing UI work on a value that isn't needed any
+            # more.
             if worker.is_cancelled:
                 break
+
+            # Having made it this far, it's safe to update the list of
+            # commands that match the input.
             self._refresh_command_list(command_list, gathered_commands)
+
+            # Bump the ID.
             command_id += 1
+
+            # Finally, get the get available command from the incoming
+            # queue; note that we send the worker cancelled status down into
+            # the search method.
             try:
                 hit = await search.asend(worker.is_cancelled)
             except StopAsyncIteration:
                 break
+
+        # One way or another, we're not busy any more.
         self._show_busy = False
+
+        # If we didn't get any hits, and we're not cancelled, that would
+        # mean nothing was found. Give the user positive feedback to that
+        # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
             command_list.add_option(
                 Option(Align.center(Text("No matches found")), disabled=True)
