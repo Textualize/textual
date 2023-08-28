@@ -722,7 +722,7 @@ class StylesBuilder:
     def process_layers(self, name: str, tokens: list[Token]) -> None:
         layers: list[str] = []
         for token in tokens:
-            if token.name != "token":
+            if token.name not in {"token", "string"}:
                 self.error(name, token, f"{token.name} not expected here")
             layers.append(token.value)
         self.styles._rules["layers"] = tuple(layers)
