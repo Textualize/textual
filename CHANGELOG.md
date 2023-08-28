@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed auto height container with default grid-rows https://github.com/Textualize/textual/issues/1597
 - Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
+- Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 ## [0.33.0] - 2023-08-15
 
@@ -48,6 +49,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
 - Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+
+### Changed
+
+- Breaking change: `DOMNode.visible` now takes into account full DOM to report whether a node is visible or not.
+
+### Removed
+
+- Property `Widget.focusable_children` https://github.com/Textualize/textual/pull/3070
 
 ### Added
 
