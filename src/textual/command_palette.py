@@ -605,14 +605,16 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         )
 
     def _refresh_command_list(
-        self, command_list: CommandList, commands: list[Command]
-    ) -> None:
+        self, command_list: CommandList, commands: list[Command], avoid_flash: bool
+    ) -> bool:
         """Refresh the command list.
 
         Args:
             command_list: The widget that shows the list of commands.
             commands: The commands to show in the widget.
         """
+        if avoid_flash:
+            command_list.clear_options()
         # For the moment, this is a fairly naive approach to populating the
         # command list with a sorted list of commands. Every time we add a
         # new one we're nuking the list of options and populating them
@@ -628,6 +630,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         command_list.clear_options().add_options(sorted(commands, reverse=True))
         if highlighted is not None:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
+        return False
 
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
@@ -678,6 +681,14 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # because the user is very quick on the keyboard.
             hit = None
 
+        # Flag to keep track of if we should avoid the flash of the initial
+        # clear. Note that the initial clear is needed, as we don't want to
+        # be adding to an already-populated OptionList. The initial clear
+        # *should* be in `_input`, but doing so caused an unsightly "flash"
+        # of the list; so here we sacrifice correct code for a
+        # better-looking UI.
+        avoid_flash = True
+
         # We're going to batch updates over time, so start off pretending
         # we've just done an update.
         last_update = monotonic()
@@ -705,8 +716,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # looks like things are moving along.
             now = monotonic()
             if (now - last_update) > self._RESULT_BATCH_TIME:
-                self._refresh_command_list(command_list, gathered_commands)
-                last_update = now
+                avoid_flash = self._refresh_command_list(
+                    command_list, gathered_commands, avoid_flash
+                )
 
             # Bump the ID.
             command_id += 1
@@ -722,7 +734,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # On the way out, if we're still in play, ensure everything has been
         # dropped into the command list.
         if not worker.is_cancelled:
-            self._refresh_command_list(command_list, gathered_commands)
+            self._refresh_command_list(command_list, gathered_commands, avoid_flash)
 
         # One way or another, we're not busy any more.
         self._show_busy = False
@@ -745,9 +757,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         search_value = event.value.strip()
         self._list_visible = bool(search_value)
         self.workers.cancel_all()
-        self.query_one(CommandList).clear_options()
         if search_value:
             self._gather_commands(search_value)
+        else:
+            self.query_one(CommandList).clear_options()
 
     @on(OptionList.OptionSelected)
     def _select_command(self, event: OptionList.OptionSelected) -> None:
