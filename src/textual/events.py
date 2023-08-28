@@ -638,3 +638,7 @@ class Print(Event, bubble=False):
         super().__init__()
         self.text = text
         self.stderr = stderr
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.text
+        yield self.stderr

@@ -614,10 +614,10 @@ class LayoutProperty:
         _rich_traceback_omit = True
         if layout is None:
             if obj.clear_rule("layout"):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, children=True)
         elif isinstance(layout, Layout):
             if obj.set_rule("layout", layout):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, children=True)
         else:
             try:
                 layout_object = get_layout(layout)
@@ -627,7 +627,7 @@ class LayoutProperty:
                     help_text=layout_property_help_text(self.name, context="inline"),
                 )
             if obj.set_rule("layout", layout_object):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, children=True)
 
 
 class OffsetProperty:
