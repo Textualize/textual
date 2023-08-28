@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
+- Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
+
 ## [0.35.0]
 
 ### Added
@@ -68,6 +75,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - DescendantBlur and DescendantFocus can now be used with @on decorator
+
 
 ## [0.32.0] - 2023-08-03
 
