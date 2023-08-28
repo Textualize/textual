@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed flicker when calling pop_screen multiple times
+- Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
 
 ## [0.35.1]
 
