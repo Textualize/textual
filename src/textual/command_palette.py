@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedT
 
 from rich.align import Align
 from rich.console import Group, RenderableType
+from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -237,7 +238,7 @@ class SearchIcon(Static, inherit_css=False):
     }
     """
 
-    icon: var[Text] = var(Text.from_markup(":magnifying_glass_tilted_right:"))
+    icon: var[str] = var(Emoji.replace(":magnifying_glass_tilted_right:"))
     """The icon to display."""
 
     def render(self) -> RenderableType:
