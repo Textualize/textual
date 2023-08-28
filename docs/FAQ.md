@@ -65,6 +65,11 @@ For more information on ANSI colors in Textual, see [Why no Ansi Themes?](#why-d
 <a name="how-do-i-center-a-widget-in-a-screen"></a>
 ## How do I center a widget in a screen?
 
+!!! tip
+
+    See [*How To Center Things*](https://textual.textualize.io/how-to/center-things/) in the
+    Textual documentation for a more comprensive answer to this question.
+
 To center a widget within a container use
 [`align`](https://textual.textualize.io/styles/align/). But remember that
 `align` works on the *children* of a container, it isn't something you use
