@@ -26,7 +26,8 @@ The example below shows how you might create a simple form using two `Input` wid
 
 You can supply one or more *[validators][textual.validation.Validator]* to the `Input` widget to validate the value.
 
-When the value changes or the `Input` is submitted, all the supplied validators will run.
+All the supplied validators will run when the value changes, the `Input` is submitted, or focus moves _out_ of the `Input`.
+This can be customized via the attribute [`prevent_validation_on`][textual.widgets.Input.prevent_validation_on].
 
 Validation is considered to have failed if *any* of the validators fail.
 

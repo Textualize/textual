@@ -266,6 +266,16 @@ class Input(Widget, can_focus=True):
         Validation is only performed on blur, when input changes and when it's submitted.
         Including any of these types of messages in this set will skip validation on
         these message types.
+
+        Example:
+            This creates an `Input` widget that only gets validated when the value
+            is submitted explicitly:
+
+            ```py
+            from textual.events import Blur
+
+            input = Input(prevent_validation_on=[Blur, Input.Changed])
+            ```
         """
 
     def _position_to_cell(self, position: int) -> int:
