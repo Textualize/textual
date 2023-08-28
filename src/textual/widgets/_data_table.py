@@ -582,6 +582,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         show_cursor: bool = True,
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
+        cursor_type: CursorType = "cell",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -669,6 +670,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.cursor_background_priority = cursor_background_priority
         """Should we prioritize the cursor component class CSS background or the renderable background
          in the event where a cell contains a renderable with a background color."""
+        self.cursor_type = cursor_type
+        """The type of cursor of the `DataTable`."""
 
     @property
     def hover_row(self) -> int:

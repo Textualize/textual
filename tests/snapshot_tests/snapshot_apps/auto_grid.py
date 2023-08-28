@@ -27,6 +27,8 @@ class GridApp(App):
 
     """
 
+    AUTO_FOCUS = None
+
     def compose(self) -> ComposeResult:
         with Container(id="c1"):
             yield Label("foo")

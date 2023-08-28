@@ -499,3 +499,81 @@ async def test_private_compute() -> None:
     async with PrivateComputeTest().run_test() as pilot:
         pilot.app.base = 5
         assert pilot.app.double == 10
+
+
+async def test_async_reactive_watch_callbacks_go_on_the_watcher():
+    """Regression test for https://github.com/Textualize/textual/issues/3036.
+
+    This makes sure that async callbacks are called.
+    See the next test for sync callbacks.
+    """
+
+    from_app = False
+    from_holder = False
+
+    class Holder(Widget):
+        attr = var(None)
+
+        def watch_attr(self):
+            nonlocal from_holder
+            from_holder = True
+
+    class MyApp(App):
+        def __init__(self):
+            super().__init__()
+            self.holder = Holder()
+
+        def on_mount(self):
+            self.watch(self.holder, "attr", self.callback)
+
+        def update(self):
+            self.holder.attr = "hello world"
+
+        async def callback(self):
+            nonlocal from_app
+            from_app = True
+
+    async with MyApp().run_test() as pilot:
+        pilot.app.update()
+        await pilot.pause()
+        assert from_holder
+        assert from_app
+
+
+async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
+    """Regression test for https://github.com/Textualize/textual/issues/3036.
+
+    This makes sure that sync callbacks are called.
+    See the previous test for async callbacks.
+    """
+
+    from_app = False
+    from_holder = False
+
+    class Holder(Widget):
+        attr = var(None)
+
+        def watch_attr(self):
+            nonlocal from_holder
+            from_holder = True
+
+    class MyApp(App):
+        def __init__(self):
+            super().__init__()
+            self.holder = Holder()
+
+        def on_mount(self):
+            self.watch(self.holder, "attr", self.callback)
+
+        def update(self):
+            self.holder.attr = "hello world"
+
+        def callback(self):
+            nonlocal from_app
+            from_app = True
+
+    async with MyApp().run_test() as pilot:
+        pilot.app.update()
+        await pilot.pause()
+        assert from_holder
+        assert from_app

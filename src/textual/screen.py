@@ -6,6 +6,7 @@ The `Screen` class is a special widget which represents the content in the termi
 from __future__ import annotations
 
 from functools import partial
+from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
     Awaitable,
@@ -293,18 +294,42 @@ class Screen(Generic[ScreenResultType], Widget):
 
         widgets: list[Widget] = []
         add_widget = widgets.append
-        stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
-        pop = stack.pop
-        push = stack.append
+        focus_sorter = attrgetter("_focus_sort_key")
+        # We traverse the DOM and keep track of where we are at with a node stack.
+        # Additionally, we manually keep track of the visibility of the DOM
+        # instead of relying on the property `.visible` to save on DOM traversals.
+        # node_stack: list[tuple[iterator over node children, node visibility]]
+        node_stack: list[tuple[Iterator[Widget], bool]] = [
+            (
+                iter(sorted(self.displayed_children, key=focus_sorter)),
+                self.visible,
+            )
+        ]
+        pop = node_stack.pop
+        push = node_stack.append
 
-        while stack:
-            node = next(stack[-1], None)
+        while node_stack:
+            children_iterator, parent_visibility = node_stack[-1]
+            node = next(children_iterator, None)
             if node is None:
                 pop()
             else:
+                if node.disabled:
+                    continue
+                node_styles_visibility = node.styles.get_rule("visibility")
+                node_is_visible = (
+                    node_styles_visibility != "hidden"
+                    if node_styles_visibility
+                    else parent_visibility  # Inherit visibility if the style is unset.
+                )
                 if node.is_container and node.can_focus_children:
-                    push(iter(node.focusable_children))
-                if node.focusable:
+                    sorted_displayed_children = sorted(
+                        node.displayed_children, key=focus_sorter
+                    )
+                    push((iter(sorted_displayed_children), node_is_visible))
+                # Same check as `if node.focusable`, but we cached inherited visibility
+                # and we also skipped disabled nodes altogether.
+                if node_is_visible and node.can_focus:
                     add_widget(node)
 
         return widgets

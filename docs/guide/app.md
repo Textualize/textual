@@ -209,6 +209,10 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
+!!! info
+
+    Textual apps typically use the extension `.tcss` for external CSS files to differentiate them from browser (`.css`) files.
+
 The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now let's look at how your app references external CSS files.
 
 The following example enables loading of CSS by adding a `CSS_PATH` class variable:
