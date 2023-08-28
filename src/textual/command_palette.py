@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import Queue, TimeoutError, wait_for
+from asyncio import CancelledError, Queue, TimeoutError, wait_for
 from functools import total_ordering
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
 
@@ -523,16 +523,24 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # Set up a delay for showing that we're busy.
         self._start_busy_countdown()
 
+        # Assume the search isn't aborted.
+        aborted = False
+
         # Now, while there's some task running...
-        while any(not search.done() for search in searches):
+        while not aborted and any(not search.done() for search in searches):
             try:
                 # ...briefly wait for something on the stack. If we get
                 # something yield it up to our caller.
-                yield await wait_for(commands.get(), 0.1)
+                aborted = yield await wait_for(commands.get(), 0.1)
+                if aborted:
+                    break
             except TimeoutError:
                 # A timeout is fine. We're just going to go back round again
                 # and see if anything else has turned up.
                 pass
+            except CancelledError:
+                # A cancelled error means things are being aborted.
+                aborted = True
             else:
                 # There was no timeout, which means that we managed to yield
                 # up that command; we're done with it so let the queue know.
@@ -550,11 +558,16 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # await/wait_for so we don't block until we're done. Not doing this
         # makes typing into the input *very* choppy when you have very fast
         # sources.
-        while not commands.empty():
+        while not aborted and not commands.empty():
             try:
-                yield await wait_for(commands.get(), 0.1)
+                aborted = yield await wait_for(commands.get(), 0.1)
             except TimeoutError:
                 pass
+
+        # If we were aborted, ensure that all of the searched are cancelled.
+        if aborted:
+            for search in searches:
+                search.cancel()
 
     @staticmethod
     def _sans_background(style: Style) -> Style:
@@ -647,7 +660,14 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         command_id = 0
         worker = get_current_worker()
         self._show_busy = False
-        async for hit in self._search_for(search_value):
+        search = self._search_for(search_value).__aiter__()
+        try:
+            hit = await search.__anext__()
+        except StopAsyncIteration:
+            # We've been stopped before we've even really got going, likely
+            # because the user is very quick on the keyboard.
+            hit = None
+        while hit:
             prompt = hit.match_display
             if hit.command_help:
                 prompt = Group(prompt, Text(hit.command_help, style=help_style))
@@ -656,6 +676,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 break
             self._refresh_command_list(command_list, gathered_commands)
             command_id += 1
+            try:
+                hit = await search.asend(worker.is_cancelled)
+            except StopAsyncIteration:
+                break
         self._show_busy = False
         if command_list.option_count == 0 and not worker.is_cancelled:
             command_list.add_option(
