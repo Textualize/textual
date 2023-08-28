@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable
 
 from rich.style import Style
 from rich.text import Text
@@ -28,6 +28,9 @@ from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
 from textual.strip import Strip
+
+_OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
+_CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -76,6 +79,15 @@ TextArea:focus > .text-area--selection {
 TextArea > .text-area--selection {
     background: $primary 65%;
 }
+TextArea:focus > .text-area--matching-bracket {
+    color: $text;
+    background: white 20%;
+    text-style: bold underline;
+}
+TextArea > .text-area--matching-bracket {
+    background: ;
+    text-style: ;
+}
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -84,6 +96,7 @@ TextArea > .text-area--selection {
         "text-area--cursor-line",
         "text-area--cursor-line-gutter",
         "text-area--selection",
+        "text-area--matching-bracket",
     }
     """| Class                           | Description                                      |
 |:--------------------------------|:-------------------------------------------------|
@@ -92,6 +105,7 @@ TextArea > .text-area--selection {
 | `text-area--cursor-line`        | Targets the line of text the cursor is on.       |
 | `text-area--cursor-line-gutter` | Targets the gutter of the line the cursor is on. |
 | `text-area--selection`          | Targets the selected text.                       |
+| `text-area--matching-bracket`   | Targets the bracket matching the cursor bracket. |
  """
 
     BINDINGS = [
@@ -232,11 +246,15 @@ TextArea > .text-area--selection {
     altering this value will immediately change the display width of the visible tabs.
     """
 
+    match_cursor_bracket: Reactive[bool] = reactive(True)
+    """If the cursor is at a bracket, highlight the matching bracket if found."""
+
     cursor_blink: Reactive[bool] = reactive(True)
     """True if the cursor should blink."""
 
     _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
-    """True if the cursor should be rendered """
+    """Indicates where the cursor is in the blink cycle. If it's currently
+    not visible due to blinking, this is False."""
 
     def __init__(
         self,
@@ -276,9 +294,62 @@ TextArea > .text-area--selection {
         self._selecting = False
         """True if we're currently selecting text using the mouse, otherwise False."""
 
-    def _watch_selection(self) -> None:
+        self._matching_bracket_location: Location | None = None
+        """The location (row, column) of the bracket which matches the bracket the
+        cursor is currently at. If the cursor is at a bracket, or there's no matching
+        bracket, this will be `None`."""
+
+    def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
         self.scroll_cursor_visible()
+        cursor_location = selection.end
+        cursor_row, cursor_column = cursor_location
+
+        try:
+            character = self.document[cursor_row][cursor_column]
+        except IndexError:
+            character = None
+
+        # Record the location of a matching closing/opening bracket.
+        match_location = None
+        bracket_stack = []
+        if character in _OPENING_BRACKETS:
+            for candidate, candidate_location in self._yield_character_locations(
+                cursor_location
+            ):
+                if candidate in _OPENING_BRACKETS:
+                    bracket_stack.append(candidate)
+                elif candidate in _CLOSING_BRACKETS:
+                    if (
+                        bracket_stack
+                        and bracket_stack[-1] == _CLOSING_BRACKETS[candidate]
+                    ):
+                        bracket_stack.pop()
+                        if not bracket_stack:
+                            match_location = candidate_location
+                            break
+        elif character in _CLOSING_BRACKETS:
+            for (
+                candidate,
+                candidate_location,
+            ) in self._yield_character_locations_reverse(cursor_location):
+                if candidate in _CLOSING_BRACKETS:
+                    bracket_stack.append(candidate)
+                elif candidate in _OPENING_BRACKETS:
+                    if (
+                        bracket_stack
+                        and bracket_stack[-1] == _OPENING_BRACKETS[candidate]
+                    ):
+                        bracket_stack.pop()
+                        if not bracket_stack:
+                            match_location = candidate_location
+                            break
+
+        self._matching_bracket_location = match_location
+        if match_location is not None:
+            match_row, match_column = match_location
+            if match_row in range(*self._visible_line_indices):
+                self.refresh_lines(match_row)
 
     def _validate_selection(self, selection: Selection) -> Selection:
         """Clamp the selection to valid locations."""
@@ -320,6 +391,15 @@ TextArea > .text-area--selection {
                 log.warning("Syntax highlighting isn't available on Python 3.7.")
                 self.document = Document(text)
 
+    @property
+    def _visible_line_indices(self) -> tuple[int, int]:
+        """Return the visible line indices as a tuple (top, bottom).
+
+        Returns:
+            A tuple (top, bottom) indicating the top and bottom visible line indices.
+        """
+        return self.scroll_offset.y, self.scroll_offset.y + self.size.height
+
     def load_text(self, text: str) -> None:
         """Load text from a string into the TextArea.
 
@@ -340,6 +420,47 @@ TextArea > .text-area--selection {
         self.document = document
         self.move_cursor((0, 0))
         self._refresh_size()
+
+    def _yield_character_locations(
+        self, start: Location
+    ) -> Iterable[tuple[str, Location]]:
+        """Yields character locations starting from the given location.
+
+        Does not yield location of line separator characters like `\\n`.
+
+        Args:
+            start: The location to start yielding from.
+
+        Returns:
+            Yields tuples of (character, (row, column)).
+        """
+        row, column = start
+        document = self.document
+        line_count = document.line_count
+
+        while 0 <= row < line_count:
+            line = document[row]
+            while column < len(line):
+                yield line[column], (row, column)
+                column += 1
+            column = 0
+            row += 1
+
+    def _yield_character_locations_reverse(
+        self, start: Location
+    ) -> Iterable[tuple[str, Location]]:
+        row, column = start
+        document = self.document
+        line_count = document.line_count
+
+        while line_count > row >= 0:
+            line = document[row]
+            if column == -1:
+                column = len(line) - 1
+            while column >= 0:
+                yield line[column], (row, column)
+                column -= 1
+            row -= 1
 
     def _refresh_size(self) -> None:
         """Update the virtual size of the TextArea."""
@@ -412,6 +533,22 @@ TextArea > .text-area--selection {
 
         virtual_width, virtual_height = self.virtual_size
 
+        # Highlight the partner opening/closing bracket.
+        matching_bracket = self._matching_bracket_location
+        match_cursor_bracket = self.match_cursor_bracket
+        draw_matched_brackets = match_cursor_bracket and matching_bracket
+        if draw_matched_brackets:
+            bracket_match_row, bracket_match_column = self._matching_bracket_location
+            if bracket_match_row == line_index:
+                matching_bracket_style = self.get_component_rich_style(
+                    "text-area--matching-bracket"
+                )
+                line.stylize(
+                    matching_bracket_style,
+                    bracket_match_column,
+                    bracket_match_column + 1,
+                )
+
         # Highlight the cursor
         cursor_row, cursor_column = end
         active_line_style = self.get_component_rich_style("text-area--cursor-line")
@@ -419,6 +556,15 @@ TextArea > .text-area--selection {
             draw_cursor = not self.cursor_blink or (
                 self.cursor_blink and self._cursor_blink_visible
             )
+            if draw_matched_brackets:
+                matching_bracket_style = self.get_component_rich_style(
+                    "text-area--matching-bracket"
+                )
+                line.stylize(
+                    matching_bracket_style,
+                    cursor_column,
+                    cursor_column + 1,
+                )
             if draw_cursor:
                 cursor_style = self.get_component_rich_style("text-area--cursor")
                 line.stylize(cursor_style, cursor_column, cursor_column + 1)
