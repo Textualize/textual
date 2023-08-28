@@ -536,9 +536,9 @@ TextArea > .text-area--matching-bracket {
         # Highlight the partner opening/closing bracket.
         matching_bracket = self._matching_bracket_location
         match_cursor_bracket = self.match_cursor_bracket
-        draw_matched_brackets = match_cursor_bracket and matching_bracket
+        draw_matched_brackets = match_cursor_bracket and matching_bracket is not None
         if draw_matched_brackets:
-            bracket_match_row, bracket_match_column = self._matching_bracket_location
+            bracket_match_row, bracket_match_column = matching_bracket
             if bracket_match_row == line_index:
                 matching_bracket_style = self.get_component_rich_style(
                     "text-area--matching-bracket"
