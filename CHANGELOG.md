@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
+- Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
 
 ## [0.35.1]
 
