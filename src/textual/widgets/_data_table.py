@@ -2107,15 +2107,18 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def sort(
         self,
-        by: Iterable[ColumnKey | str] | Callable,
+        *columns: ColumnKey | str,
+        key: Callable | None = None,
         reverse: bool = False,
     ) -> Self:
         """Sort the rows in the `DataTable` by one or more column keys or a
-        key function (or other callable).
+        key function (or other callable). If both columns and a key function
+        are specified, only data from those columns will sent to the key function.
 
         Args:
-            by: One or more columns to sort by the values by, or a function
-            (or other callable) that returns a key to use for sorting purposes.
+            columns: One or more columns to sort by the values in.
+            key: A function (or other callable) that returns a key to
+            use for sorting purposes.
             reverse: If True, the sort order will be reversed.
 
         Returns:
@@ -2126,13 +2129,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: tuple[RowKey, dict[ColumnKey | str, CellType]]
         ) -> Any:
             _, row_data = row
-            result = itemgetter(*by)(row_data)
+            result = itemgetter(*columns)(row_data)
             return result
 
-        key = by if isinstance(by, Callable) else sort_by_column_keys
-        ordered_rows = sorted(self._data.items(), key=key, reverse=reverse)
+        _key = key
+        if key and columns:
+
+            def _key(row):
+                return key(itemgetter(*columns)(row[1]))
+
+        ordered_rows = sorted(
+            self._data.items(),
+            key=_key if _key else sort_by_column_keys,
+            reverse=reverse,
+        )
         self._row_locations = TwoWayDict(
-            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
+            {row_key: new_index for new_index, (row_key, _) in enumerate(ordered_rows)}
         )
         self._update_count += 1
         self.refresh()

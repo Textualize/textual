@@ -1,6 +1,7 @@
 from rich.text import Text
 
 from textual.app import App, ComposeResult
+from textual.events import Click
 from textual.widgets import DataTable, Footer
 
 ROWS = [
@@ -46,21 +47,25 @@ class TableApp(App):
         return reverse
 
     def action_sort_by_average_time(self) -> None:
-        """Sort DataTable by average of times (via a function)."""
+        """Sort DataTable by average of times (via a function) and
+        passing of column data through positional arguments."""
 
-        def sort_by_average_time(row):
-            _, row_data = row
-            times = [row_data["time 1"], row_data["time 2"]]
-            return sum(times) / len(times)
+        def sort_by_average_time(times):
+            return sum(n for n in times) / len(times)
 
         table = self.query_one(DataTable)
-        table.sort(sort_by_average_time, reverse=self.sort_reverse("time"))
+        table.sort(
+            "time 1",
+            "time 2",
+            key=sort_by_average_time,
+            reverse=self.sort_reverse("time"),
+        )
 
     def action_sort_by_last_name(self) -> None:
         """Sort DataTable by last name of swimmer (via a lambda)."""
         table = self.query_one(DataTable)
         table.sort(
-            lambda row: row[1]["swimmer"].split()[-1],
+            key=lambda row: row[1]["swimmer"].split()[-1],
             reverse=self.sort_reverse("swimmer"),
         )
 
@@ -68,8 +73,21 @@ class TableApp(App):
         """Sort DataTable by country which is a `Rich.Text` object."""
         table = self.query_one(DataTable)
         table.sort(
-            lambda row: row[1]["country"].plain,
+            "country",
+            key=lambda country: country.plain,
             reverse=self.sort_reverse("country"),
+        )
+
+    def on_data_table_header_selected(self, event: Click) -> None:
+        """Sort `DataTable` items by the clicked column header."""
+
+        def sort_by_plain_text(cell):
+            return cell.plain if isinstance(cell, Text) else cell
+
+        column_key = event.column_key
+        table = self.query_one(DataTable)
+        table.sort(
+            column_key, key=sort_by_plain_text, reverse=self.sort_reverse(column_key)
         )
 
 

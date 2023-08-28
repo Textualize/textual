@@ -478,7 +478,7 @@ async def test_get_row():
         assert table.get_row(second_row) == [3, 2, 1]
 
         # Even if row positions change, keys should always refer to same rows.
-        table.sort([b])
+        table.sort(b)
         assert table.get_row(first_row) == [2, 4, 1]
         assert table.get_row(second_row) == [3, 2, 1]
 
@@ -502,7 +502,7 @@ async def test_get_row_at():
         assert table.get_row_at(1) == [3, 2, 1]
 
         # If we sort, then the rows present at the indices *do* change!
-        table.sort([b])
+        table.sort(b)
 
         # Since we sorted on column "B", the rows at indices 0 and 1 are swapped.
         assert table.get_row_at(0) == [3, 2, 1]
@@ -878,7 +878,7 @@ async def test_sort_coordinate_and_key_access():
         assert table.get_cell_at(Coordinate(1, 0)) == 1
         assert table.get_cell_at(Coordinate(2, 0)) == 2
 
-        table.sort([column])
+        table.sort(column)
 
         # The keys still refer to the same cells...
         assert table.get_cell(row_one, column) == 1
@@ -911,7 +911,7 @@ async def test_sort_reverse_coordinate_and_key_access():
         assert table.get_cell_at(Coordinate(1, 0)) == 1
         assert table.get_cell_at(Coordinate(2, 0)) == 2
 
-        table.sort([column], reverse=True)
+        table.sort(column, reverse=True)
 
         # The keys still refer to the same cells...
         assert table.get_cell(row_one, column) == 1
@@ -1176,22 +1176,22 @@ async def test_sort_by_multiple_columns():
         assert table.get_row_at(1) == [2, 9, 5]
         assert table.get_row_at(2) == [1, 1, 9]
 
-        table.sort([a, b, c])
+        table.sort(a, b, c)
         assert table.get_row_at(0) == [1, 1, 9]
         assert table.get_row_at(1) == [1, 3, 8]
         assert table.get_row_at(2) == [2, 9, 5]
 
-        table.sort([a, c, b])
+        table.sort(a, c, b)
         assert table.get_row_at(0) == [1, 3, 8]
         assert table.get_row_at(1) == [1, 1, 9]
         assert table.get_row_at(2) == [2, 9, 5]
 
-        table.sort([c, a, b], reverse=True)
+        table.sort(c, a, b, reverse=True)
         assert table.get_row_at(0) == [1, 1, 9]
         assert table.get_row_at(1) == [1, 3, 8]
         assert table.get_row_at(2) == [2, 9, 5]
 
-        table.sort([a, c])
+        table.sort(a, c)
         assert table.get_row_at(0) == [1, 3, 8]
         assert table.get_row_at(1) == [1, 1, 9]
         assert table.get_row_at(2) == [2, 9, 5]
@@ -1220,12 +1220,12 @@ async def test_sort_by_function_sum():
             assert table.get_row_at(i) == row
             assert sum(table.get_row_at(i)) == sum(row)
 
-        table.sort(custom_sort)
+        table.sort(key=custom_sort)
         sorted_row_data = sorted(row_data, key=sum)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
 
-        table.sort(custom_sort, reverse=True)
+        table.sort(key=custom_sort, reverse=True)
         sorted_row_data = sorted(row_data, key=sum, reverse=True)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
@@ -1249,12 +1249,12 @@ async def test_sort_by_function_sum_lambda():
             assert table.get_row_at(i) == row
             assert sum(table.get_row_at(i)) == sum(row)
 
-        table.sort(lambda row: sum(row[1].values()))
+        table.sort(key=lambda row: sum(row[1].values()))
         sorted_row_data = sorted(row_data, key=sum)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
 
-        table.sort(lambda row: sum(row[1].values()), reverse=True)
+        table.sort(key=lambda row: sum(row[1].values()), reverse=True)
         sorted_row_data = sorted(row_data, key=sum, reverse=True)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
@@ -1284,12 +1284,47 @@ async def test_sort_by_function_date():
         assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
         assert table.get_row_at(2) == ["Jane Doe", "25/12/22"]
 
-        table.sort(custom_sort)
+        table.sort(key=custom_sort)
         assert table.get_row_at(0) == ["Jane Doe", "25/12/22"]
         assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
         assert table.get_row_at(2) == ["Doug Johnson", "26/07/23"]
 
-        table.sort(custom_sort, reverse=True)
+        table.sort(key=custom_sort, reverse=True)
         assert table.get_row_at(0) == ["Doug Johnson", "26/07/23"]
         assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
         assert table.get_row_at(2) == ["Jane Doe", "25/12/22"]
+
+
+async def test_sort_by_columns_and_function():
+    """Test sorting a `DataTable` using a custom sort function and
+    only supplying data from specific columns."""
+
+    def custom_sort(nums):
+        return sum(n for n in nums)
+
+    row_data = (
+        ["A", "B", "C"],  # Column headers
+        [1, 3, 8],  # First and last columns SUM=9
+        [2, 9, 5],  # First and last columns SUM=7
+        [1, 1, 9],  # First and last columns SUM=10
+    )
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+
+        for col in row_data[0]:
+            table.add_column(col, key=col)
+        table.add_rows(row_data[1:])
+
+        table.sort("A", "C", key=custom_sort)
+        sorted_row_data = sorted(row_data[1:], key=lambda row: row[0] + row[-1])
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        table.sort("A", "C", key=custom_sort, reverse=True)
+        sorted_row_data = sorted(
+            row_data[1:], key=lambda row: row[0] + row[-1], reverse=True
+        )
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
