@@ -560,7 +560,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             except TimeoutError:
                 pass
 
-        # If we were aborted, ensure that all of the searched are cancelled.
+        # If we were aborted, ensure that all of the searches are cancelled.
         if aborted:
             for search in searches:
                 search.cancel()
