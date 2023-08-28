@@ -532,8 +532,6 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 # ...briefly wait for something on the stack. If we get
                 # something yield it up to our caller.
                 aborted = yield await wait_for(commands.get(), 0.1)
-                if aborted:
-                    break
             except TimeoutError:
                 # A timeout is fine. We're just going to go back round again
                 # and see if anything else has turned up.
