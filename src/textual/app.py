@@ -426,7 +426,7 @@ class App(Generic[ReturnType], DOMNode):
         an empty string if it doesn't.
 
         Sub-titles are typically used to show the high-level state of the app, such as the current mode, or path to
-        the file being worker on.
+        the file being worked on.
 
         Assign a new value to this attribute to change the sub-title.
         The new value is always converted to string.
