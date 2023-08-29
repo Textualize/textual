@@ -483,6 +483,8 @@ class App(Generic[ReturnType], DOMNode):
         """Internal attribute used to set the return value for the app."""
         self._return_code: int | None = None
         """Internal attribute used to set the return code for the app."""
+        self._started_running: bool = False
+        """Whether the app has ever started running or not."""
         self._exit = False
         self._disable_tooltips = False
         self._disable_notifications = False
@@ -533,14 +535,12 @@ class App(Generic[ReturnType], DOMNode):
         return self._return_value
 
     @property
-    def return_code(self) -> int:
+    def return_code(self) -> int | None:
         """The return code with which the app exited.
 
-        Non-zero codes are for errors.
+        Non-zero codes indicate errors.
         A value of 1 means the app exited with a fatal error.
-
-        Accessing this attribute before the app runs or while the app is running
-        is meaningless.
+        If the app hasn't run yet or if it is running, this will be `None`.
 
         Example:
             The return code can be used to exit the process via `sys.exit`.
@@ -549,6 +549,8 @@ class App(Generic[ReturnType], DOMNode):
             sys.exit(my_app.return_code)
             ```
         """
+        if not self._started_running or self.is_running:
+            return None
         return self._return_code if self._return_code is not None else 1
 
     @property
@@ -686,7 +688,6 @@ class App(Generic[ReturnType], DOMNode):
         self._exit = True
         self._return_value = result
         self._return_code = return_code
-        print(f"Exiting; return code is {self._return_code}")
         self.post_message(messages.ExitApp())
         if message:
             self._exit_renderables.append(message)
@@ -1199,7 +1200,7 @@ class App(Generic[ReturnType], DOMNode):
             """Called when app is ready to process events."""
             app_ready_event.set()
 
-        async def run_app(app) -> None:
+        async def run_app(app: App) -> None:
             if message_hook is not None:
                 message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
@@ -1994,6 +1995,7 @@ class App(Generic[ReturnType], DOMNode):
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
         self._set_active()
+        self._started_running = True
         active_message_pump.set(self)
 
         if self.devtools is not None:

@@ -72,10 +72,7 @@ def test_setting_sub_title():
 
 
 async def test_default_return_code_is_zero():
-    class MyApp(App):
-        pass
-
-    app = MyApp()
+    app = App()
     async with app.run_test():
         app.exit()
     assert app.return_code == 0
@@ -94,10 +91,18 @@ async def test_return_code_is_one_after_crash():
 
 
 async def test_set_return_code():
-    class MyApp(App):
-        pass
-
-    app = MyApp()
+    app = App()
     async with app.run_test():
         app.exit(return_code=42)
     assert app.return_code == 42
+
+
+def test_no_return_code_before_running():
+    app = App()
+    assert app.return_code is None
+
+
+async def test_no_return_code_while_running():
+    app = App()
+    async with app.run_test():
+        assert app.return_code is None
