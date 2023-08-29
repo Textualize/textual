@@ -72,6 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
 - Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+- Fixed click on double-width char https://github.com/Textualize/textual/issues/2968
 
 ### Changed
 
