@@ -605,16 +605,15 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         )
 
     def _refresh_command_list(
-        self, command_list: CommandList, commands: list[Command], avoid_flash: bool
-    ) -> bool:
+        self, command_list: CommandList, commands: list[Command], clear_current: bool
+    ) -> None:
         """Refresh the command list.
 
         Args:
             command_list: The widget that shows the list of commands.
             commands: The commands to show in the widget.
+            clear_current: Should the current content of the list be cleared first?
         """
-        if avoid_flash:
-            command_list.clear_options()
         # For the moment, this is a fairly naive approach to populating the
         # command list with a sorted list of commands. Every time we add a
         # new one we're nuking the list of options and populating them
@@ -624,13 +623,12 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # go with "worse is better" wisdom).
         highlighted = (
             command_list.get_option_at_index(command_list.highlighted)
-            if command_list.highlighted is not None
+            if command_list.highlighted is not None and not clear_current
             else None
         )
         command_list.clear_options().add_options(sorted(commands, reverse=True))
         if highlighted is not None:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
-        return False
 
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
@@ -669,13 +667,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # Go into a busy mode.
         self._show_busy = False
 
-        # Flag to keep track of if we should avoid the flash of the initial
-        # clear. Note that the initial clear is needed, as we don't want to
-        # be adding to an already-populated OptionList. The initial clear
-        # *should* be in `_input`, but doing so caused an unsightly "flash"
-        # of the list; so here we sacrifice correct code for a
-        # better-looking UI.
-        avoid_flash = True
+        # A flag to keep track of if the current content of the command hit
+        # list needs to be cleared. The initial clear *should* be in
+        # `_input`, but doing so caused an unsightly "flash" of the list; so
+        # here we sacrifice "correct" code for a better-looking UI.
+        clear_current = True
 
         # We're going to batch updates over time, so start off pretending
         # we've just done an update.
@@ -716,9 +712,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # looks like things are moving along.
             now = monotonic()
             if (now - last_update) > self._RESULT_BATCH_TIME:
-                avoid_flash = self._refresh_command_list(
-                    command_list, gathered_commands, avoid_flash
+                self._refresh_command_list(
+                    command_list, gathered_commands, clear_current
                 )
+                clear_current = False
                 last_update = now
 
             # Bump the ID.
@@ -735,7 +732,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # On the way out, if we're still in play, ensure everything has been
         # dropped into the command list.
         if not worker.is_cancelled:
-            self._refresh_command_list(command_list, gathered_commands, avoid_flash)
+            self._refresh_command_list(command_list, gathered_commands, clear_current)
 
         # One way or another, we're not busy any more.
         self._show_busy = False
