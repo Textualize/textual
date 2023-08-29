@@ -130,7 +130,6 @@ class Collapsible(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
-    @on(Title.Toggle)
     def _on_title_toggle(self, event: Title.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
