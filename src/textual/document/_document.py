@@ -19,6 +19,8 @@ VALID_NEWLINES = set(get_args(Newline))
 
 @dataclass
 class EditResult:
+    """Contains information about an edit that has occurred."""
+
     end_location: Location
     """The new end Location after the selection is complete."""
     replaced_text: str
