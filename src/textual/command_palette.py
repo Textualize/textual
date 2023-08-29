@@ -556,7 +556,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             (
                 search.exception()
                 for search in searches
-                if search.exception() is not None
+                if search.done() and search.exception() is not None
             ),
             None,
         )
