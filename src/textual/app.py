@@ -541,6 +541,13 @@ class App(Generic[ReturnType], DOMNode):
 
         Accessing this attribute before the app runs or while the app is running
         is meaningless.
+
+        Example:
+            The return code can be used to exit the process via `sys.exit`.
+            ```py
+            my_app.run()
+            sys.exit(my_app.return_code)
+            ```
         """
         return self._return_code if self._return_code is not None else 1
 
