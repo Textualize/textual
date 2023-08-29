@@ -257,11 +257,10 @@ async def test_delete_to_start_of_line(selection, expected_result):
         (Selection.cursor((0, 0)), "  012 345 6789", Selection.cursor((0, 0))),
         (Selection.cursor((0, 4)), "  2 345 6789", Selection.cursor((0, 2))),
         (Selection.cursor((0, 5)), "   345 6789", Selection.cursor((0, 2))),
-        pytest.param(
+        (
             Selection.cursor((0, 6)),
-            "   345 6789",
+            "  345 6789",
             Selection.cursor((0, 2)),
-            marks=pytest.mark.xfail(reason="Should skip initial whitespace."),
         ),
         (Selection.cursor((0, 14)), "  012 345 ", Selection.cursor((0, 10))),
         # When there's a selection and you "delete word left", it just deletes the selection
@@ -287,11 +286,10 @@ async def test_delete_word_left(selection, expected_result, final_selection):
         (Selection.cursor((0, 0)), "\t012 \t 345\t6789", Selection.cursor((0, 0))),
         (Selection.cursor((0, 4)), "\t \t 345\t6789", Selection.cursor((0, 1))),
         (Selection.cursor((0, 5)), "\t012\t 345\t6789", Selection.cursor((0, 4))),
-        pytest.param(
+        (
             Selection.cursor((0, 6)),
-            "\t 345\t6789",
-            Selection.cursor((0, 1)),
-            marks=pytest.mark.xfail(reason="Should skip initial whitespace."),
+            "\t012 345\t6789",
+            Selection.cursor((0, 4)),
         ),
         (Selection.cursor((0, 15)), "\t012 \t 345\t", Selection.cursor((0, 11))),
         # When there's a selection and you "delete word left", it just deletes the selection
