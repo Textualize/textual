@@ -1376,22 +1376,16 @@ TextArea > .text-area--matching-bracket {
             self.delete(start, end, maintain_selection_offset=False)
             return
 
-        cursor_row, cursor_column = end
-
-        line = self.document[cursor_row][:cursor_column]
-        matches = list(re.finditer(self._word_pattern, line))
-
-        if matches:
-            from_location = (cursor_row, matches[-1].start())
-        elif cursor_row > 0 and cursor_column == 0:
-            from_location = (cursor_row - 1, len(self.document[cursor_row - 1]))
-        else:
-            from_location = (cursor_row, 0)
-
-        self.delete(from_location, self.selection.end, maintain_selection_offset=False)
+        to_location = self.get_cursor_word_left_location()
+        self.delete(self.selection.end, to_location, maintain_selection_offset=False)
 
     def action_delete_word_right(self) -> None:
-        """Deletes the word to the right of the cursor and keeps the cursor at the same location."""
+        """Deletes the word to the right of the cursor and keeps the cursor at the same location.
+
+        Note that the location that we delete to using this action is not the same
+        as the location we move to when we move the cursor one word to the right.
+        This action does not skip leading whitespace, whereas cursor movement does.
+        """
         if self.cursor_at_end_of_document:
             return
 

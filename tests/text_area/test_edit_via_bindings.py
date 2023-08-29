@@ -285,11 +285,11 @@ async def test_delete_word_left(selection, expected_result, final_selection):
     [
         (Selection.cursor((0, 0)), "\t012 \t 345\t6789", Selection.cursor((0, 0))),
         (Selection.cursor((0, 4)), "\t \t 345\t6789", Selection.cursor((0, 1))),
-        (Selection.cursor((0, 5)), "\t012\t 345\t6789", Selection.cursor((0, 4))),
+        (Selection.cursor((0, 5)), "\t\t 345\t6789", Selection.cursor((0, 1))),
         (
             Selection.cursor((0, 6)),
-            "\t012 345\t6789",
-            Selection.cursor((0, 4)),
+            "\t 345\t6789",
+            Selection.cursor((0, 1)),
         ),
         (Selection.cursor((0, 15)), "\t012 \t 345\t", Selection.cursor((0, 11))),
         # When there's a selection and you "delete word left", it just deletes the selection
