@@ -98,7 +98,7 @@ class CommandSource(ABC):
     [`search`][textual.command_palette.CommandSource.search].
     """
 
-    def __init__(self, screen: Screen, match_style: Style | None = None) -> None:
+    def __init__(self, screen: Screen[Any], match_style: Style | None = None) -> None:
         """Initialise the command source.
 
         Args:
@@ -371,7 +371,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     _show_busy: var[bool] = var(False, init=False)
     """Internal reactive to toggle the visibility of the busy indicator."""
 
-    _calling_screen: var[Screen | None] = var(None)
+    _calling_screen: var[Screen[Any] | None] = var(None)
     """A record of the screen that was active when we were called."""
 
     _PALETTE_ID: Final[str] = "--command-palette"
@@ -516,6 +516,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
         # Fire up an instance of each command source, inside a task, and
         # have them go start looking for matches.
+        assert self._calling_screen is not None
         searches = [
             create_task(
                 self._consume(
