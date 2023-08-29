@@ -79,7 +79,6 @@ _DRACULA = {
     # "parameter": Style(color="cyan"),
     # "type": Style(color="cyan"),
     # "escape": Style(bgcolor="magenta"),
-    "heading": Style(color="#ff79c6", bold=True),
     "regex.punctuation.bracket": Style(color="#ff79c6"),
     "regex.operator": Style(color="#ff79c6"),
     # "error": Style(color="black", bgcolor="red"),
@@ -91,6 +90,12 @@ _DRACULA = {
     "toml.type": Style(color="#ff79c6"),
     "toml.datetime": Style(color="#bd93f9"),
     "toml.error": _NULL_STYLE,
+    "heading": Style(color="#ff79c6", bold=True),
+    "bold": Style(bold=True),
+    "italic": Style(italic=True),
+    "strikethrough": Style(strike=True),
+    "link": Style(color="#bd93f9", underline=True),
+    "inline_code": Style(color="#ff79c6"),
 }
 
 _BUILTIN_THEMES = {
