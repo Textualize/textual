@@ -762,9 +762,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         Args:
             event: The input event.
         """
+        self.workers.cancel_all()
         search_value = event.value.strip()
         self._list_visible = bool(search_value)
-        self.workers.cancel_all()
         if search_value:
             self._gather_commands(search_value)
         else:
