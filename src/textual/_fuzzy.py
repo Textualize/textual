@@ -50,6 +50,11 @@ class Matcher:
         """The regular expression pattern built from the query."""
         return self._query_regex.pattern
 
+    @property
+    def case_sensitive(self) -> bool:
+        """Is this matcher case sensitive?"""
+        return not bool(self._query_regex.flags & IGNORECASE)
+
     def match(self, candidate: str) -> float:
         """Match the candidate against the query.
 
