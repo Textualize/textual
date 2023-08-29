@@ -33,7 +33,6 @@ _MONOKAI = {
     # "parameter": Style(color="cyan"),
     # "type": Style(color="cyan"),
     # "escape": Style(bgcolor="magenta"),
-    "heading": Style(color="#F92672", bold=True),
     "regex.punctuation.bracket": Style(color="#F92672"),
     "regex.operator": Style(color="#F92672"),
     # "error": Style(color="black", bgcolor="red"),
@@ -45,6 +44,12 @@ _MONOKAI = {
     "toml.type": Style(color="#F92672"),
     "toml.datetime": Style(color="#AE81FF"),
     "toml.error": _NULL_STYLE,
+    "heading": Style(color="#F92672", bold=True),
+    "bold": Style(bold=True),
+    "italic": Style(italic=True),
+    "strikethrough": Style(strike=True),
+    "link": Style(color="#66D9EF", underline=True),
+    "inline_code": Style(color="#F92672"),
 }
 
 _DRACULA = {
