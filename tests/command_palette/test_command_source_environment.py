@@ -16,11 +16,11 @@ class SimpleSource(CommandSource):
     environment: set[tuple[App, Screen, Widget | None]] = set()
 
     async def search(self, _: str) -> CommandMatches:
-        def gndn() -> None:
+        def goes_nowhere_does_nothing() -> None:
             pass
 
         SimpleSource.environment.add((self.app, self.screen, self.focused))
-        yield CommandSourceHit(1, "Hit", gndn, "Hit")
+        yield CommandSourceHit(1, "Hit", goes_nowhere_does_nothing, "Hit")
 
 
 class CommandPaletteApp(App[None]):

@@ -10,11 +10,11 @@ from textual.command_palette import (
 
 class SimpleSource(CommandSource):
     async def search(self, query: str) -> CommandMatches:
-        def gndn() -> None:
+        def goes_nowhere_does_nothing() -> None:
             pass
 
         for _ in range(100):
-            yield CommandSourceHit(1, query, gndn, query)
+            yield CommandSourceHit(1, query, goes_nowhere_does_nothing, query)
 
 
 class CommandPaletteApp(App[None]):

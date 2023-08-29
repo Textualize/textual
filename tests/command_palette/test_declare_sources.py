@@ -15,10 +15,10 @@ async def test_sources_with_no_known_screen() -> None:
 
 class ExampleCommandSource(CommandSource):
     async def search(self, _: str) -> CommandMatches:
-        def gndn() -> None:
+        def goes_nowhere_does_nothing() -> None:
             pass
 
-        yield CommandSourceHit(1, "Hit", gndn, "Hit")
+        yield CommandSourceHit(1, "Hit", goes_nowhere_does_nothing, "Hit")
 
 
 class AppWithActiveCommandPalette(App[None]):

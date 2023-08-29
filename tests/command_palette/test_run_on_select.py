@@ -12,13 +12,17 @@ from textual.widgets import Input
 
 class SimpleSource(CommandSource):
     async def search(self, _: str) -> CommandMatches:
-        def gndn(selection: int) -> None:
+        def goes_nowhere_does_nothing(selection: int) -> None:
             assert isinstance(self.app, CommandPaletteRunOnSelectApp)
             self.app.selection = selection
 
         for n in range(100):
             yield CommandSourceHit(
-                n + 1 / 100, str(n), partial(gndn, n), str(n), f"This is help for {n}"
+                n + 1 / 100,
+                str(n),
+                partial(goes_nowhere_does_nothing, n),
+                str(n),
+                f"This is help for {n}",
             )
 
 
