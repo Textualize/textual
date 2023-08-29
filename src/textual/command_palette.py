@@ -154,7 +154,7 @@ class CommandSource(ABC):
         Yields:
             Instances of [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
         """
-        raise NotImplemented
+        yield NotImplemented
 
 
 @total_ordering
