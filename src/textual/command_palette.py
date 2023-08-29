@@ -674,6 +674,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # grab a reference to that.
         worker = get_current_worker()
 
+        # We're ready to show results, ensure the list is visible.
+        self._list_visible = True
+
         # Go into a busy mode.
         self._show_busy = False
 
@@ -764,10 +767,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         """
         self.workers.cancel_all()
         search_value = event.value.strip()
-        self._list_visible = bool(search_value)
         if search_value:
             self._gather_commands(search_value)
         else:
+            self._list_visible = False
             self.query_one(CommandList).clear_options()
 
     @on(OptionList.OptionSelected)
