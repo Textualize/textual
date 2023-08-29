@@ -308,13 +308,15 @@ class App(Generic[ReturnType], DOMNode):
     TITLE: str | None = None
     """A class variable to set the *default* title for the application.
 
-    To update the title while the app is running, you can set the [title][textual.app.App.title] attribute
+    To update the title while the app is running, you can set the [title][textual.app.App.title] attribute.
+    See also [the `Screen.TITLE` attribute][textual.screen.Screen.TITLE].
     """
 
     SUB_TITLE: str | None = None
     """A class variable to set the default sub-title for the application.
 
     To update the sub-title while the app is running, you can set the [sub_title][textual.app.App.sub_title] attribute.
+    See also [the `Screen.SUB_TITLE` attribute][textual.screen.Screen.SUB_TITLE].
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
