@@ -550,6 +550,19 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 # up that command; we're done with it so let the queue know.
                 commands.task_done()
 
+        # Check through all of the finished searches and, if any of them has
+        # an exception, bubble it up.
+        search_exception = next(
+            (
+                search.exception()
+                for search in searches
+                if search.exception() is not None
+            ),
+            None,
+        )
+        if search_exception is not None:
+            raise search_exception from None
+
         # Having finished the main processing loop, we're not busy any more.
         # Anything left in the queue (see next) will fall out more or less
         # instantly.
