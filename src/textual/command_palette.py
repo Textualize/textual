@@ -572,10 +572,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # this point but the queue isn't empty yet. So here we flush the
         # queue of anything left.
         while not aborted and not commands.empty():
-            try:
-                aborted = yield await commands.get()
-            except TimeoutError:
-                pass
+            aborted = yield await commands.get()
 
         # If we were aborted, ensure that all of the searches are cancelled.
         if aborted:
