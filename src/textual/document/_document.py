@@ -8,7 +8,6 @@ from typing import NamedTuple, Tuple, overload
 from rich.text import Text
 
 from textual._cells import cell_len
-from textual._fix_direction import _sort_ascending
 from textual._types import Literal, get_args
 from textual.geometry import Size
 
@@ -209,7 +208,7 @@ class Document(DocumentBase):
             The EditResult containing information about the completed
                 replace operation.
         """
-        top, bottom = _sort_ascending(start, end)
+        top, bottom = sorted((start, end))
         top_row, top_column = top
         bottom_row, bottom_column = bottom
 
@@ -263,7 +262,7 @@ class Document(DocumentBase):
         if start == end:
             return ""
 
-        top, bottom = _sort_ascending(start, end)
+        top, bottom = sorted((start, end))
         top_row, top_column = top
         bottom_row, bottom_column = bottom
         lines = self._lines
@@ -363,4 +362,4 @@ class Selection(NamedTuple):
         """Return the Selection as a "standard" range, from top to bottom i.e. (minimum point, maximum point)
         where the minimum point is inclusive and the maximum point is exclusive."""
         start, end = self
-        return _sort_ascending(start, end)
+        return tuple(sorted((start, end)))

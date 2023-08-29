@@ -19,7 +19,6 @@ try:
 except ImportError:
     TREE_SITTER = False
 
-from textual._fix_direction import _sort_ascending
 from textual.document._document import Document, EditResult, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
 from textual.document._syntax_theme import SyntaxTheme
@@ -117,7 +116,7 @@ class SyntaxAwareDocument(Document):
         Returns:
             The new end location after the edit is complete.
         """
-        top, bottom = _sort_ascending(start, end)
+        top, bottom = sorted((start, end))
 
         # An optimisation would be finding the byte offsets as a single operation rather
         # than doing two passes over the document content.

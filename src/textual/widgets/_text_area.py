@@ -12,7 +12,6 @@ if TYPE_CHECKING:
 
 from textual import events, log
 from textual._cells import cell_len
-from textual._fix_direction import _sort_ascending
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.document import (
@@ -633,7 +632,7 @@ TextArea > .text-area--matching-bracket {
         Returns:
             The text between start and end.
         """
-        start, end = _sort_ascending(start, end)
+        start, end = sorted((start, end))
         return self.document.get_text_range(start, end)
 
     def edit(self, edit: Edit) -> Any:
@@ -1274,7 +1273,7 @@ TextArea > .text-area--matching-bracket {
         Returns:
             An `EditResult` containing information about the edit.
         """
-        top, bottom = _sort_ascending(start, end)
+        top, bottom = sorted((start, end))
         return self.edit(Edit("", top, bottom, maintain_selection_offset))
 
     def replace(
@@ -1336,7 +1335,7 @@ TextArea > .text-area--matching-bracket {
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
         start, end = self.selection
-        start, end = _sort_ascending(start, end)
+        start, end = sorted((start, end))
         start_row, start_column = start
         end_row, end_column = end
 
@@ -1449,7 +1448,7 @@ class Edit:
         # position in the document even if an insert happens before
         # their cursor position.
 
-        edit_top, edit_bottom = _sort_ascending(edit_from, edit_to)
+        edit_top, edit_bottom = sorted((edit_from, edit_to))
         edit_bottom_row, edit_bottom_column = edit_bottom
 
         selection_start, selection_end = text_area.selection
