@@ -1328,3 +1328,40 @@ async def test_sort_by_columns_and_function():
         )
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
+
+
+async def test_sort_by_multiple_columns_and_function():
+    """Test sorting a `DataTable` using a custom sort function and
+    only supplying data from specific columns."""
+
+    def custom_sort(row_data):
+        name, *scores = row_data
+        return (sum(scores) / len(scores), name.split()[-1])
+
+    row_data = (
+        ["ID", "Student", "Participation", "Test 1", "Test 2", "Test 3"],
+        ["ID-01", "Joseph Schooling", True, 90, 91, 92],
+        ["ID-02", "Li Zhuhao", False, 92, 93, 94],
+        ["ID-03", "Chad le Clos", False, 92, 93, 94],
+        ["ID-04", "Michael Phelps", True, 95, 96, 99],
+    )
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+
+        for col in row_data[0]:
+            table.add_column(col, key=col)
+        table.add_rows(row_data[1:])
+
+        table.sort("Student", "Test 1", "Test 2", "Test 3", key=custom_sort)
+        sorted_row_data = (row_data[1], row_data[3], row_data[2], row_data[4])
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        table.sort(
+            "Student", "Test 1", "Test 2", "Test 3", key=custom_sort, reverse=True
+        )
+        sorted_row_data = (row_data[4], row_data[2], row_data[3], row_data[1])
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row

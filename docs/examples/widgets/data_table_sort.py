@@ -7,7 +7,7 @@ from textual.widgets import DataTable, Footer
 ROWS = [
     ("lane", "swimmer", "country", "time 1", "time 2"),
     (4, "Joseph Schooling", Text("Singapore", style="italic"), 50.39, 51.84),
-    (2, "Michael Phelps", Text("United States", style="italic"), 51.14, 51.84),
+    (2, "Michael Phelps", Text("United States", style="italic"), 50.39, 51.84),
     (5, "Chad le Clos", Text("South Africa", style="italic"), 51.14, 51.73),
     (6, "László Cseh", Text("Hungary", style="italic"), 51.14, 51.58),
     (3, "Li Zhuhao", Text("China", style="italic"), 51.26, 51.26),
@@ -50,14 +50,16 @@ class TableApp(App):
         """Sort DataTable by average of times (via a function) and
         passing of column data through positional arguments."""
 
-        def sort_by_average_time(times):
-            return sum(n for n in times) / len(times)
+        def sort_by_average_time_then_last_name(row_data):
+            name, *scores = row_data
+            return (sum(scores) / len(scores), name.split()[-1])
 
         table = self.query_one(DataTable)
         table.sort(
+            "swimmer",
             "time 1",
             "time 2",
-            key=sort_by_average_time,
+            key=sort_by_average_time_then_last_name,
             reverse=self.sort_reverse("time"),
         )
 
@@ -65,7 +67,8 @@ class TableApp(App):
         """Sort DataTable by last name of swimmer (via a lambda)."""
         table = self.query_one(DataTable)
         table.sort(
-            key=lambda row: row[1]["swimmer"].split()[-1],
+            "swimmer",
+            key=lambda swimmer: swimmer.split()[-1],
             reverse=self.sort_reverse("swimmer"),
         )
 
