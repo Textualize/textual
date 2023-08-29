@@ -92,7 +92,7 @@ The following example contains three `Collapsible`s.
 
 ## Messages
 
-- [Collapsible.Summary.Toggle][Collapsible.Summary.Toggle]
+- [Collapsible.Title.Toggle][Collapsible.Title.Toggle]
 
 ## See also
 
