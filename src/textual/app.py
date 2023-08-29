@@ -480,6 +480,9 @@ class App(Generic[ReturnType], DOMNode):
 
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None
+        """Internal attribute used to set the return value for the app."""
+        self._return_code: int | None = None
+        """Internal attribute used to set the return code for the app."""
         self._exit = False
         self._disable_tooltips = False
         self._disable_notifications = False
@@ -528,6 +531,18 @@ class App(Generic[ReturnType], DOMNode):
         The return value is set when calling [exit][textual.app.App.exit].
         """
         return self._return_value
+
+    @property
+    def return_code(self) -> int:
+        """The return code with which the app exited.
+
+        Non-zero codes are for errors.
+        A value of 1 means the app exited with a fatal error.
+
+        Accessing this attribute before the app runs or while the app is running
+        is meaningless.
+        """
+        return self._return_code if self._return_code is not None else 1
 
     @property
     def children(self) -> Sequence["Widget"]:
@@ -649,16 +664,22 @@ class App(Generic[ReturnType], DOMNode):
         return self._screen_stacks[self._current_mode]
 
     def exit(
-        self, result: ReturnType | None = None, message: RenderableType | None = None
+        self,
+        result: ReturnType | None = None,
+        return_code: int = 0,
+        message: RenderableType | None = None,
     ) -> None:
         """Exit the app, and return the supplied result.
 
         Args:
             result: Return value.
+            return_code: The return code. Use non-zero values for error codes.
             message: Optional message to display on exit.
         """
         self._exit = True
         self._return_value = result
+        self._return_code = return_code
+        print(f"Exiting; return code is {self._return_code}")
         self.post_message(messages.ExitApp())
         if message:
             self._exit_renderables.append(message)
