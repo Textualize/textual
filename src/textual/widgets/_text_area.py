@@ -113,23 +113,26 @@ TextArea > .text-area--matching-bracket {
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
         Binding("left", "cursor_left", "cursor left", show=False),
+        Binding("right", "cursor_right", "cursor right", show=False),
         Binding("ctrl+left", "cursor_word_left", "cursor word left", show=False),
+        Binding("ctrl+right", "cursor_word_right", "cursor word right", show=False),
+        Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
+        Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
+        Binding("pageup", "cursor_page_up", "cursor page up", show=False),
+        Binding("pagedown", "cursor_page_down", "cursor page down", show=False),
+        # Making selections (generally holding the shift key and moving cursor)
         Binding(
             "ctrl+shift+left",
             "cursor_word_left(True)",
             "cursor left word select",
             show=False,
         ),
-        Binding("right", "cursor_right", "cursor right", show=False),
-        Binding("ctrl+right", "cursor_word_right", "cursor word right", show=False),
         Binding(
             "ctrl+shift+right",
             "cursor_word_right(True)",
             "cursor right word select",
             show=False,
         ),
-        Binding("home,ctrl+a", "cursor_line_start", "cursor line start", show=False),
-        Binding("end,ctrl+e", "cursor_line_end", "cursor line end", show=False),
         Binding(
             "shift+home",
             "cursor_line_start(True)",
@@ -139,15 +142,14 @@ TextArea > .text-area--matching-bracket {
         Binding(
             "shift+end", "cursor_line_end(True)", "cursor line end select", show=False
         ),
-        Binding("pageup", "cursor_page_up", "cursor page up", show=False),
-        Binding("pagedown", "cursor_page_down", "cursor page down", show=False),
-        # Selection with the cursor
-        Binding("shift+up", "cursor_up_select", "cursor up select", show=False),
-        Binding("shift+down", "cursor_down_select", "cursor down select", show=False),
-        Binding("shift+left", "cursor_left_select", "cursor left select", show=False),
-        Binding(
-            "shift+right", "cursor_right_select", "cursor right select", show=False
-        ),
+        Binding("shift+up", "cursor_up(True)", "cursor up select", show=False),
+        Binding("shift+down", "cursor_down(True)", "cursor down select", show=False),
+        Binding("shift+left", "cursor_left(True)", "cursor left select", show=False),
+        Binding("shift+right", "cursor_right(True)", "cursor right select", show=False),
+        # Shortcut ways of making selections
+        # Binding("f5", "select_word", "select word", show=False),
+        Binding("f6", "select_line", "select line", show=False),
+        Binding("f7", "select_all", "select all", show=False),
         # Deletion
         Binding("backspace", "delete_left", "delete left", show=False),
         Binding(
@@ -162,9 +164,6 @@ TextArea > .text-area--matching-bracket {
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
-        # Binding("f5", "select_word", "select word", show=False),
-        Binding("f6", "select_line", "select line", show=False),
-        Binding("f7", "select_all", "select all", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -965,23 +964,17 @@ TextArea > .text-area--matching-bracket {
         return self.cursor_at_last_row and self.cursor_at_end_of_row
 
     # ------ Cursor movement actions
-    def action_cursor_left(self) -> None:
+    def action_cursor_left(self, select: bool = False) -> None:
         """Move the cursor one location to the left.
 
         If the cursor is at the left edge of the document, try to move it to
         the end of the previous line.
-        """
-        target = self.get_cursor_left_location()
-        self.selection = Selection.cursor(target)
-        self.record_cursor_width()
 
-    def action_cursor_left_select(self):
-        """Move the end of the selection one location to the left.
-
-        This will expand or contract the selection.
+        Args:
+            select: If True, select the text while moving.
         """
         new_cursor_location = self.get_cursor_left_location()
-        self.move_cursor(new_cursor_location, select=True)
+        self.move_cursor(new_cursor_location, select=select)
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left.
@@ -997,18 +990,16 @@ TextArea > .text-area--matching-bracket {
         target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
         return target_row, target_column
 
-    def action_cursor_right(self) -> None:
+    def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one location to the right.
 
         If the cursor is at the end of a line, attempt to go to the start of the next line.
+
+        Args:
+            select: If True, select the text while moving.
         """
         target = self.get_cursor_right_location()
-        self.move_cursor(target)
-
-    def action_cursor_right_select(self):
-        """Move the end of the selection one location to the right."""
-        target = self.get_cursor_right_location()
-        self.move_cursor(target, select=True)
+        self.move_cursor(target, select=select)
 
     def get_cursor_right_location(self) -> Location:
         """Get the location the cursor will move to if it moves right.
@@ -1023,15 +1014,14 @@ TextArea > .text-area--matching-bracket {
         target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
         return target_row, target_column
 
-    def action_cursor_down(self) -> None:
-        """Move the cursor down one cell."""
-        target = self.get_cursor_down_location()
-        self.move_cursor(target, record_width=False)
+    def action_cursor_down(self, select: bool = False) -> None:
+        """Move the cursor down one cell.
 
-    def action_cursor_down_select(self) -> None:
-        """Move the cursor down one cell, selecting the range between the old and new locations."""
+        Args:
+            select: If True, select the text while moving.
+        """
         target = self.get_cursor_down_location()
-        self.move_cursor(target, select=True, record_width=False)
+        self.move_cursor(target, record_width=False, select=select)
 
     def get_cursor_down_location(self) -> Location:
         """Get the location the cursor will move to if it moves down.
@@ -1051,15 +1041,14 @@ TextArea > .text-area--matching-bracket {
         target_column = clamp(target_column, 0, len(self.document[target_row]))
         return target_row, target_column
 
-    def action_cursor_up(self) -> None:
-        """Move the cursor up one cell."""
-        target = self.get_cursor_up_location()
-        self.move_cursor(target, record_width=False)
+    def action_cursor_up(self, select: bool = False) -> None:
+        """Move the cursor up one cell.
 
-    def action_cursor_up_select(self) -> None:
-        """Move the cursor up one cell, selecting the range between the old and new locations."""
+        Args:
+            select: If True, select the text while moving.
+        """
         target = self.get_cursor_up_location()
-        self.move_cursor(target, select=True, record_width=False)
+        self.move_cursor(target, record_width=False, select=select)
 
     def get_cursor_up_location(self) -> Location:
         """Get the location the cursor will move to if it moves up.
