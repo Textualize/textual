@@ -16,6 +16,8 @@ class SimpleSource(CommandSource):
 
 
 class CommandPaletteApp(App[None]):
+    COMMAND_SOURCES = {SimpleSource}
+
     def on_mount(self) -> None:
         self.action_command_palette()
 
