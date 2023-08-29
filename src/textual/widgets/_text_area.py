@@ -385,7 +385,7 @@ TextArea > .text-area--matching-bracket {
                 from textual.document._syntax_aware_document import SyntaxAwareDocument
 
                 self.document = SyntaxAwareDocument(text, language, self.theme)
-            except ImportError:
+            except RuntimeError:
                 # SyntaxAwareDocument isn't available on Python 3.7.
                 # Fall back to the standard document.
                 log.warning("Syntax highlighting isn't available on Python 3.7.")
