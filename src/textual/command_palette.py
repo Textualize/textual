@@ -6,7 +6,15 @@ from abc import ABC, abstractmethod
 from asyncio import CancelledError, Queue, TimeoutError, wait_for
 from functools import total_ordering
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, ClassVar, NamedTuple
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncGenerator,
+    AsyncIterator,
+    Callable,
+    ClassVar,
+    NamedTuple,
+)
 
 from rich.align import Align
 from rich.console import Group, RenderableType
@@ -496,7 +504,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         async for hit in source:
             await commands.put(hit)
 
-    async def _search_for(self, search_value: str) -> CommandMatches:
+    async def _search_for(
+        self, search_value: str
+    ) -> AsyncGenerator[CommandSourceHit, bool]:
         """Search for a given search value amongst all of the command sources.
 
         Args:
@@ -692,12 +702,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         last_update = monotonic()
 
         # Kick off the search, grabbing the iterator.
-        search = self._search_for(search_value).__aiter__()
+        search_routine = self._search_for(search_value)
+        search_results = search_routine.__aiter__()
 
         # We've going to be doing the send/await dance in this code, so we
         # need to grab the first yielded command to start things off.
         try:
-            hit = await search.__anext__()
+            hit = await search_results.__anext__()
         except StopAsyncIteration:
             # We've been stopped before we've even really got going, likely
             # because the user is very quick on the keyboard.
@@ -739,7 +750,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # note that we send the worker cancelled status down into the
             # search method.
             try:
-                hit = await search.asend(worker.is_cancelled)
+                hit = await search_routine.asend(worker.is_cancelled)
             except StopAsyncIteration:
                 break
 
