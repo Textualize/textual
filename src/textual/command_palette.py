@@ -781,6 +781,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             event: The option selection event.
         """
         event.stop()
+        self.workers.cancel_all()
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
@@ -788,6 +789,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self._selected_command = event.option.command
         input.action_end()
         self._list_visible = False
+        self.query_one(CommandList).clear_options()
         if self.run_on_select:
             self._select_or_command()
 
