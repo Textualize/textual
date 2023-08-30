@@ -300,7 +300,6 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     CommandPalette > .command-palette--highlight {
         text-style: bold reverse;
-        color: $success;
     }
 
     CommandPalette > Vertical {
