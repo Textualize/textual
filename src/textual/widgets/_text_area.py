@@ -571,6 +571,7 @@ TextArea > .text-area--matching-bracket {
             line.stylize_before(active_line_style)
 
         # Build the gutter text for this line
+        gutter_width = self.gutter_width
         if self.show_line_numbers:
             if cursor_row == line_index:
                 gutter_style = self.get_component_rich_style(
@@ -579,7 +580,7 @@ TextArea > .text-area--matching-bracket {
             else:
                 gutter_style = self.get_component_rich_style("text-area--gutter")
 
-            gutter_width_no_margin = self.gutter_width - 2
+            gutter_width_no_margin = gutter_width - 2
             gutter = Text(
                 f"{line_index + 1:>{gutter_width_no_margin}}  ",
                 style=gutter_style,
@@ -596,9 +597,9 @@ TextArea > .text-area--matching-bracket {
         )
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
-        gutter_strip = Strip(gutter_segments)
+        gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
         text_strip = Strip(text_segments).crop(
-            scroll_x, scroll_x + virtual_width - self.gutter_width
+            scroll_x, scroll_x + virtual_width - gutter_width
         )
 
         # Stylize the line the cursor is currently on.
