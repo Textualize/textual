@@ -49,7 +49,7 @@ TODO
 | Name                | Type                      | Default                 | Description                                       |
 |---------------------|---------------------------|-------------------------|---------------------------------------------------|
 | `language`          | `str \| Language \| None` | `None`                  | The language to use for syntax highlighting.      |
-| `theme`             | `str \| SyntaxTheme`      | `SyntaxTheme.default()` | The theme to use for syntax highlighting.         |
+| `theme`             | `str \| TextAreaTheme`      | `TextAreaTheme.default()` | The theme to use for syntax highlighting.         |
 | `selection`         | `Selection`               | `Selection()`           | The current selection.                            |
 | `show_line_numbers` | `bool`                    | `True`                  | Show or hide line numbers.                        |
 | `indent_width`      | `int`                     | `4`                     | The number of spaces to indent and width of tabs. |

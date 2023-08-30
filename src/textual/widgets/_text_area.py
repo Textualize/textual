@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Iterable
 
 from rich.style import Style
 from rich.text import Text
@@ -11,6 +12,7 @@ from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
     from tree_sitter import Language
+    from tree_sitter.binding import Query
 
 from textual import events, log
 from textual._cells import cell_len
@@ -22,7 +24,8 @@ from textual.document import (
     EditResult,
     Location,
     Selection,
-    SyntaxTheme,
+    SyntaxAwareDocument,
+    TextAreaTheme,
 )
 from textual.events import MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
@@ -32,6 +35,8 @@ from textual.strip import Strip
 
 _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
 _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
+_TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
+_HIGHLIGHTS_PATH = _TREE_SITTER_PATH / "highlights/"
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -90,24 +95,6 @@ TextArea > .text-area--matching-bracket {
     text-style: ;
 }
 """
-
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "text-area--cursor",
-        "text-area--gutter",
-        "text-area--cursor-line",
-        "text-area--cursor-line-gutter",
-        "text-area--selection",
-        "text-area--matching-bracket",
-    }
-    """| Class                           | Description                                      |
-|:--------------------------------|:-------------------------------------------------|
-| `text-area--cursor`             | Targets the cursor.                              |
-| `text-area--gutter`             | Targets the gutter (line number column).         |
-| `text-area--cursor-line`        | Targets the line of text the cursor is on.       |
-| `text-area--cursor-line-gutter` | Targets the gutter of the line the cursor is on. |
-| `text-area--selection`          | Targets the selected text.                       |
-| `text-area--matching-bracket`   | Targets the bracket matching the cursor bracket. |
- """
 
     BINDINGS = [
         Binding("escape", "screen.focus_next", "Shift Focus", show=False),
@@ -205,21 +192,25 @@ TextArea > .text-area--matching-bracket {
 
     This must be set to a valid, non-None value for syntax highlighting to work.
 
-    Check valid languages using the `TextArea.valid_languages` property.
-
     If the value is a string, a built-in parser will be used.
 
     If you wish to add support for an unsupported language, you'll have to pass in the
     tree-sitter `Language` object directly rather than the string language name.
     """
 
-    theme: Reactive[str | SyntaxTheme] = reactive(SyntaxTheme.default())
+    theme: Reactive[str | TextAreaTheme] = reactive(TextAreaTheme.default())
     """The theme to syntax highlight with.
 
     Supply a `SyntaxTheme` object to customise highlighting, or supply a builtin
     theme name as a string.
 
     Syntax highlighting is only possible when the `language` attribute is set.
+    """
+
+    highlight_query: Reactive[str | "Query" | None] = reactive(None)
+    """The tree-sitter query to use to retrieve syntax highlighting tokens.
+
+    If `None`, the default highlighting query will be fetched for the current language.
     """
 
     selection: Reactive[Selection] = reactive(Selection(), always_update=True)
@@ -258,6 +249,11 @@ TextArea > .text-area--matching-bracket {
 
     def __init__(
         self,
+        text: str = "",
+        *,
+        language: str | "Language" | None = None,
+        theme: str | TextAreaTheme | None = TextAreaTheme.default(),
+        highlight_query: str | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -271,11 +267,31 @@ TextArea > .text-area--matching-bracket {
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
         """
-
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self.document: DocumentBase = Document("")
+        self.document: DocumentBase = self._set_document(text, language)
         """The document this widget is currently editing."""
+
+        if isinstance(theme, str):
+            theme = TextAreaTheme.get_theme(theme)
+
+        self.theme = theme
+        """The theme of the `TextArea`."""
+
+        self.highlight_query = None
+        """The query to run which returns tokens which will be highlighted using the theme."""
+
+        # TODO - create a method to configure all highlighting stuff in the same place.
+        if theme is not None and highlight_query is None:
+            language_name = self.document.language.name
+            highlight_query_path = (
+                Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
+            )
+            highlight_query = highlight_query_path.read_text()
+
+        self._highlight_query: Query | None = None
+        if self.is_syntax_aware and highlight_query is not None:
+            self._query: Query | None = self.language.query(highlight_query)
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
@@ -298,6 +314,10 @@ TextArea > .text-area--matching-bracket {
         """The location (row, column) of the bracket which matches the bracket the
         cursor is currently at. If the cursor is at a bracket, or there's no matching
         bracket, this will be `None`."""
+
+    def _configure_syntax_highlighting() -> None:
+        """Configure syntax highlighting based on the theme and highlighting query."""
+        pass
 
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
@@ -359,11 +379,15 @@ TextArea > .text-area--matching-bracket {
 
     def _watch_language(self) -> None:
         """When the language is updated, update the type of document."""
-        self._reload_document()
+        self._set_document(self.text, self.language)
 
     def _watch_theme(self) -> None:
         """When the theme is updated, update the document."""
-        self._reload_document()
+        self._set_document(self.text, self.language)
+
+    def _watch_highlight_query(self) -> None:
+        """When the highlight query is updated, refresh the document."""
+        self._set_document(self.text, self.language)
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -373,10 +397,8 @@ TextArea > .text-area--matching-bracket {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _reload_document(self) -> None:
+    def _set_document(self, text: str, language: str | None) -> DocumentBase:
         """Recreate the document based on the language and theme currently set."""
-        language = self.language
-        text = self.document.text
         if not language:
             # If there's no language set, we don't need to use a SyntaxAwareDocument.
             self.document = Document(text)
@@ -384,12 +406,14 @@ TextArea > .text-area--matching-bracket {
             try:
                 from textual.document._syntax_aware_document import SyntaxAwareDocument
 
-                self.document = SyntaxAwareDocument(text, language, self.theme)
+                self.document = SyntaxAwareDocument(text, language)
             except RuntimeError:
                 # SyntaxAwareDocument isn't available on Python 3.7.
-                # Fall back to the standard document.
+                # Fall back to the standard Document.
                 log.warning("Syntax highlighting isn't available on Python 3.7.")
                 self.document = Document(text)
+
+        return self.document
 
     @property
     def _visible_line_indices(self) -> tuple[int, int]:
@@ -406,8 +430,7 @@ TextArea > .text-area--matching-bracket {
         Args:
             text: The text to load into the TextArea.
         """
-        self.document = Document(text)
-        self._reload_document()
+        self._set_document(text, self.language)
         self.move_cursor((0, 0))
         self._refresh_size()
 
@@ -420,6 +443,11 @@ TextArea > .text-area--matching-bracket {
         self.document = document
         self.move_cursor((0, 0))
         self._refresh_size()
+
+    @property
+    def is_syntax_aware(self) -> bool:
+        """True if the TextArea is currently syntax aware - i.e. it's parsing document content."""
+        return isinstance(self.document, SyntaxAwareDocument)
 
     def _yield_character_locations(
         self, start: Location

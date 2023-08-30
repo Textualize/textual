@@ -7,7 +7,7 @@ from ._syntax_aware_document import (
     StartColumn,
     SyntaxAwareDocument,
 )
-from ._syntax_theme import DEFAULT_SYNTAX_THEME, SyntaxTheme
+from ._text_area_theme import DEFAULT_SYNTAX_THEME, TextAreaTheme
 
 __all__ = [
     "Document",
@@ -20,6 +20,6 @@ __all__ = [
     "Selection",
     "StartColumn",
     "SyntaxAwareDocument",
-    "SyntaxTheme",
+    "TextAreaTheme",
     "VALID_LANGUAGES",
 ]

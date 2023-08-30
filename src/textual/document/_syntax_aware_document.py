@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import lru_cache
-from pathlib import Path
 from typing import Optional, Tuple
 
 from rich.text import Text
@@ -21,10 +20,7 @@ except ImportError:
 
 from textual.document._document import Document, EditResult, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
-from textual.document._syntax_theme import SyntaxTheme
-
-TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
-HIGHLIGHTS_PATH = TREE_SITTER_PATH / "highlights/"
+from textual.document._text_area_theme import TextAreaTheme
 
 StartColumn = int
 EndColumn = Optional[int]
@@ -48,7 +44,9 @@ class SyntaxAwareDocument(Document):
     """
 
     def __init__(
-        self, text: str, language: str | Language, syntax_theme: str | SyntaxTheme
+        self,
+        text: str,
+        language: str | Language,
     ):
         """Construct a SyntaxAwareDocument.
 
@@ -56,15 +54,12 @@ class SyntaxAwareDocument(Document):
             text: The initial text contained in the document.
             language: The language to use. You can pass a string to use a supported
                 language, or pass in your own tree-sitter `Language` object.
-            syntax_theme: The syntax highlighting theme to use. You can pass a string
-                to use a builtin theme,  or construct your own custom SyntaxTheme and
-                provide that.
         """
         if not TREE_SITTER:
             raise RuntimeError("SyntaxAwareDocument is unavailable on Python 3.7.")
 
         super().__init__(text)
-        self._language: Language | None = None
+        self.language: Language | None = None
         """The tree-sitter Language or None if tree-sitter is unavailable."""
 
         self._parser: Parser | None = None
@@ -73,7 +68,7 @@ class SyntaxAwareDocument(Document):
         self._syntax_tree: Tree | None = None
         """The tree-sitter Tree (syntax tree) built from the document."""
 
-        self._syntax_theme: SyntaxTheme | None = None
+        self._syntax_theme: TextAreaTheme | None = None
         """The syntax highlighting theme to use."""
 
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
@@ -83,26 +78,14 @@ class SyntaxAwareDocument(Document):
             if isinstance(language, str):
                 if language not in VALID_LANGUAGES:
                     raise RuntimeError(f"Invalid language {language!r}")
-                self._language = get_language(language)
+                self.language = get_language(language)
                 self._parser = get_parser(language)
             else:
-                self._language = language
+                self.language = language
                 self._parser = Parser()
                 self._parser.set_language(language)
 
-            highlight_query_path = (
-                Path(HIGHLIGHTS_PATH.resolve()) / f"{self._language.name}.scm"
-            )
-            if isinstance(syntax_theme, SyntaxTheme):
-                self._syntax_theme = syntax_theme
-            else:
-                self._syntax_theme = SyntaxTheme.get_theme(syntax_theme)
-
-            self._syntax_theme.highlight_query = highlight_query_path.read_text()
             self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
-            self._query: Query = self._language.query(
-                self._syntax_theme.highlight_query
-            )
             self._prepare_highlights()
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
