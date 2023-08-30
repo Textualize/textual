@@ -7,6 +7,8 @@ from typing import TYPE_CHECKING, Any, ClassVar, Iterable
 from rich.style import Style
 from rich.text import Text
 
+from textual.expand_tabs import expand_tabs_inline
+
 if TYPE_CHECKING:
     from tree_sitter import Language
 
@@ -776,7 +778,7 @@ TextArea > .text-area--matching-bracket {
         total_cell_offset = 0
         line = self.document[row_index]
         for column_index, character in enumerate(line):
-            total_cell_offset += cell_len(character.expandtabs(tab_width))
+            total_cell_offset += cell_len(expand_tabs_inline(character, tab_width))
             if total_cell_offset >= cell_width + 1:
                 return column_index
         return len(line)
@@ -818,7 +820,7 @@ TextArea > .text-area--matching-bracket {
         """
         row, column = self.selection.end
         text = self.document[row][:column]
-        column_offset = cell_len(text.expandtabs(self.indent_width))
+        column_offset = cell_len(expand_tabs_inline(text, self.indent_width))
         scroll_offset = self.scroll_to_region(
             Region(x=column_offset, y=row, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
@@ -1205,7 +1207,7 @@ TextArea > .text-area--matching-bracket {
             The cell width of the column relative to the start of the row.
         """
         line = self.document[row]
-        return cell_len(line[:column].expandtabs(self.indent_width))
+        return cell_len(expand_tabs_inline(line[:column], self.indent_width))
 
     def record_cursor_width(self) -> None:
         """Record the current cell width of the cursor.
