@@ -1,7 +1,6 @@
 from rich.text import Text
 
 from textual.app import App, ComposeResult
-from textual.events import Click
 from textual.widgets import DataTable, Footer
 
 ROWS = [
@@ -79,18 +78,6 @@ class TableApp(App):
             "country",
             key=lambda country: country.plain,
             reverse=self.sort_reverse("country"),
-        )
-
-    def on_data_table_header_selected(self, event: Click) -> None:
-        """Sort `DataTable` items by the clicked column header."""
-
-        def sort_by_plain_text(cell):
-            return cell.plain if isinstance(cell, Text) else cell
-
-        column_key = event.column_key
-        table = self.query_one(DataTable)
-        table.sort(
-            column_key, key=sort_by_plain_text, reverse=self.sort_reverse(column_key)
         )
 
 
