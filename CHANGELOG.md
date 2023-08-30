@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
+- Added the command palette https://github.com/Textualize/textual/pull/3058
 
 ### Changed
 
