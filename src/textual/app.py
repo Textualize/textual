@@ -475,7 +475,7 @@ class App(Generic[ReturnType], DOMNode):
                 # Dev dependencies not installed
                 pass
             else:
-                self.devtools = DevtoolsClient()
+                self.devtools = DevtoolsClient(constants.DEVTOOLS_HOST)
                 self._devtools_redirector = StdoutRedirector(self.devtools)
 
         self._loop: asyncio.AbstractEventLoop | None = None
