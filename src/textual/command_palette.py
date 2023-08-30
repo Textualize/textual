@@ -252,7 +252,11 @@ class SearchIcon(Static, inherit_css=False):
     """The icon to display."""
 
     def render(self) -> RenderableType:
-        """Render the icon."""
+        """Render the icon.
+
+        Returns:
+            The icon renderable.
+        """
         return self.icon
 
 
@@ -677,7 +681,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         gathered_commands: list[Command] = []
 
         # Get a reference to the widget that we're going to drop the
-        # (display of) the commands into.
+        # (display of) commands into.
         command_list = self.query_one(CommandList)
 
         # Each command will receive a sequential ID. This is going to be
@@ -709,7 +713,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         search_routine = self._search_for(search_value)
         search_results = search_routine.__aiter__()
 
-        # We've going to be doing the send/await dance in this code, so we
+        # We're going to be doing the send/await dance in this code, so we
         # need to grab the first yielded command to start things off.
         try:
             hit = await search_results.__anext__()
