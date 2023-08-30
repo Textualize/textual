@@ -87,3 +87,39 @@ async def test_prevent() -> None:
         await pilot.pause()
         assert len(app.input_changed_events) == 1
         assert app.input_changed_events[0].value == "foo"
+
+
+async def test_prevent_with_call_next() -> None:
+    """Test for https://github.com/Textualize/textual/issues/3166.
+
+    Does a callback scheduled with `call_next` respect messages that
+    were prevented when it was scheduled?
+    """
+
+    hits = 0
+
+    class PreventTestApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Input()
+
+        def change_input(self) -> None:
+            self.query_one(Input).value += "a"
+
+        def on_input_changed(self) -> None:
+            nonlocal hits
+            hits += 1
+
+    app = PreventTestApp()
+    async with app.run_test() as pilot:
+        app.call_next(app.change_input)
+        await pilot.pause()
+        assert hits == 1
+
+        with app.prevent(Input.Changed):
+            app.call_next(app.change_input)
+        await pilot.pause()
+        assert hits == 1
+
+        app.call_next(app.change_input)
+        await pilot.pause()
+        assert hits == 2

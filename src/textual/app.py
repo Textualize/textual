@@ -500,11 +500,14 @@ class App(Generic[ReturnType], DOMNode):
                 # Dev dependencies not installed
                 pass
             else:
-                self.devtools = DevtoolsClient()
+                self.devtools = DevtoolsClient(constants.DEVTOOLS_HOST)
                 self._devtools_redirector = StdoutRedirector(self.devtools)
 
         self._loop: asyncio.AbstractEventLoop | None = None
         self._return_value: ReturnType | None = None
+        """Internal attribute used to set the return value for the app."""
+        self._return_code: int | None = None
+        """Internal attribute used to set the return code for the app."""
         self._exit = False
         self._disable_tooltips = False
         self._disable_notifications = False
@@ -553,6 +556,23 @@ class App(Generic[ReturnType], DOMNode):
         The return value is set when calling [exit][textual.app.App.exit].
         """
         return self._return_value
+
+    @property
+    def return_code(self) -> int | None:
+        """The return code with which the app exited.
+
+        Non-zero codes indicate errors.
+        A value of 1 means the app exited with a fatal error.
+        If the app wasn't exited yet, this will be `None`.
+
+        Example:
+            The return code can be used to exit the process via `sys.exit`.
+            ```py
+            my_app.run()
+            sys.exit(my_app.return_code)
+            ```
+        """
+        return self._return_code
 
     @property
     def children(self) -> Sequence["Widget"]:
@@ -674,16 +694,21 @@ class App(Generic[ReturnType], DOMNode):
         return self._screen_stacks[self._current_mode]
 
     def exit(
-        self, result: ReturnType | None = None, message: RenderableType | None = None
+        self,
+        result: ReturnType | None = None,
+        return_code: int = 0,
+        message: RenderableType | None = None,
     ) -> None:
         """Exit the app, and return the supplied result.
 
         Args:
             result: Return value.
+            return_code: The return code. Use non-zero values for error codes.
             message: Optional message to display on exit.
         """
         self._exit = True
         self._return_value = result
+        self._return_code = return_code
         self.post_message(messages.ExitApp())
         if message:
             self._exit_renderables.append(message)
@@ -1196,7 +1221,7 @@ class App(Generic[ReturnType], DOMNode):
             """Called when app is ready to process events."""
             app_ready_event.set()
 
-        async def run_app(app) -> None:
+        async def run_app(app: App) -> None:
             if message_hook is not None:
                 message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
@@ -1859,7 +1884,6 @@ class App(Generic[ReturnType], DOMNode):
             )
         previous_screen = self._replace_screen(screen_stack.pop())
         previous_screen._pop_result_callback()
-        self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is active")
         return previous_screen
@@ -1940,6 +1964,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
+        self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
         if self.is_headless and self._exception is None:
