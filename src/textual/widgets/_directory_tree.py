@@ -65,7 +65,7 @@ class DirectoryTree(Tree[DirEntry]):
     PATH: Callable[[str | Path], Path] = Path
     """Callable that returns a fresh path object."""
 
-    class FileSelected(Message, bubble=True):
+    class FileSelected(Message):
         """Posted when a file is selected.
 
         Can be handled using `on_directory_tree_file_selected` in a subclass of
@@ -90,7 +90,7 @@ class DirectoryTree(Tree[DirEntry]):
             """The `Tree` that had a file selected."""
             return self.node.tree
 
-    class DirectorySelected(Message, bubble=True):
+    class DirectorySelected(Message):
         """Posted when a directory is selected.
 
         Can be handled using `on_directory_tree_directory_selected` in a
