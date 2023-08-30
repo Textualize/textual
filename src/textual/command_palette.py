@@ -328,6 +328,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     CommandPalette #--input Button {
         min-width: 7;
+        margin-right: 1;
     }
 
     CommandPalette #--results {
