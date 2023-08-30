@@ -668,7 +668,7 @@ TextArea > .text-area--matching-bracket {
             # None because we've checked that it's printable.
             assert insert is not None
             start, end = self.selection
-            self.replace(insert, start, end, False)
+            self.replace(insert, start, end, maintain_selection_offset=False)
 
     def get_target_document_location(self, event: MouseEvent) -> Location:
         """Given a MouseEvent, return the row and column offset of the event in document-space.
@@ -1227,6 +1227,7 @@ TextArea > .text-area--matching-bracket {
         self,
         text: str,
         location: Location | None = None,
+        *,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Insert text into the document.
@@ -1250,6 +1251,7 @@ TextArea > .text-area--matching-bracket {
         self,
         start: Location,
         end: Location,
+        *,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Delete the text between two locations in the document.
@@ -1273,6 +1275,7 @@ TextArea > .text-area--matching-bracket {
         insert: str,
         start: Location,
         end: Location,
+        *,
         maintain_selection_offset: bool = True,
     ) -> EditResult:
         """Replace text in the document with new text.
