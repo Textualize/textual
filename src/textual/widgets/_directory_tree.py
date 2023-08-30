@@ -3,7 +3,10 @@ from __future__ import annotations
 from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, ClassVar, Iterable, Iterator
+from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -145,6 +148,56 @@ class DirectoryTree(Tree[DirEntry]):
         # We have a fresh queue, we have a fresh loader, get the fresh root
         # loading up.
         self._add_to_load_queue(self.root)
+
+    def clear_node(self, node: TreeNode[DirEntry]) -> Self:
+        """Clear all nodes under the given node.
+
+        Returns:
+            The `Tree` instance.
+        """
+        self._clear_line_cache()
+        node_label = node._label
+        node_data = node.data
+        node_parent = node.parent
+        node = TreeNode(
+            self,
+            node_parent,
+            self._new_id(),
+            node_label,
+            node_data,
+            expanded=True,
+        )
+        self._updates += 1
+        self.refresh()
+        return self
+
+    def reset_node(
+        self, node: TreeNode[DirEntry], label: TextType, data: DirEntry | None = None
+    ) -> Self:
+        """Clear the subtree and reset the given node.
+
+        Args:
+            label: The label for the node.
+            data: Optional data for the node.
+
+        Returns:
+            The `Tree` instance.
+        """
+        self.clear_node(node)
+        node.label = label
+        node.data = data
+        return self
+
+    def reload_node(self, node: TreeNode[DirEntry]) -> None:
+        """Reload the given node's contents.
+
+        Args:
+            node: The node to reload.
+        """
+        self.reset_node(
+            node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
+        )
+        self._add_to_load_queue(node)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -299,7 +352,7 @@ class DirectoryTree(Tree[DirEntry]):
         except PermissionError:
             pass
 
-    @work
+    @work(thread=True)
     def _load_directory(self, node: TreeNode[DirEntry]) -> list[Path]:
         """Load the directory contents for a given node.
 

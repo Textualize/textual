@@ -628,22 +628,20 @@ class Markdown(Widget):
         if self._markdown is not None:
             self.update(self._markdown)
 
-    async def load(self, path: Path) -> bool:
+    async def load(self, path: Path) -> None:
         """Load a new Markdown document.
 
         Args:
             path: Path to the document.
 
-        Returns:
-            True on success, or False if the document could not be read.
-        """
-        try:
-            markdown = path.read_text(encoding="utf-8")
-        except Exception:
-            return False
+        Raises:
+            OSError: If there was some form of error loading the document.
 
-        await self.update(markdown)
-        return True
+        Note:
+            The exceptions that can be raised by this method are all of
+            those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
+        """
+        await self.update(path.read_text(encoding="utf-8"))
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
         """Process an unhandled token.
@@ -952,9 +950,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         if self._markdown is not None:
             self.document.update(self._markdown)
 
-    async def go(self, location: str | PurePath) -> bool:
+    async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""
-        return await self.document.load(self.navigator.go(location))
+        await self.document.load(self.navigator.go(location))
 
     async def back(self) -> None:
         """Go back one level in the history."""

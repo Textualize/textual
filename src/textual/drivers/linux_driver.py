@@ -242,8 +242,9 @@ class LinuxDriver(Driver):
 
         def more_data() -> bool:
             """Check if there is more data to parse."""
+            EVENT_READ = selectors.EVENT_READ
             for key, events in selector.select(0.01):
-                if events:
+                if events & EVENT_READ:
                     return True
             return False
 
@@ -259,7 +260,7 @@ class LinuxDriver(Driver):
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
-                    if mask | EVENT_READ:
+                    if mask & EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
                         for event in feed(unicode_data):
                             self.process_event(event)

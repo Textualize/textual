@@ -15,7 +15,7 @@ class ColorSwitcher(Static):
 
 
 class ActionsApp(App):
-    CSS_PATH = "actions05.css"
+    CSS_PATH = "actions05.tcss"
     BINDINGS = [
         ("r", "set_background('red')", "Red"),
         ("g", "set_background('green')", "Green"),

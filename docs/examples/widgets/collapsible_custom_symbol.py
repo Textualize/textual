@@ -1,11 +1,11 @@
 from textual.app import App, ComposeResult
-from textual.containers import Vertical
+from textual.containers import Horizontal
 from textual.widgets import Collapsible, Label
 
 
 class CollapsibleApp(App[None]):
     def compose(self) -> ComposeResult:
-        with Vertical():
+        with Horizontal():
             with Collapsible(
                 collapsed_symbol=">>>",
                 expanded_symbol="v",

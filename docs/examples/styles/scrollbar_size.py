@@ -17,4 +17,4 @@ class ScrollbarApp(App):
         yield ScrollableContainer(Label(TEXT * 5), classes="panel")
 
 
-app = ScrollbarApp(css_path="scrollbar_size.css")
+app = ScrollbarApp(css_path="scrollbar_size.tcss")

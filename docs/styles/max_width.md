@@ -8,7 +8,7 @@ The `max-width` style sets a maximum width for a widget.
 max-width: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `max-width` style accepts a [`<scalar>`](../../css_types/scalar) that defines an upper bound for the [`width`](./width) of a widget.
+The `max-width` style accepts a [`<scalar>`](../css_types/scalar.md) that defines an upper bound for the [`width`](./width.md) of a widget.
 That is, the width of a widget is never allowed to exceed `max-width`.
 
 ## Example
@@ -27,10 +27,10 @@ Then, we set `max-width` individually on each placeholder.
     --8<-- "docs/examples/styles/max_width.py"
     ```
 
-=== "max_width.css"
+=== "max_width.tcss"
 
     ```sass hl_lines="12 16 20 24"
-    --8<-- "docs/examples/styles/max_width.css"
+    --8<-- "docs/examples/styles/max_width.tcss"
     ```
 
     1. This won't affect the placeholder because its width is less than the maximum width.

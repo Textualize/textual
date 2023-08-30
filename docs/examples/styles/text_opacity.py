@@ -11,4 +11,4 @@ class TextOpacityApp(App):
         yield Label("text-opacity: 100%", id="full-opacity")
 
 
-app = TextOpacityApp(css_path="text_opacity.css")
+app = TextOpacityApp(css_path="text_opacity.tcss")

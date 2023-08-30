@@ -154,8 +154,9 @@ class Switch(Widget, can_focus=True):
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
         return 1
 
-    async def _on_click(self, _: Click) -> None:
+    async def _on_click(self, event: Click) -> None:
         """Toggle the state of the switch."""
+        event.stop()
         self.toggle()
 
     def action_toggle(self) -> None:

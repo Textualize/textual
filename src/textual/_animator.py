@@ -64,6 +64,20 @@ class Animation(ABC):
         """
         raise NotImplementedError("")
 
+    async def invoke_callback(self) -> None:
+        """Calls the [`on_complete`][Animation.on_complete] callback if one is provided."""
+        if self.on_complete is not None:
+            await invoke(self.on_complete)
+
+    @abstractmethod
+    async def stop(self, complete: bool = True) -> None:
+        """Stop the animation.
+
+        Args:
+            complete: Flag to say if the animation should be taken to completion.
+        """
+        raise NotImplementedError
+
     def __eq__(self, other: object) -> bool:
         return False
 
@@ -116,6 +130,20 @@ class SimpleAnimation(Animation):
                 )
         setattr(self.obj, self.attribute, value)
         return factor >= 1
+
+    async def stop(self, complete: bool = True) -> None:
+        """Stop the animation.
+
+        Args:
+            complete: Flag to say if the animation should be taken to completion.
+
+        Note:
+            [`on_complete`][Animation.on_complete] will be called regardless
+            of the value provided for `complete`.
+        """
+        if complete:
+            setattr(self.obj, self.attribute, self.end_value)
+        await self.invoke_callback()
 
     def __eq__(self, other: object) -> bool:
         if isinstance(other, SimpleAnimation):
@@ -176,20 +204,21 @@ class BoundAnimator:
 
 
 class Animator:
-    """An object to manage updates to a given attribute over a period of time.
-
-    Attrs:
-        _animations: Dictionary that maps animation keys to the corresponding animation
-            instances.
-        _scheduled: Keys corresponding to animations that have been scheduled but not yet
-            started.
-        app: The app that owns the animator object.
-    """
+    """An object to manage updates to a given attribute over a period of time."""
 
     def __init__(self, app: App, frames_per_second: int = 60) -> None:
+        """Initialise the animator object.
+
+        Args:
+            app: The application that owns the animator.
+            frames_per_second: The number of frames/second to run the animation at.
+        """
         self._animations: dict[AnimationKey, Animation] = {}
-        self._scheduled: set[AnimationKey] = set()
+        """Dictionary that maps animation keys to the corresponding animation instances."""
+        self._scheduled: dict[AnimationKey, Timer] = {}
+        """Dictionary of scheduled animations, comprising of their keys and the timer objects."""
         self.app = app
+        """The app that owns the animator object."""
         self._timer = Timer(
             app,
             1 / frames_per_second,
@@ -197,10 +226,11 @@ class Animator:
             callback=self,
             pause=True,
         )
-        # Flag if no animations are currently taking place.
+        """The timer that runs the animator."""
         self._idle_event = asyncio.Event()
-        # Flag if no animations are currently taking place and none are scheduled.
+        """Flag if no animations are currently taking place."""
         self._complete_event = asyncio.Event()
+        """Flag if no animations are currently taking place and none are scheduled."""
 
     async def start(self) -> None:
         """Start the animator task."""
@@ -219,11 +249,26 @@ class Animator:
             self._complete_event.set()
 
     def bind(self, obj: object) -> BoundAnimator:
-        """Bind the animator to a given object."""
+        """Bind the animator to a given object.
+
+        Args:
+            obj: The object to bind to.
+
+        Returns:
+            The bound animator.
+        """
         return BoundAnimator(self, obj)
 
     def is_being_animated(self, obj: object, attribute: str) -> bool:
-        """Does the object/attribute pair have an ongoing or scheduled animation?"""
+        """Does the object/attribute pair have an ongoing or scheduled animation?
+
+        Args:
+            obj: An object to check for.
+            attribute: The attribute on the object to test for.
+
+        Returns:
+            `True` if that attribute is being animated for that object, `False` if not.
+        """
         key = (id(obj), attribute)
         return key in self._animations or key in self._scheduled
 
@@ -265,9 +310,10 @@ class Animator:
             on_complete=on_complete,
         )
         if delay:
-            self._scheduled.add((id(obj), attribute))
             self._complete_event.clear()
-            self.app.set_timer(delay, animate_callback)
+            self._scheduled[(id(obj), attribute)] = self.app.set_timer(
+                delay, animate_callback
+            )
         else:
             animate_callback()
 
@@ -304,7 +350,10 @@ class Animator:
         ), "An Animation should have a duration OR a speed"
 
         animation_key = (id(obj), attribute)
-        self._scheduled.discard(animation_key)
+        try:
+            del self._scheduled[animation_key]
+        except KeyError:
+            pass
 
         if final_value is ...:
             final_value = value
@@ -374,6 +423,67 @@ class Animator:
         self._idle_event.clear()
         self._complete_event.clear()
 
+    async def _stop_scheduled_animation(
+        self, key: AnimationKey, complete: bool
+    ) -> None:
+        """Stop a scheduled animation.
+
+        Args:
+            key: The key for the animation to stop.
+            complete: Should the animation be moved to its completed state?
+        """
+        # First off, pull the timer out of the schedule and stop it; it
+        # won't be needed.
+        try:
+            schedule = self._scheduled.pop(key)
+        except KeyError:
+            return
+        schedule.stop()
+        # If we've been asked to complete (there's no point in making the
+        # animation only to then do nothing with it), and if there was a
+        # callback (there will be, but this just keeps type checkers happy
+        # really)...
+        if complete and schedule._callback is not None:
+            # ...invoke it to get the animator created and in the running
+            # animations. Yes, this does mean that a stopped scheduled
+            # animation will start running early...
+            await invoke(schedule._callback)
+            # ...but only so we can call on it to run right to the very end
+            # right away.
+            await self._stop_running_animation(key, complete)
+
+    async def _stop_running_animation(self, key: AnimationKey, complete: bool) -> None:
+        """Stop a running animation.
+
+        Args:
+            key: The key for the animation to stop.
+            complete: Should the animation be moved to its completed state?
+        """
+        try:
+            animation = self._animations.pop(key)
+        except KeyError:
+            return
+        await animation.stop(complete)
+
+    async def stop_animation(
+        self, obj: object, attribute: str, complete: bool = True
+    ) -> None:
+        """Stop an animation on an attribute.
+
+        Args:
+            obj: The object containing the attribute.
+            attribute: The name of the attribute.
+            complete: Should the animation be set to its final value?
+
+        Note:
+            If there is no animation scheduled or running, this is a no-op.
+        """
+        key = (id(obj), attribute)
+        if key in self._scheduled:
+            await self._stop_scheduled_animation(key, complete)
+        elif key in self._animations:
+            await self._stop_running_animation(key, complete)
+
     async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
@@ -387,13 +497,15 @@ class Animator:
                 animation = self._animations[animation_key]
                 animation_complete = animation(animation_time)
                 if animation_complete:
-                    completion_callback = animation.on_complete
-                    if completion_callback is not None:
-                        await invoke(completion_callback)
                     del self._animations[animation_key]
+                    await animation.invoke_callback()
 
     def _get_time(self) -> float:
-        """Get the current wall clock time, via the internal Timer."""
+        """Get the current wall clock time, via the internal Timer.
+
+        Returns:
+            The wall clock time.
+        """
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
         # but it's handy to have in mocking situations
         return _time.get_time()

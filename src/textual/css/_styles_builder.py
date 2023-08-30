@@ -722,8 +722,8 @@ class StylesBuilder:
     def process_layers(self, name: str, tokens: list[Token]) -> None:
         layers: list[str] = []
         for token in tokens:
-            if token.name != "token":
-                self.error(name, token, "{token.name} not expected here")
+            if token.name not in {"token", "string"}:
+                self.error(name, token, f"{token.name} not expected here")
             layers.append(token.value)
         self.styles._rules["layers"] = tuple(layers)
 
@@ -921,6 +921,8 @@ class StylesBuilder:
                 scalars.append(Scalar.from_number(float(token.value)))
             elif token.name == "scalar":
                 scalars.append(Scalar.parse(token.value, percent_unit=percent_unit))
+            elif token.name == "token" and token.value == "auto":
+                scalars.append(Scalar.parse("auto"))
             else:
                 self.error(
                     name,

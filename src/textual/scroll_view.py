@@ -7,8 +7,9 @@ from __future__ import annotations
 from rich.console import RenderableType
 
 from ._animator import EasingFunction
+from ._types import CallbackType
 from .containers import ScrollableContainer
-from .geometry import Size
+from .geometry import Region, Size
 
 
 class ScrollView(ScrollableContainer):
@@ -142,3 +143,16 @@ class ScrollView(ScrollableContainer):
             force=force,
             on_complete=on_complete,
         )
+
+    def refresh_lines(self, y_start: int, line_count: int = 1) -> None:
+        """Refresh one or more lines.
+
+        Args:
+            y_start: First line to refresh.
+            line_count: Total number of lines to refresh.
+        """
+
+        width = self.size.width
+        scroll_x, scroll_y = self.scroll_offset
+        refresh_region = Region(scroll_x, y_start - scroll_y, width, line_count)
+        self.refresh(refresh_region)

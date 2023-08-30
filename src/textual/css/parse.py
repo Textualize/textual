@@ -269,6 +269,7 @@ def substitute_references(
             break
         if token.name == "variable_name":
             variable_name = token.value[1:-1]  # Trim the $ and the :, i.e. "$x:" -> "x"
+            variable_tokens = variables.setdefault(variable_name, [])
             yield token
 
             while True:
@@ -284,7 +285,7 @@ def substitute_references(
                 if not token:
                     break
                 elif token.name == "whitespace":
-                    variables.setdefault(variable_name, []).append(token)
+                    variable_tokens.append(token)
                     yield token
                 elif token.name == "variable_value_end":
                     yield token
@@ -293,7 +294,6 @@ def substitute_references(
                 elif token.name == "variable_ref":
                     ref_name = token.value[1:]
                     if ref_name in variables:
-                        variable_tokens = variables.setdefault(variable_name, [])
                         reference_tokens = variables[ref_name]
                         variable_tokens.extend(reference_tokens)
                         ref_location = token.location
@@ -307,7 +307,7 @@ def substitute_references(
                     else:
                         _unresolved(ref_name, variables.keys(), token)
                 else:
-                    variables.setdefault(variable_name, []).append(token)
+                    variable_tokens.append(token)
                     yield token
                 token = next(iter_tokens, None)
         elif token.name == "variable_ref":

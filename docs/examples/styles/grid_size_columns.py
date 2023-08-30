@@ -14,4 +14,4 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="grid_size_columns.css")
+app = MyApp(css_path="grid_size_columns.tcss")

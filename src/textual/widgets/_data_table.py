@@ -251,6 +251,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $surface ;
         color: $text;
         height: auto;
+        max-height: 100%;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -581,6 +582,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         show_cursor: bool = True,
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
+        cursor_type: CursorType = "cell",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -668,6 +670,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.cursor_background_priority = cursor_background_priority
         """Should we prioritize the cursor component class CSS background or the renderable background
          in the event where a cell contains a renderable with a background color."""
+        self.cursor_type = cursor_type
+        """The type of cursor of the `DataTable`."""
 
     @property
     def hover_row(self) -> int:
@@ -1756,6 +1760,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             base_style,
             cursor,
             hover,
+            self._show_hover_cursor,
             self._update_count,
             self._pseudo_class_state,
         )
@@ -2075,8 +2080,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
+        if not meta:
+            self._set_hover_cursor(False)
+            return
 
-        if meta and self.show_cursor and self.cursor_type != "none":
+        if self.show_cursor and self.cursor_type != "none":
             try:
                 self.hover_coordinate = Coordinate(meta["row"], meta["column"])
             except KeyError:
@@ -2200,9 +2208,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_page_down(self) -> None:
         """Move the cursor one page down."""
         self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            height = self.size.height - self.header_height if self.show_header else 0
+        if self.show_cursor and self.cursor_type in ("cell", "row"):
+            height = self.size.height - (self.header_height if self.show_header else 0)
 
             # Determine how many rows constitutes a "page"
             offset = 0
@@ -2223,9 +2230,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_page_up(self) -> None:
         """Move the cursor one page up."""
         self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            height = self.size.height - self.header_height if self.show_header else 0
+        if self.show_cursor and self.cursor_type in ("cell", "row"):
+            height = self.size.height - (self.header_height if self.show_header else 0)
 
             # Determine how many rows constitutes a "page"
             offset = 0

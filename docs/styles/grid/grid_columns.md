@@ -12,10 +12,10 @@ The `grid-columns` style allows to define the width of the columns of the grid.
 grid-columns: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `grid-columns` style takes one or more [`<scalar>`](../../../css_types/scalar) that specify the length of the columns of the grid.
+The `grid-columns` style takes one or more [`<scalar>`](../../css_types/scalar.md) that specify the length of the columns of the grid.
 
 If there are more columns in the grid than scalars specified in `grid-columns`, they are reused cyclically.
-If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the excess is ignored.
+If the number of [`<scalar>`](../../css_types/scalar.md) is in excess, the excess is ignored.
 
 ## Example
 
@@ -40,10 +40,10 @@ Because there are more rows than scalars in the style definition, the scalars wi
     --8<-- "docs/examples/styles/grid_columns.py"
     ```
 
-=== "grid_columns.css"
+=== "grid_columns.tcss"
 
     ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/grid_columns.css"
+    --8<-- "docs/examples/styles/grid_columns.tcss"
     ```
 
 ## CSS

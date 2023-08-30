@@ -5,7 +5,7 @@ from textual.widgets import Sparkline
 
 
 class SparklineColorsApp(App[None]):
-    CSS_PATH = "sparkline_colors.css"
+    CSS_PATH = "sparkline_colors.tcss"
 
     def compose(self) -> ComposeResult:
         nums = [abs(sin(x / 3.14)) for x in range(0, 360 * 6, 20)]

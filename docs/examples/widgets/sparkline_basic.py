@@ -5,7 +5,7 @@ data = [1, 2, 2, 1, 1, 4, 3, 1, 1, 8, 8, 2]  # (1)!
 
 
 class SparklineBasicApp(App[None]):
-    CSS_PATH = "sparkline_basic.css"
+    CSS_PATH = "sparkline_basic.tcss"
 
     def compose(self) -> ComposeResult:
         yield Sparkline(  # (2)!

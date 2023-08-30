@@ -4,7 +4,7 @@ The `<border>` CSS type represents a border style.
 
 ## Syntax
 
-The [`<border>`](/css_types/border) type can take any of the following values:
+The [`<border>`](./border.md) type can take any of the following values:
 
 | Border type | Description                                              |
 |-------------|----------------------------------------------------------|

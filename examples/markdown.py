@@ -25,7 +25,9 @@ class MarkdownApp(App):
 
     async def on_mount(self) -> None:
         self.markdown_viewer.focus()
-        if not await self.markdown_viewer.go(self.path):
+        try:
+            await self.markdown_viewer.go(self.path)
+        except FileNotFoundError:
             self.exit(message=f"Unable to load {self.path!r}")
 
     def action_toggle_table_of_contents(self) -> None:

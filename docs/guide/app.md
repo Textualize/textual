@@ -209,6 +209,10 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
 
+!!! info
+
+    Textual apps typically use the extension `.tcss` for external CSS files to differentiate them from browser (`.css`) files.
+
 The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now let's look at how your app references external CSS files.
 
 The following example enables loading of CSS by adding a `CSS_PATH` class variable:
@@ -221,13 +225,13 @@ The following example enables loading of CSS by adding a `CSS_PATH` class variab
 
     We also added an `id` to the `Label`, because we want to style it in the CSS.
 
-If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.css"` in the same directory as the Python code. Here is that CSS file:
+If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.tcss"` in the same directory as the Python code. Here is that CSS file:
 
-```sass title="question02.css"
---8<-- "docs/examples/app/question02.css"
+```sass title="question02.tcss"
+--8<-- "docs/examples/app/question02.tcss"
 ```
 
-When `"question02.py"` runs it will load `"question02.css"` and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:
+When `"question02.py"` runs it will load `"question02.tcss"` and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:
 
 ```{.textual path="docs/examples/app/question02.py"}
 ```

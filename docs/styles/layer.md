@@ -8,8 +8,8 @@ The `layer` style defines the layer a widget belongs to.
 layer: <a href="../../css_types/name">&lt;name&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `layer` style accepts a [`<name>`](../../css_types/name) that defines the layer this widget belongs to.
-This [`<name>`](../../css_types/name) must correspond to a [`<name>`](../../css_types/name) that has been defined in a [`layers`](./layers) style by an ancestor of this widget.
+The `layer` style accepts a [`<name>`](../css_types/name.md) that defines the layer this widget belongs to.
+This [`<name>`](../css_types/name.md) must correspond to a [`<name>`](../css_types/name.md) that has been defined in a [`layers`](./layers.md) style by an ancestor of this widget.
 
 More information on layers can be found in the [guide](../guide/layout.md#layers).
 
@@ -35,10 +35,10 @@ However, since `#box1` is on the higher layer, it is drawn on top of `#box2`.
     --8<-- "docs/examples/guide/layout/layers.py"
     ```
 
-=== "layers.css"
+=== "layers.tcss"
 
     ```sass hl_lines="3 14 19"
-    --8<-- "docs/examples/guide/layout/layers.css"
+    --8<-- "docs/examples/guide/layout/layers.tcss"
     ```
 
 ## CSS

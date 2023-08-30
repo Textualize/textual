@@ -9,4 +9,4 @@ class VisibilityApp(App):
         yield Label("Widget 3")
 
 
-app = VisibilityApp(css_path="visibility.css")
+app = VisibilityApp(css_path="visibility.tcss")

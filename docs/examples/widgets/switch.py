@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal
-from textual.widgets import Switch, Static
+from textual.widgets import Static, Switch
 
 
 class SwitchApp(App):
@@ -30,6 +30,6 @@ class SwitchApp(App):
         )
 
 
-app = SwitchApp(css_path="switch.css")
+app = SwitchApp(css_path="switch.tcss")
 if __name__ == "__main__":
     app.run()

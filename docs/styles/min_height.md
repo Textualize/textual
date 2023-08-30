@@ -8,7 +8,7 @@ The `min-height` style sets a minimum height for a widget.
 min-height: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `min-height` style accepts a [`<scalar>`](../../css_types/scalar) that defines a lower bound for the [`height`](./height) of a widget.
+The `min-height` style accepts a [`<scalar>`](../css_types/scalar.md) that defines a lower bound for the [`height`](./height.md) of a widget.
 That is, the height of a widget is never allowed to be under `min-height`.
 
 ## Example
@@ -27,10 +27,10 @@ Then, we set `min-height` individually on each placeholder.
     --8<-- "docs/examples/styles/min_height.py"
     ```
 
-=== "min_height.css"
+=== "min_height.tcss"
 
     ```sass hl_lines="13 17 21 25"
-    --8<-- "docs/examples/styles/min_height.css"
+    --8<-- "docs/examples/styles/min_height.tcss"
     ```
 
     1. This won't affect the placeholder because its height is larger than the minimum height.

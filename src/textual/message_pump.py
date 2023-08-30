@@ -118,7 +118,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._last_idle: float = time()
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
-        self._next_callbacks: list[CallbackType] = []
+        self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
 
     @property
@@ -225,7 +225,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Is the node is attached to the app via the DOM?"""
+        """Is the node attached to the app via the DOM?"""
         from .app import App
 
         node = self
@@ -417,7 +417,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
         """
-        self._next_callbacks.append(partial(callback, *args, **kwargs))
+        callback_message = events.Callback(callback=partial(callback, *args, **kwargs))
+        callback_message._prevent.update(self._get_prevented_messages())
+        self._next_callbacks.append(callback_message)
         self.check_idle()
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
@@ -562,7 +564,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._next_callbacks.clear()
         for callback in callbacks:
             try:
-                await invoke(callback)
+                await self._dispatch_message(callback)
             except Exception as error:
                 self.app._handle_exception(error)
                 break
@@ -718,6 +720,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
             `True` if the messages was processed, `False` if it wasn't.
         """
         _rich_traceback_omit = True
+        if not hasattr(message, "_prevent"):
+            # Catch a common error (forgetting to call super)
+            raise RuntimeError(
+                "Message is missing attributes; did you forget to call super().__init__() ?"
+            )
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):
