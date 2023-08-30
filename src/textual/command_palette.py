@@ -136,7 +136,7 @@ class CommandSource(ABC):
 
     @property
     def match_style(self) -> Style | None:
-        """The preferred style to use when highlighting matching portions of the `match_display`."""
+        """The preferred style to use when highlighting matching portions of the [`match_display`][textual.command_palette.CommandSourceHit.match_display]."""
         return self.__match_style
 
     def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
