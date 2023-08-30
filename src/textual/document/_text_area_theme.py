@@ -81,7 +81,7 @@ class TextAreaTheme:
         Returns:
             The `Style` to use for this highlight.
         """
-        return self.token_styles.get(name, _NULL_STYLE)
+        return self.token_styles.get(name)
 
     @classmethod
     def available_themes(cls) -> list[TextAreaTheme]:
@@ -116,7 +116,7 @@ class TextAreaStyle:
     def __post_init__(self) -> None:
         self.background_color = Color.parse(self.background_color)
         self.foreground_color = Color.parse(self.foreground_color).blend(
-            self.background_color
+            self.background_color, factor=1
         )
 
         # The default for tree-sitter tokens which aren't mapped to styles.
@@ -129,8 +129,6 @@ class TextAreaStyle:
             underline=self.underline,
         )
 
-
-_NULL_STYLE = TextAreaStyle()
 
 _MONOKAI = TextAreaTheme(
     name="monokai",

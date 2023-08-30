@@ -269,7 +269,7 @@ TextArea > .text-area--matching-bracket {
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self.document: DocumentBase = self._set_document(text, language)
+        self.document = SyntaxAwareDocument(text, language)
         """The document this widget is currently editing."""
 
         if isinstance(theme, str):
@@ -278,20 +278,16 @@ TextArea > .text-area--matching-bracket {
         self.theme = theme
         """The theme of the `TextArea`."""
 
-        self.highlight_query = None
-        """The query to run which returns tokens which will be highlighted using the theme."""
-
-        # TODO - create a method to configure all highlighting stuff in the same place.
-        if theme is not None and highlight_query is None:
-            language_name = self.document.language.name
+        language_name = self.document.language.name
+        if highlight_query is None and language_name is not None:
+            # Try to retrieve the default highlight query for the language.
             highlight_query_path = (
                 Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
             )
             highlight_query = highlight_query_path.read_text()
 
-        self._highlight_query: Query | None = None
-        if self.is_syntax_aware and highlight_query is not None:
-            self._query: Query | None = self.language.query(highlight_query)
+        self._highlight_query = self.document.prepare_query(highlight_query)
+        """The query to use for syntax highlighting, or `None` if not available."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
@@ -315,9 +311,11 @@ TextArea > .text-area--matching-bracket {
         cursor is currently at. If the cursor is at a bracket, or there's no matching
         bracket, this will be `None`."""
 
-    def _configure_syntax_highlighting() -> None:
+    def _configure_syntax_highlighting(self) -> None:
         """Configure syntax highlighting based on the theme and highlighting query."""
-        pass
+        # When the language is modified, we should reset the highlighting query.
+        # When the highlighting query is modified, we should reset the language.
+        # If you want to modify both together, what do you do?
 
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""

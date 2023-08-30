@@ -55,9 +55,6 @@ class SyntaxAwareDocument(Document):
             language: The language to use. You can pass a string to use a supported
                 language, or pass in your own tree-sitter `Language` object.
         """
-        if not TREE_SITTER:
-            raise RuntimeError("SyntaxAwareDocument is unavailable on Python 3.7.")
-
         super().__init__(text)
         self.language: Language | None = None
         """The tree-sitter Language or None if tree-sitter is unavailable."""
@@ -87,6 +84,13 @@ class SyntaxAwareDocument(Document):
 
             self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
             self._prepare_highlights()
+
+    def prepare_query(self, query: str) -> Query | None:
+        if TREE_SITTER:
+            prepared_query = self.language.query(query)
+        else:
+            prepared_query = None
+        return prepared_query
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
