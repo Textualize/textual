@@ -1,3 +1,5 @@
+import contextlib
+
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Input
 
@@ -67,3 +69,40 @@ def test_setting_sub_title():
 
     app.sub_title = [True, False, 2]
     assert app.sub_title == "[True, False, 2]"
+
+
+async def test_default_return_code_is_zero():
+    app = App()
+    async with app.run_test():
+        app.exit()
+    assert app.return_code == 0
+
+
+async def test_return_code_is_one_after_crash():
+    class MyApp(App):
+        def key_p(self):
+            1 / 0
+
+    app = MyApp()
+    with contextlib.suppress(ZeroDivisionError):
+        async with app.run_test() as pilot:
+            await pilot.press("p")
+    assert app.return_code == 1
+
+
+async def test_set_return_code():
+    app = App()
+    async with app.run_test():
+        app.exit(return_code=42)
+    assert app.return_code == 42
+
+
+def test_no_return_code_before_running():
+    app = App()
+    assert app.return_code is None
+
+
+async def test_no_return_code_while_running():
+    app = App()
+    async with app.run_test():
+        assert app.return_code is None
