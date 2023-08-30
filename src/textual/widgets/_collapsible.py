@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from textual.widget import Widget
 
-from .. import events, on
+from .. import events
 from ..app import ComposeResult
 from ..containers import Container, Horizontal
 from ..message import Message

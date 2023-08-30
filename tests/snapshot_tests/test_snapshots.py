@@ -296,19 +296,20 @@ def test_collapsible_render(snap_compare):
 
 
 def test_collapsible_collapsed(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=['c'])
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["c"])
 
 
 def test_collapsible_expanded(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=['e'])
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
 
 
 def test_collapsible_nested(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "collapsible_nested.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_nested.py")
 
 
 def test_collapsible_custom_symbol(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "collapsible_custom_symbol.py")
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
+
 
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
@@ -578,7 +579,9 @@ def test_tooltips_in_compound_widgets(snap_compare):
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
 
+
 # --- textual-dev library preview tests ---
+
 
 def test_textual_dev_border_preview(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py", press=["enter"])
@@ -599,8 +602,10 @@ def test_textual_dev_keys_preview(snap_compare):
 def test_notifications_example(snap_compare) -> None:
     assert snap_compare(WIDGET_EXAMPLES_DIR / "toast.py")
 
+
 def test_notifications_through_screens(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_screens.py")
+
 
 def test_notifications_through_modes(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")

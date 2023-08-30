@@ -20,7 +20,7 @@ Son of Leto and Jessica.
 """
 
 
-class CollapsibleApp(App):
+class CollapsibleApp(App[None]):
     """An example of colllapsible container."""
 
     BINDINGS = [
