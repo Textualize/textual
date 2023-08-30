@@ -22,6 +22,7 @@ from ._progress_bar import ProgressBar as ProgressBar
 from ._radio_button import RadioButton as RadioButton
 from ._radio_set import RadioSet as RadioSet
 from ._rich_log import RichLog as RichLog
+from ._rule import Rule as Rule
 from ._select import Select as Select
 from ._selection_list import SelectionList as SelectionList
 from ._sparkline import Sparkline as Sparkline
