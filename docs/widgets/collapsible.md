@@ -50,11 +50,11 @@ def compose(self) -> ComposeResult:
     ```{.textual path="tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"}
     ```
 
- === "collapsible_custom_symbol.py"
+=== "collapsible_custom_symbol.py"
 
-     ```python
-     --8<-- "tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"
-     ```
+    ```python
+    --8<-- "tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"
+    ```
 
 ## Collapse/Expand
 
@@ -92,7 +92,7 @@ The following example contains three `Collapsible`s.
 
 ## Messages
 
-- [Collapsible.Title.Toggle][Collapsible.Title.Toggle]
+- [Collapsible.Title.Toggle][textual.widgets.Collapsible.Title.Toggle]
 
 ## See also
 
