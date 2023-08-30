@@ -483,8 +483,6 @@ class App(Generic[ReturnType], DOMNode):
         """Internal attribute used to set the return value for the app."""
         self._return_code: int | None = None
         """Internal attribute used to set the return code for the app."""
-        self._started_running: bool = False
-        """Whether the app has ever started running or not."""
         self._exit = False
         self._disable_tooltips = False
         self._disable_notifications = False
@@ -540,7 +538,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Non-zero codes indicate errors.
         A value of 1 means the app exited with a fatal error.
-        If the app hasn't run yet or if it is running, this will be `None`.
+        If the app wasn't exited yet, this will be `None`.
 
         Example:
             The return code can be used to exit the process via `sys.exit`.
@@ -549,9 +547,7 @@ class App(Generic[ReturnType], DOMNode):
             sys.exit(my_app.return_code)
             ```
         """
-        if not self._started_running or self.is_running:
-            return None
-        return self._return_code if self._return_code is not None else 1
+        return self._return_code
 
     @property
     def children(self) -> Sequence["Widget"]:
@@ -1943,6 +1939,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
+        self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
         if self.is_headless and self._exception is None:
@@ -1995,7 +1992,6 @@ class App(Generic[ReturnType], DOMNode):
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
         self._set_active()
-        self._started_running = True
         active_message_pump.set(self)
 
         if self.devtools is not None:

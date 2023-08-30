@@ -80,13 +80,13 @@ async def test_default_return_code_is_zero():
 
 async def test_return_code_is_one_after_crash():
     class MyApp(App):
-        def crash(self):
+        def key_p(self):
             1 / 0
 
     app = MyApp()
-    async with app.run_test():
-        with contextlib.suppress(ZeroDivisionError):
-            app.crash()
+    with contextlib.suppress(ZeroDivisionError):
+        async with app.run_test() as pilot:
+            await pilot.press("p")
     assert app.return_code == 1
 
 
