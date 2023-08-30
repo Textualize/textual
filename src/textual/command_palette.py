@@ -21,6 +21,7 @@ from rich.console import Group, RenderableType
 from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
+from rich.traceback import Traceback
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
@@ -561,18 +562,21 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
                 # up that command; we're done with it so let the queue know.
                 commands.task_done()
 
-        # Check through all of the finished searches and, if any of them has
-        # an exception, bubble it up.
-        search_exception = next(
-            (
-                search.exception()
-                for search in searches
-                if search.done() and search.exception() is not None
-            ),
-            None,
-        )
-        if search_exception is not None:
-            raise search_exception from None
+        # Check through all the finished searches, see if any have
+        # exceptions, and log them. In most other circumstances we'd
+        # re-raise the exception and quit the application, but the decision
+        # has been made to find and log exceptions with command sources.
+        #
+        # https://github.com/Textualize/textual/pull/3058#discussion_r1310051855
+        for search in searches:
+            if search.done():
+                exception = search.exception()
+                if exception is not None:
+                    self.log.error(
+                        Traceback.from_exception(
+                            type(exception), exception, exception.__traceback__
+                        )
+                    )
 
         # Having finished the main processing loop, we're not busy any more.
         # Anything left in the queue (see next) will fall out more or less
