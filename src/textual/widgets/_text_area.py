@@ -207,12 +207,6 @@ TextArea > .text-area--matching-bracket {
     Syntax highlighting is only possible when the `language` attribute is set.
     """
 
-    highlight_query: Reactive[str | "Query" | None] = reactive(None)
-    """The tree-sitter query to use to retrieve syntax highlighting tokens.
-
-    If `None`, the default highlighting query will be fetched for the current language.
-    """
-
     selection: Reactive[Selection] = reactive(Selection(), always_update=True)
     """The selection start and end locations (zero-based line_index, offset).
 
@@ -253,7 +247,6 @@ TextArea > .text-area--matching-bracket {
         *,
         language: str | "Language" | None = None,
         theme: str | TextAreaTheme | None = TextAreaTheme.default(),
-        highlight_query: str | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -278,6 +271,9 @@ TextArea > .text-area--matching-bracket {
         self.theme = theme
         """The theme of the `TextArea`."""
 
+        # TODO - the highlight query can only be adjusted using a method.
+        #  we need to do this because of the dependency between highlight query and
+        #  tree-sitter parser.
         language_name = self.document.language.name
         if highlight_query is None and language_name is not None:
             # Try to retrieve the default highlight query for the language.
