@@ -86,6 +86,22 @@ was matched (this appears in the drop-down list of the command palette), a
 reference to a function to run when the user selects that command, and the
 plain text version of the command.
 
+## Unhandled exceptions in a command source
+
+When writing your command source `search` method you should attempt to
+handle all possible errors. In the event that there is an unhandled
+exception Textual will carry on working and carry on taking results from any
+other registered command sources.
+
+!!! important
+
+    This is different from how Textual normally works. Under normal
+    circumstances Textual would not "hide" your errors.
+
+Textual doesn't just throw the exception away though. If an exception isn't
+handled by your code it will be logged to [the Textual devtools
+console](../../guide/devtools#console).
+
 ## Using a command source
 
 Once a command source has been created it can be used either on an `App` or
