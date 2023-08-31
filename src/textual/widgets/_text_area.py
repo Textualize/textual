@@ -3,11 +3,12 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, Optional
 
 from rich.style import Style
 from rich.text import Text
 
+from textual._tree_sitter import TREE_SITTER
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -37,6 +38,13 @@ _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
 _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
 _TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 _HIGHLIGHTS_PATH = _TREE_SITTER_PATH / "highlights/"
+
+
+@dataclass
+class TextAreaLanguage:
+    name: str
+    language: "Language"
+    highlight_query: str | "Query"
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -187,15 +195,15 @@ TextArea > .text-area--matching-bracket {
     | f7                     | Select all text in the document.             |
     """
 
-    language: Reactive[str | "Language" | None] = reactive(None, always_update=True)
+    language: Reactive[str | None] = reactive(None, always_update=True)
     """The language to use.
 
     This must be set to a valid, non-None value for syntax highlighting to work.
 
-    If the value is a string, a built-in parser will be used.
+    If the value is a string, a built-in language parser will be used if available.
 
-    If you wish to add support for an unsupported language, you'll have to pass in the
-    tree-sitter `Language` object directly rather than the string language name.
+    If you wish to use an unsupported language, you'll have to register
+    it first using `register_language`.
     """
 
     theme: Reactive[str | TextAreaTheme] = reactive(TextAreaTheme.default())
@@ -232,7 +240,7 @@ TextArea > .text-area--matching-bracket {
     """
 
     match_cursor_bracket: Reactive[bool] = reactive(True)
-    """If the cursor is at a bracket, highlight the matching bracket if found."""
+    """If the cursor is at a bracket, highlight the matching bracket (if found)."""
 
     cursor_blink: Reactive[bool] = reactive(True)
     """True if the cursor should blink."""
@@ -245,7 +253,7 @@ TextArea > .text-area--matching-bracket {
         self,
         text: str = "",
         *,
-        language: str | "Language" | None = None,
+        language: str | None = None,
         theme: str | TextAreaTheme | None = TextAreaTheme.default(),
         name: str | None = None,
         id: str | None = None,
@@ -262,28 +270,17 @@ TextArea > .text-area--matching-bracket {
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-        self.document = SyntaxAwareDocument(text, language)
+        self.document = self._document_factory(text, language)
         """The document this widget is currently editing."""
+
+        self._languages: dict[str, TextAreaLanguage] = {}
+        """Maps language names to their TextAreaLanguage metadata."""
 
         if isinstance(theme, str):
             theme = TextAreaTheme.get_theme(theme)
 
         self.theme = theme
         """The theme of the `TextArea`."""
-
-        # TODO - the highlight query can only be adjusted using a method.
-        #  we need to do this because of the dependency between highlight query and
-        #  tree-sitter parser.
-        language_name = self.document.language.name
-        if highlight_query is None and language_name is not None:
-            # Try to retrieve the default highlight query for the language.
-            highlight_query_path = (
-                Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
-            )
-            highlight_query = highlight_query_path.read_text()
-
-        self._highlight_query = self.document.prepare_query(highlight_query)
-        """The query to use for syntax highlighting, or `None` if not available."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
@@ -307,11 +304,16 @@ TextArea > .text-area--matching-bracket {
         cursor is currently at. If the cursor is at a bracket, or there's no matching
         bracket, this will be `None`."""
 
-    def _configure_syntax_highlighting(self) -> None:
-        """Configure syntax highlighting based on the theme and highlighting query."""
-        # When the language is modified, we should reset the highlighting query.
-        # When the highlighting query is modified, we should reset the language.
-        # If you want to modify both together, what do you do?
+    def _get_builtin_highlight_query(self, language_name: str) -> str:
+        try:
+            highlight_query_path = (
+                Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
+            )
+            highlight_query = highlight_query_path.read_text()
+        except OSError:
+            highlight_query = ""
+
+        return highlight_query
 
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
@@ -371,17 +373,9 @@ TextArea > .text-area--matching-bracket {
         clamp_visitable = self.clamp_visitable
         return Selection(clamp_visitable(start), clamp_visitable(end))
 
-    def _watch_language(self) -> None:
+    def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
-        self._set_document(self.text, self.language)
-
-    def _watch_theme(self) -> None:
-        """When the theme is updated, update the document."""
-        self._set_document(self.text, self.language)
-
-    def _watch_highlight_query(self) -> None:
-        """When the highlight query is updated, refresh the document."""
-        self._set_document(self.text, self.language)
+        self.document = self._document_factory(self.text, language)
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -391,23 +385,89 @@ TextArea > .text-area--matching-bracket {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _set_document(self, text: str, language: str | None) -> DocumentBase:
-        """Recreate the document based on the language and theme currently set."""
-        if not language:
-            # If there's no language set, we don't need to use a SyntaxAwareDocument.
-            self.document = Document(text)
+    def register_language(
+        self,
+        language: str | "Language",
+        highlight_query: str,
+    ) -> None:
+        """Register a language and corresponding highlight query.
+
+        Calling this method does not change the language of the `TextArea`.
+        On switching to this language (via the `language` reactive attribute),
+        syntax highlighting will be performed using the given highlight query.
+
+        If a string `name` is supplied for a builtin supported language, then
+        this method will update the default highlight query for that language.
+
+        Registering a language only registers it to this instance of `TextArea`.
+
+        Args:
+            language: A string referring to a builtin language or a tree-sitter `Language` object.
+            highlight_query: The highlight query to use for syntax highlighting this language.
+        """
+
+        # If tree-sitter is unavailable, do nothing.
+        if not TREE_SITTER:
+            return
+
+        from tree_sitter_languages import get_language
+
+        if isinstance(language, str):
+            language_name = language
+            language = get_language(language_name)
         else:
+            language_name = language.name
+
+        # Update the custom languages. When changing the document,
+        # we should first look in here for a language specification.
+        # If nothing is found, then we can go to the builtin languages.
+        self._languages[language_name] = TextAreaLanguage(
+            name=language_name,
+            language=language,
+            highlight_query=highlight_query,
+        )
+
+    #     def _set_document(self, text: str, language: str | None) -> DocumentBase:
+    #         if language in self._languages:
+    #             # Load the custom language if it exists
+    #             language_spec = self._languages[language]
+    #             document_language = language_spec.language
+    #             highlight_query = language_spec.highlight_query
+    #         else:
+    #             document_language = language
+    #             highlight_query = self._get_builtin_highlight_query(language)
+    #
+    #         # Update the document and prepare the new query.
+    #         self.document = SyntaxAwareDocument(text, document_language)
+    #         if highlight_query:
+    #             self._highlight_query = self.document.prepare_query(highlight_query)
+    #         return self.document
+
+    def _document_factory(self, text: str, language: str | None) -> DocumentBase:
+        """Construct and return an appropriate document."""
+        if TREE_SITTER and language:
+            text_area_language = self._languages.get(language, None)
+            if text_area_language:
+                document_language = text_area_language.language
+                highlight_query = text_area_language.highlight_query
+            else:
+                document_language = language
+                highlight_query = ""
+
             try:
-                from textual.document._syntax_aware_document import SyntaxAwareDocument
-
-                self.document = SyntaxAwareDocument(text, language)
+                document = SyntaxAwareDocument(text, document_language)
             except RuntimeError:
-                # SyntaxAwareDocument isn't available on Python 3.7.
-                # Fall back to the standard Document.
-                log.warning("Syntax highlighting isn't available on Python 3.7.")
-                self.document = Document(text)
+                document = Document(text)
+            else:
+                self._highlight_query = document.prepare_query(highlight_query)
 
-        return self.document
+        elif language and not TREE_SITTER:
+            log.warning("Syntax highlighting not available on this architecture.")
+            document = Document(text)
+        else:
+            document = Document(text)
+
+        return document
 
     @property
     def _visible_line_indices(self) -> tuple[int, int]:
@@ -424,7 +484,7 @@ TextArea > .text-area--matching-bracket {
         Args:
             text: The text to load into the TextArea.
         """
-        self._set_document(text, self.language)
+        self.document = self._document_factory(text, self.language)
         self.move_cursor((0, 0))
         self._refresh_size()
 

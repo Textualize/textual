@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections import defaultdict
 from functools import lru_cache
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 from rich.text import Text
 from typing_extensions import TYPE_CHECKING
@@ -55,6 +55,10 @@ class SyntaxAwareDocument(Document):
             language: The language to use. You can pass a string to use a supported
                 language, or pass in your own tree-sitter `Language` object.
         """
+
+        if not TREE_SITTER:
+            raise RuntimeError("SyntaxAwareDocument unavailable.")
+
         super().__init__(text)
         self.language: Language | None = None
         """The tree-sitter Language or None if tree-sitter is unavailable."""
@@ -71,19 +75,23 @@ class SyntaxAwareDocument(Document):
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of highlights for that line."""
 
-        if TREE_SITTER:
-            if isinstance(language, str):
-                if language not in VALID_LANGUAGES:
-                    raise RuntimeError(f"Invalid language {language!r}")
-                self.language = get_language(language)
-                self._parser = get_parser(language)
-            else:
-                self.language = language
-                self._parser = Parser()
-                self._parser.set_language(language)
+        # If the language is `None`, then avoid doing any parsing related stuff.
+        if isinstance(language, str):
+            if language not in VALID_LANGUAGES:
+                raise RuntimeError(f"Invalid language {language!r}")
+            self.language = get_language(language)
+            self._parser = get_parser(language)
+        else:
+            self.language = language
+            self._parser = Parser()
+            self._parser.set_language(language)
 
-            self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
-            self._prepare_highlights()
+        self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
+        self._prepare_highlights()
+
+    @property
+    def language_name(self) -> str | None:
+        return self.language.name if self.language else None
 
     def prepare_query(self, query: str) -> Query | None:
         if TREE_SITTER:
@@ -91,6 +99,19 @@ class SyntaxAwareDocument(Document):
         else:
             prepared_query = None
         return prepared_query
+
+    def query_syntax_tree(
+        self,
+        query: Query,
+        start_point: tuple[int, int] | None = None,
+        end_point: tuple[int, int] | None = None,
+    ) -> Any:
+        captures_kwargs = {}
+        if start_point is not None:
+            captures_kwargs["start_point"] = start_point
+        if end_point is not None:
+            captures_kwargs["end_point"] = end_point
+        return query.captures(self._syntax_tree.root_node, **captures_kwargs)
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
@@ -114,24 +135,23 @@ class SyntaxAwareDocument(Document):
 
         replace_result = super().replace_range(start, end, text)
 
-        if TREE_SITTER:
-            text_byte_length = len(_utf8_encode(text))
-            end_location = replace_result.end_location
-            assert self._syntax_tree is not None
-            assert self._parser is not None
-            self._syntax_tree.edit(
-                start_byte=start_byte,
-                old_end_byte=old_end_byte,
-                new_end_byte=start_byte + text_byte_length,
-                start_point=start_point,
-                old_end_point=old_end_point,
-                new_end_point=self._location_to_point(end_location),
-            )
-            # Incrementally parse the document.
-            self._syntax_tree = self._parser.parse(
-                self._read_callable, self._syntax_tree  # type: ignore[arg-type]
-            )
-            self._prepare_highlights()
+        text_byte_length = len(_utf8_encode(text))
+        end_location = replace_result.end_location
+        assert self._syntax_tree is not None
+        assert self._parser is not None
+        self._syntax_tree.edit(
+            start_byte=start_byte,
+            old_end_byte=old_end_byte,
+            new_end_byte=start_byte + text_byte_length,
+            start_point=start_point,
+            old_end_point=old_end_point,
+            new_end_point=self._location_to_point(end_location),
+        )
+        # Incrementally parse the document.
+        self._syntax_tree = self._parser.parse(
+            self._read_callable, self._syntax_tree  # type: ignore[arg-type]
+        )
+        self._prepare_highlights()
 
         return replace_result
 
@@ -146,8 +166,6 @@ class SyntaxAwareDocument(Document):
         """
         line_string = self[line_index]
         line = Text(line_string, end="")
-        if not TREE_SITTER or self._syntax_theme is None:
-            return line
 
         highlights = self._highlights
         if highlights:
@@ -174,9 +192,6 @@ class SyntaxAwareDocument(Document):
         Returns:
             An integer byte offset for the given location.
         """
-        if not TREE_SITTER:
-            return 0
-
         lines = self._lines
         row, column = location
         lines_above = lines[:row]
@@ -202,9 +217,6 @@ class SyntaxAwareDocument(Document):
         Returns:
             The point corresponding to that location (row index, column byte offset).
         """
-        if not TREE_SITTER:
-            return 0, 0
-
         lines = self._lines
         row, column = location
         if row < len(lines):
@@ -213,60 +225,57 @@ class SyntaxAwareDocument(Document):
             bytes_on_left = 0
         return row, bytes_on_left
 
-    def _prepare_highlights(
-        self,
-        start_point: tuple[int, int] | None = None,
-        end_point: tuple[int, int] | None = None,
-    ) -> None:
-        """Query the tree for ranges to highlights, and update the internal highlights mapping.
-
-        Args:
-            start_point: The point to start looking for highlights from.
-            end_point: The point to look for highlights to.
-        """
-        if not TREE_SITTER:
-            return None
-
-        assert self._syntax_tree is not None
-
-        highlights = self._highlights
-        highlights.clear()
-
-        captures_kwargs = {}
-        if start_point is not None:
-            captures_kwargs["start_point"] = start_point
-        if end_point is not None:
-            captures_kwargs["end_point"] = end_point
-
-        # We could optimise by only preparing highlights for a subset of lines here.
-        captures = self._query.captures(self._syntax_tree.root_node, **captures_kwargs)
-
-        highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
-        for capture in captures:
-            node, highlight_name = capture
-            node_start_row, node_start_column = node.start_point
-            node_end_row, node_end_column = node.end_point
-
-            if node_start_row == node_end_row:
-                highlight = (node_start_column, node_end_column, highlight_name)
-                highlight_updates[node_start_row].append(highlight)
-            else:
-                # Add the first line of the node range
-                highlight_updates[node_start_row].append(
-                    (node_start_column, None, highlight_name)
-                )
-
-                # Add the middle lines - entire row of this node is highlighted
-                for node_row in range(node_start_row + 1, node_end_row):
-                    highlight_updates[node_row].append((0, None, highlight_name))
-
-                # Add the last line of the node range
-                highlight_updates[node_end_row].append(
-                    (0, node_end_column, highlight_name)
-                )
-
-        for line_index, updated_highlights in highlight_updates.items():
-            highlights[line_index] = updated_highlights
+    # def _prepare_highlights(
+    #     self,
+    #     start_point: tuple[int, int] | None = None,
+    #     end_point: tuple[int, int] | None = None,
+    # ) -> None:
+    #     """Query the tree for ranges to highlights, and update the internal highlights mapping.
+    #
+    #     Args:
+    #         start_point: The point to start looking for highlights from.
+    #         end_point: The point to look for highlights to.
+    #     """
+    #     assert self._syntax_tree is not None
+    #
+    #     highlights = self._highlights
+    #     highlights.clear()
+    #
+    #     captures_kwargs = {}
+    #     if start_point is not None:
+    #         captures_kwargs["start_point"] = start_point
+    #     if end_point is not None:
+    #         captures_kwargs["end_point"] = end_point
+    #
+    #     # We could optimise by only preparing highlights for a subset of lines here.
+    #     captures = self._query.captures(self._syntax_tree.root_node, **captures_kwargs)
+    #
+    #     highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
+    #     for capture in captures:
+    #         node, highlight_name = capture
+    #         node_start_row, node_start_column = node.start_point
+    #         node_end_row, node_end_column = node.end_point
+    #
+    #         if node_start_row == node_end_row:
+    #             highlight = (node_start_column, node_end_column, highlight_name)
+    #             highlight_updates[node_start_row].append(highlight)
+    #         else:
+    #             # Add the first line of the node range
+    #             highlight_updates[node_start_row].append(
+    #                 (node_start_column, None, highlight_name)
+    #             )
+    #
+    #             # Add the middle lines - entire row of this node is highlighted
+    #             for node_row in range(node_start_row + 1, node_end_row):
+    #                 highlight_updates[node_row].append((0, None, highlight_name))
+    #
+    #             # Add the last line of the node range
+    #             highlight_updates[node_end_row].append(
+    #                 (0, node_end_column, highlight_name)
+    #             )
+    #
+    #     for line_index, updated_highlights in highlight_updates.items():
+    #         highlights[line_index] = updated_highlights
 
     def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes:
         """A callable which informs tree-sitter about the document content.
