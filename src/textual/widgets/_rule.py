@@ -60,6 +60,7 @@ class Rule(Widget, can_focus=False):
         self,
         orientation: RuleOrientation = "horizontal",
         line_style: LineStyle = "solid",
+        *,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
