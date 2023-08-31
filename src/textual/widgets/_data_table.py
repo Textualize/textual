@@ -187,6 +187,7 @@ class Row:
     key: RowKey
     height: int
     label: Text | None = None
+    auto_height: bool = False
 
 
 class RowRenderables(NamedTuple):
@@ -1190,8 +1191,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
 
     def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
-        """Called to recalculate the virtual (scrollable) size."""
+        """Called to recalculate the virtual (scrollable) size.
+
+        This recomputes column widths and then checks if any of the new rows need
+        to have their height computed.
+
+        Args:
+            new_rows: The new rows that will affect the `DataTable` dimensions.
+        """
         console = self.app.console
+        auto_height_rows: list[tuple[Row, list[RenderableType]]] = []
         for row_key in new_rows:
             row_index = self._row_locations.get(row_key)
 
@@ -1201,6 +1210,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 continue
 
             row = self.rows.get(row_key)
+            assert row is not None
 
             if row.label is not None:
                 self._labelled_row_exists = True
@@ -1214,6 +1224,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column, renderable in zip(self.ordered_columns, cells_in_row):
                 content_width = measure(console, renderable, 1)
                 column.content_width = max(column.content_width, content_width)
+
+            if row.auto_height:
+                auto_height_rows.append((row, cells_in_row))
+
+        for row, cells_in_row in auto_height_rows:
+            height = 0
+            for column, renderable in zip(self.ordered_columns, cells_in_row):
+                height = max(
+                    height,
+                    len(
+                        console.render_lines(
+                            renderable, console.options.update_width(column.width)
+                        )
+                    ),
+                )
+            row.height = height
 
         self._clear_caches()
 
@@ -1373,7 +1399,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def add_row(
         self,
         *cells: CellType,
-        height: int = 1,
+        height: int | None = 1,
         key: str | None = None,
         label: TextType | None = None,
     ) -> RowKey:
@@ -1381,13 +1407,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             *cells: Positional arguments should contain cell data.
-            height: The height of a row (in lines).
+            height: The height of a row (in lines). Use `None` to auto-detect the optimal
+                height.
             key: A key which uniquely identifies this row. If None, it will be generated
                 for you and returned.
             label: The label for the row. Will be displayed to the left if supplied.
 
         Returns:
-            Uniquely identifies this row. Can be used to retrieve this row regardless
+            Unique identifier for this row. Can be used to retrieve this row regardless
                 of its current location in the DataTable (it could have moved after
                 being added due to sorting or insertion/deletion of other rows).
         """
@@ -1407,7 +1434,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
         label = Text.from_markup(label) if isinstance(label, str) else label
-        self.rows[row_key] = Row(row_key, height, label)
+        self.rows[row_key] = Row(
+            row_key,
+            height if height is not None else 1,
+            label,
+            height is None,
+        )
         self._new_rows.add(row_key)
         self._require_update_dimensions = True
         self.cursor_coordinate = self.cursor_coordinate
@@ -1546,7 +1578,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         if self._require_update_dimensions:
             # Add the new rows *before* updating the column widths, since
-            # cells in a new row may influence the final width of a column
+            # cells in a new row may influence the final width of a column.
+            # Only then can we compute optimal height of rows with "auto" height.
             self._require_update_dimensions = False
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
