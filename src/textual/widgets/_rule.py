@@ -3,24 +3,65 @@ from __future__ import annotations
 from rich.text import Text
 from typing_extensions import Literal
 
-from .._border import BORDER_CHARS
 from ..app import RenderResult
 from ..css._error_tools import friendly_list
-from ..css.constants import VALID_BORDER
-from ..css.types import EdgeType
 from ..reactive import Reactive, reactive
 from ..widget import Widget
 
 RuleOrientation = Literal["horizontal", "vertical"]
 
-LineStyle = EdgeType
+LineStyle = Literal[
+    "ascii",
+    "blank",
+    "dashed",
+    "double",
+    "heavy",
+    "hidden",
+    "none",
+    "solid",
+    "thick",
+]
 
 
 _VALID_RULE_ORIENTATIONS = {"horizontal", "vertical"}
 """The valid orientations of the rule widget"""
 
-_VALID_LINE_STYLES = VALID_BORDER
+_VALID_LINE_STYLES = {
+    "ascii",
+    "blank",
+    "dashed",
+    "double",
+    "heavy",
+    "hidden",
+    "none",
+    "solid",
+    "thick",
+}
 """The valid line styles of the rule widget"""
+
+_HORIZONTAL_LINE_CHARS: dict[LineStyle, str] = {
+    "ascii": "-",
+    "blank": " ",
+    "dashed": "╍",
+    "double": "═",
+    "heavy": "━",
+    "hidden": " ",
+    "none": " ",
+    "solid": "─",
+    "thick": "█",
+}
+
+_VERTICAL_LINE_CHARS: dict[LineStyle, str] = {
+    "ascii": "|",
+    "blank": " ",
+    "dashed": "╏",
+    "double": "║",
+    "heavy": "┃",
+    "hidden": " ",
+    "none": " ",
+    "solid": "│",
+    "thick": "█",
+}
 
 
 class InvalidRuleOrientation(Exception):
@@ -83,10 +124,10 @@ class Rule(Widget, can_focus=False):
     def render(self) -> RenderResult:
         rule_char: str
         if self.orientation == "vertical":
-            rule_char = BORDER_CHARS[self.line_style][1][0]  # middle-left border char
+            rule_char = _VERTICAL_LINE_CHARS[self.line_style]
             return Text(rule_char * self.size.height)
         elif self.orientation == "horizontal":
-            rule_char = BORDER_CHARS[self.line_style][0][1]  # top-middle border char
+            rule_char = _HORIZONTAL_LINE_CHARS[self.line_style]
             return Text(rule_char * self.size.width)
         else:
             raise InvalidRuleOrientation(

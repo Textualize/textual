@@ -2,6 +2,7 @@ from textual.app import App, ComposeResult
 from textual.widgets import Rule, Label
 from textual.widgets._rule import _VALID_LINE_STYLES, LineStyle
 from typing import cast
+from textual.containers import Horizontal
 
 
 class RuleApp(App):
@@ -10,14 +11,10 @@ class RuleApp(App):
         align: center middle;
     }
 
-    Rule {
+    Horizontal {
         width: 80%;
-    }
-
-    Label {
-        width: 80%;
-        text-align: center;
-        text-style: bold;
+        height: 80%;
+        align: center middle;
     }
     """
 
@@ -25,9 +22,12 @@ class RuleApp(App):
         # TODO: This is just a temporary example to demonstrate and test the
         # different Rule styles. This will obviously need a nicer presentation
         # and _explicity_ created Rule widgets for the documentation.
-        for line_style in sorted(_VALID_LINE_STYLES):
-            yield Label(line_style)
-            yield Rule(line_style=cast(LineStyle, line_style))
+        with Horizontal():
+            for line_style in sorted(_VALID_LINE_STYLES):
+                yield Label(line_style)
+                yield Rule(
+                    orientation="vertical", line_style=cast(LineStyle, line_style)
+                )
 
 
 if __name__ == "__main__":
