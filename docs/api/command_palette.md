@@ -117,6 +117,19 @@ class MyApp(App[None]):
 When the command palette is called by the user, those sources will be used
 to populate the list of search hits.
 
+!!! tip
+
+    If you wish to use your own commands sources on your appliaction, and
+    you wish to keep using the default Textual command sources, be sure to
+    include the ones provided by [`App`][textual.app.App.COMMAND_SOURCES].
+    For example:
+
+    ```python
+    class MyApp(App[None]):
+
+        COMMAND_SOURCES = App.COMMAND_SOURCES | {MyCommandSource, MyOtherCommandSource}
+    ```
+
 ## API documentation
 
 ::: textual.command_palette
