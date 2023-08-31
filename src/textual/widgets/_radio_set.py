@@ -124,7 +124,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         """Initialise the radio set.
 
         Args:
-            buttons: A collection of labels or [`RadioButton`][textual.widgets.RadioButton]s to group together.
+            buttons: The labels or [`RadioButton`][textual.widgets.RadioButton]s to group together.
             name: The name of the radio set.
             id: The ID of the radio set in the DOM.
             classes: The CSS classes of the radio set.
