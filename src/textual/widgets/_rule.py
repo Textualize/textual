@@ -77,8 +77,8 @@ class Rule(Widget, can_focus=False):
             disabled: Whether the widget is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.orientation = self.validate_orientation(orientation)
-        self.line_style = self.validate_line_style(line_style)
+        self.orientation = orientation
+        self.line_style = line_style
 
     def render(self) -> RenderResult:
         rule_char: str
