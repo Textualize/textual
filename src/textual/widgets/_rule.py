@@ -81,11 +81,13 @@ class Rule(Widget, can_focus=False):
     }
 
     Rule.-horizontal {
+        min-height: 1;
         max-height: 1;
         margin: 1 0;
     }
 
     Rule.-vertical {
+        min-width: 1;
         max-width: 1;
         margin: 0 2;
     }
