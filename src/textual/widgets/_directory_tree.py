@@ -431,7 +431,6 @@ class DirectoryTree(Tree[DirEntry]):
             return
         if self._safe_is_dir(dir_entry.path):
             self._add_to_load_queue(event.node)
-            self.post_message(self.DirectorySelected(event.node, dir_entry.path))
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
 
