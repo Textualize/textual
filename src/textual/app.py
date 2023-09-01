@@ -2052,6 +2052,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         await self._dispatch_message(events.Compose())
+                        default_screen = self.screen
                         await self._dispatch_message(events.Mount())
                         self.check_idle()
                     finally:
@@ -2060,7 +2061,8 @@ class App(Generic[ReturnType], DOMNode):
                     Reactive._initialize_object(self)
 
                     self.stylesheet.update(self)
-                    self.refresh()
+                    if self.screen is not default_screen:
+                        self.stylesheet.update(default_screen)
 
                     await self.animator.start()
 
