@@ -1757,6 +1757,7 @@ class App(Generic[ReturnType], DOMNode):
         )
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
+        self.stylesheet.update(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
         return await_mount
