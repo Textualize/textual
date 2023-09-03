@@ -285,6 +285,14 @@ def test_progress_bar_completed_styled(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["u"])
 
 
+def test_rule_horizontal_rules(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "horizontal_rules.py")
+
+
+def test_rule_vertical_rules(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "vertical_rules.py")
+
+
 def test_select(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
 
