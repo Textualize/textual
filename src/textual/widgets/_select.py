@@ -226,7 +226,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     value: var[SelectType | None] = var[Optional[SelectType]](None)
     """The value of the select."""
 
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the select value was changed.
 
         This message can be handled using a `on_select_changed` method.
