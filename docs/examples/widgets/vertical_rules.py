@@ -4,22 +4,7 @@ from textual.containers import Horizontal
 
 
 class VerticalRulesApp(App):
-    CSS = """
-    Screen {
-        align: center middle;
-    }
-
-    Horizontal {
-        width: auto;
-        height: 80%;
-    }
-
-    Label {
-        width: 9;
-        height: 100%;
-        text-align: center;
-    }
-    """
+    CSS_PATH = "vertical_rules.tcss"
 
     def compose(self) -> ComposeResult:
         with Horizontal():
