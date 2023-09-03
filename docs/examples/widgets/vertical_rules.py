@@ -8,14 +8,12 @@ class VerticalRulesApp(App):
 
     def compose(self) -> ComposeResult:
         with Horizontal():
-            yield Label("solid (default)")
+            yield Label("solid")
             yield Rule(orientation="vertical")
             yield Label("heavy")
             yield Rule(orientation="vertical", line_style="heavy")
             yield Label("thick")
             yield Rule(orientation="vertical", line_style="thick")
-            yield Label("blank /hidden /none")
-            yield Rule(orientation="vertical", line_style="hidden")
             yield Label("dashed")
             yield Rule(orientation="vertical", line_style="dashed")
             yield Label("double")

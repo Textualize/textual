@@ -8,7 +8,7 @@ Horizontal {
 }
 
 Label {
-    width: 9;
+    width: 6;
     height: 100%;
     text-align: center;
 }
