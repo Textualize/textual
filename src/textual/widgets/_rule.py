@@ -9,6 +9,7 @@ from ..reactive import Reactive, reactive
 from ..widget import Widget
 
 RuleOrientation = Literal["horizontal", "vertical"]
+"""The valid orientations of the rule widget."""
 
 LineStyle = Literal[
     "ascii",
@@ -21,10 +22,10 @@ LineStyle = Literal[
     "solid",
     "thick",
 ]
+"""The valid line styles of the rule widget."""
 
 
 _VALID_RULE_ORIENTATIONS = {"horizontal", "vertical"}
-"""The valid orientations of the rule widget"""
 
 _VALID_LINE_STYLES = {
     "ascii",
@@ -37,7 +38,6 @@ _VALID_LINE_STYLES = {
     "solid",
     "thick",
 }
-"""The valid line styles of the rule widget"""
 
 _HORIZONTAL_LINE_CHARS: dict[LineStyle, str] = {
     "ascii": "-",
@@ -73,7 +73,7 @@ class InvalidLineStyle(Exception):
 
 
 class Rule(Widget, can_focus=False):
-    """A rule widget to separate content, similar to a <hr> HTML tag."""
+    """A rule widget to separate content, similar to a `<hr>` HTML tag."""
 
     DEFAULT_CSS = """
     Rule {
@@ -165,6 +165,18 @@ class Rule(Widget, can_focus=False):
         classes: str | None = None,
         disabled: bool = False,
     ) -> Rule:
+        """Utility constructor for creating a horizontal rule.
+
+        Args:
+            line_style: The line style of the rule.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes of the widget.
+            disabled: Whether the widget is disabled or not.
+
+        Returns:
+            A rule widget with horizontal orientation.
+        """
         return Rule(
             orientation="horizontal",
             line_style=line_style,
@@ -183,6 +195,18 @@ class Rule(Widget, can_focus=False):
         classes: str | None = None,
         disabled: bool = False,
     ) -> Rule:
+        """Utility constructor for creating a vertical rule.
+
+        Args:
+            line_style: The line style of the rule.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes of the widget.
+            disabled: Whether the widget is disabled or not.
+
+        Returns:
+            A rule widget with vertical orientation.
+        """
         return Rule(
             orientation="vertical",
             line_style=line_style,
