@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- `DataTable` default styles now show focus changes on `datatable--cursor`.
+
+
 ## [0.36.0] - 2023-09-05
 
 ### Added
