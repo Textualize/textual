@@ -6,7 +6,7 @@ from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
-from textual.app import App
+from textual.app import App, RenderableType
 from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
