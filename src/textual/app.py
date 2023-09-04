@@ -1543,8 +1543,7 @@ class App(Generic[ReturnType], DOMNode):
         """Do internal initialisation of a new screen stack mode.
 
         Args:
-            modes: Name of the mode.
-
+            mode: Name of the mode.
         """
 
         stack = self._screen_stacks.get(mode, [])
@@ -1553,9 +1552,7 @@ class App(Generic[ReturnType], DOMNode):
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
             screen, _ = self._get_screen(new_screen)
             stack.append(screen)
-
             self._load_screen_css(screen)
-
         self._screen_stacks[mode] = stack
 
     def switch_mode(self, mode: str) -> None:
