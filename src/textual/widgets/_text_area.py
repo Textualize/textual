@@ -206,7 +206,9 @@ TextArea > .text-area--matching-bracket {
     it first using `register_language`.
     """
 
-    theme: Reactive[str | TextAreaTheme] = reactive(TextAreaTheme.default())
+    theme: Reactive[str | TextAreaTheme] = reactive(
+        TextAreaTheme.default(), always_update=True, init=True
+    )
     """The theme to syntax highlight with.
 
     Supply a `SyntaxTheme` object to customise highlighting, or supply a builtin
@@ -277,9 +279,9 @@ TextArea > .text-area--matching-bracket {
         """Maps language names to their TextAreaLanguage metadata."""
 
         if isinstance(theme, str):
-            theme = TextAreaTheme.get_theme(theme)
+            theme = TextAreaTheme.get_by_name(theme)
 
-        self.theme = theme
+        self.theme: TextAreaTheme = theme
         """The theme of the `TextArea`."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
@@ -385,6 +387,11 @@ TextArea > .text-area--matching-bracket {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
+    def _validate_theme(self, theme: str | TextAreaTheme) -> TextAreaTheme:
+        if isinstance(theme, str):
+            theme = TextAreaTheme.get_by_name(theme)
+        return theme
+
     def register_language(
         self,
         language: str | "Language",
@@ -446,6 +453,7 @@ TextArea > .text-area--matching-bracket {
     def _document_factory(self, text: str, language: str | None) -> DocumentBase:
         """Construct and return an appropriate document."""
         if TREE_SITTER and language:
+            # Attempt to get the override language.
             text_area_language = self._languages.get(language, None)
             if text_area_language:
                 document_language = text_area_language.language
@@ -570,6 +578,9 @@ TextArea > .text-area--matching-bracket {
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
+        theme = self.theme
+        base_style = theme.base_style
+
         # Get the (possibly highlighted) line from the Document.
         line = document.get_line_text(line_index)
         line_character_count = len(line)
@@ -582,10 +593,19 @@ TextArea > .text-area--matching-bracket {
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
+        matching_bracket = self._matching_bracket_location
+        match_cursor_bracket = self.match_cursor_bracket
+        draw_matched_brackets = match_cursor_bracket and matching_bracket is not None
+
+        cursor_row, cursor_column = end
+        cursor_line_style = theme.cursor_line_style
+        if cursor_row == line_index:
+            line.stylize(cursor_line_style)
+
         # Selection styling
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
             # If this row intersects with the selection range
-            selection_style = self.get_component_rich_style("text-area--selection")
+            selection_style = theme.selection_style
             cursor_row, _ = end
             if line_character_count == 0 and line_index != cursor_row:
                 # A simple highlight to show empty lines are included in the selection
@@ -593,7 +613,7 @@ TextArea > .text-area--matching-bracket {
             else:
                 if line_index == selection_top_row == selection_bottom_row:
                     # Selection within a single line
-                    line.stylize_before(
+                    line.stylize(
                         selection_style,
                         start=selection_top_column,
                         end=selection_bottom_column,
@@ -601,66 +621,63 @@ TextArea > .text-area--matching-bracket {
                 else:
                     # Selection spanning multiple lines
                     if line_index == selection_top_row:
-                        line.stylize_before(
+                        line.stylize(
                             selection_style,
                             start=selection_top_column,
                             end=line_character_count,
                         )
                     elif line_index == selection_bottom_row:
-                        line.stylize_before(
-                            selection_style, end=selection_bottom_column
-                        )
+                        line.stylize(selection_style, end=selection_bottom_column)
                     else:
-                        line.stylize_before(selection_style, end=line_character_count)
+                        line.stylize(selection_style, end=line_character_count)
 
         virtual_width, virtual_height = self.virtual_size
 
-        # Highlight the partner opening/closing bracket.
-        matching_bracket = self._matching_bracket_location
-        match_cursor_bracket = self.match_cursor_bracket
-        draw_matched_brackets = match_cursor_bracket and matching_bracket is not None
-        if draw_matched_brackets:
-            bracket_match_row, bracket_match_column = matching_bracket
-            if bracket_match_row == line_index:
-                matching_bracket_style = self.get_component_rich_style(
-                    "text-area--matching-bracket"
-                )
-                line.stylize(
-                    matching_bracket_style,
-                    bracket_match_column,
-                    bracket_match_column + 1,
-                )
-
         # Highlight the cursor
-        cursor_row, cursor_column = end
-        active_line_style = self.get_component_rich_style("text-area--cursor-line")
+        # active_line_style = self.get_component_rich_style("text-area--cursor-line")
         if cursor_row == line_index:
             draw_cursor = not self.cursor_blink or (
                 self.cursor_blink and self._cursor_blink_visible
             )
             if draw_matched_brackets:
-                matching_bracket_style = self.get_component_rich_style(
-                    "text-area--matching-bracket"
-                )
+                matching_bracket_style = theme.bracket_matching_style
                 line.stylize(
                     matching_bracket_style,
                     cursor_column,
                     cursor_column + 1,
                 )
+
             if draw_cursor:
-                cursor_style = self.get_component_rich_style("text-area--cursor")
+                # cursor_style = self.get_component_rich_style("text-area--cursor")
+                cursor_style = theme.cursor_style
                 line.stylize(cursor_style, cursor_column, cursor_column + 1)
-            line.stylize_before(active_line_style)
+
+        # Highlight the partner opening/closing bracket.
+        if draw_matched_brackets:
+            bracket_match_row, bracket_match_column = matching_bracket
+            if bracket_match_row == line_index:
+                # matching_bracket_style = self.get_component_rich_style(
+                #     "text-area--matching-bracket"
+                # )
+                matching_bracket_style = theme.bracket_matching_style
+                if matching_bracket_style:
+                    line.stylize(
+                        matching_bracket_style,
+                        bracket_match_column,
+                        bracket_match_column + 1,
+                    )
 
         # Build the gutter text for this line
         gutter_width = self.gutter_width
         if self.show_line_numbers:
             if cursor_row == line_index:
-                gutter_style = self.get_component_rich_style(
-                    "text-area--cursor-line-gutter"
-                )
+                gutter_style = theme.cursor_line_gutter_style
+                # gutter_style = self.get_component_rich_style(
+                #     "text-area--cursor-line-gutter"
+                # )
             else:
-                gutter_style = self.get_component_rich_style("text-area--gutter")
+                # gutter_style = self.get_component_rich_style("text-area--gutter")
+                gutter_style = theme.gutter_style
 
             gutter_width_no_margin = gutter_width - 2
             gutter = Text(
@@ -687,13 +704,11 @@ TextArea > .text-area--matching-bracket {
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:
             expanded_length = max(virtual_width, self.size.width)
-            text_strip = text_strip.extend_cell_length(
-                expanded_length, active_line_style
-            )
+            text_strip = text_strip.extend_cell_length(expanded_length)
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
-        return strip.apply_style(self.rich_style)
+        return strip.apply_style(theme.base_style)
 
     @property
     def text(self) -> str:

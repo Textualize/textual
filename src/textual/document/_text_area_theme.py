@@ -4,7 +4,9 @@ from dataclasses import dataclass, field
 
 from rich.style import Style
 
+from textual.app import DEFAULT_COLORS
 from textual.color import Color
+from textual.design import DEFAULT_DARK_SURFACE
 
 
 @dataclass
@@ -30,33 +32,69 @@ class TextAreaTheme:
     name: str | None = None
     """The name of the theme."""
 
-    token_styles: dict[str, TextAreaStyle] = field(default_factory=dict)
-    """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
-
-    base_style: TextAreaStyle | None = None
+    base_style: Style | None = None
     """The background style of the text area. If `None` the parent style will be used."""
 
-    gutter_style: TextAreaStyle | None = None
+    gutter_style: Style | None = None
     """The style of the gutter. If `None`, a legible TextAreaStyle will be generated."""
 
-    cursor_style: TextAreaStyle | None = None
+    cursor_style: Style | None = None
     """The style of the cursor. If `None`, the legible TextAreaStyle will be generated."""
 
-    cursor_line_style: TextAreaStyle | None = None
-    """The style to apply to the line the cursor is on. If `None`, a legible TextAreaStyle will be generated."""
+    cursor_line_style: Style | None = None
+    """The style to apply to the line the cursor is on."""
 
-    cursor_line_gutter_style: TextAreaStyle | None = None
-    """The style to apply to the gutter of the line the cursor is on. If `None`, a legible TextAreaStyle will be
+    cursor_line_gutter_style: Style | None = None
+    """The style to apply to the gutter of the line the cursor is on. If `None`, a legible Style will be
     generated."""
 
-    bracket_matching_style: TextAreaStyle | None = None
-    """The style to apply to matching brackets. If `None`, a legible TextAreaStyle will be generated."""
+    bracket_matching_style: Style | None = None
+    """The style to apply to matching brackets. If `None`, a legible Style will be generated."""
 
-    selection_style: TextAreaStyle | None = None
-    """The style of the selection. If `None` a default selection TextAreaStyle will be generated."""
+    selection_style: Style | None = None
+    """The style of the selection. If `None` a default selection Style will be generated."""
+
+    token_styles: dict[str, Style] = field(default_factory=dict)
+    """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
+
+    def __post_init__(self) -> None:
+        """Generate some styles if they haven't been supplied."""
+        if self.base_style is None:
+            self.base_style = Style(color="#f3f3f3", bgcolor=DEFAULT_DARK_SURFACE)
+
+        if self.gutter_style is None:
+            self.gutter_style = self.base_style.copy()
+
+        background_color = Color.from_rich_color(
+            self.base_style.background_style.bgcolor
+        )
+        if self.cursor_style is None:
+            self.cursor_style = Style(
+                color=background_color.rich_color,
+                bgcolor=background_color.inverse.rich_color,
+            )
+
+        if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
+            self.cursor_line_gutter_style = self.cursor_line_style.copy()
+
+        if self.bracket_matching_style is None:
+            bracket_matching_background = background_color.blend(
+                background_color.inverse, factor=0.05
+            )
+            self.bracket_matching_style = Style(
+                bgcolor=bracket_matching_background.rich_color
+            )
+
+        if self.selection_style is None:
+            selection_background_color = background_color.blend(
+                DEFAULT_COLORS["dark"].primary, factor=0.75
+            )
+            self.selection_style = Style.from_color(
+                bgcolor=selection_background_color.rich_color
+            )
 
     @classmethod
-    def get_theme(cls, theme_name: str) -> "TextAreaTheme":
+    def get_by_name(cls, theme_name: str) -> "TextAreaTheme":
         """Get a `SyntaxTheme` by name.
 
         Given a `theme_name` return the corresponding `SyntaxTheme` object.
@@ -69,9 +107,9 @@ class TextAreaTheme:
         Returns:
             The `SyntaxTheme` corresponding to the name.
         """
-        return cls(theme_name, _BUILTIN_THEMES.get(theme_name, {}))
+        return _BUILTIN_THEMES.get(theme_name, TextAreaTheme())
 
-    def get_highlight(self, name: str) -> TextAreaTheme:
+    def get_highlight(self, name: str) -> Style:
         """Return the Rich style corresponding to the name defined in the tree-sitter
         highlight query for the current theme.
 
@@ -90,9 +128,7 @@ class TextAreaTheme:
         Returns:
             A list of all available SyntaxThemes.
         """
-        return [
-            TextAreaTheme(name, mapping) for name, mapping in _BUILTIN_THEMES.items()
-        ]
+        return list(_BUILTIN_THEMES.values())
 
     @classmethod
     def default(cls) -> TextAreaTheme:
@@ -104,85 +140,59 @@ class TextAreaTheme:
         return DEFAULT_SYNTAX_THEME
 
 
-@dataclass
-class TextAreaStyle:
-    foreground_color: str | Color = None
-    background_color: str | Color = None
-    bold: bool = False
-    italic: bool = False
-    strikethrough: bool = False
-    underline: bool = False
-
-    def __post_init__(self) -> None:
-        self.background_color = Color.parse(self.background_color)
-        self.foreground_color = Color.parse(self.foreground_color).blend(
-            self.background_color, factor=1
-        )
-
-        # The default for tree-sitter tokens which aren't mapped to styles.
-        self.default_style = Style(
-            color=self.foreground_color.rich_color,
-            bgcolor=self.background_color.rich_color,
-            bold=self.bold,
-            italic=self.italic,
-            strike=self.strikethrough,
-            underline=self.underline,
-        )
-
-
 _MONOKAI = TextAreaTheme(
     name="monokai",
-    base_style=TextAreaStyle("#f8f8f2", "#272822"),
-    gutter_style=TextAreaStyle("#90908a", "#272822"),
-    cursor_style=TextAreaStyle("#f8f8f0"),
-    cursor_line_style=TextAreaStyle(background_color="#3e3d32"),
-    cursor_line_gutter_style=TextAreaStyle("#c2c2bf", "#3e3d32"),
-    bracket_matching_style=TextAreaStyle("#414339"),
-    selection_style=TextAreaStyle(background_color="#878b9180"),
+    base_style=Style(color="#f8f8f2", bgcolor="#272822"),
+    gutter_style=Style(color="#90908a", bgcolor="#272822"),
+    cursor_style=Style(color="#272822", bgcolor="#f8f8f0"),
+    cursor_line_style=Style(bgcolor="#3e3d32"),
+    cursor_line_gutter_style=Style(color="#c2c2bf", bgcolor="#3e3d32"),
+    bracket_matching_style=Style(bold=True, underline=True),
+    selection_style=Style(bgcolor="#65686a"),
     token_styles={
-        "string": TextAreaStyle("#E6DB74"),
-        "string.documentation": TextAreaStyle("#E6DB74"),
-        "comment": TextAreaStyle("#75715E"),
-        "keyword": TextAreaStyle("#F92672"),
-        "operator": TextAreaStyle("#F92672"),
-        "repeat": TextAreaStyle("#F92672"),
-        "exception": TextAreaStyle("#F92672"),
-        "include": TextAreaStyle("#F92672"),
-        "keyword.function": TextAreaStyle("#F92672"),
-        "keyword.return": TextAreaStyle("#F92672"),
-        "keyword.operator": TextAreaStyle("#F92672"),
-        "conditional": TextAreaStyle("#F92672"),
-        "number": TextAreaStyle("#AE81FF"),
-        "float": TextAreaStyle("#AE81FF"),
-        "class": TextAreaStyle("#A6E22E"),
-        "function": TextAreaStyle("#A6E22E"),
-        "function.call": TextAreaStyle("#A6E22E"),
-        "method": TextAreaStyle("#A6E22E"),
-        "method.call": TextAreaStyle("#A6E22E"),
-        "boolean": TextAreaStyle("#66D9EF", italic=True),
-        "json.null": TextAreaStyle("#66D9EF", italic=True),
-        # "constant": TextAreaStyle("#AE81FF"),
-        # "variable": TextAreaStyle("white"),
-        # "parameter": TextAreaStyle("cyan"),
-        # "type": TextAreaStyle("cyan"),
-        # "escape": TextAreaStyle("magenta"),
-        # "error": TextAreaStyle("TextAreaStyle", "red"),
-        "regex.punctuation.bracket": TextAreaStyle("#F92672"),
-        "regex.operator": TextAreaStyle("#F92672"),
+        "string": Style(color="#E6DB74"),
+        "string.documentation": Style(color="#E6DB74"),
+        "comment": Style(color="#75715E"),
+        "keyword": Style(color="#F92672"),
+        "operator": Style(color="#F92672"),
+        "repeat": Style(color="#F92672"),
+        "exception": Style(color="#F92672"),
+        "include": Style(color="#F92672"),
+        "keyword.function": Style(color="#F92672"),
+        "keyword.return": Style(color="#F92672"),
+        "keyword.operator": Style(color="#F92672"),
+        "conditional": Style(color="#F92672"),
+        "number": Style(color="#AE81FF"),
+        "float": Style(color="#AE81FF"),
+        "class": Style(color="#A6E22E"),
+        "function": Style(color="#A6E22E"),
+        "function.call": Style(color="#A6E22E"),
+        "method": Style(color="#A6E22E"),
+        "method.call": Style(color="#A6E22E"),
+        "boolean": Style(color="#66D9EF", italic=True),
+        "json.null": Style(color="#66D9EF", italic=True),
+        # "constant": Style(color="#AE81FF"),
+        # "variable": Style(color="white"),
+        # "parameter": Style(color="cyan"),
+        # "type": Style(color="cyan"),
+        # "escape": Style("magenta"),
+        # "error": Style(color="black", bgcolor="red"),
+        "regex.punctuation.bracket": Style(color="#F92672"),
+        "regex.operator": Style(color="#F92672"),
         # "json.error": _NULL_STYLE,
-        "html.end_tag_error": TextAreaStyle("red", underline=True),
-        "tag": TextAreaStyle("#F92672"),
-        "yaml.field": TextAreaStyle("#F92672", bold=True),
-        "json.label": TextAreaStyle("#F92672", bold=True),
-        "toml.type": TextAreaStyle("#F92672"),
-        "toml.datetime": TextAreaStyle("#AE81FF"),
+        "html.end_tag_error": Style(color="red", underline=True),
+        "tag": Style(color="#F92672"),
+        "yaml.field": Style(color="#F92672", bold=True),
+        "json.label": Style(color="#F92672", bold=True),
+        "toml.type": Style(color="#F92672"),
+        "toml.datetime": Style(color="#AE81FF"),
         # "toml.error": _NULL_STYLE,
-        "heading": TextAreaStyle("#F92672", bold=True),
-        "bold": TextAreaStyle(bold=True),
-        "italic": TextAreaStyle(italic=True),
-        "strikethrough": TextAreaStyle(strikethrough=True),
-        "link": TextAreaStyle("#66D9EF", underline=True),
-        "inline_code": TextAreaStyle("#F92672"),
+        "heading": Style(color="#F92672", bold=True),
+        "bold": Style(bold=True),
+        "italic": Style(italic=True),
+        "strikethrough": Style(strike=True),
+        "link": Style(color="#66D9EF", underline=True),
+        "inline_code": Style(color="#F92672"),
     },
 )
 
@@ -238,5 +248,5 @@ _BUILTIN_THEMES = {
 }
 
 
-DEFAULT_SYNTAX_THEME = TextAreaTheme.get_theme("monokai")
+DEFAULT_SYNTAX_THEME = TextAreaTheme.get_by_name("monokai")
 """The default syntax highlighting theme used by Textual."""

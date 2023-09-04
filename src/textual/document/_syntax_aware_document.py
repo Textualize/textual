@@ -87,7 +87,6 @@ class SyntaxAwareDocument(Document):
             self._parser.set_language(language)
 
         self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
-        self._prepare_highlights()
 
     @property
     def language_name(self) -> str | None:
@@ -151,7 +150,6 @@ class SyntaxAwareDocument(Document):
         self._syntax_tree = self._parser.parse(
             self._read_callable, self._syntax_tree  # type: ignore[arg-type]
         )
-        self._prepare_highlights()
 
         return replace_result
 
@@ -167,19 +165,19 @@ class SyntaxAwareDocument(Document):
         line_string = self[line_index]
         line = Text(line_string, end="")
 
-        highlights = self._highlights
-        if highlights:
-            line_bytes = _utf8_encode(line_string)
-            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-            get_highlight_from_theme = self._syntax_theme.get_highlight
-            line_highlights = highlights[line_index]
-            for start, end, highlight_name in line_highlights:
-                node_style = get_highlight_from_theme(highlight_name)
-                line.stylize(
-                    node_style,
-                    byte_to_codepoint.get(start, 0),
-                    byte_to_codepoint.get(end) if end else None,
-                )
+        # highlights = self._highlights
+        # if highlights:
+        #     line_bytes = _utf8_encode(line_string)
+        #     byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+        #     get_highlight_from_theme = self._syntax_theme.get_highlight
+        #     line_highlights = highlights[line_index]
+        #     for start, end, highlight_name in line_highlights:
+        #         node_style = get_highlight_from_theme(highlight_name)
+        #         line.stylize(
+        #             node_style,
+        #             byte_to_codepoint.get(start, 0),
+        #             byte_to_codepoint.get(end) if end else None,
+        #         )
         return line
 
     def _location_to_byte_offset(self, location: Location) -> int:
