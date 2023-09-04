@@ -80,7 +80,7 @@ class Switch(Widget, can_focus=True):
     slider_pos = reactive(0.0)
     """The position of the slider."""
 
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the status of the switch changes.
 
         Can be handled using `on_switch_changed` in a subclass of `Switch`

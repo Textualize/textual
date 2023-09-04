@@ -508,7 +508,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         ),
     }
 
-    class NodeCollapsed(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeCollapsed(Generic[EventTreeDataType], Message):
         """Event sent when a node is collapsed.
 
         Can be handled using `on_tree_node_collapsed` in a subclass of `Tree` or in a
@@ -525,7 +525,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             """The tree that sent the message."""
             return self.node.tree
 
-    class NodeExpanded(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeExpanded(Generic[EventTreeDataType], Message):
         """Event sent when a node is expanded.
 
         Can be handled using `on_tree_node_expanded` in a subclass of `Tree` or in a
@@ -542,7 +542,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             """The tree that sent the message."""
             return self.node.tree
 
-    class NodeHighlighted(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeHighlighted(Generic[EventTreeDataType], Message):
         """Event sent when a node is highlighted.
 
         Can be handled using `on_tree_node_highlighted` in a subclass of `Tree` or in a
@@ -559,7 +559,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             """The tree that sent the message."""
             return self.node.tree
 
-    class NodeSelected(Generic[EventTreeDataType], Message, bubble=True):
+    class NodeSelected(Generic[EventTreeDataType], Message):
         """Event sent when a node is selected.
 
         Can be handled using `on_tree_node_selected` in a subclass of `Tree` or in a

@@ -76,7 +76,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
     """The index of the currently-selected radio button."""
 
     @rich.repr.auto
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the pressed button in the set changes.
 
         This message can be handled using an `on_radio_set_changed` method.
