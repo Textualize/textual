@@ -206,7 +206,7 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
 ### Return code
 
-When you exit a Textual app with [App.exit()][textual.app.App.exit], you can optionally specify a *return code* with the `return_code` parameter.
+When you exit a Textual app with [`App.exit()`][textual.app.App.exit], you can optionally specify a *return code* with the `return_code` parameter.
 
 
 !!! info "What are return codes?"
