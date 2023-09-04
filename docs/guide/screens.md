@@ -267,10 +267,19 @@ But we may still want each individual screen to have a navigation stack where we
 
 In Textual we can manage this with *modes*.
 A mode is simply a named screen stack, which we can switch between as required.
-Only a single mode is active at a time.
+When we switch modes, the topmost screen in the new mode becomes the active visible screen.
+
+The following diagram illustrates such an app with modes.
+On startup the app switches to the "dashboard" mode which makes the top of the stack visible.
 
 <div class="excalidraw">
---8<-- "docs/images/screens/modes.excalidraw.svg"
+--8<-- "docs/images/screens/modes1.excalidraw.svg"
+</div>
+
+If we later change the mode to "settings", the top of that mode's screen stack becomes visible.
+
+<div class="excalidraw">
+--8<-- "docs/images/screens/modes2.excalidraw.svg"
 </div>
 
 
