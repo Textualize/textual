@@ -17,6 +17,7 @@ from textual._slug import TrackedSlugs, slug
         ("test  test", "test-test"),
         ("test      test", "test-test"),
         ("test!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~test", "test-_test"),
+        ("tëst", "tëst"),
         ("test🤷🏻‍♀️test", "test test"),
     ],
 )
