@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from collections import defaultdict
 from functools import lru_cache
-from typing import Any, Optional, Tuple
+from typing import Any
 
 from rich.text import Text
 from typing_extensions import TYPE_CHECKING
@@ -21,12 +20,6 @@ except ImportError:
 from textual.document._document import Document, EditResult, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
 from textual.document._text_area_theme import TextAreaTheme
-
-StartColumn = int
-EndColumn = Optional[int]
-HighlightName = str
-Highlight = Tuple[StartColumn, EndColumn, HighlightName]
-"""A tuple representing a syntax highlight within one line."""
 
 
 class SyntaxAwareDocument(Document):
@@ -71,9 +64,6 @@ class SyntaxAwareDocument(Document):
 
         self._syntax_theme: TextAreaTheme | None = None
         """The syntax highlighting theme to use."""
-
-        self._highlights: dict[int, list[Highlight]] = defaultdict(list)
-        """Mapping line numbers to the set of highlights for that line."""
 
         # If the language is `None`, then avoid doing any parsing related stuff.
         if isinstance(language, str):

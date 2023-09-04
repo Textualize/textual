@@ -3,9 +3,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import NamedTuple, Tuple, overload
+from typing import TYPE_CHECKING, Any, NamedTuple, Tuple, overload
 
 from rich.text import Text
+
+if TYPE_CHECKING:
+    from tree_sitter.binding import Query
 
 from textual._cells import cell_len
 from textual._types import Literal, get_args
@@ -123,6 +126,18 @@ class DocumentBase(ABC):
         Returns:
             The Size of the document bounding box.
         """
+
+    def query_syntax_tree(
+        self,
+        query: "Query",
+        start_point: tuple[int, int] | None = None,
+        end_point: tuple[int, int] | None = None,
+    ) -> Any:
+        """Query the tree-sitter syntax tree."""
+        return []
+
+    def prepare_query(self, query: str) -> "Query" | None:
+        return None
 
     @property
     @abstractmethod

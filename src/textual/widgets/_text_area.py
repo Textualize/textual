@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import re
+from collections import defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, Optional
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
 
 from rich.style import Style
 from rich.text import Text
@@ -38,6 +39,13 @@ _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
 _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
 _TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 _HIGHLIGHTS_PATH = _TREE_SITTER_PATH / "highlights/"
+
+
+StartColumn = int
+EndColumn = Optional[int]
+HighlightName = str
+Highlight = Tuple[StartColumn, EndColumn, HighlightName]
+"""A tuple representing a syntax highlight within one line."""
 
 
 @dataclass
@@ -177,7 +185,7 @@ TextArea > .text-area--matching-bracket {
     | home,ctrl+a            | Move the cursor to the start of the line.    |
     | end,ctrl+e             | Move the cursor to the end of the line.      |
     | shift+home             | Move the cursor to the start of the line and select.      |
-    | shift+end             | Move the cursor to the end of the line and select.      |
+    | shift+end              | Move the cursor to the end of the line and select.      |
     | pageup                 | Move the cursor one page up.                 |
     | pagedown               | Move the cursor one page down.               |
     | shift+up               | Select while moving the cursor up.           |
@@ -306,6 +314,12 @@ TextArea > .text-area--matching-bracket {
         cursor is currently at. If the cursor is at a bracket, or there's no matching
         bracket, this will be `None`."""
 
+        self._highlights: dict[int, list[Highlight]] = defaultdict(list)
+        """Mapping line numbers to the set of highlights for that line."""
+
+        self._highlight_query: "Query" | None = None
+        """The query that's currently being used for highlighting."""
+
     def _get_builtin_highlight_query(self, language_name: str) -> str:
         try:
             highlight_query_path = (
@@ -316,6 +330,36 @@ TextArea > .text-area--matching-bracket {
             highlight_query = ""
 
         return highlight_query
+
+    def _build_highlight_map(self) -> None:
+        """Query the tree for ranges to highlights, and update the internal highlights mapping."""
+
+        highlights = self._highlights
+        highlights.clear()
+        if not self._highlight_query:
+            return
+
+        captures = self.document.query_syntax_tree(self._highlight_query)
+        for capture in captures:
+            node, highlight_name = capture
+            node_start_row, node_start_column = node.start_point
+            node_end_row, node_end_column = node.end_point
+
+            if node_start_row == node_end_row:
+                highlight = (node_start_column, node_end_column, highlight_name)
+                highlights[node_start_row].append(highlight)
+            else:
+                # Add the first line of the node range
+                highlights[node_start_row].append(
+                    (node_start_column, None, highlight_name)
+                )
+
+                # Add the middle lines - entire row of this node is highlighted
+                for node_row in range(node_start_row + 1, node_end_row):
+                    highlights[node_row].append((0, None, highlight_name))
+
+                # Add the last line of the node range
+                highlights[node_end_row].append((0, node_end_column, highlight_name))
 
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
@@ -460,7 +504,7 @@ TextArea > .text-area--matching-bracket {
                 highlight_query = text_area_language.highlight_query
             else:
                 document_language = language
-                highlight_query = ""
+                highlight_query = self._get_builtin_highlight_query(language)
 
             try:
                 document = SyntaxAwareDocument(text, document_language)
@@ -468,7 +512,6 @@ TextArea > .text-area--matching-bracket {
                 document = Document(text)
             else:
                 self._highlight_query = document.prepare_query(highlight_query)
-
         elif language and not TREE_SITTER:
             log.warning("Syntax highlighting not available on this architecture.")
             document = Document(text)
@@ -748,6 +791,7 @@ TextArea > .text-area--matching-bracket {
         result = edit.do(self)
         self._refresh_size()
         edit.after(self)
+        self._build_highlight_map()
         return result
 
     async def _on_key(self, event: events.Key) -> None:
