@@ -16,5 +16,5 @@ _No other attributes_
 ## See also
 
 - [Blur](blur.md)
-- [DescendantFocus](descendant_focus.md)
 - [DescendantBlur](descendant_blur.md)
+- [DescendantFocus](descendant_focus.md)
