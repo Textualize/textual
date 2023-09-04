@@ -260,7 +260,7 @@ The addition of `[bool]` adds typing information that tells the type checker to 
 
 ## Modes
 
-Some apps may benefit from having multiple screen stacks.
+Some apps may benefit from having multiple screen stacks, rather than just one.
 Consider an app with a dashboard screen, a settings screen, and a help screen.
 These are independent in the sense that we don't want to prevent the user from switching between them, even if there are one or more modal screens on the screen stack.
 But we may still want each individual screen to have a navigation stack where we can push and pop screens.
@@ -282,15 +282,12 @@ If we later change the mode to "settings", the top of that mode's screen stack b
 --8<-- "docs/images/screens/modes2.excalidraw.svg"
 </div>
 
-
-To add modes to your app, define a [`MODES`][textual.app.App.MODES] class variable which should be a dictionary.
-This dictionary maps the name of the mode onto either a screen object, a callable that returns a screen, or the name of an installed screen.
-However you specify it, this screen is the base screen in an independent stack of screens.
+To add modes to your app, define a [`MODES`][textual.app.App.MODES] class variable in your App class which should be a `dict` that maps the name of the mode on to either a screen object, a callable that returns a screen, or the name of an installed screen.
+However you specify it, the values in `MODES` set the base screen for each mode's screen stack.
 
 You can switch between these screens at any time by calling [`App.switch_mode`][textual.app.App.switch_mode].
-When you switch to a new mode, it becomes the active screen stack and the topmost screen in the new stack becomes visible.
+When you switch to a new mode, the topmost screen in the new stack becomes visible.
 Any calls to [`App.push_screen`][textual.app.App.push_screen] or [`App.pop_screen`][textual.app.App.pop_screen] will affect only the active mode.
-
 
 Let's look at an example with modes:
 
@@ -309,7 +306,7 @@ Let's look at an example with modes:
     ```{.textual path="docs/examples/guide/screens/modes01.py"}
     ```
 
-=== "Output (after pressing ++S++)"
+=== "Output (after pressing S)"
 
     ```{.textual path="docs/examples/guide/screens/modes01.py", press="s"}
     ```
