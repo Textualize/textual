@@ -662,6 +662,9 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
 
+    _NO_MATCHES: Final[str] = "--no-matches"
+    """The ID to give the disabled option that shows there were no matches."""
+
     @work(exclusive=True)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
@@ -775,7 +778,11 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
             command_list.add_option(
-                Option(Align.center(Text("No matches found")), disabled=True)
+                Option(
+                    Align.center(Text("No matches found")),
+                    disabled=True,
+                    id=self._NO_MATCHES,
+                )
             )
 
     @on(Input.Changed)
@@ -868,5 +875,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         if commands.option_count and not self._list_visible:
             self._list_visible = True
             commands.highlighted = 0
-        elif commands.option_count and not commands.get_option_at_index(0).disabled:
+        elif (
+            commands.option_count
+            and not commands.get_option_at_index(0).id == self._NO_MATCHES
+        ):
             self._action_command_list("cursor_down")
