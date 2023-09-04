@@ -1800,7 +1800,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         if cell_cache_key not in self._cell_render_cache:
             base_style += Style.from_meta({"row": row_index, "column": column_index})
-            height = self.header_height if is_header_cell else self.rows[row_key].height
             row_label, row_cells = self._get_row_renderables(row_index)
 
             if is_row_label_cell:
@@ -1839,13 +1838,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 else Style.null()
             )
 
+            if is_header_cell:
+                options = self.app.console.options.update_dimensions(
+                    width, self.header_height
+                )
+            else:
+                row = self.rows[row_key]
+                if row.auto_height:
+                    options = self.app.console.options.update_width(width)
+                else:
+                    options = self.app.console.options.update_dimensions(
+                        width, row.height
+                    )
             lines = self.app.console.render_lines(
                 Styled(
                     Padding(cell, (0, 1)),
                     pre_style=base_style + component_style,
                     post_style=post_foreground + post_background,
                 ),
-                self.app.console.options.update_dimensions(width, height),
+                options,
             )
 
             self._cell_render_cache[cell_cache_key] = lines
@@ -1892,29 +1903,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
 
-        def _should_highlight(
-            cursor: Coordinate,
-            target_cell: Coordinate,
-            type_of_cursor: CursorType,
-        ) -> bool:
-            """Determine whether we should highlight a cell given the location
-            of the cursor, the location of the cell, and the type of cursor that
-            is currently active."""
-            if type_of_cursor == "cell":
-                return cursor == target_cell
-            elif type_of_cursor == "row":
-                cursor_row, _ = cursor
-                cell_row, _ = target_cell
-                return cursor_row == cell_row
-            elif type_of_cursor == "column":
-                _, cursor_column = cursor
-                _, cell_column = target_cell
-                return cursor_column == cell_column
-            else:
-                return False
-
-        is_header_row = row_key is self._header_row_key
+        should_highlight = self._should_highlight
         render_cell = self._render_cell
+        header_style = self.get_component_styles("datatable--header").rich_style
 
         if row_key in self._row_locations:
             row_index = self._row_locations.get(row_key)
@@ -1923,7 +1914,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # If the row has a label, add it to fixed_row here with correct style.
         fixed_row = []
-        header_style = self.get_component_styles("datatable--header").rich_style
 
         if self._labelled_row_exists and self.show_row_labels:
             # The width of the row label is updated again on idle
@@ -1933,14 +1923,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 -1,
                 header_style,
                 width=self._row_label_column_width,
-                cursor=_should_highlight(cursor_location, cell_location, cursor_type),
-                hover=_should_highlight(hover_location, cell_location, cursor_type),
+                cursor=should_highlight(cursor_location, cell_location, cursor_type),
+                hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             fixed_row.append(label_cell_lines)
 
         if self.fixed_columns:
-            fixed_style = self.get_component_styles("datatable--fixed").rich_style
-            fixed_style += Style.from_meta({"fixed": True})
+            if row_key is self._header_row_key:
+                fixed_style = header_style  # We use the header style either way.
+            else:
+                fixed_style = self.get_component_styles("datatable--fixed").rich_style
+                fixed_style += Style.from_meta({"fixed": True})
             for column_index, column in enumerate(
                 self.ordered_columns[: self.fixed_columns]
             ):
@@ -1948,28 +1941,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 fixed_cell_lines = render_cell(
                     row_index,
                     column_index,
-                    header_style if is_header_row else fixed_style,
+                    fixed_style,
                     column.render_width,
-                    cursor=_should_highlight(
+                    cursor=should_highlight(
                         cursor_location, cell_location, cursor_type
                     ),
-                    hover=_should_highlight(hover_location, cell_location, cursor_type),
+                    hover=should_highlight(hover_location, cell_location, cursor_type),
                 )[line_no]
                 fixed_row.append(fixed_cell_lines)
 
-        is_header_row = row_key is self._header_row_key
-        if is_header_row:
-            row_style = self.get_component_styles("datatable--header").rich_style
-        elif row_index < self.fixed_rows:
-            row_style = self.get_component_styles("datatable--fixed").rich_style
-        else:
-            if self.zebra_stripes:
-                component_row_style = (
-                    "datatable--odd-row" if row_index % 2 else "datatable--even-row"
-                )
-                row_style = self.get_component_styles(component_row_style).rich_style
-            else:
-                row_style = base_style
+        row_style = self._get_row_style(row_index, base_style)
 
         scrollable_row = []
         for column_index, column in enumerate(self.ordered_columns):
@@ -1979,8 +1960,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column_index,
                 row_style,
                 column.render_width,
-                cursor=_should_highlight(cursor_location, cell_location, cursor_type),
-                hover=_should_highlight(hover_location, cell_location, cursor_type),
+                cursor=should_highlight(cursor_location, cell_location, cursor_type),
+                hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             scrollable_row.append(cell_lines)
 
@@ -2107,6 +2088,63 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             y += scroll_y
 
         return self._render_line(y, scroll_x, scroll_x + width, self.rich_style)
+
+    def _should_highlight(
+        self,
+        cursor: Coordinate,
+        target_cell: Coordinate,
+        type_of_cursor: CursorType,
+    ) -> bool:
+        """Determine if the given cell should be highlighted because of the cursor.
+
+        This auxiliary method takes the cursor position and type into account when
+        determining whether the cell should be highlighted.
+
+        Args:
+            cursor: The current position of the cursor.
+            target_cell: The cell we're checking for the need to highlight.
+            type_of_cursor: The type of cursor that is currently active.
+
+        Returns:
+            Whether or not the given cell should be highlighted.
+        """
+        if type_of_cursor == "cell":
+            return cursor == target_cell
+        elif type_of_cursor == "row":
+            cursor_row, _ = cursor
+            cell_row, _ = target_cell
+            return cursor_row == cell_row
+        elif type_of_cursor == "column":
+            _, cursor_column = cursor
+            _, cell_column = target_cell
+            return cursor_column == cell_column
+        else:
+            return False
+
+    def _get_row_style(self, row_index: int, base_style: Style) -> Style:
+        """Gets the Style that should be applied to the row at the given index.
+
+        Args:
+            row_index: The index of the row to style.
+            base_style: The base style to use by default.
+
+        Returns:
+            The appropriate style.
+        """
+
+        if row_index == -1:
+            row_style = self.get_component_styles("datatable--header").rich_style
+        elif row_index < self.fixed_rows:
+            row_style = self.get_component_styles("datatable--fixed").rich_style
+        else:
+            if self.zebra_stripes:
+                component_row_style = (
+                    "datatable--odd-row" if row_index % 2 else "datatable--even-row"
+                )
+                row_style = self.get_component_styles(component_row_style).rich_style
+            else:
+                row_style = base_style
+        return row_style
 
     def _on_mouse_move(self, event: events.MouseMove):
         """If the hover cursor is visible, display it by extracting the row
