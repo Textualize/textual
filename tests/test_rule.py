@@ -1,7 +1,7 @@
 import pytest
 
 from textual.widgets import Rule
-from textual.widgets._rule import InvalidLineStyle, InvalidRuleOrientation
+from textual.widgets.rule import InvalidLineStyle, InvalidRuleOrientation
 
 
 def test_invalid_rule_orientation():

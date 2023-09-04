@@ -68,3 +68,8 @@ This widget sends no messages.
 ::: textual.widgets.Rule
     options:
       heading_level: 2
+
+::: textual.widgets.rule
+    options:
+      show_root_heading: true
+      show_root_toc_entry: true
