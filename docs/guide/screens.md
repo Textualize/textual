@@ -287,7 +287,7 @@ To add modes to your app, define a [`MODES`][textual.app.App.MODES] class variab
 This dictionary maps the name of the mode onto either a screen object, a callable that returns a screen, or the name of an installed screen.
 However you specify it, this screen is the base screen in an independent stack of screens.
 
-You can the switch between these screens at any time by calling [`App.switch_mode`][textual.app.App.switch_mode].
+You can switch between these screens at any time by calling [`App.switch_mode`][textual.app.App.switch_mode].
 When you switch to a new mode, it becomes the active screen stack and the topmost screen in the new stack becomes visible.
 Any calls to [`App.push_screen`][textual.app.App.push_screen] or [`App.pop_screen`][textual.app.App.pop_screen] will affect only the active mode.
 
