@@ -57,58 +57,9 @@ class TextAreaLanguage:
 
 class TextArea(ScrollView, can_focus=True):
     DEFAULT_CSS = """\
-$text-area-active-line-bg: white 8%;
-
 TextArea {
-    background: $panel 70%;
     width: 1fr;
     height: 1fr;
-}
-TextArea:focus {
-    background: $panel;
-}
-TextArea:focus > .text-area--cursor-line {
-    background: $text-area-active-line-bg;
-}
-TextArea > .text-area--cursor-line {
-    background: white 5%;
-}
-TextArea:focus > .text-area--cursor-line-gutter {
-    color: $text;
-    background: $text-area-active-line-bg;
-}
-TextArea > .text-area--cursor-line-gutter {
-    color: $text 65%;
-    background: $text-area-active-line-bg;
-}
-TextArea:focus > .text-area--gutter {
-    color: $text-muted 45%;
-}
-TextArea > .text-area--gutter {
-    color: $text-muted 35%;
-}
-TextArea:focus > .text-area--cursor {
-    color: black 90%;
-    background: white 80%;
-}
-TextArea > .text-area--cursor {
-    color: black 90%;
-    background: white 25%;
-}
-TextArea:focus > .text-area--selection {
-    background: $primary;
-}
-TextArea > .text-area--selection {
-    background: $primary 65%;
-}
-TextArea:focus > .text-area--matching-bracket {
-    color: $text;
-    background: white 20%;
-    text-style: bold underline;
-}
-TextArea > .text-area--matching-bracket {
-    background: ;
-    text-style: ;
 }
 """
 
