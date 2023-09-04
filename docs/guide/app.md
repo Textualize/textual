@@ -206,8 +206,8 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
 ### Return code
 
-When you exit a Textual app with [App.exit()][textual.app.App.exit], you can optionally specify an application *return code* by setting the `return_code` parameter.
-By default, if the app exits normally, the return code will be `0`. If there is an unhandled exception, the return code will be `1`
+When you exit a Textual app with [App.exit()][textual.app.App.exit], you can optionally specify a *return code* with the `return_code` parameter.
+
 
 !!! info "What are return codes?"
 
@@ -215,6 +215,9 @@ By default, if the app exits normally, the return code will be `0`. If there is 
     When any application exits it can return an integer to indicate if it was successful or not.
     A return code of `0` indicates success, any other value indicates that an error occurred.
     The exact meaning of a non-zero return code is application-dependant.
+
+When a Textual app exits normally, the return code will be `0`. If there is an unhandled exception, Textual will set a return code of `1`.
+You may want to set another value for the return code if there is another error condition that you want to differentiate from an unhandled exception.
 
 Here's an example of setting a return code for an error condition:
 
