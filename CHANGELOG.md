@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
 - Added the command palette https://github.com/Textualize/textual/pull/3058
+- Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
 
 ### Changed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
 - Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
+- Fixed flicker when scrolling tree up or down a line https://github.com/Textualize/textual/issues/3206
 
 ## [0.35.1]
 
