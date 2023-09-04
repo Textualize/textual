@@ -158,7 +158,7 @@ class Button(Static, can_focus=True):
     variant = reactive("default")
     """The variant name for the button."""
 
-    class Pressed(Message, bubble=True):
+    class Pressed(Message):
         """Event sent when a `Button` is pressed.
 
         Can be handled using `on_button_pressed` in a subclass of
