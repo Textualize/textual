@@ -87,7 +87,7 @@ class DocumentBase(ABC):
         """The text from the document as a string."""
 
     @abstractmethod
-    def get_line_text(self, index: int) -> Text:
+    def get_line_text(self, index: int) -> str:
         """Returns the line with the given index from the document.
 
         This is used in rendering lines, and will be called by the
@@ -97,8 +97,7 @@ class DocumentBase(ABC):
             index: The index of the line in the document.
 
         Returns:
-            The Text instance representing the line. When overriding
-            this method, ensure the returned Text instance has `end=""`.
+            The str instance representing the line.
         """
 
     @abstractmethod

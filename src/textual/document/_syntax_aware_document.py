@@ -143,14 +143,14 @@ class SyntaxAwareDocument(Document):
 
         return replace_result
 
-    def get_line_text(self, line_index: int) -> Text:
-        """Apply syntax highlights and return the Text of the line.
+    def get_line_text(self, line_index: int) -> str:
+        """Return the string representing the line, not including new line characters.
 
         Args:
             line_index: The index of the line.
 
         Returns:
-            The syntax highlighted Text of the line.
+            The string representing the line.
         """
         line_string = self[line_index]
         line = Text(line_string, end="")

@@ -10,6 +10,7 @@ from rich.style import Style
 from rich.text import Text
 
 from textual._tree_sitter import TREE_SITTER
+from textual.document._document import _utf8_encode
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -573,10 +574,23 @@ TextArea {
             return Strip.blank(self.size.width)
 
         theme = self.theme
-        base_style = theme.base_style
 
-        # Get the (possibly highlighted) line from the Document.
-        line = document.get_line_text(line_index)
+        # Get the line from the Document.
+        line_string = document.get_line_text(line_index)
+
+        if self._highlights:
+            line_bytes = _utf8_encode(line_string)
+            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+            get_highlight_from_theme = self._syntax_theme.get_highlight
+            line_highlights = highlights[line_index]
+            for start, end, highlight_name in line_highlights:
+                node_style = get_highlight_from_theme(highlight_name)
+                line.stylize(
+                    node_style,
+                    byte_to_codepoint.get(start, 0),
+                    byte_to_codepoint.get(end) if end else None,
+                )
+
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(self.virtual_size.width)
