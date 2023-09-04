@@ -284,7 +284,7 @@ If we later change the mode to "settings", the top of that mode's screen stack b
 
 
 To add modes to your app, define a [`MODES`][textual.app.App.MODES] class variable which should be a dictionary.
-This dictionary maps the name of the mode on to either a screen object, a callable that returns a screen, or the name of an installed screen.
+This dictionary maps the name of the mode onto either a screen object, a callable that returns a screen, or the name of an installed screen.
 However you specify it, this screen is the base screen in an independent stack of screens.
 
 You can the switch between these screens at any time by calling [`App.switch_mode`][textual.app.App.switch_mode].
