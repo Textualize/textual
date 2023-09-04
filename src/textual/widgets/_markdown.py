@@ -565,7 +565,7 @@ class Markdown(Widget):
         self._markdown = markdown
         self._parser_factory = parser_factory
 
-    class TableOfContentsUpdated(Message, bubble=True):
+    class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
 
         def __init__(
@@ -586,7 +586,7 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    class TableOfContentsSelected(Message, bubble=True):
+    class TableOfContentsSelected(Message):
         """An item in the TOC was selected."""
 
         def __init__(self, markdown: Markdown, block_id: str) -> None:
@@ -605,7 +605,7 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    class LinkClicked(Message, bubble=True):
+    class LinkClicked(Message):
         """A link in the document was clicked."""
 
         def __init__(self, markdown: Markdown, href: str) -> None:

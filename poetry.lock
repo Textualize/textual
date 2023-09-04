@@ -690,14 +690,14 @@ smmap = ">=3.0.1,<6"
 
 [[package]]
 name = "gitpython"
-version = "3.1.32"
+version = "3.1.33"
 description = "GitPython is a Python library used to interact with Git repositories"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "GitPython-3.1.32-py3-none-any.whl", hash = "sha256:e3d59b1c2c6ebb9dfa7a184daf3b6dd4914237e7488a1730a6d8f6f5d0b4187f"},
-    {file = "GitPython-3.1.32.tar.gz", hash = "sha256:8d9b8cb1e80b9735e8717c9362079d3ce4c6e5ddeebedd0361b228c3a67a62f6"},
+    {file = "GitPython-3.1.33-py3-none-any.whl", hash = "sha256:11f22466f982211ad8f3bdb456c03be8466c71d4da8774f3a9f68344e89559cb"},
+    {file = "GitPython-3.1.33.tar.gz", hash = "sha256:13aaa3dff88a23afec2d00eb3da3f2e040e2282e41de484c5791669b31146084"},
 ]
 
 [package.dependencies]
@@ -1221,14 +1221,14 @@ mkdocs = "*"
 
 [[package]]
 name = "mkdocs-material"
-version = "9.2.4"
+version = "9.2.6"
 description = "Documentation that simply works"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "mkdocs_material-9.2.4-py3-none-any.whl", hash = "sha256:2df876367625ff5e0f7112bc19a57521ed21ce9a2b85656baf9bb7f5dc3cb987"},
-    {file = "mkdocs_material-9.2.4.tar.gz", hash = "sha256:25008187b89fc376cb4ed2312b1fea4121bf2bd956442f38afdc6b4dcc21c57d"},
+    {file = "mkdocs_material-9.2.6-py3-none-any.whl", hash = "sha256:84bc7e79c1d0bae65a77123efd5ef74731b8c3671601c7962c5db8dba50a65ad"},
+    {file = "mkdocs_material-9.2.6.tar.gz", hash = "sha256:3806c58dd112e7b9677225e2021035ddbe3220fbd29d9dc812aa7e01f70b5e0a"},
 ]
 
 [package.dependencies]
@@ -1664,19 +1664,22 @@ plugins = ["importlib-metadata"]
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.1"
+version = "10.2.1"
 description = "Extension pack for Python Markdown."
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pymdown_extensions-10.1-py3-none-any.whl", hash = "sha256:ef25dbbae530e8f67575d222b75ff0649b1e841e22c2ae9a20bad9472c2207dc"},
-    {file = "pymdown_extensions-10.1.tar.gz", hash = "sha256:508009b211373058debb8247e168de4cbcb91b1bff7b5e961b2c3e864e00b195"},
+    {file = "pymdown_extensions-10.2.1-py3-none-any.whl", hash = "sha256:bded105eb8d93f88f2f821f00108cb70cef1269db6a40128c09c5f48bfc60ea4"},
+    {file = "pymdown_extensions-10.2.1.tar.gz", hash = "sha256:d0c534b4a5725a4be7ccef25d65a4c97dba58b54ad7c813babf0eb5ba9c81591"},
 ]
 
 [package.dependencies]
 markdown = ">=3.2"
 pyyaml = "*"
+
+[package.extras]
+extra = ["pygments (>=2.12)"]
 
 [[package]]
 name = "pyquery"
@@ -2379,14 +2382,14 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "virtualenv"
-version = "20.24.3"
+version = "20.24.4"
 description = "Virtual Python Environment builder"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "virtualenv-20.24.3-py3-none-any.whl", hash = "sha256:95a6e9398b4967fbcb5fef2acec5efaf9aa4972049d9ae41f95e0972a683fd02"},
-    {file = "virtualenv-20.24.3.tar.gz", hash = "sha256:e5c3b4ce817b0b328af041506a2a299418c98747c4b1e68cb7527e74ced23efc"},
+    {file = "virtualenv-20.24.4-py3-none-any.whl", hash = "sha256:29c70bb9b88510f6414ac3e55c8b413a1f96239b6b789ca123437d5e892190cb"},
+    {file = "virtualenv-20.24.4.tar.gz", hash = "sha256:772b05bfda7ed3b8ecd16021ca9716273ad9f4467c801f27e83ac73430246dca"},
 ]
 
 [package.dependencies]
@@ -2396,7 +2399,7 @@ importlib-metadata = {version = ">=6.6", markers = "python_version < \"3.8\""}
 platformdirs = ">=3.9.1,<4"
 
 [package.extras]
-docs = ["furo (>=2023.5.20)", "proselint (>=0.13)", "sphinx (>=7.0.1)", "sphinx-argparse (>=0.4)", "sphinxcontrib-towncrier (>=0.2.1a0)", "towncrier (>=23.6)"]
+docs = ["furo (>=2023.7.26)", "proselint (>=0.13)", "sphinx (>=7.1.2)", "sphinx-argparse (>=0.4)", "sphinxcontrib-towncrier (>=0.2.1a0)", "towncrier (>=23.6)"]
 test = ["covdefaults (>=2.3)", "coverage (>=7.2.7)", "coverage-enable-subprocess (>=1)", "flaky (>=3.7)", "packaging (>=23.1)", "pytest (>=7.4)", "pytest-env (>=0.8.2)", "pytest-freezer (>=0.4.8)", "pytest-mock (>=3.11.1)", "pytest-randomly (>=3.12)", "pytest-timeout (>=2.1)", "setuptools (>=68)", "time-machine (>=2.10)"]
 
 [[package]]

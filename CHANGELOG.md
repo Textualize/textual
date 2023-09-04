@@ -11,18 +11,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
+- Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
 
 ### Changed
 
 - Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
 - Added `cursor_type` to the `DataTable` constructor.
+- Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
 - `DataTable.add_row` accepts `height=None` to automatically compute optimal height for a row https://github.com/Textualize/textual/pull/3213
 
 ### Fixed
 
 - Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
 - Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
+- Fixed flicker when scrolling tree up or down a line https://github.com/Textualize/textual/issues/3206
 
 ## [0.35.1]
 
