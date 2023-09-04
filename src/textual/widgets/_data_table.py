@@ -1200,7 +1200,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             new_rows: The new rows that will affect the `DataTable` dimensions.
         """
         console = self.app.console
-        auto_height_rows: list[tuple[Row, list[RenderableType]]] = []
+        auto_height_rows: list[tuple[int, Row, list[RenderableType]]] = []
         for row_key in new_rows:
             row_index = self._row_locations.get(row_key)
 
@@ -1226,22 +1226,47 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 column.content_width = max(column.content_width, content_width)
 
             if row.auto_height:
-                auto_height_rows.append((row, cells_in_row))
-
-        for row, cells_in_row in auto_height_rows:
-            height = 0
-            for column, renderable in zip(self.ordered_columns, cells_in_row):
-                height = max(
-                    height,
-                    len(
-                        console.render_lines(
-                            renderable, console.options.update_width(column.width)
-                        )
-                    ),
-                )
-            row.height = height
+                auto_height_rows.append((row_index, row, cells_in_row))
 
         self._clear_caches()
+
+        # If there are rows that need to have their height computed, render them correctly
+        # so that we can cache this rendering for later.
+        if auto_height_rows:
+            render_cell = self._render_cell  # This method renders & caches.
+            should_highlight = self._should_highlight
+            cursor_type = self.cursor_type
+            cursor_location = self.cursor_coordinate
+            hover_location = self.hover_coordinate
+            base_style = self.rich_style
+            fixed_style = self.get_component_styles(
+                "datatable--fixed"
+            ).rich_style + Style.from_meta({"fixed": True})
+            ordered_columns = self.ordered_columns
+            fixed_columns = self.fixed_columns
+
+            for row_index, row, cells_in_row in auto_height_rows:
+                height = 0
+                row_style = self._get_row_style(row_index, base_style)
+
+                for column_index, column in enumerate(ordered_columns):
+                    style = fixed_style if column_index < fixed_columns else row_style
+                    cell_location = Coordinate(row_index, column_index)
+                    rendered_cell = render_cell(
+                        row_index,
+                        column_index,
+                        style,
+                        column.render_width,
+                        cursor=should_highlight(
+                            cursor_location, cell_location, cursor_type
+                        ),
+                        hover=should_highlight(
+                            hover_location, cell_location, cursor_type
+                        ),
+                    )
+                    height = max(height, len(rendered_cell))
+
+                row.height = height
 
         data_cells_width = sum(column.render_width for column in self.columns.values())
         total_width = data_cells_width + self._row_label_column_width
