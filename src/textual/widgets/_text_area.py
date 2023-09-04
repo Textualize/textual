@@ -610,6 +610,7 @@ TextArea > .text-area--matching-bracket {
             if line_character_count == 0 and line_index != cursor_row:
                 # A simple highlight to show empty lines are included in the selection
                 line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
+                line.set_length(self.virtual_size.width)
             else:
                 if line_index == selection_top_row == selection_bottom_row:
                     # Selection within a single line
