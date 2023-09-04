@@ -204,6 +204,38 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
     Type annotations are entirely optional (but recommended) with Textual.
 
+### Return code
+
+When you exit a Textual app with [App.exit()][textual.app.App.exit], you can optionally specify an application *return code* by setting the `return_code` parameter.
+By default, if the app exits normally, the return code will be `0`. If there is an unhandled exception, the return code will be `1`
+
+!!! info "What are return codes?"
+
+    Returns codes are a standard feature provided by your operating system.
+    When any application exits it can return an integer to indicate if it was successful or not.
+    A return code of `0` indicates success, any other value indicates that an error occurred.
+    The exact meaning of a non-zero return code is application-dependant.
+
+Here's an example of setting a return code for an error condition:
+
+```python
+if critical_error:
+    self.exit(return_code=4, message="Critical error occurred")
+```
+
+The apps return code can be queried with `app.return_code`, which will be `None` if it hasn't been set, or an integer.
+
+Textual won't explicitly exit the process.
+To exit the app with a return code, you should call `sys.exit`.
+Here's how you might do that:
+
+```python
+if __name__ == "__main__"
+    app = MyApp()
+    app.run()
+    import sys
+    sys.exit(app.return_code or 0)
+```
 
 ## CSS
 
