@@ -687,6 +687,16 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # (display of) commands into.
         command_list = self.query_one(CommandList)
 
+        # If there's just one option in the list, and it's the item that
+        # tells the user there were no matches, let's remove that. We're
+        # starting a new search so we don't want them thinking there's no
+        # matches already.
+        if (
+            command_list.option_count == 1
+            and command_list.get_option_at_index(0).id == self._NO_MATCHES
+        ):
+            command_list.remove_option(self._NO_MATCHES)
+
         # Each command will receive a sequential ID. This is going to be
         # used to find commands back again when we update the visible list
         # and want to settle the selection back on the command it was on.
