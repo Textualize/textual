@@ -668,6 +668,11 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self._screen_stacks[self._current_mode]
 
+    @property
+    def current_mode(self) -> str:
+        """The name of the currently active mode."""
+        return self._current_mode
+
     def exit(
         self,
         result: ReturnType | None = None,
