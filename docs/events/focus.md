@@ -12,3 +12,9 @@ _No other attributes_
 ## Code
 
 ::: textual.events.Focus
+
+## See also
+
+- [Blur](blur.md)
+- [DescendantFocus](descendant_focus.md)
+- [DescendantBlur](descendant_blur.md)
