@@ -226,7 +226,7 @@ if critical_error:
     self.exit(return_code=4, message="Critical error occurred")
 ```
 
-The apps return code can be queried with `app.return_code`, which will be `None` if it hasn't been set, or an integer.
+The app's return code can be queried with `app.return_code`, which will be `None` if it hasn't been set, or an integer.
 
 Textual won't explicitly exit the process.
 To exit the app with a return code, you should call `sys.exit`.
