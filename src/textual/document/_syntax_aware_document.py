@@ -143,7 +143,7 @@ class SyntaxAwareDocument(Document):
 
         return replace_result
 
-    def get_line_text(self, line_index: int) -> str:
+    def get_line(self, line_index: int) -> str:
         """Return the string representing the line, not including new line characters.
 
         Args:
@@ -153,7 +153,7 @@ class SyntaxAwareDocument(Document):
             The string representing the line.
         """
         line_string = self[line_index]
-        line = Text(line_string, end="")
+        return line_string
 
         # highlights = self._highlights
         # if highlights:
@@ -168,7 +168,6 @@ class SyntaxAwareDocument(Document):
         #             byte_to_codepoint.get(start, 0),
         #             byte_to_codepoint.get(end) if end else None,
         #         )
-        return line
 
     def _location_to_byte_offset(self, location: Location) -> int:
         """Given a document coordinate, return the byte offset of that coordinate.
@@ -303,43 +302,3 @@ class SyntaxAwareDocument(Document):
                 return b"\n"
 
         return b""
-
-
-@lru_cache(maxsize=128)
-def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
-    """Build a mapping of utf-8 byte offsets to codepoint offsets for the given data.
-
-    Args:
-        data: utf-8 bytes.
-
-    Returns:
-        A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
-    """
-    byte_to_codepoint = {}
-    current_byte_offset = 0
-    code_point_offset = 0
-
-    while current_byte_offset < len(data):
-        byte_to_codepoint[current_byte_offset] = code_point_offset
-        first_byte = data[current_byte_offset]
-
-        # Single-byte character
-        if (first_byte & 0b10000000) == 0:
-            current_byte_offset += 1
-        # 2-byte character
-        elif (first_byte & 0b11100000) == 0b11000000:
-            current_byte_offset += 2
-        # 3-byte character
-        elif (first_byte & 0b11110000) == 0b11100000:
-            current_byte_offset += 3
-        # 4-byte character
-        elif (first_byte & 0b11111000) == 0b11110000:
-            current_byte_offset += 4
-        else:
-            raise ValueError(f"Invalid UTF-8 byte: {first_byte}")
-
-        code_point_offset += 1
-
-    # Mapping for the end of the string
-    byte_to_codepoint[current_byte_offset] = code_point_offset
-    return byte_to_codepoint

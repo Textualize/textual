@@ -87,7 +87,7 @@ class DocumentBase(ABC):
         """The text from the document as a string."""
 
     @abstractmethod
-    def get_line_text(self, index: int) -> str:
+    def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
 
         This is used in rendering lines, and will be called by the
@@ -303,7 +303,7 @@ class Document(DocumentBase):
         """Returns the number of lines in the document."""
         return len(self._lines)
 
-    def get_line_text(self, index: int) -> Text:
+    def get_line(self, index: int) -> Text:
         """Returns the line with the given index from the document.
 
         Args:
@@ -314,8 +314,7 @@ class Document(DocumentBase):
             this method, ensure the returned Text instance has `end=""`.
         """
         line_string = self[index]
-        line_string = line_string.replace("\n", "").replace("\r", "")
-        return Text(line_string, end="")
+        return line_string
 
     @overload
     def __getitem__(self, line_index: int) -> str:

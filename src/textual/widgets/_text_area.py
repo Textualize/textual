@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
 
@@ -374,6 +375,7 @@ TextArea {
     def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
         self.document = self._document_factory(self.text, language)
+        self._build_highlight_map()
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -576,20 +578,23 @@ TextArea {
         theme = self.theme
 
         # Get the line from the Document.
-        line_string = document.get_line_text(line_index)
+        line_string = document.get_line(line_index)
+        line = Text(line_string, end="")
 
-        if self._highlights:
+        highlights = self._highlights
+        if highlights:
             line_bytes = _utf8_encode(line_string)
             byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-            get_highlight_from_theme = self._syntax_theme.get_highlight
+            get_highlight_from_theme = self.theme.token_styles.get
             line_highlights = highlights[line_index]
             for start, end, highlight_name in line_highlights:
                 node_style = get_highlight_from_theme(highlight_name)
-                line.stylize(
-                    node_style,
-                    byte_to_codepoint.get(start, 0),
-                    byte_to_codepoint.get(end) if end else None,
-                )
+                if node_style is not None:
+                    line.stylize(
+                        node_style,
+                        byte_to_codepoint.get(start, 0),
+                        byte_to_codepoint.get(end) if end else None,
+                    )
 
         line_character_count = len(line)
         line.tab_size = self.indent_width
@@ -1641,3 +1646,43 @@ class Undoable(Protocol):
         Returns:
             Anything. This protocol doesn't prescribe what is returned.
         """
+
+
+@lru_cache(maxsize=128)
+def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
+    """Build a mapping of utf-8 byte offsets to codepoint offsets for the given data.
+
+    Args:
+        data: utf-8 bytes.
+
+    Returns:
+        A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
+    """
+    byte_to_codepoint = {}
+    current_byte_offset = 0
+    code_point_offset = 0
+
+    while current_byte_offset < len(data):
+        byte_to_codepoint[current_byte_offset] = code_point_offset
+        first_byte = data[current_byte_offset]
+
+        # Single-byte character
+        if (first_byte & 0b10000000) == 0:
+            current_byte_offset += 1
+        # 2-byte character
+        elif (first_byte & 0b11100000) == 0b11000000:
+            current_byte_offset += 2
+        # 3-byte character
+        elif (first_byte & 0b11110000) == 0b11100000:
+            current_byte_offset += 3
+        # 4-byte character
+        elif (first_byte & 0b11111000) == 0b11110000:
+            current_byte_offset += 4
+        else:
+            raise ValueError(f"Invalid UTF-8 byte: {first_byte}")
+
+        code_point_offset += 1
+
+    # Mapping for the end of the string
+    byte_to_codepoint[current_byte_offset] = code_point_offset
+    return byte_to_codepoint
