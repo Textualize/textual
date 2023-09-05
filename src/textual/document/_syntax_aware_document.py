@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from functools import lru_cache
 from typing import Any
 
-from rich.text import Text
 from typing_extensions import TYPE_CHECKING
 
 try:
