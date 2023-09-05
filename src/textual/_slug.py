@@ -34,9 +34,14 @@ def slug(text: str) -> str:
 
     Returns:
         A slug for the given text.
+
+    The rules used in generating the slug are based on observations of how
+    GitHub-flavoured Markdown works.
     """
     result = text.strip().lower()
     for rule, replacement in (
+        # The order of these is important. If you make changes here,
+        # keep this in mind.
         (STRIP_RE, ""),
         (SIMPLIFY_RE, REPLACEMENT),
     ):
@@ -86,13 +91,3 @@ class TrackedSlugs:
         if used:
             slugged = f"{slugged}-{used}"
         return slugged
-
-
-if __name__ == "__main__":
-    for text in ("Hello", "Hello world", "Hello -- world!!!", "Hello, World!"):
-        print(f"'{text}' -> '{slug(text)}'")
-
-    print("")
-    slugger = TrackedSlugs()
-    for _ in range(10):
-        print(slugger.slug("Hello, World!"))
