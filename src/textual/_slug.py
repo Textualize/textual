@@ -20,13 +20,14 @@ from collections import defaultdict
 from re import compile
 from string import punctuation
 from typing import Pattern
+from urllib.parse import quote
 
 from typing_extensions import Final
 
-REPLACEMENT: Final[str] = "-"
+WHITESPACE_REPLACEMENT: Final[str] = "-"
 """The character to replace undesirable characters with."""
 
-REMOVABLE: Final[str] = punctuation.replace(REPLACEMENT, "").replace("_", "")
+REMOVABLE: Final[str] = punctuation.replace(WHITESPACE_REPLACEMENT, "").replace("_", "")
 """The collection of characters that should be removed altogether."""
 
 NONLINGUAL: Final[str] = (
@@ -64,10 +65,10 @@ def slug(text: str) -> str:
     result = text.strip().lower()
     for rule, replacement in (
         (STRIP_RE, ""),
-        (WHITESPACE_RE, REPLACEMENT),
+        (WHITESPACE_RE, WHITESPACE_REPLACEMENT),
     ):
         result = rule.sub(replacement, result)
-    return result
+    return quote(result)
 
 
 class TrackedSlugs:
