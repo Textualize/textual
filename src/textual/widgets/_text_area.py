@@ -168,7 +168,7 @@ TextArea {
     """
 
     theme: Reactive[str | TextAreaTheme] = reactive(
-        TextAreaTheme.default(), always_update=True, init=True
+        TextAreaTheme.default(), always_update=True, init=False
     )
     """The theme to syntax highlight with.
 
@@ -237,12 +237,6 @@ TextArea {
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to their TextAreaLanguage metadata."""
 
-        if isinstance(theme, str):
-            theme = TextAreaTheme.get_by_name(theme)
-
-        self.theme: TextAreaTheme = theme
-        """The theme of the `TextArea`."""
-
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
 
@@ -275,6 +269,12 @@ TextArea {
         """The document this widget is currently editing."""
 
         self.language = language
+
+        if isinstance(theme, str):
+            theme = TextAreaTheme.get_by_name(theme)
+
+        self.theme: TextAreaTheme = theme
+        """The theme of the `TextArea`."""
 
     def _get_builtin_highlight_query(self, language_name: str) -> str:
         try:
@@ -593,9 +593,12 @@ TextArea {
                         byte_to_codepoint.get(end) if end else None,
                     )
 
+        virtual_width, virtual_height = self.virtual_size
+
         line_character_count = len(line)
         line.tab_size = self.indent_width
-        line.set_length(self.virtual_size.width)
+        expanded_length = max(virtual_width, self.size.width)
+        line.set_length(expanded_length)
 
         selection = self.selection
         start, end = selection
@@ -641,8 +644,6 @@ TextArea {
                         line.stylize(selection_style, end=selection_bottom_column)
                     else:
                         line.stylize(selection_style, end=line_character_count)
-
-        virtual_width, virtual_height = self.virtual_size
 
         # Highlight the cursor
         if cursor_row == line_index:
@@ -695,7 +696,7 @@ TextArea {
         gutter_segments = console.render(gutter)
         text_segments = console.render(
             line,
-            console.options.update_width(virtual_width),
+            console.options.update_width(expanded_length),
         )
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
@@ -705,9 +706,9 @@ TextArea {
         )
 
         # Stylize the line the cursor is currently on.
-        if cursor_row == line_index:
-            expanded_length = max(virtual_width, self.size.width)
-            text_strip = text_strip.extend_cell_length(expanded_length)
+        # TODO - is this required or have we already expanded it?
+        # if cursor_row == line_index:
+        #     text_strip = text_strip.extend_cell_length(expanded_length)
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
