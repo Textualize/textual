@@ -1459,9 +1459,12 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
         label = Text.from_markup(label) if isinstance(label, str) else label
+        # Rows with auto-height get a height of 0 because 1) we need an integer height
+        # to do some intermediate computations and 2) because 0 doesn't impact the data
+        # table while we don't figure out how tall this row is.
         self.rows[row_key] = Row(
             row_key,
-            height if height is not None else 1,
+            height or 0,
             label,
             height is None,
         )
