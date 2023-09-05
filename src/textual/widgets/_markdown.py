@@ -628,6 +628,20 @@ class Markdown(Widget):
         if self._markdown is not None:
             self.update(self._markdown)
 
+    @staticmethod
+    def _sanitise_location(location: str) -> tuple[Path, str]:
+        """Given a location, extract and remove any anchor.
+
+        Args:
+            location: The location to sanitise.
+
+        Returns:
+            A tuple of the path to the location cleaned of any anchor, plus
+            the anchor (or an empty string if none was found).
+        """
+        location, _, anchor = location.partition("#")
+        return Path(location), anchor
+
     async def load(self, path: Path) -> None:
         """Load a new Markdown document.
 
@@ -641,6 +655,7 @@ class Markdown(Widget):
             The exceptions that can be raised by this method are all of
             those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
         """
+        path, _ = self._sanitise_location(str(path))
         await self.update(path.read_text(encoding="utf-8"))
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
