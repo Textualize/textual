@@ -155,20 +155,6 @@ class SyntaxAwareDocument(Document):
         line_string = self[line_index]
         return line_string
 
-        # highlights = self._highlights
-        # if highlights:
-        #     line_bytes = _utf8_encode(line_string)
-        #     byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-        #     get_highlight_from_theme = self._syntax_theme.get_highlight
-        #     line_highlights = highlights[line_index]
-        #     for start, end, highlight_name in line_highlights:
-        #         node_style = get_highlight_from_theme(highlight_name)
-        #         line.stylize(
-        #             node_style,
-        #             byte_to_codepoint.get(start, 0),
-        #             byte_to_codepoint.get(end) if end else None,
-        #         )
-
     def _location_to_byte_offset(self, location: Location) -> int:
         """Given a document coordinate, return the byte offset of that coordinate.
         This method only does work if tree-sitter was imported, otherwise it returns 0.
@@ -211,58 +197,6 @@ class SyntaxAwareDocument(Document):
         else:
             bytes_on_left = 0
         return row, bytes_on_left
-
-    # def _prepare_highlights(
-    #     self,
-    #     start_point: tuple[int, int] | None = None,
-    #     end_point: tuple[int, int] | None = None,
-    # ) -> None:
-    #     """Query the tree for ranges to highlights, and update the internal highlights mapping.
-    #
-    #     Args:
-    #         start_point: The point to start looking for highlights from.
-    #         end_point: The point to look for highlights to.
-    #     """
-    #     assert self._syntax_tree is not None
-    #
-    #     highlights = self._highlights
-    #     highlights.clear()
-    #
-    #     captures_kwargs = {}
-    #     if start_point is not None:
-    #         captures_kwargs["start_point"] = start_point
-    #     if end_point is not None:
-    #         captures_kwargs["end_point"] = end_point
-    #
-    #     # We could optimise by only preparing highlights for a subset of lines here.
-    #     captures = self._query.captures(self._syntax_tree.root_node, **captures_kwargs)
-    #
-    #     highlight_updates: dict[int, list[Highlight]] = defaultdict(list)
-    #     for capture in captures:
-    #         node, highlight_name = capture
-    #         node_start_row, node_start_column = node.start_point
-    #         node_end_row, node_end_column = node.end_point
-    #
-    #         if node_start_row == node_end_row:
-    #             highlight = (node_start_column, node_end_column, highlight_name)
-    #             highlight_updates[node_start_row].append(highlight)
-    #         else:
-    #             # Add the first line of the node range
-    #             highlight_updates[node_start_row].append(
-    #                 (node_start_column, None, highlight_name)
-    #             )
-    #
-    #             # Add the middle lines - entire row of this node is highlighted
-    #             for node_row in range(node_start_row + 1, node_end_row):
-    #                 highlight_updates[node_row].append((0, None, highlight_name))
-    #
-    #             # Add the last line of the node range
-    #             highlight_updates[node_end_row].append(
-    #                 (0, node_end_column, highlight_name)
-    #             )
-    #
-    #     for line_index, updated_highlights in highlight_updates.items():
-    #         highlights[line_index] = updated_highlights
 
     def _read_callable(self, byte_offset: int, point: tuple[int, int]) -> bytes:
         """A callable which informs tree-sitter about the document content.

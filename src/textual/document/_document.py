@@ -303,15 +303,14 @@ class Document(DocumentBase):
         """Returns the number of lines in the document."""
         return len(self._lines)
 
-    def get_line(self, index: int) -> Text:
+    def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
 
         Args:
             index: The index of the line in the document.
 
         Returns:
-            The Text instance representing the line. When overriding
-            this method, ensure the returned Text instance has `end=""`.
+            The string representing the line.
         """
         line_string = self[index]
         return line_string
