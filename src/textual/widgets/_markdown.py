@@ -564,6 +564,7 @@ class Markdown(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
         self._parser_factory = parser_factory
+        self._table_of_contents: TableOfContentsType | None = None
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -687,7 +688,7 @@ class Markdown(Widget):
         )
 
         block_id: int = 0
-        table_of_contents: TableOfContentsType = []
+        self._table_of_contents = []
 
         for token in parser.parse(markdown):
             if token.type == "heading_open":
@@ -736,7 +737,7 @@ class Markdown(Widget):
                 if token.type == "heading_close":
                     heading = block._text.plain
                     level = int(token.tag[1:])
-                    table_of_contents.append((level, heading, block.id))
+                    self._table_of_contents.append((level, heading, block.id))
                 if stack:
                     stack[-1]._blocks.append(block)
                 else:
@@ -816,7 +817,9 @@ class Markdown(Widget):
                 if external is not None:
                     (stack[-1]._blocks if stack else output).append(external)
 
-        self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
+        self.post_message(
+            Markdown.TableOfContentsUpdated(self, self._table_of_contents)
+        )
         with self.app.batch_update():
             self.query("MarkdownBlock").remove()
             return self.mount_all(output)
