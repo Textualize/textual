@@ -80,7 +80,7 @@ class TrackedSlugs:
     instance of this class to generate them.
 
     Example:
-        ```Python
+        ```python
         >>> slug("hello world")
         'hello-world'
         >>> slug("hello world")
