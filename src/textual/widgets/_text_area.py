@@ -319,6 +319,10 @@ TextArea {
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
 
+    def _watch_theme(self) -> None:
+        """When the theme changes, update the highlight map"""
+        self._build_highlight_map()
+
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
         self.scroll_cursor_visible()
