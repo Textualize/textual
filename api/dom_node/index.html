@@ -4265,6 +4265,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4898,6 +4900,32 @@
     
   
     RichLog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/rule/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Rule
   
 
     
@@ -8137,8 +8165,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.classes" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8742,9 +8770,13 @@ the child will also be bold.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Is the visibility style set to a visible state?</p>
-<p>May be set to a boolean to make the node visible (<code>True</code>) or invisible (<code>False</code>), or to any valid value for the <code>visibility</code> rule.</p>
-<p>When a node is invisible, Textual will reserve space for it, but won't display anything there.</p>
+      <p>Is this widget visible in the DOM?</p>
+<p>If a widget hasn't had its visibility set explicitly, then it inherits it from its
+DOM ancestors.</p>
+<p>This may be set explicitly to override inherited values.
+The valid values include the valid values for the <code>visibility</code> rule and the booleans
+<code>True</code> or <code>False</code>, to set the widget to be visible or invisible, respectively.</p>
+<p>When a node is invisible, Textual will reserve space for it, but won't display anything.</p>
   </div>
 
 </div>

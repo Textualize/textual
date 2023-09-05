@@ -4269,6 +4269,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -6279,6 +6281,32 @@
     
   
     RichLog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rule/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Rule
   
 
     
@@ -10962,11 +10990,12 @@ The example below shows how to attach simple numbered labels to rows.</p>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">show_cursor</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">cursor_foreground_priority</span><span class="o">=</span><span class="s2">&quot;css&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">cursor_background_priority</span><span class="o">=</span><span class="s2">&quot;renderable&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="p">):</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">cursor_type</span><span class="o">=</span><span class="s2">&quot;cell&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -11213,8 +11242,8 @@ in the event where a cell contains a renderable with a background color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.cursor_coordinate" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11288,19 +11317,17 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.cursor_type" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_type</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">CursorType</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">CursorType</span><span class="p">](</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;cell&quot;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_type</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="n">CursorType</span><span class="p">]</span> <span class="o">=</span> <span class="n">cursor_type</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>The type of the cursor of the <code>DataTable</code>.</p>
+      <p>The type of cursor of the <code>DataTable</code>.</p>
   </div>
 
 </div>
@@ -11314,8 +11341,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.fixed_columns" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11338,8 +11365,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.fixed_rows" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11362,8 +11389,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.header_height" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11409,8 +11436,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.hover_coordinate" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11550,8 +11577,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.show_cursor" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11574,8 +11601,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.show_header" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11598,8 +11625,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.show_row_labels" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11622,8 +11649,8 @@ in the event where a cell contains a renderable with a foreground color.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._data_table.DataTable.zebra_stripes" class="headerlink" title="Permanent link">&para;</a></h3>

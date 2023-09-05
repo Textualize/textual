@@ -4265,6 +4265,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -4917,6 +4919,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/rule/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Rule
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/select/" class="md-nav__link">
         
   
@@ -5477,6 +5505,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.current_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.dark" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5536,6 +5575,17 @@
     <span class="md-ellipsis">
       
         namespace_bindings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.return_code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        return_code
       
     </span>
   </a>
@@ -7936,6 +7986,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.current_mode" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        current_mode
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.dark" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7995,6 +8056,17 @@
     <span class="md-ellipsis">
       
         namespace_bindings
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.return_code" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        return_code
       
     </span>
   </a>
@@ -9284,8 +9356,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9309,8 +9381,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9373,13 +9445,36 @@ be the currently active screen.</p>
 
 
 
+<h3 id="textual.app.App.current_mode" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">current_mode</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.current_mode" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">current_mode</span><span class="p">:</span> <span class="nb">str</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The name of the currently active mode.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.app.App.dark" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">dark</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9576,6 +9671,39 @@ If a widget is focused, then any bindings present in the active screen and app a
     </tbody>
   </table>
   </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.return_code" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">return_code</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.return_code" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">return_code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The return code with which the app exited.</p>
+<p>Non-zero codes indicate errors.
+A value of 1 means the app exited with a fatal error.
+If the app wasn't exited yet, this will be <code>None</code>.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <p>The return code can be used to exit the process via <code>sys.exit</code>.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">my_app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">my_app</span><span class="o">.</span><span class="n">return_code</span><span class="p">)</span>
+</code></pre></div></p>
+</details>  </div>
 
 </div>
 
@@ -9799,8 +9927,8 @@ If a widget is focused, then any bindings present in the active screen and app a
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9831,8 +9959,8 @@ The new value is always converted to string.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11235,7 +11363,7 @@ if you wish to <em>simulate</em> a key being pressed.</p>
   </span>
 
 <a href="#textual.app.App.exit" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">exit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_code</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -11261,6 +11389,16 @@ if you wish to <em>simulate</em> a key being pressed.</p>
           <td><p>Return value.</p></td>
           <td>
                 <code>None</code>
+          </td>
+        </tr>
+        <tr>
+          <td><code>return_code</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td><p>The return code. Use non-zero values for error codes.</p></td>
+          <td>
+                <code>0</code>
           </td>
         </tr>
         <tr>
