@@ -1,7 +1,17 @@
 """Provides a utility function and class for creating Markdown-friendly slugs.
 
 The approach to creating slugs is designed to be as close to
-GitHub-flavoured Markdown as possible.
+GitHub-flavoured Markdown as possible. However, because there doesn't appear
+to be any actual documentation for this 'standard', the code here involves
+some guesswork and also some pragmatic shortcuts.
+
+Expect this to grow over time.
+
+The main rules used in here at the moment are:
+
+1. Strip all leading and trailing whitespace.
+2. Remove all non-lingual characters (emoji, etc).
+3. Remove all punctuation and whitespace apart from dash and underscore.
 """
 
 from __future__ import annotations
@@ -19,11 +29,24 @@ REPLACEMENT: Final[str] = "-"
 REMOVABLE: Final[str] = punctuation.replace(REPLACEMENT, "").replace("_", "")
 """The collection of characters that should be removed altogether."""
 
-STRIP_RE: Final[Pattern] = compile(f"[{REMOVABLE}]+")
+NONLINGUAL: Final[str] = (
+    r"\U000024C2-\U0001F251"
+    r"\U00002702-\U000027B0"
+    r"\U0001F1E0-\U0001F1FF"
+    r"\U0001F300-\U0001F5FF"
+    r"\U0001F600-\U0001F64F"
+    r"\U0001F680-\U0001F6FF"
+    r"\U0001f926-\U0001f937"
+    r"\u200D"
+    r"\u2640-\u2642"
+)
+"""A string that can be used in a regular expression to remove most non-lingual characters."""
+
+STRIP_RE: Final[Pattern] = compile(f"[{REMOVABLE}{NONLINGUAL}]+")
 """A regular expression for finding all the characters that should be removed."""
 
-SIMPLIFY_RE: Final[Pattern] = compile(rf"[{REPLACEMENT}\s]+")
-"""A regular expression for finding all the characters that can be turned into a `REPLACEMENT`."""
+WHITESPACE_RE: Final[Pattern] = compile(r"\s")
+"""A regular expression for finding all the whitespace and turning it into `REPLACEMENT`."""
 
 
 def slug(text: str) -> str:
@@ -40,10 +63,8 @@ def slug(text: str) -> str:
     """
     result = text.strip().lower()
     for rule, replacement in (
-        # The order of these is important. If you make changes here,
-        # keep this in mind.
         (STRIP_RE, ""),
-        (SIMPLIFY_RE, REPLACEMENT),
+        (WHITESPACE_RE, REPLACEMENT),
     ):
         result = rule.sub(replacement, result)
     return result
@@ -73,6 +94,7 @@ class TrackedSlugs:
     """
 
     def __init__(self) -> None:
+        """Initialise the tracked slug object."""
         self._used: defaultdict[str, int] = defaultdict(int)
         """Keeps track of how many times a particular slug has been used."""
 

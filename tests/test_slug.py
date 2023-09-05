@@ -14,11 +14,16 @@ from textual._slug import TrackedSlugs, slug
         ("test!!test", "testtest"),
         ("test! !test", "test-test"),
         ("test test", "test-test"),
-        ("test  test", "test-test"),
-        ("test      test", "test-test"),
+        ("test  test", "test--test"),
+        ("test          test", "test----------test"),
+        ("--test", "--test"),
+        ("test--", "test--"),
+        ("--test--test--", "--test--test--"),
         ("test!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~test", "test-_test"),
         ("tëst", "tëst"),
-        ("test🤷🏻‍♀️test", "test test"),
+        ("test🙂test", "testtest"),
+        ("test🤷test", "testtest"),
+        ("test🤷🏻‍♀️test", "testtest"),
     ],
 )
 def test_simple_slug(text: str, expected: str) -> None:
@@ -26,11 +31,32 @@ def test_simple_slug(text: str, expected: str) -> None:
     assert slug(text) == expected
 
 
-def test_tracked_slugs() -> None:
+@pytest.fixture(scope="module")
+def tracker() -> TrackedSlugs:
+    return TrackedSlugs()
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("test", "test"),
+        ("test", "test-1"),
+        ("test", "test-2"),
+        ("-test-", "-test-"),
+        ("-test-", "-test--1"),
+        ("test!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~test", "test-_test"),
+        ("test!\"#$%&'()*+,-./:;<=>?@[]^_`{|}~test", "test-_test-1"),
+        ("tëst", "tëst"),
+        ("tëst", "tëst-1"),
+        ("tëst", "tëst-2"),
+        ("test🙂test", "testtest"),
+        ("test🤷test", "testtest-1"),
+        ("test🤷🏻‍♀️test", "testtest-2"),
+        ("test", "test-3"),
+        ("test", "test-4"),
+        (" test ", "test-5"),
+    ],
+)
+def test_tracked_slugs(tracker: TrackedSlugs, text: str, expected: str) -> None:
     """The tracked slugging class should produce the expected slugs."""
-    unique = TrackedSlugs()
-    assert unique.slug("test") == "test"
-    assert unique.slug("test") == "test-1"
-    assert unique.slug("tester") == "tester"
-    assert unique.slug("test") == "test-2"
-    assert unique.slug("tester") == "tester-1"
+    assert tracker.slug(text) == expected
