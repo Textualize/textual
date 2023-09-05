@@ -2,14 +2,10 @@ from __future__ import annotations
 
 from typing import Any
 
-from typing_extensions import TYPE_CHECKING
-
 try:
+    from tree_sitter import Language, Parser, Tree
+    from tree_sitter.binding import Query
     from tree_sitter_languages import get_language, get_parser
-
-    if TYPE_CHECKING:
-        from tree_sitter import Language, Parser, Tree
-        from tree_sitter.binding import Query
 
     TREE_SITTER = True
 except ImportError:

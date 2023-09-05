@@ -156,7 +156,7 @@ TextArea {
     | f7                     | Select all text in the document.             |
     """
 
-    language: Reactive[str | None] = reactive(None, always_update=True)
+    language: Reactive[str | None] = reactive(None, always_update=True, init=False)
     """The language to use.
 
     This must be set to a valid, non-None value for syntax highlighting to work.
@@ -232,9 +232,7 @@ TextArea {
             disabled: True if the widget is disabled.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-
-        self.document = self._document_factory(text, language)
-        """The document this widget is currently editing."""
+        self._initial_text = text
 
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to their TextAreaLanguage metadata."""
@@ -273,6 +271,11 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
+        self.document: DocumentBase | None = None
+        """The document this widget is currently editing."""
+
+        self.language = language
+
     def _get_builtin_highlight_query(self, language_name: str) -> str:
         try:
             highlight_query_path = (
@@ -287,9 +290,11 @@ TextArea {
     def _build_highlight_map(self) -> None:
         """Query the tree for ranges to highlights, and update the internal highlights mapping."""
 
+        print("building highlight map")
         highlights = self._highlights
         highlights.clear()
         if not self._highlight_query:
+            print("no highlight query")
             return
 
         captures = self.document.query_syntax_tree(self._highlight_query)
@@ -374,8 +379,11 @@ TextArea {
 
     def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
-        self.document = self._document_factory(self.text, language)
-        self._build_highlight_map()
+        self._set_document(
+            self.document.text if self.document is not None else self._initial_text,
+            language,
+        )
+        self._initial_text = ""
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -432,24 +440,9 @@ TextArea {
             highlight_query=highlight_query,
         )
 
-    #     def _set_document(self, text: str, language: str | None) -> DocumentBase:
-    #         if language in self._languages:
-    #             # Load the custom language if it exists
-    #             language_spec = self._languages[language]
-    #             document_language = language_spec.language
-    #             highlight_query = language_spec.highlight_query
-    #         else:
-    #             document_language = language
-    #             highlight_query = self._get_builtin_highlight_query(language)
-    #
-    #         # Update the document and prepare the new query.
-    #         self.document = SyntaxAwareDocument(text, document_language)
-    #         if highlight_query:
-    #             self._highlight_query = self.document.prepare_query(highlight_query)
-    #         return self.document
-
-    def _document_factory(self, text: str, language: str | None) -> DocumentBase:
+    def _set_document(self, text: str, language: str | None) -> None:
         """Construct and return an appropriate document."""
+        self._highlight_query = None
         if TREE_SITTER and language:
             # Attempt to get the override language.
             text_area_language = self._languages.get(language, None)
@@ -459,7 +452,6 @@ TextArea {
             else:
                 document_language = language
                 highlight_query = self._get_builtin_highlight_query(language)
-
             try:
                 document = SyntaxAwareDocument(text, document_language)
             except RuntimeError:
@@ -472,7 +464,8 @@ TextArea {
         else:
             document = Document(text)
 
-        return document
+        self.document = document
+        self._build_highlight_map()
 
     @property
     def _visible_line_indices(self) -> tuple[int, int]:
@@ -489,7 +482,7 @@ TextArea {
         Args:
             text: The text to load into the TextArea.
         """
-        self.document = self._document_factory(text, self.language)
+        self._set_document(text, self.language)
         self.move_cursor((0, 0))
         self._refresh_size()
 
@@ -648,7 +641,6 @@ TextArea {
         virtual_width, virtual_height = self.virtual_size
 
         # Highlight the cursor
-        # active_line_style = self.get_component_rich_style("text-area--cursor-line")
         if cursor_row == line_index:
             draw_cursor = not self.cursor_blink or (
                 self.cursor_blink and self._cursor_blink_visible
@@ -662,7 +654,6 @@ TextArea {
                 )
 
             if draw_cursor:
-                # cursor_style = self.get_component_rich_style("text-area--cursor")
                 cursor_style = theme.cursor_style
                 line.stylize(cursor_style, cursor_column, cursor_column + 1)
 
@@ -670,9 +661,6 @@ TextArea {
         if draw_matched_brackets:
             bracket_match_row, bracket_match_column = matching_bracket
             if bracket_match_row == line_index:
-                # matching_bracket_style = self.get_component_rich_style(
-                #     "text-area--matching-bracket"
-                # )
                 matching_bracket_style = theme.bracket_matching_style
                 if matching_bracket_style:
                     line.stylize(
@@ -686,11 +674,7 @@ TextArea {
         if self.show_line_numbers:
             if cursor_row == line_index:
                 gutter_style = theme.cursor_line_gutter_style
-                # gutter_style = self.get_component_rich_style(
-                #     "text-area--cursor-line-gutter"
-                # )
             else:
-                # gutter_style = self.get_component_rich_style("text-area--gutter")
                 gutter_style = theme.gutter_style
 
             gutter_width_no_margin = gutter_width - 2
@@ -703,10 +687,11 @@ TextArea {
             gutter = Text("", end="")
 
         # Render the gutter and the text of this line
-        gutter_segments = self.app.console.render(gutter)
-        text_segments = self.app.console.render(
+        console = self.app.console
+        gutter_segments = console.render(gutter)
+        text_segments = console.render(
             line,
-            self.app.console.options.update_width(virtual_width),
+            console.options.update_width(virtual_width),
         )
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
