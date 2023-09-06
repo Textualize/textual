@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided [PR here]
+
+### Fixed
+
+- Fixed a crash in `MarkdownViewer` when clicking on a link that contains an anchor https://github.com/Textualize/textual/issues/3094
+
 ## [0.36.0] - 2023-09-05
 
 ### Added
