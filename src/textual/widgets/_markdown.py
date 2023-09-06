@@ -644,11 +644,19 @@ class Markdown(Widget):
         location, _, anchor = location.partition("#")
         return Path(location), anchor
 
-    def _goto_anchor(self, anchor: str) -> None:
+    def goto_anchor(self, anchor: str) -> None:
         """Try and find the given anchor in the current document.
 
         Args:
             anchor: The anchor to try and find.
+
+        Note:
+            The anchor is found by looking at all of the headings in the
+            document and finding the first one whose slug matches the
+            anchor.
+
+            Note that the slugging method used is similar to that found on
+            GitHub.
         """
         if not self._table_of_contents or not isinstance(self.parent, Widget):
             return
@@ -674,7 +682,7 @@ class Markdown(Widget):
         path, anchor = self._sanitise_location(str(path))
         await self.update(path.read_text(encoding="utf-8"))
         if anchor:
-            self._goto_anchor(anchor)
+            self.goto_anchor(anchor)
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
         """Process an unhandled token.
