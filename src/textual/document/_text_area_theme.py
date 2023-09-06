@@ -244,9 +244,51 @@ _DRACULA = TextAreaTheme(
     },
 )
 
+_DARK_VS = TextAreaTheme(
+    name="dark_vs",
+    base_style=Style(color="#CCCCCC", bgcolor="#1F1F1F"),
+    gutter_style=Style(color="#6E7681", bgcolor="#1F1F1F"),
+    cursor_style=Style(color="#1e1e1e", bgcolor="#f0f0f0"),
+    cursor_line_style=Style(bgcolor="#232323"),
+    cursor_line_gutter_style=Style(color="#CCCCCC", bgcolor="#232323"),
+    selection_style=Style(bgcolor="#264F78"),
+    token_styles={
+        "string": Style(color="#ce9178"),
+        "string.documentation": Style(color="#ce9178"),
+        "comment": Style(color="#6A9955"),
+        "keyword": Style(color="#569cd6"),
+        "operator": Style(color="#569cd6"),
+        "conditional": Style(color="#569cd6"),
+        "keyword.function": Style(color="#569cd6"),
+        "keyword.return": Style(color="#569cd6"),
+        "keyword.operator": Style(color="#d4d4d4"),
+        "repeat": Style(color="#569cd6"),
+        "exception": Style(color="#569cd6"),
+        "include": Style(color="#569cd6"),
+        "number": Style(color="#b5cea8"),
+        "float": Style(color="#b5cea8"),
+        "class": Style(color="#4EC9B0"),
+        "type.class": Style(color="#4EC9B0"),
+        "function": Style(color="#4EC9B0"),
+        "method": Style(color="#4EC9B0"),
+        "boolean": Style(color="#7DAF9C"),
+        "tag": Style(color="#EFCB43"),
+        "yaml.field": Style(color="#EFCB43", bold=True),
+        "json.label": Style(color="#EFCB43", bold=True),
+        "toml.type": Style(color="#EFCB43"),
+        "heading": Style(color="#569cd6", bold=True),
+        "bold": Style(bold=True),
+        "italic": Style(italic=True),
+        "strikethrough": Style(strike=True),
+        "link": Style(color="#40A6FF", underline=True),
+        "inline_code": Style(color="#ce9178"),
+    },
+)
+
 _BUILTIN_THEMES = {
     "monokai": _MONOKAI,
     "dracula": _DRACULA,
+    "dark_vs": _DARK_VS,
 }
 
 DEFAULT_SYNTAX_THEME = TextAreaTheme.get_by_name("monokai")
