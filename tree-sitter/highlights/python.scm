@@ -292,7 +292,7 @@
 
 ;; Class definitions
 
-(class_definition name: (identifier) @type)
+(class_definition name: (identifier) @type.class)
 
 (class_definition
   body: (block

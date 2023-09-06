@@ -578,6 +578,12 @@ TextArea {
         line_string = document.get_line(line_index)
         line = Text(line_string, end="")
 
+        line_character_count = len(line)
+        line.tab_size = self.indent_width
+        virtual_width, virtual_height = self.virtual_size
+        expanded_length = max(virtual_width, self.size.width)
+        line.set_length(expanded_length)
+
         highlights = self._highlights
         if highlights:
             line_bytes = _utf8_encode(line_string)
@@ -592,13 +598,6 @@ TextArea {
                         byte_to_codepoint.get(start, 0),
                         byte_to_codepoint.get(end) if end else None,
                     )
-
-        virtual_width, virtual_height = self.virtual_size
-
-        line_character_count = len(line)
-        line.tab_size = self.indent_width
-        expanded_length = max(virtual_width, self.size.width)
-        line.set_length(expanded_length)
 
         selection = self.selection
         start, end = selection
@@ -707,8 +706,14 @@ TextArea {
 
         # Stylize the line the cursor is currently on.
         # TODO - is this required or have we already expanded it?
-        # if cursor_row == line_index:
-        #     text_strip = text_strip.extend_cell_length(expanded_length)
+        if cursor_row == line_index:
+            text_strip = text_strip.extend_cell_length(
+                expanded_length, theme.cursor_line_style
+            )
+        else:
+            text_strip = text_strip.extend_cell_length(
+                expanded_length, theme.base_style
+            )
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
