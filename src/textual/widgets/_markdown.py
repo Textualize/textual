@@ -12,6 +12,7 @@ from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
+from .._slug import TrackedSlugs
 from ..app import ComposeResult
 from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
@@ -643,6 +644,20 @@ class Markdown(Widget):
         location, _, anchor = location.partition("#")
         return Path(location), anchor
 
+    def _goto_anchor(self, anchor: str) -> None:
+        """Try and find the given anchor in the current document.
+
+        Args:
+            anchor: The anchor to try and find.
+        """
+        if not self._table_of_contents or not isinstance(self.parent, Widget):
+            return
+        unique = TrackedSlugs()
+        for _, title, header_id in self._table_of_contents:
+            if unique.slug(title) == anchor:
+                self.parent.scroll_to_widget(self.query_one(f"#{header_id}"), top=True)
+                return
+
     async def load(self, path: Path) -> None:
         """Load a new Markdown document.
 
@@ -656,8 +671,10 @@ class Markdown(Widget):
             The exceptions that can be raised by this method are all of
             those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
         """
-        path, _ = self._sanitise_location(str(path))
+        path, anchor = self._sanitise_location(str(path))
         await self.update(path.read_text(encoding="utf-8"))
+        if anchor:
+            self._goto_anchor(anchor)
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
         """Process an unhandled token.
