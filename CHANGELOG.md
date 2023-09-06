@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 This project uses [*towncrier*](https://towncrier.readthedocs.io/) and
 the changes for the upcoming release can be found in
-<https://github.com/twisted/my-project/tree/main/changelog.d/>.
+<https://github.com/Textualize/textual/tree/main/changelog.d/>.
 
 <!-- DO NOT MODIFY DIRECTLY. Read `Updating the changelog` in CONTRIBUTING.md for how to note your changes. -->
 
