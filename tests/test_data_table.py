@@ -1183,3 +1183,22 @@ async def test_add_row_auto_height(cell: RenderableType, height: int):
         row = table.rows.get(row_key)
         await pilot.pause()
         assert row.height == height
+
+
+async def test_add_row_expands_column_widths():
+    """Regression test for https://github.com/Textualize/textual/issues/1026."""
+    app = DataTableApp()
+    from textual.widgets._data_table import CELL_X_PADDING
+
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("First")
+        table.add_column("Second", width=10)
+        await pilot.pause()
+        assert table.ordered_columns[0].render_width == 5 + CELL_X_PADDING
+        assert table.ordered_columns[1].render_width == 10 + CELL_X_PADDING
+
+        table.add_row("a" * 20, "a" * 20)
+        await pilot.pause()
+        assert table.ordered_columns[0].render_width == 20 + CELL_X_PADDING
+        assert table.ordered_columns[1].render_width == 10 + CELL_X_PADDING

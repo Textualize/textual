@@ -1228,8 +1228,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             if row.auto_height:
                 auto_height_rows.append((row_index, row, cells_in_row))
 
-        self._clear_caches()
-
         # If there are rows that need to have their height computed, render them correctly
         # so that we can cache this rendering for later.
         if auto_height_rows:
