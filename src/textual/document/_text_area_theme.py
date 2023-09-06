@@ -11,7 +11,10 @@ from textual.design import DEFAULT_DARK_SURFACE
 
 @dataclass
 class TextAreaTheme:
-    """Maps tree-sitter names to Rich styles for syntax-highlighting in `TextArea`.
+    """A theme for the `TextArea` widget.
+
+    Allows theming the general widget (gutter, selections, cursor, and so on) and
+    mapping of tree-sitter tokens to Rich styles.
 
     For example, consider the following snippet from the `markdown.scm` highlight
     query file. We've assigned the `heading_content` token type to the name `heading`.
@@ -25,7 +28,7 @@ class TextAreaTheme:
     node is used (as will be the case when language="markdown"):
 
     ```
-    SyntaxTheme('my_theme', {'heading': Style(color='cyan', bold=True)})
+    TextAreaThe('my_theme', {'heading': Style(color='cyan', bold=True)})
     ```
     """
 
@@ -237,52 +240,6 @@ _DRACULA = TextAreaTheme(
         "inline_code": Style(color="#ff79c6"),
     },
 )
-
-# _DRACULA = {
-#     "string": Style(color="#f1fa8c"),
-#     "string.documentation": Style(color="#f1fa8c"),
-#     "comment": Style(color="#6272a4"),
-#     "keyword": Style(color="#ff79c6"),
-#     "operator": Style(color="#ff79c6"),
-#     "repeat": Style(color="#ff79c6"),
-#     "exception": Style(color="#ff79c6"),
-#     "include": Style(color="#ff79c6"),
-#     "keyword.function": Style(color="#ff79c6"),
-#     "keyword.return": Style(color="#ff79c6"),
-#     "keyword.operator": Style(color="#ff79c6"),
-#     "conditional": Style(color="#ff79c6"),
-#     "number": Style(color="#bd93f9"),
-#     "float": Style(color="#bd93f9"),
-#     "class": Style(color="#50fa7b"),
-#     "function": Style(color="#50fa7b"),
-#     "function.call": Style(color="#50fa7b"),
-#     "method": Style(color="#50fa7b"),
-#     "method.call": Style(color="#50fa7b"),
-#     "boolean": Style(color="#bd93f9"),
-#     "json.null": Style(color="#bd93f9"),
-#     # "constant": Style(color="#bd93f9"),
-#     # "variable": Style(color="white"),
-#     # "parameter": Style(color="cyan"),
-#     # "type": Style(color="cyan"),
-#     # "escape": Style(bgcolor="magenta"),
-#     "regex.punctuation.bracket": Style(color="#ff79c6"),
-#     "regex.operator": Style(color="#ff79c6"),
-#     # "error": Style(color="black", bgcolor="red"),
-#     "json.error": _NULL_STYLE,
-#     "html.end_tag_error": Style(color="#F83333", underline=True),
-#     "tag": Style(color="#ff79c6"),
-#     "yaml.field": Style(color="#ff79c6", bold=True),
-#     "json.label": Style(color="#ff79c6", bold=True),
-#     "toml.type": Style(color="#ff79c6"),
-#     "toml.datetime": Style(color="#bd93f9"),
-#     "toml.error": _NULL_STYLE,
-#     "heading": Style(color="#ff79c6", bold=True),
-#     "bold": Style(bold=True),
-#     "italic": Style(italic=True),
-#     "strikethrough": Style(strike=True),
-#     "link": Style(color="#bd93f9", underline=True),
-#     "inline_code": Style(color="#ff79c6"),
-# }
 
 _BUILTIN_THEMES = {
     "monokai": _MONOKAI,
