@@ -42,7 +42,6 @@ _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
 _TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
 _HIGHLIGHTS_PATH = _TREE_SITTER_PATH / "highlights/"
 
-
 StartColumn = int
 EndColumn = Optional[int]
 HighlightName = str
@@ -167,7 +166,7 @@ TextArea {
     it first using `register_language`.
     """
 
-    theme: Reactive[str | TextAreaTheme] = reactive(
+    theme: Reactive[str | TextAreaTheme | None] = reactive(
         TextAreaTheme.default(), always_update=True, init=False
     )
     """The theme to syntax highlight with.
@@ -226,6 +225,9 @@ TextArea {
         """Construct a new `TextArea`.
 
         Args:
+            text: The initial text to load into the TextArea.
+            language: The language to use.
+            theme: The theme to use.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
@@ -265,7 +267,7 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self.document: DocumentBase | None = None
+        self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
 
         self.language = language
@@ -273,10 +275,19 @@ TextArea {
         if isinstance(theme, str):
             theme = TextAreaTheme.get_by_name(theme)
 
-        self.theme: TextAreaTheme = theme
+        self.theme: TextAreaTheme | None = theme
         """The theme of the `TextArea`."""
 
-    def _get_builtin_highlight_query(self, language_name: str) -> str:
+    @staticmethod
+    def _get_builtin_highlight_query(language_name: str) -> str:
+        """Get the highlight query for a builtin language.
+
+        Args:
+            language_name: The name of the builtin language.
+
+        Returns:
+            The highlight query.
+        """
         try:
             highlight_query_path = (
                 Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
@@ -289,12 +300,9 @@ TextArea {
 
     def _build_highlight_map(self) -> None:
         """Query the tree for ranges to highlights, and update the internal highlights mapping."""
-
-        print("building highlight map")
         highlights = self._highlights
         highlights.clear()
         if not self._highlight_query:
-            print("no highlight query")
             return
 
         captures = self.document.query_syntax_tree(self._highlight_query)

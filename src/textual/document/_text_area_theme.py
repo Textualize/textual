@@ -25,11 +25,14 @@ class TextAreaTheme:
 
     Now, we can map this `heading` name to a Rich style, and it will be styled as
     such in the `TextArea`, assuming a parser which returns a `heading_content`
-    node is used (as will be the case when language="markdown"):
+    node is used (as will be the case when language="markdown").
 
     ```
-    TextAreaThe('my_theme', {'heading': Style(color='cyan', bold=True)})
+    TextAreaTheme('my_theme', token_styles={'heading': Style(color='cyan', bold=True)})
     ```
+
+    We can supply this theme to our `TextArea`, and headings in our markdown files will
+    be styled bold cyan.
     """
 
     name: str | None = None
@@ -98,17 +101,17 @@ class TextAreaTheme:
 
     @classmethod
     def get_by_name(cls, theme_name: str) -> "TextAreaTheme":
-        """Get a `SyntaxTheme` by name.
+        """Get a `TextAreaTheme` by name.
 
-        Given a `theme_name` return the corresponding `SyntaxTheme` object.
+        Given a `theme_name` return the corresponding `TextAreaTheme` object.
 
-        Check the available `SyntaxTheme`s by calling `SyntaxTheme.available_themes()`.
+        Check the available `TextAreaTheme`s by calling `TextAreaTheme.available_themes()`.
 
         Args:
             theme_name: The name of the theme.
 
         Returns:
-            The `SyntaxTheme` corresponding to the name.
+            The `TextAreaTheme` corresponding to the name.
         """
         return _BUILTIN_THEMES.get(theme_name, TextAreaTheme())
 
@@ -126,10 +129,10 @@ class TextAreaTheme:
 
     @classmethod
     def available_themes(cls) -> list[TextAreaTheme]:
-        """Get a list of all available SyntaxThemes.
+        """Get a list of all available TextAreaThemes.
 
         Returns:
-            A list of all available SyntaxThemes.
+            A list of all available TextAreaThemes.
         """
         return list(_BUILTIN_THEMES.values())
 
@@ -138,7 +141,7 @@ class TextAreaTheme:
         """Get the default syntax theme.
 
         Returns:
-            The default SyntaxTheme (probably Monokai).
+            The default TextAreaTheme (probably "monokai").
         """
         return DEFAULT_SYNTAX_THEME
 
