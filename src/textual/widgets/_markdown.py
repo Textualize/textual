@@ -51,6 +51,10 @@ class Navigator:
         Returns:
             New location.
         """
+        location, anchor = Markdown.sanitize_location(str(path))
+        if location == Path(".") and anchor:
+            current_file, _ = Markdown.sanitize_location(str(self.location))
+            path = f"{current_file}#{anchor}"
         new_path = self.location.parent / Path(path)
         self.stack = self.stack[: self.index + 1]
         new_path = new_path.absolute()
