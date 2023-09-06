@@ -79,6 +79,10 @@ docs-deploy: clean-screenshot-cache docs-online-nav
 build: docs-build-offline
 	poetry build
 
+.PHONY: build-changelog
+build-changelog:
+	$(run) towncrier build --yes
+
 .PHONY: clean
 clean: clean-screenshot-cache clean-offline-docs
 

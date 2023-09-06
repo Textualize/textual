@@ -66,10 +66,10 @@ The process described here should check off these goals:
 
 - [x] Maintain the project's quality.
 - [x] Fix problems that are important to users.
-- [x] The CHANGELOG.md was updated;
-- [x] Your code was formatted with black (make format);
+- [x] A changelog snippet was added (see below);
+- [x] Your code was formatted with black (`make format`);
 - [x] All of your code has docstrings in the style of the rest of the codebase;
-- [x]  your code passes all tests (make test); and
+- [x] Your code passes all tests (`make test`); and
 - [x] You added documentation when needed.
 
 ### After the PR 🥳
@@ -97,10 +97,10 @@ If you go through our history of pull requests, you will see that every single o
 - Write tests for your code.
 
 - If you are fixing a bug, make sure to add regression tests that link to the original issue.
-  
+
 - If you are implementing a visual element, make sure to add snapshot tests. See below for more details.
 
-  
+
 ### Snapshot Testing
 Snapshot tests ensure that things like widgets look like they are supposed to.
 PR [#1969](https://github.com/Textualize/textual/pull/1969) is a good example of what adding snapshot tests means: it amounts to a change in the file ```tests/snapshot_tests/test_snapshots.py```, that should run an app that you write and compare it against a historic snapshot of what that app should look like.
@@ -113,6 +113,14 @@ This interface should show all failing snapshot tests and a side-by-side diff be
 Make sure your snapshot app looks like it is supposed to and that you didn't break any other snapshot tests.
 If that's the case, you can run ```make test-snapshot-update``` to update the snapshot history with your new snapshot.
 This will write to the file ```tests/snapshot_tests/__snapshots__/test_snapshots.ambr```, that you should NOT modify by hand
+
+
+### Updating the changelog
+To update the changelog, **do not modify `CHANGELOG.md` directly**. Instead, *add* a file to `changelog.d` with a *one-line* description of your changes. If there are multiple changes you can add multiple files, but at that point it should probably be split into multiple PRs.
+
+The filename should be in the format `{github_issue}.{change_type}.md` where `change_type` is one of `added`, `changed`, `fixed`, `security`, `removed`, or `deprecated`, e.g. `42.added.md`. If no issue exists (like for a simple bug-fix), then use the format *with the plus-sign prefix* `+{your_github_username}-{branch_name}.{change_type}.md`, e.g. `+willmcgugan-rendering-hotfix.fixed.md`.
+
+Using this method (supported by [towncrier](https://github.com/twisted/towncrier)) to generate the changelog prevents merge conflicts, which allows your PR to be merged faster!
 
 
 ### 📈Join the community
