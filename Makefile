@@ -81,6 +81,7 @@ build: docs-build-offline
 
 .PHONY: changelog
 changelog:
+	poetry install
 	$(run) towncrier build --yes
 
 .PHONY: clean
