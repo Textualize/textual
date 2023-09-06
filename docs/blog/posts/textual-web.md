@@ -1,6 +1,6 @@
 ---
 draft: false
-date: 2023-09-05
+date: 2023-09-06
 categories:
   - News
 title: "What is Textual Web?"
