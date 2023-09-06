@@ -12,7 +12,7 @@ the changes for the upcoming release can be found in
 
 <!-- towncrier release notes start -->
 
-## [0.36.0] - 2023-09-05
+## [0.36.0](https://github.com/Textualize/textual/tree/v0.36.0) - 2023-09-05
 
 ### Added
 
@@ -35,13 +35,15 @@ the changes for the upcoming release can be found in
 - Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
 - Fixed flicker when scrolling tree up or down a line https://github.com/Textualize/textual/issues/3206
 
-## [0.35.1]
+
+## [0.35.1](https://github.com/Textualize/textual/tree/v0.35.1)
 
 ### Fixed
 
 - Fixed flash of 80x24 interface in textual-web
 
-## [0.35.0]
+
+## [0.35.0](https://github.com/Textualize/textual/tree/v0.35.0)
 
 ### Added
 
@@ -52,7 +54,8 @@ the changes for the upcoming release can be found in
 
 - Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
 
-## [0.34.0] - 2023-08-22
+
+## [0.34.0](https://github.com/Textualize/textual/tree/v0.34.0) - 2023-08-22
 
 ### Added
 
@@ -75,7 +78,8 @@ the changes for the upcoming release can be found in
 - Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
 - Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
-## [0.33.0] - 2023-08-15
+
+## [0.33.0](https://github.com/Textualize/textual/tree/v0.33.0) - 2023-08-15
 
 
 ### Fixed
@@ -107,7 +111,7 @@ the changes for the upcoming release can be found in
 - DescendantBlur and DescendantFocus can now be used with @on decorator
 
 
-## [0.32.0] - 2023-08-03
+## [0.32.0](https://github.com/Textualize/textual/tree/v0.32.0) - 2023-08-03
 
 ### Added
 
@@ -118,7 +122,8 @@ the changes for the upcoming release can be found in
 
 - Breaking change: Renamed TextLog to RichLog
 
-## [0.31.0] - 2023-08-01
+
+## [0.31.0](https://github.com/Textualize/textual/tree/v0.31.0) - 2023-08-01
 
 ### Added
 
@@ -141,7 +146,8 @@ the changes for the upcoming release can be found in
 - Fixed issue with tabs in TextLog https://github.com/Textualize/textual/issues/3007
 - Fixed a bug with `DataTable` hover highlighting https://github.com/Textualize/textual/issues/2909
 
-## [0.30.0] - 2023-07-17
+
+## [0.30.0](https://github.com/Textualize/textual/tree/v0.30.0) - 2023-07-17
 
 ### Added
 
@@ -155,7 +161,7 @@ the changes for the upcoming release can be found in
 - Fixed Toggle Buttons issue with not being clickable/hoverable https://github.com/Textualize/textual/pull/2930
 
 
-## [0.29.0] - 2023-07-03
+## [0.29.0](https://github.com/Textualize/textual/tree/v0.29.0) - 2023-07-03
 
 ### Changed
 
@@ -179,7 +185,8 @@ the changes for the upcoming release can be found in
 - Fixed style problem with selected selections in a non-focused selection list https://github.com/Textualize/textual/issues/2768
 - Fixed sys.stdout and sys.stderr being None https://github.com/Textualize/textual/issues/2879
 
-## [0.28.1] - 2023-06-20
+
+## [0.28.1](https://github.com/Textualize/textual/tree/v0.28.1) - 2023-06-20
 
 ### Fixed
 
@@ -199,7 +206,7 @@ the changes for the upcoming release can be found in
 - Tooltips are now inherited, so will work with compound widgets
 
 
-## [0.28.0] - 2023-06-19
+## [0.28.0](https://github.com/Textualize/textual/tree/v0.28.0) - 2023-06-19
 
 ### Added
 
@@ -236,7 +243,8 @@ the changes for the upcoming release can be found in
 - `Tabs.remove_tab` is now optionally awaitable https://github.com/Textualize/textual/pull/2778
 - Breaking change: `Tabs.clear` has been changed from returning `self` to being optionally awaitable https://github.com/Textualize/textual/pull/2778
 
-## [0.27.0] - 2023-06-01
+
+## [0.27.0](https://github.com/Textualize/textual/tree/v0.27.0) - 2023-06-01
 
 ### Fixed
 
@@ -285,7 +293,8 @@ the changes for the upcoming release can be found in
 - `Placeholder.reset_color_cycle`
 - Removed `Widget.reset_focus` (now called `Widget.blur`) https://github.com/Textualize/textual/issues/2642
 
-## [0.26.0] - 2023-05-20
+
+## [0.26.0](https://github.com/Textualize/textual/tree/v0.26.0) - 2023-05-20
 
 ### Added
 
@@ -295,7 +304,8 @@ the changes for the upcoming release can be found in
 
 - Textual will now scroll focused widgets to center if not in view
 
-## [0.25.0] - 2023-05-17
+
+## [0.25.0](https://github.com/Textualize/textual/tree/v0.25.0) - 2023-05-17
 
 ### Changed
 
@@ -325,13 +335,15 @@ the changes for the upcoming release can be found in
 - Class variable `AUTO_FOCUS` to screens https://github.com/Textualize/textual/issues/2457
 - Added `NULL_SPACING` and `NULL_REGION` to geometry.py
 
-## [0.24.1] - 2023-05-08
+
+## [0.24.1](https://github.com/Textualize/textual/tree/v0.24.1) - 2023-05-08
 
 ### Fixed
 
 - Fix TypeError in code browser
 
-## [0.24.0] - 2023-05-08
+
+## [0.24.0](https://github.com/Textualize/textual/tree/v0.24.0) - 2023-05-08
 
 ### Fixed
 
@@ -385,7 +397,8 @@ the changes for the upcoming release can be found in
     - `NodeExpanded`
     - `NodeCollapsed`
 
-## [0.23.0] - 2023-05-03
+
+## [0.23.0](https://github.com/Textualize/textual/tree/v0.23.0) - 2023-05-03
 
 ### Fixed
 
@@ -415,14 +428,16 @@ the changes for the upcoming release can be found in
 - Added `DirectoryTree.reload` https://github.com/Textualize/textual/issues/2448
 - Added textual.on decorator https://github.com/Textualize/textual/issues/2398
 
-## [0.22.3] - 2023-04-29
+
+## [0.22.3](https://github.com/Textualize/textual/tree/v0.22.3) - 2023-04-29
 
 ### Fixed
 
 - Fixed `textual run` on Windows https://github.com/Textualize/textual/issues/2406
 - Fixed top border of button hover state
 
-## [0.22.2] - 2023-04-29
+
+## [0.22.2](https://github.com/Textualize/textual/tree/v0.22.2) - 2023-04-29
 
 ### Added
 
@@ -432,14 +447,16 @@ the changes for the upcoming release can be found in
 
 - Fixed superfluous style updates for focus-within pseudo-selector
 
-## [0.22.1] - 2023-04-28
+
+## [0.22.1](https://github.com/Textualize/textual/tree/v0.22.1) - 2023-04-28
 
 ### Fixed
 
 - Fixed timer issue https://github.com/Textualize/textual/issues/2416
 - Fixed `textual run` issue https://github.com/Textualize/textual/issues/2391
 
-## [0.22.0] - 2023-04-27
+
+## [0.22.0](https://github.com/Textualize/textual/tree/v0.22.0) - 2023-04-27
 
 ### Fixed
 
@@ -455,7 +472,7 @@ the changes for the upcoming release can be found in
 - All `textual.containers` are now `1fr` in relevant dimensions by default https://github.com/Textualize/textual/pull/2386
 
 
-## [0.21.0] - 2023-04-26
+## [0.21.0](https://github.com/Textualize/textual/tree/v0.21.0) - 2023-04-26
 
 ### Changed
 
@@ -484,13 +501,15 @@ the changes for the upcoming release can be found in
 - Fixed `TabbedContent.active` changes not changing the actual content https://github.com/Textualize/textual/issues/2352
 - Fixed broken color on macOS Terminal https://github.com/Textualize/textual/issues/2359
 
-## [0.20.1] - 2023-04-18
+
+## [0.20.1](https://github.com/Textualize/textual/tree/v0.20.1) - 2023-04-18
 
 ### Fix
 
 - New fix for stuck tabs underline https://github.com/Textualize/textual/issues/2229
 
-## [0.20.0] - 2023-04-18
+
+## [0.20.0](https://github.com/Textualize/textual/tree/v0.20.0) - 2023-04-18
 
 ### Changed
 
@@ -519,7 +538,8 @@ the changes for the upcoming release can be found in
 - Fix `get_component_styles` returning incorrect values on first call when combined with pseudoclasses https://github.com/Textualize/textual/pull/2304
 - Fixed `active_message_pump.get` sometimes resulting in a `LookupError` https://github.com/Textualize/textual/issues/2301
 
-## [0.19.1] - 2023-04-10
+
+## [0.19.1](https://github.com/Textualize/textual/tree/v0.19.1) - 2023-04-10
 
 ### Fixed
 
@@ -527,7 +547,7 @@ the changes for the upcoming release can be found in
 - Fixed layout not clearing arrangement cache https://github.com/Textualize/textual/pull/2249
 
 
-## [0.19.0] - 2023-04-07
+## [0.19.0](https://github.com/Textualize/textual/tree/v0.19.0) - 2023-04-07
 
 ### Added
 
@@ -546,7 +566,8 @@ the changes for the upcoming release can be found in
 - Fixed issue which prevent scroll_visible from working https://github.com/Textualize/textual/issues/2181
 - Fixed missing tracebacks on Windows https://github.com/Textualize/textual/issues/2027
 
-## [0.18.0] - 2023-04-04
+
+## [0.18.0](https://github.com/Textualize/textual/tree/v0.18.0) - 2023-04-04
 
 ### Added
 
@@ -560,13 +581,15 @@ the changes for the upcoming release can be found in
 
 - `RadioSet` is now far less likely to report `pressed_button` as `None` https://github.com/Textualize/textual/issues/2203
 
-## [0.17.3] - 2023-04-02
+
+## [0.17.3](https://github.com/Textualize/textual/tree/v0.17.3) - 2023-04-02
 
 ### [Fixed]
 
 - Fixed scrollable area not taking in to account dock https://github.com/Textualize/textual/issues/2188
 
-## [0.17.2] - 2023-04-02
+
+## [0.17.2](https://github.com/Textualize/textual/tree/v0.17.2) - 2023-04-02
 
 ### [Fixed]
 
@@ -579,14 +602,16 @@ the changes for the upcoming release can be found in
 
 - tab and shift+tab are now defined on Screen.
 
-## [0.17.1] - 2023-03-30
+
+## [0.17.1](https://github.com/Textualize/textual/tree/v0.17.1) - 2023-03-30
 
 ### Fixed
 
 - Fix cursor not hiding on Windows https://github.com/Textualize/textual/issues/2170
 - Fixed freeze when ctrl-clicking links https://github.com/Textualize/textual/issues/2167 https://github.com/Textualize/textual/issues/2073
 
-## [0.17.0] - 2023-03-29
+
+## [0.17.0](https://github.com/Textualize/textual/tree/v0.17.0) - 2023-03-29
 
 ### Fixed
 
@@ -627,7 +652,8 @@ the changes for the upcoming release can be found in
 - Added Query.set_classes, DOMNode.set_classes, and `classes` setter for Widget https://github.com/Textualize/textual/issues/1081
 - Added `OptionList` https://github.com/Textualize/textual/pull/2154
 
-## [0.16.0] - 2023-03-22
+
+## [0.16.0](https://github.com/Textualize/textual/tree/v0.16.0) - 2023-03-22
 
 ### Added
 - Added `parser_factory` argument to `Markdown` and `MarkdownViewer` constructors https://github.com/Textualize/textual/pull/2075
@@ -659,21 +685,24 @@ the changes for the upcoming release can be found in
 - Fixed borders not rendering correctly. https://github.com/Textualize/textual/pull/2074
 - Fix for error when removing nodes. https://github.com/Textualize/textual/issues/2079
 
-## [0.15.1] - 2023-03-14
+
+## [0.15.1](https://github.com/Textualize/textual/tree/v0.15.1) - 2023-03-14
 
 ### Fixed
 
 - Fixed how the namespace for messages is calculated to facilitate inheriting messages https://github.com/Textualize/textual/issues/1814
 - `Tab` is now correctly made available from `textual.widgets`. https://github.com/Textualize/textual/issues/2044
 
-## [0.15.0] - 2023-03-13
+
+## [0.15.0](https://github.com/Textualize/textual/tree/v0.15.0) - 2023-03-13
 
 ### Fixed
 
 - Fixed container not resizing when a widget is removed https://github.com/Textualize/textual/issues/2007
 - Fixes issue where the horizontal scrollbar would be incorrectly enabled https://github.com/Textualize/textual/pull/2024
 
-## [0.15.0] - 2023-03-13
+
+## [0.15.0](https://github.com/Textualize/textual/tree/v0.15.0) - 2023-03-13
 
 ### Changed
 
@@ -693,7 +722,8 @@ the changes for the upcoming release can be found in
 - Breaking change: Renamed Widget.action and App.action to Widget.run_action and App.run_action
 - Added `shift`, `meta` and `control` arguments to `Pilot.click`.
 
-## [0.14.0] - 2023-03-09
+
+## [0.14.0](https://github.com/Textualize/textual/tree/v0.14.0) - 2023-03-09
 
 ### Changed
 
@@ -726,7 +756,8 @@ the changes for the upcoming release can be found in
 - Fixed scrollbar getting "stuck" to cursor when cursor leaves window during drag https://github.com/Textualize/textual/pull/1968 https://github.com/Textualize/textual/pull/2003
 - DataTable crash when enter pressed when table is empty https://github.com/Textualize/textual/pull/1973
 
-## [0.13.0] - 2023-03-02
+
+## [0.13.0](https://github.com/Textualize/textual/tree/v0.13.0) - 2023-03-02
 
 ### Added
 
@@ -746,13 +777,15 @@ the changes for the upcoming release can be found in
 - Fixed scrollbar size miscalculation https://github.com/Textualize/textual/pull/1910
 - Fixed slow exit on some terminals https://github.com/Textualize/textual/issues/1920
 
-## [0.12.1] - 2023-02-25
+
+## [0.12.1](https://github.com/Textualize/textual/tree/v0.12.1) - 2023-02-25
 
 ### Fixed
 
 - Fix for batch update glitch https://github.com/Textualize/textual/pull/1880
 
-## [0.12.0] - 2023-02-24
+
+## [0.12.0](https://github.com/Textualize/textual/tree/v0.12.0) - 2023-02-24
 
 ### Added
 
@@ -784,7 +817,8 @@ the changes for the upcoming release can be found in
 - Fixes walk_children which was returning more than one screen https://github.com/Textualize/textual/issues/1846
 - Fixed issue with watchers fired for detached nodes https://github.com/Textualize/textual/issues/1846
 
-## [0.11.1] - 2023-02-17
+
+## [0.11.1](https://github.com/Textualize/textual/tree/v0.11.1) - 2023-02-17
 
 ### Fixed
 
@@ -792,7 +826,8 @@ the changes for the upcoming release can be found in
 - DataTable scrollbars resize correctly when header is toggled https://github.com/Textualize/textual/pull/1803
 - DataTable location mapping cleared when clear called https://github.com/Textualize/textual/pull/1809
 
-## [0.11.0] - 2023-02-15
+
+## [0.11.0](https://github.com/Textualize/textual/tree/v0.11.0) - 2023-02-15
 
 ### Added
 
@@ -876,7 +911,8 @@ the changes for the upcoming release can be found in
 - Methods `MessagePump.emit` and `MessagePump.emit_no_wait` https://github.com/Textualize/textual/pull/1738
 - Removed `reactive.watch` in favor of DOMNode.watch.
 
-## [0.10.1] - 2023-01-20
+
+## [0.10.1](https://github.com/Textualize/textual/tree/v0.10.1) - 2023-01-20
 
 ### Added
 
@@ -891,7 +927,7 @@ the changes for the upcoming release can be found in
 - The default filename for screenshots uses a datetime format similar to ISO8601, but with reserved characters replaced by underscores https://github.com/Textualize/textual/pull/1518
 
 
-## [0.10.0] - 2023-01-19
+## [0.10.0](https://github.com/Textualize/textual/tree/v0.10.0) - 2023-01-19
 
 ### Added
 
@@ -934,13 +970,15 @@ the changes for the upcoming release can be found in
 - Fixed freeze in tests https://github.com/Textualize/textual/issues/1608
 - Fixed minus not displaying as symbol https://github.com/Textualize/textual/issues/1482
 
-## [0.9.1] - 2022-12-30
+
+## [0.9.1](https://github.com/Textualize/textual/tree/v0.9.1) - 2022-12-30
 
 ### Added
 
 - Added textual._win_sleep for Python on Windows < 3.11 https://github.com/Textualize/textual/pull/1457
 
-## [0.9.0] - 2022-12-30
+
+## [0.9.0](https://github.com/Textualize/textual/tree/v0.9.0) - 2022-12-30
 
 ### Added
 
@@ -954,19 +992,22 @@ the changes for the upcoming release can be found in
 - Fix for slow updates on Windows
 - Bumped Rich dependency
 
-## [0.8.2] - 2022-12-28
+
+## [0.8.2](https://github.com/Textualize/textual/tree/v0.8.2) - 2022-12-28
 
 ### Fixed
 
 - Fixed issue with TextLog.clear() https://github.com/Textualize/textual/issues/1447
 
-## [0.8.1] - 2022-12-25
+
+## [0.8.1](https://github.com/Textualize/textual/tree/v0.8.1) - 2022-12-25
 
 ### Fixed
 
 - Fix for overflowing tree issue https://github.com/Textualize/textual/issues/1425
 
-## [0.8.0] - 2022-12-22
+
+## [0.8.0](https://github.com/Textualize/textual/tree/v0.8.0) - 2022-12-22
 
 ### Fixed
 
@@ -989,7 +1030,8 @@ the changes for the upcoming release can be found in
 - Renamed `key_name` to `name` on Key event.
 - Queries/`walk_children` no longer includes self in results by default https://github.com/Textualize/textual/pull/1416
 
-## [0.7.0] - 2022-12-17
+
+## [0.7.0](https://github.com/Textualize/textual/tree/v0.7.0) - 2022-12-17
 
 ### Added
 
@@ -1009,7 +1051,7 @@ the changes for the upcoming release can be found in
 - Ensure only printable characters are used as key_display https://github.com/Textualize/textual/pull/1361
 
 
-## [0.6.0] - 2022-12-11
+## [0.6.0](https://github.com/Textualize/textual/tree/v0.6.0) - 2022-12-11
 
 https://textual.textualize.io/blog/2022/12/11/version-060
 
@@ -1036,7 +1078,8 @@ https://textual.textualize.io/blog/2022/12/11/version-060
 - Fixed default CSS retrieval for widgets with no `DEFAULT_CSS` that inherited from widgets with `DEFAULT_CSS` https://github.com/Textualize/textual/issues/1335
 - Fixed merging of `BINDINGS` when binding inheritance is set to `None` https://github.com/Textualize/textual/issues/1351
 
-## [0.5.0] - 2022-11-20
+
+## [0.5.0](https://github.com/Textualize/textual/tree/v0.5.0) - 2022-11-20
 
 ### Added
 
@@ -1077,7 +1120,8 @@ https://textual.textualize.io/blog/2022/12/11/version-060
 - Fixed Input cursor invisible when placeholder empty https://github.com/Textualize/textual/pull/1202
 - Fixed deadlock when removing widgets from the App https://github.com/Textualize/textual/pull/1219
 
-## [0.4.0] - 2022-11-08
+
+## [0.4.0](https://github.com/Textualize/textual/tree/v0.4.0) - 2022-11-08
 
 https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 
@@ -1098,7 +1142,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - Added `DOMQuery.only_one` https://github.com/Textualize/textual/issues/1096
 - Writes to stdout are now done in a thread, for smoother animation. https://github.com/Textualize/textual/pull/1104
 
-## [0.3.0] - 2022-10-31
+
+## [0.3.0](https://github.com/Textualize/textual/tree/v0.3.0) - 2022-10-31
 
 ### Fixed
 
@@ -1131,56 +1176,65 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - Added always_update to reactive
 - Returned an awaitable from push_screen, switch_screen, and install_screen https://github.com/Textualize/textual/pull/1061
 
-## [0.2.1] - 2022-10-23
+
+## [0.2.1](https://github.com/Textualize/textual/tree/v0.2.1) - 2022-10-23
 
 ### Changed
 
 - Updated meta data for PyPI
 
-## [0.2.0] - 2022-10-23
+
+## [0.2.0](https://github.com/Textualize/textual/tree/v0.2.0) - 2022-10-23
 
 ### Added
 
 - CSS support
 - Too numerous to mention
-## [0.1.18] - 2022-04-30
+
+## [0.1.18](https://github.com/Textualize/textual/tree/v0.1.18) - 2022-04-30
 
 ### Changed
 
 - Bump typing extensions
 
-## [0.1.17] - 2022-03-10
+
+## [0.1.17](https://github.com/Textualize/textual/tree/v0.1.17) - 2022-03-10
 
 ### Changed
 
 - Bumped Rich dependency
 
-## [0.1.16] - 2022-03-10
+
+## [0.1.16](https://github.com/Textualize/textual/tree/v0.1.16) - 2022-03-10
 
 ### Fixed
 
 - Fixed escape key hanging on Windows
 
-## [0.1.15] - 2022-01-31
+
+## [0.1.15](https://github.com/Textualize/textual/tree/v0.1.15) - 2022-01-31
 
 ### Added
 
 - Added Windows Driver
 
-## [0.1.14] - 2022-01-09
+
+## [0.1.14](https://github.com/Textualize/textual/tree/v0.1.14) - 2022-01-09
 
 ### Changed
 
 - Updated Rich dependency to 11.X
 
-## [0.1.13] - 2022-01-01
+
+## [0.1.13](https://github.com/Textualize/textual/tree/v0.1.13) - 2022-01-01
 
 ### Fixed
 
 - Fixed spurious characters when exiting app
 - Fixed increasing delay when exiting
 
-## [0.1.12] - 2021-09-20
+
+## [0.1.12](https://github.com/Textualize/textual/tree/v0.1.12) - 2021-09-20
 
 ### Added
 
@@ -1190,7 +1244,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 
 - Fixed calculation of virtual size in scroll views
 
-## [0.1.11] - 2021-09-12
+
+## [0.1.11](https://github.com/Textualize/textual/tree/v0.1.11) - 2021-09-12
 
 ### Changed
 
@@ -1206,7 +1261,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - Added big_table.py example
 - Added easing.py example
 
-## [0.1.10] - 2021-08-25
+
+## [0.1.10](https://github.com/Textualize/textual/tree/v0.1.10) - 2021-08-25
 
 ### Added
 
@@ -1222,6 +1278,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - Added Message.wait() which waits for a message to be processed
 - Key events are now sent to widgets first, before processing bindings
 
+
 ## [0.1.9] - 2021-08-06
 
 ### Added
@@ -1234,6 +1291,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - Simplified events. Remove Startup event (use Mount)
 - Changed geometry.Point to geometry.Offset and geometry.Dimensions to geometry.Size
 
+
 ## [0.1.8] - 2021-07-17
 
 ### Fixed
@@ -1244,6 +1302,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 ### Added
 
 - New log system
+
 
 ## [0.1.7] - 2021-07-14
 
