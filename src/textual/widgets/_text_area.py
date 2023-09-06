@@ -53,7 +53,7 @@ Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 class TextAreaLanguage:
     name: str
     language: "Language"
-    highlight_query: str | "Query"
+    highlight_query: str
 
 
 class TextArea(ScrollView, can_focus=True):
@@ -271,12 +271,12 @@ TextArea {
         """The document this widget is currently editing."""
 
         self.language = language
+        """The language of the `TextArea`."""
 
-        if isinstance(theme, str):
-            theme = TextAreaTheme.get_by_name(theme)
-
-        self.theme: TextAreaTheme | None = theme
-        """The theme of the `TextArea`."""
+        self.theme = theme
+        """The theme of the `TextArea` as set by the user."""
+        self._theme: TextAreaTheme | None = None
+        """The theme that is actually being used."""
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -326,10 +326,6 @@ TextArea {
 
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
-
-    def _watch_theme(self) -> None:
-        """When the theme changes, update the highlight map"""
-        self._build_highlight_map()
 
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
@@ -405,6 +401,10 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
+    def _watch_theme(self) -> None:
+        """When the theme changes, update the highlight map"""
+        self._build_highlight_map()
+
     def _validate_theme(self, theme: str | TextAreaTheme) -> TextAreaTheme:
         if isinstance(theme, str):
             theme = TextAreaTheme.get_by_name(theme)
@@ -458,12 +458,14 @@ TextArea {
         if TREE_SITTER and language:
             # Attempt to get the override language.
             text_area_language = self._languages.get(language, None)
+            document_language: str | "Language"
             if text_area_language:
                 document_language = text_area_language.language
                 highlight_query = text_area_language.highlight_query
             else:
                 document_language = language
                 highlight_query = self._get_builtin_highlight_query(language)
+            document: DocumentBase
             try:
                 document = SyntaxAwareDocument(text, document_language)
             except RuntimeError:
@@ -580,7 +582,7 @@ TextArea {
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        theme = self.theme
+        theme = self._theme
 
         # Get the line from the Document.
         line_string = document.get_line(line_index)
@@ -592,87 +594,92 @@ TextArea {
         expanded_length = max(virtual_width, self.size.width)
         line.set_length(expanded_length)
 
-        highlights = self._highlights
-        if highlights:
-            line_bytes = _utf8_encode(line_string)
-            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-            get_highlight_from_theme = self.theme.token_styles.get
-            line_highlights = highlights[line_index]
-            for start, end, highlight_name in line_highlights:
-                node_style = get_highlight_from_theme(highlight_name)
-                if node_style is not None:
-                    line.stylize(
-                        node_style,
-                        byte_to_codepoint.get(start, 0),
-                        byte_to_codepoint.get(end) if end else None,
-                    )
-
         selection = self.selection
         start, end = selection
         selection_top, selection_bottom = selection.range
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
-        matching_bracket = self._matching_bracket_location
-        match_cursor_bracket = self.match_cursor_bracket
-        draw_matched_brackets = match_cursor_bracket and matching_bracket is not None
+        highlights = self._highlights
+        if highlights and theme:
+            line_bytes = _utf8_encode(line_string)
+            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+            get_highlight_from_theme = theme.token_styles.get
+            line_highlights = highlights[line_index]
+            for highlight_start, highlight_end, highlight_name in line_highlights:
+                node_style = get_highlight_from_theme(highlight_name)
+                if node_style is not None:
+                    line.stylize(
+                        node_style,
+                        byte_to_codepoint.get(highlight_start, 0),
+                        byte_to_codepoint.get(highlight_end) if highlight_end else None,
+                    )
 
         cursor_row, cursor_column = end
-        cursor_line_style = theme.cursor_line_style
-        if cursor_row == line_index:
+        cursor_line_style = theme.cursor_line_style if theme else None
+        if cursor_line_style and cursor_row == line_index:
             line.stylize(cursor_line_style)
 
         # Selection styling
         if start != end and selection_top_row <= line_index <= selection_bottom_row:
             # If this row intersects with the selection range
-            selection_style = theme.selection_style
+            selection_style = theme.selection_style if theme else None
             cursor_row, _ = end
-            if line_character_count == 0 and line_index != cursor_row:
-                # A simple highlight to show empty lines are included in the selection
-                line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
-                line.set_length(self.virtual_size.width)
-            else:
-                if line_index == selection_top_row == selection_bottom_row:
-                    # Selection within a single line
-                    line.stylize(
-                        selection_style,
-                        start=selection_top_column,
-                        end=selection_bottom_column,
-                    )
+            if selection_style:
+                if line_character_count == 0 and line_index != cursor_row:
+                    # A simple highlight to show empty lines are included in the selection
+                    line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
+                    line.set_length(self.virtual_size.width)
                 else:
-                    # Selection spanning multiple lines
-                    if line_index == selection_top_row:
+                    if line_index == selection_top_row == selection_bottom_row:
+                        # Selection within a single line
                         line.stylize(
                             selection_style,
                             start=selection_top_column,
-                            end=line_character_count,
+                            end=selection_bottom_column,
                         )
-                    elif line_index == selection_bottom_row:
-                        line.stylize(selection_style, end=selection_bottom_column)
                     else:
-                        line.stylize(selection_style, end=line_character_count)
+                        # Selection spanning multiple lines
+                        if line_index == selection_top_row:
+                            line.stylize(
+                                selection_style,
+                                start=selection_top_column,
+                                end=line_character_count,
+                            )
+                        elif line_index == selection_bottom_row:
+                            line.stylize(selection_style, end=selection_bottom_column)
+                        else:
+                            line.stylize(selection_style, end=line_character_count)
 
         # Highlight the cursor
+        matching_bracket = self._matching_bracket_location
+        match_cursor_bracket = self.match_cursor_bracket
+        draw_matched_brackets = match_cursor_bracket and matching_bracket is not None
+
         if cursor_row == line_index:
             draw_cursor = not self.cursor_blink or (
                 self.cursor_blink and self._cursor_blink_visible
             )
             if draw_matched_brackets:
-                matching_bracket_style = theme.bracket_matching_style
-                line.stylize(
-                    matching_bracket_style,
-                    cursor_column,
-                    cursor_column + 1,
-                )
+                matching_bracket_style = theme.bracket_matching_style if theme else None
+                if matching_bracket_style:
+                    line.stylize(
+                        matching_bracket_style,
+                        cursor_column,
+                        cursor_column + 1,
+                    )
 
             if draw_cursor:
-                cursor_style = theme.cursor_style
-                line.stylize(cursor_style, cursor_column, cursor_column + 1)
+                cursor_style = theme.cursor_style if theme else None
+                if cursor_style:
+                    line.stylize(cursor_style, cursor_column, cursor_column + 1)
 
         # Highlight the partner opening/closing bracket.
         if draw_matched_brackets:
+            # mypy doesn't know matching bracket is guaranteed to be non-None
+            assert matching_bracket is not None
             bracket_match_row, bracket_match_column = matching_bracket
-            if bracket_match_row == line_index:
+            if theme and bracket_match_row == line_index:
                 matching_bracket_style = theme.bracket_matching_style
                 if matching_bracket_style:
                     line.stylize(
@@ -685,14 +692,14 @@ TextArea {
         gutter_width = self.gutter_width
         if self.show_line_numbers:
             if cursor_row == line_index:
-                gutter_style = theme.cursor_line_gutter_style
+                gutter_style = theme.cursor_line_gutter_style if theme else None
             else:
-                gutter_style = theme.gutter_style
+                gutter_style = theme.gutter_style if theme else None
 
             gutter_width_no_margin = gutter_width - 2
             gutter = Text(
                 f"{line_index + 1:>{gutter_width_no_margin}}  ",
-                style=gutter_style,
+                style=gutter_style or "",
                 end="",
             )
         else:
@@ -713,19 +720,23 @@ TextArea {
         )
 
         # Stylize the line the cursor is currently on.
-        # TODO - is this required or have we already expanded it?
         if cursor_row == line_index:
             text_strip = text_strip.extend_cell_length(
-                expanded_length, theme.cursor_line_style
+                expanded_length, cursor_line_style
             )
         else:
             text_strip = text_strip.extend_cell_length(
-                expanded_length, theme.base_style
+                expanded_length, theme.base_style if theme else None
             )
 
         # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
-        return strip.apply_style(theme.base_style)
+
+        return strip.apply_style(
+            theme.base_style
+            if theme and theme.base_style is not None
+            else self.rich_style
+        )
 
     @property
     def text(self) -> str:
