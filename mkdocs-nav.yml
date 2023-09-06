@@ -153,6 +153,7 @@ nav:
                       - "widgets/radiobutton.md"
                       - "widgets/radioset.md"
                       - "widgets/rich_log.md"
+                      - "widgets/rule.md"
                       - "widgets/select.md"
                       - "widgets/selection_list.md"
                       - "widgets/sparkline.md"

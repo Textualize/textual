@@ -693,6 +693,11 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self._screen_stacks[self._current_mode]
 
+    @property
+    def current_mode(self) -> str:
+        """The name of the currently active mode."""
+        return self._current_mode
+
     def exit(
         self,
         result: ReturnType | None = None,
@@ -1560,19 +1565,19 @@ class App(Generic[ReturnType], DOMNode):
         return self.mount(*widgets, before=before, after=after)
 
     def _init_mode(self, mode: str) -> None:
-        """Do internal initialisation of a new screen stack mode."""
+        """Do internal initialisation of a new screen stack mode.
+
+        Args:
+            mode: Name of the mode.
+        """
 
         stack = self._screen_stacks.get(mode, [])
         if not stack:
             _screen = self.MODES[mode]
-            if callable(_screen):
-                screen, _ = self._get_screen(_screen())
-            else:
-                screen, _ = self._get_screen(self.MODES[mode])
+            new_screen: Screen | str = _screen() if callable(_screen) else _screen
+            screen, _ = self._get_screen(new_screen)
             stack.append(screen)
-
             self._load_screen_css(screen)
-
         self._screen_stacks[mode] = stack
 
     def switch_mode(self, mode: str) -> None:
