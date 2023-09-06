@@ -35,11 +35,6 @@ class SystemCommandSource(CommandSource):
                 "Toggle the application between light and dark mode",
             ),
             (
-                "Save a screenshot",
-                self.app.action_screenshot,
-                "Save a SVG file to storage that contains the contents of the current screen",
-            ),
-            (
                 "Quit the application",
                 self.app.action_quit,
                 "Quit the application as soon as possible",
