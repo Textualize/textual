@@ -5,13 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added the command palette https://github.com/Textualize/textual/pull/3058
+
 ## [0.36.0] - 2023-09-05
 
 ### Added
 
 - TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
-- Added the command palette https://github.com/Textualize/textual/pull/3058
 - Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
 - Added `Rule` widget https://github.com/Textualize/textual/pull/3209
 - Added App.current_mode to get the current mode https://github.com/Textualize/textual/pull/3233

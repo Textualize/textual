@@ -1,4 +1,4 @@
-!!! tip "Added in version 0.36.0"
+!!! tip "Added in version 0.37.0"
 
 ## Introduction
 
