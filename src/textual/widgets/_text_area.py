@@ -649,7 +649,9 @@ TextArea {
         # Highlight the cursor
         matching_bracket = self._matching_bracket_location
         match_cursor_bracket = self.match_cursor_bracket
-        draw_matched_brackets = match_cursor_bracket and matching_bracket is not None
+        draw_matched_brackets = (
+            match_cursor_bracket and matching_bracket is not None and start == end
+        )
 
         if cursor_row == line_index:
             draw_cursor = not self.cursor_blink or (
