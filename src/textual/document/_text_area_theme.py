@@ -249,7 +249,8 @@ _DARK_VS = TextAreaTheme(
     base_style=Style(color="#CCCCCC", bgcolor="#1F1F1F"),
     gutter_style=Style(color="#6E7681", bgcolor="#1F1F1F"),
     cursor_style=Style(color="#1e1e1e", bgcolor="#f0f0f0"),
-    cursor_line_style=Style(bgcolor="#232323"),
+    cursor_line_style=Style(bgcolor="#252525"),
+    bracket_matching_style=Style(bgcolor="#3a3a3a"),
     cursor_line_gutter_style=Style(color="#CCCCCC", bgcolor="#232323"),
     selection_style=Style(bgcolor="#264F78"),
     token_styles={
