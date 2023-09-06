@@ -631,11 +631,11 @@ class Markdown(Widget):
             self.update(self._markdown)
 
     @staticmethod
-    def _sanitise_location(location: str) -> tuple[Path, str]:
-        """Given a location, extract and remove any anchor.
+    def sanitize_location(location: str) -> tuple[Path, str]:
+        """Given a location, break out the path and any anchor.
 
         Args:
-            location: The location to sanitise.
+            location: The location to sanitize.
 
         Returns:
             A tuple of the path to the location cleaned of any anchor, plus
@@ -679,7 +679,7 @@ class Markdown(Widget):
             The exceptions that can be raised by this method are all of
             those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
         """
-        path, anchor = self._sanitise_location(str(path))
+        path, anchor = self.sanitize_location(str(path))
         await self.update(path.read_text(encoding="utf-8"))
         if anchor:
             self.goto_anchor(anchor)
