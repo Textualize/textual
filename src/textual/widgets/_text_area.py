@@ -267,16 +267,14 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self.document: DocumentBase = Document(text)
+        self.document: DocumentBase | None = None
         """The document this widget is currently editing."""
+
+        self.theme: TextAreaTheme | None = theme
+        """The theme of the `TextArea` as set by the user."""
 
         self.language = language
         """The language of the `TextArea`."""
-
-        self.theme = theme
-        """The theme of the `TextArea` as set by the user."""
-        self._theme: TextAreaTheme | None = None
-        """The theme that is actually being used."""
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -401,10 +399,6 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _watch_theme(self) -> None:
-        """When the theme changes, update the highlight map"""
-        self._build_highlight_map()
-
     def _validate_theme(self, theme: str | TextAreaTheme) -> TextAreaTheme:
         if isinstance(theme, str):
             theme = TextAreaTheme.get_by_name(theme)
@@ -479,6 +473,7 @@ TextArea {
             document = Document(text)
 
         self.document = document
+        log.debug(f"setting document: {document!r}")
         self._build_highlight_map()
 
     @property
@@ -582,7 +577,7 @@ TextArea {
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        theme = self._theme
+        theme = self.theme
 
         # Get the line from the Document.
         line_string = document.get_line(line_index)
