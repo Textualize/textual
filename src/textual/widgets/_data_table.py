@@ -33,7 +33,7 @@ from ..strip import Strip
 from ..widget import PseudoClasses
 
 CellCacheKey: TypeAlias = (
-    "tuple[RowKey, ColumnKey, Style, bool, bool, int, PseudoClasses]"
+    "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
 )
 LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
 RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
@@ -1813,7 +1813,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key = self._row_locations.get_key(row_index)
 
         column_key = self._column_locations.get_key(column_index)
-        cell_cache_key = (
+        cell_cache_key: CellCacheKey = (
             row_key,
             column_key,
             base_style,
