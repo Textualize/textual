@@ -1,9 +1,7 @@
 from __future__ import annotations
 
-from typing import Any
-
 try:
-    from tree_sitter import Language, Parser, Tree
+    from tree_sitter import Language, Node, Parser, Tree
     from tree_sitter.binding import Query
     from tree_sitter_languages import get_language, get_parser
 
@@ -14,6 +12,12 @@ except ImportError:
 from textual.document._document import Document, EditResult, Location, _utf8_encode
 from textual.document._languages import VALID_LANGUAGES
 from textual.document._text_area_theme import TextAreaTheme
+
+
+class SyntaxAwareDocumentError(Exception):
+    """General error raised when SyntaxAwareDocument is used incorrectly."""
+
+    pass
 
 
 class SyntaxAwareDocument(Document):
@@ -53,16 +57,13 @@ class SyntaxAwareDocument(Document):
         self._parser: Parser | None = None
         """The tree-sitter Parser or None if tree-sitter is unavailable."""
 
-        self._syntax_tree: Tree | None = None
-        """The tree-sitter Tree (syntax tree) built from the document."""
-
         self._syntax_theme: TextAreaTheme | None = None
         """The syntax highlighting theme to use."""
 
         # If the language is `None`, then avoid doing any parsing related stuff.
         if isinstance(language, str):
             if language not in VALID_LANGUAGES:
-                raise RuntimeError(f"Invalid language {language!r}")
+                raise SyntaxAwareDocumentError(f"Invalid language {language!r}")
             self.language = get_language(language)
             self._parser = get_parser(language)
         else:
@@ -70,31 +71,45 @@ class SyntaxAwareDocument(Document):
             self._parser = Parser()
             self._parser.set_language(language)
 
-        self._syntax_tree = self._parser.parse(self._read_callable)  # type: ignore
+        self._syntax_tree: Tree = self._parser.parse(self._read_callable)  # type: ignore
+        """The tree-sitter Tree (syntax tree) built from the document."""
 
     @property
     def language_name(self) -> str | None:
         return self.language.name if self.language else None
 
     def prepare_query(self, query: str) -> Query | None:
-        if TREE_SITTER:
-            prepared_query = self.language.query(query)
-        else:
-            prepared_query = None
-        return prepared_query
+        if not TREE_SITTER:
+            raise SyntaxAwareDocumentError(
+                "Couldn't prepare query - tree-sitter is not available on this architecture."
+            )
+
+        if self.language is None:
+            raise SyntaxAwareDocumentError(
+                "Couldn't prepare query - no language assigned."
+            )
+
+        return self.language.query(query)
 
     def query_syntax_tree(
         self,
         query: Query,
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
-    ) -> Any:
+    ) -> list[tuple["Node", str]]:
+        if not TREE_SITTER:
+            raise SyntaxAwareDocumentError(
+                "tree-sitter is not available on this architecture."
+            )
+
         captures_kwargs = {}
         if start_point is not None:
             captures_kwargs["start_point"] = start_point
         if end_point is not None:
             captures_kwargs["end_point"] = end_point
-        return query.captures(self._syntax_tree.root_node, **captures_kwargs)
+
+        captures = query.captures(self._syntax_tree.root_node, **captures_kwargs)
+        return captures
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.

@@ -370,10 +370,3 @@ class Selection(NamedTuple):
         """Return True if the selection has 0 width, i.e. it's just a cursor."""
         start, end = self
         return start == end
-
-    @property
-    def range(self) -> tuple[Location, Location]:
-        """Return the Selection as a "standard" range, from top to bottom i.e. (minimum point, maximum point)
-        where the minimum point is inclusive and the maximum point is exclusive."""
-        start, end = self
-        return tuple(sorted((start, end)))

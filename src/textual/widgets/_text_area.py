@@ -596,7 +596,7 @@ TextArea {
 
         selection = self.selection
         start, end = selection
-        selection_top, selection_bottom = selection.range
+        selection_top, selection_bottom = sorted(selection)
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
