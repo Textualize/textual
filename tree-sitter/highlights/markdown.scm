@@ -1,4 +1,4 @@
-(atx_heading) @heading
+(heading_content) @heading
 (list_marker) @comment
 (strong_emphasis) @bold
 (emphasis) @italic
