@@ -5,14 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [Unreleased]
+
+### Added
+
+- Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
+
+## [0.36.0] - 2023-09-05
 
 ### Added
 
 - TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
 - Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
-- Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
+- Added `Rule` widget https://github.com/Textualize/textual/pull/3209
+- Added App.current_mode to get the current mode https://github.com/Textualize/textual/pull/3233
 
 ### Changed
 
@@ -1246,6 +1253,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
 [0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
 [0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/Textualize/textual/compare/v0.33.0...v0.34.0
