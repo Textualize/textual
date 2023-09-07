@@ -11,6 +11,7 @@ from rich.style import Style
 from rich.text import Text
 
 from textual._tree_sitter import TREE_SITTER
+from textual.color import Color
 from textual.document._document import _utf8_encode
 from textual.expand_tabs import expand_tabs_inline
 
@@ -399,7 +400,17 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _validate_theme(self, theme: str | TextAreaTheme) -> TextAreaTheme:
+    def _watch_theme(self, theme: TextAreaTheme | None) -> None:
+        if theme is None:
+            self.styles.color = None
+            self.styles.background = None
+        else:
+            self.styles.color = Color.from_rich_color(theme.base_style.color)
+            self.styles.background = Color.from_rich_color(theme.base_style.bgcolor)
+
+    def _validate_theme(
+        self, theme: str | TextAreaTheme | None
+    ) -> TextAreaTheme | None:
         if isinstance(theme, str):
             theme = TextAreaTheme.get_by_name(theme)
         return theme

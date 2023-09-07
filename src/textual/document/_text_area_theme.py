@@ -128,11 +128,11 @@ class TextAreaTheme:
         return self.token_styles.get(name)
 
     @classmethod
-    def available_themes(cls) -> list[TextAreaTheme]:
-        """Get a list of all available TextAreaThemes.
+    def builtin_themes(cls) -> list[TextAreaTheme]:
+        """Get a list of all builtin TextAreaThemes.
 
         Returns:
-            A list of all available TextAreaThemes.
+            A list of all builtin TextAreaThemes.
         """
         return list(_BUILTIN_THEMES.values())
 
@@ -191,7 +191,7 @@ _MONOKAI = TextAreaTheme(
         "italic": Style(italic=True),
         "strikethrough": Style(strike=True),
         "link": Style(color="#66D9EF", underline=True),
-        "inline_code": Style(color="#F92672"),
+        "inline_code": Style(color="#E6DB74"),
     },
 )
 
@@ -240,12 +240,12 @@ _DRACULA = TextAreaTheme(
         "italic": Style(italic=True),
         "strikethrough": Style(strike=True),
         "link": Style(color="#bd93f9", underline=True),
-        "inline_code": Style(color="#ff79c6"),
+        "inline_code": Style(color="#f1fa8c"),
     },
 )
 
 _DARK_VS = TextAreaTheme(
-    name="dark_vs",
+    name="vscode_dark",
     base_style=Style(color="#CCCCCC", bgcolor="#1F1F1F"),
     gutter_style=Style(color="#6E7681", bgcolor="#1F1F1F"),
     cursor_style=Style(color="#1e1e1e", bgcolor="#f0f0f0"),
@@ -274,22 +274,67 @@ _DARK_VS = TextAreaTheme(
         "method": Style(color="#4EC9B0"),
         "boolean": Style(color="#7DAF9C"),
         "tag": Style(color="#EFCB43"),
-        "yaml.field": Style(color="#EFCB43", bold=True),
-        "json.label": Style(color="#EFCB43", bold=True),
-        "toml.type": Style(color="#EFCB43"),
+        "yaml.field": Style(color="#569cd6", bold=True),
+        "json.label": Style(color="#569cd6", bold=True),
+        "toml.type": Style(color="#569cd6"),
         "heading": Style(color="#569cd6", bold=True),
         "bold": Style(bold=True),
         "italic": Style(italic=True),
         "strikethrough": Style(strike=True),
         "link": Style(color="#40A6FF", underline=True),
         "inline_code": Style(color="#ce9178"),
+        "info_string": Style(color="#ce9178", bold=True, italic=True),
+    },
+)
+
+_GITHUB_LIGHT = TextAreaTheme(
+    name="github_light",
+    base_style=Style(color="#24292e", bgcolor="#f0f0f0"),
+    gutter_style=Style(color="#BBBBBB", bgcolor="#f0f0f0"),
+    cursor_style=Style(color="#fafbfc", bgcolor="#24292e"),
+    cursor_line_style=Style(bgcolor="#ebebeb"),
+    bracket_matching_style=Style(color="#24292e", underline=True),
+    cursor_line_gutter_style=Style(color="#A4A4A4", bgcolor="#ebebeb"),
+    selection_style=Style(bgcolor="#c8c8fa"),
+    token_styles={
+        "string": Style(color="#093069"),
+        "string.documentation": Style(color="#093069"),
+        "comment": Style(color="#6a737d"),
+        "keyword": Style(color="#d73a49"),
+        "operator": Style(color="#0450AE"),
+        "conditional": Style(color="#CF222E"),
+        "keyword.function": Style(color="#CF222E"),
+        "keyword.return": Style(color="#CF222E"),
+        "keyword.operator": Style(color="#CF222E"),
+        "repeat": Style(color="#CF222E"),
+        "exception": Style(color="#CF222E"),
+        "include": Style(color="#CF222E"),
+        "number": Style(color="#d73a49"),
+        "float": Style(color="#d73a49"),
+        "parameter": Style(color="#24292e"),
+        "class": Style(color="#963800"),
+        "variable": Style(color="#e36209"),
+        "function": Style(color="#6639BB"),
+        "method": Style(color="#6639BB"),
+        "boolean": Style(color="#7DAF9C"),
+        "tag": Style(color="#6639BB"),
+        "yaml.field": Style(color="#6639BB"),
+        "json.label": Style(color="#6639BB"),
+        "toml.type": Style(color="#6639BB"),
+        "heading": Style(color="#24292e", bold=True),
+        "bold": Style(bold=True),
+        "italic": Style(italic=True),
+        "strikethrough": Style(strike=True),
+        "link": Style(color="#40A6FF", underline=True),
+        "inline_code": Style(color="#093069"),
     },
 )
 
 _BUILTIN_THEMES = {
     "monokai": _MONOKAI,
     "dracula": _DRACULA,
-    "dark_vs": _DARK_VS,
+    "vscode_dark": _DARK_VS,
+    "github_light": _GITHUB_LIGHT,
 }
 
 DEFAULT_SYNTAX_THEME = TextAreaTheme.get_by_name("monokai")
