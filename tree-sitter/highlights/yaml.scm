@@ -7,7 +7,7 @@
 (escape_sequence) @string.escape
 (integer_scalar) @number
 (float_scalar) @number
-(comment) @comment @spell
+(comment) @comment
 (anchor_name) @type
 (alias_name) @type
 (tag) @type
