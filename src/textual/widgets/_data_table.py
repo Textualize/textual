@@ -1170,15 +1170,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column = self.columns.get(column_key)
             if column is None:
                 continue
+            row = self._data.get(row_key)
+            if row is None:
+                continue
+            cell_value = row.get(column_key)
+            if cell_value is None:
+                continue
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
-            cell_value = self._data[row_key][column_key]
 
             new_content_width = measure(console, default_cell_formatter(cell_value), 1)
 
             if new_content_width < content_width:
-                cells_in_column = self.get_column(column_key)
+                try:
+                    cells_in_column = self.get_column(column_key)
+                except (KeyError, ColumnDoesNotExist):
+                    continue
                 cell_widths = [
                     measure(console, default_cell_formatter(cell), 1)
                     for cell in cells_in_column
@@ -1201,6 +1209,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 continue
 
             row = self.rows.get(row_key)
+            if row is None:
+                continue
 
             if row.label is not None:
                 self._labelled_row_exists = True

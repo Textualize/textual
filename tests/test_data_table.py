@@ -173,6 +173,18 @@ async def test_empty_table_interactions():
         assert app.message_names == []
 
 
+async def test_table_update_remove_on_idle():
+    """Regression test for https://github.com/Textualize/textual/issues/1955"""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table: DataTable = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "X", update_width=True)
+        table.remove_row("1")
+        await pilot.pause()
+
+
 @pytest.mark.parametrize("show_header", [True, False])
 async def test_cursor_movement_with_home_pagedown_etc(show_header):
     app = DataTableApp()
