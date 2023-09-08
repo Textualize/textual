@@ -999,7 +999,13 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""
-        await self.document.load(self.navigator.go(location))
+        path, anchor = self.document.sanitize_location(str(location))
+        if path == Path(".") and anchor:
+            # We've been asked to go to an anchor but with no file specified.
+            self.document.goto_anchor(anchor)
+        else:
+            # We've been asked to go to a file, optionally with an anchor.
+            await self.document.load(self.navigator.go(location))
 
     async def back(self) -> None:
         """Go back one level in the history."""
