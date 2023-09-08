@@ -421,10 +421,11 @@ class Input(Widget, can_focus=True):
         cell_offset = 0
         _cell_size = get_character_cell_size
         for index, char in enumerate(self.value):
-            if cell_offset >= click_x:
+            cell_width = _cell_size(char)
+            if cell_offset <= click_x < (cell_offset + cell_width):
                 self.cursor_position = index
                 break
-            cell_offset += _cell_size(char)
+            cell_offset += cell_width
         else:
             self.cursor_position = len(self.value)
 

@@ -5,11 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.36.0] - 2023-09-05
+
+### Added
+
+- TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
+- `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
+- Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
+- Added `Rule` widget https://github.com/Textualize/textual/pull/3209
+- Added App.current_mode to get the current mode https://github.com/Textualize/textual/pull/3233
+
+### Changed
+
+- Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
+- Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
+- Added `cursor_type` to the `DataTable` constructor.
+- Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
+
+### Fixed
+
+- Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
+- Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
+- Fixed flicker when scrolling tree up or down a line https://github.com/Textualize/textual/issues/3206
+
+## [0.35.1]
+
+### Fixed
+
+- Fixed flash of 80x24 interface in textual-web
+
+## [0.35.0]
 
 ### Added
 
 - Ability to enable/disable tabs via the reactive `disabled` in tab panes https://github.com/Textualize/textual/pull/3152
+- Textual-web driver support for Windows
+
 ### Fixed
 
 - Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
@@ -35,6 +66,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed auto height container with default grid-rows https://github.com/Textualize/textual/issues/1597
 - Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
+- Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 ## [0.33.0] - 2023-08-15
 
@@ -46,6 +78,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
 - Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+- Fixed click on double-width char https://github.com/Textualize/textual/issues/2968
+
+### Changed
+
+- Breaking change: `DOMNode.visible` now takes into account full DOM to report whether a node is visible or not.
+
+### Removed
+
+- Property `Widget.focusable_children` https://github.com/Textualize/textual/pull/3070
 
 ### Added
 
@@ -57,6 +98,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - DescendantBlur and DescendantFocus can now be used with @on decorator
+
 
 ## [0.32.0] - 2023-08-03
 
@@ -1205,6 +1247,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
+[0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
+[0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/Textualize/textual/compare/v0.33.0...v0.34.0
 [0.33.0]: https://github.com/Textualize/textual/compare/v0.32.0...v0.33.0
 [0.32.0]: https://github.com/Textualize/textual/compare/v0.31.0...v0.32.0

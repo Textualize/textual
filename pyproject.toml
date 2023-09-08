@@ -1,7 +1,10 @@
 [tool.poetry]
 name = "textual"
-version = "0.34.0"
+version = "0.36.0"
 homepage = "https://github.com/Textualize/textual"
+repository = "https://github.com/Textualize/textual"
+documentation = "https://textual.textualize.io/"
+
 description = "Modern Text User Interface framework"
 authors = ["Will McGugan <will@textualize.io>"]
 license = "MIT"
@@ -32,6 +35,9 @@ include = [
     # that works around that.
     { path = "docs-offline/**/*", format = "sdist" },
 ]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
 [tool.poetry.dependencies]
 python = "^3.7"

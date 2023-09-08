@@ -11,7 +11,6 @@ import rich.repr
 
 from . import _time
 from ._context import active_message_pump
-from ._types import MessageTarget
 from .case import camel_to_snake
 
 if TYPE_CHECKING:

@@ -1,8 +1,10 @@
 import pytest
 
 from textual.app import App
+from textual.containers import Container
 from textual.screen import Screen
 from textual.widget import Widget
+from textual.widgets import Button
 
 
 class Focusable(Widget, can_focus=True):
@@ -201,3 +203,109 @@ def test_focus_next_and_previous_with_str_selector_without_self(screen: Screen):
     assert screen.focus_previous(".a").id == "foo"
     assert screen.focus_previous(".a").id == "foo"
     assert screen.focus_previous(".b").id == "baz"
+
+
+async def test_focus_does_not_move_to_invisible_widgets():
+    """Make sure invisible widgets don't get focused by accident.
+
+    This is kind of a regression test for https://github.com/Textualize/textual/issues/3053,
+    but not really.
+    """
+
+    class MyApp(App):
+        CSS = "#inv { visibility: hidden; }"
+
+        def compose(self):
+            yield Button("one", id="one")
+            yield Button("two", id="inv")
+            yield Button("three", id="three")
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.focused.id == "one"
+        assert app.screen.focus_next().id == "three"
+
+
+async def test_focus_moves_to_visible_widgets_inside_invisible_containers():
+    """Regression test for https://github.com/Textualize/textual/issues/3053."""
+
+    class MyApp(App):
+        CSS = """
+        #inv { visibility: hidden; }
+        #three { visibility: visible; }
+        """
+
+        def compose(self):
+            yield Button(id="one")
+            with Container(id="inv"):
+                yield Button(id="three")
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.focused.id == "one"
+        assert app.screen.focus_next().id == "three"
+
+
+async def test_focus_chain_handles_inherited_visibility():
+    """Regression test for https://github.com/Textualize/textual/issues/3053
+
+    This is more or less a test for the interactions between #3053 and #3071.
+    We want to make sure that the focus chain is computed correctly when going through
+    a DOM with containers with all sorts of visibilities set.
+    """
+
+    class W(Widget):
+        can_focus = True
+
+    w1 = W(id="one")
+    c2 = Container(id="two")
+    w3 = W(id="three")
+    c4 = Container(id="four")
+    w5 = W(id="five")
+    c6 = Container(id="six")
+    w7 = W(id="seven")
+    c8 = Container(id="eight")
+    w9 = W(id="nine")
+    w10 = W(id="ten")
+    w11 = W(id="eleven")
+    w12 = W(id="twelve")
+    w13 = W(id="thirteen")
+
+    class InheritedVisibilityApp(App[None]):
+        CSS = """
+        #four, #eight, #ten {
+            visibility: visible;
+        }
+
+        #six, #thirteen {
+            visibility: hidden;
+        }
+        """
+
+        def compose(self):
+            yield w1  # visible, inherited
+            with c2:  # visible, inherited
+                yield w3  # visible, inherited
+                with c4:  # visible, set
+                    yield w5  # visible, inherited
+                    with c6:  # hidden, set
+                        yield w7  # hidden, inherited
+                        with c8:  # visible, set
+                            yield w9  # visible, inherited
+                        yield w10  # visible, set
+                    yield w11  # visible, inherited
+                yield w12  # visible, inherited
+            yield w13  # invisible, set
+
+    app = InheritedVisibilityApp()
+    async with app.run_test():
+        focus_chain = app.screen.focus_chain
+        assert focus_chain == [
+            w1,
+            w3,
+            w5,
+            w9,
+            w10,
+            w11,
+            w12,
+        ]

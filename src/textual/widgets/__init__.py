@@ -32,6 +32,7 @@ if typing.TYPE_CHECKING:
     from ._radio_button import RadioButton
     from ._radio_set import RadioSet
     from ._rich_log import RichLog
+    from ._rule import Rule
     from ._select import Select
     from ._selection_list import SelectionList
     from ._sparkline import Sparkline
@@ -68,6 +69,7 @@ __all__ = [
     "ProgressBar",
     "RadioButton",
     "RadioSet",
+    "Rule",
     "Select",
     "SelectionList",
     "Sparkline",

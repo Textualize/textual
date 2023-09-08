@@ -1507,17 +1507,7 @@ class Widget(DOMNode):
     @property
     def focusable(self) -> bool:
         """Can this widget currently be focused?"""
-        return self.can_focus and not self._self_or_ancestors_disabled
-
-    @property
-    def focusable_children(self) -> list[Widget]:
-        """Get the children which may be focused.
-
-        Returns:
-            List of widgets that can receive focus.
-        """
-        focusable = [child for child in self._nodes if child.display and child.visible]
-        return sorted(focusable, key=attrgetter("_focus_sort_key"))
+        return self.can_focus and self.visible and not self._self_or_ancestors_disabled
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:

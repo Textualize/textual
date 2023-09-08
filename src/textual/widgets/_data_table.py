@@ -322,7 +322,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     )
     """The coordinate of the `DataTable` that is being hovered."""
 
-    class CellHighlighted(Message, bubble=True):
+    class CellHighlighted(Message):
         """Posted when the cursor moves to highlight a new cell.
 
         This is only relevant when the `cursor_type` is `"cell"`.
@@ -359,7 +359,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class CellSelected(Message, bubble=True):
+    class CellSelected(Message):
         """Posted by the `DataTable` widget when a cell is selected.
 
         This is only relevant when the `cursor_type` is `"cell"`. Can be handled using
@@ -394,7 +394,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class RowHighlighted(Message, bubble=True):
+    class RowHighlighted(Message):
         """Posted when a row is highlighted.
 
         This message is only posted when the
@@ -423,7 +423,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class RowSelected(Message, bubble=True):
+    class RowSelected(Message):
         """Posted when a row is selected.
 
         This message is only posted when the
@@ -452,7 +452,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class ColumnHighlighted(Message, bubble=True):
+    class ColumnHighlighted(Message):
         """Posted when a column is highlighted.
 
         This message is only posted when the
@@ -481,7 +481,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class ColumnSelected(Message, bubble=True):
+    class ColumnSelected(Message):
         """Posted when a column is selected.
 
         This message is only posted when the
@@ -510,7 +510,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class HeaderSelected(Message, bubble=True):
+    class HeaderSelected(Message):
         """Posted when a column header/label is clicked."""
 
         def __init__(
@@ -540,7 +540,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class RowLabelSelected(Message, bubble=True):
+    class RowLabelSelected(Message):
         """Posted when a row label is clicked."""
 
         def __init__(
@@ -582,6 +582,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         show_cursor: bool = True,
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
+        cursor_type: CursorType = "cell",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -669,6 +670,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.cursor_background_priority = cursor_background_priority
         """Should we prioritize the cursor component class CSS background or the renderable background
          in the event where a cell contains a renderable with a background color."""
+        self.cursor_type = cursor_type
+        """The type of cursor of the `DataTable`."""
 
     @property
     def hover_row(self) -> int:

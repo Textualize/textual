@@ -56,6 +56,9 @@ FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
 LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 """A last resort log file that appends all logs, when devtools isn't working."""
 
+DEVTOOLS_HOST: Final[str] = get_environ("TEXTUAL_DEVTOOLS_HOST", "127.0.0.1")
+"""The host where textual console is running."""
+
 DEVTOOLS_PORT: Final[int] = get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
 """Constant with the port that the devtools will connect to."""
 
@@ -70,3 +73,6 @@ SHOW_RETURN: Final[bool] = get_environ_bool("TEXTUAL_SHOW_RETURN")
 
 MAX_FPS: Final[int] = get_environ_int("TEXTUAL_FPS", 60)
 """Maximum frames per second for updates."""
+
+COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
+"""Force color system override"""

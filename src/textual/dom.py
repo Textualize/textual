@@ -612,13 +612,21 @@ class DOMNode(MessagePump):
 
     @property
     def visible(self) -> bool:
-        """Is the visibility style set to a visible state?
+        """Is this widget visible in the DOM?
 
-        May be set to a boolean to make the node visible (`True`) or invisible (`False`), or to any valid value for the `visibility` rule.
+        If a widget hasn't had its visibility set explicitly, then it inherits it from its
+        DOM ancestors.
 
-        When a node is invisible, Textual will reserve space for it, but won't display anything there.
+        This may be set explicitly to override inherited values.
+        The valid values include the valid values for the `visibility` rule and the booleans
+        `True` or `False`, to set the widget to be visible or invisible, respectively.
+
+        When a node is invisible, Textual will reserve space for it, but won't display anything.
         """
-        return self.styles.visibility != "hidden"
+        own_value = self.styles.get_rule("visibility")
+        if own_value is not None:
+            return own_value != "hidden"
+        return self.parent.visible if self.parent else True
 
     @visible.setter
     def visible(self, new_value: bool | str) -> None:
