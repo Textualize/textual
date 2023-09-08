@@ -1,8 +1,8 @@
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.document import Selection
 from textual.widgets import TextArea
+from textual.widgets.text_area import Selection
 
 TEXT = """I must not fear.
 Fear is the mind-killer.

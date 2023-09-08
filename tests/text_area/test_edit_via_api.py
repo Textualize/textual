@@ -8,8 +8,8 @@ Note that more extensive testing for editing is done at the Document level.
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.document import EditResult, Selection
 from textual.widgets import TextArea
+from textual.widgets.text_area import EditResult, Selection
 
 TEXT = """\
 I must not fear.

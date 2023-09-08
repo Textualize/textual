@@ -9,9 +9,9 @@ try:
 except ImportError:
     TREE_SITTER = False
 
+from textual._text_area_theme import TextAreaTheme
 from textual.document._document import Document, EditResult, Location, _utf8_encode
-from textual.document._languages import VALID_LANGUAGES
-from textual.document._text_area_theme import TextAreaTheme
+from textual.document._languages import BUILTIN_LANGUAGES
 
 
 class SyntaxAwareDocumentError(Exception):
@@ -62,7 +62,7 @@ class SyntaxAwareDocument(Document):
 
         # If the language is `None`, then avoid doing any parsing related stuff.
         if isinstance(language, str):
-            if language not in VALID_LANGUAGES:
+            if language not in BUILTIN_LANGUAGES:
                 raise SyntaxAwareDocumentError(f"Invalid language {language!r}")
             self.language = get_language(language)
             self._parser = get_parser(language)

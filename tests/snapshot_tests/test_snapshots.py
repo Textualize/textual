@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual.document import Selection, VALID_LANGUAGES
+from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
 from textual.widgets import TextArea
 
 # These paths should be relative to THIS directory.
@@ -639,7 +639,7 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
-@pytest.mark.parametrize("language", VALID_LANGUAGES)
+@pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
     # language. We should have a snapshot test for each language we support

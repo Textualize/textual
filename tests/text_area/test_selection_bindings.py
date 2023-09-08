@@ -1,9 +1,9 @@
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.document import Document, Selection
 from textual.geometry import Offset
 from textual.widgets import TextArea
+from textual.widgets.text_area import Document, Selection
 
 TEXT = """I must not fear.
 Fear is the mind-killer.

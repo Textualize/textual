@@ -10,9 +10,19 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
 from rich.style import Style
 from rich.text import Text
 
+from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER
 from textual.color import Color
-from textual.document._document import _utf8_encode
+from textual.document._document import (
+    Document,
+    DocumentBase,
+    EditResult,
+    Location,
+    Selection,
+    _utf8_encode,
+)
+from textual.document._languages import BUILTIN_LANGUAGES
+from textual.document._syntax_aware_document import SyntaxAwareDocument
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -23,15 +33,6 @@ from textual import events, log
 from textual._cells import cell_len
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.document import (
-    Document,
-    DocumentBase,
-    EditResult,
-    Location,
-    Selection,
-    SyntaxAwareDocument,
-    TextAreaTheme,
-)
 from textual.events import MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
@@ -338,11 +339,30 @@ TextArea {
             character = None
 
         # Record the location of a matching closing/opening bracket.
+        match_location = self.find_matching_bracket(character, cursor_location)
+        self._matching_bracket_location = match_location
+        if match_location is not None:
+            match_row, match_column = match_location
+            if match_row in range(*self._visible_line_indices):
+                self.refresh_lines(match_row)
+
+    def find_matching_bracket(
+        self, bracket: str, search_from: Location
+    ) -> Location | None:
+        """If the character is a bracket, find the matching bracket.
+
+        Args:
+            bracket: The character we're searching for the matching bracket of.
+            search_from: The location to start the search.
+
+        Returns:
+            The `Location` of the matching bracket, or None if it's not found.
+        """
         match_location = None
         bracket_stack = []
-        if character in _OPENING_BRACKETS:
+        if bracket in _OPENING_BRACKETS:
             for candidate, candidate_location in self._yield_character_locations(
-                cursor_location
+                search_from
             ):
                 if candidate in _OPENING_BRACKETS:
                     bracket_stack.append(candidate)
@@ -355,11 +375,11 @@ TextArea {
                         if not bracket_stack:
                             match_location = candidate_location
                             break
-        elif character in _CLOSING_BRACKETS:
+        elif bracket in _CLOSING_BRACKETS:
             for (
                 candidate,
                 candidate_location,
-            ) in self._yield_character_locations_reverse(cursor_location):
+            ) in self._yield_character_locations_reverse(search_from):
                 if candidate in _CLOSING_BRACKETS:
                     bracket_stack.append(candidate)
                 elif candidate in _OPENING_BRACKETS:
@@ -372,11 +392,7 @@ TextArea {
                             match_location = candidate_location
                             break
 
-        self._matching_bracket_location = match_location
-        if match_location is not None:
-            match_row, match_column = match_location
-            if match_row in range(*self._visible_line_indices):
-                self.refresh_lines(match_row)
+        return match_location
 
     def _validate_selection(self, selection: Selection) -> Selection:
         """Clamp the selection to valid locations."""
@@ -400,7 +416,17 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
+    def _validate_theme(
+        self, theme: str | TextAreaTheme | None
+    ) -> TextAreaTheme | None:
+        """When the user sets the theme to a string, convert it to a `TextAreaTheme`."""
+        if isinstance(theme, str):
+            theme = TextAreaTheme.get_by_name(theme)
+        return theme
+
     def _watch_theme(self, theme: TextAreaTheme | None) -> None:
+        """We set the styles on this widget when the theme changes, to ensure that
+        if padding is applied, the colours match."""
         if theme is None:
             self.styles.color = None
             self.styles.background = None
@@ -408,12 +434,34 @@ TextArea {
             self.styles.color = Color.from_rich_color(theme.base_style.color)
             self.styles.background = Color.from_rich_color(theme.base_style.bgcolor)
 
-    def _validate_theme(
-        self, theme: str | TextAreaTheme | None
-    ) -> TextAreaTheme | None:
-        if isinstance(theme, str):
-            theme = TextAreaTheme.get_by_name(theme)
-        return theme
+    @property
+    def available_themes(self) -> list[str]:
+        """A list of the names of the themes available to the `TextArea`.
+
+        The values in this list can be assigned `theme` reactive attribute of
+        `TextArea`.
+
+        You can retrieve the full specification for a theme by passing one of
+        the strings from this list into `TextAreaTheme.get_by_name(theme_name: str)`.
+
+        Alternatively, you can directly retrieve a list of `TextAreaTheme` objects
+        (which contain the full theme specification) by calling
+        `TextAreaTheme.builtin_themes()`.
+        """
+        return [theme.name for theme in TextAreaTheme.builtin_themes()]
+
+    @property
+    def available_languages(self) -> list[str]:
+        """A list of the names of languages available to the `TextArea`.
+
+        The values in this list can be assigned to the `language` reactive attribute
+        of `TextArea`.
+
+        The returned list contains the builtin languages plus those registered via the
+        `register_language` method. Builtin languages will be listed before
+        user-registered languages, but there are no other ordering guarantees.
+        """
+        return BUILTIN_LANGUAGES + list(self._languages.keys())
 
     def register_language(
         self,
