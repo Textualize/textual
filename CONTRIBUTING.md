@@ -100,7 +100,6 @@ If you go through our history of pull requests, you will see that every single o
 
 - If you are implementing a visual element, make sure to add snapshot tests. See below for more details.
 
-
 ### Snapshot Testing
 Snapshot tests ensure that things like widgets look like they are supposed to.
 PR [#1969](https://github.com/Textualize/textual/pull/1969) is a good example of what adding snapshot tests means: it amounts to a change in the file ```tests/snapshot_tests/test_snapshots.py```, that should run an app that you write and compare it against a historic snapshot of what that app should look like.
