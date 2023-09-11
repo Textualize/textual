@@ -160,18 +160,26 @@ class Header(Widget):
     def _on_click(self):
         self.toggle_class("-tall")
 
+    @property
+    def screen_title(self) -> str:
+        screen_title = self.screen.title
+        title = screen_title if screen_title is not None else self.app.title
+        return title
+
+    @property
+    def screen_sub_title(self) -> str:
+        screen_sub_title = self.screen.sub_title
+        sub_title = (
+            screen_sub_title if screen_sub_title is not None else self.app.sub_title
+        )
+        return sub_title
+
     def _on_mount(self, _: Mount) -> None:
         def set_title() -> None:
-            screen_title = self.screen.title
-            title = screen_title if screen_title is not None else self.app.title
-            self.query_one(HeaderTitle).text = title
+            self.query_one(HeaderTitle).text = self.screen_title
 
         def set_sub_title(sub_title: str) -> None:
-            screen_sub_title = self.screen.sub_title
-            sub_title = (
-                screen_sub_title if screen_sub_title is not None else self.app.sub_title
-            )
-            self.query_one(HeaderTitle).sub_text = sub_title
+            self.query_one(HeaderTitle).sub_text = self.screen_sub_title
 
         self.watch(self.app, "title", set_title)
         self.watch(self.app, "sub_title", set_sub_title)
