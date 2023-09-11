@@ -341,16 +341,15 @@ TextArea {
         try:
             character = self.document[cursor_row][cursor_column]
         except IndexError:
-            character = None
+            character = ""
 
         # Record the location of a matching closing/opening bracket.
-        if character:
-            match_location = self.find_matching_bracket(character, cursor_location)
-            self._matching_bracket_location = match_location
-            if match_location is not None:
-                match_row, match_column = match_location
-                if match_row in range(*self._visible_line_indices):
-                    self.refresh_lines(match_row)
+        match_location = self.find_matching_bracket(character, cursor_location)
+        self._matching_bracket_location = match_location
+        if match_location is not None:
+            match_row, match_column = match_location
+            if match_row in range(*self._visible_line_indices):
+                self.refresh_lines(match_row)
 
     def find_matching_bracket(
         self, bracket: str, search_from: Location
