@@ -9,6 +9,7 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.highlighter import Highlighter
 from rich.segment import Segment
 from rich.text import Text
+from typing_extensions import Literal
 
 from .. import events
 from .._segment_tools import line_crop
@@ -20,6 +21,11 @@ from ..reactive import reactive
 from ..suggester import Suggester, SuggestionReady
 from ..validation import ValidationResult, Validator
 from ..widget import Widget
+
+InputValidationOn = Literal["blur", "changed", "submitted"]
+"""Possible messages that trigger input validation."""
+_POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
+"""Set literal with the legal values for the type `InputValidationOn`."""
 
 
 class _InputRenderable:
@@ -221,6 +227,7 @@ class Input(Widget, can_focus=True):
         *,
         suggester: Suggester | None = None,
         validators: Validator | Iterable[Validator] | None = None,
+        validate_on: Iterable[InputValidationOn] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -236,6 +243,9 @@ class Input(Widget, can_focus=True):
             suggester: [`Suggester`][textual.suggester.Suggester] associated with this
                 input instance.
             validators: An iterable of validators that the Input value will be checked against.
+            validate_on: Zero or more of the values "blur", "changed", and "submitted",
+                which determine when to do input validation. The default is to do
+                validation for all messages.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -254,7 +264,25 @@ class Input(Widget, can_focus=True):
         elif validators is None:
             self.validators = []
         else:
-            self.validators = list(validators) or []
+            self.validators = list(validators)
+
+        self.validate_on = (
+            set(validate_on) & _POSSIBLE_VALIDATE_ON_VALUES
+            if validate_on is not None
+            else _POSSIBLE_VALIDATE_ON_VALUES
+        )
+        """Set with event names to do input validation on.
+
+        Validation can only be performed on blur, on input changes and on input submission.
+
+        Example:
+            This creates an `Input` widget that only gets validated when the value
+            is submitted explicitly:
+
+            ```py
+            input = Input(validate_on=["submitted"])
+            ```
+        """
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -306,8 +334,9 @@ class Input(Widget, can_focus=True):
         if self.styles.auto_dimensions:
             self.refresh(layout=True)
 
-        validation_result = self.validate(value)
-
+        validation_result = (
+            self.validate(value) if "changed" in self.validate_on else None
+        )
         self.post_message(self.Changed(self, value, validation_result))
 
     def validate(self, value: str) -> ValidationResult | None:
@@ -389,6 +418,8 @@ class Input(Widget, can_focus=True):
 
     def _on_blur(self, _: Blur) -> None:
         self.blink_timer.pause()
+        if "blur" in self.validate_on:
+            self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
         self.cursor_position = len(self.value)
@@ -577,7 +608,9 @@ class Input(Widget, can_focus=True):
     async def action_submit(self) -> None:
         """Handle a submit action.
 
-        Normally triggered by the user pressing Enter. This will also run any validators.
+        Normally triggered by the user pressing Enter. This may also run any validators.
         """
-        validation_result = self.validate(self.value)
+        validation_result = (
+            self.validate(self.value) if "submitted" in self.validate_on else None
+        )
         self.post_message(self.Submitted(self, self.value, validation_result))
