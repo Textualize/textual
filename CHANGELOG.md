@@ -13,9 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Widget.notify and App.notify are now thread-safe
-- Breaking change: Widget.notify and App.notify now return None
-- App.unnotify is now private (renamed to App._unnotify)
+- Widget.notify and App.notify are now thread-safe https://github.com/Textualize/textual/pull/3275
+- Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
+- App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
 
 ## [0.36.0] - 2023-09-05
 
