@@ -130,7 +130,7 @@ class Screen(Generic[ScreenResultType], Widget):
     }
     """
 
-    TITLE: str | None = None
+    TITLE: ClassVar[str | None] = None
     """A class variable to set the *default* title for the screen.
 
     This overrides the app title.
@@ -138,7 +138,7 @@ class Screen(Generic[ScreenResultType], Widget):
     you can set the [title][textual.screen.Screen.title] attribute.
     """
 
-    SUB_TITLE: str | None = None
+    SUB_TITLE: ClassVar[str | None] = None
     """A class variable to set the *default* sub-title for the screen.
 
     This overrides the app sub-title.
