@@ -361,7 +361,8 @@ TextArea {
             search_from: The location to start the search.
 
         Returns:
-            The `Location` of the matching bracket, or None if it's not found.
+            The `Location` of the matching bracket, or `None` if it's not found.
+            If the character is not available for bracket matching, `None` is returned.
         """
         match_location = None
         bracket_stack = []
