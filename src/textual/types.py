@@ -9,6 +9,7 @@ from ._types import CallbackType, MessageTarget, WatchCallbackType
 from .actions import ActionParseResult
 from .css.styles import RenderStyles
 from .widgets._data_table import CursorType
+from .widgets._input import InputValidationOn
 
 __all__ = [
     "ActionParseResult",
@@ -18,6 +19,7 @@ __all__ = [
     "CSSPathType",
     "CursorType",
     "EasingFunction",
+    "InputValidationOn",
     "MessageTarget",
     "NoActiveAppError",
     "RenderStyles",
