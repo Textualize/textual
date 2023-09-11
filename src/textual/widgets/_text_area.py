@@ -452,37 +452,34 @@ TextArea {
     def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
+
         if theme is None:
-            self._theme = TextAreaTheme.default()
-            self.styles.color = None
-            self.styles.background = None
+            # If the theme is None, use the default.
+            theme_object = TextAreaTheme.default()
         else:
-            theme_object = None
-
             # If the user supplied a string theme name, find it and apply it.
-            if isinstance(theme, str):
-                try:
-                    theme_object = self._themes[theme]
-                except KeyError:
-                    theme_object = TextAreaTheme.get_builtin_theme(theme)
+            try:
+                theme_object = self._themes[theme]
+            except KeyError:
+                theme_object = TextAreaTheme.get_builtin_theme(theme)
 
-                if theme_object is None:
-                    raise ThemeDoesNotExist(
-                        f"{theme!r} is not a builtin theme, or it has not been registered. "
-                        f"To use a custom theme, register it first using `register_theme`, "
-                        f"then switch to that theme by setting the `TextArea.theme` attribute."
-                    )
+            if theme_object is None:
+                raise ThemeDoesNotExist(
+                    f"{theme!r} is not a builtin theme, or it has not been registered. "
+                    f"To use a custom theme, register it first using `register_theme`, "
+                    f"then switch to that theme by setting the `TextArea.theme` attribute."
+                )
 
-            self._theme = theme_object
-            if theme_object:
-                base_style = theme_object.base_style
-                if base_style:
-                    color = base_style.color
-                    background = base_style.bgcolor
-                    if color:
-                        self.styles.color = Color.from_rich_color(color)
-                    if background:
-                        self.styles.background = Color.from_rich_color(background)
+        self._theme = theme_object
+        if theme_object:
+            base_style = theme_object.base_style
+            if base_style:
+                color = base_style.color
+                background = base_style.bgcolor
+                if color:
+                    self.styles.color = Color.from_rich_color(color)
+                if background:
+                    self.styles.background = Color.from_rich_color(background)
 
     @property
     def available_themes(self) -> set[str]:

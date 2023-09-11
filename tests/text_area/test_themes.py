@@ -34,6 +34,17 @@ async def test_setting_builtin_themes():
         assert text_area.theme == "monokai"
 
 
+async def test_setting_theme_to_none():
+    app = TextAreaApp()
+
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.theme = None
+        assert text_area.theme is None
+        # When theme is None, we use the default theme.
+        assert text_area._theme.name == TextAreaTheme.default().name
+
+
 async def test_setting_unknown_theme():
     app = TextAreaApp()
     async with app.run_test():

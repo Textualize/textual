@@ -42,6 +42,14 @@ async def test_setting_builtin_language_via_attribute():
         assert text_area.language == "markdown"
 
 
+async def test_setting_language_to_none():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.language = None
+        assert text_area.language is None
+
+
 async def test_setting_unknown_language():
     app = TextAreaApp()
     async with app.run_test():
