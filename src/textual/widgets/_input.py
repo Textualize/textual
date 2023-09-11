@@ -24,6 +24,8 @@ from ..widget import Widget
 
 InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
+_POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
+"""Set literal with the legal values for the type `InputValidationOn`."""
 
 
 class _InputRenderable:
@@ -241,8 +243,9 @@ class Input(Widget, can_focus=True):
             suggester: [`Suggester`][textual.suggester.Suggester] associated with this
                 input instance.
             validators: An iterable of validators that the Input value will be checked against.
-            validate_on: When does input validation happen? The default is to validate
-                on input changes and submissions, as well as on blur events.
+            validate_on: Zero or more of the values "blur", "changed", and "submitted",
+                which determine when to do input validation. The default is to do
+                validation for all messages.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -263,11 +266,10 @@ class Input(Widget, can_focus=True):
         else:
             self.validators = list(validators)
 
-        _possible_validate_on_values = {"blur", "changed", "submitted"}
         self.validate_on = (
-            set(validate_on) & _possible_validate_on_values
+            set(validate_on) & _POSSIBLE_VALIDATE_ON_VALUES
             if validate_on is not None
-            else _possible_validate_on_values
+            else _POSSIBLE_VALIDATE_ON_VALUES
         )
         """Set with event names to do input validation on.
 
@@ -278,8 +280,6 @@ class Input(Widget, can_focus=True):
             is submitted explicitly:
 
             ```py
-            from textual.events import Blur
-
             input = Input(validate_on=["submitted"])
             ```
         """
@@ -608,7 +608,7 @@ class Input(Widget, can_focus=True):
     async def action_submit(self) -> None:
         """Handle a submit action.
 
-        Normally triggered by the user pressing Enter. This will also run any validators.
+        Normally triggered by the user pressing Enter. This may also run any validators.
         """
         validation_result = (
             self.validate(self.value) if "submitted" in self.validate_on else None

@@ -27,7 +27,13 @@ The example below shows how you might create a simple form using two `Input` wid
 You can supply one or more *[validators][textual.validation.Validator]* to the `Input` widget to validate the value.
 
 All the supplied validators will run when the value changes, the `Input` is submitted, or focus moves _out_ of the `Input`.
-This can be customized via the attribute [`prevent_validation_on`][textual.widgets.Input.prevent_validation_on].
+The values `"changed"`, `"submitted"`, and `"blur"`, can be passed as an iterable to the `Input` parameter `validate_on` to request that validation occur only on the respective mesages.
+(See [`InputValidationOn`][textual.widgets._input.InputValidationOn] and [`Input.validate_on`][textual.widgets.Input.validate_on].)
+For example, the code below creates an `Input` widget that only gets validated when the value is submitted explicitly:
+
+```python
+input = Input(validate_on=["submitted"])
+```
 
 Validation is considered to have failed if *any* of the validators fail.
 
