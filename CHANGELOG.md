@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Screen-specific (sub-)title attributes https://github.com/Textualize/textual/pull/3199:
+  - `Screen.TITLE`
+  - `Screen.SUB_TITLE`
+  - `Screen.title`
+  - `Screen.sub_title`
+- Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
+
 ### Fixed
 
 - Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
