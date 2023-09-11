@@ -586,7 +586,9 @@ TextArea {
             else:
                 self._highlight_query = document.prepare_query(highlight_query)
         elif language and not TREE_SITTER:
-            log.warning("Syntax highlighting not available on this architecture.")
+            log.warning(
+                "tree-sitter not available in this environment. Parsing disabled."
+            )
             document = Document(text)
         else:
             document = Document(text)
