@@ -25,7 +25,7 @@ async def test_app_with_removing_notifications() -> None:
     async with NotificationApp().run_test() as pilot:
         notification = pilot.app.notify("test")
         assert len(pilot.app._notifications) == 1
-        pilot.app.unnotify(notification)
+        pilot.app._unnotify(notification)
         assert len(pilot.app._notifications) == 0
 
 

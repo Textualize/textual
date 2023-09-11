@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
 
+### Changed
+
+- Widget.notify and App.notify are now thread-safe
+- Breaking change: Widget.notify and App.notify now return None
+- App.unnotify is now private (renamed to App._unnotify)
+
 ## [0.36.0] - 2023-09-05
 
 ### Added
