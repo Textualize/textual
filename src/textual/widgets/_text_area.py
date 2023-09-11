@@ -517,7 +517,14 @@ TextArea {
         )
 
     def _set_document(self, text: str, language: str | None) -> None:
-        """Construct and return an appropriate document."""
+        """Construct and return an appropriate document.
+
+        Args:
+            text: The text of the document.
+            language: The name of the language to use. This must either be a
+                built-in supported language, or a language previously registered
+                via the `register_language` method.
+        """
         self._highlight_query = None
         if TREE_SITTER and language:
             # Attempt to get the override language.
