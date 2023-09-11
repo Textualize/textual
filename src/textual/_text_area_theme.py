@@ -110,7 +110,7 @@ class TextAreaTheme:
             )
 
     @classmethod
-    def get_by_name(cls, theme_name: str) -> "TextAreaTheme" | None:
+    def get_builtin_theme(cls, theme_name: str) -> "TextAreaTheme" | None:
         """Get a `TextAreaTheme` by name.
 
         Given a `theme_name` return the corresponding `TextAreaTheme` object.
@@ -348,5 +348,5 @@ _BUILTIN_THEMES = {
     "github_light": _GITHUB_LIGHT,
 }
 
-DEFAULT_SYNTAX_THEME = TextAreaTheme.get_by_name("monokai")
+DEFAULT_SYNTAX_THEME = TextAreaTheme.get_builtin_theme("monokai")
 """The default syntax highlighting theme used by Textual."""

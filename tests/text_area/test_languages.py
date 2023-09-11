@@ -48,8 +48,13 @@ async def test_register_language():
         from tree_sitter_languages import get_language
 
         language = get_language("elm")
+
         # ...and register it with no highlights
         text_area.register_language(language, "")
+
+        # Ensure that registered language is now available.
+        assert "elm" in text_area.available_languages
+
         # Switch to the newly registered language
         text_area.language = "elm"
 

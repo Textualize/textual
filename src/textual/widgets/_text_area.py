@@ -51,6 +51,10 @@ Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 """A tuple representing a syntax highlight within one line."""
 
 
+class ThemeDoesNotExist(Exception):
+    pass
+
+
 @dataclass
 class TextAreaLanguage:
     name: str
@@ -168,9 +172,7 @@ TextArea {
     it first using `register_language`.
     """
 
-    theme: Reactive[str | TextAreaTheme | None] = reactive(
-        TextAreaTheme.default(), always_update=True, init=False
-    )
+    theme: Reactive[str | None] = reactive(None, always_update=True, init=False)
     """The theme to syntax highlight with.
 
     Supply a `SyntaxTheme` object to customise highlighting, or supply a builtin
@@ -218,7 +220,7 @@ TextArea {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | TextAreaTheme | None = TextAreaTheme.default(),
+        theme: str | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -239,7 +241,10 @@ TextArea {
         self._initial_text = text
 
         self._languages: dict[str, TextAreaLanguage] = {}
-        """Maps language names to their TextAreaLanguage metadata."""
+        """Maps language names to TextAreaLanguage."""
+
+        self._themes: dict[str, TextAreaTheme] = {}
+        """Maps theme names to TextAreaTheme."""
 
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
@@ -422,18 +427,30 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _watch_theme(self, theme: str | TextAreaTheme | None) -> None:
+    def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
         if theme is None:
-            self._theme = None
+            self._theme = TextAreaTheme.default()
             self.styles.color = None
             self.styles.background = None
         else:
+            theme_object = None
+
+            # If the user supplied a string theme name, find it and apply it.
             if isinstance(theme, str):
-                theme_object = TextAreaTheme.get_by_name(theme)
-            else:
-                theme_object = theme
+                try:
+                    theme_object = self._themes[theme]
+                except KeyError:
+                    theme_object = TextAreaTheme.get_builtin_theme(theme)
+
+                if theme_object is None:
+                    raise ThemeDoesNotExist(
+                        f"{theme!r} is not a builtin theme, or has not been registered. "
+                        f"To use a custom theme, register it first using `register_theme`, "
+                        f"then switch to that theme by setting the `TextArea.theme` attribute."
+                    )
+
             self._theme = theme_object
             if theme_object:
                 base_style = theme_object.base_style
@@ -459,7 +476,22 @@ TextArea {
         (which contain the full theme specification) by calling
         `TextAreaTheme.builtin_themes()`.
         """
-        return {theme.name for theme in TextAreaTheme.builtin_themes()}
+        return {
+            theme.name for theme in TextAreaTheme.builtin_themes()
+        } | self._themes.keys()
+
+    def register_theme(self, theme: TextAreaTheme) -> None:
+        """Register a theme for use by the `TextArea`.
+
+        After registering a theme, you can set themes by assigning the theme
+        name to the `TextArea.theme` reactive attribute. For example
+        `text_area.theme = "my_custom_theme"` where `"my_custom_theme"` is the
+        name of the theme you registered.
+
+        If you supply a theme with a name that already exists that theme
+        will be overwritten.
+        """
+        self._themes[theme.name] = theme
 
     @property
     def available_languages(self) -> set[str]:
