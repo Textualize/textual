@@ -269,26 +269,19 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self._document: DocumentBase | None = None
+        self.document: DocumentBase | None = None
         """The document this widget is currently editing."""
-
-        self.theme: str | None = theme
-        """The name of the theme of the `TextArea` as set by the user."""
 
         self._theme: TextAreaTheme | None = None
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
 
+        self.theme: str | None = theme
+        """The name of the theme of the `TextArea` as set by the user."""
+
         self.language = language
         """The language of the `TextArea`."""
-
-    @property
-    def document(self) -> DocumentBase:
-        if self._document is None:
-            self._set_document(self.text, self.language)
-        assert self._document is not None
-        return self._document
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -429,7 +422,7 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _watch_theme(self, theme: str | None) -> None:
+    def _watch_theme(self, theme: str | TextAreaTheme | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
         if theme is None:
@@ -437,7 +430,10 @@ TextArea {
             self.styles.color = None
             self.styles.background = None
         else:
-            theme_object = TextAreaTheme.get_by_name(theme)
+            if isinstance(theme, str):
+                theme_object = TextAreaTheme.get_by_name(theme)
+            else:
+                theme_object = theme
             self._theme = theme_object
             base_style = theme_object.base_style
             if base_style:
@@ -545,7 +541,7 @@ TextArea {
         else:
             document = Document(text)
 
-        self._document = document
+        self.document = document
         log.debug(f"setting document: {document!r}")
         self._build_highlight_map()
 
@@ -574,7 +570,7 @@ TextArea {
         Args:
             document: The document to load into the TextArea.
         """
-        self._document = document
+        self.document = document
         self.move_cursor((0, 0))
         self._refresh_size()
 
