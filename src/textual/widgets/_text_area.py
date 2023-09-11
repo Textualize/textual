@@ -269,7 +269,7 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self.document: DocumentBase | None = None
+        self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
 
         self._theme: TextAreaTheme | None = None
@@ -277,11 +277,11 @@ TextArea {
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
 
-        self.theme: str | None = theme
-        """The name of the theme of the `TextArea` as set by the user."""
-
         self.language = language
         """The language of the `TextArea`."""
+
+        self.theme: str | None = theme
+        """The name of the theme of the `TextArea` as set by the user."""
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -435,14 +435,15 @@ TextArea {
             else:
                 theme_object = theme
             self._theme = theme_object
-            base_style = theme_object.base_style
-            if base_style:
-                color = base_style.color
-                background = base_style.bgcolor
-                if color:
-                    self.styles.color = Color.from_rich_color(color)
-                if background:
-                    self.styles.background = Color.from_rich_color(background)
+            if theme_object:
+                base_style = theme_object.base_style
+                if base_style:
+                    color = base_style.color
+                    background = base_style.bgcolor
+                    if color:
+                        self.styles.color = Color.from_rich_color(color)
+                    if background:
+                        self.styles.background = Color.from_rich_color(background)
 
     @property
     def available_themes(self) -> list[str]:
