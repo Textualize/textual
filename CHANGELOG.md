@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `Input` is now validated when focus moves out of it https://github.com/Textualize/textual/pull/3193
-- Attribute `Input.prevent_validation_on` (and `__init__` parameter of the same name) to customise when validation occurs https://github.com/Textualize/textual/pull/3193
+- Attribute `Input.validate_on` (and `__init__` parameter of the same name) to customise when validation occurs https://github.com/Textualize/textual/pull/3193
 
 ### Changed
 

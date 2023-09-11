@@ -9,6 +9,7 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.highlighter import Highlighter
 from rich.segment import Segment
 from rich.text import Text
+from typing_extensions import Literal
 
 from .. import events
 from .._segment_tools import line_crop
@@ -20,6 +21,9 @@ from ..reactive import reactive
 from ..suggester import Suggester, SuggestionReady
 from ..validation import ValidationResult, Validator
 from ..widget import Widget
+
+InputValidationOn = Literal["blur", "changed", "submitted"]
+"""Possible messages that trigger input validation."""
 
 
 class _InputRenderable:
@@ -221,7 +225,7 @@ class Input(Widget, can_focus=True):
         *,
         suggester: Suggester | None = None,
         validators: Validator | Iterable[Validator] | None = None,
-        prevent_validation_on: Iterable[type[Message]] | None = None,
+        validate_on: Iterable[InputValidationOn] | None = None,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -237,8 +241,8 @@ class Input(Widget, can_focus=True):
             suggester: [`Suggester`][textual.suggester.Suggester] associated with this
                 input instance.
             validators: An iterable of validators that the Input value will be checked against.
-            prevent_validation_on: Message types for which validation shouldn't occur.
-                Validation occurs for input changes and submissions, as well as on blur events.
+            validate_on: When does input validation happen? The default is to validate
+                on input changes and submissions, as well as on blur events.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
@@ -258,14 +262,16 @@ class Input(Widget, can_focus=True):
             self.validators = []
         else:
             self.validators = list(validators)
-        self.prevent_validation_on: set[type[Message]] = set(
-            prevent_validation_on or []
-        ) & {self.Changed, self.Submitted, Blur}
-        """Set with events to skip validation on.
 
-        Validation is only performed on blur, when input changes and when it's submitted.
-        Including any of these types of messages in this set will skip validation on
-        these message types.
+        _possible_validate_on_values = {"blur", "changed", "submitted"}
+        self.validate_on = (
+            set(validate_on) & _possible_validate_on_values
+            if validate_on is not None
+            else _possible_validate_on_values
+        )
+        """Set with event names to do input validation on.
+
+        Validation can only be performed on blur, on input changes and on input submission.
 
         Example:
             This creates an `Input` widget that only gets validated when the value
@@ -274,7 +280,7 @@ class Input(Widget, can_focus=True):
             ```py
             from textual.events import Blur
 
-            input = Input(prevent_validation_on=[Blur, Input.Changed])
+            input = Input(validate_on=["submitted"])
             ```
         """
 
@@ -329,9 +335,7 @@ class Input(Widget, can_focus=True):
             self.refresh(layout=True)
 
         validation_result = (
-            self.validate(value)
-            if self.Changed not in self.prevent_validation_on
-            else None
+            self.validate(value) if "changed" in self.validate_on else None
         )
         self.post_message(self.Changed(self, value, validation_result))
 
@@ -414,7 +418,7 @@ class Input(Widget, can_focus=True):
 
     def _on_blur(self, _: Blur) -> None:
         self.blink_timer.pause()
-        if Blur not in self.prevent_validation_on:
+        if "blur" in self.validate_on:
             self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
@@ -606,8 +610,6 @@ class Input(Widget, can_focus=True):
         Normally triggered by the user pressing Enter. This will also run any validators.
         """
         validation_result = (
-            self.validate(self.value)
-            if self.Submitted not in self.prevent_validation_on
-            else None
+            self.validate(self.value) if "submitted" in self.validate_on else None
         )
         self.post_message(self.Submitted(self, self.value, validation_result))
