@@ -603,6 +603,16 @@ def test_tooltips_in_compound_widgets(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
 
 
+def test_command_palette(snap_compare) -> None:
+
+    from textual.command_palette import CommandPalette
+
+    async def run_before(pilot) -> None:
+        await pilot.press("ctrl+@")
+        await pilot.press("A")
+        await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
+    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
+
 # --- textual-dev library preview tests ---
 
 
