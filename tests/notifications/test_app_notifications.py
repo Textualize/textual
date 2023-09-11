@@ -24,7 +24,7 @@ async def test_app_with_notifications() -> None:
 async def test_app_with_removing_notifications() -> None:
     """An app with notifications should have notifications in the list, which can be removed."""
     async with NotificationApp().run_test() as pilot:
-        notification = pilot.app.notify("test")
+        pilot.app.notify("test")
         await pilot.pause()
         assert len(pilot.app._notifications) == 1
         pilot.app._unnotify(list(pilot.app._notifications)[0])
