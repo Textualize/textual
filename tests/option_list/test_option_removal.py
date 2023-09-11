@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.geometry import Offset
 from textual.widgets import OptionList
 from textual.widgets.option_list import Option, OptionDoesNotExist
 
@@ -99,3 +100,13 @@ async def test_remove_invalid_index() -> None:
     async with OptionListApp().run_test() as pilot:
         with pytest.raises(OptionDoesNotExist):
             pilot.app.query_one(OptionList).remove_option_at_index(23)
+
+
+async def test_remove_with_hover_on_last_option():
+    """https://github.com/Textualize/textual/issues/3270"""
+    async with OptionListApp().run_test() as pilot:
+        await pilot.hover(OptionList, Offset(1, 1) + Offset(2, 1))
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list._mouse_hovering_over == 1
+        option_list.remove_option_at_index(0)
+        assert option_list._mouse_hovering_over == None
