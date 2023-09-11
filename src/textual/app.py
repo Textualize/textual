@@ -2982,7 +2982,7 @@ class App(Generic[ReturnType], DOMNode):
         self.post_message(Notify(notification))
 
     def _on_notify(self, event: Notify) -> None:
-        """Handle notification method."""
+        """Handle notification message."""
         self._notifications.add(event.notification)
         self._refresh_notifications()
 
