@@ -1247,6 +1247,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 height = 0
                 row_style = self._get_row_style(row_index, base_style)
 
+                # As we go through the cells, save their rendering, height, and
+                # column width. After we compute the height of the row, go over the cells
+                # that were rendered with the wrong height and append the missing padding.
+                rendered_cells: list[tuple[SegmentLines, int, int]] = []
                 for column_index, column in enumerate(ordered_columns):
                     style = fixed_style if column_index < fixed_columns else row_style
                     cell_location = Coordinate(row_index, column_index)
@@ -1262,9 +1266,24 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                             hover_location, cell_location, cursor_type
                         ),
                     )
-                    height = max(height, len(rendered_cell))
+                    cell_height = len(rendered_cell)
+                    rendered_cells.append(
+                        (rendered_cell, cell_height, column.render_width)
+                    )
+                    height = max(height, cell_height)
 
                 row.height = height
+                # Do surgery on the cache for cells that were rendered with the incorrect
+                # height during the first pass.
+                for cell_renderable, cell_height, column_width in rendered_cells:
+                    if cell_height < height:
+                        first_line_space_style = cell_renderable[0][0].style
+                        cell_renderable.extend(
+                            [
+                                [Segment(" " * column_width, first_line_space_style)]
+                                for _ in range(height - cell_height)
+                            ]
+                        )
 
         data_cells_width = sum(column.render_width for column in self.columns.values())
         total_width = data_cells_width + self._row_label_column_width
@@ -1851,7 +1870,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 )
             else:
                 row = self.rows[row_key]
-                if row.auto_height:
+                # If an auto-height row hasn't had its height calculated, we don't fix
+                # the value for `height` so that we can measure the height of the cell.
+                if row.auto_height and row.height == 0:
                     options = self.app.console.options.update_width(width)
                 else:
                     options = self.app.console.options.update_dimensions(
