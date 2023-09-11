@@ -90,7 +90,7 @@ from .keys import (
     _get_unicode_name_from_key,
 )
 from .messages import CallbackType
-from .notifications import Notification, Notifications, SeverityLevel
+from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import Screen, ScreenResultCallbackType, ScreenResultType
@@ -2931,17 +2931,19 @@ class App(Generic[ReturnType], DOMNode):
         title: str = "",
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
-    ) -> Notification:
+    ) -> None:
         """Create a notification.
+
+        !!! tip
+
+            This method is thread-safe.
+
 
         Args:
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout for the notification.
-
-        Returns:
-            The new notification.
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
@@ -2977,11 +2979,14 @@ class App(Generic[ReturnType], DOMNode):
             ```
         """
         notification = Notification(message, title, severity, timeout)
-        self._notifications.add(notification)
-        self._refresh_notifications()
-        return notification
+        self.post_message(Notify(notification))
 
-    def unnotify(self, notification: Notification, refresh: bool = True) -> None:
+    def _on_notify(self, event: Notify) -> None:
+        """Handle notification message."""
+        self._notifications.add(event.notification)
+        self._refresh_notifications()
+
+    def _unnotify(self, notification: Notification, refresh: bool = True) -> None:
         """Remove a notification from the notification collection.
 
         Args:

@@ -3391,17 +3391,18 @@ class Widget(DOMNode):
         title: str = "",
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
-    ) -> Notification:
+    ) -> None:
         """Create a notification.
+
+        !!! tip
+
+            This method is thread-safe.
 
         Args:
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout for the notification.
-
-        Returns:
-            The new notification.
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.
