@@ -446,7 +446,7 @@ TextArea {
                         self.styles.background = Color.from_rich_color(background)
 
     @property
-    def available_themes(self) -> list[str]:
+    def available_themes(self) -> set[str]:
         """A list of the names of the themes available to the `TextArea`.
 
         The values in this list can be assigned `theme` reactive attribute of
@@ -459,10 +459,10 @@ TextArea {
         (which contain the full theme specification) by calling
         `TextAreaTheme.builtin_themes()`.
         """
-        return [theme.name for theme in TextAreaTheme.builtin_themes()]
+        return {theme.name for theme in TextAreaTheme.builtin_themes()}
 
     @property
-    def available_languages(self) -> list[str]:
+    def available_languages(self) -> set[str]:
         """A list of the names of languages available to the `TextArea`.
 
         The values in this list can be assigned to the `language` reactive attribute
@@ -472,7 +472,7 @@ TextArea {
         `register_language` method. Builtin languages will be listed before
         user-registered languages, but there are no other ordering guarantees.
         """
-        return BUILTIN_LANGUAGES + list(self._languages.keys())
+        return set(BUILTIN_LANGUAGES) | self._languages.keys()
 
     def register_language(
         self,
@@ -515,6 +515,10 @@ TextArea {
             language=language,
             highlight_query=highlight_query,
         )
+        # If we updated the currently set language, rebuild the highlights
+        # using the newly updated highlights query.
+        if language_name == self.language:
+            self._set_document(self.text, language_name)
 
     def _set_document(self, text: str, language: str | None) -> None:
         """Construct and return an appropriate document.
