@@ -162,12 +162,20 @@ class Header(Widget):
 
     @property
     def screen_title(self) -> str:
+        """The title that this header will display.
+
+        This depends on [`Screen.title`][textual.screen.Screen.title] and [`App.title`][textual.app.App.title].
+        """
         screen_title = self.screen.title
         title = screen_title if screen_title is not None else self.app.title
         return title
 
     @property
     def screen_sub_title(self) -> str:
+        """The sub-title that this header will display.
+
+        This depends on [`Screen.sub_title`][textual.screen.Screen.sub_title] and [`App.sub_title`][textual.app.App.sub_title].
+        """
         screen_sub_title = self.screen.sub_title
         sub_title = (
             screen_sub_title if screen_sub_title is not None else self.app.sub_title
