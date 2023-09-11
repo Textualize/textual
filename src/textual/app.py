@@ -238,6 +238,10 @@ class _PrintCapture:
         # TODO: should this be configurable?
         return True
 
+    def fileno(self) -> int:
+        """Return invalid fileno."""
+        return -1
+
 
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):

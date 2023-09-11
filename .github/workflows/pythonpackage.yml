@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
     defaults:
       run:
         shell: bash
@@ -33,6 +33,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
+          allow-prereleases: true
       - name: Load cached venv
         id: cached-poetry-dependencies
         uses: actions/cache@v3
