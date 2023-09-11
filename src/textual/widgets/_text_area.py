@@ -269,7 +269,7 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self.document: DocumentBase | None = None
+        self._document: DocumentBase | None = None
         """The document this widget is currently editing."""
 
         self.theme: TextAreaTheme | None = theme
@@ -277,6 +277,13 @@ TextArea {
 
         self.language = language
         """The language of the `TextArea`."""
+
+    @property
+    def document(self) -> DocumentBase:
+        if self._document is None:
+            self._set_document(self.text, self.language)
+        assert self._document is not None
+        return self._document
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -339,12 +346,13 @@ TextArea {
             character = None
 
         # Record the location of a matching closing/opening bracket.
-        match_location = self.find_matching_bracket(character, cursor_location)
-        self._matching_bracket_location = match_location
-        if match_location is not None:
-            match_row, match_column = match_location
-            if match_row in range(*self._visible_line_indices):
-                self.refresh_lines(match_row)
+        if character:
+            match_location = self.find_matching_bracket(character, cursor_location)
+            self._matching_bracket_location = match_location
+            if match_location is not None:
+                match_row, match_column = match_location
+                if match_row in range(*self._visible_line_indices):
+                    self.refresh_lines(match_row)
 
     def find_matching_bracket(
         self, bracket: str, search_from: Location
@@ -431,8 +439,14 @@ TextArea {
             self.styles.color = None
             self.styles.background = None
         else:
-            self.styles.color = Color.from_rich_color(theme.base_style.color)
-            self.styles.background = Color.from_rich_color(theme.base_style.bgcolor)
+            base_style = theme.base_style
+            if base_style:
+                color = base_style.color
+                background = base_style.bgcolor
+                if color:
+                    self.styles.color = Color.from_rich_color(color)
+                if background:
+                    self.styles.background = Color.from_rich_color(background)
 
     @property
     def available_themes(self) -> list[str]:
@@ -531,7 +545,7 @@ TextArea {
         else:
             document = Document(text)
 
-        self.document = document
+        self._document = document
         log.debug(f"setting document: {document!r}")
         self._build_highlight_map()
 
@@ -560,7 +574,7 @@ TextArea {
         Args:
             document: The document to load into the TextArea.
         """
-        self.document = document
+        self._document = document
         self.move_cursor((0, 0))
         self._refresh_size()
 

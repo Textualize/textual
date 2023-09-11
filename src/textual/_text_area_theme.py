@@ -35,7 +35,7 @@ class TextAreaTheme:
     be styled bold cyan.
     """
 
-    name: str | None = None
+    name: str
     """The name of the theme."""
 
     base_style: Style | None = None
