@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+
+## Unreleased
 
 ### Added
 
 - Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
+
+### Fixed
+
+- Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
+
 
 ## [0.36.0] - 2023-09-05
 
