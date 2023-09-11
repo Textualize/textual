@@ -9,15 +9,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
 - `Input` is now validated when focus moves out of it https://github.com/Textualize/textual/pull/3193
 - Attribute `Input.validate_on` (and `__init__` parameter of the same name) to customise when validation occurs https://github.com/Textualize/textual/pull/3193
+### Fixed
+
+- Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
+
+## [0.36.0] - 2023-09-05
+
+### Added
+
+- TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
+- `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
+- Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
+- Added `Rule` widget https://github.com/Textualize/textual/pull/3209
+- Added App.current_mode to get the current mode https://github.com/Textualize/textual/pull/3233
 
 ### Changed
 
 - Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
 - Added `cursor_type` to the `DataTable` constructor.
+- Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
+
+### Fixed
+
+- Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
+- Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
+- Fixed flicker when scrolling tree up or down a line https://github.com/Textualize/textual/issues/3206
 
 ## [0.35.1]
 
@@ -69,6 +88,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
 - Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
 - `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+- Fixed click on double-width char https://github.com/Textualize/textual/issues/2968
 
 ### Changed
 
@@ -1237,6 +1257,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
 [0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
 [0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
 [0.34.0]: https://github.com/Textualize/textual/compare/v0.33.0...v0.34.0

@@ -1,0 +1,13 @@
+Screen {
+    align: center middle;
+}
+
+Vertical {
+    height: auto;
+    width: 80%;
+}
+
+Label {
+    width: 100%;
+    text-align: center;
+}

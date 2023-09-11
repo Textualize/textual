@@ -38,7 +38,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     index = reactive[Optional[int]](0, always_update=True)
 
-    class Highlighted(Message, bubble=True):
+    class Highlighted(Message):
         """Posted when the highlighted item changes.
 
         Highlighted item is controlled using up/down keys.
@@ -65,7 +65,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             """
             return self.list_view
 
-    class Selected(Message, bubble=True):
+    class Selected(Message):
         """Posted when a list item is selected, e.g. when you press the enter key on it.
 
         Can be handled using `on_list_view_selected` in a subclass of `ListView` or in

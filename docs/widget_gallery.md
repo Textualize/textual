@@ -225,6 +225,16 @@ Display and update text in a scrolling panel.
 ```{.textual path="docs/examples/widgets/rich_log.py" press="H,i"}
 ```
 
+## Rule
+
+A rule widget to separate content, similar to a `<hr>` HTML tag.
+
+[Rule reference](./widgets/rule.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/horizontal_rules.py"}
+```
+
 ## Select
 
 Select from a number of possible options.

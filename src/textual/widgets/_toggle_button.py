@@ -232,7 +232,7 @@ class ToggleButton(Static, can_focus=True):
         """Toggle the value of the widget when clicked with the mouse."""
         self.toggle()
 
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the value of the toggle button changes."""
 
         def __init__(self, toggle_button: ToggleButton, value: bool) -> None:
