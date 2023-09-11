@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `Input` is now validated when focus moves out of it https://github.com/Textualize/textual/pull/3193
+- Attribute `Input.validate_on` (and `__init__` parameter of the same name) to customise when validation occurs https://github.com/Textualize/textual/pull/3193
 - Screen-specific (sub-)title attributes https://github.com/Textualize/textual/pull/3199:
   - `Screen.TITLE`
   - `Screen.SUB_TITLE`
