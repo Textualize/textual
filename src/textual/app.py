@@ -68,11 +68,13 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
+from ._system_commands_source import SystemCommandSource
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
+from .command_palette import CommandPalette, CommandPaletteCallable, CommandSource
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -323,8 +325,23 @@ class App(Generic[ReturnType], DOMNode):
     See also [the `Screen.SUB_TITLE` attribute][textual.screen.Screen.SUB_TITLE].
     """
 
+    ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
+    """Should the [command palette][textual.command_palette.CommandPalette] be enabled for the application?"""
+
+    COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
+    """The [command sources](/api/command_palette/) for the application.
+
+    This is the collection of [command sources][textual.command_palette.CommandSource]
+    that provide matched
+    commands to the [command palette][textual.command_palette.CommandPalette].
+
+    The default Textual command palette source is
+    [the Textual system-wide command source][textual._system_commands_source.SystemCommandSource].
+    """
+
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("ctrl+c", "quit", "Quit", show=False, priority=True)
+        Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
+        Binding("ctrl+@", "command_palette", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
@@ -436,6 +453,14 @@ class App(Generic[ReturnType], DOMNode):
 
         Assign a new value to this attribute to change the sub-title.
         The new value is always converted to string.
+        """
+
+        self.use_command_palette: bool = self.ENABLE_COMMAND_PALETTE
+        """A flag to say if the application should use the command palette.
+
+        If set to `False` any call to
+        [`action_command_palette`][textual.app.App.action_command_palette]
+        will be ignored.
         """
 
         self._logger = Logger(self._log)
@@ -3003,3 +3028,8 @@ class App(Generic[ReturnType], DOMNode):
         """Clear all the current notifications."""
         self._notifications.clear()
         self._refresh_notifications()
+
+    def action_command_palette(self) -> None:
+        """Show the Textual command palette."""
+        if self.use_command_palette and not CommandPalette.is_open(self):
+            self.push_screen(CommandPalette(), callback=self.call_next)
