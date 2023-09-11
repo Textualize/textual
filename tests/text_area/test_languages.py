@@ -1,5 +1,8 @@
+import pytest
+
 from textual.app import App, ComposeResult
 from textual.widgets import TextArea
+from textual.widgets.text_area import LanguageDoesNotExist
 
 
 class TextAreaApp(App):
@@ -39,11 +42,21 @@ async def test_setting_builtin_language_via_attribute():
         assert text_area.language == "markdown"
 
 
+async def test_setting_unknown_language():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+
+        with pytest.raises(LanguageDoesNotExist):
+            text_area.language = "this-language-doesnt-exist"
+
+
 async def test_register_language():
     app = TextAreaApp()
 
     async with app.run_test():
         text_area = app.query_one(TextArea)
+
         # Get the language from py-tree-sitter-languages...
         from tree_sitter_languages import get_language
 

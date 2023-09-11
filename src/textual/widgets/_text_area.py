@@ -55,6 +55,18 @@ Highlight = Tuple[StartColumn, EndColumn, HighlightName]
 
 
 class ThemeDoesNotExist(Exception):
+    """Raised when the user tries to use a theme which does not exist.
+    This means a theme which is not builtin, or has not been registered.
+    """
+
+    pass
+
+
+class LanguageDoesNotExist(Exception):
+    """Raised when the user tries to use a language which does not exist.
+    This means a language which is not builtin, or has not been registered.
+    """
+
     pass
 
 
@@ -416,6 +428,13 @@ TextArea {
 
     def _watch_language(self, language: str | None) -> None:
         """When the language is updated, update the type of document."""
+        if language is not None and language not in self.available_languages:
+            raise LanguageDoesNotExist(
+                f"{language!r} is not a builtin language, or it has not been registered. "
+                f"To use a custom language, register it first using `register_language`, "
+                f"then switch to it by setting the `TextArea.language` attribute."
+            )
+
         self._set_document(
             self.document.text if self.document is not None else self._initial_text,
             language,
@@ -449,7 +468,7 @@ TextArea {
 
                 if theme_object is None:
                     raise ThemeDoesNotExist(
-                        f"{theme!r} is not a builtin theme, or has not been registered. "
+                        f"{theme!r} is not a builtin theme, or it has not been registered. "
                         f"To use a custom theme, register it first using `register_theme`, "
                         f"then switch to that theme by setting the `TextArea.theme` attribute."
                     )
