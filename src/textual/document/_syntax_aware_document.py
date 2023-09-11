@@ -9,7 +9,6 @@ try:
 except ImportError:
     TREE_SITTER = False
 
-from textual._text_area_theme import TextAreaTheme
 from textual.document._document import Document, EditResult, Location, _utf8_encode
 from textual.document._languages import BUILTIN_LANGUAGES
 
@@ -56,9 +55,6 @@ class SyntaxAwareDocument(Document):
 
         self._parser: Parser | None = None
         """The tree-sitter Parser or None if tree-sitter is unavailable."""
-
-        self._syntax_theme: TextAreaTheme | None = None
-        """The syntax highlighting theme to use."""
 
         # If the language is `None`, then avoid doing any parsing related stuff.
         if isinstance(language, str):

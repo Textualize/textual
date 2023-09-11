@@ -22,7 +22,10 @@ from textual.document._document import (
     _utf8_encode,
 )
 from textual.document._languages import BUILTIN_LANGUAGES
-from textual.document._syntax_aware_document import SyntaxAwareDocument
+from textual.document._syntax_aware_document import (
+    SyntaxAwareDocument,
+    SyntaxAwareDocumentError,
+)
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -575,8 +578,11 @@ TextArea {
             document: DocumentBase
             try:
                 document = SyntaxAwareDocument(text, document_language)
-            except RuntimeError:
+            except SyntaxAwareDocumentError:
                 document = Document(text)
+                log.warning(
+                    f"Parser not found for language {document_language!r}. Parsing disabled."
+                )
             else:
                 self._highlight_query = document.prepare_query(highlight_query)
         elif language and not TREE_SITTER:
@@ -586,7 +592,6 @@ TextArea {
             document = Document(text)
 
         self.document = document
-        log.debug(f"setting document: {document!r}")
         self._build_highlight_map()
 
     @property
