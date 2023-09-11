@@ -10,6 +10,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added the command palette https://github.com/Textualize/textual/pull/3058
+- `Input` is now validated when focus moves out of it https://github.com/Textualize/textual/pull/3193
+- Attribute `Input.validate_on` (and `__init__` parameter of the same name) to customise when validation occurs https://github.com/Textualize/textual/pull/3193
+- Screen-specific (sub-)title attributes https://github.com/Textualize/textual/pull/3199:
+  - `Screen.TITLE`
+  - `Screen.SUB_TITLE`
+  - `Screen.title`
+  - `Screen.sub_title`
+- Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
+
+### Fixed
+
+- Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
+
+### Changed
+
+- Widget.notify and App.notify are now thread-safe https://github.com/Textualize/textual/pull/3275
+- Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
+- App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
+
 
 ## [0.36.0] - 2023-09-05
 

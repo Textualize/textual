@@ -10,8 +10,17 @@ from uuid import uuid4
 from rich.repr import Result
 from typing_extensions import Literal, Self, TypeAlias
 
+from .message import Message
+
 SeverityLevel: TypeAlias = Literal["information", "warning", "error"]
 """The severity level for a notification."""
+
+
+@dataclass
+class Notify(Message, bubble=False):
+    """Message to show a notification."""
+
+    notification: Notification
 
 
 @dataclass

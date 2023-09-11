@@ -9,6 +9,7 @@ from functools import partial
 from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
+    Any,
     Awaitable,
     Callable,
     ClassVar,
@@ -130,10 +131,31 @@ class Screen(Generic[ScreenResultType], Widget):
         background: $surface;
     }
     """
+
+    TITLE: ClassVar[str | None] = None
+    """A class variable to set the *default* title for the screen.
+
+    This overrides the app title.
+    To update the title while the screen is running,
+    you can set the [title][textual.screen.Screen.title] attribute.
+    """
+
+    SUB_TITLE: ClassVar[str | None] = None
+    """A class variable to set the *default* sub-title for the screen.
+
+    This overrides the app sub-title.
+    To update the sub-title while the screen is running,
+    you can set the [sub_title][textual.screen.Screen.sub_title] attribute.
+    """
+
     focused: Reactive[Widget | None] = Reactive(None)
     """The focused [widget][textual.widget.Widget] or `None` for no focus."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
     """An integer that updates when the screen is resumed."""
+    sub_title: Reactive[str | None] = Reactive(None, compute=False)
+    """Screen sub-title to override [the app sub-title][textual.app.App.sub_title]."""
+    title: Reactive[str | None] = Reactive(None, compute=False)
+    """Screen title to override [the app title][textual.app.App.title]."""
 
     COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = set()
     """The [command sources](/api/command_palette/) for the screen."""
@@ -177,6 +199,9 @@ class Screen(Generic[ScreenResultType], Widget):
             )
         ]
         self.css_path = css_paths
+
+        self.title = self.TITLE
+        self.sub_title = self.SUB_TITLE
 
     @property
     def is_modal(self) -> bool:
@@ -1006,6 +1031,14 @@ class Screen(Generic[ScreenResultType], Widget):
             return widget.region in self.region
         # Failing that fall back to normal checking.
         return super().can_view(widget)
+
+    def validate_title(self, title: Any) -> str | None:
+        """Ensure the title is a string or `None`."""
+        return None if title is None else str(title)
+
+    def validate_sub_title(self, sub_title: Any) -> str | None:
+        """Ensure the sub-title is a string or `None`."""
+        return None if sub_title is None else str(sub_title)
 
 
 @rich.repr.auto
