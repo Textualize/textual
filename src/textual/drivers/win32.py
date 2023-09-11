@@ -268,6 +268,13 @@ class EventMonitor(threading.Thread):
                             if (
                                 key_event.dwControlKeyState
                                 and key_event.wVirtualKeyCode == 0
+                            ) or (
+                                # Filter out any NUL characters that don't
+                                # appear to be Ctrl-2, AKA Ctrl-space.
+                                #
+                                # https://github.com/Textualize/textual/issues/872
+                                key == "\x00"
+                                and key_event.wVirtualKeyCode != 50
                             ):
                                 continue
                             append_key(key)
