@@ -272,8 +272,13 @@ TextArea {
         self._document: DocumentBase | None = None
         """The document this widget is currently editing."""
 
-        self.theme: TextAreaTheme | None = theme
-        """The theme of the `TextArea` as set by the user."""
+        self.theme: str | None = theme
+        """The name of the theme of the `TextArea` as set by the user."""
+
+        self._theme: TextAreaTheme | None = None
+        """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
+        reactive is set as a string, the watcher will update this attribute to the
+        corresponding `TextAreaTheme` object."""
 
         self.language = language
         """The language of the `TextArea`."""
@@ -424,22 +429,17 @@ TextArea {
         """Changing width of tabs will change document display width."""
         self._refresh_size()
 
-    def _validate_theme(
-        self, theme: str | TextAreaTheme | None
-    ) -> TextAreaTheme | None:
-        """When the user sets the theme to a string, convert it to a `TextAreaTheme`."""
-        if isinstance(theme, str):
-            theme = TextAreaTheme.get_by_name(theme)
-        return theme
-
-    def _watch_theme(self, theme: TextAreaTheme | None) -> None:
+    def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
         if theme is None:
+            self._theme = None
             self.styles.color = None
             self.styles.background = None
         else:
-            base_style = theme.base_style
+            theme_object = TextAreaTheme.get_by_name(theme)
+            self._theme = theme_object
+            base_style = theme_object.base_style
             if base_style:
                 color = base_style.color
                 background = base_style.bgcolor
@@ -650,7 +650,7 @@ TextArea {
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        theme = self.theme
+        theme = self._theme
 
         # Get the line from the Document.
         line_string = document.get_line(line_index)

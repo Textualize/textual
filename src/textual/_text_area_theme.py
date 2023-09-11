@@ -66,14 +66,24 @@ class TextAreaTheme:
     def __post_init__(self) -> None:
         """Generate some styles if they haven't been supplied."""
         if self.base_style is None:
-            self.base_style = Style(color="#f3f3f3", bgcolor=DEFAULT_DARK_SURFACE)
+            self.base_style = Style()
+
+        if self.base_style.color is None:
+            self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
+
+        if self.base_style.bgcolor is None:
+            self.base_style = Style(
+                color=self.base_style.color, bgcolor=DEFAULT_DARK_SURFACE
+            )
+
+        assert self.base_style is not None
+        assert self.base_style.color is not None
+        assert self.base_style.bgcolor is not None
 
         if self.gutter_style is None:
             self.gutter_style = self.base_style.copy()
 
-        background_color = Color.from_rich_color(
-            self.base_style.background_style.bgcolor
-        )
+        background_color = Color.from_rich_color(self.base_style.bgcolor)
         if self.cursor_style is None:
             self.cursor_style = Style(
                 color=background_color.rich_color,
@@ -100,7 +110,7 @@ class TextAreaTheme:
             )
 
     @classmethod
-    def get_by_name(cls, theme_name: str) -> "TextAreaTheme":
+    def get_by_name(cls, theme_name: str) -> "TextAreaTheme" | None:
         """Get a `TextAreaTheme` by name.
 
         Given a `theme_name` return the corresponding `TextAreaTheme` object.
@@ -111,11 +121,12 @@ class TextAreaTheme:
             theme_name: The name of the theme.
 
         Returns:
-            The `TextAreaTheme` corresponding to the name.
+            The `TextAreaTheme` corresponding to the name or `None` if the theme isn't
+            found.
         """
-        return _BUILTIN_THEMES.get(theme_name, TextAreaTheme())
+        return _BUILTIN_THEMES.get(theme_name)
 
-    def get_highlight(self, name: str) -> Style:
+    def get_highlight(self, name: str) -> Style | None:
         """Return the Rich style corresponding to the name defined in the tree-sitter
         highlight query for the current theme.
 
@@ -123,7 +134,7 @@ class TextAreaTheme:
             name: The name of the highlight.
 
         Returns:
-            The `Style` to use for this highlight.
+            The `Style` to use for this highlight, or `None` if no style.
         """
         return self.token_styles.get(name)
 
@@ -143,7 +154,7 @@ class TextAreaTheme:
         Returns:
             The default TextAreaTheme (probably "monokai").
         """
-        return DEFAULT_SYNTAX_THEME
+        return _MONOKAI
 
 
 _MONOKAI = TextAreaTheme(
