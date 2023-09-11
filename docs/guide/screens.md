@@ -256,3 +256,63 @@ Returning data in this way can help keep your code manageable by making it easy 
 
 You may have noticed in the previous example that we changed the base class to `ModalScreen[bool]`.
 The addition of `[bool]` adds typing information that tells the type checker to expect a boolean in the call to `dismiss`, and that any callback set in `push_screen` should also expect the same type. As always, typing is optional in Textual, but this may help you catch bugs.
+
+
+## Modes
+
+Some apps may benefit from having multiple screen stacks, rather than just one.
+Consider an app with a dashboard screen, a settings screen, and a help screen.
+These are independent in the sense that we don't want to prevent the user from switching between them, even if there are one or more modal screens on the screen stack.
+But we may still want each individual screen to have a navigation stack where we can push and pop screens.
+
+In Textual we can manage this with *modes*.
+A mode is simply a named screen stack, which we can switch between as required.
+When we switch modes, the topmost screen in the new mode becomes the active visible screen.
+
+The following diagram illustrates such an app with modes.
+On startup the app switches to the "dashboard" mode which makes the top of the stack visible.
+
+<div class="excalidraw">
+--8<-- "docs/images/screens/modes1.excalidraw.svg"
+</div>
+
+If we later change the mode to "settings", the top of that mode's screen stack becomes visible.
+
+<div class="excalidraw">
+--8<-- "docs/images/screens/modes2.excalidraw.svg"
+</div>
+
+To add modes to your app, define a [`MODES`][textual.app.App.MODES] class variable in your App class which should be a `dict` that maps the name of the mode on to either a screen object, a callable that returns a screen, or the name of an installed screen.
+However you specify it, the values in `MODES` set the base screen for each mode's screen stack.
+
+You can switch between these screens at any time by calling [`App.switch_mode`][textual.app.App.switch_mode].
+When you switch to a new mode, the topmost screen in the new stack becomes visible.
+Any calls to [`App.push_screen`][textual.app.App.push_screen] or [`App.pop_screen`][textual.app.App.pop_screen] will affect only the active mode.
+
+Let's look at an example with modes:
+
+=== "modes01.py"
+
+    ```python hl_lines="25-29 30-34 37"
+    --8<-- "docs/examples/guide/screens/modes01.py"
+    ```
+
+    1. `switch_mode` is a builtin action to switch modes.
+    2. Associates `DashboardScreen` with the name "dashboard".
+    3. Switches to the dashboard mode.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/screens/modes01.py"}
+    ```
+
+=== "Output (after pressing S)"
+
+    ```{.textual path="docs/examples/guide/screens/modes01.py", press="s"}
+    ```
+
+Here we have defined three screens.
+One for a dashboard, one for settings, and one for help.
+We've bound keys to each of these screens, so the user can switch between the screens.
+
+Pressing ++d++, ++s++, or ++h++ switches between these modes.

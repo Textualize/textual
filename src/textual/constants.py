@@ -56,6 +56,9 @@ FILTERS: Final[str] = get_environ("TEXTUAL_FILTERS", "")
 LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 """A last resort log file that appends all logs, when devtools isn't working."""
 
+DEVTOOLS_HOST: Final[str] = get_environ("TEXTUAL_DEVTOOLS_HOST", "127.0.0.1")
+"""The host where textual console is running."""
+
 DEVTOOLS_PORT: Final[int] = get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
 """Constant with the port that the devtools will connect to."""
 
