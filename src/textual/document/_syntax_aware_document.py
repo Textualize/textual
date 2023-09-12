@@ -75,6 +75,18 @@ class SyntaxAwareDocument(Document):
         return self.language.name if self.language else None
 
     def prepare_query(self, query: str) -> Query | None:
+        """Prepare a tree-sitter tree query.
+
+        Queries should be prepared once, then reused.
+
+        To execute a query, call `query_syntax_tree`.
+
+        Args:
+            The string query to prepare.
+
+        Returns:
+            The prepared query.
+        """
         if not TREE_SITTER:
             raise SyntaxAwareDocumentError(
                 "Couldn't prepare query - tree-sitter is not available on this architecture."
@@ -93,6 +105,21 @@ class SyntaxAwareDocument(Document):
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
     ) -> list[tuple["Node", str]]:
+        """Query the tree-sitter syntax tree.
+
+        The default implementation always returns an empty list.
+
+        To support querying in a subclass, this must be implemented.
+
+        Args:
+            query: The tree-sitter Query to perform.
+            start_point: The (row, column byte) to start the query at.
+            end_point: The (row, column byte) to end the query at.
+
+        Returns:
+            A tuple containing the nodes and text captured by the query.
+        """
+
         if not TREE_SITTER:
             raise SyntaxAwareDocumentError(
                 "tree-sitter is not available on this architecture."

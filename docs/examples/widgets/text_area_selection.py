@@ -1,5 +1,6 @@
 from textual.app import App, ComposeResult
 from textual.widgets import TextArea
+from textual.widgets.text_area import Selection
 
 TEXT = """\
 def hello(name):
@@ -10,11 +11,13 @@ def goodbye(name):
 """
 
 
-class TextAreaSelection(App):
+class TextAreaExample(App):
     def compose(self) -> ComposeResult:
-        yield TextArea(TEXT, language="python")
+        text_area = TextArea(TEXT, language="python")
+        text_area.selection = Selection(start=(0, 0), end=(2, 0))  # (1)!
+        yield text_area
 
 
-app = TextAreaSelection()
+app = TextAreaExample()
 if __name__ == "__main__":
     app.run()

@@ -3,11 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from functools import lru_cache
-from typing import TYPE_CHECKING, Any, NamedTuple, Tuple, overload
-
-from rich.text import Text
+from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
 
 if TYPE_CHECKING:
+    from tree_sitter import Node
     from tree_sitter.binding import Query
 
 from textual._cells import cell_len
@@ -116,7 +115,7 @@ class DocumentBase(ABC):
     def get_size(self, indent_width: int) -> Size:
         """Get the size of the document.
 
-        The height is generally be the number of lines, and the width
+        The height is generally the number of lines, and the width
         is generally the maximum cell length of all the lines.
 
         Args:
@@ -131,8 +130,21 @@ class DocumentBase(ABC):
         query: "Query",
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
-    ) -> Any:
-        """Query the tree-sitter syntax tree."""
+    ) -> list[tuple["Node", str]]:
+        """Query the tree-sitter syntax tree.
+
+        The default implementation always returns an empty list.
+
+        To support querying in a subclass, this must be implemented.
+
+        Args:
+            query: The tree-sitter Query to perform.
+            start_point: The (row, column byte) to start the query at.
+            end_point: The (row, column byte) to end the query at.
+
+        Returns:
+            A tuple containing the nodes and text captured by the query.
+        """
         return []
 
     def prepare_query(self, query: str) -> "Query" | None:
@@ -336,7 +348,7 @@ class Document(DocumentBase):
 
 
 Location = Tuple[int, int]
-"""A location (row, column) within the document."""
+"""A location (row, column) within the document. Indexing starts at 0."""
 
 
 class Selection(NamedTuple):
