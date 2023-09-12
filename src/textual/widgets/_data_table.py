@@ -38,7 +38,7 @@ CellCacheKey: TypeAlias = (
 LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
 RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
 CursorType = Literal["cell", "row", "column", "none"]
-"""The legal types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
+"""The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
 
 CELL_X_PADDING = 2
@@ -47,18 +47,18 @@ CELL_X_PADDING = 2
 class CellDoesNotExist(Exception):
     """The cell key/index was invalid.
 
-    Raised when the user supplies coordinates or cell keys which
-    do not exist in the DataTable."""
+    Raised when the coordinates or cell key provided does not exist
+    in the DataTable (e.g. out of bounds index, invalid key)"""
 
 
 class RowDoesNotExist(Exception):
-    """Raised when the user supplies a row index or row key which does
-    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+    """Raised when the row index or row key provided does not exist
+    in the DataTable (e.g. out of bounds index, invalid key)"""
 
 
 class ColumnDoesNotExist(Exception):
-    """Raised when the user supplies a column index or column key which does
-    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+    """Raised when the column index or column key provided does not exist
+    in the DataTable (e.g. out of bounds index, invalid key)"""
 
 
 class DuplicateKey(Exception):
