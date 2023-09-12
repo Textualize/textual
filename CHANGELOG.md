@@ -29,7 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widget.notify and App.notify are now thread-safe https://github.com/Textualize/textual/pull/3275
 - Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
 - App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
-- `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided [PR here]
+- `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided https://github.com/Textualize/textual/pull/3244
 
 ## [0.36.0] - 2023-09-05
 
