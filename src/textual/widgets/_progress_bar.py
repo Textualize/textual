@@ -276,7 +276,6 @@ class ProgressBar(Widget, can_focus=False):
     """The total number of steps associated with this progress bar, when known.
 
     The value `None` will render an indeterminate progress bar.
-    Once `total` is set to a numerical value, it cannot be set back to `None`.
     """
     percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed.
@@ -398,6 +397,7 @@ class ProgressBar(Widget, can_focus=False):
             ```py
             progress_bar.advance(10)  # Advance 10 steps.
             ```
+
         Args:
             advance: Number of steps to advance progress by.
         """

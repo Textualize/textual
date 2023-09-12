@@ -78,9 +78,6 @@ def test_update_total():
     pb.update(total=1000)
     assert pb.total == 1000
 
-    pb.update(total=None)
-    assert pb.total == 1000
-
     pb.update(total=100)
     assert pb.total == 100
 
@@ -117,6 +114,15 @@ def test_update():
     pb.update(total=100, progress=30, advance=20)
     assert pb.total == 100
     assert pb.progress == 50
+
+
+def test_go_back_to_indeterminate():
+    pb = ProgressBar()
+
+    pb.total = 100
+    assert pb.percentage == 0
+    pb.total = None
+    assert pb.percentage is None
 
 
 @pytest.mark.parametrize(
