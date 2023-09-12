@@ -45,7 +45,7 @@ async def test_setting_theme_to_none():
         assert text_area._theme.name == TextAreaTheme.default().name
 
 
-async def test_setting_unknown_theme():
+async def test_setting_unknown_theme_raises_exception():
     app = TextAreaApp()
     async with app.run_test():
         text_area = app.query_one(TextArea)
@@ -53,7 +53,7 @@ async def test_setting_unknown_theme():
             text_area.theme = "this-theme-doesnt-exist"
 
 
-async def test_registering_themes():
+async def test_registering_and_setting_theme():
     app = TextAreaApp()
 
     async with app.run_test():
