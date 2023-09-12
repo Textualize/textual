@@ -282,6 +282,7 @@ _DARK_VS = TextAreaTheme(
         "class": Style(color="#4EC9B0"),
         "type.class": Style(color="#4EC9B0"),
         "function": Style(color="#4EC9B0"),
+        "function.call": Style(color="#4EC9B0"),
         "method": Style(color="#4EC9B0"),
         "method.call": Style(color="#4EC9B0"),
         "boolean": Style(color="#7DAF9C"),
