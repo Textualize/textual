@@ -5,6 +5,7 @@ import pytest
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
 from textual.widgets import TextArea
+from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -93,7 +94,8 @@ def test_input_validation(snap_compare):
         "tab",
         "3",  # This is valid, so -valid should be applied
         "tab",
-        *"-2",  # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
+        *"-2",
+        # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
     ]
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_validation.py", press=press)
 
@@ -604,14 +606,15 @@ def test_tooltips_in_compound_widgets(snap_compare):
 
 
 def test_command_palette(snap_compare) -> None:
-
     from textual.command_palette import CommandPalette
 
     async def run_before(pilot) -> None:
         await pilot.press("ctrl+@")
         await pilot.press("A")
         await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
+
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
+
 
 # --- textual-dev library preview tests ---
 
@@ -705,6 +708,34 @@ I am the final line."""
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_selection,
         terminal_size=(30, text.count("\n") + 1),
+    )
+
+
+@pytest.mark.parametrize("theme_name",
+                         [theme.name for theme in TextAreaTheme.builtin_themes()])
+def test_text_area_themes(snap_compare, theme_name):
+    """Each theme should have its own snapshot with at least some Python
+    to check that the rendering is sensible. This also ensures that theme
+    switching results in the display changing correctly."""
+    text = """\
+def hello(name):
+    x = 123
+    while not False:
+        print("hello " + name)
+        continue
+"""
+
+    def setup_theme(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.selection = Selection((0, 1), (1, 9))
+        text_area.theme = theme_name
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_theme,
+        terminal_size=(48, text.count("\n") + 2),
     )
 
 
