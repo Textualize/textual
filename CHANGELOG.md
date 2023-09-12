@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Screen.title`
   - `Screen.sub_title`
 - Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
+- Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
 
 ### Fixed
 
@@ -28,7 +29,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widget.notify and App.notify are now thread-safe https://github.com/Textualize/textual/pull/3275
 - Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
 - App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
-
 
 ## [0.36.0] - 2023-09-05
 
