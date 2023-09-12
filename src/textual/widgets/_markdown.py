@@ -12,6 +12,7 @@ from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
+from .._slug import TrackedSlugs
 from ..app import ComposeResult
 from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
@@ -50,6 +51,10 @@ class Navigator:
         Returns:
             New location.
         """
+        location, anchor = Markdown.sanitize_location(str(path))
+        if location == Path(".") and anchor:
+            current_file, _ = Markdown.sanitize_location(str(self.location))
+            path = f"{current_file}#{anchor}"
         new_path = self.location.parent / Path(path)
         self.stack = self.stack[: self.index + 1]
         new_path = new_path.absolute()
@@ -564,6 +569,7 @@ class Markdown(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
         self._parser_factory = parser_factory
+        self._table_of_contents: TableOfContentsType | None = None
 
     class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
@@ -628,6 +634,42 @@ class Markdown(Widget):
         if self._markdown is not None:
             self.update(self._markdown)
 
+    @staticmethod
+    def sanitize_location(location: str) -> tuple[Path, str]:
+        """Given a location, break out the path and any anchor.
+
+        Args:
+            location: The location to sanitize.
+
+        Returns:
+            A tuple of the path to the location cleaned of any anchor, plus
+            the anchor (or an empty string if none was found).
+        """
+        location, _, anchor = location.partition("#")
+        return Path(location), anchor
+
+    def goto_anchor(self, anchor: str) -> None:
+        """Try and find the given anchor in the current document.
+
+        Args:
+            anchor: The anchor to try and find.
+
+        Note:
+            The anchor is found by looking at all of the headings in the
+            document and finding the first one whose slug matches the
+            anchor.
+
+            Note that the slugging method used is similar to that found on
+            GitHub.
+        """
+        if not self._table_of_contents or not isinstance(self.parent, Widget):
+            return
+        unique = TrackedSlugs()
+        for _, title, header_id in self._table_of_contents:
+            if unique.slug(title) == anchor:
+                self.parent.scroll_to_widget(self.query_one(f"#{header_id}"), top=True)
+                return
+
     async def load(self, path: Path) -> None:
         """Load a new Markdown document.
 
@@ -641,7 +683,10 @@ class Markdown(Widget):
             The exceptions that can be raised by this method are all of
             those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
         """
+        path, anchor = self.sanitize_location(str(path))
         await self.update(path.read_text(encoding="utf-8"))
+        if anchor:
+            self.goto_anchor(anchor)
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
         """Process an unhandled token.
@@ -672,7 +717,7 @@ class Markdown(Widget):
         )
 
         block_id: int = 0
-        table_of_contents: TableOfContentsType = []
+        self._table_of_contents = []
 
         for token in parser.parse(markdown):
             if token.type == "heading_open":
@@ -721,7 +766,7 @@ class Markdown(Widget):
                 if token.type == "heading_close":
                     heading = block._text.plain
                     level = int(token.tag[1:])
-                    table_of_contents.append((level, heading, block.id))
+                    self._table_of_contents.append((level, heading, block.id))
                 if stack:
                     stack[-1]._blocks.append(block)
                 else:
@@ -801,7 +846,9 @@ class Markdown(Widget):
                 if external is not None:
                     (stack[-1]._blocks if stack else output).append(external)
 
-        self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
+        self.post_message(
+            Markdown.TableOfContentsUpdated(self, self._table_of_contents)
+        )
         with self.app.batch_update():
             self.query("MarkdownBlock").remove()
             return self.mount_all(output)
@@ -952,7 +999,13 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""
-        await self.document.load(self.navigator.go(location))
+        path, anchor = self.document.sanitize_location(str(location))
+        if path == Path(".") and anchor:
+            # We've been asked to go to an anchor but with no file specified.
+            self.document.goto_anchor(anchor)
+        else:
+            # We've been asked to go to a file, optionally with an anchor.
+            await self.document.load(self.navigator.go(location))
 
     async def back(self) -> None:
         """Go back one level in the history."""

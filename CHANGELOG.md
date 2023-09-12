@@ -23,12 +23,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
+- Fixed a crash in `MarkdownViewer` when clicking on a link that contains an anchor https://github.com/Textualize/textual/issues/3094
 
 ### Changed
 
 - Widget.notify and App.notify are now thread-safe https://github.com/Textualize/textual/pull/3275
 - Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
 - App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
+- `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided https://github.com/Textualize/textual/pull/3244
 
 ## [0.36.0] - 2023-09-05
 
