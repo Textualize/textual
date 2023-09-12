@@ -84,7 +84,7 @@ You can access the text inside the `TextArea` via the [`text`][textual.widgets._
 ### Editing content inside `TextArea`
 
 The content of the `TextArea` can be updated using the [`replace`][textual.widgets._text_area.TextArea.replace] method.
-This method is the programmatic equivalent of selecting some text then pasting.
+This method is the programmatic equivalent of selecting some text and then pasting.
 
 All atomic (single-cursor) edits can be represented by a `replace` operation, but for
 convenience, some other utility methods are provided, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
@@ -223,7 +223,7 @@ TextAreaTheme(
 )
 ```
 
-The exact queries used by Textual can be found inside `.scm` files in the GitHub repo.
+The exact queries `TextArea` uses for highlighting can be found inside `.scm` files in the GitHub repo.
 
 #### Adding support for custom languages
 
