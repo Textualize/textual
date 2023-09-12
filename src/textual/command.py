@@ -498,7 +498,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             self.workers.cancel_all()
             self.dismiss()
 
-    async def on_mount(self, _: Mount) -> None:
+    def on_mount(self, _: Mount) -> None:
         """Capture the calling screen."""
         self._calling_screen = self.app.screen_stack[-2]
 
