@@ -192,7 +192,7 @@ Each time you update the document in a `TextArea`, an internal syntax tree is up
 This tree is frequently _queried_ to find location ranges relevant to syntax highlighting.
 We give these ranges _names_, and ultimately map them to Rich styles inside `TextAreaTheme.token_styles`.
 
-Let's use the `markdown` language to illustrate how this works.
+To illustrate how this works, lets look at how the "Monokai" `TextAreaTheme` highlights Markdown files.
 
 When the `language` attribute is set to `"markdown"`, a highlight query similar to the one below is used (trimmed for brevity).
 
@@ -201,7 +201,7 @@ When the `language` attribute is set to `"markdown"`, a highlight query similar 
 (link) @link
 ```
 
-This highlight query maps `heading_content` nodes returned by the Markdown tree-sitter parser to the name `"heading"`,
+This highlight query maps `heading_content` nodes returned by the Markdown parser to the name `"heading"`,
 and `link` nodes to the name `link`.
 
 Inside our `TextAreaTheme.token_styles` dict, we can map the name `"heading"` to a Rich style.
