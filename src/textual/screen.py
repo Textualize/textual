@@ -49,7 +49,7 @@ from .widgets._toast import ToastRack
 if TYPE_CHECKING:
     from typing_extensions import Final
 
-    from .command_palette import CommandSource
+    from .command import Source
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .errors import NoWidget  # type: ignore  # noqa: F401
@@ -157,7 +157,7 @@ class Screen(Generic[ScreenResultType], Widget):
     title: Reactive[str | None] = Reactive(None, compute=False)
     """Screen title to override [the app title][textual.app.App.title]."""
 
-    COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = set()
+    COMMAND_SOURCES: ClassVar[set[type[Source]]] = set()
     """The [command sources](/api/command_palette/) for the screen."""
 
     BINDINGS = [
