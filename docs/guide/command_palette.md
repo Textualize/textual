@@ -93,6 +93,12 @@ It also contains a callback, which will be run if the user selects that command.
 
 In the example above, the callback is a lambda which calls the `open_file` method in the example app.
 
+!!! note
+
+    Unlike most other places in Textual, errors in command sources will not *exit* the app.
+    This is a deliberate design decision taken to prevent a single broken `Source` class from making the command palette unusable.
+    Errors in command sources will be logged to the [console](./devtools.md).
+
 ## Disabling the command palette
 
 The command palette is enabled by default.
