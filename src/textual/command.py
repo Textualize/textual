@@ -247,7 +247,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey $accent;
+        border-bottom: hkey $primary;
         border-left: none;
         border-right: none;
         height: auto;
@@ -352,7 +352,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     CommandPalette #--input {
         height: auto;
         visibility: visible;
-        border: hkey $accent;
+        border: hkey $primary;
         background: $panel;
     }
 
@@ -379,7 +379,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         height: auto;
         visibility: hidden;
         background: $panel;
-        border-bottom: hkey $accent;
+        border-bottom: hkey $primary;
     }
 
     CommandPalette LoadingIndicator.--visible {
