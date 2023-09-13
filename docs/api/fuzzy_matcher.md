@@ -1,1 +1,1 @@
-::: textual._fuzzy
+::: textual.fuzzy

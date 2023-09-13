@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.command_palette import CommandPalette
+from textual.command import CommandPalette
 from textual.widgets import OptionList
 
 

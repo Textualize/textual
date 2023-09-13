@@ -1,23 +1,18 @@
 from functools import partial
 
 from textual.app import App
-from textual.command_palette import (
-    CommandMatches,
-    CommandPalette,
-    CommandSource,
-    CommandSourceHit,
-)
+from textual.command import CommandPalette, Hit, Hits, Source
 from textual.widgets import Input
 
 
-class SimpleSource(CommandSource):
-    async def search(self, _: str) -> CommandMatches:
+class SimpleSource(Source):
+    async def search(self, _: str) -> Hits:
         def goes_nowhere_does_nothing(selection: int) -> None:
             assert isinstance(self.app, CommandPaletteRunOnSelectApp)
             self.app.selection = selection
 
         for n in range(100):
-            yield CommandSourceHit(
+            yield Hit(
                 n + 1 / 100,
                 str(n),
                 partial(goes_nowhere_does_nothing, n),

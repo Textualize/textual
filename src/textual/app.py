@@ -74,7 +74,7 @@ from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
-from .command_palette import CommandPalette, CommandPaletteCallable, CommandSource
+from .command import CommandPalette, Source
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -326,17 +326,12 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
-    """Should the [command palette][textual.command_palette.CommandPalette] be enabled for the application?"""
+    """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
-    COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
-    """The [command sources](/api/command_palette/) for the application.
+    COMMAND_SOURCES: ClassVar[set[type[Source]]] = {SystemCommandSource}
+    """Command sources used by the [command palette](/guide/command).
 
-    This is the collection of [command sources][textual.command_palette.CommandSource]
-    that provide matched
-    commands to the [command palette][textual.command_palette.CommandPalette].
-
-    The default Textual command palette source is
-    [the Textual system-wide command source][textual._system_commands_source.SystemCommandSource].
+    Should be a set of [command.Source][textual.command.Source] classes.
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [

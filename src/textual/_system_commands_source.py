@@ -1,19 +1,19 @@
 """A command palette command source for Textual system commands.
 
 This is a simple command source that makes the most obvious application
-actions available via the [command palette][textual.command_palette.CommandPalette].
+actions available via the [command palette][textual.command.CommandPalette].
 """
 
-from .command_palette import CommandMatches, CommandSource, CommandSourceHit
+from .command import Hit, Hits, Source
 
 
-class SystemCommandSource(CommandSource):
-    """A [source][textual.command_palette.CommandSource] of command palette commands that run app-wide tasks.
+class SystemCommandSource(Source):
+    """A [source][textual.command.Source] of command palette commands that run app-wide tasks.
 
     Used by default in [`App.COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES].
     """
 
-    async def search(self, query: str) -> CommandMatches:
+    async def search(self, query: str) -> Hits:
         """Handle a request to search for system commands that match the query.
 
         Args:
@@ -47,10 +47,9 @@ class SystemCommandSource(CommandSource):
         ):
             match = matcher.match(name)
             if match > 0:
-                yield CommandSourceHit(
+                yield Hit(
                     match,
                     matcher.highlight(name),
                     runnable,
-                    name,
-                    help_text,
+                    help=help_text,
                 )
