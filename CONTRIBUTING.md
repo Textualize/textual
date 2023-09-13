@@ -35,7 +35,7 @@ python -m textual
 
 ## Guidelines
 
-- Make sure to read the issue instructions carefully. If something isn't clear, ask for clarification!
+- Make sure to read the issue instructions carefully. Not all issues have instructions, though, so if something isn't clear, ask for clarification!
 
 - Add docstrings to all of your code (functions, methods, classes, ...). The codebase should have enough examples for you to copy from.
 
