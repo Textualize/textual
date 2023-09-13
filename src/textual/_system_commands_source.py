@@ -51,6 +51,5 @@ class SystemCommandSource(Source):
                     match,
                     matcher.highlight(name),
                     runnable,
-                    name,
-                    help_text,
+                    help=help_text,
                 )

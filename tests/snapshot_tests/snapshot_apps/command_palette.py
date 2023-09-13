@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.command import Source, Hits, Hit
+from textual.command import Hit, Hits, Source
 
 
 class TestSource(Source):

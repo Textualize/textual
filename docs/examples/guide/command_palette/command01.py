@@ -16,7 +16,7 @@ class PythonFileSource(Source):
         return list(Path("./").glob("*.py"))
 
     async def post_init(self) -> None:  # (1)!
-        """Called before search."""
+        """Called once when the command palette is opened, prior to searching."""
         worker = self.app.run_worker(self.read_files, thread=True)
         self.python_paths = await worker.wait()
 

@@ -8,17 +8,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
+from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    AsyncGenerator,
-    AsyncIterator,
-    Callable,
-    ClassVar,
-    NamedTuple,
-)
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
 
 from rich.align import Align
 from rich.console import Group, RenderableType
@@ -47,29 +40,26 @@ if TYPE_CHECKING:
     from .app import App, ComposeResult
 
 __all__ = [
-    "Hits",
     "CommandPalette",
-    "Source",
     "Hit",
+    "Hits",
     "Matcher",
+    "Source",
 ]
 
 
-@total_ordering
-class Hit(NamedTuple):
+@dataclass
+class Hit:
     """Holds the details of a single command search hit."""
 
     score: float
-    """The match value of the command hit.
+    """The score of the command hit.
 
     The value should be between 0 (no match) and 1 (complete match).
     """
 
     match_display: RenderableType
-    """The Rich renderable representation of the hit.
-
-    Ideally a [rich Text object][rich.text.Text] object.
-    """
+    """A string or Rich renderable representation of the hit."""
 
     command: CallbackType
     """The function to call when the command is chosen."""
@@ -77,9 +67,8 @@ class Hit(NamedTuple):
     text: str | None = None
     """The command text associated with the hit, as plain text.
 
-    This is the text that will be placed into the `Input` field of the
-    [command palette][textual.command.CommandPalette] when a
-    selection is made.
+    If `match_display` is not simple text, this attribute should be provided by the
+    [Source][textual.command.Source] object.
     """
 
     help: str | None = None
@@ -96,8 +85,16 @@ class Hit(NamedTuple):
         return NotImplemented
 
     def __post_init__(self) -> None:
+        """Ensure 'text' is populated."""
         if self.text is None:
-            self.text = str(self.match_display)
+            if isinstance(self.match_display, str):
+                self.text = self.match_display
+            elif isinstance(self.match_display, Text):
+                self.text = self.match_display.plain
+            else:
+                raise ValueError(
+                    "A value for 'text' is required if 'match_display' is not a str or Text"
+                )
 
 
 Hits: TypeAlias = AsyncIterator[Hit]
