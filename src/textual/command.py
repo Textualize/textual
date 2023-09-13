@@ -570,11 +570,6 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             The hits made amongst the registered command sources.
         """
 
-        # Get the style for highlighted parts of a hit match.
-        match_style = self._sans_background(
-            self.get_component_rich_style("command-palette--highlight")
-        )
-
         # Set up a queue to stream in the command hits from all the sources.
         commands: Queue[Hit] = Queue()
 
