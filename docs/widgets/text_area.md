@@ -293,7 +293,7 @@ Recall that we map names (like `@heading`) from the tree-sitter highlight query 
 If you notice some highlights are missing after registering a language, the issue may be:
 
 1. The current `TextAreaTheme` doesn't contain a mapping for the name in the highlight query. Adding a new to `syntax_styles` should resolve the issue.
-2. The highlight query doesn't assign a name to the pattern you expect to be highlighted.
+2. The highlight query doesn't assign a name to the pattern you expect to be highlighted. In this case you'll need to update the highlight query to assign to the name.
 
 !!! tip
 
