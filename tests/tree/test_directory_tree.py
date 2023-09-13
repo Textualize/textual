@@ -1,18 +1,82 @@
-from rich.text import Text
+from __future__ import annotations
 
+from rich.text import Text
+from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import DirectoryTree
 
 
-class DirectoryTreeReloadApp(App[None]):
-    """DirectoryTree reloading test app."""
+class DirectoryTreeApp(App[None]):
+    """DirectoryTree test app."""
 
     def __init__(self, path):
         super().__init__()
         self._tmp_path = path
+        self.messages = []
 
     def compose(self) -> ComposeResult:
         yield DirectoryTree(self._tmp_path)
+
+    @on(DirectoryTree.FileSelected)
+    @on(DirectoryTree.DirectorySelected)
+    def record(
+        self, event: DirectoryTree.FileSelected | DirectoryTree.DirectorySelected
+    ) -> None:
+        self.messages.append(event.__class__.__name__)
+
+
+async def test_directory_tree_file_selected_message(tmp_path) -> None:
+    """Selecting a file should result in a file selected message being emitted."""
+
+    FILE_NAME = "hello.txt"
+
+    # Creating one file under root
+    file = tmp_path / FILE_NAME
+    file.touch()
+    async with DirectoryTreeApp(tmp_path).run_test() as pilot:
+        tree = pilot.app.query_one(DirectoryTree)
+        await pilot.pause()
+
+        # Sanity check - file is the only child of root
+        assert len(tree.root.children) == 1
+        node = tree.root.children[0]
+        assert node.label == Text(FILE_NAME)
+
+        # Navigate to the file and select it
+        await pilot.press("down", "enter")
+        await pilot.pause()
+        assert pilot.app.messages == ["FileSelected"]
+
+
+async def test_directory_tree_directory_selected_message(tmp_path) -> None:
+    """Selecting a directory should result in a directory selected message being emitted."""
+
+    SUBDIR = "subdir"
+    FILE_NAME = "hello.txt"
+
+    # Creating node with one file as its child
+    subdir = tmp_path / SUBDIR
+    subdir.mkdir()
+    file = subdir / FILE_NAME
+    file.touch()
+    async with DirectoryTreeApp(tmp_path).run_test() as pilot:
+        tree = pilot.app.query_one(DirectoryTree)
+        await pilot.pause()
+
+        # Sanity check - subdirectory is the only child of root
+        assert len(tree.root.children) == 1
+        node = tree.root.children[0]
+        assert node.label == Text(SUBDIR)
+
+        # Navigate to the subdirectory and select it
+        await pilot.press("down", "enter")
+        await pilot.pause()
+        assert pilot.app.messages == ["DirectorySelected"]
+
+        # Select the subdirectory again
+        await pilot.press("enter")
+        await pilot.pause()
+        assert pilot.app.messages == ["DirectorySelected", "DirectorySelected"]
 
 
 async def test_directory_tree_reload_node(tmp_path) -> None:
@@ -28,7 +92,7 @@ async def test_directory_tree_reload_node(tmp_path) -> None:
     file1 = reloaded_dir / FILE1_NAME
     file1.touch()
 
-    async with DirectoryTreeReloadApp(tmp_path).run_test() as pilot:
+    async with DirectoryTreeApp(tmp_path).run_test() as pilot:
         tree = pilot.app.query_one(DirectoryTree)
         await pilot.pause()
 
@@ -78,7 +142,7 @@ async def test_directory_tree_reload_other_node(tmp_path) -> None:
     file3 = non_reloaded_dir / NOT_RELOADED_FILE3_NAME
     file3.touch()
 
-    async with DirectoryTreeReloadApp(tmp_path).run_test() as pilot:
+    async with DirectoryTreeApp(tmp_path).run_test() as pilot:
         tree = pilot.app.query_one(DirectoryTree)
         await pilot.pause()
 

@@ -217,3 +217,8 @@ The data table widget provides the following component classes:
 ::: textual.widgets.DataTable
     options:
       heading_level: 2
+
+::: textual.widgets.data_table
+    options:
+      show_root_heading: true
+      show_root_toc_entry: true
