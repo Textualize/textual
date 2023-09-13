@@ -103,7 +103,7 @@ In the example above, the callback is a lambda which calls the `open_file` metho
 
 You can also associate commands with a screen by adding a `COMMAND_SOURCES` class var to your Screen class.
 
-This is useful for commands that only make sense when a give screen is active.
+This is useful for commands that only make sense when a given screen is active.
 
 ## Disabling the command palette
 
