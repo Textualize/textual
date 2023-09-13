@@ -46,7 +46,7 @@ Textual apps have the following commands enabled by default:
 
 ## Command sources
 
-To add your own command(s) to the command palette, first define a [`command.Source`][textual.command.Source] class then add it to the [`COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES] class var on your App.
+To add your own command(s) to the command palette, first define a [`command.Source`][textual.command.Source] class then add it to the [`COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES] class var on your app.
 
 Let's look at a simple example which adds the ability to open Python files via the command palette.
 
