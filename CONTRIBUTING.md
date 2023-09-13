@@ -1,120 +1,116 @@
-# Contributing Guidelines
+# Contributing to Textual
 
-🎉 **First of all, thanks for taking the time to contribute!** 🎉
+First of all, thanks for taking the time to contribute to Textual!
 
-## 🤔 How can I contribute?
+## How can I contribute?
 
-**1.** Fix issue
+You can contribute to Textual in many ways:
 
-**2.** Report bug
+ 1. [Report a bug](https://github.com/textualize/textual/issues/new?title=%5BBUG%5D%20short%20bug%20description&template=bug_report.md)
+ 2. Fix a previously opened issue
+ 3. Improve the documentation
+ 4. Talk/write about Textual online
 
-**3.** Improve Documentation
 
+## Setup
 
-## Setup 🚀
-You need to set up Textualize to make your contribution. Textual requires Python 3.7 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows, and probably any OS where Python also runs.
+To make a code or documentation contribution you will need to set up Textual locally.
+You can follow these steps:
 
-### Installation
+ 1. Make sure you have Poetry installed ([see instructions here](https://python-poetry.org))
+ 2. Clone the Textual repository
+ 3. Run `poetry shell` to create a virtual environment for the dependencies
+ 4. Run `poetry install` to install all dependencies
+ 5. Make sure the latest version of Textual was installed by running the command `textual --version`
+ 6. Install the pre-commit hooks with the command `pre-commit install`
 
-**Install Texualize via pip:**
-```bash
-pip install textual
-```
-**Install [Poetry](https://python-poetry.org/)**
-```bash
-curl -sSL https://install.python-poetry.org | python3 -
-```
-**To install all dependencies, run:**
-```bash
-poetry install --all 
-```
-**Make sure everything works fine:**
-```bash
-textual --version
-```
-### Demo
+## Demo
 
-Once you have Textual installed, run the following to get an impression of what it can do:
+Once you have Textual installed, run the Textual demo to get an impression of what Textual can do and to double check that everything was installed correctly:
 
 ```bash
 python -m textual
 ```
-If Texualize is installed, you should see this:
-<img width="848" alt="demo" src="https://github.com/clairecharles/textual/assets/67120042/62fd53c0-7ad6-4429-8751-5a713180b836">
 
-## Make contribution
-**1.** Fork [this](repo) repository.
+## Guidelines
 
-**2.** Clone the forked repository.
+- Make sure to read the issue instructions carefully. If something isn't clear, ask for clarification!
 
-```bash
-git clone https://github.com/<your-username>/textual.git
-```
+- Add docstrings to all of your code (functions, methods, classes, ...). The codebase should have enough examples for you to copy from.
 
-**3.** Navigate to the project directory.
+- Write tests for your code.
+  - If you are fixing a bug, make sure to add regression tests that link to the original issue.
+  - If you are implementing a visual element, make sure to add _snapshot tests_. [See below](#snapshot-testing) for more details.
 
-```bash
-cd textual
-```
+## Before opening a PR
 
-**4.** Create a new [pull request](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request)
+Before you open your PR, please go through this checklist and make sure you've checked all the items that apply:
 
+ - [ ] Update the `CHANGELOG.md`
+ - [ ] Format your code with black (`make format`)
+ - [ ] All your code has docstrings in the style of the rest of the codebase
+ - [ ] Your code passes all tests (`make test`)
+ - [ ] You added documentation under `docs/`
 
-### 📣 Pull Requests(PRs)
+([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
-The process described here should check off these goals:
+## Updating and building the documentation
 
-- [x] Maintain the project's quality.
-- [x] Fix problems that are important to users.
-- [x] The CHANGELOG.md was updated;
-- [x] Your code was formatted with black (make format);
-- [x] All of your code has docstrings in the style of the rest of the codebase;
-- [x]  your code passes all tests (make test); and
-- [x] You added documentation when needed.
+If you change the documentation, you will want to build the documentation to make sure everything looks like it should.
+The command `make docs-serve-offline` should start a server that will let you preview the documentation locally and that should reload whenever you save changes to the documentation or the code files.
 
-### After the PR 🥳
+([Read this](#makefile-commands) if the command `make` doesn't work for you.)
+
+## After opening a PR
+
 When you open a PR, your code will be reviewed by one of the Textual maintainers.
 In that review process,
 
-- We will take a look at all of the changes you are making;
-- We might ask for clarifications (why did you do X or Y?);
-- We might ask for more tests/more documentation; and
-- We might ask for some code changes.
+- We will take a look at all of the changes you are making
+- We might ask for clarifications (why did you do X or Y?)
+- We might ask for more tests/more documentation
+- We might ask for some code changes
 
 The sole purpose of those interactions is to make sure that, in the long run, everyone has the best experience possible with Textual and with the feature you are implementing/fixing.
 
 Don't be discouraged if a reviewer asks for code changes.
 If you go through our history of pull requests, you will see that every single one of the maintainers has had to make changes following a review.
 
+## Snapshot testing
 
+Snapshot tests ensure that visual things (like widgets) look like they are supposed to.
+PR [#1969](https://github.com/Textualize/textual/pull/1969) is a good example of what adding snapshot tests looks like: it amounts to a change in the file `tests/snapshot_tests/test_snapshots.py` that should run an app that you write and compare it against a historic snapshot of what that app should look like.
 
-## 🛑 Important
-
-- Make sure to read the issue instructions carefully. If you are a newbie you should look out for some good first issues because they should be clear enough and sometimes even provide some hints. If something isn't clear, ask for clarification!
-
-- Add docstrings to all of your code (functions, methods, classes, ...). The codebase should have enough examples for you to copy from.
-
-- Write tests for your code.
-
-- If you are fixing a bug, make sure to add regression tests that link to the original issue.
-  
-- If you are implementing a visual element, make sure to add snapshot tests. See below for more details.
-
-  
-### Snapshot Testing
-Snapshot tests ensure that things like widgets look like they are supposed to.
-PR [#1969](https://github.com/Textualize/textual/pull/1969) is a good example of what adding snapshot tests means: it amounts to a change in the file ```tests/snapshot_tests/test_snapshots.py```, that should run an app that you write and compare it against a historic snapshot of what that app should look like.
-
-When you create a new snapshot test, run it with ```pytest -vv tests/snapshot_tests/test_snapshots.py.```
-Because you just created this snapshot test, there is no history to compare against and the test will fail automatically.
+When you create a new snapshot test, run it with `pytest -vv tests/snapshot_tests/test_snapshots.py`.
+Because you just created this snapshot test, there is no history to compare against and the test will fail.
 After running the snapshot tests, you should see a link that opens an interface in your browser.
-This interface should show all failing snapshot tests and a side-by-side diff between what the app looked like when it ran VS the historic snapshot.
+This interface should show all failing snapshot tests and a side-by-side diff between what the app looked like when the test ran versus the historic snapshot.
 
 Make sure your snapshot app looks like it is supposed to and that you didn't break any other snapshot tests.
-If that's the case, you can run ```make test-snapshot-update``` to update the snapshot history with your new snapshot.
-This will write to the file ```tests/snapshot_tests/__snapshots__/test_snapshots.ambr```, that you should NOT modify by hand
+If everything looks fine, you can run `make test-snapshot-update` to update the snapshot history with your new snapshot.
+This will write to the file `tests/snapshot_tests/__snapshots__/test_snapshots.ambr`, which you should NOT modify by hand.
 
+([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
-### 📈Join the community
+## Join the community
 
-- 😕 Seems a little overwhelming? Join our community on [Discord](https://discord.gg/uNRPEGCV) to get help.
+Seems a little overwhelming?
+Join our community on [Discord](https://discord.gg/uNRPEGCV) to get help!
+
+## Makefile commands
+
+Textual has a `Makefile` file that contains the most common commands used when developing Textual.
+([Read about Make and makefiles on Wikipedia.](https://en.wikipedia.org/wiki/Make_(software)))
+If you don't have Make, you can open the file `Makefile` with any text editor and read the rules yourself.
+
+For example, the top of the file looks like this:
+
+```
+run := poetry run
+
+.PHONY: test
+test:
+	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv
+```
+
+This means that whenever we run the command `make test`, Make will run the list of commands under `test:`, which in this case is just `poetry run pytest --cov-report term-missing --cov=textual tests/ -vv`.
