@@ -9,7 +9,7 @@ from textual.widgets import Static
 
 
 class PythonFileSource(Source):
-    """A command source to open a file in the current working directory."""
+    """A command source to open a Python file in the current working directory."""
 
     def read_files(self) -> list[Path]:
         """Get a list of Python files in the current working directory."""
