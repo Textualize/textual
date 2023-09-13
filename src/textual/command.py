@@ -475,7 +475,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         with Vertical():
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Search...")
+                yield CommandInput(placeholder="Command Palette Search...")
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):
