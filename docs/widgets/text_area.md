@@ -258,6 +258,10 @@ from tree_sitter_languages import get_language
 java_language = get_language("java")
 ```
 
+!!! note
+
+    `py-tree-sitter-languages` may not be available on some architectures (e.g. Macbooks with Apple Silicon running Python 3.7).
+
 The exact version of the parser used when you call `get_language` can be checked via
 the [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) in
 the version of `py-tree-sitter-languages` you're using. This file contains links to the GitHub
