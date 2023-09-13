@@ -1,3 +1,4 @@
+
 # TextArea
 
 !!! tip "Added in version 0.38.0"
@@ -35,6 +36,9 @@ To update the parser used for syntax highlighting, set the [`language`][textual.
 # Set the language to Markdown
 text_area.language = "markdown"
 ```
+
+!!! note
+    More built-in languages will be added in the future. For now, you can [add your own](#adding-support-for-custom-languages).
 
 ### Working with the cursor
 
@@ -94,7 +98,7 @@ convenience, some other utility methods are provided, such as [`insert`][textual
 `TextArea` ships with some builtin themes, and you can easily add your own.
 
 Themes give you control over the look and feel, including syntax highlighting,
-the cursor, the selection, and gutter, and more.
+the cursor, selection, gutter, and more.
 
 #### Using builtin themes
 
@@ -153,12 +157,16 @@ my_theme = TextAreaTheme(
 )
 ```
 
-The `token_styles` attribute of `TextAreaTheme` is used for syntax highlighting.
+Attributes like `cursor_style` and `cursor_line_style` apply general language-agnostic
+styling to the widget.
+
+The `token_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
+depends on the `language` currently in use.
 For more details, see [syntax highlighting](#syntax-highlighting).
 
 ##### 2. Registering a theme
 
-With our theme created, we can now register it with the `TextArea` instance.
+Our theme can now be registered with the `TextArea` instance.
 
 ```python
 text_area.register_theme(my_theme)
@@ -171,13 +179,13 @@ After registering a theme, it'll appear in the `available_themes`:
 {'dracula', 'github_light', 'monokai', 'vscode_dark', 'my_cool_theme'}
 ```
 
-We can now switch to this theme:
+We can now switch to it:
 
 ```python
 text_area.theme = "my_cool_theme"
 ```
 
-Which immediately updates the appearance of our `TextArea`:
+This immediately updates the appearance of the `TextArea`:
 
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
@@ -201,10 +209,10 @@ When the `language` attribute is set to `"markdown"`, a highlight query similar 
 (link) @link
 ```
 
-This highlight query maps `heading_content` nodes returned by the Markdown parser to the name `"heading"`,
-and `link` nodes to the name `link`.
+This highlight query maps `heading_content` nodes returned by the Markdown parser to the name `@heading`,
+and `link` nodes to the name `@link`.
 
-Inside our `TextAreaTheme.token_styles` dict, we can map the name `"heading"` to a Rich style.
+Inside our `TextAreaTheme.token_styles` dict, we can map the name `@heading` to a Rich style.
 Here's a snippet from the "Monokai" theme which does just that:
 
 ```python
@@ -214,25 +222,49 @@ TextAreaTheme(
     gutter_style=Style(color="#90908a", bgcolor="#272822"),
     # ...
     token_styles={
-        # Colorise headings and make them bold
+        # Colorise @heading and make them bold
         "heading": Style(color="#F92672", bold=True),
-        # Colorise and underline Markdown links
+        # Colorise and underline @link
         "link": Style(color="#66D9EF", underline=True),
         # ...
     },
 )
 ```
 
-The exact queries `TextArea` uses for highlighting can be found inside `.scm` files in the GitHub repo.
+To understand which names can be mapped inside `token_styles`, we recommend looking at the existing
+themes and highlighting queries (`.scm` files) in the Textual repository.
 
 #### Adding support for custom languages
 
 To add support for a language to a `TextArea`, use the [`register_language`][textual.widgets._text_area.TextArea.register_language] method.
 
-[`py-tree-sitter-languages`](https://github.com/grantjenks/py-tree-sitter-languages)
+To register a language, we require two things:
 
-!!! note
-    More built-in languages will be added in the future.
+1. A tree-sitter `Language` object which contains the grammar for the language.
+2. A highlight query which is used for [syntax highlighting](#syntax-highlighting).
+
+##### Example - adding Java support
+
+The easiest way to obtain a `Language` object is using the [`py-tree-sitter-languages`](https://github.com/grantjenks/py-tree-sitter-languages) package. Here's how we can use this package to obtain a reference to a `Language` object representing Java:
+
+```python
+from tree_sitter_languages import get_language
+java_language = get_language("java")
+```
+
+The exact version of the parser used when you call `get_language` can be checked via
+the [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) in
+the version of `py-tree-sitter-languages` you're using. This file contains links to the GitHub
+repos and commit hashes of the tree-sitter parsers. Inside these repos, you can often find pre-made highlight queries in `queries/highlights.scm`,
+and a JSON file showing all the available node types which can be used in highlight queries at `src/node-types.json`.
+
+Since we're adding support for Java, lets grab the highlight query from the repo by following these steps.
+Be sure to check the license in the repo before copying the query:
+
+1. Open [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt).
+2. Find the link corresponding to `tree-sitter-java` and go to the repo on GitHub (you may also need to go to the specific commit referenced in `repos.txt`).
+3. Go to [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-java/blob/83044af4950e9f1adb46a20f616d10934930ce7e/queries/highlights.scm) to see the example highlight query for Java.
+
 
 
 ## Reactive attributes
