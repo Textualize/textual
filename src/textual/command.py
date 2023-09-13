@@ -575,7 +575,6 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
 
         # Fire up an instance of each command source, inside a task, and
         # have them go start looking for matches.
-        assert self._calling_screen is not None
         searches = [
             create_task(
                 self._consume(
