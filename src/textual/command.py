@@ -150,7 +150,7 @@ class Source(ABC):
 
         Args:
             user_input: The text that the user has input.
-            case_sensitive: Should match be case sensitive?
+            case_sensitive: Should matching be case sensitive?
 
         Returns:
             A [fuzzy matcher][textual.fuzzy.Matcher] object for matching against candidate hits.
