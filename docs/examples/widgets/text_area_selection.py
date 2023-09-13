@@ -11,13 +11,13 @@ def goodbye(name):
 """
 
 
-class TextAreaExample(App):
+class TextAreaSelection(App):
     def compose(self) -> ComposeResult:
         text_area = TextArea(TEXT, language="python")
         text_area.selection = Selection(start=(0, 0), end=(2, 0))  # (1)!
         yield text_area
 
 
-app = TextAreaExample()
+app = TextAreaSelection()
 if __name__ == "__main__":
     app.run()
