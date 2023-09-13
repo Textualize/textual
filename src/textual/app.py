@@ -1161,7 +1161,10 @@ class App(Generic[ReturnType], DOMNode):
             stderr: True if the print was to stderr, or False for stdout.
         """
         if self._devtools_redirector is not None:
-            self._devtools_redirector.write(text)
+            current_frame = inspect.currentframe()
+            self._devtools_redirector.write(
+                text, current_frame.f_back if current_frame is not None else None
+            )
         for target, (_stdout, _stderr) in self._capture_print.items():
             if (_stderr and stderr) or (_stdout and not stderr):
                 target.post_message(events.Print(text, stderr=stderr))
