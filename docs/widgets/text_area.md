@@ -263,9 +263,27 @@ Be sure to check the license in the repo before copying the query:
 
 1. Open [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt).
 2. Find the link corresponding to `tree-sitter-java` and go to the repo on GitHub (you may also need to go to the specific commit referenced in `repos.txt`).
-3. Go to [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-java/blob/83044af4950e9f1adb46a20f616d10934930ce7e/queries/highlights.scm) to see the example highlight query for Java.
+3. Go to [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-java/blob/ac14b4b1884102839455d32543ab6d53ae089ab7/queries/highlights.scm) to see the example highlight query for Java.
 
+!!! note
 
+    It's important to use a highlight query which is compatible with the parser, so
+    pay attention to the commit hash when visiting the repo via `repos.txt`.
+
+We now have our `Language` and our highlight query, so we can register Java as a language.
+
+```python
+--8<-- "docs/examples/widgets/text_area_custom_languages.py"
+```
+
+Running our app, we can see that the Java code is highlighted.
+
+```{.textual path="docs/examples/widgets/text_area_custom_languages.py" columns="52" lines="8"}
+```
+
+However, some tokens in the document aren't highlighted like we might expect.
+
+TODO - add method for adding style mapping.
 
 ## Reactive attributes
 
