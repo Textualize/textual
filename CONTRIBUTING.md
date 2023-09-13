@@ -7,9 +7,10 @@ First of all, thanks for taking the time to contribute to Textual!
 You can contribute to Textual in many ways:
 
  1. [Report a bug](https://github.com/textualize/textual/issues/new?title=%5BBUG%5D%20short%20bug%20description&template=bug_report.md)
- 2. Fix a previously opened issue
- 3. Improve the documentation
- 4. Talk/write about Textual online
+ 2. Propose a new feature
+ 3. Work on a previously opened issue
+ 4. Improve the documentation
+ 5. Talk/write about Textual online
 
 
 ## Setup
@@ -50,7 +51,6 @@ Before you open your PR, please go through this checklist and make sure you've c
  - [ ] Format your code with black (`make format`)
  - [ ] All your code has docstrings in the style of the rest of the codebase
  - [ ] Your code passes all tests (`make test`)
- - [ ] You added documentation under `docs/`
 
 ([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
@@ -101,16 +101,4 @@ Join our community on [Discord](https://discord.gg/uNRPEGCV) to get help!
 
 Textual has a `Makefile` file that contains the most common commands used when developing Textual.
 ([Read about Make and makefiles on Wikipedia.](https://en.wikipedia.org/wiki/Make_(software)))
-If you don't have Make, you can open the file `Makefile` with any text editor and read the rules yourself.
-
-For example, the top of the file looks like this:
-
-```
-run := poetry run
-
-.PHONY: test
-test:
-	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv
-```
-
-This means that whenever we run the command `make test`, Make will run the list of commands under `test:`, which in this case is just `poetry run pytest --cov-report term-missing --cov=textual tests/ -vv`.
+If you don't have Make and you're on Windows, you may want to [install Make](https://stackoverflow.com/q/32127524/2828287).
