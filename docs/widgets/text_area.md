@@ -148,9 +148,9 @@ my_theme = TextAreaTheme(
     # Basic styles such as background, cursor, selection, gutter, etc...
     cursor_style=Style(color="white", bgcolor="blue"),
     cursor_line_style=Style(bgcolor="yellow"),
-    # `token_styles` is for syntax highlighting.
+    # `syntax_styles` is for syntax highlighting.
     # It maps tokens parsed from the document to Rich styles.
-    token_styles={
+    syntax_styles={
         "string": Style(color="red"),
         "comment": Style(color="magenta"),
     }
@@ -160,7 +160,7 @@ my_theme = TextAreaTheme(
 Attributes like `cursor_style` and `cursor_line_style` apply general language-agnostic
 styling to the widget.
 
-The `token_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
+The `syntax_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
 depends on the `language` currently in use.
 For more details, see [syntax highlighting](#syntax-highlighting).
 
@@ -198,7 +198,7 @@ Syntax highlighting inside the `TextArea` is powered by a library called [`tree-
 
 Each time you update the document in a `TextArea`, an internal syntax tree is updated.
 This tree is frequently _queried_ to find location ranges relevant to syntax highlighting.
-We give these ranges _names_, and ultimately map them to Rich styles inside `TextAreaTheme.token_styles`.
+We give these ranges _names_, and ultimately map them to Rich styles inside `TextAreaTheme.syntax_styles`.
 
 To illustrate how this works, lets look at how the "Monokai" `TextAreaTheme` highlights Markdown files.
 
@@ -212,7 +212,7 @@ When the `language` attribute is set to `"markdown"`, a highlight query similar 
 This highlight query maps `heading_content` nodes returned by the Markdown parser to the name `@heading`,
 and `link` nodes to the name `@link`.
 
-Inside our `TextAreaTheme.token_styles` dict, we can map the name `@heading` to a Rich style.
+Inside our `TextAreaTheme.syntax_styles` dict, we can map the name `@heading` to a Rich style.
 Here's a snippet from the "Monokai" theme which does just that:
 
 ```python
@@ -221,7 +221,7 @@ TextAreaTheme(
     base_style=Style(color="#f8f8f2", bgcolor="#272822"),
     gutter_style=Style(color="#90908a", bgcolor="#272822"),
     # ...
-    token_styles={
+    syntax_styles={
         # Colorise @heading and make them bold
         "heading": Style(color="#F92672", bold=True),
         # Colorise and underline @link
@@ -231,8 +231,14 @@ TextAreaTheme(
 )
 ```
 
-To understand which names can be mapped inside `token_styles`, we recommend looking at the existing
+To understand which names can be mapped inside `syntax_styles`, we recommend looking at the existing
 themes and highlighting queries (`.scm` files) in the Textual repository.
+
+!!! tip
+
+    You may also wish to take a look at the contents of `TextArea._highlights` on an
+    active `TextArea` instance to see which highlights have been generated for the
+    open document.
 
 #### Adding support for custom languages
 
@@ -255,35 +261,42 @@ java_language = get_language("java")
 The exact version of the parser used when you call `get_language` can be checked via
 the [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) in
 the version of `py-tree-sitter-languages` you're using. This file contains links to the GitHub
-repos and commit hashes of the tree-sitter parsers. Inside these repos, you can often find pre-made highlight queries in `queries/highlights.scm`,
-and a JSON file showing all the available node types which can be used in highlight queries at `src/node-types.json`.
+repos and commit hashes of the tree-sitter parsers. In these repos you can often find pre-made highlight queries at `queries/highlights.scm`,
+and a file showing all the available node types which can be used in highlight queries at `src/node-types.json`.
 
-Since we're adding support for Java, lets grab the highlight query from the repo by following these steps.
-Be sure to check the license in the repo before copying the query:
+Since we're adding support for Java, lets grab the Java highlight query from the repo by following these steps:
 
-1. Open [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt).
+1. Open [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) from the `py-tree-sitter-languages` repo.
 2. Find the link corresponding to `tree-sitter-java` and go to the repo on GitHub (you may also need to go to the specific commit referenced in `repos.txt`).
 3. Go to [`queries/highlights.scm`](https://github.com/tree-sitter/tree-sitter-java/blob/ac14b4b1884102839455d32543ab6d53ae089ab7/queries/highlights.scm) to see the example highlight query for Java.
 
-!!! note
+Be sure to check the license in the repo to ensure it can be freely copied.
 
-    It's important to use a highlight query which is compatible with the parser, so
+!!! warning
+
+    It's important to use a highlight query which is compatible with the parser in use, so
     pay attention to the commit hash when visiting the repo via `repos.txt`.
 
 We now have our `Language` and our highlight query, so we can register Java as a language.
 
 ```python
---8<-- "docs/examples/widgets/text_area_custom_languages.py"
+--8<-- "docs/examples/widgets/text_area_custom_language.py"
 ```
 
 Running our app, we can see that the Java code is highlighted.
+We can freely edit the text, and the syntax highlighting will update immediately.
 
-```{.textual path="docs/examples/widgets/text_area_custom_languages.py" columns="52" lines="8"}
+```{.textual path="docs/examples/widgets/text_area_custom_language.py" columns="52" lines="8"}
 ```
 
-However, some tokens in the document aren't highlighted like we might expect.
+Recall that we map names (like `@heading`) from the tree-sitter highlight query to Rich style objects inside the `TextAreaTheme.syntax_styles` dictionary.
+If you notice some highlights are missing after registering a language, it's likely that the current theme simply doesn't contain a mapping for that name.
+Adding a new to `syntax_styles` should resolve the issue.
 
-TODO - add method for adding style mapping.
+!!! tip
+
+    The names assigned in tree-sitter highlight queries are often reused across multiple languages.
+    For example, `@string` is used in many languages to highlight strings.
 
 ## Reactive attributes
 
@@ -346,6 +359,8 @@ The gutter (column on the left containing line numbers) can be toggled by settin
 the `show_line_numbers` attribute to `True` or `False`.
 
 Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
+
+### The file system
 
 ## See also
 

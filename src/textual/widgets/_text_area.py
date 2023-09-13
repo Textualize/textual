@@ -735,7 +735,7 @@ TextArea {
         if highlights and theme:
             line_bytes = _utf8_encode(line_string)
             byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-            get_highlight_from_theme = theme.token_styles.get
+            get_highlight_from_theme = theme.syntax_styles.get
             line_highlights = highlights[line_index]
             for highlight_start, highlight_end, highlight_name in line_highlights:
                 node_style = get_highlight_from_theme(highlight_name)

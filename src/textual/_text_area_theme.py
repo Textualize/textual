@@ -28,11 +28,11 @@ class TextAreaTheme:
     node is used (as will be the case when language="markdown").
 
     ```
-    TextAreaTheme('my_theme', token_styles={'heading': Style(color='cyan', bold=True)})
+    TextAreaTheme('my_theme', syntax_styles={'heading': Style(color='cyan', bold=True)})
     ```
 
-    We can supply this theme to our `TextArea`, and headings in our markdown files will
-    be styled bold cyan.
+    We can register this theme with our `TextArea` using the `register_theme` method,
+    and headings in our markdown files will be styled bold cyan.
     """
 
     name: str
@@ -60,7 +60,7 @@ class TextAreaTheme:
     selection_style: Style | None = None
     """The style of the selection. If `None` a default selection Style will be generated."""
 
-    token_styles: dict[str, Style] = field(default_factory=dict)
+    syntax_styles: dict[str, Style] = field(default_factory=dict)
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
     def __post_init__(self) -> None:
@@ -136,7 +136,7 @@ class TextAreaTheme:
         Returns:
             The `Style` to use for this highlight, or `None` if no style.
         """
-        return self.token_styles.get(name)
+        return self.syntax_styles.get(name)
 
     @classmethod
     def builtin_themes(cls) -> list[TextAreaTheme]:
@@ -166,7 +166,7 @@ _MONOKAI = TextAreaTheme(
     cursor_line_gutter_style=Style(color="#c2c2bf", bgcolor="#3e3d32"),
     bracket_matching_style=Style(bgcolor="#838889", bold=True),
     selection_style=Style(bgcolor="#65686a"),
-    token_styles={
+    syntax_styles={
         "string": Style(color="#E6DB74"),
         "string.documentation": Style(color="#E6DB74"),
         "comment": Style(color="#75715E"),
@@ -215,7 +215,7 @@ _DRACULA = TextAreaTheme(
     cursor_line_gutter_style=Style(color="#c2c2bf", bgcolor="#282b45", bold=True),
     bracket_matching_style=Style(bgcolor="#99999d", bold=True, underline=True),
     selection_style=Style(bgcolor="#44475A"),
-    token_styles={
+    syntax_styles={
         "string": Style(color="#f1fa8c"),
         "string.documentation": Style(color="#f1fa8c"),
         "comment": Style(color="#6272a4"),
@@ -264,7 +264,7 @@ _DARK_VS = TextAreaTheme(
     bracket_matching_style=Style(bgcolor="#3a3a3a", bold=True),
     cursor_line_gutter_style=Style(color="#CCCCCC", bgcolor="#2b2b2b"),
     selection_style=Style(bgcolor="#264F78"),
-    token_styles={
+    syntax_styles={
         "string": Style(color="#ce9178"),
         "string.documentation": Style(color="#ce9178"),
         "comment": Style(color="#6A9955"),
@@ -310,7 +310,7 @@ _GITHUB_LIGHT = TextAreaTheme(
     bracket_matching_style=Style(color="#24292e", underline=True),
     cursor_line_gutter_style=Style(color="#A4A4A4", bgcolor="#ebebeb"),
     selection_style=Style(bgcolor="#c8c8fa"),
-    token_styles={
+    syntax_styles={
         "string": Style(color="#093069"),
         "string.documentation": Style(color="#093069"),
         "comment": Style(color="#6a737d"),
@@ -351,5 +351,5 @@ _BUILTIN_THEMES = {
     "github_light": _GITHUB_LIGHT,
 }
 
-DEFAULT_SYNTAX_THEME = TextAreaTheme.get_builtin_theme("monokai")
-"""The default syntax highlighting theme used by Textual."""
+DEFAULT_THEME = TextAreaTheme.get_builtin_theme("monokai")
+"""The default TextAreaTheme used by Textual."""

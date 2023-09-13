@@ -20,8 +20,8 @@ MY_THEME = TextAreaTheme(
     # Basic styles such as background, cursor, selection, gutter, etc...
     cursor_style=Style(color="white", bgcolor="blue"),
     cursor_line_style=Style(bgcolor="yellow"),
-    # `token_styles` maps tokens parsed from the document to Rich styles.
-    token_styles={
+    # `syntax_styles` maps tokens parsed from the document to Rich styles.
+    syntax_styles={
         "string": Style(color="red"),
         "comment": Style(color="magenta"),
     },

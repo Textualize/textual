@@ -85,6 +85,11 @@ class DocumentBase(ABC):
     def text(self) -> str:
         """The text from the document as a string."""
 
+    @property
+    @abstractmethod
+    def newline(self) -> Newline:
+        """Return the line separator used in the document."""
+
     @abstractmethod
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
