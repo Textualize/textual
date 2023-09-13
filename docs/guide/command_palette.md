@@ -99,6 +99,12 @@ In the example above, the callback is a lambda which calls the `open_file` metho
     This is a deliberate design decision taken to prevent a single broken `Source` class from making the command palette unusable.
     Errors in command sources will be logged to the [console](./devtools.md).
 
+## Screen commands
+
+You can also associate commands with a screen by adding a `COMMAND_SOURCES` class var to your Screen class.
+
+This is useful for commands that only make sense when a give screen is active.
+
 ## Disabling the command palette
 
 The command palette is enabled by default.

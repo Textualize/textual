@@ -158,7 +158,10 @@ class Screen(Generic[ScreenResultType], Widget):
     """Screen title to override [the app title][textual.app.App.title]."""
 
     COMMAND_SOURCES: ClassVar[set[type[Source]]] = set()
-    """The [command sources](/api/command_palette/) for the screen."""
+    """Command sources used by the [command palette](/guide/command), associated with the screen.
+
+    Should be a set of [command.Source][textual.command.Source] classes.
+    """
 
     BINDINGS = [
         Binding("tab", "focus_next", "Focus Next", show=False),
