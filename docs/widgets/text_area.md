@@ -99,7 +99,7 @@ Let's select the first two lines of text in a document by adding `text_area.sele
 
     1. Selects the first two lines of text.
 
-Note that selections can happen in both directions. That is, `Selection((2, 0), (0, 0))` is also valid.
+Note that selections can happen in both directions, so `Selection((2, 0), (0, 0))` is also valid.
 
 !!! tip
 
@@ -278,6 +278,32 @@ The gutter (column on the left containing line numbers) can be toggled by settin
 the `show_line_numbers` attribute to `True` or `False`.
 
 Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
+
+### Extending `TextArea`
+
+Sometimes, you may wish to subclass `TextArea` to add some extra functionality.
+In this section, we'll briefly explore how we can extend the widget to achieve common goals.
+
+#### Hooking into key presses
+
+You may wish to hook into certain key presses to inject some functionality.
+This can be done by over-riding `_on_key` and adding the required functionality.
+
+##### Example - closing parentheses automatically
+
+Let's extend `TextArea` to add a feature which automatically closes parentheses and moves the cursor to a sensible location.
+
+```python
+--8<-- "docs/examples/widgets/text_area_extended.py"
+```
+
+This intercepts the key handler when `"("` is pressed, and inserts `"()"` instead.
+It then moves the cursor so that it lands between the open and closing parentheses.
+
+Typing `def hello(` into the `TextArea` results in the bracket automatically being closed:
+
+```{.textual path="docs/examples/widgets/text_area_extended.py" columns="36" lines="4" press="d,e,f,space,h,e,l,l,o,left_parenthesis"}
+```
 
 ### Advanced concepts
 
