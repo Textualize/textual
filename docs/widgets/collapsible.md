@@ -19,7 +19,7 @@ def compose(self) -> ComposeResult:
     yield Collapsible(Label("Hello, world."))
 ```
 
-Here's how the to use it with the context manager.
+Here's how the to use it with the context manager:
 
 ```python
 def compose(self) -> ComposeResult:
