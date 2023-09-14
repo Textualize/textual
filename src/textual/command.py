@@ -210,9 +210,7 @@ class Source(ABC):
         """Called when the Source is shutdown.
 
         Use this method to perform an cleanup, if required.
-
         """
-        print("SHUTDOWN Source ")
 
 
 @rich.repr.auto

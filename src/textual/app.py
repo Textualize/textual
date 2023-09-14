@@ -336,7 +336,7 @@ class App(Generic[ReturnType], DOMNode):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+@", "command_palette", show=False, priority=True),
+        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
