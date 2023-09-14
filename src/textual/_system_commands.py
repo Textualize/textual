@@ -1,6 +1,6 @@
-"""A command palette command source for Textual system commands.
+"""A command palette command provider for Textual system commands.
 
-This is a simple command source that makes the most obvious application
+This is a simple command provider that makes the most obvious application
 actions available via the [command palette][textual.command.CommandPalette].
 """
 
@@ -20,7 +20,7 @@ class SystemCommands(Provider):
             user_input: The user input to be matched.
 
         Yields:
-            Command source hits for use in the command palette.
+            Command hits for use in the command palette.
         """
         # We're going to use Textual's builtin fuzzy matcher to find
         # matching commands.
