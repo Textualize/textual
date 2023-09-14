@@ -206,6 +206,13 @@ class Provider(ABC):
         """
         yield NotImplemented
 
+    async def _shutdown(self) -> None:
+        """Internal method to call shutdown and log errors."""
+        try:
+            await self.shutdown()
+        except Exception:
+            self.app.log.error(Traceback())
+
     async def shutdown(self) -> None:
         """Called when the Provider is shutdown.
 
@@ -521,12 +528,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             provider._post_init()
 
     async def on_unmount(self) -> None:
-        try:
-            await wait(
-                [create_task(provider.shutdown()) for provider in self._providers],
-            )
-        except Exception:
-            self.log(Exception)
+        """Shutdown providers when command palette is closed."""
+        await wait(
+            [create_task(provider._shutdown()) for provider in self._providers],
+        )
         self._providers.clear()
 
     def _stop_busy_countdown(self) -> None:

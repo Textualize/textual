@@ -32,6 +32,7 @@ class HeaderIcon(Widget):
     """The character to use as the icon within the header."""
 
     async def on_click(self, event: Click) -> None:
+        """Launch the command palette when icon is clicked."""
         event.stop()
         await self.run_action("command_palette")
 
