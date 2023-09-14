@@ -343,8 +343,8 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     }
 
     CommandPalette > .command-palette--help-text {
-        text-style: dim;
         background: transparent;
+        color: $text-muted;
     }
 
     CommandPalette > .command-palette--highlight {
