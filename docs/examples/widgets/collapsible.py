@@ -21,7 +21,7 @@ Son of Leto and Jessica.
 
 
 class CollapsibleApp(App[None]):
-    """An example of colllapsible container."""
+    """An example of collapsible container."""
 
     BINDINGS = [
         ("c", "collapse_or_expand(True)", "Collapse All"),
