@@ -623,7 +623,7 @@ def test_command_palette(snap_compare) -> None:
     from textual.command import CommandPalette
 
     async def run_before(pilot) -> None:
-        await pilot.press("ctrl+@")
+        await pilot.press("ctrl+backslash")
         await pilot.press("A")
         await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
 

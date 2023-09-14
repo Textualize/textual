@@ -68,13 +68,13 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._system_commands_source import SystemCommandSource
+from ._system_commands import SystemCommands
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
-from .command import CommandPalette, Source
+from .command import CommandPalette, Provider
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -328,15 +328,15 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
-    COMMAND_SOURCES: ClassVar[set[type[Source]]] = {SystemCommandSource}
-    """Command sources used by the [command palette](/guide/command).
+    COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
+    """Command providers used by the [command palette](/guide/command).
 
-    Should be a set of [command.Source][textual.command.Source] classes.
+    Should be a set of [command.Provider][textual.command.Provider] classes.
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+@", "command_palette", show=False, priority=True),
+        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)

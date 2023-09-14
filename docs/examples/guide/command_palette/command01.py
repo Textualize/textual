@@ -3,19 +3,19 @@ from pathlib import Path
 from rich.syntax import Syntax
 
 from textual.app import App, ComposeResult
-from textual.command import Hit, Hits, Source
+from textual.command import Hit, Hits, Provider
 from textual.containers import VerticalScroll
 from textual.widgets import Static
 
 
-class PythonFileSource(Source):
-    """A command source to open a Python file in the current working directory."""
+class PythonFileCommands(Provider):
+    """A command provider to open a Python file in the current working directory."""
 
     def read_files(self) -> list[Path]:
         """Get a list of Python files in the current working directory."""
         return list(Path("./").glob("*.py"))
 
-    async def post_init(self) -> None:  # (1)!
+    async def startup(self) -> None:  # (1)!
         """Called once when the command palette is opened, prior to searching."""
         worker = self.app.run_worker(self.read_files, thread=True)
         self.python_paths = await worker.wait()
@@ -42,7 +42,7 @@ class PythonFileSource(Source):
 class ViewerApp(App):
     """Demonstrate a command source."""
 
-    COMMAND_SOURCES = App.COMMAND_SOURCES | {PythonFileSource}  # (6)!
+    COMMANDS = App.COMMANDS | {PythonFileCommands}  # (6)!
 
     def compose(self) -> ComposeResult:
         with VerticalScroll():

@@ -6,7 +6,7 @@ In this chapter we will explain what a command palette is, how to use it, and ho
 
 ## Launching the command palette
 
-Press ++ctrl+space++ to invoke the command palette (modal) screen, which contains of a single input widget.
+Press ++ctrl++ + `\` (ctrl and backslash) to invoke the command palette screen, which contains of a single input widget.
 Textual will suggest commands as you type in that input.
 Press ++up++ or ++down++ to select a command from the list, and ++enter++ to invoke it.
 
@@ -17,17 +17,17 @@ This scheme allows the user to quickly get to a particular command with a minimu
 
 === "Command Palette"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+@"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash"}
     ```
 
 === "Command Palette after 't'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+@,t"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t"}
     ```
 
 === "Command Palette after 'td'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+@,t,d"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t,d"}
     ```
 
 
@@ -44,13 +44,13 @@ Textual apps have the following commands enabled by default:
   Plays the terminal bell, by calling [`App.bell`][textual.app.App.bell].
 
 
-## Command sources
+## Command providers
 
-To add your own command(s) to the command palette, first define a [`command.Source`][textual.command.Source] class then add it to the [`COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES] class var on your app.
+To add your own command(s) to the command palette, define a [`command.Provider`][textual.command.Provider] class then add it to the [`COMMANDS`][textual.app.App.COMMANDS] class var on your `App` class.
 
 Let's look at a simple example which adds the ability to open Python files via the command palette.
 
-The following example will display a blank screen initially, but if you hit ++ctrl+space++ and start typing the name of a Python file, it will show the command to open it.
+The following example will display a blank screen initially, but if you bring up the command palette and start typing the name of a Python file, it will show the command to open it.
 
 !!! tip
 
@@ -66,24 +66,24 @@ The following example will display a blank screen initially, but if you hit ++ct
   3. Get a [Matcher][textual.fuzzy.Matcher] instance to compare against hits.
   4. Use the matcher to get a score.
   5. Highlights matching letters in the search.
-  6. Adds our custom command source and the default command sources.
+  6. Adds our custom command provider and the default command provider.
 
-There are two methods you will typically override in a command source: [`post_init`][textual.command.Source.post_init] and [`search`][textual.command.Source.search].
-Both should be coroutines (`async def`).
+There are three methods you can override in a command provider: [`startup`][textual.command.Provider.startup], [`search`][textual.command.Provider.search], and [`shutdown`][textual.command.Provider.shutdown].
+All of these methods should be coroutines (`async def`). Only `search` is required, the other methods are optional.
 Let's explore those methods in detail.
 
-### post_init method
+### startup method
 
-The [`post_init`][textual.command.Source.post_init] method is called when the command palette is opened.
+The [`startup`][textual.command.Provider.startup] method is called when the command palette is opened.
 You can use this method as way of performing work that needs to be done prior to searching.
 In the example, we use this method to get the Python (.py) files in the current working directory.
 
 ### search method
 
-The [`search`][textual.command.Source.search] method is responsible for finding results (or *hits*) that match the user's input.
+The [`search`][textual.command.Provider.search] method is responsible for finding results (or *hits*) that match the user's input.
 This method should *yield* [`Hit`][textual.command.Hit] objects for any command that matches the `query` argument.
 
-Exactly how the matching is implemented is up to the author of the command source, but we recommend using the builtin fuzzy matcher object, which you can get by calling [`matcher`][textual.command.Source.matcher].
+Exactly how the matching is implemented is up to the author of the command provider, but we recommend using the builtin fuzzy matcher object, which you can get by calling [`matcher`][textual.command.Provider.matcher].
 This object has a [`match()`][textual.fuzzy.Matcher.match] method which compares the user's search term against the potential command and returns a *score*.
 A score of zero means *no hit*, and you can discard the potential command.
 A score of above zero indicates the confidence in the result, where 1 is an exact match, and anything lower indicates a less confident match.
@@ -95,15 +95,21 @@ In the example above, the callback is a lambda which calls the `open_file` metho
 
 !!! note
 
-    Unlike most other places in Textual, errors in command sources will not *exit* the app.
-    This is a deliberate design decision taken to prevent a single broken `Source` class from making the command palette unusable.
-    Errors in command sources will be logged to the [console](./devtools.md).
+    Unlike most other places in Textual, errors in command provider will not *exit* the app.
+    This is a deliberate design decision taken to prevent a single broken `Provider` class from making the command palette unusable.
+    Errors in command providers will be logged to the [console](./devtools.md).
+
+### Shutdown method
+
+The [`shutdown`][textual.command.Provider.shutdown] method is called when the command palette is closed.
+You can use this as a hook to gracefully close any objects you created in [`startup`][textual.command.Provider.startup].
 
 ## Screen commands
 
-You can also associate commands with a screen by adding a `COMMAND_SOURCES` class var to your Screen class.
+You can also associate commands with a screen by adding a `COMMANDS` class var to your Screen class.
 
-This is useful for commands that only make sense when a given screen is active.
+Commands defined on a screen are only considered when that screen is active.
+You can use this to implement commands that are specific to a particular screen, that wouldn't be applicable everywhere in the app.
 
 ## Disabling the command palette
 

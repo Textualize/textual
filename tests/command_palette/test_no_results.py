@@ -4,7 +4,7 @@ from textual.widgets import OptionList
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = set()
+    COMMANDS = set()
 
     def on_mount(self) -> None:
         self.action_command_palette()
