@@ -7,7 +7,7 @@ from datetime import datetime
 from rich.text import Text
 
 from ..app import RenderResult
-from ..events import Mount
+from ..events import Click, Mount
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -22,10 +22,18 @@ class HeaderIcon(Widget):
         width: 8;
         content-align: left middle;
     }
+
+    HeaderIcon:hover {
+        background: $foreground 10%;
+    }
     """
 
     icon = Reactive("⭘")
     """The character to use as the icon within the header."""
+
+    async def on_click(self, event: Click) -> None:
+        event.stop()
+        await self.run_action("command_palette")
 
     def render(self) -> RenderResult:
         """Render the header icon.
