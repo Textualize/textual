@@ -24,7 +24,7 @@ class EditResult:
     """Contains information about an edit that has occurred."""
 
     end_location: Location
-    """The new end Location after the selection is complete."""
+    """The new end Location after the edit is complete."""
     replaced_text: str
     """The text that was replaced."""
 
