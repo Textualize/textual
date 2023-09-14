@@ -91,6 +91,10 @@ class Collapsible(Widget):
     Collapsible.-collapsed > Contents {
         display: none;
     }
+
+    Collapsible  Collapsible {
+        margin-top: 1;
+    }
     """
 
     class Contents(Container):
