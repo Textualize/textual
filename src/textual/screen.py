@@ -160,7 +160,7 @@ class Screen(Generic[ScreenResultType], Widget):
     COMMANDS: ClassVar[set[type[Provider]]] = set()
     """Command providers used by the [command palette](/guide/command), associated with the screen.
 
-    Should be a set of [command.Provider][textual.command.Provider] classes.
+    Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
 
     BINDINGS = [
