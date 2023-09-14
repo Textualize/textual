@@ -52,6 +52,8 @@ There are a number of ways to retrieve content from the `TextArea`:
 - The [`TextArea.selected_text`][textual.widgets._text_area.TextArea.selected_text] property returns the text corresponding to the current selection.
 - The [`TextArea.get_text_range`][textual.widgets._text_area.TextArea.get_text_range] method returns the text between two locations.
 
+In all cases, when multiple lines of text are retrieved, the [document line separator](#line-separators) will be used.
+
 ### Editing content inside `TextArea`
 
 The content of the `TextArea` can be updated using the [`replace`][textual.widgets._text_area.TextArea.replace] method.
@@ -122,7 +124,7 @@ A number of similar methods exist, with names like `get_cursor_*_location`.
 ##### Cursor movement methods
 
 The [`move_cursor`][textual.widgets._text_area.TextArea.move_cursor] method allows you to move the cursor to a new location while selecting
-text, or move the cursor while keeping it centered on screen.
+text, or move the cursor and scroll to keep it centered.
 
 ```python
 # Move the cursor from its current location to row index 4,
@@ -244,6 +246,38 @@ This immediately updates the appearance of the `TextArea`:
 
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
+
+### Indentation
+
+The character(s) inserted when you press tab is controlled by setting the `indent_type` attribute to either `tabs` or `spaces`.
+
+If `indent_type == "spaces"`, pressing ++tab++ will insert `indent_width` spaces.
+
+### Line separators
+
+When content is loaded into `TextArea`, the content is scanned from beginning to end
+and the first occurrence of a line separator is recorded.
+
+This separator will then be used when content is later read from the `TextArea` via
+the `text` property. The `TextArea` widget does not support exporting text which
+contains mixed line endings.
+
+Similarly, newline characters pasted into the `TextArea` will be converted.
+
+You can check the line separator of the current document by inspecting `TextArea.document.newline`:
+
+```python
+>>> text_area = TextArea()
+>>> text_area.document.newline
+'\n'
+```
+
+### Line numbers
+
+The gutter (column on the left containing line numbers) can be toggled by setting
+the `show_line_numbers` attribute to `True` or `False`.
+
+Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
 
 ### Advanced concepts
 
@@ -387,46 +421,13 @@ The `TextArea` widget defines no component classes.
 
 Styling should be done exclusively via [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
 
-## Additional notes
-
-### Indentation
-
-The character(s) inserted when you press tab is controlled by setting the `indent_type` attribute to either `tabs` or `spaces`.
-
-If `indent_type == "spaces"`, pressing ++tab++ will insert `indent_width` spaces.
-
-### Line separators
-
-When content is loaded into `TextArea`, the content is scanned from beginning to end
-and the first occurrence of a line separator is recorded.
-
-This separator will then be used when content is later read from the `TextArea` via
-the `text` property. The `TextArea` widget does not support exporting text which
-contains mixed line endings.
-
-Similarly, newline characters pasted into the `TextArea` will be converted.
-
-You can check the line separator of the current document by inspecting `TextArea.document.newline`:
-
-```python
->>> text_area = TextArea()
->>> text_area.document.newline
-'\n'
-```
-
-### The gutter and line numbers
-
-The gutter (column on the left containing line numbers) can be toggled by setting
-the `show_line_numbers` attribute to `True` or `False`.
-
-Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
-
-### The file system
-
 ## See also
 
 - [`Input`][textual.widgets.Input] - for single-line text input.
 - [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme] - for theming the `TextArea`.
+- The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
+- The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
+- `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
 
 ---
 
