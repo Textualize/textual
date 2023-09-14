@@ -69,7 +69,7 @@ class Hit:
     """The command text associated with the hit, as plain text.
 
     If `match_display` is not simple text, this attribute should be provided by the
-    [Source][textual.command.Source] object.
+    [Provider][textual.command.Provider] object.
     """
 
     help: str | None = None
@@ -99,18 +99,18 @@ class Hit:
 
 
 Hits: TypeAlias = AsyncIterator[Hit]
-"""Return type for the command source match searching method."""
+"""Return type for the command provider's `search` method."""
 
 
 class Provider(ABC):
-    """Base class for command palette command sources.
+    """Base class for command palette command providers.
 
-    To create a source of commands inherit from this class and implement
-    [`search`][textual.command.Source.search].
+    To create new command provider, inherit from this class and implement
+    [`search`][textual.command.Provider.search].
     """
 
     def __init__(self, screen: Screen[Any], match_style: Style | None = None) -> None:
-        """Initialise the command source.
+        """Initialise the command provider.
 
         Args:
             screen: A reference to the active screen.
@@ -177,7 +177,7 @@ class Provider(ABC):
             await self._init_task
 
     async def startup(self) -> None:
-        """Called after the Source is initialized, but before any calls to `search`."""
+        """Called after the Provider is initialized, but before any calls to `search`."""
 
     async def _search(self, query: str) -> Hits:
         """Internal method to perform search.
@@ -207,7 +207,7 @@ class Provider(ABC):
         yield NotImplemented
 
     async def shutdown(self) -> None:
-        """Called when the Source is shutdown.
+        """Called when the Provider is shutdown.
 
         Use this method to perform an cleanup, if required.
 
@@ -446,8 +446,8 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
-        self._sources: list[Provider] = []
-        """List of Source instances involved in searches."""
+        self._providers: list[Provider] = []
+        """List of Provider instances involved in searches."""
 
     @staticmethod
     def is_open(app: App) -> bool:
@@ -462,10 +462,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         return app.screen.id == CommandPalette._PALETTE_ID
 
     @property
-    def _source_classes(self) -> set[type[Provider]]:
-        """The currently available command sources.
+    def _provider_classes(self) -> set[type[Provider]]:
+        """The currently available command providers.
 
-        This is a combination of the command sources defined [in the
+        This is a combination of the command providers defined [in the
         application][textual.app.App.COMMANDS] and those [defined in
         the current screen][textual.screen.Screen.COMMANDS].
         """
@@ -513,20 +513,21 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         )
 
         assert self._calling_screen is not None
-        self._sources = [
-            source(self._calling_screen, match_style) for source in self._source_classes
+        self._providers = [
+            provider_class(self._calling_screen, match_style)
+            for provider_class in self._provider_classes
         ]
-        for _source in self._sources:
-            _source._post_init()
+        for provider in self._providers:
+            provider._post_init()
 
     async def on_unmount(self) -> None:
         try:
             await wait(
-                [create_task(source.shutdown()) for source in self._sources],
+                [create_task(provider.shutdown()) for provider in self._providers],
             )
         except Exception:
             self.log(Exception)
-        self._sources.clear()
+        self._providers.clear()
 
     def _stop_busy_countdown(self) -> None:
         """Stop any busy countdown that's in effect."""
@@ -568,39 +569,39 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         self.query_one(CommandList).set_class(self._show_busy, "--populating")
 
     @staticmethod
-    async def _consume(source: Hits, commands: Queue[Hit]) -> None:
+    async def _consume(hits: Hits, commands: Queue[Hit]) -> None:
         """Consume a source of matching commands, feeding the given command queue.
 
         Args:
-            source: The source to consume.
+            hits: The hits to consume.
             commands: The command queue to feed.
         """
-        async for hit in source:
+        async for hit in hits:
             await commands.put(hit)
 
     async def _search_for(self, search_value: str) -> AsyncGenerator[Hit, bool]:
-        """Search for a given search value amongst all of the command sources.
+        """Search for a given search value amongst all of the command providers.
 
         Args:
             search_value: The value to search for.
 
         Yields:
-            The hits made amongst the registered command sources.
+            The hits made amongst the registered command providers.
         """
 
-        # Set up a queue to stream in the command hits from all the sources.
+        # Set up a queue to stream in the command hits from all the providers.
         commands: Queue[Hit] = Queue()
 
-        # Fire up an instance of each command source, inside a task, and
+        # Fire up an instance of each command provider, inside a task, and
         # have them go start looking for matches.
         searches = [
             create_task(
                 self._consume(
-                    source._search(search_value),
+                    provider._search(search_value),
                     commands,
                 )
             )
-            for source in self._sources
+            for provider in self._providers
         ]
 
         # Set up a delay for showing that we're busy.
@@ -630,7 +631,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # Check through all the finished searches, see if any have
         # exceptions, and log them. In most other circumstances we'd
         # re-raise the exception and quit the application, but the decision
-        # has been made to find and log exceptions with command sources.
+        # has been made to find and log exceptions with command providers.
         #
         # https://github.com/Textualize/textual/pull/3058#discussion_r1310051855
         for search in searches:
@@ -648,7 +649,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # instantly.
         self._stop_busy_countdown()
 
-        # If all the sources are pretty fast it could be that we've reached
+        # If all the providers are pretty fast it could be that we've reached
         # this point but the queue isn't empty yet. So here we flush the
         # queue of anything left.
         while not aborted and not commands.empty():
@@ -741,7 +742,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         )
 
         # The list to hold on to the commands we've gathered from the
-        # command sources.
+        # command providers.
         gathered_commands: list[Command] = []
 
         # Get a reference to the widget that we're going to drop the
