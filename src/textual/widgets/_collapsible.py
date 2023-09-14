@@ -12,7 +12,7 @@ from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
 
-__all__ = ["Collapsible"]
+__all__ = ["Collapsible", "CollapsibleTitle"]
 
 
 class CollapsibleTitle(Widget, can_focus=True):
