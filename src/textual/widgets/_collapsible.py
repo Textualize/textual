@@ -1,16 +1,76 @@
 from __future__ import annotations
 
-from textual.widget import Widget
+from rich.console import RenderableType
+from rich.text import Text
 
 from .. import events
 from ..app import ComposeResult
-from ..containers import Container, Horizontal
+from ..binding import Binding
+from ..containers import Container
+from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
-from ..widgets import Label
 
-__all__ = ["Collapsible"]
+__all__ = ["Collapsible", "CollapsibleTitle"]
+
+
+class CollapsibleTitle(Widget, can_focus=True):
+    """Title and symbol for the Collapsible."""
+
+    DEFAULT_CSS = """
+    CollapsibleTitle {
+        width: auto;
+        height: auto;
+        padding: 0 1 0 1;
+    }
+
+    CollapsibleTitle:hover {
+        background: $foreground 10%;
+        color: $text;
+    }
+
+    CollapsibleTitle:focus {
+        background: $accent;
+    }
+    """
+
+    BINDINGS = [Binding("enter", "toggle", "Toggle collapsible", show=False)]
+
+    collapsed = reactive(True)
+
+    def __init__(
+        self,
+        *,
+        label: str,
+        collapsed_symbol: str,
+        expanded_symbol: str,
+        collapsed: bool,
+    ) -> None:
+        super().__init__()
+        self.collapsed_symbol = collapsed_symbol
+        self.expanded_symbol = expanded_symbol
+        self.label = label
+        self.collapse = collapsed
+
+    class Toggle(Message):
+        """Request toggle."""
+
+    async def _on_click(self, event: events.Click) -> None:
+        """Inform ancestor we want to toggle."""
+        event.stop()
+        self.post_message(self.Toggle())
+
+    def action_toggle(self) -> None:
+        """Toggle the state of the parent collapsible."""
+        self.post_message(self.Toggle())
+
+    def render(self) -> RenderableType:
+        """Compose right/down arrow and label."""
+        if self.collapsed:
+            return Text(f"{self.collapsed_symbol} {self.label}")
+        else:
+            return Text(f"{self.expanded_symbol} {self.label}")
 
 
 class Collapsible(Widget):
@@ -23,65 +83,11 @@ class Collapsible(Widget):
         width: 1fr;
         height: auto;
     }
+
+    Collapsible.-collapsed > Contents {
+        display: none;
+    }
     """
-
-    class Title(Horizontal):
-        DEFAULT_CSS = """
-        Title {
-            width: 100%;
-            height: auto;
-        }
-
-        Title:hover {
-            background: grey;
-        }
-
-        Title .label {
-            padding: 0 0 0 1;
-        }
-
-        Title #collapsed-symbol {
-            display:none;
-        }
-
-        Title.-collapsed #expanded-symbol {
-            display:none;
-        }
-
-        Title.-collapsed #collapsed-symbol {
-            display:block;
-        }
-        """
-
-        def __init__(
-            self,
-            *,
-            label: str,
-            collapsed_symbol: str,
-            expanded_symbol: str,
-            name: str | None = None,
-            id: str | None = None,
-            classes: str | None = None,
-            disabled: bool = False,
-        ) -> None:
-            super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-            self.collapsed_symbol = collapsed_symbol
-            self.expanded_symbol = expanded_symbol
-            self.label = label
-
-        class Toggle(Message):
-            """Request toggle."""
-
-        async def _on_click(self, event: events.Click) -> None:
-            """Inform ancestor we want to toggle."""
-            event.stop()
-            self.post_message(self.Toggle())
-
-        def compose(self) -> ComposeResult:
-            """Compose right/down arrow and label."""
-            yield Label(self.expanded_symbol, classes="label", id="expanded-symbol")
-            yield Label(self.collapsed_symbol, classes="label", id="collapsed-symbol")
-            yield Label(self.label, classes="label")
 
     class Contents(Container):
         DEFAULT_CSS = """
@@ -91,9 +97,6 @@ class Collapsible(Widget):
             padding: 0 0 0 3;
         }
 
-        Contents.-collapsed {
-            display: none;
-        }
         """
 
     def __init__(
@@ -101,7 +104,7 @@ class Collapsible(Widget):
         *children: Widget,
         title: str = "Toggle",
         collapsed: bool = True,
-        collapsed_symbol: str = "►",
+        collapsed_symbol: str = "▶",
         expanded_symbol: str = "▼",
         name: str | None = None,
         id: str | None = None,
@@ -121,31 +124,39 @@ class Collapsible(Widget):
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
-        self._title = self.Title(
+        self._title = CollapsibleTitle(
             label=title,
             collapsed_symbol=collapsed_symbol,
             expanded_symbol=expanded_symbol,
+            collapsed=collapsed,
         )
         self._contents_list: list[Widget] = list(children)
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
-    def _on_title_toggle(self, event: Title.Toggle) -> None:
+    def on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
 
-    def watch_collapsed(self) -> None:
-        for child in self._nodes:
-            child.set_class(self.collapsed, "-collapsed")
+    def _watch_collapsed(self, collapsed: bool) -> None:
+        """Update collapsed state when reactive is changed."""
+        self._update_collapsed(collapsed)
+
+    def _update_collapsed(self, collapsed: bool) -> None:
+        """Update children to match collapsed state."""
+        try:
+            self._title.collapsed = collapsed
+            self.set_class(collapsed, "-collapsed")
+        except NoMatches:
+            pass
+
+    def _on_mount(self) -> None:
+        """Initialise collapsed state."""
+        self._update_collapsed(self.collapsed)
 
     def compose(self) -> ComposeResult:
-        yield from (
-            child.set_class(self.collapsed, "-collapsed")
-            for child in (
-                self._title,
-                self.Contents(*self._contents_list),
-            )
-        )
+        yield self._title
+        yield self.Contents(*self._contents_list)
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the contents.

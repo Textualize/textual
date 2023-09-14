@@ -1,24 +1,25 @@
 # Collapsible
 
-!!! tip "Added in version 0.36"
+!!! tip "Added in version 0.37"
 
-Widget that wraps its contents in a collapsible container.
+A container with a title that can be used to show (expand) or hide (collapse) content, either by clicking or focusing and pressing ++enter++.
 
-- [ ] Focusable
+- [x] Focusable
 - [x] Container
 
 
 ## Composing
 
-There are two ways to wrap other widgets.
-You can pass them as positional arguments to the [Collapsible][textual.widgets.Collapsible] constructor:
+You can add content to a Collapsible widget either by passing in children to the constructor, or with a context manager (`with` statement).
+
+Here is an example of using the constructor to add content:
 
 ```python
 def compose(self) -> ComposeResult:
     yield Collapsible(Label("Hello, world."))
 ```
 
-Alternatively, you can compose other widgets under the context manager:
+Here's how the to use it with the context manager:
 
 ```python
 def compose(self) -> ComposeResult:
@@ -26,9 +27,11 @@ def compose(self) -> ComposeResult:
         yield Label("Hello, world.")
 ```
 
+The second form is generally preferred, but the end result is the same.
+
 ## Title
 
-The default title "Toggle" of the `Collapsible` widget can be customized by specifying the parameter `title` of the constructor:
+The default title "Toggle" can be customized by setting the `title` parameter of the constructor:
 
 ```python
 def compose(self) -> ComposeResult:
@@ -38,7 +41,7 @@ def compose(self) -> ComposeResult:
 
 ## Initial State
 
-The initial state of the `Collapsible` widget can be customized via the parameter `collapsed` of the constructor:
+The initial state of the `Collapsible` widget can be customized via the `collapsed` parameter of the constructor:
 
 ```python
 def compose(self) -> ComposeResult:
@@ -51,7 +54,7 @@ def compose(self) -> ComposeResult:
 
 ## Collapse/Expand Symbols
 
-The symbols `►` and `▼` of the `Collapsible` widget can be customized by specifying the parameters `collapsed_symbol` and `expanded_symbol`, respectively, of the `Collapsible` constructor:
+The symbols used to show the collapsed / expanded state can be customized by setting the parameters `collapsed_symbol` and `expanded_symbol`:
 
 ```python
 def compose(self) -> ComposeResult:
@@ -59,31 +62,19 @@ def compose(self) -> ComposeResult:
         yield Label("Hello, world.")
 ```
 
-=== "Output"
-
-    ```{.textual path="tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"}
-    ```
-
-=== "collapsible_custom_symbol.py"
-
-    ```python
-    --8<-- "tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"
-    ```
-
 ## Examples
 
-### Basic example
 
 The following example contains three `Collapsible`s in different states.
 
 === "All expanded"
 
-    ```{.textual path="docs/examples/widgets/collapsible.py press="e"}
+    ```{.textual path="docs/examples/widgets/collapsible.py" press="e"}
     ```
 
 === "All collapsed"
 
-    ```{.textual path="docs/examples/widgets/collapsible.py press="c"}
+    ```{.textual path="docs/examples/widgets/collapsible.py" press="c"}
     ```
 
 === "Mixed"
@@ -104,48 +95,36 @@ The example below shows nested `Collapsible` widgets and how to set their initia
 
 === "Output"
 
-    ```{.textual path="tests/snapshot_tests/snapshot_apps/collapsible_nested.py"}
+    ```{.textual path="docs/examples/widgets/collapsible_nested.py"}
     ```
 
 === "collapsible_nested.py"
 
     ```python hl_lines="7"
-    --8<-- "tests/snapshot_tests/snapshot_apps/collapsible_nested.py"
+    --8<-- "docs/examples/widgets/collapsible_nested.py"
     ```
 
 ### Custom Symbols
 
-The app below shows `Collapsible` widgets with custom expand/collapse symbols.
+The following example shows `Collapsible` widgets with custom expand/collapse symbols.
 
 
 === "Output"
 
-    ```{.textual path="tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"}
+    ```{.textual path="docs/examples/widgets/collapsible_custom_symbol.py"}
     ```
 
 === "collapsible_custom_symbol.py"
 
     ```python
-    --8<-- "tests/snapshot_tests/snapshot_apps/collapsible_custom_symbol.py"
+    --8<-- "docs/examples/widgets/collapsible_custom_symbol.py"
     ```
 
 ## Reactive attributes
 
-| Name        | Type   | Default | Description                                                    |
-| ----------- | ------ | ------- | -------------------------------------------------------------- |
+| Name        | Type   | Default | Description                                          |
+| ----------- | ------ | ------- | ---------------------------------------------------- |
 | `collapsed` | `bool` | `True`  | Controls the collapsed/expanded state of the widget. |
-
-## Messages
-
-- [Collapsible.Title.Toggle][textual.widgets.Collapsible.Title.Toggle]
-
-<!--
-## See also
-
-TODO: Add Accordion widgets later
--->
-
----
 
 
 ::: textual.widgets.Collapsible
