@@ -37,7 +37,7 @@ class CollapsibleTitle(Widget, can_focus=True):
 
     BINDINGS = [Binding("enter", "toggle", "Toggle collapsible", show=False)]
 
-    collapsed = reactive(False)
+    collapsed = reactive(True)
 
     def __init__(
         self,
@@ -68,9 +68,9 @@ class CollapsibleTitle(Widget, can_focus=True):
     def render(self) -> RenderableType:
         """Compose right/down arrow and label."""
         if self.collapsed:
-            return Text.assemble(self.collapsed_symbol, " ", self.label)
+            return Text(f"{self.collapsed_symbol} {self.label}")
         else:
-            return Text.assemble(self.expanded_symbol, " ", self.label)
+            return Text(f"{self.expanded_symbol} {self.label}")
 
 
 class Collapsible(Widget):
