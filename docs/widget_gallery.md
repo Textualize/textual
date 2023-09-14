@@ -36,7 +36,7 @@ A classic checkbox control.
 
 ## Collapsible
 
-Content that may be toggled on and off by clicking a header.
+Content that may be toggled on and off by clicking a title.
 
 [Collapsible reference](./widgets/collapsible.md){ .md-button .md-button--primary }
 
