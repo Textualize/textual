@@ -68,13 +68,13 @@ The following example will display a blank screen initially, but if you hit ++ct
   5. Highlights matching letters in the search.
   6. Adds our custom command source and the default command sources.
 
-There are two methods you will typically override in a command source: [`post_init`][textual.command.Source.post_init] and [`search`][textual.command.Source.search].
-Both should be coroutines (`async def`).
+There are three methods you can override in a command source: [`startup`][textual.command.Source.startup], [`search`][textual.command.Source.search], and [`shutdown`][textual.command.Source.shutdown].
+All of these methods should be coroutines (`async def`). Only `search` is required, the other methods are optional.
 Let's explore those methods in detail.
 
-### post_init method
+### startup method
 
-The [`post_init`][textual.command.Source.post_init] method is called when the command palette is opened.
+The [`startup`][textual.command.Source.startup] method is called when the command palette is opened.
 You can use this method as way of performing work that needs to be done prior to searching.
 In the example, we use this method to get the Python (.py) files in the current working directory.
 
@@ -98,6 +98,11 @@ In the example above, the callback is a lambda which calls the `open_file` metho
     Unlike most other places in Textual, errors in command sources will not *exit* the app.
     This is a deliberate design decision taken to prevent a single broken `Source` class from making the command palette unusable.
     Errors in command sources will be logged to the [console](./devtools.md).
+
+### Shutdown method
+
+The [`shutdown`][textual.command.Source.shutdown] method is called when the command palette is closed.
+You can use this as a hook to gracefully close any objects you created in startup.
 
 ## Screen commands
 

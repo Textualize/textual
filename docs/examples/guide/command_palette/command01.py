@@ -15,7 +15,7 @@ class PythonFileSource(Source):
         """Get a list of Python files in the current working directory."""
         return list(Path("./").glob("*.py"))
 
-    async def post_init(self) -> None:  # (1)!
+    async def startup(self) -> None:  # (1)!
         """Called once when the command palette is opened, prior to searching."""
         worker = self.app.run_worker(self.read_files, thread=True)
         self.python_paths = await worker.wait()

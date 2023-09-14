@@ -7,12 +7,13 @@ See the guide on the [Command Palette](../guide/command_palette.md) for full det
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import CancelledError, Queue, Task, TimeoutError, wait_for
+from asyncio import Queue, Task, wait, wait_for
 from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
+from typing import TYPE_CHECKING, Any, AsyncIterator, ClassVar
 
+import rich.repr
 from rich.align import Align
 from rich.console import Group, RenderableType
 from rich.emoji import Emoji
@@ -162,7 +163,7 @@ class Source(ABC):
         async def post_init_task() -> None:
             """Wrapper to post init that runs in a task."""
             try:
-                await self.post_init()
+                await self.startup()
             except Exception:
                 self.app.log.error(Traceback())
             else:
@@ -175,7 +176,7 @@ class Source(ABC):
         if self._init_task is not None:
             await self._init_task
 
-    async def post_init(self) -> None:
+    async def startup(self) -> None:
         """Called after the Source is initialized, but before any calls to `search`."""
 
     async def _search(self, query: str) -> Hits:
@@ -205,7 +206,16 @@ class Source(ABC):
         """
         yield NotImplemented
 
+    async def shutdown(self) -> None:
+        """Called when the Source is shutdown.
 
+        Use this method to perform an cleanup, if required.
+
+        """
+        print("SHUTDOWN Source ")
+
+
+@rich.repr.auto
 @total_ordering
 class Command(Option):
     """Class that holds a command in the [`CommandList`][textual.command.CommandList]."""
@@ -509,6 +519,15 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         ]
         for _source in self._sources:
             _source._post_init()
+
+    async def on_unmount(self) -> None:
+        try:
+            await wait(
+                [create_task(source.shutdown()) for source in self._sources],
+            )
+        except Exception:
+            self.log(Exception)
+        self._sources.clear()
 
     def _stop_busy_countdown(self) -> None:
         """Stop any busy countdown that's in effect."""
