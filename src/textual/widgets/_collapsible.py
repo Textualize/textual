@@ -32,6 +32,7 @@ class CollapsibleTitle(Widget, can_focus=True):
 
     CollapsibleTitle:focus {
         background: $accent;
+        color: $text;
     }
     """
 
