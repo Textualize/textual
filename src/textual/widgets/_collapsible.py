@@ -82,6 +82,10 @@ class Collapsible(Widget):
     Collapsible {
         width: 1fr;
         height: auto;
+        background: $boost;
+        border-top: hkey $background;
+        padding-bottom: 1;
+        padding-left: 1;
     }
 
     Collapsible.-collapsed > Contents {
