@@ -552,9 +552,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             if self._list_visible:
                 self._show_busy = True
 
-        self._busy_timer = self._busy_timer = self.set_timer(
-            self._BUSY_COUNTDOWN, _become_busy
-        )
+        self._busy_timer = self.set_timer(self._BUSY_COUNTDOWN, _become_busy)
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
@@ -652,8 +650,11 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
 
         # Having finished the main processing loop, we're not busy any more.
         # Anything left in the queue (see next) will fall out more or less
-        # instantly.
-        self._stop_busy_countdown()
+        # instantly. If we're aborted, that means a fresh search is incoming
+        # and it'll have cleaned up the countdown anyway, so don't do that
+        # here as they'll be a clash.
+        if not aborted:
+            self._stop_busy_countdown()
 
         # If all the providers are pretty fast it could be that we've reached
         # this point but the queue isn't empty yet. So here we flush the
