@@ -188,10 +188,9 @@ TextArea {
     """
 
     theme: Reactive[str | None] = reactive(None, always_update=True, init=False)
-    """The theme to syntax highlight with.
+    """The name of the theme to use.
 
-    Supply a `SyntaxTheme` object to customise highlighting, or supply a builtin
-    theme name as a string.
+    Themes must be registered using `register_theme` before they can be used.
 
     Syntax highlighting is only possible when the `language` attribute is set.
     """
@@ -203,7 +202,7 @@ TextArea {
 
     The `Selection.end` always refers to the cursor location.
 
-    If no text is selected, then `Selection.end == Selection.start`.
+    If no text is selected, then `Selection.end == Selection.start` is True.
 
     The text selected in the document is available via the `TextArea.selected_text` property.
     """
@@ -622,7 +621,9 @@ TextArea {
         return self.scroll_offset.y, self.scroll_offset.y + self.size.height
 
     def load_text(self, text: str) -> None:
-        """Load text from a string into the TextArea.
+        """Load text into the TextArea.
+
+        This will replace the text currently in the TextArea.
 
         Args:
             text: The text to load into the TextArea.
@@ -1193,22 +1194,22 @@ TextArea {
         self.move_cursor(location, select=not self.selection.is_empty)
 
     @property
-    def cursor_at_first_row(self) -> bool:
-        """True if and only if the cursor is on the first row."""
+    def cursor_at_first_line(self) -> bool:
+        """True if and only if the cursor is on the first line."""
         return self.selection.end[0] == 0
 
     @property
-    def cursor_at_last_row(self) -> bool:
-        """True if and only if the cursor is on the last row."""
+    def cursor_at_last_line(self) -> bool:
+        """True if and only if the cursor is on the last line."""
         return self.selection.end[0] == self.document.line_count - 1
 
     @property
-    def cursor_at_start_of_row(self) -> bool:
+    def cursor_at_start_of_line(self) -> bool:
         """True if and only if the cursor is at column 0."""
         return self.selection.end[1] == 0
 
     @property
-    def cursor_at_end_of_row(self) -> bool:
+    def cursor_at_end_of_line(self) -> bool:
         """True if and only if the cursor is at the end of a row."""
         cursor_row, cursor_column = self.selection.end
         row_length = len(self.document[cursor_row])
@@ -1216,14 +1217,14 @@ TextArea {
         return cursor_at_end
 
     @property
-    def cursor_at_start_of_document(self) -> bool:
+    def cursor_at_start_of_text(self) -> bool:
         """True if and only if the cursor is at location (0, 0)"""
         return self.selection.end == (0, 0)
 
     @property
-    def cursor_at_end_of_document(self) -> bool:
+    def cursor_at_end_of_text(self) -> bool:
         """True if and only if the cursor is at the very end of the document."""
-        return self.cursor_at_last_row and self.cursor_at_end_of_row
+        return self.cursor_at_last_line and self.cursor_at_end_of_line
 
     # ------ Cursor movement actions
     def action_cursor_left(self, select: bool = False) -> None:
@@ -1244,7 +1245,7 @@ TextArea {
         Returns:
             The location of the cursor if it moves left.
         """
-        if self.cursor_at_start_of_document:
+        if self.cursor_at_start_of_text:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
         length_of_row_above = len(self.document[cursor_row - 1])
@@ -1269,11 +1270,11 @@ TextArea {
         Returns:
             the location the cursor will move to if it moves right.
         """
-        if self.cursor_at_end_of_document:
+        if self.cursor_at_end_of_text:
             return self.selection.end
         cursor_row, cursor_column = self.selection.end
-        target_row = cursor_row + 1 if self.cursor_at_end_of_row else cursor_row
-        target_column = 0 if self.cursor_at_end_of_row else cursor_column + 1
+        target_row = cursor_row + 1 if self.cursor_at_end_of_line else cursor_row
+        target_column = 0 if self.cursor_at_end_of_line else cursor_column + 1
         return target_row, target_column
 
     def action_cursor_down(self, select: bool = False) -> None:
@@ -1292,7 +1293,7 @@ TextArea {
             The location the cursor will move to if it moves down.
         """
         cursor_row, cursor_column = self.selection.end
-        if self.cursor_at_last_row:
+        if self.cursor_at_last_line:
             return cursor_row, len(self.document[cursor_row])
 
         target_row = min(self.document.line_count - 1, cursor_row + 1)
@@ -1318,7 +1319,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves up.
         """
-        if self.cursor_at_first_row:
+        if self.cursor_at_first_line:
             return 0, 0
         cursor_row, cursor_column = self.selection.end
         target_row = max(0, cursor_row - 1)
@@ -1380,7 +1381,7 @@ TextArea {
         Args:
             select: Whether to select while moving the cursor.
         """
-        if self.cursor_at_start_of_document:
+        if self.cursor_at_start_of_text:
             return
         target = self.get_cursor_word_left_location()
         self.move_cursor(target, select=select)
@@ -1406,7 +1407,7 @@ TextArea {
     def action_cursor_word_right(self, select: bool = False) -> None:
         """Move the cursor right by a single word, skipping leading whitespace."""
 
-        if self.cursor_at_end_of_document:
+        if self.cursor_at_end_of_text:
             return
 
         target = self.get_cursor_word_right_location()
@@ -1619,7 +1620,7 @@ TextArea {
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""
-        if self.cursor_at_start_of_document:
+        if self.cursor_at_start_of_text:
             return
 
         # If there's a non-zero selection, then "delete word left" typically only
@@ -1639,7 +1640,7 @@ TextArea {
         as the location we move to when we move the cursor one word to the right.
         This action does not skip leading whitespace, whereas cursor movement does.
         """
-        if self.cursor_at_end_of_document:
+        if self.cursor_at_end_of_text:
             return
 
         start, end = self.selection

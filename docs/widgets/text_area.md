@@ -18,13 +18,13 @@ In this example we load some initial text into the `TextArea`, and set the langu
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/text_area.py" columns="42" lines="8"}
+    ```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
     ```
 
 === "text_area_example.py"
 
     ```python
-    --8<-- "docs/examples/widgets/text_area.py"
+    --8<-- "docs/examples/widgets/text_area_example.py"
     ```
 
 To load content into the `TextArea` after it has already been created,
@@ -43,9 +43,29 @@ text_area.language = "markdown"
 !!! note
     More built-in languages will be added in the future. For now, you can [add your own](#adding-support-for-custom-languages).
 
+
+### Reading content from `TextArea`
+
+There are a number of ways to retrieve content from the `TextArea`:
+
+- The [`TextArea.text`][textual.widgets._text_area.TextArea.text] property returns all content in the text area as a string.
+- The [`TextArea.selected_text`][textual.widgets._text_area.TextArea.selected_text] property returns the text corresponding to the current selection.
+- The [`TextArea.get_text_range`][textual.widgets._text_area.TextArea.get_text_range] method returns the text between two locations.
+
+### Editing content inside `TextArea`
+
+The content of the `TextArea` can be updated using the [`replace`][textual.widgets._text_area.TextArea.replace] method.
+This method is the programmatic equivalent of selecting some text and then pasting.
+
+All atomic (single-cursor) edits can be represented by a `replace` operation, but for
+convenience, some other utility methods are provided, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
+
 ### Working with the cursor
 
-The cursor location is available via the `cursor_location` attribute.
+#### Moving the cursor
+
+The cursor location is available via the [`cursor_location`][textual.widgets._text_area.TextArea.cursor_location] property, which represents
+the location of the cursor as a tuple `(row_index, column_index)`. These indices are zero-based.
 Writing a new value to `cursor_location` will immediately update the location of the cursor.
 
 ```python
@@ -57,11 +77,12 @@ Writing a new value to `cursor_location` will immediately update the location of
 (0, 4)
 ```
 
-`cursor_location` is the easiest way to move the cursor programmatically, but it doesn't
-allow us to select text. To select text, we can use the `selection` reactive attribute.
+`cursor_location` is a simple way to move the cursor programmatically, but it doesn't let us select text.
 
-Let's select the first two lines of text in a document by adding `text_area.selection = Selection(start=(0, 0), end=(2, 0))`
-to our code:
+#### Selecting text
+
+To select text, we can use the `selection` reactive attribute.
+Let's select the first two lines of text in a document by adding `text_area.selection = Selection(start=(0, 0), end=(2, 0))` to our code:
 
 === "Output"
 
@@ -70,7 +91,7 @@ to our code:
 
 === "text_area_selection.py"
 
-    ```python
+    ```python hl_lines="17"
     --8<-- "docs/examples/widgets/text_area_selection.py"
     ```
 
@@ -83,18 +104,41 @@ Note that selections can happen in both directions. That is, `Selection((2, 0), 
     The `end` attribute of the `selection` is always equal to `TextArea.cursor_location`. In other words,
     the `cursor_location` attribute is simply a convenience for accessing `text_area.selection.end`.
 
+#### More cursor utilities
 
-### Reading content from `TextArea`
+There are a number of additional utility methods available for interacting with the cursor.
 
-You can access the text inside the `TextArea` via the [`text`][textual.widgets._text_area.TextArea.text] property.
+##### Location information
 
-### Editing content inside `TextArea`
+A number of properties exist on `TextArea` which give information about the current cursor location.
+These properties begin with `cursor_at_`, and return booleans.
+For example, [`cursor_at_start_of_line`][textual.widgets._text_area.TextArea.cursor_at_start_of_line] tells us if the cursor is at a start of line.
 
-The content of the `TextArea` can be updated using the [`replace`][textual.widgets._text_area.TextArea.replace] method.
-This method is the programmatic equivalent of selecting some text and then pasting.
+We can also check the location the cursor _would_ arrive at if we were to move it.
+For example, [`get_cursor_right_location`][textual.widgets._text_area.TextArea.get_cursor_right_location] returns the location
+the cursor would move to if it were to move right.
+A number of similar methods exist, with names like `get_cursor_*_location`.
 
-All atomic (single-cursor) edits can be represented by a `replace` operation, but for
-convenience, some other utility methods are provided, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
+##### Cursor movement methods
+
+The [`move_cursor`][textual.widgets._text_area.TextArea.move_cursor] method allows you to move the cursor to a new location while selecting
+text, or move the cursor while keeping it centered on screen.
+
+```python
+# Move the cursor from its current location to row index 4,
+# column index 8, while selecting all the text between.
+text_area.move_cursor((4, 8), select=True)
+```
+
+The [`move_cursor_relative`][textual.widgets._text_area.TextArea.move_cursor_relative] method offers a very similar interface, but moves the cursor relative
+to its current location.
+
+##### Common selections
+
+There are some methods available which make common selections easier:
+
+- [`select_line`][textual.widgets._text_area.TextArea.select_line] selects a line by index. Bound to ++f6++ by default.
+- [`select_all`][textual.widgets._text_area.TextArea.select_all] selects all text. Bound to ++f7++ by default.
 
 ### Themes
 
@@ -166,6 +210,14 @@ styling to the widget.
 The `syntax_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
 depends on the `language` currently in use.
 For more details, see [syntax highlighting](#syntax-highlighting).
+
+If you wish to build on an existing theme, you can obtain a reference to it using the [`TextAreaTheme.get_builtin_theme`][textual.widgets.text_area.TextAreaTheme.get_builtin_theme] classmethod:
+
+```python
+from textual.widgets.text_area import TextAreaTheme
+
+monokai = TextAreaTheme.get_builtin_theme("monokai")
+```
 
 ##### 2. Registering a theme
 
