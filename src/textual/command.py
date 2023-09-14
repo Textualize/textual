@@ -552,9 +552,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             if self._list_visible:
                 self._show_busy = True
 
-        self._busy_timer = self._busy_timer = self.set_timer(
-            self._BUSY_COUNTDOWN, _become_busy
-        )
+        self._busy_timer = self.set_timer(self._BUSY_COUNTDOWN, _become_busy)
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
