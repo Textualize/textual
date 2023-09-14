@@ -2,7 +2,7 @@
 
 !!! tip "Added in version 0.37"
 
-A container with a title than can be used to show (expand) or hide (collapse) content, either by clicking or focusing and pressing ++enter++.
+A container with a title that can be used to show (expand) or hide (collapse) content, either by clicking or focusing and pressing ++enter++.
 
 - [x] Focusable
 - [x] Container
