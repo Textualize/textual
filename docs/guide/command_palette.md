@@ -102,13 +102,14 @@ In the example above, the callback is a lambda which calls the `open_file` metho
 ### Shutdown method
 
 The [`shutdown`][textual.command.Provider.shutdown] method is called when the command palette is closed.
-You can use this as a hook to gracefully close any objects you created in startup.
+You can use this as a hook to gracefully close any objects you created in [`startup`][textual.command.Provider.startup].
 
 ## Screen commands
 
 You can also associate commands with a screen by adding a `COMMANDS` class var to your Screen class.
 
-This is useful for commands that only make sense when a given screen is active.
+Commands defined on a screen are only considered when that screen is active.
+You can use this to implement commands that are specific to a particular screen, that wouldn't be applicable everywhere in the app.
 
 ## Disabling the command palette
 
