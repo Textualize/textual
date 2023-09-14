@@ -44,9 +44,9 @@ Textual apps have the following commands enabled by default:
   Plays the terminal bell, by calling [`App.bell`][textual.app.App.bell].
 
 
-## Command sources
+## Command providers
 
-To add your own command(s) to the command palette, first define a [`command.Source`][textual.command.Source] class then add it to the [`COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES] class var on your app.
+To add your own command(s) to the command palette, define a [`command.Provider`][textual.command.Provider] class then add it to the [`COMMANDS`][textual.app.App.COMMANDS] class var on your `App` class.
 
 Let's look at a simple example which adds the ability to open Python files via the command palette.
 
@@ -66,24 +66,24 @@ The following example will display a blank screen initially, but if you hit ++ct
   3. Get a [Matcher][textual.fuzzy.Matcher] instance to compare against hits.
   4. Use the matcher to get a score.
   5. Highlights matching letters in the search.
-  6. Adds our custom command source and the default command sources.
+  6. Adds our custom command provider and the default command provider.
 
-There are three methods you can override in a command source: [`startup`][textual.command.Source.startup], [`search`][textual.command.Source.search], and [`shutdown`][textual.command.Source.shutdown].
+There are three methods you can override in a command provider: [`startup`][textual.command.Provider.startup], [`search`][textual.command.Provider.search], and [`shutdown`][textual.command.Provider.shutdown].
 All of these methods should be coroutines (`async def`). Only `search` is required, the other methods are optional.
 Let's explore those methods in detail.
 
 ### startup method
 
-The [`startup`][textual.command.Source.startup] method is called when the command palette is opened.
+The [`startup`][textual.command.Provider.startup] method is called when the command palette is opened.
 You can use this method as way of performing work that needs to be done prior to searching.
 In the example, we use this method to get the Python (.py) files in the current working directory.
 
 ### search method
 
-The [`search`][textual.command.Source.search] method is responsible for finding results (or *hits*) that match the user's input.
+The [`search`][textual.command.Provider.search] method is responsible for finding results (or *hits*) that match the user's input.
 This method should *yield* [`Hit`][textual.command.Hit] objects for any command that matches the `query` argument.
 
-Exactly how the matching is implemented is up to the author of the command source, but we recommend using the builtin fuzzy matcher object, which you can get by calling [`matcher`][textual.command.Source.matcher].
+Exactly how the matching is implemented is up to the author of the command provider, but we recommend using the builtin fuzzy matcher object, which you can get by calling [`matcher`][textual.command.Provider.matcher].
 This object has a [`match()`][textual.fuzzy.Matcher.match] method which compares the user's search term against the potential command and returns a *score*.
 A score of zero means *no hit*, and you can discard the potential command.
 A score of above zero indicates the confidence in the result, where 1 is an exact match, and anything lower indicates a less confident match.
@@ -95,18 +95,18 @@ In the example above, the callback is a lambda which calls the `open_file` metho
 
 !!! note
 
-    Unlike most other places in Textual, errors in command sources will not *exit* the app.
-    This is a deliberate design decision taken to prevent a single broken `Source` class from making the command palette unusable.
-    Errors in command sources will be logged to the [console](./devtools.md).
+    Unlike most other places in Textual, errors in command provider will not *exit* the app.
+    This is a deliberate design decision taken to prevent a single broken `Provider` class from making the command palette unusable.
+    Errors in command providers will be logged to the [console](./devtools.md).
 
 ### Shutdown method
 
-The [`shutdown`][textual.command.Source.shutdown] method is called when the command palette is closed.
+The [`shutdown`][textual.command.Provider.shutdown] method is called when the command palette is closed.
 You can use this as a hook to gracefully close any objects you created in startup.
 
 ## Screen commands
 
-You can also associate commands with a screen by adding a `COMMAND_SOURCES` class var to your Screen class.
+You can also associate commands with a screen by adding a `COMMANDS` class var to your Screen class.
 
 This is useful for commands that only make sense when a given screen is active.
 

@@ -1,8 +1,8 @@
 from textual.app import App
-from textual.command import Hit, Hits, Source
+from textual.command import Hit, Hits, Provider
 
 
-class TestSource(Source):
+class TestSource(Provider):
     def goes_nowhere_does_nothing(self) -> None:
         pass
 
@@ -19,7 +19,7 @@ class TestSource(Source):
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = {TestSource}
+    COMMANDS = {TestSource}
 
     def on_mount(self) -> None:
         self.action_command_palette()

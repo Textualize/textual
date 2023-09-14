@@ -7,11 +7,11 @@ See the guide on the [Command Palette](../guide/command_palette.md) for full det
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import Queue, Task, wait, wait_for
+from asyncio import CancelledError, Queue, Task, wait, wait_for
 from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncIterator, ClassVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
 
 import rich.repr
 from rich.align import Align
@@ -45,7 +45,7 @@ __all__ = [
     "Hit",
     "Hits",
     "Matcher",
-    "Source",
+    "Provider",
 ]
 
 
@@ -102,7 +102,7 @@ Hits: TypeAlias = AsyncIterator[Hit]
 """Return type for the command source match searching method."""
 
 
-class Source(ABC):
+class Provider(ABC):
     """Base class for command palette command sources.
 
     To create a source of commands inherit from this class and implement
@@ -210,6 +210,7 @@ class Source(ABC):
         """Called when the Source is shutdown.
 
         Use this method to perform an cleanup, if required.
+
         """
 
 
@@ -445,7 +446,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
-        self._sources: list[Source] = []
+        self._sources: list[Provider] = []
         """List of Source instances involved in searches."""
 
     @staticmethod
@@ -461,17 +462,17 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         return app.screen.id == CommandPalette._PALETTE_ID
 
     @property
-    def _source_classes(self) -> set[type[Source]]:
+    def _source_classes(self) -> set[type[Provider]]:
         """The currently available command sources.
 
         This is a combination of the command sources defined [in the
-        application][textual.app.App.COMMAND_SOURCES] and those [defined in
-        the current screen][textual.screen.Screen.COMMAND_SOURCES].
+        application][textual.app.App.COMMANDS] and those [defined in
+        the current screen][textual.screen.Screen.COMMANDS].
         """
         return (
             set()
             if self._calling_screen is None
-            else self.app.COMMAND_SOURCES | self._calling_screen.COMMAND_SOURCES
+            else self.app.COMMANDS | self._calling_screen.COMMANDS
         )
 
     def compose(self) -> ComposeResult:

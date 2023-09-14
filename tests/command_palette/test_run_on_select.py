@@ -1,11 +1,11 @@
 from functools import partial
 
 from textual.app import App
-from textual.command import CommandPalette, Hit, Hits, Source
+from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.widgets import Input
 
 
-class SimpleSource(Source):
+class SimpleSource(Provider):
     async def search(self, _: str) -> Hits:
         def goes_nowhere_does_nothing(selection: int) -> None:
             assert isinstance(self.app, CommandPaletteRunOnSelectApp)
@@ -22,7 +22,7 @@ class SimpleSource(Source):
 
 
 class CommandPaletteRunOnSelectApp(App[None]):
-    COMMAND_SOURCES = {SimpleSource}
+    COMMANDS = {SimpleSource}
 
     def __init__(self) -> None:
         super().__init__()

@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.command import CommandPalette, Hit, Hits, Source
+from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
 
 
@@ -8,7 +8,7 @@ async def test_sources_with_no_known_screen() -> None:
     assert CommandPalette()._source_classes == set()
 
 
-class ExampleCommandSource(Source):
+class ExampleCommandSource(Provider):
     async def search(self, _: str) -> Hits:
         def goes_nowhere_does_nothing() -> None:
             pass
@@ -28,13 +28,11 @@ class AppWithNoSources(AppWithActiveCommandPalette):
 async def test_no_app_command_sources() -> None:
     """An app with no sources declared should work fine."""
     async with AppWithNoSources().run_test() as pilot:
-        assert (
-            pilot.app.query_one(CommandPalette)._source_classes == App.COMMAND_SOURCES
-        )
+        assert pilot.app.query_one(CommandPalette)._source_classes == App.COMMANDS
 
 
 class AppWithSources(AppWithActiveCommandPalette):
-    COMMAND_SOURCES = {ExampleCommandSource}
+    COMMANDS = {ExampleCommandSource}
 
 
 async def test_app_command_sources() -> None:
@@ -42,7 +40,7 @@ async def test_app_command_sources() -> None:
     async with AppWithSources().run_test() as pilot:
         assert (
             pilot.app.query_one(CommandPalette)._source_classes
-            == AppWithSources.COMMAND_SOURCES
+            == AppWithSources.COMMANDS
         )
 
 
@@ -63,13 +61,11 @@ class ScreenWithNoSources(Screen[None]):
 async def test_no_screen_command_sources() -> None:
     """An app with a screen with no sources declared should work fine."""
     async with AppWithInitialScreen(ScreenWithNoSources()).run_test() as pilot:
-        assert (
-            pilot.app.query_one(CommandPalette)._source_classes == App.COMMAND_SOURCES
-        )
+        assert pilot.app.query_one(CommandPalette)._source_classes == App.COMMANDS
 
 
 class ScreenWithSources(ScreenWithNoSources):
-    COMMAND_SOURCES = {ExampleCommandSource}
+    COMMANDS = {ExampleCommandSource}
 
 
 async def test_screen_command_sources() -> None:
@@ -77,7 +73,7 @@ async def test_screen_command_sources() -> None:
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
         assert (
             pilot.app.query_one(CommandPalette)._source_classes
-            == App.COMMAND_SOURCES | ScreenWithSources.COMMAND_SOURCES
+            == App.COMMANDS | ScreenWithSources.COMMANDS
         )
 
 
@@ -86,7 +82,7 @@ class AnotherCommandSource(ExampleCommandSource):
 
 
 class CombinedSourceApp(App[None]):
-    COMMAND_SOURCES = {AnotherCommandSource}
+    COMMANDS = {AnotherCommandSource}
 
     def on_mount(self) -> None:
         self.push_screen(ScreenWithSources())
@@ -97,5 +93,5 @@ async def test_app_and_screen_command_sources_combine() -> None:
     async with CombinedSourceApp().run_test() as pilot:
         assert (
             pilot.app.query_one(CommandPalette)._source_classes
-            == CombinedSourceApp.COMMAND_SOURCES | ScreenWithSources.COMMAND_SOURCES
+            == CombinedSourceApp.COMMANDS | ScreenWithSources.COMMANDS
         )

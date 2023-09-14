@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
-from textual.command import CommandPalette, Hit, Hits, Source
+from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
 from textual.widget import Widget
 from textual.widgets import Input
 
 
-class SimpleSource(Source):
+class SimpleSource(Provider):
     environment: set[tuple[App, Screen, Widget | None]] = set()
 
     async def search(self, _: str) -> Hits:
@@ -19,7 +19,7 @@ class SimpleSource(Source):
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = {SimpleSource}
+    COMMANDS = {SimpleSource}
 
     def compose(self) -> ComposeResult:
         yield Input()

@@ -3,12 +3,12 @@ from pathlib import Path
 from rich.syntax import Syntax
 
 from textual.app import App, ComposeResult
-from textual.command import Hit, Hits, Source
+from textual.command import Hit, Hits, Provider
 from textual.containers import VerticalScroll
 from textual.widgets import Static
 
 
-class PythonFileSource(Source):
+class PythonFileCommands(Provider):
     """A command source to open a Python file in the current working directory."""
 
     def read_files(self) -> list[Path]:
@@ -42,7 +42,7 @@ class PythonFileSource(Source):
 class ViewerApp(App):
     """Demonstrate a command source."""
 
-    COMMAND_SOURCES = App.COMMAND_SOURCES | {PythonFileSource}  # (6)!
+    COMMANDS = App.COMMANDS | {PythonFileCommands}  # (6)!
 
     def compose(self) -> ComposeResult:
         with VerticalScroll():

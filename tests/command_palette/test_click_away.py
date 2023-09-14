@@ -1,8 +1,8 @@
 from textual.app import App
-from textual.command import CommandPalette, Hit, Hits, Source
+from textual.command import CommandPalette, Hit, Hits, Provider
 
 
-class SimpleSource(Source):
+class SimpleSource(Provider):
     async def search(self, query: str) -> Hits:
         def goes_nowhere_does_nothing() -> None:
             pass
@@ -11,7 +11,7 @@ class SimpleSource(Source):
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = {SimpleSource}
+    COMMANDS = {SimpleSource}
 
     def on_mount(self) -> None:
         self.action_command_palette()
