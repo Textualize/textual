@@ -13,11 +13,11 @@ No spacing is added between the edges of the cells and the edges of the containe
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-grid-gutter: <a href="../../css_types/scalar">&lt;scalar&gt;</a> [<a href="../../css_types/scalar">&lt;scalar&gt;</a>];
+grid-gutter: <a href="../../css_types/integer">&lt;integer&gt;</a> [<a href="../../css_types/integer">&lt;integer&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `grid-gutter` style takes one or two [`<scalar>`](../../css_types/scalar.md) that set the length of the gutter along the vertical and horizontal axes.
-If only one [`<scalar>`](../../css_types/scalar.md) is supplied, it sets the vertical and horizontal gutters.
+The `grid-gutter` style takes one or two [`<integer>`](../../css_types/integer.md) that set the length of the gutter along the vertical and horizontal axes.
+If only one [`<integer>`](../../css_types/integer.md) is supplied, it sets the vertical and horizontal gutters.
 If two are supplied, they set the vertical and horizontal gutters, respectively.
 
 ## Example
@@ -47,7 +47,7 @@ The example below employs a common trick to apply visually consistent spacing ar
 
 ```sass
 /* Set vertical and horizontal gutters to be the same */
-grid-gutter: 5%;
+grid-gutter: 5;
 
 /* Set vertical and horizontal gutters separately */
 grid-gutter: 1 2;
