@@ -88,14 +88,9 @@ class Collapsible(Widget):
         padding-left: 1;
     }
 
-    Collapsible.-collapsed {
-
-    }
-
     Collapsible.-collapsed > Contents {
         display: none;
     }
-
     """
 
     class Contents(Container):
@@ -105,7 +100,6 @@ class Collapsible(Widget):
             height: auto;
             padding: 1 0 0 3;
         }
-
         """
 
     def __init__(
