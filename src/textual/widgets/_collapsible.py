@@ -82,6 +82,10 @@ class Collapsible(Widget):
     Collapsible {
         width: 1fr;
         height: auto;
+        background: $boost;
+        border-top: hkey $background;
+        padding-bottom: 1;
+        padding-left: 1;
     }
 
     Collapsible.-collapsed > Contents {
@@ -94,9 +98,8 @@ class Collapsible(Widget):
         Contents {
             width: 100%;
             height: auto;
-            padding: 0 0 0 3;
+            padding: 1 0 0 3;
         }
-
         """
 
     def __init__(

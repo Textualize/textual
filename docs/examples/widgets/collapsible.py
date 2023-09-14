@@ -1,11 +1,10 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Collapsible, Footer, Label, Markdown
 
-LETO = """
+LETO = """\
 # Duke Leto I Atreides
 
-Head of House Atreides.
-"""
+Head of House Atreides."""
 
 JESSICA = """
 # Lady Jessica

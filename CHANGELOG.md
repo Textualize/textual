@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Screen.sub_title`
 - Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
 - Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
+- Added `widgets.Collapsible` contributed buy Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
 
 ### Fixed
 
