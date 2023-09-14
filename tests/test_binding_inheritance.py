@@ -85,7 +85,7 @@ async def test_just_app_low_priority_alpha_binding() -> None:
     """An app with a single low-priority binding should have just the one binding."""
     async with LowAlphaBinding().run_test() as pilot:
         assert sorted(pilot.app._bindings.keys.keys()) == sorted(
-            ["ctrl+c", "ctrl+@", "a"]
+            ["ctrl+c", "ctrl+backslash", "a"]
         )
         assert pilot.app._bindings.get_key("ctrl+c").priority is True
         assert pilot.app._bindings.get_key("a").priority is False

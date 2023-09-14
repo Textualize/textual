@@ -529,10 +529,11 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
 
     async def on_unmount(self) -> None:
         """Shutdown providers when command palette is closed."""
-        await wait(
-            [create_task(provider._shutdown()) for provider in self._providers],
-        )
-        self._providers.clear()
+        if self._providers:
+            await wait(
+                [create_task(provider._shutdown()) for provider in self._providers],
+            )
+            self._providers.clear()
 
     def _stop_busy_countdown(self) -> None:
         """Stop any busy countdown that's in effect."""

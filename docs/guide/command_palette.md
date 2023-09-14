@@ -6,7 +6,7 @@ In this chapter we will explain what a command palette is, how to use it, and ho
 
 ## Launching the command palette
 
-Press ++ctrl+space++ to invoke the command palette (modal) screen, which contains of a single input widget.
+Press ++ctrl++ + `\` (ctrl and backslash) to invoke the command palette screen, which contains of a single input widget.
 Textual will suggest commands as you type in that input.
 Press ++up++ or ++down++ to select a command from the list, and ++enter++ to invoke it.
 
@@ -17,17 +17,17 @@ This scheme allows the user to quickly get to a particular command with a minimu
 
 === "Command Palette"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+@"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash"}
     ```
 
 === "Command Palette after 't'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+@,t"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t"}
     ```
 
 === "Command Palette after 'td'"
 
-    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+@,t,d"}
+    ```{.textual path="docs/examples/guide/command_palette/command01.py" press="ctrl+backslash,t,d"}
     ```
 
 
@@ -50,7 +50,7 @@ To add your own command(s) to the command palette, define a [`command.Provider`]
 
 Let's look at a simple example which adds the ability to open Python files via the command palette.
 
-The following example will display a blank screen initially, but if you hit ++ctrl+space++ and start typing the name of a Python file, it will show the command to open it.
+The following example will display a blank screen initially, but if you bring up the command palette and start typing the name of a Python file, it will show the command to open it.
 
 !!! tip
 
