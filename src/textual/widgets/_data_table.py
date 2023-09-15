@@ -952,6 +952,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._styles_cache.clear()
         self._offset_cache.clear()
         self._ordered_row_cache.clear()
+        self._get_styles_to_render_cell.cache_clear()
 
     def get_row_height(self, row_key: RowKey) -> int:
         """Given a row key, return the height of that row in terminal cells.
