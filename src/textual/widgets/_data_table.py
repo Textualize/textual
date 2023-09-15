@@ -1891,9 +1891,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         return self._cell_render_cache[cell_cache_key]
 
-    @functools.lru_cache(
-        maxsize=512
-    )  # 9 Boolean arguments = 512 possible combinations.
+    @functools.lru_cache(maxsize=32)
     def _get_styles_to_render_cell(
         self,
         is_header_cell: bool,
