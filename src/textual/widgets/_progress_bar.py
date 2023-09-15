@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from math import ceil
 from time import monotonic
-from typing import Callable, Optional
+from typing import Callable, NewType, Optional
 
 from rich.style import Style
 
@@ -17,6 +17,10 @@ from ..renderables.bar import Bar as BarRenderable
 from ..timer import Timer
 from ..widget import Widget
 from ..widgets import Label
+
+UnusedParameter = NewType("UnusedParameter", object)
+"""Helper type for a parameter that isn't specified in a method call."""
+_sentinel: UnusedParameter = UnusedParameter(object())
 
 
 class Bar(Widget, can_focus=False):
@@ -406,30 +410,28 @@ class ProgressBar(Widget, can_focus=False):
     def update(
         self,
         *,
-        total: float | None = None,
-        progress: float | None = None,
-        advance: float | None = None,
+        total: float | None | UnusedParameter = _sentinel,
+        progress: float | UnusedParameter = _sentinel,
+        advance: float | UnusedParameter = _sentinel,
     ) -> None:
         """Update the progress bar with the given options.
-
-        Options only affect the progress bar if they are not `None`.
 
         Example:
             ```py
             progress_bar.update(
                 total=200,  # Set new total to 200 steps.
-                progress=None,  # This has no effect.
+                progress=50,  # Set the progress to 50 (out of 200).
             )
             ```
 
         Args:
-            total: New total number of steps (if not `None`).
-            progress: Set the progress to the given number of steps (if not `None`).
-            advance: Advance the progress by this number of steps (if not `None`).
+            total: New total number of steps.
+            progress: Set the progress to the given number of steps.
+            advance: Advance the progress by this number of steps.
         """
-        if total is not None:
+        if isinstance(total, (float, int)) or total is None:
             self.total = total
-        if progress is not None:
+        if isinstance(progress, (float, int)):
             self.progress = progress
-        if advance is not None:
+        if isinstance(advance, (float, int)):
             self.progress += advance

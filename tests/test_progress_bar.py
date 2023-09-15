@@ -78,6 +78,9 @@ def test_update_total():
     pb.update(total=1000)
     assert pb.total == 1000
 
+    pb.update(total=None)
+    assert pb.total is None
+
     pb.update(total=100)
     assert pb.total == 100
 
