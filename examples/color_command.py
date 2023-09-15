@@ -37,7 +37,7 @@ class ColorBlock(Static):
 
     DEFAULT_CSS = """
     ColorBlock{
-        padding: 2 4;
+        padding: 3 6;
         margin: 1 2;
         color: auto;
     }
@@ -59,6 +59,7 @@ class ColorApp(App):
         color_block = ColorBlock(event.color)
         color_block.styles.background = event.color
         self.mount(color_block)
+        self.screen.scroll_end()
 
 
 if __name__ == "__main__":
