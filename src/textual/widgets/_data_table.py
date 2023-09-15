@@ -965,7 +965,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self.header_height
         return self.rows[row_key].height
 
-    async def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._clear_caches()
         self.refresh()
 
