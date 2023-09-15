@@ -46,7 +46,7 @@ class ColorCommands(Provider):
                 )
 ```
 
-And here is how you add a provider to you app:
+And here is how you add a provider to your app:
 
 ```python
 class ColorApp(App):
@@ -55,7 +55,7 @@ class ColorApp(App):
     COMMANDS = App.COMMANDS | {ColorCommands}
 ```
 
-We're excited about this feature because it is a step towards brining a common user interface to Textual apps.
+We're excited about this feature because it is a step towards bringing a common user interface to Textual apps.
 
 !!! quote
 
