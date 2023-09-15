@@ -4,23 +4,22 @@ from __future__ import annotations
 
 from math import ceil
 from time import monotonic
-from typing import Callable, NewType, Optional
+from typing import Callable, Optional
 
 from rich.style import Style
 
-from textual.geometry import clamp
-
+from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
 from ..containers import Horizontal
+from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
 from ..timer import Timer
 from ..widget import Widget
 from ..widgets import Label
 
-UnusedParameter = NewType("UnusedParameter", object)
-"""Helper type for a parameter that isn't specified in a method call."""
-_sentinel: UnusedParameter = UnusedParameter(object())
+UNUSED = UnusedParameter()
+"""Sentinel for method signatures."""
 
 
 class Bar(Widget, can_focus=False):
@@ -410,9 +409,9 @@ class ProgressBar(Widget, can_focus=False):
     def update(
         self,
         *,
-        total: float | None | UnusedParameter = _sentinel,
-        progress: float | UnusedParameter = _sentinel,
-        advance: float | UnusedParameter = _sentinel,
+        total: None | float | UnusedParameter = UNUSED,
+        progress: float | UnusedParameter = UNUSED,
+        advance: float | UnusedParameter = UNUSED,
     ) -> None:
         """Update the progress bar with the given options.
 
@@ -429,9 +428,9 @@ class ProgressBar(Widget, can_focus=False):
             progress: Set the progress to the given number of steps.
             advance: Advance the progress by this number of steps.
         """
-        if isinstance(total, (float, int)) or total is None:
+        if not isinstance(total, UnusedParameter):
             self.total = total
-        if isinstance(progress, (float, int)):
+        if not isinstance(progress, UnusedParameter):
             self.progress = progress
-        if isinstance(advance, (float, int)):
+        if not isinstance(advance, UnusedParameter):
             self.progress += advance
