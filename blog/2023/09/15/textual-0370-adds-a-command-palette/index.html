@@ -6984,13 +6984,13 @@ Here's the (command) Provider class used in the example above:</p>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>                    <span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">post_message</span><span class="p">,</span> <span class="n">SwitchColor</span><span class="p">(</span><span class="n">color</span><span class="p">)),</span>
 <a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>                <span class="p">)</span>
 </code></pre></div>
-<p>And here is how you add a provider to you app:</p>
+<p>And here is how you add a provider to your app:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span> <span class="nc">ColorApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Experiment with the command palette.&quot;&quot;&quot;</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 <a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">COMMANDS</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">COMMANDS</span> <span class="o">|</span> <span class="p">{</span><span class="n">ColorCommands</span><span class="p">}</span>
 </code></pre></div>
-<p>We're excited about this feature because it is a step towards brining a common user interface to Textual apps.</p>
+<p>We're excited about this feature because it is a step towards bringing a common user interface to Textual apps.</p>
 <div class="admonition quote">
 <p class="admonition-title">Quote</p>
 <p>It's a Textual app. I know this.</p>
