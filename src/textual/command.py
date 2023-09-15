@@ -31,7 +31,7 @@ from .fuzzy import Matcher
 from .reactive import var
 from .screen import ModalScreen, Screen
 from .timer import Timer
-from .types import CallbackType
+from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
 from .widgets.option_list import Option
@@ -62,7 +62,7 @@ class Hit:
     match_display: RenderableType
     """A string or Rich renderable representation of the hit."""
 
-    command: CallbackType
+    command: IgnoreReturnCallbackType
     """The function to call when the command is chosen."""
 
     text: str | None = None
@@ -354,8 +354,13 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         color: $text-muted;
     }
 
+    App.-dark-mode CommandPalette > .command-palette--highlight {
+        text-style: bold;
+        color: $warning;
+    }
     CommandPalette > .command-palette--highlight {
-        text-style: bold reverse;
+        text-style: bold;
+        color: $warning-darken-2;
     }
 
     CommandPalette > Vertical {
