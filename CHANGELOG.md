@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.37.0] 2023-09-15
 
 ### Added
 
@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Screen.sub_title`
 - Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
 - Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
-- Added `widgets.Collapsible` contributed buy Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
+- Added `widgets.Collapsible` contributed by Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
 
 ### Fixed
 
@@ -1276,6 +1276,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.37.0]: https://github.com/Textualize/textual/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
 [0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
 [0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
