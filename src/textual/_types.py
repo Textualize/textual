@@ -29,6 +29,8 @@ class EventTarget(Protocol):
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 """Type used for arbitrary callables used in callbacks."""
+IgnoreReturnCallbackType = Union[Callable[[], Awaitable[Any]], Callable[[], Any]]
+"""A callback which ignores the return type."""
 WatchCallbackType = Union[
     Callable[[], Awaitable[None]],
     Callable[[Any], Awaitable[None]],
