@@ -330,6 +330,26 @@ def test_sparkline_component_classes_colors(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "sparkline_colors.py")
 
 
+def test_collapsible_render(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py")
+
+
+def test_collapsible_collapsed(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["c"])
+
+
+def test_collapsible_expanded(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
+
+
+def test_collapsible_nested(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_nested.py")
+
+
+def test_collapsible_custom_symbol(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.
@@ -600,14 +620,15 @@ def test_tooltips_in_compound_widgets(snap_compare):
 
 
 def test_command_palette(snap_compare) -> None:
-
-    from textual.command_palette import CommandPalette
+    from textual.command import CommandPalette
 
     async def run_before(pilot) -> None:
-        await pilot.press("ctrl+@")
+        await pilot.press("ctrl+backslash")
         await pilot.press("A")
         await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
+
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
+
 
 # --- textual-dev library preview tests ---
 
