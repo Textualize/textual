@@ -72,7 +72,7 @@ class ResultCallback(Generic[ScreenResultType]):
 
     def __init__(
         self,
-        requester: Widget | None,
+        requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
     ) -> None:
         """Initialise the result callback object.
@@ -81,7 +81,7 @@ class ResultCallback(Generic[ScreenResultType]):
             requester: The object making a request for the callback.
             callback: The callback function.
         """
-        self.requester: Widget | None = requester
+        self.requester = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
@@ -685,7 +685,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _push_result_callback(
         self,
-        requester: Widget | None,
+        requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
     ) -> None:
         """Add a result callback to the screen.
