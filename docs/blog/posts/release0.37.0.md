@@ -12,7 +12,7 @@ authors:
 # Textual 0.37.0 adds a command palette
 
 Textual version 0.37.0 has landed!
-The highlight of these release is the new command palette.
+The highlight of this release is the new command palette.
 
 <!-- more -->
 
