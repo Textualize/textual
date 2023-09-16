@@ -7,7 +7,7 @@ See the guide on the [Command Palette](../guide/command_palette.md) for full det
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import CancelledError, Queue, Task, wait, wait_for
+from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
 from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
