@@ -876,6 +876,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         Args:
             event: The input event.
         """
+        event.stop()
         self.workers.cancel_all()
         search_value = event.value.strip()
         if search_value:
@@ -906,10 +907,14 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
 
     @on(Input.Submitted)
     @on(Button.Pressed)
-    def _select_or_command(self) -> None:
+    def _select_or_command(
+        self, event: Input.Submitted | Button.Pressed | None = None
+    ) -> None:
         """Depending on context, select or execute a command."""
         # If the list is visible, that means we're in "pick a command"
         # mode...
+        if event is not None:
+            event.stop()
         if self._list_visible:
             # ...so if nothing in the list is highlighted yet...
             if self.query_one(CommandList).highlighted is None:
