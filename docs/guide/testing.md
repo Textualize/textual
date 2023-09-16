@@ -69,12 +69,12 @@ Let's look at the tests for the example above:
 5. Simulates clicking on the widget with an `id` of `red` (the button labelled "Red").
 
 There are two tests defined in `test_rgb.py`.
-One to tests keys and one to test button clicks.
+One to test keys and one to test button clicks.
 Both tests first construct an instance of the app and call `run_test()` to get a Pilot object.
 The `test_keys` function simulates key presses with [`Pilot.press`][textual.pilot.Pilot.press], and `test_buttons` simulates button clicks with [`Pilot.click`][textual.pilot.Pilot.click].
 
-After simulating interaction, Textual tests will typically check the state has been updated with an `assert` statement.
-The `pytest` module will record any failures of these assert statements.
+After simulating a user interaction, Textual tests will typically check the state has been updated with an `assert` statement.
+The `pytest` module will record any failures of these assert statements as a test fail.
 
 If you run the tests with `pytest test_rgb.py` you should get 2 passes, which will confirm that the user will be able to click buttons or press the keys to change the background color.
 
@@ -92,13 +92,13 @@ await pilot.press("h", "e", "l", "l", "o")
 ```
 
 Each string creates a single keypress.
-You an also use the name for non-printable keys (such as "enter") and the "ctrl+" modifier.
+You can also use the name for non-printable keys (such as "enter") and the "ctrl+" modifier.
 These are the same identifiers as used for key events, which you can experiment with by running `textual keys`.
 
 ## Simulating clicks
 
-We can simulate mouse clicks in a similar way with [`Pilot.click`][textual.pilot.Pilot.click].
-If you supply a css selector you can tell Textual which widget to click.
+You can simulate mouse clicks in a similar way with [`Pilot.click`][textual.pilot.Pilot.click].
+If you supply a css selector Textual will simulate clicking on the matching widget.
 
 !!! note
 
