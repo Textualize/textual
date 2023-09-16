@@ -678,6 +678,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -1129,6 +1131,32 @@
     
   
     Command Palette
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing
   
 
     
@@ -7215,7 +7243,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">click</span><span class="p">(</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">selector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">offset</span><span class="o">=</span><span class="n">Offset</span><span class="p">(),</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">shift</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">meta</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">control</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
@@ -7254,11 +7282,11 @@ not land on it.</p></td>
         <tr>
           <td><code>offset</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
           </td>
           <td><p>The offset to click within the selected widget.</p></td>
           <td>
-                <code>Offset()</code>
+                <code>(0, 0)</code>
           </td>
         </tr>
         <tr>
@@ -7357,7 +7385,7 @@ not land on it.</p></td>
   </span>
 
 <a href="#textual.pilot.Pilot.hover" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">hover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">Offset</span><span class="p">()):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">hover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7392,11 +7420,11 @@ not land on it.</p></td>
         <tr>
           <td><code>offset</code></td>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
           </td>
           <td><p>The offset to hover over within the selected widget.</p></td>
           <td>
-                <code>Offset()</code>
+                <code>(0, 0)</code>
           </td>
         </tr>
     </tbody>
