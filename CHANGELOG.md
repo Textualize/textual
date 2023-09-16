@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
 - Fixed `Input` event leakage from `CommandPalette` to `App`.
 
+## [0.36.0] - 2023-09-15
+
 ### Added
 
 - Added the command palette https://github.com/Textualize/textual/pull/3058
