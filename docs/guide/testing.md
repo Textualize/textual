@@ -62,15 +62,15 @@ Let's look at the tests for the example above:
 --8<-- "docs/examples/guide/testing/test_rgb.py"
 ```
 
-1. The `run_test()` method requires that it run in a coroutine, so test must use the `async` keyword.
+1. The `run_test()` method requires that it run in a coroutine, so tests must use the `async` keyword.
 2. This runs the app and returns a Pilot instance we can use to interact with it.
 3. Simulates pressing the ++r++ key.
 4. This checks that pressing the ++r++ key has resulted in the background color changing.
 5. Simulates clicking on the widget with an `id` of `red` (the button labelled "Red").
 
 There are two tests defined in `test_rgb.py`.
-One to test keys and one to test button clicks.
-Both tests first construct an instance of the app and call `run_test()` to get a Pilot object.
+The first to test keys and the second to test button clicks.
+Both tests first construct an instance of the app and then call `run_test()` to get a Pilot object.
 The `test_keys` function simulates key presses with [`Pilot.press`][textual.pilot.Pilot.press], and `test_buttons` simulates button clicks with [`Pilot.click`][textual.pilot.Pilot.click].
 
 After simulating a user interaction, Textual tests will typically check the state has been updated with an `assert` statement.
@@ -98,7 +98,7 @@ These are the same identifiers as used for key events, which you can experiment 
 ## Simulating clicks
 
 You can simulate mouse clicks in a similar way with [`Pilot.click`][textual.pilot.Pilot.click].
-If you supply a css selector Textual will simulate clicking on the matching widget.
+If you supply a CSS selector Textual will simulate clicking on the matching widget.
 
 !!! note
 
@@ -155,7 +155,7 @@ async with app.run_test(size=(100, 50)) as pilot:
 ## Pausing the pilot
 
 Some actions in a Textual app won't change the state immediately.
-For instance messages may take a moment to bubble from the widget that sent them.
+For instance, messages may take a moment to bubble from the widget that sent them.
 If you were to post a message and immediately `assert` you may find that it fails because the message hasn't yet been processed.
 
 You can generally solve this by calling [`pause()`][textual.pilot.Pilot.pause] which will wait for all pending messages to be processed.
