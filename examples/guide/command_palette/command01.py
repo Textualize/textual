@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from functools import partial
 from pathlib import Path
 
 from rich.syntax import Syntax
@@ -34,7 +37,7 @@ class PythonFileCommands(Provider):
                 yield Hit(
                     score,
                     matcher.highlight(command),  # (5)!
-                    lambda: app.open_file(path),
+                    partial(app.open_file, path),
                     help="Open this file in the viewer",
                 )
 
