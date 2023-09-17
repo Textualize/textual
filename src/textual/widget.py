@@ -2838,6 +2838,8 @@ class Widget(DOMNode):
                 self.app.focused.blur()
         except ScreenStackError:
             pass
+        if self.disabled and self.mouse_over:
+            self.mouse_over = False
         self._update_styles()
 
     def _size_updated(

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed button stuck in hover state when disabled programatically https://github.com/Textualize/textual/issues/3130
 - Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
 - Fixed `Input` event leakage from `CommandPalette` to `App`.
 
