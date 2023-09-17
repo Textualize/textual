@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `DataTable.update_cell` not raising an error with an invalid column key.
+
 ## [0.37.1] - 2023-09-16
 
 ### Fixed
