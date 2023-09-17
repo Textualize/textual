@@ -744,12 +744,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if isinstance(column_key, str):
             column_key = ColumnKey(column_key)
 
-        try:
-            self._data[row_key][column_key] = value
-        except KeyError:
+        if (
+            row_key not in self._row_locations
+            or column_key not in self._column_locations
+        ):
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
-            ) from None
+            )
+
+        self._data[row_key][column_key] = value
         self._update_count += 1
 
         # Recalculate widths if necessary
