@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
+
+## [0.37.1] - 2023-09-16
+
+### Fixed
+
+- Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
+- Fixed `Input` event leakage from `CommandPalette` to `App`.
+
+## [0.37.0] - 2023-09-15
+
 ### Added
 
 - Added the command palette https://github.com/Textualize/textual/pull/3058
@@ -19,13 +32,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Screen.sub_title`
 - Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
 - Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
-- Added `widgets.Collapsible` contributed buy Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
+- Added `widgets.Collapsible` contributed by Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
 
 ### Fixed
 
 - Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
 - Fixed a crash in `MarkdownViewer` when clicking on a link that contains an anchor https://github.com/Textualize/textual/issues/3094
-- Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
+- Fixed wrong message pump in pop_screen https://github.com/Textualize/textual/pull/3315
 
 ### Changed
 
@@ -1276,6 +1289,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.37.1]: https://github.com/Textualize/textual/compare/v0.37.0...v0.37.1
+[0.37.0]: https://github.com/Textualize/textual/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
 [0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
 [0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0

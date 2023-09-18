@@ -1196,9 +1196,9 @@ class App(Generic[ReturnType], DOMNode):
         notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
     ) -> AsyncGenerator[Pilot, None]:
-        """An asynchronous context manager for testing app.
+        """An asynchronous context manager for testing apps.
 
-        Use this to run your app in "headless" (no output) mode and driver the app via a [Pilot][textual.pilot.Pilot] object.
+        Use this to run your app in "headless" mode (no output) and drive the app via a [Pilot][textual.pilot.Pilot] object.
 
         Example:
 
@@ -1783,9 +1783,11 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
-        next_screen._push_result_callback(
-            self.screen if self._screen_stack else None, callback
-        )
+        try:
+            message_pump = active_message_pump.get()
+        except LookupError:
+            message_pump = self.app
+        next_screen._push_result_callback(message_pump, callback)
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         self.stylesheet.update(next_screen)

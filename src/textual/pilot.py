@@ -13,13 +13,12 @@ import rich.repr
 from ._wait import wait_for_idle
 from .app import App, ReturnType
 from .events import Click, MouseDown, MouseMove, MouseUp
-from .geometry import Offset
 from .widget import Widget
 
 
 def _get_mouse_message_arguments(
     target: Widget,
-    offset: Offset = Offset(),
+    offset: tuple[int, int] = (0, 0),
     button: int = 0,
     shift: bool = False,
     meta: bool = False,
@@ -74,7 +73,7 @@ class Pilot(Generic[ReturnType]):
     async def click(
         self,
         selector: type[Widget] | str | None = None,
-        offset: Offset = Offset(),
+        offset: tuple[int, int] = (0, 0),
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
@@ -112,7 +111,7 @@ class Pilot(Generic[ReturnType]):
     async def hover(
         self,
         selector: type[Widget] | str | None | None = None,
-        offset: Offset = Offset(),
+        offset: tuple[int, int] = (0, 0),
     ) -> None:
         """Simulate hovering with the mouse cursor.
 
