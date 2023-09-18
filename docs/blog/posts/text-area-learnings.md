@@ -14,14 +14,77 @@ editor that I'd been taking for granted.
 
 <!-- more -->
 
+
 ### Vertical cursor movement
 
 When you move the cursor vertically, you can't simply keep the same column index.
-Editors should maintain the last visual horizontal offset the user navigated to.
+Editors should maintain the visual column offset where possible.
 
 ![maintain_offset.gif](../images/text-area-learnings/maintain_offset.gif)
 
-In the clip above, notice how the column offset of the cursor changes as the cursor moves vertically between rows.
+Notice that although the cursor is on column 11 while on line 1, it lands on column 6 when it arrives at line 3.
+This is because the 6th character of line 3 _visually_ aligns with the 11th character of line 1.
+When calculating the column to move the cursor to, we must account for double-width emoji and East Asian characters.
+
+
+### Edits from other sources may move my cursor
+
+There are two ways to interact with the `TextArea`:
+
+1. You can type into it.
+2. You can make API calls to edit the content in it.
+
+In the example below, `Hello, world!\n` is repeatedly inserted at the start of the document via the API.
+Notice that this updates the cursor location such that the user who is typing doesn't lose their place in the document.
+
+![text-area-api-insert.gif](../images/text-area-learnings/text-area-api-insert.gif)
+
+This subtle feature should aid those implementing collaborative and multi-cursor editing.
+
+This turned out to be one of the more complex features and went through a few iterations before
+I was happy with the result.
+Thankfully it resulted in some wonderful Tetrisesque whiteboards along the way!
+
+![cursor_position_updating_via_api.png](../images/text-area-learnings/cursor_position_updating_via_api.png)
+
+Many thanks to David Brochart for sending me down this rabbit hole!
+
+### Syntax highlighting
+
+In order support syntax highlighting, we make use of the [tree-sitter](https://tree-sitter.github.io/tree-sitter/) library, which maintains a syntax tree representing the structure of our document.
+
+To perform highlighting, we follow these steps:
+
+1. The user edits the document.
+2. We inform tree-sitter of the location of this edit.
+3. tree-sitter intelligently parses only the subset of the document impacted by the change.
+4. We run a query against the tree to retrieve ranges of text we wish to highlight.
+5. These ranges are mapped to styles (defined by the chosen "theme").
+6. These styles to the appropriate text ranges when rendering the widget.
+
+![text-area-theme-cycle.gif](../images/text-area-learnings/text-area-theme-cycle.gif)
+
+Before building this widget, I was oblivious as to how we might approach syntax highlighting.
+Without tree-sitter's incremental parsing approach, I'm not sure reasonable performance would have been feasible.
+
+### Edits are replacements
+
+All single-cursor edits can be distilled into a single method: `replace_range`.
+This method replaces a range of characters with some text.
+We can use this one method to easily implement deletion, insertion, and replacement of text.
+
+- Inserting text is replacing a zero-width range with the text to insert.
+- Pressing backspace (delete left) is just replacing the character behind the cursor with an empty string.
+- Selecting text and pressing delete is just replacing the selected text with an empty string.
+- Selecting text and pasting is replacing the selected text with some other text.
+
+This greatly simplified my initial approach, which involved unique implementations for inserting and deleting.
+
+### A quick use of a profiler can pay huge dividends
+
+
+
+
 
 ```python
 from itertools import cycle
