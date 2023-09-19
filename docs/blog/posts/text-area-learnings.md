@@ -7,405 +7,176 @@ authors:
   - darrenburns
 ---
 
-# Learnings from building Textual's TextArea widget
+# Things I learned while building Textual's TextArea
 
-Working on the `TextArea` widget for Textual taught me that there are many subtle features in my text
-editor that I'd been taking for granted.
+Working on the `TextArea` widget for Textual taught me that there are many subtle features in my
+text editor that I'd been taking for granted.
 
 <!-- more -->
 
+## Vertical cursor movement is more than just `cursor_row++`
 
-### Vertical cursor movement
+When you move the cursor vertically, you can't simply keep the same column index and clamp it within the line.
+Editors should maintain the visual column offset where possible,
+meaning they must account for double-width emoji (sigh 😔) and East-Asian characters.
 
-When you move the cursor vertically, you can't simply keep the same column index.
-Editors should maintain the visual column offset where possible.
+![maintain_offset.gif](../images/text-area-learnings/maintain_offset.gif){ loading=lazy }
 
-![maintain_offset.gif](../images/text-area-learnings/maintain_offset.gif)
-
-Notice that although the cursor is on column 11 while on line 1, it lands on column 6 when it arrives at line 3.
+Notice that although the cursor is on column 11 while on line 1, it lands on column 6 when it
+arrives at line 3.
 This is because the 6th character of line 3 _visually_ aligns with the 11th character of line 1.
-When calculating the column to move the cursor to, we must account for double-width emoji and East Asian characters.
 
 
-### Edits from other sources may move my cursor
+## Edits from other sources may move my cursor
 
 There are two ways to interact with the `TextArea`:
 
 1. You can type into it.
 2. You can make API calls to edit the content in it.
 
-In the example below, `Hello, world!\n` is repeatedly inserted at the start of the document via the API.
-Notice that this updates the cursor location such that the user who is typing doesn't lose their place in the document.
+In the example below, `Hello, world!\n` is repeatedly inserted at the start of the document via the
+API.
+Notice that this updates the location of my cursor, ensuring that I don't lose my place.
 
-![text-area-api-insert.gif](../images/text-area-learnings/text-area-api-insert.gif)
+![text-area-api-insert.gif](../images/text-area-learnings/text-area-api-insert.gif){ loading=lazy }
 
 This subtle feature should aid those implementing collaborative and multi-cursor editing.
 
-This turned out to be one of the more complex features and went through a few iterations before
-I was happy with the result.
-Thankfully it resulted in some wonderful Tetrisesque whiteboards along the way!
+This turned out to be one of the more complex features of the whole project, and went through several iterations before I was happy with the result.
 
-![cursor_position_updating_via_api.png](../images/text-area-learnings/cursor_position_updating_via_api.png)
+Thankfully it resulted in some wonderful Tetris-esque whiteboards along the way!
 
-Many thanks to David Brochart for sending me down this rabbit hole!
+<figure markdown>
+  ![cursor_position_updating_via_api.png](../images/text-area-learnings/cursor_position_updating_via_api.png){ loading=lazy }
+  <figcaption>A TetrisArea white-boarding session.</figcaption>
+</figure>
 
-### Syntax highlighting
+Sometimes stepping away from the screen and scribbling on a whiteboard with your colleagues (thanks [Dave](https://fosstodon.org/@davep)!) is what's needed to finally crack a tough problem.
 
-In order support syntax highlighting, we make use of the [tree-sitter](https://tree-sitter.github.io/tree-sitter/) library, which maintains a syntax tree representing the structure of our document.
+Many thanks to [David Brochart](https://fosstodon.org/@davidbrochart@mastodon.top) for sending me down this rabbit hole!
+
+## Spending a few minutes running a profiler can be really beneficial
+
+While building the `TextArea` widget I avoided heavy optimisation work that may have affected
+readability or maintainability.
+
+However, I did run a profiler in an attempt to detect flawed assumptions or mistakes which were
+affecting the performance of my code.
+
+I spent around 30 minutes profiling `TextArea`
+using [pyinstrument](https://pyinstrument.readthedocs.io/en/latest/home.html), and the result was a
+**~97%** reduction in the time taken to handle a key press.
+What an amazing return on investment for such a minimal time commitment!
+
+
+<figure markdown>
+  ![text-area-pyinstrument.png](../images/text-area-learnings/text-area-pyinstrument.png){ loading=lazy }
+  <figcaption>"pyinstrument -r html" produces this beautiful output.</figcaption>
+</figure>
+
+pyinstrument unveiled two issues that were massively impacting performance.
+
+### 1. Reparsing highlighting queries on each key press
+
+I was constructing a tree-sitter `Query` object on each key press, incorrectly assuming it was a
+low-overhead call.
+This query was completely static, so I moved it into the constructor ensuring the object was created
+only once.
+This reduced key processing time by around 94% - a substantial and very much noticeable improvement.
+
+This seems obvious in hindsight, but the code in question was written earlier in the project and had
+been relegated in my mind to "code that works correctly and will receive less attention from here on
+out".
+pyinstrument quickly brought this code back to my attention and highlighted it as a glaring
+performance bug.
+
+### 2. NamedTuples are slower than I expected
+
+In Python, `NamedTuple`s are slow to create relative to `tuple`s, and this cost was adding up inside
+an extremely hot loop which was instantiating a large number of them.
+After the  large portion of the time during syntax highlighting was spent inside `NamedTuple.__new__`.
+
+Here's a quick benchmark which constructs 10,000 `NamedTuple`s:
+
+```toml
+❯ hyperfine -w 2 'python sandbox/darren/make_namedtuples.py'
+Benchmark 1: python sandbox/darren/make_namedtuples.py
+  Time (mean ± σ):      15.9 ms ±   0.5 ms    [User: 12.8 ms, System: 2.5 ms]
+  Range (min … max):    15.2 ms …  18.4 ms    165 runs
+```
+
+Here's the same benchmark using `tuple` instead:
+
+```toml
+❯ hyperfine -w 2 'python sandbox/darren/make_tuples.py'
+Benchmark 1: python sandbox/darren/make_tuples.py
+  Time (mean ± σ):       9.3 ms ±   0.5 ms    [User: 6.8 ms, System: 2.0 ms]
+  Range (min … max):     8.7 ms …  12.3 ms    256 runs
+```
+
+Switching to `tuple` resulted in another noticeable increase in responsiveness.
+Key-press handling time dropped by almost 50%!
+Unfortunately, this change _does_ impact readability.
+However, the scope in which these tuples were used was very small, and so I felt it was a worthy trade-off.
+
+
+## Syntax highlighting is very different from what I expected
+
+In order support syntax highlighting, we make use of
+the [tree-sitter](https://tree-sitter.github.io/tree-sitter/) library, which maintains a syntax tree
+representing the structure of our document.
 
 To perform highlighting, we follow these steps:
 
 1. The user edits the document.
 2. We inform tree-sitter of the location of this edit.
-3. tree-sitter intelligently parses only the subset of the document impacted by the change.
+3. tree-sitter intelligently parses only the subset of the document impacted by the change, updating the tree.
 4. We run a query against the tree to retrieve ranges of text we wish to highlight.
 5. These ranges are mapped to styles (defined by the chosen "theme").
 6. These styles to the appropriate text ranges when rendering the widget.
 
-![text-area-theme-cycle.gif](../images/text-area-learnings/text-area-theme-cycle.gif)
+<figure markdown>
+  ![text-area-theme-cycle.gif](../images/text-area-learnings/text-area-theme-cycle.gif){ loading=lazy }
+  <figcaption>Cycling through a few of the builtin themes.</figcaption>
+</figure>
+
+Another benefit that I didn't consider before working on this project is that tree-sitter
+parsers can also be used to highlight syntax errors in a document.
+This can be useful in some situations - for example, highlighting mismatched HTML closing tags:
+
+<figure markdown>
+  ![text-area-syntax-error.gif](../images/text-area-learnings/text-area-syntax-error.gif){ loading=lazy }
+  <figcaption>Highlighting mismatched closing HTML tags in red.</figcaption>
+</figure>
 
 Before building this widget, I was oblivious as to how we might approach syntax highlighting.
-Without tree-sitter's incremental parsing approach, I'm not sure reasonable performance would have been feasible.
+Without tree-sitter's incremental parsing approach, I'm not sure reasonable performance would have
+been feasible.
 
-### Edits are replacements
+## The blurry line between "text area" and "VSCode in the terminal"
 
-All single-cursor edits can be distilled into a single method: `replace_range`.
-This method replaces a range of characters with some text.
+The nature of a project like this is that there's no finish line.
+There are always new features, optimisations, and refactors waiting to be made.
+So where do we draw the line?
+
+We want to provide a widget which can act as both a basic multiline text area that
+anyone can drop into their app, yet powerful and extensible enough to act as the foundation
+for a text editor.
+
+Is there a point at which a "text area" becomes a "code editor"?
+Are they different names for the same thing?
+
+## Edits are replacements
+
+All single-cursor edits can be distilled into a single behaviour: `replace_range`.
+This replaces a range of characters with some text.
 We can use this one method to easily implement deletion, insertion, and replacement of text.
 
 - Inserting text is replacing a zero-width range with the text to insert.
-- Pressing backspace (delete left) is just replacing the character behind the cursor with an empty string.
+- Pressing backspace (delete left) is just replacing the character behind the cursor with an empty
+  string.
 - Selecting text and pressing delete is just replacing the selected text with an empty string.
 - Selecting text and pasting is replacing the selected text with some other text.
 
-This greatly simplified my initial approach, which involved unique implementations for inserting and deleting.
-
-### A quick use of a profiler can pay huge dividends
-
-
-
-
-
-```python
-from itertools import cycle
-from pathlib import Path
-
-from textual import on
-from textual._text_area_theme import TextAreaTheme, _BUILTIN_THEMES
-from textual.app import App, ComposeResult
-from textual.binding import Binding
-from textual.containers import Horizontal, Vertical
-from textual.document._document import Selection
-from textual.widgets import Footer, Select, TextArea, DirectoryTree, Static
-
-SAMPLE_TEXT = [
-    "Hello, world!",
-    "",
-    "你好，世界！",  # Chinese characters, which are usually double-width
-    "こんにちは、世界！",  # Japanese characters, also usually double-width
-    "안녕하세요, 세계!",  # Korean characters, also usually double-width
-    "    This line has leading white space",
-    "This line has trailing white space    ",
-    "    This line has both leading and trailing white space    ",
-    "    ",  # Line with only spaces
-    "こんにちは、world! 你好，world!",  # Mixed script line
-    "Hello, 🌍! Hello, 🌏! Hello, 🌎!",  # Line with emoji (which are often double-width)
-    "The quick brown 🦊 jumps over the lazy 🐶.",  # Line with emoji interspersed in text
-    "Special characters: ~!@#$%^&*()_+`-={}|[]\\:\";'<>?,./",
-    # Line with special characters
-    "Unicode example: Привет, мир!",  # Russian text
-    "Unicode example: Γειά σου Κόσμε!",  # Greek text
-]
-
-YAML = """\
-# This is a comment in YAML
-
-# Scalars
-string: "Hello, world!"
-integer: 42
-float: 3.14
-boolean: true
-
-# Sequences (Arrays)
-fruits:
-  - Apple
-  - Banana
-  - Cherry
-
-# Nested sequences
-persons:
-  - name: John
-    age: 28
-    is_student: false
-  - name: Jane
-    age: 22
-    is_student: true
-
-# Mappings (Dictionaries)
-address:
-  street: 123 Main St
-  city: Anytown
-  state: CA
-  zip: '12345'
-
-# Multiline string
-description: |
-  This is a multiline
-  string in YAML.
-
-# Inline and nested collections
-colors: { red: FF0000, green: 00FF00, blue: 0000FF }
-"""
-
-SMALL_SAMPLE = "0123\n0123\n0123"
-
-PYTHON_SNIPPET = """\
-def render_line(self, y: int) -> Strip:
-    '''Render a line of the widget. y is relative to the top of the widget.'''
-
-    row_index = y // 4  # A checkerboard square consists of 4 rows
-
-    if row_index >= 8:  # Generate blank lines when we reach the end
-        return Strip.blank(self.size.width)
-
-    is_odd = row_index % 2  # Used to alternate the starting square on each row
-
-    white = Style.parse("on white")  # Get a style object for a white background
-    black = Style.parse("on black")  # Get a style object for a black background
-
-    # Generate a list of segments with alternating black and white space characters
-    segments = [
-        Segment(" " * 8, black if (column + is_odd) % 2 else white)
-        for column in range(8)
-    ]
-    strip = Strip(segments, 8 * 8)
-    return strip"""
-
-TOML = """\
-# This is a comment in TOML
-
-string = "Hello, world!"
-integer = 42
-float = 3.14
-boolean = true
-datetime = 1979-05-27T07:32:00Z
-
-fruits = ["apple", "banana", "cherry"]
-
-[address]
-street = "123 Main St"
-city = "Anytown"
-state = "CA"
-zip = "12345"
-
-[person.john]
-name = "John Doe"
-age = 28
-is_student = false
-
-
-[[animals]]
-name = "Fido"
-type = "dog"
-"""
-
-JSON = """\
-{
-    "name": "John Doe",
-    "age": 30,
-    "isStudent": false,
-    "address": {
-        "street": "123 Main St",
-        "city": "Anytown",
-        "state": "CA",
-        "zip": "12345"
-    },
-    "phoneNumbers": [
-        {
-            "type": "home",
-            "number": "555-555-1234"
-        },
-        {
-            "type": "work",
-            "number": "555-555-5678"
-        }
-    ],
-    "hobbies": ["reading", "hiking", "swimming"],
-    "pets": [
-        {
-            "type": "dog",
-            "name": "Fido"
-        },
-    ],
-    "graduationYear": null
-}
-"""
-
-SQL = """\
--- This is a comment in SQL
-
--- Create tables
-CREATE TABLE Authors (
-    AuthorID INT PRIMARY KEY,
-    Name VARCHAR(255) NOT NULL,
-    Country VARCHAR(50)
-);
-
-CREATE TABLE Books (
-    BookID INT PRIMARY KEY,
-    Title VARCHAR(255) NOT NULL,
-    AuthorID INT,
-    PublishedDate DATE,
-    FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID)
-);
-
--- Insert data
-INSERT INTO Authors (AuthorID, Name, Country) VALUES (1, 'George Orwell', 'UK');
-
-INSERT INTO Books (BookID, Title, AuthorID, PublishedDate) VALUES (1, '1984', 1, '1949-06-08');
-
--- Update data
-UPDATE Authors SET Country = 'United Kingdom' WHERE Country = 'UK';
-
--- Select data with JOIN
-SELECT Books.Title, Authors.Name
-FROM Books
-JOIN Authors ON Books.AuthorID = Authors.AuthorID;
-
--- Delete data (commented to preserve data for other examples)
--- DELETE FROM Books WHERE BookID = 1;
-
--- Alter table structure
-ALTER TABLE Authors ADD COLUMN BirthDate DATE;
-
--- Create index
-CREATE INDEX idx_author_name ON Authors(Name);
-
--- Drop index (commented to avoid actually dropping it)
--- DROP INDEX idx_author_name ON Authors;
-
--- End of script
-"""
-
-
-different_width_text = """\
-# Hello, world!
-
-# こんにちは、世界！
-
-Here is some text.
-"""
-
-class TextAreaDemo(App):
-    CSS = """\
-    * {
-        scrollbar-size-vertical: 1;
-    }
-    TextArea {
-        height: auto;
-    }
-    #file-tree {
-        width: 25%;
-    }
-    #debug {
-        height: auto;
-        background: $primary-darken-1 25%;
-        padding: 1 2;
-    }
-    #options {
-        dock: bottom;
-        align-horizontal: right;
-        height: auto;
-        margin-bottom: 1;
-        width: 40;
-    }
-    #location-bar {
-        color: $text;
-        background: $accent;
-        padding: 0 3;
-    }
-    """
-
-    BINDINGS = [
-        Binding("ctrl+l", "gutter", "Toggle Gutter"),
-        Binding("ctrl+n", "tab_size_cycle", "Cycle Tab Size"),
-        Binding("f9", "print_highlights", "Print highlights"),
-    ]
-
-    def compose(self) -> ComposeResult:
-        code_path = Path("/Users/darrenburns/Code/textual/sandbox/darren/sample.py")
-        text = code_path.read_text()
-
-        default_language = "markdown"
-        text_area = TextArea(different_width_text, language=default_language, theme="vscode_dark")
-
-        with Horizontal(id="body"):
-            yield DirectoryTree(Path(".").resolve(), id="file-tree")
-            with Vertical():
-                yield text_area
-                yield Static(id="location-bar")
-
-        with Horizontal(id="options"):
-            yield Select(
-                [(lang, lang) for lang in text_area.available_languages],
-                value=default_language,
-                prompt="Language",
-                id="language-select",
-            )
-            yield Select(
-                [(theme, theme) for theme in text_area.available_themes],
-                prompt="Theme",
-                value="vscode_dark",
-                id="theme-select",
-            )
-        yield Footer()
-
-    def on_mount(self) -> None:
-        self.watch(self.query_one(TextArea), "selection", self._update_location)
-
-    def _update_location(self, selection: Selection) -> None:
-        text_area = self.query_one(TextArea)
-        location_bar = self.query_one("#location-bar", Static)
-        row, column = text_area.cursor_location
-        location_bar.update(f"column = {column}")
-
-    @on(DirectoryTree.FileSelected)
-    def navigate_to_definition(self, event: DirectoryTree.FileSelected) -> None:
-        editor = self.query_one(TextArea)
-        print("loading text")
-        editor.load_text(event.path.read_text())
-
-    @on(Select.Changed, selector="#language-select")
-    def update_language(self, event: Select.Changed) -> None:
-        language = event.value
-        print("language selected")
-        editor = self.query_one(TextArea)
-        editor.language = language
-
-    @on(Select.Changed, selector="#theme-select")
-    def update_theme(self, event: Select.Changed) -> None:
-        theme = event.value
-        print("theme selected")
-        editor = self.query_one(TextArea)
-        editor.theme = theme
-
-    def action_gutter(self):
-        editor = self.query_one(TextArea)
-        editor.show_line_numbers = not editor.show_line_numbers
-
-    tab_sizes = cycle([2, 4, 8])
-
-    def action_tab_size_cycle(self):
-        editor = self.query_one(TextArea)
-        editor.indent_width = next(self.tab_sizes)
-
-    def action_print_highlights(self) -> None:
-        area = self.query_one(TextArea)
-        print(area._highlights)
-
-
-app = TextAreaDemo()
-if __name__ == "__main__":
-    app.run()
-
-```
+This greatly simplified my initial approach, which involved unique implementations for inserting and
+deleting.
