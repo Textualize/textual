@@ -57,7 +57,7 @@ The following example will display a blank screen initially, but if you bring up
     If you are running that example from the repository, you may want to add some additional Python files to see how the examples works with multiple files.
 
 
-  ```python title="command01.py" hl_lines="11-39 45"
+  ```python title="command01.py" hl_lines="14-42 45"
   --8<-- "docs/examples/guide/command_palette/command01.py"
   ```
 
