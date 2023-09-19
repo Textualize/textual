@@ -30,7 +30,7 @@ Example app showing the widget:
     ```
 
 
-## Reactive attributes
+## Reactive Attributes
 
 
 ## Bindings
