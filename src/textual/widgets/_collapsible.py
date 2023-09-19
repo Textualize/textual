@@ -37,6 +37,11 @@ class CollapsibleTitle(Widget, can_focus=True):
     """
 
     BINDINGS = [Binding("enter", "toggle", "Toggle collapsible", show=False)]
+    """
+    | Key(s) | Description |
+    | :- | :- |
+    | enter | Toggle the collapsible. |
+    """
 
     collapsed = reactive(True)
 

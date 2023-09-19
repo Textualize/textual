@@ -73,6 +73,9 @@ The Tabs widget defines the following bindings:
       show_root_heading: false
       show_root_toc_entry: false
 
+## Component Classes
+
+This widget has no component classes.
 
 ---
 
