@@ -1,6 +1,9 @@
 """
 
 The pilot object is used by [App.run_test][textual.app.App.run_test] to programmatically operate an app.
+
+See the guide on how to [test Textual apps](/guide/testing).
+
 """
 
 from __future__ import annotations
@@ -42,7 +45,10 @@ def _get_mouse_message_arguments(
 
 
 class WaitForScreenTimeout(Exception):
-    pass
+    """Exception raised if messages aren't being processed quickly enough.
+
+    If this occurs, the most likely explanation is some kind of deadlock in the app code.
+    """
 
 
 @rich.repr.auto(angular=True)

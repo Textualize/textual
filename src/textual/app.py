@@ -1198,6 +1198,10 @@ class App(Generic[ReturnType], DOMNode):
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing apps.
 
+        !!! tip
+
+            See the guide for [testing](/guide/testing) Textual apps.
+
         Use this to run your app in "headless" mode (no output) and drive the app via a [Pilot][textual.pilot.Pilot] object.
 
         Example:

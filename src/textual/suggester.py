@@ -1,3 +1,9 @@
+"""
+
+The `Suggester` class is used by the [Input](/widgets/input) widget.
+
+"""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
