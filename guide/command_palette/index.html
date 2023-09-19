@@ -7628,10 +7628,10 @@ This scheme allows the user to quickly get to a particular command with a minimu
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kn">from</span> <span class="nn">textual.command</span> <span class="kn">import</span> <span class="n">Hit</span><span class="p">,</span> <span class="n">Hits</span><span class="p">,</span> <span class="n">Provider</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">VerticalScroll</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="hll"><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
-</span><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="hll">
-</span><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="hll">
-</span><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="hll"><span class="k">class</span> <span class="nc">PythonFileCommands</span><span class="p">(</span><span class="n">Provider</span><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="hll"><span class="k">class</span> <span class="nc">PythonFileCommands</span><span class="p">(</span><span class="n">Provider</span><span class="p">):</span>
 </span><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="hll"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A command provider to open a Python file in the current working directory.&quot;&quot;&quot;</span>
 </span><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="hll">
 </span><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="hll">    <span class="k">def</span> <span class="nf">read_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
@@ -7657,10 +7657,10 @@ This scheme allows the user to quickly get to a particular command with a minimu
 </span><a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="hll">                <span class="k">yield</span> <span class="n">Hit</span><span class="p">(</span>
 </span><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="hll">                    <span class="n">score</span><span class="p">,</span>
 </span><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="hll">                    <span class="n">matcher</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>  <span class="c1"># (5)!</span>
-</span><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>                    <span class="n">partial</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">open_file</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Open this file in the viewer&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>                <span class="p">)</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>
+</span><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="hll">                    <span class="n">partial</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">open_file</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span>
+</span><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="hll">                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Open this file in the viewer&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="hll">                <span class="p">)</span>
+</span><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>
 <a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>
 <a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="hll"><span class="k">class</span> <span class="nc">ViewerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 </span><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Demonstrate a command source.&quot;&quot;&quot;</span>
