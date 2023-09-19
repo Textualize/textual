@@ -1,7 +1,7 @@
 """
 Fuzzy matcher.
 
-This class is used by the [command palette](guide/command) to match search terms.
+This class is used by the [command palette](guide/command_palette) to match search terms.
 
 """
 

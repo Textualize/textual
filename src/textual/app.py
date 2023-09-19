@@ -329,7 +329,7 @@ class App(Generic[ReturnType], DOMNode):
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
     COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
-    """Command providers used by the [command palette](/guide/command).
+    """Command providers used by the [command palette](/guide/command_palette).
 
     Should be a set of [command.Provider][textual.command.Provider] classes.
     """
