@@ -153,19 +153,6 @@ Before building this widget, I was oblivious as to how we might approach syntax 
 Without tree-sitter's incremental parsing approach, I'm not sure reasonable performance would have
 been feasible.
 
-## The blurry line between "text area" and "VSCode in the terminal"
-
-The nature of a project like this is that there's no finish line.
-There are always new features, optimisations, and refactors waiting to be made.
-So where do we draw the line?
-
-We want to provide a widget which can act as both a basic multiline text area that
-anyone can drop into their app, yet powerful and extensible enough to act as the foundation
-for a text editor.
-
-Is there a point at which a "text area" becomes a "code editor"?
-Are they different names for the same thing?
-
 ## Edits are replacements
 
 All single-cursor edits can be distilled into a single behaviour: `replace_range`.
@@ -180,3 +167,18 @@ We can use this one method to easily implement deletion, insertion, and replacem
 
 This greatly simplified my initial approach, which involved unique implementations for inserting and
 deleting.
+
+
+## The line between "text area" and "VSCode in the terminal"
+
+A project like this has no clear finish line.
+There are always new features, optimisations, and refactors waiting to be made.
+
+So where do we draw the line?
+
+We want to provide a widget which can act as both a basic multiline text area that
+anyone can drop into their app, yet powerful and extensible enough to act as the foundation
+for a Textual-powered text editor.
+
+Yet, the more features we add, the more opinionated the widget becomes, and the less that users
+will feel like they can build it into their _own_ thing.
