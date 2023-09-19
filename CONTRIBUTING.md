@@ -7,10 +7,9 @@ First of all, thanks for taking the time to contribute to Textual!
 You can contribute to Textual in many ways:
 
  1. [Report a bug](https://github.com/textualize/textual/issues/new?title=%5BBUG%5D%20short%20bug%20description&template=bug_report.md)
- 2. Propose a new feature
- 3. Work on a previously opened issue
+ 2. Add a new feature
+ 3. Fix a bug
  4. Improve the documentation
- 5. Talk/write about Textual online
 
 
 ## Setup
