@@ -19,8 +19,7 @@ High-level features we plan on implementing.
     * [x] Monochrome mode
     * [ ] High contrast theme
     * [ ] Color-blind themes
-- [X] Command interface
-    * [ ] Command menu
+- [X] Command palette
     * [X] Fuzzy search
 - [ ] Configuration (.toml based extensible configuration format)
 - [x] Console
