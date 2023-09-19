@@ -1,4 +1,11 @@
-# Introduction
+---
+hide:
+  - toc
+  - navigation
+---
+
+
+# Welcome
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation.
 
