@@ -143,7 +143,7 @@ However, the scope in which these tuples were used was very small, and so I felt
 
 ## Syntax highlighting is very different from what I expected
 
-In order support syntax highlighting, we make use of
+In order to support syntax highlighting, we make use of
 the [tree-sitter](https://tree-sitter.github.io/tree-sitter/) library, which maintains a syntax tree
 representing the structure of our document.
 
