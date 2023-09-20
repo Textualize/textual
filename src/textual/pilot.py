@@ -16,6 +16,7 @@ import rich.repr
 from ._wait import wait_for_idle
 from .app import App, ReturnType
 from .events import Click, MouseDown, MouseMove, MouseUp
+from .geometry import Offset
 from .widget import Widget
 
 
@@ -42,6 +43,10 @@ def _get_mouse_message_arguments(
         "screen_y": click_y,
     }
     return message_arguments
+
+
+class OutOfBounds(Exception):
+    """Raised when the pilot mouse target is outside of the target widget or screen."""
 
 
 class WaitForScreenTimeout(Exception):
@@ -83,7 +88,7 @@ class Pilot(Generic[ReturnType]):
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
-    ) -> None:
+    ) -> bool:
         """Simulate clicking with the mouse.
 
         Args:
@@ -96,6 +101,9 @@ class Pilot(Generic[ReturnType]):
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
             control: Click with the control key held down.
+
+        Returns:
+            True if the click lands on the target, False otherwise.
         """
         app = self.app
         screen = app.screen
@@ -104,21 +112,41 @@ class Pilot(Generic[ReturnType]):
         else:
             target_widget = screen
 
+        if not target_widget.size.contains(*offset):
+            raise OutOfBounds(
+                f"Target size is {target_widget.size}, click offset is {offset}."
+            )
+
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
+
+        click_offset = Offset(message_arguments["x"], message_arguments["y"])
+        visible_screen_region = screen.region + screen.scroll_offset
+        if not visible_screen_region.contains(*click_offset):
+            raise OutOfBounds(
+                "Target offset is outside of currently-visible"
+                + f"screen region {visible_screen_region}."
+            )
+
+        # Figure out the widget under the click before we click because the app
+        # might react to the click and move things.
+        widget_at, _ = app.get_widget_at(*click_offset)
+
         app.post_message(MouseDown(**message_arguments))
-        await self.pause(0.1)
+        await self.pause()
         app.post_message(MouseUp(**message_arguments))
-        await self.pause(0.1)
+        await self.pause()
         app.post_message(Click(**message_arguments))
-        await self.pause(0.1)
+        await self.pause()
+
+        return selector is None or widget_at is target_widget
 
     async def hover(
         self,
         selector: type[Widget] | str | None | None = None,
         offset: tuple[int, int] = (0, 0),
-    ) -> None:
+    ) -> bool:
         """Simulate hovering with the mouse cursor.
 
         Args:
@@ -128,6 +156,9 @@ class Pilot(Generic[ReturnType]):
                 currently hidden or obscured by another widget, then the hover may
                 not land on it.
             offset: The offset to hover over within the selected widget.
+
+        Returns:
+            True if the hover lands on the target, False otherwise.
         """
         app = self.app
         screen = app.screen
@@ -136,12 +167,29 @@ class Pilot(Generic[ReturnType]):
         else:
             target_widget = screen
 
+        if not target_widget.size.contains(*offset):
+            raise OutOfBounds(
+                f"Target size is {target_widget.size}, click offset is {offset}."
+            )
+
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
+
+        click_offset = Offset(message_arguments["x"], message_arguments["y"])
+        visible_screen_region = screen.region + screen.scroll_offset
+        if not visible_screen_region.contains(*click_offset):
+            raise OutOfBounds(
+                "Target offset is outside of currently-visible"
+                + f"screen region {visible_screen_region}."
+            )
+
         await self.pause()
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
+
+        widget_at, _ = app.get_widget_at(*click_offset)
+        return selector is None or widget_at is target_widget
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
         """Wait for the current screen and its children to have processed all pending events.
