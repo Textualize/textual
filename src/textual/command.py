@@ -354,7 +354,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         color: $text-muted;
     }
 
-    App.-dark-mode CommandPalette > .command-palette--highlight {
+    CommandPalette:dark > .command-palette--highlight {
         text-style: bold;
         color: $warning;
     }
