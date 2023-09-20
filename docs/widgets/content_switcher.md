@@ -50,6 +50,18 @@ When the user presses the "Markdown" button the view is switched:
 | --------- | --------------- | ------- | ----------------------------------------------------------------------- |
 | `current` | `str` \| `None` | `None`  | The ID of the currently-visible child. `None` means nothing is visible. |
 
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
+
 
 ---
 

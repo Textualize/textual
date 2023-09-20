@@ -34,10 +34,6 @@ and directories:
     --8<-- "docs/examples/widgets/directory_tree_filtered.py"
     ~~~
 
-## Messages
-
-- [DirectoryTree.FileSelected][textual.widgets.DirectoryTree.FileSelected]
-
 ## Reactive Attributes
 
 | Name          | Type   | Default | Description                                     |
@@ -45,6 +41,14 @@ and directories:
 | `show_root`   | `bool` | `True`  | Show the root node.                             |
 | `show_guides` | `bool` | `True`  | Show guide lines between levels.                |
 | `guide_depth` | `int`  | `4`     | Amount of indentation between parent and child. |
+
+## Messages
+
+- [DirectoryTree.FileSelected][textual.widgets.DirectoryTree.FileSelected]
+
+## Bindings
+
+The directory tree widget inherits [the bindings from the tree widget][textual.widgets.Tree.BINDINGS].
 
 ## Component Classes
 

@@ -544,7 +544,19 @@ class Markdown(Widget):
         text-style: bold dim;
     }
     """
+
     COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
+    """
+    These component classes target standard inline markdown styles.
+    Changing these will potentially break the standard markdown formatting.
+
+    | Class | Description |
+    | :- | :- |
+    | `code_inline` | Target text that is styled as inline code. |
+    | `em` | Target text that is emphasized inline. |
+    | `s` | Target text that is styled inline with strykethrough. |
+    | `strong` | Target text that is styled inline with strong. |
+    """
 
     BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
 

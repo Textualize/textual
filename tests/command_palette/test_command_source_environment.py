@@ -1,30 +1,25 @@
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
-from textual.command_palette import (
-    CommandMatches,
-    CommandPalette,
-    CommandSource,
-    CommandSourceHit,
-)
+from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
 from textual.widget import Widget
 from textual.widgets import Input
 
 
-class SimpleSource(CommandSource):
+class SimpleSource(Provider):
     environment: set[tuple[App, Screen, Widget | None]] = set()
 
-    async def search(self, _: str) -> CommandMatches:
+    async def search(self, _: str) -> Hits:
         def goes_nowhere_does_nothing() -> None:
             pass
 
         SimpleSource.environment.add((self.app, self.screen, self.focused))
-        yield CommandSourceHit(1, "Hit", goes_nowhere_does_nothing, "Hit")
+        yield Hit(1, "Hit", goes_nowhere_does_nothing, "Hit")
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = {SimpleSource}
+    COMMANDS = {SimpleSource}
 
     def compose(self) -> ComposeResult:
         yield Input()

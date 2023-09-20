@@ -399,9 +399,12 @@ class DOMNode(MessagePump):
         """
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "name", self._name, None
-        yield "id", self._id, None
-        if self._classes:
+        # Being a bit defensive here to guard against errors when calling repr before initialization
+        if hasattr(self, "_name"):
+            yield "name", self._name, None
+        if hasattr(self, "_id"):
+            yield "id", self._id, None
+        if hasattr(self, "_classes") and self._classes:
             yield "classes", " ".join(self._classes)
 
     def _get_default_css(self) -> list[tuple[str, str, int]]:

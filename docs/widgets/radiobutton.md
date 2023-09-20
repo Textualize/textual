@@ -36,6 +36,10 @@ The example below shows radio buttons, used within a [`RadioSet`](./radioset.md)
 | ------- | ------ | ------- | ------------------------------ |
 | `value` | `bool` | `False` | The value of the radio button. |
 
+## Messages
+
+- [RadioButton.Changed][textual.widgets.RadioButton.Changed]
+
 ## Bindings
 
 The radio button widget defines the following bindings:
@@ -47,16 +51,12 @@ The radio button widget defines the following bindings:
 
 ## Component Classes
 
-The radio button widget provides the following component classes:
+The checkbox widget inherits the following component classes:
 
 ::: textual.widgets._toggle_button.ToggleButton.COMPONENT_CLASSES
     options:
       show_root_heading: false
       show_root_toc_entry: false
-
-## Messages
-
-- [RadioButton.Changed][textual.widgets.RadioButton.Changed]
 
 ## See Also
 
