@@ -1,24 +1,18 @@
 from textual.app import App
-from textual.command_palette import (
-    CommandList,
-    CommandMatches,
-    CommandPalette,
-    CommandSource,
-    CommandSourceHit,
-)
+from textual.command import CommandList, CommandPalette, Hit, Hits, Provider
 
 
-class SimpleSource(CommandSource):
-    async def search(self, query: str) -> CommandMatches:
+class SimpleSource(Provider):
+    async def search(self, query: str) -> Hits:
         def goes_nowhere_does_nothing() -> None:
             pass
 
         for _ in range(100):
-            yield CommandSourceHit(1, query, goes_nowhere_does_nothing, query)
+            yield Hit(1, query, goes_nowhere_does_nothing, query)
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = {SimpleSource}
+    COMMANDS = {SimpleSource}
 
     def on_mount(self) -> None:
         self.action_command_palette()

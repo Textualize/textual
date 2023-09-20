@@ -34,6 +34,16 @@ A classic checkbox control.
 ```{.textual path="docs/examples/widgets/checkbox.py"}
 ```
 
+## Collapsible
+
+Content that may be toggled on and off by clicking a title.
+
+[Collapsible reference](./widgets/collapsible.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/collapsible.py"}
+```
+
 
 ## ContentSwitcher
 

@@ -44,15 +44,19 @@ Here's another example which uses `Digits` to display the current time:
     --8<-- "docs/examples/widgets/clock.py"
     ```
 
-## Reactive attributes
+## Reactive Attributes
 
 This widget has no reactive attributes.
+
+## Messages
+
+This widget posts no messages.
 
 ## Bindings
 
 This widget has no bindings.
 
-## Component classes
+## Component Classes
 
 This widget has no component classes.
 

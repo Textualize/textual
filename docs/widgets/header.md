@@ -45,7 +45,15 @@ This example shows how to set the text in the `Header` using `App.title` and `Ap
 
 ## Messages
 
-This widget sends no messages.
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
 
 ---
 

@@ -245,7 +245,6 @@ class OptionList(ScrollView, can_focus=True):
         background: $accent 60%;
     }
     """
-    """The default styling for an `OptionList`."""
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
