@@ -115,7 +115,7 @@ performance bug.
 
 In Python, `NamedTuple`s are slow to create relative to `tuple`s, and this cost was adding up inside
 an extremely hot loop which was instantiating a large number of them.
-After the  large portion of the time during syntax highlighting was spent inside `NamedTuple.__new__`.
+pyinstrument revealed that a large portion of the time during syntax highlighting was spent inside `NamedTuple.__new__`.
 
 Here's a quick benchmark which constructs 10,000 `NamedTuple`s:
 
