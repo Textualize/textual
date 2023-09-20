@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
 - Added `cursor_type` to the `DataTable` constructor.
 - Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
+- `DataTable.add_row` accepts `height=None` to automatically compute optimal height for a row https://github.com/Textualize/textual/pull/3213
 
 ### Fixed
 

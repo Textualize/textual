@@ -1,11 +1,12 @@
 from __future__ import annotations
 
 import pytest
+from rich.panel import Panel
 from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
-from textual.app import App
+from textual.app import App, RenderableType
 from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
@@ -419,11 +420,11 @@ async def test_get_cell_coordinate_returns_coordinate():
         table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
         table.add_row("ValR3C1", "ValR3C2", "ValR3C3", key="R3")
 
-        assert table.get_cell_coordinate('R1', 'C1') == Coordinate(0, 0)
-        assert table.get_cell_coordinate('R2', 'C2') == Coordinate(1, 1)
-        assert table.get_cell_coordinate('R1', 'C3') == Coordinate(0, 2)
-        assert table.get_cell_coordinate('R3', 'C1') == Coordinate(2, 0)
-        assert table.get_cell_coordinate('R3', 'C2') == Coordinate(2, 1)
+        assert table.get_cell_coordinate("R1", "C1") == Coordinate(0, 0)
+        assert table.get_cell_coordinate("R2", "C2") == Coordinate(1, 1)
+        assert table.get_cell_coordinate("R1", "C3") == Coordinate(0, 2)
+        assert table.get_cell_coordinate("R3", "C1") == Coordinate(2, 0)
+        assert table.get_cell_coordinate("R3", "C2") == Coordinate(2, 1)
 
 
 async def test_get_cell_coordinate_invalid_row_key():
@@ -434,7 +435,7 @@ async def test_get_cell_coordinate_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate('INVALID_ROW', 'C1')
+            coordinate = table.get_cell_coordinate("INVALID_ROW", "C1")
 
 
 async def test_get_cell_coordinate_invalid_column_key():
@@ -445,7 +446,7 @@ async def test_get_cell_coordinate_invalid_column_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate('R1', 'INVALID_COLUMN')
+            coordinate = table.get_cell_coordinate("R1", "INVALID_COLUMN")
 
 
 async def test_get_cell_at_returns_value_at_cell():
@@ -531,9 +532,9 @@ async def test_get_row_index_returns_index():
         table.add_row("ValR2C1", "ValR2C2", key="R2")
         table.add_row("ValR3C1", "ValR3C2", key="R3")
 
-        assert table.get_row_index('R1') == 0
-        assert table.get_row_index('R2') == 1
-        assert table.get_row_index('R3') == 2
+        assert table.get_row_index("R1") == 0
+        assert table.get_row_index("R2") == 1
+        assert table.get_row_index("R3") == 2
 
 
 async def test_get_row_index_invalid_row_key():
@@ -544,7 +545,7 @@ async def test_get_row_index_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(RowDoesNotExist):
-            index = table.get_row_index('InvalidRow')
+            index = table.get_row_index("InvalidRow")
 
 
 async def test_get_column():
@@ -591,6 +592,7 @@ async def test_get_column_at_invalid_index(index):
         with pytest.raises(ColumnDoesNotExist):
             list(table.get_column_at(index))
 
+
 async def test_get_column_index_returns_index():
     app = DataTableApp()
     async with app.run_test():
@@ -598,12 +600,12 @@ async def test_get_column_index_returns_index():
         table.add_column("Column1", key="C1")
         table.add_column("Column2", key="C2")
         table.add_column("Column3", key="C3")
-        table.add_row("ValR1C1", "ValR1C2", "ValR1C3",  key="R1")
-        table.add_row("ValR2C1", "ValR2C2", "ValR2C3",  key="R2")
+        table.add_row("ValR1C1", "ValR1C2", "ValR1C3", key="R1")
+        table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
 
-        assert table.get_column_index('C1') == 0
-        assert table.get_column_index('C2') == 1
-        assert table.get_column_index('C3') == 2
+        assert table.get_column_index("C1") == 0
+        assert table.get_column_index("C2") == 1
+        assert table.get_column_index("C3") == 2
 
 
 async def test_get_column_index_invalid_column_key():
@@ -613,11 +615,10 @@ async def test_get_column_index_invalid_column_key():
         table.add_column("Column1", key="C1")
         table.add_column("Column2", key="C2")
         table.add_column("Column3", key="C3")
-        table.add_row("TargetValue1", "TargetValue2", "TargetValue3",  key="R1")
+        table.add_row("TargetValue1", "TargetValue2", "TargetValue3", key="R1")
 
         with pytest.raises(ColumnDoesNotExist):
-            index = table.get_column_index('InvalidCol')
-
+            index = table.get_column_index("InvalidCol")
 
 
 async def test_update_cell_cell_exists():
@@ -1161,3 +1162,43 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
         # the widget, and the hover cursor is hidden
         await pilot.hover(DataTable, offset=Offset(42, 1))
         assert not table._show_hover_cursor
+
+
+@pytest.mark.parametrize(
+    ["cell", "height"],
+    [
+        ("hey there", 1),
+        (Text("hey there"), 1),
+        (Text("long string", overflow="fold"), 2),
+        (Panel.fit("Hello\nworld"), 4),
+        ("1\n2\n3\n4\n5\n6\n7", 7),
+    ],
+)
+async def test_add_row_auto_height(cell: RenderableType, height: int):
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("C", width=10)
+        row_key = table.add_row(cell, height=None)
+        row = table.rows.get(row_key)
+        await pilot.pause()
+        assert row.height == height
+
+
+async def test_add_row_expands_column_widths():
+    """Regression test for https://github.com/Textualize/textual/issues/1026."""
+    app = DataTableApp()
+    from textual.widgets._data_table import CELL_X_PADDING
+
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("First")
+        table.add_column("Second", width=10)
+        await pilot.pause()
+        assert table.ordered_columns[0].render_width == 5 + CELL_X_PADDING
+        assert table.ordered_columns[1].render_width == 10 + CELL_X_PADDING
+
+        table.add_row("a" * 20, "a" * 20)
+        await pilot.pause()
+        assert table.ordered_columns[0].render_width == 20 + CELL_X_PADDING
+        assert table.ordered_columns[1].render_width == 10 + CELL_X_PADDING

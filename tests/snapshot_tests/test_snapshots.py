@@ -148,6 +148,18 @@ def test_datatable_add_column(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_column.py")
 
 
+def test_datatable_add_row_auto_height(snap_compare):
+    # Check that rows added with auto height computation look right.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py")
+
+
+def test_datatable_add_row_auto_height_sorted(snap_compare):
+    # Check that rows added with auto height computation look right.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py", press=["s"]
+    )
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
