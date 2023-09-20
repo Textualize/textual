@@ -280,7 +280,7 @@ our new developer has also deleted the number 4!
 You can simulate pressing keys before the snapshot is captured using the `press` parameter.
 
 ```python
-def test_calculator(snap_compare):
+def test_calculator_pressing_numbers(snap_compare):
     assert snap_compare("path/to/calculator.py", press=["1", "2", "3"])
 ```
 
