@@ -213,7 +213,7 @@ TextArea {
     Changing this value will immediately re-render the `TextArea`."""
 
     indent_width: Reactive[int] = reactive(4)
-    """The width of tabs or the number of spaces to insert on pressing the `tab` key.
+    """The width of tabs or the multiple of spaces to align to on pressing the `tab` key.
 
     If the document currently open contains tabs that are currently visible on screen,
     altering this value will immediately change the display width of the visible tabs.
@@ -916,7 +916,7 @@ TextArea {
         """Handle key presses which correspond to document inserts."""
         key = event.key
         insert_values = {
-            "tab": " " * self.indent_width if self.indent_type == "spaces" else "\t",
+            "tab": " " * self._find_columns_to_next_tab_stop(),
             "enter": "\n",
         }
         self._restart_blink()
@@ -929,6 +929,27 @@ TextArea {
             assert insert is not None
             start, end = self.selection
             self.replace(insert, start, end, maintain_selection_offset=False)
+
+    def _find_columns_to_next_tab_stop(self) -> int:
+        """Get the location of the next tab stop after the cursors position on the current line.
+
+        If the cursor is already at a tab stop, this returns the *next* tab stop location.
+
+        Returns:
+            The number of cells to the next tab stop from the current cursor column.
+        """
+        cursor_row, cursor_column = self.cursor_location
+        line_text = self.document[cursor_row]
+        indent_width = self.indent_width
+        if not line_text:
+            return indent_width
+
+        width_before_cursor = self.get_column_width(cursor_row, cursor_column)
+        spaces_to_insert = indent_width - (
+            (indent_width + width_before_cursor) % indent_width
+        )
+
+        return spaces_to_insert
 
     def get_target_document_location(self, event: MouseEvent) -> Location:
         """Given a MouseEvent, return the row and column offset of the event in document-space.
