@@ -710,3 +710,11 @@ def test_auto_grid(snap_compare) -> None:
 
 def test_auto_grid_default_height(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid_default_height.py", press=["g"])
+
+
+def test_scoped_css(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scoped_css.py")
+
+
+def test_unscoped_css(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")

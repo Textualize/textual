@@ -103,6 +103,13 @@ Here's the Hello example again, this time the widget has embedded default CSS:
     ```{.textual path="docs/examples/guide/widgets/hello04.py"}
     ```
 
+#### Scoped CSS
+
+Default CSS is *scoped* by default.
+All this means is that CSS defined in `DEFAULT_CSS` will effect the widget and potentially its children only.
+This is to prevent you from inadvertently breaking an unrelated widget.
+
+You can disabled scoped CSS by setting the class var `SCOPED_CSS` to `False`.
 
 #### Default specificity
 

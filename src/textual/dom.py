@@ -134,6 +134,7 @@ class DOMNode(MessagePump):
 
     # Indicates if the CSS should be automatically scoped
     SCOPED_CSS: ClassVar[bool] = True
+    """Should default css be limited to the widget type?"""
 
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
