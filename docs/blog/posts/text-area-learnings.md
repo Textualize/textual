@@ -74,7 +74,7 @@ Thankfully it resulted in some wonderful Tetris-esque whiteboards along the way!
 
 Sometimes stepping away from the screen and scribbling on a whiteboard with your colleagues (thanks [Dave](https://fosstodon.org/@davep)!) is what's needed to finally crack a tough problem.
 
-Many thanks to [David Brochart](https://fosstodon.org/@davidbrochart@mastodon.top) for sending me down this rabbit hole!
+Many thanks to [David Brochart](https://mastodon.top/@davidbrochart) for sending me down this rabbit hole!
 
 ## Spending a few minutes running a profiler can be really beneficial
 
