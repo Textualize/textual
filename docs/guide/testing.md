@@ -174,14 +174,14 @@ If you are interested in how we write tests, see the [tests/](https://github.com
 A _snapshot_ is a record of what an application looked like at a given point in time.
 
 _Snapshot testing_ is the process of creating a snapshot of an application while our tests run, and comparing it to a historical version.
-If there's a mismatch, a snapshot testing framework flags it for review.
+If there's a mismatch, the snapshot testing framework flags it for review.
 
 This offers a simple, automated way of checking our application displays like we expect.
 
 ### pytest-textual-snapshot
 
 You can use [`pytest-textual-snapshot`](https://github.com/Textualize/pytest-textual-snapshot) to snapshot test your Textual app.
-This is a plugin for pytest which adds support for snapshot testing Textual apps, and it's maintain by the developers of Textual.
+This is a plugin for pytest which adds support for snapshot testing Textual apps, and it's maintained by the developers of Textual.
 
 A test using this package saves a snapshot (in this case, an SVG screenshot) of a running Textual app to disk.
 The next time the test runs, it takes another snapshot and compares it to the previously saved one.
