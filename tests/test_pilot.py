@@ -5,6 +5,7 @@ import pytest
 from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
+from textual.pilot import OutOfBounds
 from textual.widgets import Label
 
 KEY_CHARACTERS_TO_TEST = "akTW03" + punctuation
@@ -52,3 +53,63 @@ async def test_pilot_exception_catching_action():
     with pytest.raises(ZeroDivisionError):
         async with FailingApp().run_test() as pilot:
             await pilot.press("b")
+
+
+@pytest.mark.parametrize(
+    ["screen_size", "offset"],
+    [
+        # Screen size is 80 x 24.
+        ((80, 24), (100, 12)),  # Right of screen.
+        ((80, 24), (100, 36)),  # Bottom-right of screen.
+        ((80, 24), (50, 36)),  # Under screen.
+        ((80, 24), (-10, 36)),  # Bottom-left of screen.
+        ((80, 24), (-10, 12)),  # Left of screen.
+        ((80, 24), (-10, -2)),  # Top-left of screen.
+        ((80, 24), (50, -2)),  # Above screen.
+        ((80, 24), (100, -2)),  # Top-right of screen.
+        # Screen size is 5 x 5.
+        ((5, 5), (7, 3)),  # Right of screen.
+        ((5, 5), (7, 7)),  # Bottom-right of screen.
+        ((5, 5), (3, 7)),  # Under screen.
+        ((5, 5), (-1, 7)),  # Bottom-left of screen.
+        ((5, 5), (-1, 3)),  # Left of screen.
+        ((5, 5), (-1, -1)),  # Top-left of screen.
+        ((5, 5), (3, -1)),  # Above screen.
+        ((5, 5), (7, -1)),  # Top-right of screen.
+    ],
+)
+async def test_pilot_click_outside_screen_errors(screen_size, offset):
+    app = App()
+    async with app.run_test(size=screen_size) as pilot:
+        with pytest.raises(OutOfBounds):
+            await pilot.click(offset=offset)
+
+
+@pytest.mark.parametrize(
+    ["screen_size", "offset"],
+    [
+        # Screen size is 80 x 24.
+        ((80, 24), (100, 12)),  # Right of screen.
+        ((80, 24), (100, 36)),  # Bottom-right of screen.
+        ((80, 24), (50, 36)),  # Under screen.
+        ((80, 24), (-10, 36)),  # Bottom-left of screen.
+        ((80, 24), (-10, 12)),  # Left of screen.
+        ((80, 24), (-10, -2)),  # Top-left of screen.
+        ((80, 24), (50, -2)),  # Above screen.
+        ((80, 24), (100, -2)),  # Top-right of screen.
+        # Screen size is 5 x 5.
+        ((5, 5), (7, 3)),  # Right of screen.
+        ((5, 5), (7, 7)),  # Bottom-right of screen.
+        ((5, 5), (3, 7)),  # Under screen.
+        ((5, 5), (-1, 7)),  # Bottom-left of screen.
+        ((5, 5), (-1, 3)),  # Left of screen.
+        ((5, 5), (-1, -1)),  # Top-left of screen.
+        ((5, 5), (3, -1)),  # Above screen.
+        ((5, 5), (7, -1)),  # Top-right of screen.
+    ],
+)
+async def test_pilot_hover_outside_screen_errors(screen_size, offset):
+    app = App()
+    async with app.run_test(size=screen_size) as pilot:
+        with pytest.raises(OutOfBounds):
+            await pilot.hover(offset=offset)
