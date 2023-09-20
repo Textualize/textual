@@ -9,6 +9,7 @@ from ._types import (
     CallbackType,
     IgnoreReturnCallbackType,
     MessageTarget,
+    UnusedParameter,
     WatchCallbackType,
 )
 from .actions import ActionParseResult
@@ -29,5 +30,6 @@ __all__ = [
     "MessageTarget",
     "NoActiveAppError",
     "RenderStyles",
+    "UnusedParameter",
     "WatchCallbackType",
 ]

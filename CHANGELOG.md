@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
 - App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
 - `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided https://github.com/Textualize/textual/pull/3244
+- `ProgressBar` explicitly supports being set back to its indeterminate state https://github.com/Textualize/textual/pull/3286
 
 ## [0.36.0] - 2023-09-05
 
