@@ -14,7 +14,7 @@ It provides a multi-line space to edit text, and features optional syntax highli
 
 ![text-area-welcome.gif](../images/text-area-learnings/text-area-welcome.gif)
 
-Adding a `TextArea` to your Textual app is as simple adding this to your `compose` method:
+Adding a `TextArea` to your Textual app is as simple as adding this to your `compose` method:
 
 ```python
 yield TextArea()
