@@ -9,8 +9,29 @@ authors:
 
 # Things I learned while building Textual's TextArea
 
-Working on the `TextArea` widget for Textual taught me that there are many subtle features in my
-text editor that I'd been taking for granted.
+`TextArea` is the latest widget to be added to Textual's [growing collection](https://textual.textualize.io/widget_gallery/).
+It provides a multi-line space to edit text, and features optional syntax highlighting for a selection of languages.
+
+![text-area-welcome.gif](../images/text-area-learnings/text-area-welcome.gif)
+
+Adding a `TextArea` to your Textual app is as simple adding this to your `compose` method:
+
+```python
+yield TextArea()
+```
+
+Enabling syntax highlighting for a language is as simple as:
+
+```python
+yield TextArea(language="python")
+```
+
+Working on the `TextArea` widget for Textual taught me a lot about Python and my general
+approach to software engineering. It gave me an appreciation for the subtle functionality behind
+the editors we use on a daily basis — features we may not even notice, despite
+some engineer spending hours perfecting it to provide a small boost to our development experience.
+
+This post is a tour of some of these learnings.
 
 <!-- more -->
 
@@ -182,3 +203,8 @@ for a Textual-powered text editor.
 
 Yet, the more features we add, the more opinionated the widget becomes, and the less that users
 will feel like they can build it into their _own_ thing.
+Finding the sweet spot between feature-rich and flexible is no easy task.
+
+I don't think the answer is clear, and I don't believe it's possible to please everyone.
+
+Regardless, I'm happy with where we've landed, and I'm really excited to see what people build using `TextArea` in the future!
