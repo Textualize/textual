@@ -218,12 +218,12 @@ Let's run the test as normal using `pytest`.
 pytest
 ```
 
-When this test runs for the first time, an SVG screenshot of the calculator app is generated, and your test will fail.
+When this test runs for the first time, an SVG screenshot of the calculator app is generated, and the test will fail.
 Snapshot tests always fail on the first run, since there's no previous version to compare the snapshot to.
 
 ![snapshot_report_console_output.png](../images/testing/snapshot_report_console_output.png)
 
-If you open the report in your browser, you'll see a "snapshot report", which looks like this:
+If you open the snapshot report in your browser, you'll see something like this:
 
 ![snapshot_report_example.png](../images/testing/snapshot_report_example.png)
 
