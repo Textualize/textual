@@ -251,7 +251,7 @@ This immediately updates the appearance of the `TextArea`:
 
 The character(s) inserted when you press tab is controlled by setting the `indent_type` attribute to either `tabs` or `spaces`.
 
-If `indent_type == "spaces"`, pressing ++tab++ will insert `indent_width` spaces.
+If `indent_type == "spaces"`, pressing ++tab++ will insert up to `indent_width` spaces in order to align with the next tab stop.
 
 ### Line separators
 

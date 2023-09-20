@@ -50,6 +50,35 @@ async def test_single_keypress_enter():
         assert text_area.text == "\n" + TEXT
 
 
+@pytest.mark.parametrize(
+    "content,cursor_column,cursor_destination",
+    [
+        ("", 0, 4),
+        ("x", 0, 4),
+        ("x", 1, 4),
+        ("xxx", 3, 4),
+        ("xxxx", 4, 8),
+        ("xxxxx", 5, 8),
+        ("xxxxxx", 6, 8),
+        ("💩", 1, 3),
+        ("💩💩", 2, 6),
+    ],
+)
+async def test_tab_with_spaces_goes_to_tab_stop(
+    content, cursor_column, cursor_destination
+):
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.indent_width = 4
+        text_area.load_text(content)
+        text_area.cursor_location = (0, cursor_column)
+
+        await pilot.press("tab")
+
+        assert text_area.cursor_location[1] == cursor_destination
+
+
 async def test_delete_left():
     app = TextAreaApp()
     async with app.run_test() as pilot:
