@@ -148,6 +148,18 @@ def test_datatable_add_column(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_column.py")
 
 
+def test_datatable_add_row_auto_height(snap_compare):
+    # Check that rows added with auto height computation look right.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py")
+
+
+def test_datatable_add_row_auto_height_sorted(snap_compare):
+    # Check that rows added with auto height computation look right.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py", press=["s"]
+    )
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
@@ -508,6 +520,20 @@ def test_css_hot_reloading(snap_compare):
 
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "hot_reloading_app.py", run_before=run_before
+    )
+
+
+def test_datatable_hot_reloading(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3312."""
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "datatable_hot_reloading.py", run_before=run_before
     )
 
 

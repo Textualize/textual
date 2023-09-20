@@ -1,6 +1,6 @@
 nav:
+  - "index.md"
   - Introduction:
-      - "index.md"
       - "getting_started.md"
       - "help.md"
   - "tutorial.md"

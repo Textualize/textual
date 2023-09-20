@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `DataTable.update_cell` not raising an error with an invalid column key.
+- Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
+- Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
 
 ## [0.37.1] - 2023-09-16
 
@@ -18,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
 - Fixed `Input` event leakage from `CommandPalette` to `App`.
 
-## [0.36.0] - 2023-09-15
+## [0.37.0] - 2023-09-15
 
 ### Added
 
@@ -46,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
 - App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
 - `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided https://github.com/Textualize/textual/pull/3244
+- `ProgressBar` explicitly supports being set back to its indeterminate state https://github.com/Textualize/textual/pull/3286
 
 ## [0.36.0] - 2023-09-05
 
@@ -63,6 +65,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
 - Added `cursor_type` to the `DataTable` constructor.
 - Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
+- `DataTable.add_row` accepts `height=None` to automatically compute optimal height for a row https://github.com/Textualize/textual/pull/3213
 
 ### Fixed
 

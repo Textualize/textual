@@ -88,7 +88,7 @@ as seen for `Palindrome` in the example above.
 
 ## Bindings
 
-The Input widget defines the following bindings:
+The input widget defines the following bindings:
 
 ::: textual.widgets.Input.BINDINGS
     options:

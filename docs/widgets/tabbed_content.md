@@ -94,7 +94,7 @@ The following example contains a `TabbedContent` with three tabs.
     --8<-- "docs/examples/widgets/tabbed_content.py"
     ```
 
-## Reactive attributes
+## Reactive Attributes
 
 | Name     | Type  | Default | Description                                                    |
 | -------- | ----- | ------- | -------------------------------------------------------------- |
@@ -104,6 +104,14 @@ The following example contains a `TabbedContent` with three tabs.
 ## Messages
 
 - [TabbedContent.TabActivated][textual.widgets.TabbedContent.TabActivated]
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
 
 ## See also
 
