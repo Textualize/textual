@@ -16,6 +16,7 @@ class BaseScreen(Screen):
 
 
 class ScreenWithCSS(Screen):
+    SCOPED_CSS = False
     CSS = """
     #screen-css {
         background: #ff0000;

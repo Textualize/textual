@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
 
+### Changed
+
+- Added :dark and :light pseudo classes
+- Breaking change: CSS in DEFAULT_CSS is now automatically scoped to the widget (set SCOPED_CSS=False) to disable
+
 ## [0.37.1] - 2023-09-16
 
 ### Fixed

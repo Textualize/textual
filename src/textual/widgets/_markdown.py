@@ -223,6 +223,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 class MarkdownParagraph(MarkdownBlock):
     """A paragraph Markdown block."""
 
+    SCOPED_CSS = False
     DEFAULT_CSS = """
     Markdown > MarkdownParagraph {
          margin: 0 0 1 0;
@@ -949,6 +950,8 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
 
 class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     """A Markdown viewer widget."""
+
+    SCOPED_CSS = False
 
     DEFAULT_CSS = """
     MarkdownViewer {
