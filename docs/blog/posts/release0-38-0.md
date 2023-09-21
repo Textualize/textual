@@ -11,7 +11,6 @@ authors:
 # Textual 0.38.0 adds a syntax aware TextArea
 
 The is the second big feature release this month after last week's [command palette](./release0.37.0.md).
-We are really excited about this one!
 
 <!-- more -->
 
@@ -19,8 +18,6 @@ The [TextArea](/docs/widgets/text_area.md) has finally landed.
 I know a lot of folk have been waiting for this one.
 Textual's TextArea is a fully-featured widget for editing code, with syntax highlighting and line numbers.
 It is highlight configurable, and looks great.
-
-I am personally excited to see what people will build with it!
 
 Darren Burns (the author of this widget) has penned a terrific write-up on the TextArea.
 See [Things I learned while building Textual's TextArea](./text-area-learnings.md) for some of the challenges he faced.
