@@ -1154,6 +1154,17 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#scoped-css" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoped CSS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#default-specificity" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -4736,6 +4747,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -5603,6 +5616,32 @@
     
   
     Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/text_area/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    TextArea
   
 
     
@@ -7163,13 +7202,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/news/" class="md-nav__link">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    News
+    DevLog
   
 
     
@@ -7189,13 +7228,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../blog/category/news/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    DevLog
+    News
   
 
     
@@ -7295,6 +7334,17 @@
   
     <nav class="md-nav" aria-label="Default CSS">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scoped-css" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Scoped CSS
+      
+    </span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#default-specificity" class="md-nav__link">
@@ -8441,6 +8491,11 @@
 </div>
 </div>
 </div>
+<h4 id="scoped-css">Scoped CSS<a class="headerlink" href="#scoped-css" title="Permanent link">&para;</a></h4>
+<p>Default CSS is <em>scoped</em> by default.
+All this means is that CSS defined in <code>DEFAULT_CSS</code> will affect the widget and potentially its children only.
+This is to prevent you from inadvertently breaking an unrelated widget.</p>
+<p>You can disabled scoped CSS by setting the class var <code>SCOPED_CSS</code> to <code>False</code>.</p>
 <h4 id="default-specificity">Default specificity<a class="headerlink" href="#default-specificity" title="Permanent link">&para;</a></h4>
 <p>CSS defined within <code>DEFAULT_CSS</code> has an automatically lower <a href="../CSS/#specificity">specificity</a> than CSS read from either the App's <code>CSS</code> class variable or an external stylesheet. In practice this means that your app's CSS will take precedence over any CSS bundled with widgets.</p>
 <h2 id="text-links">Text links<a class="headerlink" href="#text-links" title="Permanent link">&para;</a></h2>

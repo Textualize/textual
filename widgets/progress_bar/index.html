@@ -4370,6 +4370,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
@@ -5521,6 +5523,32 @@
     
   
     Tabs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../text_area/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    TextArea
   
 
     
@@ -7081,13 +7109,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/news/" class="md-nav__link">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    News
+    DevLog
   
 
     
@@ -7107,13 +7135,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../blog/category/news/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    DevLog
+    News
   
 
     
@@ -9328,8 +9356,8 @@ bar in its different states.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._progress_bar.ProgressBar.percentage" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9365,8 +9393,8 @@ bar in its different states.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._progress_bar.ProgressBar.progress" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9389,8 +9417,8 @@ bar in its different states.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._progress_bar.ProgressBar.total" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9400,8 +9428,7 @@ bar in its different states.</p>
   <div class="doc doc-contents ">
   
       <p>The total number of steps associated with this progress bar, when known.</p>
-<p>The value <code>None</code> will render an indeterminate progress bar.
-Once <code>total</code> is set to a numerical value, it cannot be set back to <code>None</code>.</p>
+<p>The value <code>None</code> will render an indeterminate progress bar.</p>
   </div>
 
 </div>
@@ -9496,19 +9523,20 @@ Once <code>total</code> is set to a numerical value, it cannot be set back to <c
   </span>
 
 <a href="#textual.widgets._progress_bar.ProgressBar.update" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">advance</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">UNUSED</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">UNUSED</span><span class="p">,</span> <span class="n">advance</span><span class="o">=</span><span class="n">UNUSED</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Update the progress bar with the given options.</p>
-<p>Options only affect the progress bar if they are not <code>None</code>.</p>
 
 <details class="example" open>
   <summary>Example</summary>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">total</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>  <span class="c1"># Set new total to 200 steps.</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">progress</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># This has no effect.</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">progress</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># Set the progress to 50 (out of 200).</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span>
 </code></pre></div>
 </details>
@@ -9526,31 +9554,31 @@ Once <code>total</code> is set to a numerical value, it cannot be set back to <c
         <tr>
           <td><code>total</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+                <code>None | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | <a class="autorefs autorefs-internal" title="textual._types.UnusedParameter" href="../../api/types/#textual.types.UnusedParameter">UnusedParameter</a></code>
           </td>
-          <td><p>New total number of steps (if not <code>None</code>).</p></td>
+          <td><p>New total number of steps.</p></td>
           <td>
-                <code>None</code>
+                <code>UNUSED</code>
           </td>
         </tr>
         <tr>
           <td><code>progress</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | <a class="autorefs autorefs-internal" title="textual._types.UnusedParameter" href="../../api/types/#textual.types.UnusedParameter">UnusedParameter</a></code>
           </td>
-          <td><p>Set the progress to the given number of steps (if not <code>None</code>).</p></td>
+          <td><p>Set the progress to the given number of steps.</p></td>
           <td>
-                <code>None</code>
+                <code>UNUSED</code>
           </td>
         </tr>
         <tr>
           <td><code>advance</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | <a class="autorefs autorefs-internal" title="textual._types.UnusedParameter" href="../../api/types/#textual.types.UnusedParameter">UnusedParameter</a></code>
           </td>
-          <td><p>Advance the progress by this number of steps (if not <code>None</code>).</p></td>
+          <td><p>Advance the progress by this number of steps.</p></td>
           <td>
-                <code>None</code>
+                <code>UNUSED</code>
           </td>
         </tr>
     </tbody>

@@ -4366,6 +4366,8 @@
       
         
       
+        
+      
     
     
     <li class="md-nav__item md-nav__item--nested">
@@ -5252,6 +5254,32 @@
   
   
     <li class="md-nav__item">
+      <a href="../../widgets/text_area/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    
+  
+    TextArea
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../widgets/tree/" class="md-nav__link">
         
   
@@ -6042,6 +6070,17 @@
     <span class="md-ellipsis">
       
         get_content_offset()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.get_content_offset_capture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_content_offset_capture()
       
     </span>
   </a>
@@ -7356,13 +7395,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/news/" class="md-nav__link">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    News
+    DevLog
   
 
     
@@ -7382,13 +7421,13 @@
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../blog/category/news/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    DevLog
+    News
   
 
     
@@ -7795,6 +7834,17 @@
     <span class="md-ellipsis">
       
         get_content_offset()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.events.MouseEvent.get_content_offset_capture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        get_content_offset_capture()
       
     </span>
   </a>
@@ -9287,6 +9337,72 @@ configuration and binding keys.</p>
         <tr>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a> | None</code>
+          </td>
+          <td><p>An offset where the origin is at the top left of the content area.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.events.MouseEvent.get_content_offset_capture" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_content_offset_capture</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.events.MouseEvent.get_content_offset_capture" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_content_offset_capture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get offset from a widget's content area.</p>
+<p>This method works even if the offset is outside the widget content region.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>widget</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Widget receiving the event.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
           </td>
           <td><p>An offset where the origin is at the top left of the content area.</p></td>
         </tr>
