@@ -10,7 +10,7 @@ authors:
 
 # Textual 0.38.0 adds a syntax aware TextArea
 
-The is the second big feature release this month after last week's [command palette](./release0.37.0.md).
+This is the second big feature release this month after last week's [command palette](./release0.37.0.md).
 
 <!-- more -->
 
@@ -58,7 +58,7 @@ If you do want to style something outside of the widget you can set `SCOPED_CSS=
 ## Light and Dark pseudo selectors
 
 We've also made a slight quality of life improvement to the CSS, by adding `:light` and `:dark` pseudo selectors.
-This allows you to change styles depending on wether you have dark mode enabled or not.
+This allows you to change styles depending on whether you have dark mode enabled or not.
 
 This was possible before, just a little verbose.
 Here's how you would do it in 0.37.0:
@@ -69,7 +69,7 @@ App.-dark-mode MyWidget Label {
 }
 ```
 
-In 0.38.0 its a little more concise and readable:
+In 0.38.0 it's a little more concise and readable:
 
 ```css
 MyWidget:dark Label {
