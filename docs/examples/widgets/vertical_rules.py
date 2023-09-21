@@ -1,6 +1,6 @@
 from textual.app import App, ComposeResult
-from textual.widgets import Rule, Label
 from textual.containers import Horizontal
+from textual.widgets import Label, Rule
 
 
 class VerticalRulesApp(App):

@@ -281,7 +281,7 @@ Displays simple static content. Typically used as a base class.
 
 ## Switch
 
-A on / off control, inspired by toggle buttons.
+An on / off control, inspired by toggle buttons.
 
 [Switch reference](./widgets/switch.md){ .md-button .md-button--primary }
 
@@ -307,6 +307,14 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
+## TextArea
+
+A multi-line text area which supports syntax highlighting various languages.
+
+[TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/text_area.py" columns="42" lines="8"}
+```
 
 ## Tree
 

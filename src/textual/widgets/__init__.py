@@ -41,6 +41,7 @@ if typing.TYPE_CHECKING:
     from ._switch import Switch
     from ._tabbed_content import TabbedContent, TabPane
     from ._tabs import Tab, Tabs
+    from ._text_area import TextArea
     from ._tooltip import Tooltip
     from ._tree import Tree
     from ._welcome import Welcome
@@ -79,6 +80,7 @@ __all__ = [
     "TabbedContent",
     "TabPane",
     "Tabs",
+    "TextArea",
     "RichLog",
     "Tooltip",
     "Tree",
