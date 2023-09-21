@@ -7072,7 +7072,7 @@
 
 
 <h1 id="textual-0380-adds-a-syntax-aware-textarea">Textual 0.38.0 adds a syntax aware TextArea<a class="headerlink" href="#textual-0380-adds-a-syntax-aware-textarea" title="Permanent link">&para;</a></h1>
-<p>The is the second big feature release this month after last week's <a href="../../15/textual-0370-adds-a-command-palette/">command palette</a>.</p>
+<p>This is the second big feature release this month after last week's <a href="../../15/textual-0370-adds-a-command-palette/">command palette</a>.</p>
 <!-- more -->
 
 <p>The <a href="../../../../../widgets/text_area/">TextArea</a> has finally landed.
@@ -7107,14 +7107,14 @@ This is almost always what you want, which is why it is enabled by default.
 If you do want to style something outside of the widget you can set <code>SCOPED_CSS=False</code> (as a classvar).</p>
 <h2 id="light-and-dark-pseudo-selectors">Light and Dark pseudo selectors<a class="headerlink" href="#light-and-dark-pseudo-selectors" title="Permanent link">&para;</a></h2>
 <p>We've also made a slight quality of life improvement to the CSS, by adding <code>:light</code> and <code>:dark</code> pseudo selectors.
-This allows you to change styles depending on wether you have dark mode enabled or not.</p>
+This allows you to change styles depending on whether you have dark mode enabled or not.</p>
 <p>This was possible before, just a little verbose.
 Here's how you would do it in 0.37.0:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">App</span><span class="p">.</span><span class="nc">-dark-mode</span><span class="w"> </span><span class="nt">MyWidget</span><span class="w"> </span><span class="nt">Label</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="err">...</span>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="p">}</span>
 </code></pre></div>
-<p>In 0.38.0 its a little more concise and readable:</p>
+<p>In 0.38.0 it's a little more concise and readable:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">MyWidget</span><span class="p">:</span><span class="nd">dark</span><span class="w"> </span><span class="nt">Label</span><span class="w"> </span><span class="p">{</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="err">...</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">}</span>
