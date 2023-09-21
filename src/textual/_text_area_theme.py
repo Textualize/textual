@@ -45,7 +45,7 @@ class TextAreaTheme:
     """The style of the gutter. If `None`, a legible TextAreaStyle will be generated."""
 
     cursor_style: Style | None = None
-    """The style of the cursor. If `None`, the legible TextAreaStyle will be generated."""
+    """The style of the cursor. If `None`, a legible TextAreaStyle will be generated."""
 
     cursor_line_style: Style | None = None
     """The style to apply to the line the cursor is on."""
