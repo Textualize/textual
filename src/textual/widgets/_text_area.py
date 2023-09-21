@@ -192,13 +192,13 @@ TextArea {
     If the value is a string, a built-in language parser will be used if available.
 
     If you wish to use an unsupported language, you'll have to register
-    it first using `register_language`.
+    it first using  [`TextArea.register_language`][textual.widgets._text_area.TextArea.register_language].
     """
 
     theme: Reactive[str | None] = reactive(None, always_update=True, init=False)
     """The name of the theme to use.
 
-    Themes must be registered using `register_theme` before they can be used.
+    Themes must be registered using  [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme] before they can be used.
 
     Syntax highlighting is only possible when the `language` attribute is set.
     """

@@ -31,7 +31,7 @@ class TextAreaTheme:
     TextAreaTheme('my_theme', syntax_styles={'heading': Style(color='cyan', bold=True)})
     ```
 
-    We can register this theme with our `TextArea` using the `register_theme` method,
+    We can register this theme with our `TextArea` using the  [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme] method,
     and headings in our markdown files will be styled bold cyan.
     """
 
@@ -42,10 +42,10 @@ class TextAreaTheme:
     """The background style of the text area. If `None` the parent style will be used."""
 
     gutter_style: Style | None = None
-    """The style of the gutter. If `None`, a legible TextAreaStyle will be generated."""
+    """The style of the gutter. If `None`, a legible Style will be generated."""
 
     cursor_style: Style | None = None
-    """The style of the cursor. If `None`, a legible TextAreaStyle will be generated."""
+    """The style of the cursor. If `None`, a legible Style will be generated."""
 
     cursor_line_style: Style | None = None
     """The style to apply to the line the cursor is on."""
