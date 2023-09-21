@@ -16,8 +16,6 @@ from textual.document._languages import BUILTIN_LANGUAGES
 class SyntaxAwareDocumentError(Exception):
     """General error raised when SyntaxAwareDocument is used incorrectly."""
 
-    pass
-
 
 class SyntaxAwareDocument(Document):
     """A wrapper around a Document which also maintains a tree-sitter syntax
