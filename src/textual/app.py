@@ -1737,7 +1737,10 @@ class App(Generic[ReturnType], DOMNode):
                 screen_css_path = f"{screen.__class__.__name__}"
             if not self.stylesheet.has_source(screen_css_path):
                 self.stylesheet.add_source(
-                    screen.CSS, path=screen_css_path, is_default_css=False
+                    screen.CSS,
+                    path=screen_css_path,
+                    is_default_css=False,
+                    scope=screen._css_type_name if screen.SCOPED_CSS else "",
                 )
                 update = True
         if update:
@@ -2053,9 +2056,13 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path:
                 self.stylesheet.read_all(self.css_path)
-            for path, css, tie_breaker in self._get_default_css():
+            for path, css, tie_breaker, scope in self._get_default_css():
                 self.stylesheet.add_source(
-                    css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                    css,
+                    path=path,
+                    is_default_css=True,
+                    tie_breaker=tie_breaker,
+                    scope=scope,
                 )
             if self.CSS:
                 try:

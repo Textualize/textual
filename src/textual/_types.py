@@ -32,6 +32,10 @@ class EventTarget(Protocol):
         ...
 
 
+class UnusedParameter:
+    """Helper type for a parameter that isn't specified in a method call."""
+
+
 SegmentLines = List[List["Segment"]]
 CallbackType = Union[Callable[[], Awaitable[None]], Callable[[], None]]
 """Type used for arbitrary callables used in callbacks."""

@@ -915,9 +915,13 @@ class Widget(DOMNode):
             app: App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker in self._get_default_css():
+        for path, css, tie_breaker, scope in self._get_default_css():
             self.app.stylesheet.add_source(
-                css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                css,
+                path=path,
+                is_default_css=True,
+                tie_breaker=tie_breaker,
+                scope=scope,
             )
 
     def _get_box_model(
@@ -2757,6 +2761,7 @@ class Widget(DOMNode):
         except NoScreen:
             pass
         else:
+            yield "dark" if self.app.dark else "light"
             if focused:
                 node = focused
                 while node is not None:
