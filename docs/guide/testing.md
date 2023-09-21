@@ -243,7 +243,7 @@ pytest --snapshot-update
     Only ever run pytest with `--snapshot-update` if you're happy with how the output looks
     on the left hand side of the snapshot report. When using `--snapshot-update`, you're saying "I'm happy with all of the
     screenshots in the snapshot test report, and they will now represent the ground truth which all future runs will be compared
-    against".
+    against". As such, you should only run `pytest --snapshot-update` _after_ running `pytest` and confirming the output looks good.
 
 Now that our snapshot is saved, if we run `pytest` (with no arguments) again, the test will pass.
 This is because the screenshot taken during this test run matches the one we saved earlier.
