@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- Added an option to strip spaces from checked string to the Length validator https://github.com/Textualize/textual/issues/3366
+
+
 ## [0.38.0] - 2023-09-21
 
 ### Added
