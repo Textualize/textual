@@ -815,7 +815,7 @@ async def test_hover_mouse_leave():
         await pilot.hover(DataTable, offset=Offset(1, 1))
         assert table._show_hover_cursor
         # Move our cursor away from the DataTable, and the hover cursor is hidden
-        await pilot.hover(DataTable, offset=Offset(-1, -1))
+        await pilot.hover(DataTable, offset=Offset(20, 20))
         assert not table._show_hover_cursor
 
 
