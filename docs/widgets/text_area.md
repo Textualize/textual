@@ -59,8 +59,7 @@ In all cases, when multiple lines of text are retrieved, the [document line sepa
 The content of the `TextArea` can be updated using the [`replace`][textual.widgets._text_area.TextArea.replace] method.
 This method is the programmatic equivalent of selecting some text and then pasting.
 
-All atomic (single-cursor) edits can be represented by a `replace` operation, but for
-convenience, some other utility methods are provided, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
+Some other convenient methods are available, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
 
 ### Working with the cursor
 
