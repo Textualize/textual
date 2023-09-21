@@ -44,7 +44,7 @@ from textual.strip import Strip
 
 _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
 _CLOSING_BRACKETS = {v: k for k, v in _OPENING_BRACKETS.items()}
-_TREE_SITTER_PATH = Path(__file__) / "../../../../tree-sitter/"
+_TREE_SITTER_PATH = Path(__file__).parent / "../tree-sitter/"
 _HIGHLIGHTS_PATH = _TREE_SITTER_PATH / "highlights/"
 
 StartColumn = int
@@ -325,7 +325,8 @@ TextArea {
                 Path(_HIGHLIGHTS_PATH.resolve()) / f"{language_name}.scm"
             )
             highlight_query = highlight_query_path.read_text()
-        except OSError:
+        except OSError as e:
+            log.warning(f"Unable to load highlight query. {e}")
             highlight_query = ""
 
         return highlight_query

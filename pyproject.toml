@@ -26,6 +26,7 @@ classifiers = [
 ]
 include = [
     "src/textual/py.typed",
+    "tree-sitter",
     { path = "docs/examples", format = "sdist" },
     { path = "tests", format = "sdist" },
     # The reason for the slightly convoluted path specification here is that
