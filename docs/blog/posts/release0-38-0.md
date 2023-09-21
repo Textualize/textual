@@ -10,10 +10,12 @@ authors:
 
 # Textual 0.38.0 adds a syntax aware TextArea
 
-The is the second big feature release after last week's [command palette](./release0.37.0.md).
+The is the second big feature release this month after last week's [command palette](./release0.37.0.md).
 We are really excited about this one!
 
-The [TextArea](/docs/widgets/textarea.md) has finally landed.
+<!-- more -->
+
+The [TextArea](/docs/widgets/text_area.md) has finally landed.
 I know a lot of folk have been waiting for this one.
 Textual's TextArea is a fully-featured widget for editing code, with syntax highlighting and line numbers.
 It is highlight configurable, and looks great.
@@ -55,7 +57,53 @@ With version 0.38.0, the CSS is scoped so that only the widget's labels will be 
 This is almost always what you want, which is why it is enabled by default.
 If you do want to style something outside of the widget you can set `SCOPED_CSS=False` (as a classvar)
 
+
+## Light and Dark pseudo selectors
+
+We've also made a slight quality of life improvement to the CSS, by adding `:light` and `:dark` pseudo selectors.
+This allows you to change styles depending on wether you have dark mode enabled or not.
+
+This was possible before, just a little verbose.
+Here's how you would do it in 0.37.0:
+
+```css
+App.-dark-mode MyWidget Label {
+    ...
+}
+```
+
+In 0.38.0 its a little more concise and readable:
+
+```css
+MyWidget:dark Label {
+    ...
+}
+```
+
+## Testing guide
+
+Not strictly part of the release, but we've added a [guide on testing](/guide/testing) Textual apps.
+
+As you may know, we are on a mission to make TUIs a serious proposition for critical apps, which makes testing essential.
+We've extracted and documented our internal testing tools, including our snapshot tests pytest plugin [pytest-textual-snapshot](https://pypi.org/project/pytest-textual-snapshot/).
+
+This gives devs powerful tools to ensure the quality of their apps.
+Let us know your thoughts on that!
+
+## Release notes
+
 See the [release](https://github.com/Textualize/textual/releases/tag/v0.38.0) page for the full details on this release.
+
+
+## What's next?
+
+There's lots of features planned over the next few months.
+One feature I am particularly excited by is a widget to generate plots by wrapping the awesome [Plotext](https://pypi.org/project/plotext/) library.
+Check out some early work on this feature:
+
+<div class="video-wrapper">
+<iframe width="1163" height="1005" src="https://www.youtube.com/embed/A3uKzWErC8o" title="Preview of Textual Plot widget" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
 
 ## Join us
 

@@ -313,7 +313,7 @@ A multi-line text area which supports syntax highlighting various languages.
 
 [TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/text_area.py" columns="42" lines="8"}
+```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
 ```
 
 ## Tree
