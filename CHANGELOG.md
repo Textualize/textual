@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
 - Fixed `Input` event leakage from `CommandPalette` to `App`.
 
+### Changed
+
+- Breaking change: Changed `Markdown.goto_anchor` to return a boolean (if the anchor was found) instead of `None` https://github.com/Textualize/textual/pull/3334
+
 ## [0.37.0] - 2023-09-15
 
 ### Added
