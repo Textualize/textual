@@ -17,7 +17,7 @@ The is the second big feature release this month after last week's [command pale
 The [TextArea](/docs/widgets/text_area.md) has finally landed.
 I know a lot of folk have been waiting for this one.
 Textual's TextArea is a fully-featured widget for editing code, with syntax highlighting and line numbers.
-It is highlight configurable, and looks great.
+It is highly configurable, and looks great.
 
 Darren Burns (the author of this widget) has penned a terrific write-up on the TextArea.
 See [Things I learned while building Textual's TextArea](./text-area-learnings.md) for some of the challenges he faced.
@@ -52,7 +52,7 @@ This does work for the widget in question, but (prior to 0.38.0) the `Label` rul
 
 With version 0.38.0, the CSS is scoped so that only the widget's labels will be styled.
 This is almost always what you want, which is why it is enabled by default.
-If you do want to style something outside of the widget you can set `SCOPED_CSS=False` (as a classvar)
+If you do want to style something outside of the widget you can set `SCOPED_CSS=False` (as a classvar).
 
 
 ## Light and Dark pseudo selectors
