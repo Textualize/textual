@@ -136,74 +136,6 @@ async def test_pilot_target_outside_screen_errors(method, screen_size, offset):
 
 
 @pytest.mark.parametrize(
-    ["method", "offset"],
-    [
-        ("click", (20, 1)),  # Right of button.
-        ("click", (20, 5)),  # Bottom-right of button.
-        ("click", (10, 5)),  # Under button.
-        ("click", (-3, 5)),  # Bottom-left of button.
-        ("click", (-3, 2)),  # Left of button.
-        ("click", (-3, -2)),  # Top-left of button.
-        ("click", (10, -2)),  # Above button.
-        ("click", (20, -2)),  # Top-right of screen.
-        #
-        ("hover", (20, 1)),  # Right of button.
-        ("hover", (20, 5)),  # Bottom-right of button.
-        ("hover", (10, 5)),  # Under button.
-        ("hover", (-3, 5)),  # Bottom-left of button.
-        ("hover", (-3, 2)),  # Left of button.
-        ("hover", (-3, -2)),  # Top-left of button.
-        ("hover", (10, -2)),  # Above button.
-        ("hover", (20, -2)),  # Top-right of screen.
-    ],
-)
-async def test_pilot_target_outside_of_widget_but_inside_screen_errors(method, offset):
-    """This test makes sure that targeting a widget with a click that's outside of the
-    widget BUT inside the screen raises an `OutOfBounds` error.
-    """
-
-    app = CenteredButtonApp()
-    async with app.run_test(size=(80, 24)) as pilot:
-        pilot_method = getattr(pilot, method)
-        with pytest.raises(OutOfBounds):
-            await pilot_method(Button, offset=offset)
-
-
-@pytest.mark.parametrize(
-    ["method", "offset"],
-    [
-        ("click", (100, 12)),  # Right of screen.
-        ("click", (100, 36)),  # Bottom-right of screen.
-        ("click", (50, 36)),  # Under screen.
-        ("click", (-10, 36)),  # Bottom-left of screen.
-        ("click", (-10, 12)),  # Left of screen.
-        ("click", (-10, -2)),  # Top-left of screen.
-        ("click", (50, -2)),  # Above screen.
-        ("click", (100, -2)),  # Top-right of screen.
-        #
-        ("hover", (100, 12)),  # Right of screen.
-        ("hover", (100, 36)),  # Bottom-right of screen.
-        ("hover", (50, 36)),  # Under screen.
-        ("hover", (-10, 36)),  # Bottom-left of screen.
-        ("hover", (-10, 12)),  # Left of screen.
-        ("hover", (-10, -2)),  # Top-left of screen.
-        ("hover", (50, -2)),  # Above screen.
-        ("hover", (100, -2)),  # Top-right of screen.
-    ],
-)
-async def test_pilot_target_outside_of_widget_and_outside_screen_errors(method, offset):
-    """This test makes sure that targeting a widget with a click that's outside of the
-    widget AND outside the screen raises an `OutOfBounds` error.
-    """
-
-    app = CenteredButtonApp()
-    async with app.run_test(size=(80, 24)) as pilot:
-        pilot_method = getattr(pilot, method)
-        with pytest.raises(OutOfBounds):
-            await pilot_method(Button, offset=offset)
-
-
-@pytest.mark.parametrize(
     ["method", "target"],
     [
         ("click", "#label0"),
@@ -269,23 +201,21 @@ async def test_pilot_target_visible_widget(method):
 
 
 @pytest.mark.parametrize(
-    ["method", "target", "offset"],
+    ["method", "offset"],
     [
-        ("click", "#label0", (0, 0)),
-        ("click", "#label3", (0, 0)),
-        ("click", "#label5", (2, 0)),
-        ("click", None, (10, 23)),
-        ("click", None, (70, 0)),
+        ("click", (0, 0)),
+        ("click", (2, 0)),
+        ("click", (10, 23)),
+        ("click", (70, 0)),
         #
-        ("hover", "#label0", (0, 0)),
-        ("hover", "#label3", (0, 0)),
-        ("hover", "#label5", (2, 0)),
-        ("hover", None, (10, 23)),
-        ("hover", None, (70, 0)),
+        ("hover", (0, 0)),
+        ("hover", (2, 0)),
+        ("hover", (10, 23)),
+        ("hover", (70, 0)),
     ],
 )
-async def test_pilot_target_screen_always_true(method, target, offset):
+async def test_pilot_target_screen_always_true(method, offset):
     app = ManyLabelsApp()
     async with app.run_test(size=(80, 24)) as pilot:
         pilot_method = getattr(pilot, method)
-        assert (await pilot_method(target, offset=offset)) is True
+        assert (await pilot_method(offset=offset)) is True

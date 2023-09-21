@@ -89,21 +89,23 @@ class Pilot(Generic[ReturnType]):
         meta: bool = False,
         control: bool = False,
     ) -> bool:
-        """Simulate clicking with the mouse.
+        """Simulate clicking with the mouse in a given position.
 
         Args:
-            selector: The widget that should be clicked. If None, then the click
-                will occur relative to the screen. Note that this simply causes
-                a click to occur at the location of the widget. If the widget is
-                currently hidden or obscured by another widget, then the click may
-                not land on it.
-            offset: The offset to click within the selected widget.
+            selector: A selector to specify a widget that should be used as the reference
+                for the click offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to click on a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the click may not land on the widget you specified.
+            offset: The offset to click. The offset is relative to the selector provided
+                or to the screen, if no selector is provided.
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
             control: Click with the control key held down.
 
         Returns:
-            True if the click lands on the target, False otherwise.
+            True if no selector was specified or if the click landed on the selected
+                widget, False otherwise.
         """
         app = self.app
         screen = app.screen
@@ -112,31 +114,25 @@ class Pilot(Generic[ReturnType]):
         else:
             target_widget = screen
 
-        if not target_widget.size.contains(*offset):
-            raise OutOfBounds(
-                f"Target size is {target_widget.size}, click offset is {offset}."
-            )
-
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
 
         click_offset = Offset(message_arguments["x"], message_arguments["y"])
         visible_screen_region = screen.region + screen.scroll_offset
-        if not visible_screen_region.contains(*click_offset):
+        if click_offset not in visible_screen_region:
             raise OutOfBounds(
-                "Target offset is outside of currently-visible"
-                + f"screen region {visible_screen_region}."
+                "Target offset is outside of currently-visible screen region."
             )
-
-        # Figure out the widget under the click before we click because the app
-        # might react to the click and move things.
-        widget_at, _ = app.get_widget_at(*click_offset)
 
         app.post_message(MouseDown(**message_arguments))
         await self.pause()
         app.post_message(MouseUp(**message_arguments))
         await self.pause()
+
+        # Figure out the widget under the click before we click because the app
+        # might react to the click and move things.
+        widget_at, _ = app.get_widget_at(*click_offset)
         app.post_message(Click(**message_arguments))
         await self.pause()
 
@@ -150,15 +146,17 @@ class Pilot(Generic[ReturnType]):
         """Simulate hovering with the mouse cursor.
 
         Args:
-            selector: The widget that should be hovered. If None, then the click
-                will occur relative to the screen. Note that this simply causes
-                a hover to occur at the location of the widget. If the widget is
-                currently hidden or obscured by another widget, then the hover may
-                not land on it.
-            offset: The offset to hover over within the selected widget.
+            selector: A selector to specify a widget that should be used as the reference
+                for the hover offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to hover a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the hover may not land on the widget you specified.
+            offset: The offset to hover. The offset is relative to the selector provided
+                or to the screen, if no selector is provided.
 
         Returns:
-            True if the hover lands on the target, False otherwise.
+            True if no selector was specified or if the hover landed on the selected
+                widget, False otherwise.
         """
         app = self.app
         screen = app.screen
@@ -167,28 +165,22 @@ class Pilot(Generic[ReturnType]):
         else:
             target_widget = screen
 
-        if not target_widget.size.contains(*offset):
-            raise OutOfBounds(
-                f"Target size is {target_widget.size}, click offset is {offset}."
-            )
-
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
 
-        click_offset = Offset(message_arguments["x"], message_arguments["y"])
+        hover_offset = Offset(message_arguments["x"], message_arguments["y"])
         visible_screen_region = screen.region + screen.scroll_offset
-        if not visible_screen_region.contains(*click_offset):
+        if hover_offset not in visible_screen_region:
             raise OutOfBounds(
-                "Target offset is outside of currently-visible"
-                + f"screen region {visible_screen_region}."
+                "Target offset is outside of currently-visible screen region."
             )
 
         await self.pause()
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
 
-        widget_at, _ = app.get_widget_at(*click_offset)
+        widget_at, _ = app.get_widget_at(*hover_offset)
         return selector is None or widget_at is target_widget
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
