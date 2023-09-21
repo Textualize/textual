@@ -51,7 +51,7 @@ class MyWidget(Widget):
 ```
 
 The author has intended to style the labels in that widget by adding a green border.
-This does work for the widget in question, but (prior to 0.38.0) the `Label` rule would style *all* Labels &mdash; which was probably not intended.
+This does work for the widget in question, but (prior to 0.38.0) the `Label` rule would style *all* Labels (including any outside of the widget) &mdash; which was probably not intended.
 
 With version 0.38.0, the CSS is scoped so that only the widget's labels will be styled.
 This is almost always what you want, which is why it is enabled by default.
