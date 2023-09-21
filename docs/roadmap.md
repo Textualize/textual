@@ -74,8 +74,8 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [X] Spark-lines
 - [X] Switch
 - [X] Tabs
-- [ ] TextArea (multi-line input)
-    * [ ] Basic controls
+- [X] TextArea (multi-line input)
+    * [X] Basic controls
     * [ ] Indentation guides
-    * [ ] Smart features for various languages
-    * [ ] Syntax highlighting
+    * [X] Smart features for various languages
+    * [X] Syntax highlighting
