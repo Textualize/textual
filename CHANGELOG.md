@@ -7,13 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.38.0] - 2023-09-21
 
+### Added
+
+- Added a TextArea https://github.com/Textualize/textual/pull/2931
+- Added :dark and :light pseudo classes
+
 ### Fixed
 
 - Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
 
 ### Changed
 
-- Added :dark and :light pseudo classes
 - Breaking change: CSS in DEFAULT_CSS is now automatically scoped to the widget (set SCOPED_CSS=False) to disable
 
 ## [0.37.1] - 2023-09-16
