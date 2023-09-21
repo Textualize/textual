@@ -72,6 +72,14 @@ class LanguageDoesNotExist(Exception):
 
 @dataclass
 class TextAreaLanguage:
+    """A container for a language which has been registered with the TextArea.
+
+    Attributes:
+        name: The name of the language.
+        language: The tree-sitter Language.
+        highlight_query: The tree-sitter highlight query corresponding to the language, as a string.
+    """
+
     name: str
     language: "Language"
     highlight_query: str
