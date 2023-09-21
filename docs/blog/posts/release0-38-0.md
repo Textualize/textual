@@ -14,7 +14,7 @@ The is the second big feature release this month after last week's [command pale
 
 <!-- more -->
 
-The [TextArea](/docs/widgets/text_area.md) has finally landed.
+The [TextArea](../../widgets/text_area.md) has finally landed.
 I know a lot of folk have been waiting for this one.
 Textual's TextArea is a fully-featured widget for editing code, with syntax highlighting and line numbers.
 It is highly configurable, and looks great.
