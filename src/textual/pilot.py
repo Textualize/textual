@@ -46,7 +46,7 @@ def _get_mouse_message_arguments(
 
 
 class OutOfBounds(Exception):
-    """Raised when the pilot mouse target is outside of the target widget or screen."""
+    """Raised when the pilot mouse target is outside of the (visible) screen."""
 
 
 class WaitForScreenTimeout(Exception):
@@ -89,7 +89,10 @@ class Pilot(Generic[ReturnType]):
         meta: bool = False,
         control: bool = False,
     ) -> bool:
-        """Simulate clicking with the mouse in a given position.
+        """Simulate clicking with the mouse at a specified position.
+
+        The final position to be clicked is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
 
         Args:
             selector: A selector to specify a widget that should be used as the reference
@@ -102,6 +105,9 @@ class Pilot(Generic[ReturnType]):
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
             control: Click with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position to be clicked is outside of the (visible) screen.
 
         Returns:
             True if no selector was specified or if the click landed on the selected
@@ -143,7 +149,10 @@ class Pilot(Generic[ReturnType]):
         selector: type[Widget] | str | None | None = None,
         offset: tuple[int, int] = (0, 0),
     ) -> bool:
-        """Simulate hovering with the mouse cursor.
+        """Simulate hovering with the mouse cursor at a specified position.
+
+        The final position to be hovered is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
 
         Args:
             selector: A selector to specify a widget that should be used as the reference
@@ -153,6 +162,9 @@ class Pilot(Generic[ReturnType]):
                 another widget, the hover may not land on the widget you specified.
             offset: The offset to hover. The offset is relative to the selector provided
                 or to the screen, if no selector is provided.
+
+        Raises:
+            OutOfBounds: If the position to be hovered is outside of the (visible) screen.
 
         Returns:
             True if no selector was specified or if the hover landed on the selected
