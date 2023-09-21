@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.38.1] - 2023-09-21
+
+### Fixed
+
+- Hotfix - added missing highlight files in build distribution https://github.com/Textualize/textual/pull/3370
+
 ## [0.38.0] - 2023-09-21
 
 ### Added
