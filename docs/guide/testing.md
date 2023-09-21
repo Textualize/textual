@@ -134,7 +134,7 @@ await pilot.click(Button, offset(0, -1))
 ### Modifier keys
 
 You can simulate clicks in combination with modifier keys, by setting the `shift`, `meta`, or `control` parameters.
-Here's how you could simulate ctrl-clicking a widget with an id of "slider":
+Here's how you could simulate ctrl-clicking a widget with an ID of "slider":
 
 ```python
 await pilot.click("#slider", control=True)
@@ -169,11 +169,9 @@ If you are interested in how we write tests, see the [tests/](https://github.com
 
 ## Snapshot testing
 
-### What is snapshot testing?
-
 A _snapshot_ is a record of what an application looked like at a given point in time.
 
-_Snapshot testing_ is the process of creating a snapshot of an application while our tests run, and comparing it to a historical version.
+_Snapshot testing_ is the process of creating a snapshot of an application while a test runs, and comparing it to a historical version.
 If there's a mismatch, the snapshot testing framework flags it for review.
 
 This offers a simple, automated way of checking our application displays like we expect.
@@ -185,7 +183,7 @@ This is a plugin for pytest which adds support for snapshot testing Textual apps
 
 A test using this package saves a snapshot (in this case, an SVG screenshot) of a running Textual app to disk.
 The next time the test runs, it takes another snapshot and compares it to the previously saved one.
-If the snapshots differ, the test fails, and you can view side-by-side diff showing the visual change.
+If the snapshots differ, the test fails, and you can view a side-by-side diff showing the visual change.
 
 #### Installation
 
@@ -243,8 +241,9 @@ pytest --snapshot-update
 !!! warning
 
     Only ever run pytest with `--snapshot-update` if you're happy with how the output looks
-    on the left hand side of the snapshot report. When using `--snapshot-update`, you're saying "I'm happy with this
-    screenshot, and it will now represent the ground truth which all future runs of this test should be compared against".
+    on the left hand side of the snapshot report. When using `--snapshot-update`, you're saying "I'm happy with all of the
+    screenshots in the snapshot test report, and they will now represent the ground truth which all future runs will be compared
+    against".
 
 Now that our snapshot is saved, if we run `pytest` (with no arguments) again, the test will pass.
 This is because the screenshot taken during this test run matches the one we saved earlier.
@@ -286,11 +285,11 @@ def test_calculator_pressing_numbers(snap_compare):
 
 #### Changing the terminal size
 
-To capture the snapshot with a different terminal size, pass a tuple `(height, width)` as the `terminal_size` parameter.
+To capture the snapshot with a different terminal size, pass a tuple `(width, height)` as the `terminal_size` parameter.
 
 ```python
 def test_calculator(snap_compare):
-    assert snap_compare("path/to/calculator.py", terminal_size=(100, 50))
+    assert snap_compare("path/to/calculator.py", terminal_size=(50, 100))
 ```
 
 #### Running setup code
