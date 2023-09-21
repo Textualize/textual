@@ -286,7 +286,7 @@ def test_calculator_pressing_numbers(snap_compare):
 
 #### Changing the terminal size
 
-To capture the snapshot with a different terminal size, pass a tuple `(height, width)` as the `terminal_size` parameter.
+To capture the snapshot with a different terminal size, pass a tuple `(width, height)` as the `terminal_size` parameter.
 
 ```python
 def test_calculator(snap_compare):
