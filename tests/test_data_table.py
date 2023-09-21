@@ -1165,6 +1165,7 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
 
 async def test_sort_by_multiple_columns():
     """Test sorting a `DataTable` my multiple columns."""
+
     app = DataTableApp()
     async with app.run_test():
         table = app.query_one(DataTable)
@@ -1200,9 +1201,8 @@ async def test_sort_by_multiple_columns():
 async def test_sort_by_function_sum():
     """Test sorting a `DataTable` using a custom sort function."""
 
-    def custom_sort(row):
-        _, row_data = row
-        return sum(row_data.values())
+    def custom_sort(row_data):
+        return sum(row_data)
 
     row_data = (
         [1, 3, 8],  # SUM=12
@@ -1220,19 +1220,19 @@ async def test_sort_by_function_sum():
             assert table.get_row_at(i) == row
             assert sum(table.get_row_at(i)) == sum(row)
 
-        table.sort(key=custom_sort)
+        table.sort(a, b, c, key=custom_sort)
         sorted_row_data = sorted(row_data, key=sum)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
 
-        table.sort(key=custom_sort, reverse=True)
+        table.sort(a, b, c, key=custom_sort, reverse=True)
         sorted_row_data = sorted(row_data, key=sum, reverse=True)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
 
 
-async def test_sort_by_function_sum_lambda():
-    """Test sorting a `DataTable` using a custom sort lambda."""
+async def test_sort_by_lambda_function():
+    """Test sorting a `DataTable` using lambda function."""
     row_data = (
         [1, 3, 8],  # SUM=12
         [2, 9, 5],  # SUM=16
@@ -1249,12 +1249,12 @@ async def test_sort_by_function_sum_lambda():
             assert table.get_row_at(i) == row
             assert sum(table.get_row_at(i)) == sum(row)
 
-        table.sort(key=lambda row: sum(row[1].values()))
+        table.sort(a, b, c, key=lambda row_data: sum(row_data))
         sorted_row_data = sorted(row_data, key=sum)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
 
-        table.sort(key=lambda row: sum(row[1].values()), reverse=True)
+        table.sort(a, b, c, key=lambda row_data: sum(row_data), reverse=True)
         sorted_row_data = sorted(row_data, key=sum, reverse=True)
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
@@ -1267,10 +1267,8 @@ async def test_sort_by_function_date():
     Example: 26/07/23 == 2023-07-26
     """
 
-    def custom_sort(row):
-        _, row_data = row
-        result = itemgetter(birthdate)(row_data)
-        d, m, y = result.split("/")
+    def custom_sort(birthdate):
+        d, m, y = birthdate.split("/")
         return f"{y}{m}{d}"
 
     app = DataTableApp()
@@ -1284,55 +1282,20 @@ async def test_sort_by_function_date():
         assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
         assert table.get_row_at(2) == ["Jane Doe", "25/12/22"]
 
-        table.sort(key=custom_sort)
+        table.sort(birthdate, key=custom_sort)
         assert table.get_row_at(0) == ["Jane Doe", "25/12/22"]
         assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
         assert table.get_row_at(2) == ["Doug Johnson", "26/07/23"]
 
-        table.sort(key=custom_sort, reverse=True)
+        table.sort(birthdate, key=custom_sort, reverse=True)
         assert table.get_row_at(0) == ["Doug Johnson", "26/07/23"]
         assert table.get_row_at(1) == ["Albert Douglass", "16/07/23"]
         assert table.get_row_at(2) == ["Jane Doe", "25/12/22"]
 
 
-async def test_sort_by_columns_and_function():
-    """Test sorting a `DataTable` using a custom sort function and
-    only supplying data from specific columns."""
-
-    def custom_sort(nums):
-        return sum(n for n in nums)
-
-    row_data = (
-        ["A", "B", "C"],  # Column headers
-        [1, 3, 8],  # First and last columns SUM=9
-        [2, 9, 5],  # First and last columns SUM=7
-        [1, 1, 9],  # First and last columns SUM=10
-    )
-
-    app = DataTableApp()
-    async with app.run_test():
-        table = app.query_one(DataTable)
-
-        for col in row_data[0]:
-            table.add_column(col, key=col)
-        table.add_rows(row_data[1:])
-
-        table.sort("A", "C", key=custom_sort)
-        sorted_row_data = sorted(row_data[1:], key=lambda row: row[0] + row[-1])
-        for i, row in enumerate(sorted_row_data):
-            assert table.get_row_at(i) == row
-
-        table.sort("A", "C", key=custom_sort, reverse=True)
-        sorted_row_data = sorted(
-            row_data[1:], key=lambda row: row[0] + row[-1], reverse=True
-        )
-        for i, row in enumerate(sorted_row_data):
-            assert table.get_row_at(i) == row
-
-
-async def test_sort_by_multiple_columns_and_function():
-    """Test sorting a `DataTable` using a custom sort function and
-    only supplying data from specific columns."""
+async def test_sort_by_function_retuning_multiple_values():
+    """Test sorting a `DataTable` using a custom sort function
+    that returns multiple for the row to be sorted by."""
 
     def custom_sort(row_data):
         name, *scores = row_data

@@ -2108,7 +2108,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def sort(
         self,
         *columns: ColumnKey | str,
-        key: Callable | None = None,
+        key: Callable[[Any], Any] | None = None,
         reverse: bool = False,
     ) -> Self:
         """Sort the rows in the `DataTable` by one or more column keys or a
@@ -2133,14 +2133,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return result
 
         _key = key
-        if key and columns:
+        if key:
 
-            def _key(row):
-                return key(itemgetter(*columns)(row[1]))
+            def _key(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
+                _, row_data = row
+                return key(itemgetter(*columns)(row_data))
 
         ordered_rows = sorted(
             self._data.items(),
-            key=_key if _key else sort_by_column_keys,
+            key=_key if key is not None else sort_by_column_keys,
             reverse=reverse,
         )
         self._row_locations = TwoWayDict(
