@@ -30,7 +30,11 @@ widget. Notice how the `Footer` automatically displays the keybinding.
 
 ## Messages
 
-This widget sends no messages.
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
 
 ## Component Classes
 

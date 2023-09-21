@@ -329,7 +329,7 @@ class App(Generic[ReturnType], DOMNode):
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
     COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
-    """Command providers used by the [command palette](/guide/command).
+    """Command providers used by the [command palette](/guide/command_palette).
 
     Should be a set of [command.Provider][textual.command.Provider] classes.
     """
@@ -1196,9 +1196,13 @@ class App(Generic[ReturnType], DOMNode):
         notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
     ) -> AsyncGenerator[Pilot, None]:
-        """An asynchronous context manager for testing app.
+        """An asynchronous context manager for testing apps.
 
-        Use this to run your app in "headless" (no output) mode and driver the app via a [Pilot][textual.pilot.Pilot] object.
+        !!! tip
+
+            See the guide for [testing](/guide/testing) Textual apps.
+
+        Use this to run your app in "headless" mode (no output) and drive the app via a [Pilot][textual.pilot.Pilot] object.
 
         Example:
 

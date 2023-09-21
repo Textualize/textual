@@ -104,15 +104,6 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
     --8<-- "docs/examples/widgets/progress_bar_styled.tcss"
     ```
 
-## Reactive Attributes
-
-| Name         | Type    | Default | Description                                                                                             |
-| ------------ | ------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| `percentage` | `float  | None`   | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
-| `progress`   | `float` | `0`     | The number of steps of progress already made.                                                           |
-| `total`      | `float  | None`   | The total number of steps that we are keeping track of.                                                 |
-
-
 ## Styling the Progress Bar
 
 The progress bar is composed of three sub-widgets that can be styled independently:
@@ -130,8 +121,27 @@ The progress bar is composed of three sub-widgets that can be styled independent
       show_root_heading: false
       show_root_toc_entry: false
 
----
+## Reactive Attributes
 
+| Name         | Type    | Default | Description                                                                                             |
+| ------------ | ------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| `percentage` | `float  | None`   | The read-only percentage of progress that has been made. This is `None` if the `total` hasn't been set. |
+| `progress`   | `float` | `0`     | The number of steps of progress already made.                                                           |
+| `total`      | `float  | None`   | The total number of steps that we are keeping track of.                                                 |
+
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
+
+---
 
 ::: textual.widgets.ProgressBar
     options:

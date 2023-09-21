@@ -1,6 +1,9 @@
 """
 
 The pilot object is used by [App.run_test][textual.app.App.run_test] to programmatically operate an app.
+
+See the guide on how to [test Textual apps](/guide/testing).
+
 """
 
 from __future__ import annotations
@@ -13,13 +16,12 @@ import rich.repr
 from ._wait import wait_for_idle
 from .app import App, ReturnType
 from .events import Click, MouseDown, MouseMove, MouseUp
-from .geometry import Offset
 from .widget import Widget
 
 
 def _get_mouse_message_arguments(
     target: Widget,
-    offset: Offset = Offset(),
+    offset: tuple[int, int] = (0, 0),
     button: int = 0,
     shift: bool = False,
     meta: bool = False,
@@ -43,7 +45,10 @@ def _get_mouse_message_arguments(
 
 
 class WaitForScreenTimeout(Exception):
-    pass
+    """Exception raised if messages aren't being processed quickly enough.
+
+    If this occurs, the most likely explanation is some kind of deadlock in the app code.
+    """
 
 
 @rich.repr.auto(angular=True)
@@ -74,7 +79,7 @@ class Pilot(Generic[ReturnType]):
     async def click(
         self,
         selector: type[Widget] | str | None = None,
-        offset: Offset = Offset(),
+        offset: tuple[int, int] = (0, 0),
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
@@ -112,7 +117,7 @@ class Pilot(Generic[ReturnType]):
     async def hover(
         self,
         selector: type[Widget] | str | None | None = None,
-        offset: Offset = Offset(),
+        offset: tuple[int, int] = (0, 0),
     ) -> None:
         """Simulate hovering with the mouse cursor.
 

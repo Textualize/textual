@@ -37,10 +37,17 @@ The example below shows how to write text to a `Log` widget:
 | `max_lines`   | `int`  | `None`  | Maximum number of lines in the log or `None` for no maximum. |
 | `auto_scroll` | `bool` | `False` | Scroll to end of log when new lines are added.               |
 
-
 ## Messages
 
-This widget sends no messages.
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
 
 
 ---

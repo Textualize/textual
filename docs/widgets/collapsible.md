@@ -120,11 +120,28 @@ The following example shows `Collapsible` widgets with custom expand/collapse sy
     --8<-- "docs/examples/widgets/collapsible_custom_symbol.py"
     ```
 
-## Reactive attributes
+## Reactive Attributes
 
 | Name        | Type   | Default | Description                                          |
 | ----------- | ------ | ------- | ---------------------------------------------------- |
 | `collapsed` | `bool` | `True`  | Controls the collapsed/expanded state of the widget. |
+
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+The collapsible widget defines the following binding on its title:
+
+::: textual.widgets._collapsible.CollapsibleTitle.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
+## Component Classes
+
+This widget has no component classes.
 
 
 ::: textual.widgets.Collapsible

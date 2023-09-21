@@ -1,3 +1,10 @@
+"""
+Fuzzy matcher.
+
+This class is used by the [command palette](guide/command_palette) to match search terms.
+
+"""
+
 from __future__ import annotations
 
 from re import IGNORECASE, compile, escape

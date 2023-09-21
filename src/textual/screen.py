@@ -158,7 +158,7 @@ class Screen(Generic[ScreenResultType], Widget):
     """Screen title to override [the app title][textual.app.App.title]."""
 
     COMMANDS: ClassVar[set[type[Provider]]] = set()
-    """Command providers used by the [command palette](/guide/command), associated with the screen.
+    """Command providers used by the [command palette](/guide/command_palette), associated with the screen.
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
     """
