@@ -174,10 +174,10 @@ Snapshot testing is the process of recording the output of a test, and comparing
 Textual uses snapshot testing internally to ensure that the builtin widgets look and function correctly in every release.
 We've made the pytest plugin we built available for public use.
 
-The [official pytest plugin](https://github.com/Textualize/pytest-textual-snapshot) can help you catch otherwise difficult to detect visual changes in your app.
+The [official Textual pytest plugin](https://github.com/Textualize/pytest-textual-snapshot) can help you catch otherwise difficult to detect visual changes in your app.
 
 It works by generating an SVG _screenshot_ (such as the images in these docs) from your app.
-If the screenshot changes in any test run, you will will have the opertunity to visually compare the new output against previous runs.
+If the screenshot changes in any test run, you will have the opportunity to visually compare the new output against previous runs.
 
 
 ### Installing the plugin
