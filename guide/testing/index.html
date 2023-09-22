@@ -1388,22 +1388,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pytest-textual-snapshot" class="md-nav__link">
+  <a href="#installing-the-plugin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pytest-textual-snapshot
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="pytest-textual-snapshot">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Installation
+        Installing the plugin
       
     </span>
   </a>
@@ -1462,11 +1450,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -7345,22 +7328,10 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#pytest-textual-snapshot" class="md-nav__link">
+  <a href="#installing-the-plugin" class="md-nav__link">
     <span class="md-ellipsis">
       
-        pytest-textual-snapshot
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="pytest-textual-snapshot">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Installation
+        Installing the plugin
       
     </span>
   </a>
@@ -7419,11 +7390,6 @@
       
     </span>
   </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
         
@@ -7804,21 +7770,17 @@ You can also supply a <code>delay</code> parameter, which will insert a delay pr
 <p>Textual itself has a large battery of tests.
 If you are interested in how we write tests, see the <a href="https://github.com/Textualize/textual/tree/main/tests">tests/</a> directory in the Textual repository.</p>
 <h2 id="snapshot-testing">Snapshot testing<a class="headerlink" href="#snapshot-testing" title="Permanent link">&para;</a></h2>
-<p>A <em>snapshot</em> is a record of what an application looked like at a given point in time.</p>
-<p><em>Snapshot testing</em> is the process of creating a snapshot of an application while a test runs, and comparing it to a historical version.
-If there's a mismatch, the snapshot testing framework flags it for review.</p>
-<p>This offers a simple, automated way of checking our application displays like we expect.</p>
-<h3 id="pytest-textual-snapshot">pytest-textual-snapshot<a class="headerlink" href="#pytest-textual-snapshot" title="Permanent link">&para;</a></h3>
-<p>You can use <a href="https://github.com/Textualize/pytest-textual-snapshot"><code>pytest-textual-snapshot</code></a> to snapshot test your Textual app.
-This is a plugin for pytest which adds support for snapshot testing Textual apps, and it's maintained by the developers of Textual.</p>
-<p>A test using this package saves a snapshot (in this case, an SVG screenshot) of a running Textual app to disk.
-The next time the test runs, it takes another snapshot and compares it to the previously saved one.
-If the snapshots differ, the test fails, and you can view a side-by-side diff showing the visual change.</p>
-<h4 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h4>
+<p>Snapshot testing is the process of recording the output of a test, and comparing it against the output from previous runs.</p>
+<p>Textual uses snapshot testing internally to ensure that the builtin widgets look and function correctly in every release.
+We've made the pytest plugin we built available for public use.</p>
+<p>The <a href="https://github.com/Textualize/pytest-textual-snapshot">official pytest plugin</a> can help you catch otherwise difficult to detect visual changes in your app.</p>
+<p>It works by generating an SVG <em>screenshot</em> (such as the images in these docs) from your app.
+If the screenshot changes in any test run, you will will have the opertunity to visually compare the new output against previous runs.</p>
+<h3 id="installing-the-plugin">Installing the plugin<a class="headerlink" href="#installing-the-plugin" title="Permanent link">&para;</a></h3>
 <p>You can install <code>pytest-textual-snapshot</code> using your favorite package manager (<code>pip</code>, <code>poetry</code>, etc.).</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>pip install pytest-textual-snapshot
 </code></pre></div>
-<h4 id="creating-a-snapshot-test">Creating a snapshot test<a class="headerlink" href="#creating-a-snapshot-test" title="Permanent link">&para;</a></h4>
+<h3 id="creating-a-snapshot-test">Creating a snapshot test<a class="headerlink" href="#creating-a-snapshot-test" title="Permanent link">&para;</a></h3>
 <p>With the package installed, you now have access to the <code>snap_compare</code> pytest fixture.</p>
 <p>Let's look at an example of how we'd create a snapshot test for the <a href="https://github.com/Textualize/textual/blob/main/examples/calculator.py">calculator app</a> below.</p>
 <p><svg class="rich-terminal" viewBox="0 0 1238 1050.4" xmlns="http://www.w3.org/2000/svg">
@@ -8083,7 +8045,7 @@ against". As such, you should only run <code>pytest --snapshot-update</code> <em
 </div>
 <p>Now that our snapshot is saved, if we run <code>pytest</code> (with no arguments) again, the test will pass.
 This is because the screenshot taken during this test run matches the one we saved earlier.</p>
-<h4 id="catching-a-bug">Catching a bug<a class="headerlink" href="#catching-a-bug" title="Permanent link">&para;</a></h4>
+<h3 id="catching-a-bug">Catching a bug<a class="headerlink" href="#catching-a-bug" title="Permanent link">&para;</a></h3>
 <p>The real power of snapshot testing comes from its ability to catch visual regressions which could otherwise easily be missed.</p>
 <p>Imagine a new developer joins your team, and tries to make a few changes to the calculator.
 While making this change they accidentally break some styling which removes the orange coloring from the buttons on the right of the app.
@@ -8100,17 +8062,17 @@ our new developer has also deleted the number 4!</p>
 <p>Snapshot tests work well in CI on all supported operating systems, and the snapshot
 report is just an HTML file which can be exported as a build artifact.</p>
 </div>
-<h4 id="pressing-keys">Pressing keys<a class="headerlink" href="#pressing-keys" title="Permanent link">&para;</a></h4>
+<h3 id="pressing-keys">Pressing keys<a class="headerlink" href="#pressing-keys" title="Permanent link">&para;</a></h3>
 <p>You can simulate pressing keys before the snapshot is captured using the <code>press</code> parameter.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span> <span class="nf">test_calculator_pressing_numbers</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
 <a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">press</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;1&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;3&quot;</span><span class="p">])</span>
 </code></pre></div>
-<h4 id="changing-the-terminal-size">Changing the terminal size<a class="headerlink" href="#changing-the-terminal-size" title="Permanent link">&para;</a></h4>
+<h3 id="changing-the-terminal-size">Changing the terminal size<a class="headerlink" href="#changing-the-terminal-size" title="Permanent link">&para;</a></h3>
 <p>To capture the snapshot with a different terminal size, pass a tuple <code>(width, height)</code> as the <code>terminal_size</code> parameter.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="k">def</span> <span class="nf">test_calculator</span><span class="p">(</span><span class="n">snap_compare</span><span class="p">):</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="k">assert</span> <span class="n">snap_compare</span><span class="p">(</span><span class="s2">&quot;path/to/calculator.py&quot;</span><span class="p">,</span> <span class="n">terminal_size</span><span class="o">=</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
 </code></pre></div>
-<h4 id="running-setup-code">Running setup code<a class="headerlink" href="#running-setup-code" title="Permanent link">&para;</a></h4>
+<h3 id="running-setup-code">Running setup code<a class="headerlink" href="#running-setup-code" title="Permanent link">&para;</a></h3>
 <p>You can also run arbitrary code before the snapshot is captured using the <code>run_before</code> parameter.</p>
 <p>In this example, we use <code>run_before</code> to hover the mouse cursor over the widget with ID <code>number-5</code>
 before taking the snapshot.</p>
