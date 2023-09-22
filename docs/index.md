@@ -4,15 +4,16 @@ hide:
   - navigation
 ---
 
+!!! tip inline end
+
+    See the navigation links in the header or side-bar.
+
+    Click :octicons-three-bars-16: (top left) on mobile.
+
 
 # Welcome
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation.
-
-!!! tip
-
-    See the navigation links in the header or side-bars. Click the :octicons-three-bars-16: button (top left) on mobile.
-
 
 [Get started](./getting_started.md){ .md-button .md-button--primary } or go straight to the [Tutorial](./tutorial.md)
 
