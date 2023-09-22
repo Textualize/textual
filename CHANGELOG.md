@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
+
 ## [0.38.1] - 2023-09-21
 
 ### Fixed
@@ -21,7 +27,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
-- Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
 
 ### Changed
 
