@@ -10,10 +10,14 @@ data = [
 ]
 
 
-def make_datatable(foreground_priority: Literal["css", "renderable"],
-                   background_priority: Literal["css", "renderable"]) -> DataTable:
-    table = DataTable(cursor_foreground_priority=foreground_priority,
-                      cursor_background_priority=background_priority)
+def make_datatable(
+    foreground_priority: Literal["css", "renderable"],
+    background_priority: Literal["css", "renderable"],
+) -> DataTable:
+    table = DataTable(
+        cursor_foreground_priority=foreground_priority,
+        cursor_background_priority=background_priority,
+    )
     table.zebra_stripes = True
     table.add_column("Movies")
     for row in data:
@@ -30,15 +34,17 @@ class DataTableCursorStyles(App):
 
     CSS = """
     DataTable {margin-bottom: 1;}
-DataTable > .datatable--cursor {
-    color: $secondary;
-    background: $success;
-    text-style: bold italic;
-}
+    DataTable > .datatable--cursor {
+        color: $secondary;
+        background: $success;
+        text-style: bold italic;
+    }
 """
 
     def compose(self) -> ComposeResult:
-        priorities: list[tuple[Literal["css", "renderable"], Literal["css", "renderable"]]] = [
+        priorities: list[
+            tuple[Literal["css", "renderable"], Literal["css", "renderable"]]
+        ] = [
             ("css", "css"),
             ("css", "renderable"),
             ("renderable", "renderable"),
@@ -52,5 +58,5 @@ DataTable > .datatable--cursor {
 
 app = DataTableCursorStyles()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

@@ -125,3 +125,18 @@ async def test_load_non_existing_file() -> None:
             await pilot.app.query_one(Markdown).load(
                 Path("---this-does-not-exist---.it.is.not.a.md")
             )
+
+
+@pytest.mark.parametrize(
+    ("anchor", "found"),
+    [
+        ("hello-world", False),
+        ("hello-there", True),
+    ]
+)
+async def test_goto_anchor(anchor: str, found: bool) -> None:
+    """Going to anchors should return a boolean: whether the anchor was found."""
+    document = "# Hello There\n\nGeneral.\n"
+    async with MarkdownApp(document).run_test() as pilot:
+        markdown = pilot.app.query_one(Markdown)
+        assert markdown.goto_anchor(anchor) is found

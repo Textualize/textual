@@ -245,7 +245,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """
 
     DEFAULT_CSS = """
-    App.-dark DataTable {
+    DataTable:dark {
         background:;
     }
     DataTable {
@@ -291,7 +291,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $secondary 30%;
     }
 
-    .-dark-mode DataTable > .datatable--even-row {
+    DataTable:dark > .datatable--even-row {
         background: $primary 15%;
     }
 

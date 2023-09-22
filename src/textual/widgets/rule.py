@@ -1,9 +1,4 @@
-from ._rule import (
-    InvalidLineStyle,
-    InvalidRuleOrientation,
-    LineStyle,
-    RuleOrientation,
-)
+from ._rule import InvalidLineStyle, InvalidRuleOrientation, LineStyle, RuleOrientation
 
 __all__ = [
     "InvalidLineStyle",

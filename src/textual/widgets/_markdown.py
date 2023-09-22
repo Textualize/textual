@@ -223,6 +223,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 class MarkdownParagraph(MarkdownBlock):
     """A paragraph Markdown block."""
 
+    SCOPED_CSS = False
     DEFAULT_CSS = """
     Markdown > MarkdownParagraph {
          margin: 0 0 1 0;
@@ -660,7 +661,7 @@ class Markdown(Widget):
         location, _, anchor = location.partition("#")
         return Path(location), anchor
 
-    def goto_anchor(self, anchor: str) -> None:
+    def goto_anchor(self, anchor: str) -> bool:
         """Try and find the given anchor in the current document.
 
         Args:
@@ -673,14 +674,18 @@ class Markdown(Widget):
 
             Note that the slugging method used is similar to that found on
             GitHub.
+
+        Returns:
+            True when the anchor was found in the current document, False otherwise.
         """
         if not self._table_of_contents or not isinstance(self.parent, Widget):
-            return
+            return False
         unique = TrackedSlugs()
         for _, title, header_id in self._table_of_contents:
             if unique.slug(title) == anchor:
                 self.parent.scroll_to_widget(self.query_one(f"#{header_id}"), top=True)
-                return
+                return True
+        return False
 
     async def load(self, path: Path) -> None:
         """Load a new Markdown document.
@@ -945,6 +950,8 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
 
 class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     """A Markdown viewer widget."""
+
+    SCOPED_CSS = False
 
     DEFAULT_CSS = """
     MarkdownViewer {

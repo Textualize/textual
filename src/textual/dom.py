@@ -132,6 +132,10 @@ class DOMNode(MessagePump):
     # Mapping of key bindings
     BINDINGS: ClassVar[list[BindingType]] = []
 
+    # Indicates if the CSS should be automatically scoped
+    SCOPED_CSS: ClassVar[bool] = True
+    """Should default css be limited to the widget type?"""
+
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
 
@@ -143,6 +147,9 @@ class DOMNode(MessagePump):
 
     # List of names of base classes that inherit CSS
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
+
+    # Name of the widget in CSS
+    _css_type_name: str = ""
 
     # Generated list of bindings
     _merged_bindings: ClassVar[_Bindings | None] = None
@@ -304,7 +311,9 @@ class DOMNode(MessagePump):
         cls._inherit_bindings = inherit_bindings
         cls._inherit_component_classes = inherit_component_classes
         css_type_names: set[str] = set()
-        for base in cls._css_bases(cls):
+        bases = cls._css_bases(cls)
+        cls._css_type_name = bases[0].__name__
+        for base in bases:
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
@@ -407,18 +416,18 @@ class DOMNode(MessagePump):
         if hasattr(self, "_classes") and self._classes:
             yield "classes", " ".join(self._classes)
 
-    def _get_default_css(self) -> list[tuple[str, str, int]]:
+    def _get_default_css(self) -> list[tuple[str, str, int, str]]:
         """Gets the CSS for this class and inherited from bases.
 
         Default CSS is inherited from base classes, unless `inherit_css` is set to
         `False` when subclassing.
 
         Returns:
-            A list of tuples containing (PATH, SOURCE) for this
+            A list of tuples containing (PATH, SOURCE, SPECIFICITY, SCOPE) for this
                 and inherited from base classes.
         """
 
-        css_stack: list[tuple[str, str, int]] = []
+        css_stack: list[tuple[str, str, int, str]] = []
 
         def get_path(base: Type[DOMNode]) -> str:
             """Get a path to the DOM Node"""
@@ -428,10 +437,17 @@ class DOMNode(MessagePump):
                 return f"{base.__name__}"
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css = base.__dict__.get("DEFAULT_CSS", "").strip()
+            css: str = base.__dict__.get("DEFAULT_CSS", "").strip()
             if css:
-                css_stack.append((get_path(base), css, -tie_breaker))
-
+                scoped: bool = base.__dict__.get("SCOPED_CSS", True)
+                css_stack.append(
+                    (
+                        get_path(base),
+                        css,
+                        -tie_breaker,
+                        base._css_type_name if scoped else "",
+                    )
+                )
         return css_stack
 
     @classmethod

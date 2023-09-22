@@ -915,9 +915,13 @@ class Widget(DOMNode):
             app: App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker in self._get_default_css():
+        for path, css, tie_breaker, scope in self._get_default_css():
             self.app.stylesheet.add_source(
-                css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                css,
+                path=path,
+                is_default_css=True,
+                tie_breaker=tie_breaker,
+                scope=scope,
             )
 
     def _get_box_model(
@@ -2757,6 +2761,7 @@ class Widget(DOMNode):
         except NoScreen:
             pass
         else:
+            yield "dark" if self.app.dark else "light"
             if focused:
                 node = focused
                 while node is not None:
@@ -3186,7 +3191,7 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be send an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
 
         Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
 

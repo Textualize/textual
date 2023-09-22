@@ -164,6 +164,7 @@ nav:
           - "widgets/switch.md"
           - "widgets/tabbed_content.md"
           - "widgets/tabs.md"
+          - "widgets/text_area.md"
           - "widgets/tree.md"
   - API:
       - "api/index.md"

@@ -33,6 +33,7 @@ from ._tabbed_content import TabbedContent as TabbedContent
 from ._tabbed_content import TabPane as TabPane
 from ._tabs import Tab as Tab
 from ._tabs import Tabs as Tabs
+from ._text_area import TextArea as TextArea
 from ._tooltip import Tooltip as Tooltip
 from ._tree import Tree as Tree
 from ._welcome import Welcome as Welcome

@@ -2,6 +2,11 @@ from pathlib import Path
 
 import pytest
 
+from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
+from textual.widgets import TextArea
+from textual.widgets.text_area import TextAreaTheme
+
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
@@ -89,7 +94,8 @@ def test_input_validation(snap_compare):
         "tab",
         "3",  # This is valid, so -valid should be applied
         "tab",
-        *"-2",  # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
+        *"-2",
+        # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
     ]
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_validation.py", press=press)
 
@@ -700,6 +706,85 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
+@pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
+def test_text_area_language_rendering(language, snap_compare):
+    # This test will fail if we're missing a snapshot test for a valid
+    # language. We should have a snapshot test for each language we support
+    # as the syntax highlighting will be completely different for each of them.
+
+    snippet = SNIPPETS.get(language)
+
+    def setup_language(pilot) -> None:
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(snippet)
+        text_area.language = language
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_language,
+        terminal_size=(80, snippet.count("\n") + 2),
+    )
+
+
+@pytest.mark.parametrize(
+    "selection",
+    [
+        Selection((0, 0), (2, 8)),
+        Selection((1, 0), (0, 0)),
+        Selection((5, 2), (0, 0)),
+        Selection((0, 0), (4, 20)),
+        Selection.cursor((1, 0)),
+        Selection.cursor((2, 6)),
+    ],
+)
+def test_text_area_selection_rendering(snap_compare, selection):
+    text = """I am a line.
+
+I am another line.
+
+I am the final line."""
+
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.show_line_numbers = False
+        text_area.selection = selection
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, text.count("\n") + 1),
+    )
+
+
+@pytest.mark.parametrize("theme_name",
+                         [theme.name for theme in TextAreaTheme.builtin_themes()])
+def test_text_area_themes(snap_compare, theme_name):
+    """Each theme should have its own snapshot with at least some Python
+    to check that the rendering is sensible. This also ensures that theme
+    switching results in the display changing correctly."""
+    text = """\
+def hello(name):
+    x = 123
+    while not False:
+        print("hello " + name)
+        continue
+"""
+
+    def setup_theme(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.selection = Selection((0, 1), (1, 9))
+        text_area.theme = theme_name
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_theme,
+        terminal_size=(48, text.count("\n") + 2),
+    )
+
+
 def test_digits(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
 
@@ -710,3 +795,11 @@ def test_auto_grid(snap_compare) -> None:
 
 def test_auto_grid_default_height(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid_default_height.py", press=["g"])
+
+
+def test_scoped_css(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scoped_css.py")
+
+
+def test_unscoped_css(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")
