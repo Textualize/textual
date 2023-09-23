@@ -5,6 +5,7 @@ categories:
   - DevLog
 authors:
   - darrenburns
+title: "Things I learned while building Textual's TextArea"
 ---
 
 # Things I learned building a text editor for the terminal
