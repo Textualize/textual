@@ -7,7 +7,7 @@ authors:
   - darrenburns
 ---
 
-# Things I learned while building Textual's TextArea
+# Things I learned building a text editor for the terminal
 
 `TextArea` is the latest widget to be added to Textual's [growing collection](https://textual.textualize.io/widget_gallery/).
 It provides a multi-line space to edit text, and features optional syntax highlighting for a selection of languages.
