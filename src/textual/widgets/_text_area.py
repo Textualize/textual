@@ -305,10 +305,8 @@ TextArea {
         corresponding `TextAreaTheme` object."""
 
         self.language = language
-        """The language of the `TextArea`."""
 
-        self.theme: str | None = theme
-        """The name of the theme of the `TextArea` as set by the user."""
+        self.theme = theme
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
