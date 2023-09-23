@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.38.1] - 2023-09-21
 
+### Added
+
+- added a new method to SelectionList that selects only enabled selections
+
 ### Fixed
 
 - Hotfix - added missing highlight files in build distribution https://github.com/Textualize/textual/pull/3370

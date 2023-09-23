@@ -37,6 +37,26 @@ async def test_programatic_select_all() -> None:
         assert pilot.app.query_one(SelectionList).selected == list(range(50))
 
 
+async def test_programatic_select_all_enabled() -> None:
+    """Selected should contain all selected values."""
+    async with SelectionListApp().run_test() as pilot:
+        selection = pilot.app.query_one(SelectionList)
+        selection.select_all_enabled()
+        assert pilot.app.query_one(SelectionList).selected == list(range(50))
+
+
+async def test_programatic_select_all_enabled_selecting_only_enabled() -> None:
+    """Selected should contain only enabled selected values."""
+    async with SelectionListApp().run_test() as pilot:
+        for selection in pilot.app.query_one(SelectionList)._options[:25]:
+            selection.disabled = True
+        selection = pilot.app.query_one(SelectionList)
+        selection.select_all_enabled()
+        expected = list(range(25, 50))
+        result = pilot.app.query_one(SelectionList).selected
+        assert expected == result
+
+
 async def test_programatic_deselect() -> None:
     """Selected should not contain a deselected value."""
     async with SelectionListApp(True).run_test() as pilot:

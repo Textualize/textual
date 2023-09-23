@@ -357,6 +357,30 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         return self._apply_to_all(self._select)
 
+    def _select_enabled(self, value: SelectionType) -> bool:
+        """Mark the given value as selected if the value is enabled.
+
+        Args:
+            value: The value to mark as selected.
+
+        Returns:
+            `True` if the value is enabled, `False` if not.
+        """
+        conditions = [value not in self._selected, not self._options[value].disabled]
+        if all(conditions):
+            self._selected[value] = None
+            self._message_changed()
+            return True
+        return False
+
+    def select_all_enabled(self) -> Self:
+        """Select all items that are enabled.
+
+        Returns:
+            The [`SelectionList`][textual.widgets.SelectionList] instance.
+        """
+        return self._apply_to_all(self._select_enabled)
+
     def _deselect(self, value: SelectionType) -> bool:
         """Mark the given selection as not selected.
 

@@ -141,6 +141,19 @@ async def test_select_all() -> None:
         ]
 
 
+async def test_select_all_enabled() -> None:
+    """Selecting all options enabled should result in messages."""
+    async with SelectionListApp().run_test() as pilot:
+        assert isinstance(pilot.app, SelectionListApp)
+        await pilot.pause()
+        pilot.app.query_one(SelectionList).select_all_enabled()
+        await pilot.pause()
+        assert pilot.app.messages == [
+            ("SelectionHighlighted", 0),
+            ("SelectedChanged", None),
+        ]
+
+
 async def test_select_all_selected() -> None:
     """Selecting all when all are selected should result in no extra messages."""
     async with SelectionListApp().run_test() as pilot:
@@ -149,6 +162,21 @@ async def test_select_all_selected() -> None:
         pilot.app.query_one(SelectionList).select_all()
         await pilot.pause()
         pilot.app.query_one(SelectionList).select_all()
+        await pilot.pause()
+        assert pilot.app.messages == [
+            ("SelectionHighlighted", 0),
+            ("SelectedChanged", None),
+        ]
+
+
+async def test_select_all_enabled_selected() -> None:
+    """Selecting all enabled when all are selected should result in no extra messages."""
+    async with SelectionListApp().run_test() as pilot:
+        assert isinstance(pilot.app, SelectionListApp)
+        await pilot.pause()
+        pilot.app.query_one(SelectionList).select_all_enabled()
+        await pilot.pause()
+        pilot.app.query_one(SelectionList).select_all_enabled()
         await pilot.pause()
         assert pilot.app.messages == [
             ("SelectionHighlighted", 0),
@@ -198,6 +226,26 @@ async def test_select_then_deselect_all() -> None:
         assert isinstance(pilot.app, SelectionListApp)
         await pilot.pause()
         pilot.app.query_one(SelectionList).select_all()
+        await pilot.pause()
+        assert pilot.app.messages == [
+            ("SelectionHighlighted", 0),
+            ("SelectedChanged", None),
+        ]
+        pilot.app.query_one(SelectionList).deselect_all()
+        await pilot.pause()
+        assert pilot.app.messages == [
+            ("SelectionHighlighted", 0),
+            ("SelectedChanged", None),
+            ("SelectedChanged", None),
+        ]
+
+
+async def test_select_then_deselect_all_enabled() -> None:
+    """Selecting and then deselecting all options enabled should result in messages."""
+    async with SelectionListApp().run_test() as pilot:
+        assert isinstance(pilot.app, SelectionListApp)
+        await pilot.pause()
+        pilot.app.query_one(SelectionList).select_all_enabled()
         await pilot.pause()
         assert pilot.app.messages == [
             ("SelectionHighlighted", 0),
