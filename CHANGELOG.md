@@ -7,6 +7,44 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
+
+## [0.38.1] - 2023-09-21
+
+### Fixed
+
+- Hotfix - added missing highlight files in build distribution https://github.com/Textualize/textual/pull/3370
+
+## [0.38.0] - 2023-09-21
+
+### Added
+
+- Added a TextArea https://github.com/Textualize/textual/pull/2931
+- Added :dark and :light pseudo classes
+
+### Fixed
+
+- Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
+
+### Changed
+
+- Breaking change: CSS in DEFAULT_CSS is now automatically scoped to the widget (set SCOPED_CSS=False) to disable
+
+## [0.37.1] - 2023-09-16
+
+### Fixed
+
+- Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
+- Fixed `Input` event leakage from `CommandPalette` to `App`.
+
+### Changed
+
+- Breaking change: Changed `Markdown.goto_anchor` to return a boolean (if the anchor was found) instead of `None` https://github.com/Textualize/textual/pull/3334
+
+## [0.37.0] - 2023-09-15
+
 ### Added
 
 - Added the command palette https://github.com/Textualize/textual/pull/3058
@@ -19,12 +57,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `Screen.sub_title`
 - Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
 - Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
+- Added `widgets.Collapsible` contributed by Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
 
 ### Fixed
 
 - Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
 - Fixed a crash in `MarkdownViewer` when clicking on a link that contains an anchor https://github.com/Textualize/textual/issues/3094
-- Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
+- Fixed wrong message pump in pop_screen https://github.com/Textualize/textual/pull/3315
 
 ### Changed
 
@@ -32,6 +71,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
 - App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
 - `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided https://github.com/Textualize/textual/pull/3244
+- `ProgressBar` explicitly supports being set back to its indeterminate state https://github.com/Textualize/textual/pull/3286
 
 ## [0.36.0] - 2023-09-05
 
@@ -49,6 +89,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
 - Added `cursor_type` to the `DataTable` constructor.
 - Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
+- `DataTable.add_row` accepts `height=None` to automatically compute optimal height for a row https://github.com/Textualize/textual/pull/3213
 
 ### Fixed
 
@@ -1275,6 +1316,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.37.1]: https://github.com/Textualize/textual/compare/v0.37.0...v0.37.1
+[0.37.0]: https://github.com/Textualize/textual/compare/v0.36.0...v0.37.0
 [0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
 [0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
 [0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0

@@ -68,13 +68,13 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._system_commands_source import SystemCommandSource
+from ._system_commands import SystemCommands
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
-from .command_palette import CommandPalette, CommandPaletteCallable, CommandSource
+from .command import CommandPalette, Provider
 from .css.query import NoMatches
 from .css.stylesheet import Stylesheet
 from .design import ColorSystem
@@ -326,22 +326,17 @@ class App(Generic[ReturnType], DOMNode):
     """
 
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
-    """Should the [command palette][textual.command_palette.CommandPalette] be enabled for the application?"""
+    """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
-    COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = {SystemCommandSource}
-    """The [command sources](/api/command_palette/) for the application.
+    COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
+    """Command providers used by the [command palette](/guide/command_palette).
 
-    This is the collection of [command sources][textual.command_palette.CommandSource]
-    that provide matched
-    commands to the [command palette][textual.command_palette.CommandPalette].
-
-    The default Textual command palette source is
-    [the Textual system-wide command source][textual._system_commands_source.SystemCommandSource].
+    Should be a set of [command.Provider][textual.command.Provider] classes.
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
-        Binding("ctrl+@", "command_palette", show=False, priority=True),
+        Binding("ctrl+backslash", "command_palette", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
@@ -1201,9 +1196,13 @@ class App(Generic[ReturnType], DOMNode):
         notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
     ) -> AsyncGenerator[Pilot, None]:
-        """An asynchronous context manager for testing app.
+        """An asynchronous context manager for testing apps.
 
-        Use this to run your app in "headless" (no output) mode and driver the app via a [Pilot][textual.pilot.Pilot] object.
+        !!! tip
+
+            See the guide for [testing](/guide/testing) Textual apps.
+
+        Use this to run your app in "headless" mode (no output) and drive the app via a [Pilot][textual.pilot.Pilot] object.
 
         Example:
 
@@ -1738,7 +1737,10 @@ class App(Generic[ReturnType], DOMNode):
                 screen_css_path = f"{screen.__class__.__name__}"
             if not self.stylesheet.has_source(screen_css_path):
                 self.stylesheet.add_source(
-                    screen.CSS, path=screen_css_path, is_default_css=False
+                    screen.CSS,
+                    path=screen_css_path,
+                    is_default_css=False,
+                    scope=screen._css_type_name if screen.SCOPED_CSS else "",
                 )
                 update = True
         if update:
@@ -1788,9 +1790,11 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
         next_screen, await_mount = self._get_screen(screen)
-        next_screen._push_result_callback(
-            self.screen if self._screen_stack else None, callback
-        )
+        try:
+            message_pump = active_message_pump.get()
+        except LookupError:
+            message_pump = self.app
+        next_screen._push_result_callback(message_pump, callback)
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         self.stylesheet.update(next_screen)
@@ -2052,9 +2056,13 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path:
                 self.stylesheet.read_all(self.css_path)
-            for path, css, tie_breaker in self._get_default_css():
+            for path, css, tie_breaker, scope in self._get_default_css():
                 self.stylesheet.add_source(
-                    css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                    css,
+                    path=path,
+                    is_default_css=True,
+                    tie_breaker=tie_breaker,
+                    scope=scope,
                 )
             if self.CSS:
                 try:

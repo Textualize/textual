@@ -71,6 +71,27 @@ Toast.-information .toast--title {
     --8<-- "docs/examples/widgets/toast.py"
     ```
 
+## Reactive Attributes
+
+This widget has no reactive attributes.
+
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+The toast widget provides the following component classes:
+
+::: textual.widgets._toast.Toast.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
 ---
 
 ::: textual.widgets._toast

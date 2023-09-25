@@ -32,6 +32,10 @@ The example below shows switches in various states.
 | ------- | ------ | ------- | ------------------------ |
 | `value` | `bool` | `False` | The value of the switch. |
 
+## Messages
+
+- [Switch.Changed][textual.widgets.Switch.Changed]
+
 ## Bindings
 
 The switch widget defines the following bindings:
@@ -49,10 +53,6 @@ The switch widget provides the following component classes:
     options:
       show_root_heading: false
       show_root_toc_entry: false
-
-## Messages
-
-- [Switch.Changed][textual.widgets.Switch.Changed]
 
 ## Additional Notes
 

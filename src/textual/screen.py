@@ -49,7 +49,7 @@ from .widgets._toast import ToastRack
 if TYPE_CHECKING:
     from typing_extensions import Final
 
-    from .command_palette import CommandSource
+    from .command import Provider
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .errors import NoWidget  # type: ignore  # noqa: F401
@@ -72,7 +72,7 @@ class ResultCallback(Generic[ScreenResultType]):
 
     def __init__(
         self,
-        requester: Widget | None,
+        requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
     ) -> None:
         """Initialise the result callback object.
@@ -81,7 +81,7 @@ class ResultCallback(Generic[ScreenResultType]):
             requester: The object making a request for the callback.
             callback: The callback function.
         """
-        self.requester: Widget | None = requester
+        self.requester = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
@@ -157,8 +157,11 @@ class Screen(Generic[ScreenResultType], Widget):
     title: Reactive[str | None] = Reactive(None, compute=False)
     """Screen title to override [the app title][textual.app.App.title]."""
 
-    COMMAND_SOURCES: ClassVar[set[type[CommandSource]]] = set()
-    """The [command sources](/api/command_palette/) for the screen."""
+    COMMANDS: ClassVar[set[type[Provider]]] = set()
+    """Command providers used by the [command palette](/guide/command_palette), associated with the screen.
+
+    Should be a set of [`command.Provider`][textual.command.Provider] classes.
+    """
 
     BINDINGS = [
         Binding("tab", "focus_next", "Focus Next", show=False),
@@ -682,7 +685,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _push_result_callback(
         self,
-        requester: Widget | None,
+        requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
     ) -> None:
         """Add a result callback to the screen.
@@ -950,7 +953,9 @@ class Screen(Generic[ScreenResultType], Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseUp) and widget.focusable:
+                if isinstance(event, events.MouseDown) and widget.focusable:
+                    self.set_focus(widget)
+                elif isinstance(event, events.MouseUp) and widget.focusable:
                     if self.focused is not widget:
                         self.set_focus(widget)
                         event.stop()

@@ -1,10 +1,10 @@
 from textual.app import App
-from textual.command_palette import CommandPalette
+from textual.command import CommandPalette
 from textual.widgets import OptionList
 
 
 class CommandPaletteApp(App[None]):
-    COMMAND_SOURCES = set()
+    COMMANDS = set()
 
     def on_mount(self) -> None:
         self.action_command_palette()

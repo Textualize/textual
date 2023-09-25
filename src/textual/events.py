@@ -417,6 +417,19 @@ class MouseEvent(InputEvent, bubble=True):
         """
         if self.screen_offset not in widget.content_region:
             return None
+        return self.get_content_offset_capture(widget)
+
+    def get_content_offset_capture(self, widget: Widget) -> Offset:
+        """Get offset from a widget's content area.
+
+        This method works even if the offset is outside the widget content region.
+
+        Args:
+            widget: Widget receiving the event.
+
+        Returns:
+            An offset where the origin is at the top left of the content area.
+        """
         return self.offset - widget.gutter.top_left
 
     def _apply_offset(self, x: int, y: int) -> MouseEvent:
