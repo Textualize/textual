@@ -84,7 +84,7 @@ async def test_register_language():
         assert text_area.language == "elm"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="requires python3.8 or higher")
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
 async def test_register_language_existing_language():
     app = TextAreaApp()
     async with app.run_test():
