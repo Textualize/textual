@@ -759,7 +759,7 @@ I am the final line."""
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="requires python3.8 or higher")
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
 @pytest.mark.parametrize("theme_name",
                          [theme.name for theme in TextAreaTheme.builtin_themes()])
 def test_text_area_themes(snap_compare, theme_name):
