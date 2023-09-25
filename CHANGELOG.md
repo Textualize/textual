@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `Pilot.click`/`Pilot.hover` now raises `OutOfBounds` when clicking outside visible screen https://github.com/Textualize/textual/pull/3360
-- `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector
+- `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector https://github.com/Textualize/textual/pull/3360
 
 ## [0.38.1] - 2023-09-21
 
