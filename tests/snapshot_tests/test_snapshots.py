@@ -644,6 +644,7 @@ def test_blur_on_disabled(snap_compare):
 def test_tooltips_in_compound_widgets(snap_compare):
     # https://github.com/Textualize/textual/issues/2641
     async def run_before(pilot) -> None:
+        await pilot.pause()
         await pilot.hover("ProgressBar")
         await pilot.pause(0.3)
         await pilot.pause()
