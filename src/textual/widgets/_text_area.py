@@ -609,7 +609,9 @@ TextArea {
                 self._highlight_query = document.prepare_query(highlight_query)
         elif language and not TREE_SITTER:
             log.warning(
-                "tree-sitter not available in this environment. Parsing disabled."
+                "tree-sitter not available in this environment. Parsing disabled.\n"
+                "You may need to install the `syntax` extras alongside textual.\n"
+                "Try `pip install 'textual[syntax]'` or '`poetry add textual[syntax]'."
             )
             document = Document(text)
         else:
