@@ -16,6 +16,7 @@ import rich.repr
 from ._wait import wait_for_idle
 from .app import App, ReturnType
 from .events import Click, MouseDown, MouseMove, MouseUp
+from .geometry import Offset
 from .widget import Widget
 
 
@@ -42,6 +43,10 @@ def _get_mouse_message_arguments(
         "screen_y": click_y,
     }
     return message_arguments
+
+
+class OutOfBounds(Exception):
+    """Raised when the pilot mouse target is outside of the (visible) screen."""
 
 
 class WaitForScreenTimeout(Exception):
@@ -83,65 +88,110 @@ class Pilot(Generic[ReturnType]):
         shift: bool = False,
         meta: bool = False,
         control: bool = False,
-    ) -> None:
-        """Simulate clicking with the mouse.
+    ) -> bool:
+        """Simulate clicking with the mouse at a specified position.
+
+        The final position to be clicked is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: The widget that should be clicked. If None, then the click
-                will occur relative to the screen. Note that this simply causes
-                a click to occur at the location of the widget. If the widget is
-                currently hidden or obscured by another widget, then the click may
-                not land on it.
-            offset: The offset to click within the selected widget.
+            selector: A selector to specify a widget that should be used as the reference
+                for the click offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to click on a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the click may not land on the widget you specified.
+            offset: The offset to click. The offset is relative to the selector provided
+                or to the screen, if no selector is provided.
             shift: Click with the shift key held down.
             meta: Click with the meta key held down.
             control: Click with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position to be clicked is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the click landed on the selected
+                widget, False otherwise.
         """
         app = self.app
         screen = app.screen
         if selector is not None:
-            target_widget = screen.query_one(selector)
+            target_widget = app.query_one(selector)
         else:
             target_widget = screen
 
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=1, shift=shift, meta=meta, control=control
         )
+
+        click_offset = Offset(message_arguments["x"], message_arguments["y"])
+        if click_offset not in screen.region:
+            raise OutOfBounds(
+                "Target offset is outside of currently-visible screen region."
+            )
+
         app.post_message(MouseDown(**message_arguments))
-        await self.pause(0.1)
+        await self.pause()
         app.post_message(MouseUp(**message_arguments))
-        await self.pause(0.1)
+        await self.pause()
+
+        # Figure out the widget under the click before we click because the app
+        # might react to the click and move things.
+        widget_at, _ = app.get_widget_at(*click_offset)
         app.post_message(Click(**message_arguments))
-        await self.pause(0.1)
+        await self.pause()
+
+        return selector is None or widget_at is target_widget
 
     async def hover(
         self,
         selector: type[Widget] | str | None | None = None,
         offset: tuple[int, int] = (0, 0),
-    ) -> None:
-        """Simulate hovering with the mouse cursor.
+    ) -> bool:
+        """Simulate hovering with the mouse cursor at a specified position.
+
+        The final position to be hovered is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
 
         Args:
-            selector: The widget that should be hovered. If None, then the click
-                will occur relative to the screen. Note that this simply causes
-                a hover to occur at the location of the widget. If the widget is
-                currently hidden or obscured by another widget, then the hover may
-                not land on it.
-            offset: The offset to hover over within the selected widget.
+            selector: A selector to specify a widget that should be used as the reference
+                for the hover offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to hover a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the hover may not land on the widget you specified.
+            offset: The offset to hover. The offset is relative to the selector provided
+                or to the screen, if no selector is provided.
+
+        Raises:
+            OutOfBounds: If the position to be hovered is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the hover landed on the selected
+                widget, False otherwise.
         """
         app = self.app
         screen = app.screen
         if selector is not None:
-            target_widget = screen.query_one(selector)
+            target_widget = app.query_one(selector)
         else:
             target_widget = screen
 
         message_arguments = _get_mouse_message_arguments(
             target_widget, offset, button=0
         )
+
+        hover_offset = Offset(message_arguments["x"], message_arguments["y"])
+        if hover_offset not in screen.region:
+            raise OutOfBounds(
+                "Target offset is outside of currently-visible screen region."
+            )
+
         await self.pause()
         app.post_message(MouseMove(**message_arguments))
         await self.pause()
+
+        widget_at, _ = app.get_widget_at(*hover_offset)
+        return selector is None or widget_at is target_widget
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:
         """Wait for the current screen and its children to have processed all pending events.
