@@ -12,6 +12,23 @@ Supports syntax highlighting for a selection of languages.
 
 ## Guide
 
+### Syntax highlighting dependencies
+
+To enable syntax highlighting, you'll need to install the `syntax` extra dependencies:
+
+=== "pip"
+
+    ```
+    pip install "textual[syntax]"
+    ```
+
+=== "poetry"
+
+    ```
+    poetry add "textual[syntax]"
+    ```
+
+
 ### Loading text
 
 In this example we load some initial text into the `TextArea`, and set the language to `"python"` to enable syntax highlighting.
