@@ -85,6 +85,24 @@ async def test_pilot_exception_catching_action():
             await pilot.press("b")
 
 
+async def test_pilot_click_screen():
+    """Regression test for https://github.com/Textualize/textual/issues/3395.
+
+    Check we can use `Screen` as a selector for a click."""
+
+    async with App().run_test() as pilot:
+        await pilot.click("Screen")
+
+
+async def test_pilot_hover_screen():
+    """Regression test for https://github.com/Textualize/textual/issues/3395.
+
+    Check we can use `Screen` as a selector for a hover."""
+
+    async with App().run_test() as pilot:
+        await pilot.hover("Screen")
+
+
 @pytest.mark.parametrize(
     ["method", "screen_size", "offset"],
     [

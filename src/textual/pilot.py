@@ -116,7 +116,7 @@ class Pilot(Generic[ReturnType]):
         app = self.app
         screen = app.screen
         if selector is not None:
-            target_widget = screen.query_one(selector)
+            target_widget = app.query_one(selector)
         else:
             target_widget = screen
 
@@ -173,7 +173,7 @@ class Pilot(Generic[ReturnType]):
         app = self.app
         screen = app.screen
         if selector is not None:
-            target_widget = screen.query_one(selector)
+            target_widget = app.query_one(selector)
         else:
             target_widget = screen
 

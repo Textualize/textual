@@ -9,7 +9,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
+
+## [0.38.1] - 2023-09-21
+
+### Fixed
+
+- Hotfix - added missing highlight files in build distribution https://github.com/Textualize/textual/pull/3370
+
+## [0.38.0] - 2023-09-21
+
+### Added
+
+- Added a TextArea https://github.com/Textualize/textual/pull/2931
+- Added :dark and :light pseudo classes
+
+### Fixed
+
 - Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
+
+### Changed
+
+- Breaking change: CSS in DEFAULT_CSS is now automatically scoped to the widget (set SCOPED_CSS=False) to disable
 
 ## [0.37.1] - 2023-09-16
 
@@ -17,6 +38,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
 - Fixed `Input` event leakage from `CommandPalette` to `App`.
+
+### Changed
+
+- Breaking change: Changed `Markdown.goto_anchor` to return a boolean (if the anchor was found) instead of `None` https://github.com/Textualize/textual/pull/3334
 
 ## [0.37.0] - 2023-09-15
 

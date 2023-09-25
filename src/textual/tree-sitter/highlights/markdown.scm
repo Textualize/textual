@@ -1,0 +1,9 @@
+(heading_content) @heading
+(list_marker) @comment
+(strong_emphasis) @bold
+(emphasis) @italic
+(strikethrough) @strikethrough
+(link) @link
+(code_span) @inline_code
+(info_string) @info_string
+(fenced_code_block) @fenced_code_block
