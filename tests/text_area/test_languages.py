@@ -61,7 +61,7 @@ async def test_setting_unknown_language():
             text_area.language = "this-language-doesnt-exist"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="requires python3.8 or higher")
+@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
 async def test_register_language():
     app = TextAreaApp()
 
