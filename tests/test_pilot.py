@@ -154,6 +154,46 @@ async def test_pilot_target_outside_screen_errors(method, screen_size, offset):
 
 
 @pytest.mark.parametrize(
+    ["method", "offset"],
+    [
+        ("click", (0, 0)),  # Top-left corner.
+        ("click", (40, 0)),  # Top edge.
+        ("click", (79, 0)),  # Top-right corner.
+        ("click", (79, 12)),  # Right edge.
+        ("click", (79, 23)),  # Bottom-right corner.
+        ("click", (40, 23)),  # Bottom edge.
+        ("click", (40, 23)),  # Bottom-left corner.
+        ("click", (0, 12)),  # Left edge.
+        ("click", (40, 12)),  # Right in the middle.
+        #
+        ("hover", (0, 0)),  # Top-left corner.
+        ("hover", (40, 0)),  # Top edge.
+        ("hover", (79, 0)),  # Top-right corner.
+        ("hover", (79, 12)),  # Right edge.
+        ("hover", (79, 23)),  # Bottom-right corner.
+        ("hover", (40, 23)),  # Bottom edge.
+        ("hover", (40, 23)),  # Bottom-left corner.
+        ("hover", (0, 12)),  # Left edge.
+        ("hover", (40, 12)),  # Right in the middle.
+    ],
+)
+async def test_pilot_target_inside_screen_is_fine_with_correct_coordinate_system(
+    method, offset
+):
+    """Make sure that the coordinate system for the click is the correct one.
+
+    Especially relevant because I kept getting confused about the way it works.
+    """
+    app = ManyLabelsApp()
+    async with app.run_test(size=(80, 24)) as pilot:
+        app.query_one("#label99").scroll_visible(animate=False)
+        await pilot.pause()
+
+        pilot_method = getattr(pilot, method)
+        await pilot_method(offset=offset)
+
+
+@pytest.mark.parametrize(
     ["method", "target"],
     [
         ("click", "#label0"),
