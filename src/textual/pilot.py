@@ -181,8 +181,7 @@ class Pilot(Generic[ReturnType]):
         )
 
         hover_offset = Offset(message_arguments["x"], message_arguments["y"])
-        visible_screen_region = screen.region + screen.scroll_offset
-        if hover_offset not in visible_screen_region:
+        if hover_offset not in screen.region:
             raise OutOfBounds(
                 "Target offset is outside of currently-visible screen region."
             )
