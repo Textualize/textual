@@ -53,6 +53,7 @@ import rich
 import rich.repr
 from rich import terminal_theme
 from rich.console import Console, RenderableType
+from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 from rich.traceback import Traceback
@@ -417,6 +418,7 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+        self.cursor_position = Offset(0, 0)
 
         self._exception: Exception | None = None
         """The unhandled exception which is leading to the app shutting down,
@@ -2423,7 +2425,11 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
+                            cursor_x, cursor_y = self.cursor_position
                             terminal_sequence = renderable.render_segments(console)
+                            terminal_sequence += Control.move_to(
+                                cursor_x, cursor_y
+                            ).segment.text
                         else:
                             segments = console.render(renderable)
                             terminal_sequence = console._render_buffer(segments)
@@ -2433,7 +2439,9 @@ class App(Generic[ReturnType], DOMNode):
                         self._driver.write(terminal_sequence)
                 finally:
                     self._end_update()
+
                 self._driver.flush()
+
         finally:
             self.post_display_hook()
 
