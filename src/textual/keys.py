@@ -304,10 +304,20 @@ def _get_key_display(key: str) -> str:
 def _character_to_key(character: str) -> str:
     """Convert a single character to a key value.
 
+    If `character` has no key value, return it unchanged.
+
     This transformation can be undone by the function `_get_unicode_name_from_key`.
     """
     if not character.isalnum():
-        key = unicodedata.name(character).lower().replace("-", "_").replace(" ", "_")
+        try:
+            key = unicodedata.name(character)
+        except (TypeError, ValueError):
+            # ValueError: `character` has no name. Control characters, for
+            # example, have no name: https://stackoverflow.com/questions/70074668
+            # TypeError: `character` is not a single character.
+            key = character
+        else:
+            key = key.lower().replace("-", "_").replace(" ", "_")
     else:
         key = character
     key = KEY_NAME_REPLACEMENTS.get(key, key)
