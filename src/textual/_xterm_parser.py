@@ -235,12 +235,5 @@ class XTermParser(Parser[events.Event]):
             for key in keys:
                 yield events.Key(key.value, sequence if len(sequence) == 1 else None)
         elif len(sequence) == 1:
-            try:
-                if not sequence.isalnum():
-                    name = _character_to_key(sequence)
-                else:
-                    name = sequence
-                name = KEY_NAME_REPLACEMENTS.get(name, name)
-                yield events.Key(name, sequence)
-            except:
-                yield events.Key(sequence, sequence)
+            name = _character_to_key(sequence)
+            yield events.Key(name, sequence)
