@@ -426,8 +426,7 @@ JSON = """\
 
 """
 
-REGEX = """\
-^abc            # Matches any string that starts with "abc"
+REGEX = r"""^abc            # Matches any string that starts with "abc"
 abc$            # Matches any string that ends with "abc"
 ^abc$           # Matches the string "abc" and nothing else
 a.b             # Matches any string containing "a", any character, then "b"
