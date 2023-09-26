@@ -17,6 +17,7 @@ from textual.keys import _character_to_key, _get_key_display
         ("?", "question_mark"),
         ("£", "pound_sign"),
         (",", "comma"),
+        (r"\t", r"\t"),
     ],
 )
 def test_character_to_key(character: str, key: str) -> None:

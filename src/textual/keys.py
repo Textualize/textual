@@ -307,7 +307,15 @@ def _character_to_key(character: str) -> str:
     This transformation can be undone by the function `_get_unicode_name_from_key`.
     """
     if not character.isalnum():
-        key = unicodedata.name(character).lower().replace("-", "_").replace(" ", "_")
+        try:
+            key = unicodedata.name(character)
+        except (TypeError, ValueError):
+            # ValueError: `character` has no name
+            # TypeError: `character` is not a unicode character (e.g. a control
+            #            character like r"\r")
+            key = character
+        else:
+            key = key.lower().replace("-", "_").replace(" ", "_")
     else:
         key = character
     key = KEY_NAME_REPLACEMENTS.get(key, key)
