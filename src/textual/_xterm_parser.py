@@ -221,9 +221,7 @@ class XTermParser(Parser[events.Event]):
                     for event in sequence_to_key_events(character):
                         on_token(event)
 
-    def _sequence_to_key_events(
-        self, sequence: str, _unicode_name=unicodedata.name
-    ) -> Iterable[events.Key]:
+    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
