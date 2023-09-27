@@ -77,5 +77,5 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [X] TextArea (multi-line input)
     * [X] Basic controls
     * [ ] Indentation guides
-    * [X] Smart features for various languages
+    * [ ] Smart features for various languages
     * [X] Syntax highlighting
