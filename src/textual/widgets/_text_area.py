@@ -630,6 +630,12 @@ TextArea {
         _, scroll_offset_y = self.scroll_offset
         return scroll_offset_y, scroll_offset_y + self.size.height
 
+    def _watch_scroll_x(self) -> None:
+        self.app.cursor_position = self.cursor_screen_offset
+
+    def _watch_scroll_y(self) -> None:
+        self.app.cursor_position = self.cursor_screen_offset
+
     def load_text(self, text: str) -> None:
         """Load text into the TextArea.
 
