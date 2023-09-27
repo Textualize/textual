@@ -107,7 +107,7 @@ class Tab(Static):
     }
     Tab:disabled {
         color: $text-disabled;
-        text-opacity: 50%;
+        text-opacity: 70%;
     }
     Tab.-hidden {
         display: none;
