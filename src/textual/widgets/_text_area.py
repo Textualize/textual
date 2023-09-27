@@ -1230,7 +1230,7 @@ TextArea {
         """The offset of the cursor relative to the screen."""
         cursor_row, cursor_column = self.cursor_location
         scroll_x, scroll_y = self.scroll_offset
-        region_x, region_y, width, height = self.content_region
+        region_x, region_y, _width, _height = self.content_region
 
         offset_x = (
             region_x
