@@ -110,7 +110,12 @@ This widget has no bindings.
 
 ## Component Classes
 
-This widget has no component classes.
+The sparkline widget provides the following component classes:
+
+::: textual.widgets.Sparkline.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ---
 
