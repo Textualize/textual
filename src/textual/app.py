@@ -418,7 +418,12 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
         self.cursor_position = Offset(0, 0)
+        """The position of the terminal cursor in screen-space.
+
+        This can be set by widgets and is useful for controlling the
+        positioning of OS IME and emoji popup menus."""
 
         self._exception: Exception | None = None
         """The unhandled exception which is leading to the app shutting down,

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
+- Fix location of IME and emoji popups https://github.com/Textualize/textual/pull/3408
 
 ### Added
 
