@@ -120,13 +120,13 @@ def test__get_default_css():
         pass
 
     class C(B):
-        DEFAULT_CSS = "C"
+        DEFAULT_CSS = "C {}"
 
     class D(C):
         pass
 
     class E(D):
-        DEFAULT_CSS = "E"
+        DEFAULT_CSS = "E {}"
 
     node = DOMNode()
     node_css = node._get_default_css()
@@ -150,8 +150,8 @@ def test__get_default_css():
     assert c_css[0][2] == d_css[0][2] + 1 == 0
 
     # The CSS on the stack is the correct one.
-    assert e_css[0][1:] == ("E", 0, "E")
-    assert e_css[1][1:] == ("C", -2, "C")
+    assert e_css[0][1:] == ("E {}", 0, "E")
+    assert e_css[1][1:] == ("C {}", -2, "C")
 
 
 def test_component_classes_inheritance():
