@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 from textual import on
@@ -33,19 +35,19 @@ class TreeApp(App[None]):
         )
 
     @on(Tree.NodeSelected)
-    def node_selected(self, event: Tree.NodeSelected) -> None:
+    def node_selected(self, event: Tree.NodeSelected[None]) -> None:
         self.record(event)
 
     @on(Tree.NodeExpanded)
-    def node_expanded(self, event: Tree.NodeExpanded) -> None:
+    def node_expanded(self, event: Tree.NodeExpanded[None]) -> None:
         self.record(event)
 
     @on(Tree.NodeCollapsed)
-    def node_collapsed(self, event: Tree.NodeCollapsed) -> None:
+    def node_collapsed(self, event: Tree.NodeCollapsed[None]) -> None:
         self.record(event)
 
     @on(Tree.NodeHighlighted)
-    def node_highlighted(self, event: Tree.NodeHighlighted) -> None:
+    def node_highlighted(self, event: Tree.NodeHighlighted[None]) -> None:
         self.record(event)
 
 
