@@ -259,3 +259,33 @@ def test_walk_children_with_self_breadth(search):
     ]
 
     assert children == ["f", "e", "d", "c", "b", "a"]
+
+
+async def test_rich_style_text_opacity():
+    """Regression test for https://github.com/Textualize/textual/issues/3413."""
+
+    node = DOMNode()
+    node.styles.color = "red"
+    node.styles.background = "white"
+    node.styles.text_opacity = 0.0
+
+    rich_style = node.rich_style
+    assert rich_style.color == rich_style.bgcolor
+
+
+async def test_rich_style_text_opacity_inheritance():
+    """Regression test for https://github.com/Textualize/textual/issues/3414.
+
+    This regression test involves inheritance.
+    """
+
+    node = DOMNode()
+    node.styles.color = "red"
+    node.styles.background = "white"
+
+    base_node = DOMNode()
+    base_node.styles.text_opacity = 0.0
+    base_node._add_child(node)
+
+    rich_style = node.rich_style
+    assert rich_style.color == rich_style.bgcolor

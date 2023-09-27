@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
 - App exception when a `Tree` is initialized/mounted with `disabled=True` https://github.com/Textualize/textual/issues/3407
+- `DOMNode.rich_style` didn't take text opacity into account when determining foreground color https://github.com/Textualize/textual/issues/3413
 
 ### Added
 

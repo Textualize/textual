@@ -777,6 +777,7 @@ class DOMNode(MessagePump):
 
         style = Style()
         opacity = 1.0
+        text_opacity = 1.0
 
         for node in reversed(self.ancestors_with_self):
             styles = node.styles
@@ -786,8 +787,10 @@ class DOMNode(MessagePump):
                 background += styles.background.multiply_alpha(opacity)
             else:
                 text_background = background
+            if styles.has_rule("text_opacity"):
+                text_opacity = styles.text_opacity
             if styles.has_rule("color"):
-                color = styles.color
+                color = styles.color.multiply_alpha(text_opacity)
             style += styles.text_style
             if styles.has_rule("auto_color") and styles.auto_color:
                 color = text_background.get_contrast_text(color.a)
