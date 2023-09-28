@@ -23,7 +23,7 @@ See the [layout](../guide/layout.md) guide for more information.
 ## Example
 
 Note how the `layout` style affects the arrangement of widgets in the example below.
-To learn more about the grid layout, you can see the [layout guide](../guide/layout.md) or the [grid reference](./grid.md).
+To learn more about the grid layout, you can see the [layout guide](../guide/layout.md) or the [grid reference](./grid/index.md).
 
 === "Output"
 
