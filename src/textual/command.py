@@ -586,6 +586,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
                     id=self._NO_MATCHES,
                 )
             )
+            self._list_visible = True
 
         self._no_matches_timer = self.set_timer(
             self._NO_MATCHES_COUNTDOWN,
@@ -765,6 +766,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         command_list.clear_options().add_options(sorted(commands, reverse=True))
         if highlighted is not None:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
+        self._list_visible = bool(command_list.option_count)
 
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
@@ -812,9 +814,6 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # We're going to be checking in on the worker as we loop around, so
         # grab a reference to that.
         worker = get_current_worker()
-
-        # We're ready to show results, ensure the list is visible.
-        self._list_visible = True
 
         # Reset busy mode.
         self._show_busy = False
