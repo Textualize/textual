@@ -816,7 +816,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # We're ready to show results, ensure the list is visible.
         self._list_visible = True
 
-        # Go into a busy mode.
+        # Reset busy mode.
         self._show_busy = False
 
         # A flag to keep track of if the current content of the command hit
