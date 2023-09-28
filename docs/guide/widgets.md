@@ -535,6 +535,10 @@ Here's a sketch of what the app should ultimately look like:
 
 There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them in to logical groups with compound widgets. This will make our app easier to work with.
 
+??? textualize "Try in Textual-web"
+
+    <div class="textual-web-demo" data-app="byte03"></div>
+
 ###  Identifying components
 
 We will divide this UI into three compound widgets:
