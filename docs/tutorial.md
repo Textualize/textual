@@ -33,7 +33,7 @@ Here's what the finished app will look like:
 
 ### Try it out!
 
-The following is *not* a screenshot, but a fulling interactive Textual app running in your browser.
+The following is *not* a screenshot, but a fully interactive Textual app running in your browser.
 
 
 !!! textualize "Try in Textual-web"
