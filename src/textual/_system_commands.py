@@ -1,26 +1,26 @@
-"""A command palette command source for Textual system commands.
+"""A command palette command provider for Textual system commands.
 
-This is a simple command source that makes the most obvious application
-actions available via the [command palette][textual.command_palette.CommandPalette].
+This is a simple command provider that makes the most obvious application
+actions available via the [command palette][textual.command.CommandPalette].
 """
 
-from .command_palette import CommandMatches, CommandSource, CommandSourceHit
+from .command import Hit, Hits, Provider
 
 
-class SystemCommandSource(CommandSource):
-    """A [source][textual.command_palette.CommandSource] of command palette commands that run app-wide tasks.
+class SystemCommands(Provider):
+    """A [source][textual.command.Provider] of command palette commands that run app-wide tasks.
 
-    Used by default in [`App.COMMAND_SOURCES`][textual.app.App.COMMAND_SOURCES].
+    Used by default in [`App.COMMANDS`][textual.app.App.COMMANDS].
     """
 
-    async def search(self, query: str) -> CommandMatches:
+    async def search(self, query: str) -> Hits:
         """Handle a request to search for system commands that match the query.
 
         Args:
             user_input: The user input to be matched.
 
         Yields:
-            Command source hits for use in the command palette.
+            Command hits for use in the command palette.
         """
         # We're going to use Textual's builtin fuzzy matcher to find
         # matching commands.
@@ -47,10 +47,9 @@ class SystemCommandSource(CommandSource):
         ):
             match = matcher.match(name)
             if match > 0:
-                yield CommandSourceHit(
+                yield Hit(
                     match,
                     matcher.highlight(name),
                     runnable,
-                    name,
-                    help_text,
+                    help=help_text,
                 )

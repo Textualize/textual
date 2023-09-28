@@ -102,7 +102,20 @@ The example below shows how to use component classes to change the colors of the
 
 ## Messages
 
-This widget sends no messages.
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+The sparkline widget provides the following component classes:
+
+::: textual.widgets.Sparkline.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ---
 

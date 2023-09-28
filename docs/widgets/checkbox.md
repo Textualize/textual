@@ -34,6 +34,10 @@ The example below shows check boxes in various states.
 | ------- | ------ | ------- | -------------------------- |
 | `value` | `bool` | `False` | The value of the checkbox. |
 
+## Messages
+
+- [Checkbox.Changed][textual.widgets.Checkbox.Changed]
+
 ## Bindings
 
 The checkbox widget defines the following bindings:
@@ -45,16 +49,12 @@ The checkbox widget defines the following bindings:
 
 ## Component Classes
 
-The checkbox widget provides the following component classes:
+The checkbox widget inherits the following component classes:
 
 ::: textual.widgets._toggle_button.ToggleButton.COMPONENT_CLASSES
     options:
       show_root_heading: false
       show_root_toc_entry: false
-
-## Messages
-
-- [Checkbox.Changed][textual.widgets.Checkbox.Changed]
 
 
 ---

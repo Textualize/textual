@@ -29,12 +29,17 @@ of multiple `ListItem`s. The arrow keys can be used to navigate the list.
 | ------------- | ------ | ------- | ------------------------------------ |
 | `highlighted` | `bool` | `False` | True if this ListItem is highlighted |
 
+## Messages
 
-#### Attributes
+This widget posts no messages.
 
-| attribute | type       | purpose                     |
-| --------- | ---------- | --------------------------- |
-| `item`    | `ListItem` | The item that was selected. |
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
 
 ---
 

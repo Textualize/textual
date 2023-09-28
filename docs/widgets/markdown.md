@@ -27,11 +27,28 @@ The following example displays Markdown from a string.
     --8<-- "docs/examples/widgets/markdown.py"
     ~~~
 
+## Reactive Attributes
+
+This widget has no reactive attributes.
+
 ## Messages
 
 - [Markdown.TableOfContentsUpdated][textual.widgets.Markdown.TableOfContentsUpdated]
 - [Markdown.TableOfContentsSelected][textual.widgets.Markdown.TableOfContentsSelected]
 - [Markdown.LinkClicked][textual.widgets.Markdown.LinkClicked]
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+The markdown widget provides the following component classes:
+
+::: textual.widgets.Markdown.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 
 ## See Also

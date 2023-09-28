@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
     from ..widget import Widget
     from ._button import Button
     from ._checkbox import Checkbox
+    from ._collapsible import Collapsible
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
     from ._digits import Digits
@@ -40,14 +41,15 @@ if typing.TYPE_CHECKING:
     from ._switch import Switch
     from ._tabbed_content import TabbedContent, TabPane
     from ._tabs import Tab, Tabs
+    from ._text_area import TextArea
     from ._tooltip import Tooltip
     from ._tree import Tree
     from ._welcome import Welcome
 
-
 __all__ = [
     "Button",
     "Checkbox",
+    "Collapsible",
     "ContentSwitcher",
     "DataTable",
     "Digits",
@@ -78,6 +80,7 @@ __all__ = [
     "TabbedContent",
     "TabPane",
     "Tabs",
+    "TextArea",
     "RichLog",
     "Tooltip",
     "Tree",

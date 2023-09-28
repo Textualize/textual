@@ -597,8 +597,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             disabled: Whether the tree is disabled or not.
         """
 
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-
         text_label = self.process_label(label)
 
         self._updates = 0
@@ -609,6 +607,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
+
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     @property
     def cursor_node(self) -> TreeNode[TreeDataType] | None:

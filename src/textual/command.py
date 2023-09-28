@@ -1,21 +1,19 @@
-"""The Textual command palette."""
+"""The Textual command palette.
+
+See the guide on the [Command Palette](../guide/command_palette.md) for full details.
+
+"""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import CancelledError, Queue, TimeoutError, wait_for
+from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
+from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    AsyncGenerator,
-    AsyncIterator,
-    Callable,
-    ClassVar,
-    NamedTuple,
-)
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
 
+import rich.repr
 from rich.align import Align
 from rich.console import Group, RenderableType
 from rich.emoji import Emoji
@@ -26,13 +24,14 @@ from typing_extensions import Final, TypeAlias
 
 from . import on, work
 from ._asyncio import create_task
-from ._fuzzy import Matcher
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
+from .fuzzy import Matcher
 from .reactive import var
 from .screen import ModalScreen, Screen
 from .timer import Timer
+from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
 from .widgets import Button, Input, LoadingIndicator, OptionList, Static
 from .widgets.option_list import Option
@@ -42,79 +41,84 @@ if TYPE_CHECKING:
     from .app import App, ComposeResult
 
 __all__ = [
-    "CommandMatches",
     "CommandPalette",
-    "CommandPaletteCallable",
-    "CommandSource",
-    "CommandSourceHit",
+    "Hit",
+    "Hits",
     "Matcher",
+    "Provider",
 ]
 
 
-CommandPaletteCallable: TypeAlias = Callable[[], Any]
-"""The type of a function that will be called when a command is selected from the command palette."""
-
-
-@total_ordering
-class CommandSourceHit(NamedTuple):
+@dataclass
+class Hit:
     """Holds the details of a single command search hit."""
 
-    match_value: float
-    """The match value of the command hit.
+    score: float
+    """The score of the command hit.
 
     The value should be between 0 (no match) and 1 (complete match).
     """
 
     match_display: RenderableType
-    """The Rich renderable representation of the hit.
+    """A string or Rich renderable representation of the hit."""
 
-    Ideally a [rich Text object][rich.text.Text] object or similar.
-    """
-
-    command: CommandPaletteCallable
+    command: IgnoreReturnCallbackType
     """The function to call when the command is chosen."""
 
-    command_text: str
+    text: str | None = None
     """The command text associated with the hit, as plain text.
 
-    This is the text that will be placed into the `Input` field of the
-    [command palette][textual.command_palette.CommandPalette] when a
-    selection is made.
+    If `match_display` is not simple text, this attribute should be provided by the
+    [Provider][textual.command.Provider] object.
     """
 
-    command_help: str | None = None
+    help: str | None = None
     """Optional help text for the command."""
 
     def __lt__(self, other: object) -> bool:
-        if isinstance(other, CommandSourceHit):
-            return self.match_value < other.match_value
+        if isinstance(other, Hit):
+            return self.score < other.score
         return NotImplemented
 
     def __eq__(self, other: object) -> bool:
-        if isinstance(other, CommandSourceHit):
-            return self.match_value == other.match_value
+        if isinstance(other, Hit):
+            return self.score == other.score
         return NotImplemented
 
+    def __post_init__(self) -> None:
+        """Ensure 'text' is populated."""
+        if self.text is None:
+            if isinstance(self.match_display, str):
+                self.text = self.match_display
+            elif isinstance(self.match_display, Text):
+                self.text = self.match_display.plain
+            else:
+                raise ValueError(
+                    "A value for 'text' is required if 'match_display' is not a str or Text"
+                )
 
-CommandMatches: TypeAlias = AsyncIterator[CommandSourceHit]
-"""Return type for the command source match searching method."""
+
+Hits: TypeAlias = AsyncIterator[Hit]
+"""Return type for the command provider's `search` method."""
 
 
-class CommandSource(ABC):
-    """Base class for command palette command sources.
+class Provider(ABC):
+    """Base class for command palette command providers.
 
-    To create a source of commands inherit from this class and implement
-    [`search`][textual.command_palette.CommandSource.search].
+    To create new command provider, inherit from this class and implement
+    [`search`][textual.command.Provider.search].
     """
 
     def __init__(self, screen: Screen[Any], match_style: Style | None = None) -> None:
-        """Initialise the command source.
+        """Initialise the command provider.
 
         Args:
             screen: A reference to the active screen.
         """
         self.__screen = screen
         self.__match_style = match_style
+        self._init_task: Task | None = None
+        self._init_success = False
 
     @property
     def focused(self) -> Widget | None:
@@ -136,44 +140,96 @@ class CommandSource(ABC):
 
     @property
     def match_style(self) -> Style | None:
-        """The preferred style to use when highlighting matching portions of the [`match_display`][textual.command_palette.CommandSourceHit.match_display]."""
+        """The preferred style to use when highlighting matching portions of the [`match_display`][textual.command.Hit.match_display]."""
         return self.__match_style
 
     def matcher(self, user_input: str, case_sensitive: bool = False) -> Matcher:
-        """Create a [fuzzy matcher][textual._fuzzy.Matcher] for the given user input.
+        """Create a [fuzzy matcher][textual.fuzzy.Matcher] for the given user input.
 
         Args:
             user_input: The text that the user has input.
-            case_sensitive: Should match be case sensitive?
+            case_sensitive: Should matching be case sensitive?
 
         Returns:
-            A [fuzzy matcher][textual._fuzzy.Matcher] object for matching against candidate hits.
+            A [fuzzy matcher][textual.fuzzy.Matcher] object for matching against candidate hits.
         """
         return Matcher(
             user_input, match_style=self.match_style, case_sensitive=case_sensitive
         )
 
+    def _post_init(self) -> None:
+        """Internal method to run post init task."""
+
+        async def post_init_task() -> None:
+            """Wrapper to post init that runs in a task."""
+            try:
+                await self.startup()
+            except Exception:
+                self.app.log.error(Traceback())
+            else:
+                self._init_success = True
+
+        self._init_task = create_task(post_init_task())
+
+    async def _wait_init(self) -> None:
+        """Wait for initialization."""
+        if self._init_task is not None:
+            await self._init_task
+
+    async def startup(self) -> None:
+        """Called after the Provider is initialized, but before any calls to `search`."""
+
+    async def _search(self, query: str) -> Hits:
+        """Internal method to perform search.
+
+        Args:
+            query: The user input to be matched.
+
+        Yields:
+            Instances of [`Hit`][textual.command.Hit].
+        """
+        await self._wait_init()
+        if self._init_success:
+            hits = self.search(query)
+            async for hit in hits:
+                yield hit
+
     @abstractmethod
-    async def search(self, query: str) -> CommandMatches:
+    async def search(self, query: str) -> Hits:
         """A request to search for commands relevant to the given query.
 
         Args:
             query: The user input to be matched.
 
         Yields:
-            Instances of [`CommandSourceHit`][textual.command_palette.CommandSourceHit].
+            Instances of [`Hit`][textual.command.Hit].
         """
         yield NotImplemented
 
+    async def _shutdown(self) -> None:
+        """Internal method to call shutdown and log errors."""
+        try:
+            await self.shutdown()
+        except Exception:
+            self.app.log.error(Traceback())
 
+    async def shutdown(self) -> None:
+        """Called when the Provider is shutdown.
+
+        Use this method to perform an cleanup, if required.
+
+        """
+
+
+@rich.repr.auto
 @total_ordering
 class Command(Option):
-    """Class that holds a command in the [`CommandList`][textual.command_palette.CommandList]."""
+    """Class that holds a command in the [`CommandList`][textual.command.CommandList]."""
 
     def __init__(
         self,
         prompt: RenderableType,
-        command: CommandSourceHit,
+        command: Hit,
         id: str | None = None,
         disabled: bool = False,
     ) -> None:
@@ -207,7 +263,7 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey $accent;
+        border-bottom: hkey $primary;
         border-left: none;
         border-right: none;
         height: auto;
@@ -273,7 +329,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
+class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     """The Textual command palette."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -294,12 +350,17 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     }
 
     CommandPalette > .command-palette--help-text {
-        text-style: dim;
         background: transparent;
+        color: $text-muted;
     }
 
+    CommandPalette:dark > .command-palette--highlight {
+        text-style: bold;
+        color: $warning;
+    }
     CommandPalette > .command-palette--highlight {
-        text-style: bold reverse;
+        text-style: bold;
+        color: $warning-darken-2;
     }
 
     CommandPalette > Vertical {
@@ -312,7 +373,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     CommandPalette #--input {
         height: auto;
         visibility: visible;
-        border: hkey $accent;
+        border: hkey $primary;
         background: $panel;
     }
 
@@ -339,7 +400,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         height: auto;
         visibility: hidden;
         background: $panel;
-        border-bottom: hkey $accent;
+        border-bottom: hkey $primary;
     }
 
     CommandPalette LoadingIndicator.--visible {
@@ -393,10 +454,14 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
     def __init__(self) -> None:
         """Initialise the command palette."""
         super().__init__(id=self._PALETTE_ID)
-        self._selected_command: CommandSourceHit | None = None
+        self._selected_command: Hit | None = None
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
+        self._no_matches_timer: Timer | None = None
+        """Keeps track of if there are 'No matches found' message waiting to be displayed."""
+        self._providers: list[Provider] = []
+        """List of Provider instances involved in searches."""
 
     @staticmethod
     def is_open(app: App) -> bool:
@@ -411,17 +476,17 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         return app.screen.id == CommandPalette._PALETTE_ID
 
     @property
-    def _sources(self) -> set[type[CommandSource]]:
-        """The currently available command sources.
+    def _provider_classes(self) -> set[type[Provider]]:
+        """The currently available command providers.
 
-        This is a combination of the command sources defined [in the
-        application][textual.app.App.COMMAND_SOURCES] and those [defined in
-        the current screen][textual.screen.Screen.COMMAND_SOURCES].
+        This is a combination of the command providers defined [in the
+        application][textual.app.App.COMMANDS] and those [defined in
+        the current screen][textual.screen.Screen.COMMANDS].
         """
         return (
             set()
             if self._calling_screen is None
-            else self.app.COMMAND_SOURCES | self._calling_screen.COMMAND_SOURCES
+            else self.app.COMMANDS | self._calling_screen.COMMANDS
         )
 
     def compose(self) -> ComposeResult:
@@ -433,7 +498,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         with Vertical():
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Search...")
+                yield CommandInput(placeholder="Command Palette Search...")
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):
@@ -453,9 +518,29 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self.workers.cancel_all()
             self.dismiss()
 
-    def _on_mount(self, _: Mount) -> None:
+    def on_mount(self, _: Mount) -> None:
         """Capture the calling screen."""
         self._calling_screen = self.app.screen_stack[-2]
+
+        match_style = self.get_component_rich_style(
+            "command-palette--highlight", partial=True
+        )
+
+        assert self._calling_screen is not None
+        self._providers = [
+            provider_class(self._calling_screen, match_style)
+            for provider_class in self._provider_classes
+        ]
+        for provider in self._providers:
+            provider._post_init()
+
+    async def on_unmount(self) -> None:
+        """Shutdown providers when command palette is closed."""
+        if self._providers:
+            await wait(
+                [create_task(provider._shutdown()) for provider in self._providers],
+            )
+            self._providers.clear()
 
     def _stop_busy_countdown(self) -> None:
         """Stop any busy countdown that's in effect."""
@@ -474,8 +559,37 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             if self._list_visible:
                 self._show_busy = True
 
-        self._busy_timer = self._busy_timer = self.set_timer(
-            self._BUSY_COUNTDOWN, _become_busy
+        self._busy_timer = self.set_timer(self._BUSY_COUNTDOWN, _become_busy)
+
+    def _stop_no_matches_countdown(self) -> None:
+        """Stop any 'No matches' countdown that's in effect."""
+        if self._no_matches_timer is not None:
+            self._no_matches_timer.stop()
+            self._no_matches_timer = None
+
+    _NO_MATCHES_COUNTDOWN: Final[float] = 0.5
+    """How many seconds to wait before showing 'No matches found'."""
+
+    def _start_no_matches_countdown(self) -> None:
+        """Start a countdown to showing that there are no matches for the query.
+
+        Adds a 'No matches found' option to the command list after `_NO_MATCHES_COUNTDOWN` seconds.
+        """
+        self._stop_no_matches_countdown()
+
+        def _show_no_matches() -> None:
+            command_list = self.query_one(CommandList)
+            command_list.add_option(
+                Option(
+                    Align.center(Text("No matches found")),
+                    disabled=True,
+                    id=self._NO_MATCHES,
+                )
+            )
+
+        self._no_matches_timer = self.set_timer(
+            self._NO_MATCHES_COUNTDOWN,
+            _show_no_matches,
         )
 
     def _watch__list_visible(self) -> None:
@@ -497,49 +611,39 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         self.query_one(CommandList).set_class(self._show_busy, "--populating")
 
     @staticmethod
-    async def _consume(
-        source: CommandMatches, commands: Queue[CommandSourceHit]
-    ) -> None:
+    async def _consume(hits: Hits, commands: Queue[Hit]) -> None:
         """Consume a source of matching commands, feeding the given command queue.
 
         Args:
-            source: The source to consume.
+            hits: The hits to consume.
             commands: The command queue to feed.
         """
-        async for hit in source:
+        async for hit in hits:
             await commands.put(hit)
 
-    async def _search_for(
-        self, search_value: str
-    ) -> AsyncGenerator[CommandSourceHit, bool]:
-        """Search for a given search value amongst all of the command sources.
+    async def _search_for(self, search_value: str) -> AsyncGenerator[Hit, bool]:
+        """Search for a given search value amongst all of the command providers.
 
         Args:
             search_value: The value to search for.
 
         Yields:
-            The hits made amongst the registered command sources.
+            The hits made amongst the registered command providers.
         """
 
-        # Get the style for highlighted parts of a hit match.
-        match_style = self._sans_background(
-            self.get_component_rich_style("command-palette--highlight")
-        )
+        # Set up a queue to stream in the command hits from all the providers.
+        commands: Queue[Hit] = Queue()
 
-        # Set up a queue to stream in the command hits from all the sources.
-        commands: Queue[CommandSourceHit] = Queue()
-
-        # Fire up an instance of each command source, inside a task, and
+        # Fire up an instance of each command provider, inside a task, and
         # have them go start looking for matches.
-        assert self._calling_screen is not None
         searches = [
             create_task(
                 self._consume(
-                    source(self._calling_screen, match_style).search(search_value),
+                    provider._search(search_value),
                     commands,
                 )
             )
-            for source in self._sources
+            for provider in self._providers
         ]
 
         # Set up a delay for showing that we're busy.
@@ -569,7 +673,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # Check through all the finished searches, see if any have
         # exceptions, and log them. In most other circumstances we'd
         # re-raise the exception and quit the application, but the decision
-        # has been made to find and log exceptions with command sources.
+        # has been made to find and log exceptions with command providers.
         #
         # https://github.com/Textualize/textual/pull/3058#discussion_r1310051855
         for search in searches:
@@ -584,10 +688,13 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
         # Having finished the main processing loop, we're not busy any more.
         # Anything left in the queue (see next) will fall out more or less
-        # instantly.
-        self._stop_busy_countdown()
+        # instantly. If we're aborted, that means a fresh search is incoming
+        # and it'll have cleaned up the countdown anyway, so don't do that
+        # here as they'll be a clash.
+        if not aborted:
+            self._stop_busy_countdown()
 
-        # If all the sources are pretty fast it could be that we've reached
+        # If all the providers are pretty fast it could be that we've reached
         # this point but the queue isn't empty yet. So here we flush the
         # queue of anything left.
         while not aborted and not commands.empty():
@@ -680,7 +787,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         )
 
         # The list to hold on to the commands we've gathered from the
-        # command sources.
+        # command providers.
         gathered_commands: list[Command] = []
 
         # Get a reference to the widget that we're going to drop the
@@ -739,8 +846,8 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
             prompt = hit.match_display
-            if hit.command_help:
-                prompt = Group(prompt, Text(hit.command_help, style=help_style))
+            if hit.help:
+                prompt = Group(prompt, Text(hit.help, style=help_style))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
 
             # Before we go making any changes to the UI, we do a quick
@@ -787,13 +894,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
-            command_list.add_option(
-                Option(
-                    Align.center(Text("No matches found")),
-                    disabled=True,
-                    id=self._NO_MATCHES,
-                )
-            )
+            self._start_no_matches_countdown()
 
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
@@ -802,7 +903,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         Args:
             event: The input event.
         """
+        event.stop()
         self.workers.cancel_all()
+        self._stop_no_matches_countdown()
+
         search_value = event.value.strip()
         if search_value:
             self._gather_commands(search_value)
@@ -822,7 +926,7 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
-            input.value = str(event.option.command.command_text)
+            input.value = str(event.option.command.text)
             self._selected_command = event.option.command
         input.action_end()
         self._list_visible = False
@@ -832,10 +936,14 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
 
     @on(Input.Submitted)
     @on(Button.Pressed)
-    def _select_or_command(self) -> None:
+    def _select_or_command(
+        self, event: Input.Submitted | Button.Pressed | None = None
+    ) -> None:
         """Depending on context, select or execute a command."""
         # If the list is visible, that means we're in "pick a command"
         # mode...
+        if event is not None:
+            event.stop()
         if self._list_visible:
             # ...so if nothing in the list is highlighted yet...
             if self.query_one(CommandList).highlighted is None:
@@ -863,10 +971,10 @@ class CommandPalette(ModalScreen[CommandPaletteCallable], inherit_css=False):
             self.dismiss()
 
     def _action_command_list(self, action: str) -> None:
-        """Pass an action on to the [`CommandList`][textual.command_palette.CommandList].
+        """Pass an action on to the [`CommandList`][textual.command.CommandList].
 
         Args:
-            action: The action to pass on to the [`CommandList`][textual.command_palette.CommandList].
+            action: The action to pass on to the [`CommandList`][textual.command.CommandList].
         """
         try:
             command_action = getattr(self.query_one(CommandList), f"action_{action}")

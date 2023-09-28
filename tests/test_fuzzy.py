@@ -1,7 +1,7 @@
 from rich.style import Style
 from rich.text import Span
 
-from textual._fuzzy import Matcher
+from textual.fuzzy import Matcher
 
 
 def test_match():

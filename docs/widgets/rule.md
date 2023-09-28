@@ -62,6 +62,14 @@ The example below shows vertical rules with all the available line styles.
 
 This widget sends no messages.
 
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
+
 ---
 
 
