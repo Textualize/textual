@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `OutOfBounds` exception to be raised by `Pilot` https://github.com/Textualize/textual/pull/3360
-- Added `Input.Clear` method https://github.com/Textualize/textual/pull/3430
+- Added `Input.clear` method https://github.com/Textualize/textual/pull/3430
 
 ### Changed
 
