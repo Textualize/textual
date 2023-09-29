@@ -1063,8 +1063,8 @@ class FractionalProperty:
                 obj.refresh(children=self.children)
             return
 
-        if isinstance(value, float):
-            float_value = value
+        if isinstance(value, (int, float)):
+            float_value = float(value)
         elif isinstance(value, str) and value.endswith("%"):
             float_value = float(Scalar.parse(value).value) / 100
         else:
