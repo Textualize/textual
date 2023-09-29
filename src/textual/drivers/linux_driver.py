@@ -12,6 +12,7 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING, Any
 
 import rich.repr
+import rich.traceback
 
 from .. import events, log
 from .._xterm_parser import XTermParser
@@ -265,6 +266,13 @@ class LinuxDriver(Driver):
                         for event in feed(unicode_data):
                             self.process_event(event)
         except Exception as error:
-            log(error)
+            self._app.exit(
+                return_code=1,
+                message=rich.traceback.Traceback.from_exception(
+                    exc_type=type(error),
+                    exc_value=error,
+                    traceback=error.__traceback__,
+                ),
+            )
         finally:
             selector.close()
