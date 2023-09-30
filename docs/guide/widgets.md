@@ -520,7 +520,7 @@ In this section we will show how to design and build a fully-working app, while 
 
 ### Designing the app
 
-We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this a teaching aid for binary numbers.
+We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this as a teaching aid for binary numbers.
 
 Here's a sketch of what the app should ultimately look like:
 
