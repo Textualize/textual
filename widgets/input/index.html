@@ -93,6 +93,25 @@
 
 </style>
 
+<script lang="js">
+window.onload = async (event) => {
+  const demos = document.querySelectorAll(".textual-web-demo");
+
+  if (demos.length){
+    await fetch("https://textual-web-demos.fly.dev/health-check/", {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    demos.forEach((element)=>{
+      const app = element.dataset.app;
+      const iframe_html = `<div class="textual-web-demo"><iframe width="100%" onload="this.parentElement.classList.add('-loaded');" src="https://textual-web.io/textualize/${app}?delay=y&fontsize=12&ping=https://textual-web-demos.fly.dev/health-check/"></iframe></div>`;
+      element.outerHTML = iframe_html;
+    });
+  }
+}
+
+</script>
+
 
   </head>
   
@@ -5144,6 +5163,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._input.Input.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._input.Input.insert_text_at_cursor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7838,6 +7868,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._input.Input.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._input.Input.insert_text_at_cursor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -9684,6 +9725,29 @@ to the corresponding <code>Input</code> widget.</p>
   
       <p>Handle a submit action.</p>
 <p>Normally triggered by the user pressing Enter. This may also run any validators.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._input.Input.clear" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._input.Input.clear" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear the input.</p>
 
   </div>
 

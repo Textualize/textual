@@ -93,6 +93,25 @@
 
 </style>
 
+<script lang="js">
+window.onload = async (event) => {
+  const demos = document.querySelectorAll(".textual-web-demo");
+
+  if (demos.length){
+    await fetch("https://textual-web-demos.fly.dev/health-check/", {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    demos.forEach((element)=>{
+      const app = element.dataset.app;
+      const iframe_html = `<div class="textual-web-demo"><iframe width="100%" onload="this.parentElement.classList.add('-loaded');" src="https://textual-web.io/textualize/${app}?delay=y&fontsize=12&ping=https://textual-web-demos.fly.dev/health-check/"></iframe></div>`;
+      element.outerHTML = iframe_html;
+    });
+  }
+}
+
+</script>
+
 
   </head>
   
@@ -7140,6 +7159,10 @@ You could use a drawing package such as <a href="https://excalidraw.com/">Excali
 </div>
 
 <p>It's rough, but it's all we need.</p>
+<details class="textualize">
+<summary>Try in Textual-web</summary>
+<p><div class="textual-web-demo" data-app="layout06"></div></p>
+</details>
 <h2 id="tip-2-work-outside-in">Tip 2. Work outside in<a class="headerlink" href="#tip-2-work-outside-in" title="Permanent link">&para;</a></h2>
 <p>Like a sculpture with a block of marble, it is best to work from the outside towards the center.
 If your design has fixed elements (like a header, footer, or sidebar), start with those first.</p>
