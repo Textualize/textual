@@ -11,6 +11,7 @@ from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
 from textual.widgets import DataTable
+from textual.widgets._data_table import _DEFAULT_CELL_X_PADDING
 from textual.widgets.data_table import (
     CellDoesNotExist,
     CellKey,
@@ -271,7 +272,10 @@ async def test_add_column_with_width():
         row = table.add_row("123")
         assert table.get_cell(row, column) == "123"
         assert table.columns[column].width == 10
-        assert table.columns[column].render_width(table) == 12  # 10 + (2 padding)
+        assert (
+            table.columns[column].render_width(table)
+            == 10 + 2 * _DEFAULT_CELL_X_PADDING
+        )
 
 
 async def test_add_columns():
@@ -689,7 +693,10 @@ async def test_update_cell_at_column_width(label, new_value, new_content_width):
         table.update_cell_at(Coordinate(0, 0), new_value, update_width=True)
         await wait_for_idle()
         assert first_column.content_width == new_content_width
-        assert first_column.render_width(table) == new_content_width + 2
+        assert (
+            first_column.render_width(table)
+            == new_content_width + 2 * _DEFAULT_CELL_X_PADDING
+        )
 
 
 async def test_coordinate_to_cell_key():
@@ -1188,7 +1195,6 @@ async def test_add_row_auto_height(cell: RenderableType, height: int):
 async def test_add_row_expands_column_widths():
     """Regression test for https://github.com/Textualize/textual/issues/1026."""
     app = DataTableApp()
-    from textual.widgets._data_table import _DEFAULT_CELL_X_PADDING
 
     async with app.run_test() as pilot:
         table = app.query_one(DataTable)
