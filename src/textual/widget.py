@@ -758,7 +758,7 @@ class Widget(DOMNode):
         except AttributeError as e:
             for widget in widgets:
                 if not isinstance(widget, Widget):
-                    raise TypeError(f"Objects of type {type(widget).__name__!r} are not widgets")
+                    raise TypeError(f"Objects of type {type(widget).__name__!r} are not widgets and cannot be mounted")
         unique_ids = set(ids_to_mount)
         num_unique_ids = len(unique_ids)
         num_widgets_with_ids = len(ids_to_mount)
