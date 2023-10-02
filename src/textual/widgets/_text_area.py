@@ -36,7 +36,7 @@ from textual import events, log
 from textual._cells import cell_len
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.events import MouseEvent
+from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -203,7 +203,9 @@ TextArea {
     Syntax highlighting is only possible when the `language` attribute is set.
     """
 
-    selection: Reactive[Selection] = reactive(Selection(), always_update=True)
+    selection: Reactive[Selection] = reactive(
+        Selection(), always_update=True, init=False
+    )
     """The selection start and end locations (zero-based line_index, offset).
 
     This represents the cursor location and the current selection.
