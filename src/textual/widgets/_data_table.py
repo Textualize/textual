@@ -42,6 +42,7 @@ CursorType = Literal["cell", "row", "column", "none"]
 CellType = TypeVar("CellType")
 
 _DEFAULT_CELL_X_PADDING = 1
+"""Default padding to use on each side of a column in the data table."""
 
 
 class CellDoesNotExist(Exception):
@@ -171,7 +172,7 @@ class Column:
     auto_width: bool = False
 
     def render_width(self, data_table: DataTable[Any]) -> int:
-        """Width, in cells, required to render a column with padding included.
+        """Width, in cells, required to render the column with padding included.
 
         Args:
             data_table: The data table to which the column belongs.
@@ -596,6 +597,37 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialises a widget to display tabular data.
+
+        Args:
+            show_header: Whether the table header should be visible or not.
+            show_row_labels: Whether the row labels should be shown or not.
+            fixed_rows: The number of rows, counting from the top, that should be fixed
+                and still visible when the user scrolls down.
+            fixed_columns: The number of columns, counting from the left, that should be
+                fixed and still visible when the user scrolls right.
+            zebra_stripes: Enables or disables a zebra effect applied to the background
+                color of the rows of the table, where alternate colors are styled
+                differently to improve the readability of the table.
+            header_height: The height, in number of cells, of the data table header.
+            show_cursor: Whether the cursor should be visible when navigating the data
+                table or not.
+            cursor_foreground_priority: If the data associated with a cell is an
+                arbitrary renderable with a set foreground color, this determines whether
+                that color is prioritised over the cursor component class or not.
+            cursor_background_priority: If the data associated with a cell is an
+                arbitrary renderable with a set background color, this determines whether
+                that color is prioritesed over the cursor component class or not.
+            cursor_type: The type of cursor to be used when navigating the data table
+                with the keyboard.
+            cell_padding: The number of cells added on each side of each column. Setting
+                this value to zero will likely make your table very heard to read.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
         """Contains the cells of the table, indexed by row key and column key.
