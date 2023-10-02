@@ -175,10 +175,10 @@ class Column:
         """Width, in cells, required to render the column with padding included.
 
         Args:
-            data_table: The data table to which the column belongs.
+            data_table: The data table where the column will be rendered.
 
         Returns:
-            The width, in cells, required to render a column; padding included.
+            The width, in cells, required to render the column with padding included.
         """
         return 2 * data_table.cell_padding + (
             self.content_width if self.auto_width else self.width
