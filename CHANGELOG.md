@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `OutOfBounds` exception to be raised by `Pilot` https://github.com/Textualize/textual/pull/3360
 - Added `Input.clear` method https://github.com/Textualize/textual/pull/3430
+- Added `TextArea.SelectionChanged` and `TextArea.Changed` messages https://github.com/Textualize/textual/pull/3442
 
 ### Changed
 

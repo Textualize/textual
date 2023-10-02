@@ -1218,7 +1218,8 @@ class App(Generic[ReturnType], DOMNode):
                 or None to auto-detect.
             tooltips: Enable tooltips when testing.
             notifications: Enable notifications when testing.
-            message_hook: An optional callback that will called with every message going through the app.
+            message_hook: An optional callback that will be called each time any message arrives at any
+                message pump in the app.
         """
         from .pilot import Pilot
 
