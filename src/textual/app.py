@@ -2151,9 +2151,12 @@ class App(Generic[ReturnType], DOMNode):
             if not self._exit:
                 driver.start_application_mode()
                 try:
-                    with redirect_stdout(self._capture_stdout):
-                        with redirect_stderr(self._capture_stderr):
-                            await run_process_messages()
+                    if headless:
+                        await run_process_messages()
+                    else:
+                        with redirect_stdout(self._capture_stdout):
+                            with redirect_stderr(self._capture_stderr):
+                                await run_process_messages()
 
                 finally:
                     driver.stop_application_mode()
