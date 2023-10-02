@@ -755,10 +755,8 @@ class Widget(DOMNode):
         # Check for duplicate IDs in the incoming widgets
         try:
             ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
-        except AttributeError as e:
-            for widget in widgets:
-                if not isinstance(widget, Widget):
-                    raise TypeError(f"Objects of type {type(widget).__name__!r} are not widgets and cannot be mounted")
+        except AttributeError:  # Lack of an id is checked in App._register()
+            ids_to_mount = []
         unique_ids = set(ids_to_mount)
         num_unique_ids = len(unique_ids)
         num_widgets_with_ids = len(ids_to_mount)

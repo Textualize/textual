@@ -1,6 +1,6 @@
 import pytest
 
-from textual.app import App
+from textual.app import App, AppError
 from textual.css.query import TooManyMatches
 from textual.widget import MountError, Widget, WidgetError
 from textual.widgets import Static
@@ -116,8 +116,10 @@ async def test_mount_via_app() -> None:
             await pilot.app.mount(Static(), before="Static")
 
     async with App().run_test() as pilot:
-        # Make sure we get told off trying to mount something
-        # that isn't actually a widget.
-        await pilot.app.mount_all(widgets)
-        with pytest.raises(TypeError):
-            await pilot.app.mount([])
+        # Make sure we get told off trying to mount a widget
+        # class rather than an instance.
+        with pytest.raises(AppError):
+            class BadWidget(Widget):
+                def __init_(self, *args, **kw):
+                    ...
+            await pilot.app.mount(BadWidget)
