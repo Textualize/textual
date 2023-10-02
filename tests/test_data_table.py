@@ -273,7 +273,7 @@ async def test_add_column_with_width():
         assert table.get_cell(row, column) == "123"
         assert table.columns[column].width == 10
         assert (
-            table.columns[column].render_width(table)
+            table.columns[column].get_render_width(table)
             == 10 + 2 * _DEFAULT_CELL_X_PADDING
         )
 
@@ -694,7 +694,7 @@ async def test_update_cell_at_column_width(label, new_value, new_content_width):
         await wait_for_idle()
         assert first_column.content_width == new_content_width
         assert (
-            first_column.render_width(table)
+            first_column.get_render_width(table)
             == new_content_width + 2 * _DEFAULT_CELL_X_PADDING
         )
 
@@ -1202,21 +1202,21 @@ async def test_add_row_expands_column_widths():
         table.add_column("Second", width=10)
         await pilot.pause()
         assert (
-            table.ordered_columns[0].render_width(table)
+            table.ordered_columns[0].get_render_width(table)
             == 5 + 2 * _DEFAULT_CELL_X_PADDING
         )
         assert (
-            table.ordered_columns[1].render_width(table)
+            table.ordered_columns[1].get_render_width(table)
             == 10 + 2 * _DEFAULT_CELL_X_PADDING
         )
 
         table.add_row("a" * 20, "a" * 20)
         await pilot.pause()
         assert (
-            table.ordered_columns[0].render_width(table)
+            table.ordered_columns[0].get_render_width(table)
             == 20 + 2 * _DEFAULT_CELL_X_PADDING
         )
         assert (
-            table.ordered_columns[1].render_width(table)
+            table.ordered_columns[1].get_render_width(table)
             == 10 + 2 * _DEFAULT_CELL_X_PADDING
         )

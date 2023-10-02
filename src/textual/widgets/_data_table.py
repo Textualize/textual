@@ -171,7 +171,7 @@ class Column:
     content_width: int = 0
     auto_width: bool = False
 
-    def render_width(self, data_table: DataTable[Any]) -> int:
+    def get_render_width(self, data_table: DataTable[Any]) -> int:
         """Width, in cells, required to render the column with padding included.
 
         Args:
@@ -1037,7 +1037,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_show_row_labels(self, show: bool) -> None:
         width, height = self.virtual_size
-        column_width = self._label_column.render_width(self)
+        column_width = self._label_column.get_render_width(self)
         width_change = column_width if show else -column_width
         self.virtual_size = Size(width + width_change, height)
         self._scroll_cursor_into_view()
@@ -1206,7 +1206,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def _row_label_column_width(self) -> int:
         """The render width of the column containing row labels"""
         return (
-            self._label_column.render_width(self)
+            self._label_column.get_render_width(self)
             if self._should_render_row_labels
             else 0
         )
@@ -1304,7 +1304,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                         row_index,
                         column_index,
                         style,
-                        column.render_width(self),
+                        column.get_render_width(self),
                         cursor=should_highlight(
                             cursor_location, cell_location, cursor_type
                         ),
@@ -1314,7 +1314,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     )
                     cell_height = len(rendered_cell)
                     rendered_cells.append(
-                        (rendered_cell, cell_height, column.render_width(self))
+                        (rendered_cell, cell_height, column.get_render_width(self))
                     )
                     height = max(height, cell_height)
 
@@ -1332,7 +1332,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                         )
 
         data_cells_width = sum(
-            column.render_width(self) for column in self.columns.values()
+            column.get_render_width(self) for column in self.columns.values()
         )
         total_width = data_cells_width + self._row_label_column_width
         header_height = self.header_height if self.show_header else 0
@@ -1354,13 +1354,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # plus the width of the render width of the longest row label.
         x = (
             sum(
-                column.render_width(self)
+                column.get_render_width(self)
                 for column in self.ordered_columns[:column_index]
             )
             + self._row_label_column_width
         )
         column_key = self._column_locations.get_key(column_index)
-        width = self.columns[column_key].render_width(self)
+        width = self.columns[column_key].get_render_width(self)
         height = row.height
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
@@ -1377,7 +1377,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
         row_width = (
-            sum(column.render_width(self) for column in self.columns.values())
+            sum(column.get_render_width(self) for column in self.columns.values())
             + self._row_label_column_width
         )
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
@@ -1394,13 +1394,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         columns = self.columns
         x = (
             sum(
-                column.render_width(self)
+                column.get_render_width(self)
                 for column in self.ordered_columns[:column_index]
             )
             + self._row_label_column_width
         )
         column_key = self._column_locations.get_key(column_index)
-        width = columns[column_key].render_width(self)
+        width = columns[column_key].get_render_width(self)
         header_height = self.header_height if self.show_header else 0
         height = self._total_row_height + header_height
         full_column_region = Region(x, 0, width, height)
@@ -2083,7 +2083,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     row_index,
                     column_index,
                     fixed_style,
-                    column.render_width(self),
+                    column.get_render_width(self),
                     cursor=should_highlight(
                         cursor_location, cell_location, cursor_type
                     ),
@@ -2100,7 +2100,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row_index,
                 column_index,
                 row_style,
-                column.render_width(self),
+                column.get_render_width(self),
                 cursor=should_highlight(cursor_location, cell_location, cursor_type),
                 hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
@@ -2110,7 +2110,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget_width = self.size.width
         table_width = (
             sum(
-                column.render_width(self)
+                column.get_render_width(self)
                 for column in self.ordered_columns[self.fixed_columns :]
             )
             + self._row_label_column_width
@@ -2194,7 +2194,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             hover_location=self.hover_coordinate,
         )
         fixed_width = sum(
-            column.render_width(self)
+            column.get_render_width(self)
             for column in self.ordered_columns[: self.fixed_columns]
         )
 
@@ -2314,7 +2314,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         top += sum(row.height for row in self.ordered_rows[: self.fixed_rows])
         left = (
             sum(
-                column.render_width(self)
+                column.get_render_width(self)
                 for column in self.ordered_columns[: self.fixed_columns]
             )
             + self._row_label_column_width
