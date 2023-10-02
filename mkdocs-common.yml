@@ -34,6 +34,7 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.snippets
   - markdown.extensions.attr_list
+  - pymdownx.details
 
 theme:
   name: material
