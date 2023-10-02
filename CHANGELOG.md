@@ -18,11 +18,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `OutOfBounds` exception to be raised by `Pilot` https://github.com/Textualize/textual/pull/3360
 - `TextArea.cursor_screen_offset` property for getting the screen-relative position of the cursor https://github.com/Textualize/textual/pull/3408
 - `Input.cursor_screen_offset` property for getting the screen-relative position of the cursor https://github.com/Textualize/textual/pull/3408
+- Added `Input.clear` method https://github.com/Textualize/textual/pull/3430
 
 ### Changed
 
 - `Pilot.click`/`Pilot.hover` now raises `OutOfBounds` when clicking outside visible screen https://github.com/Textualize/textual/pull/3360
 - `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector https://github.com/Textualize/textual/pull/3360
+- Added a delay to when the `No Matches` message appears in the command palette, thus removing a flicker https://github.com/Textualize/textual/pull/3399
 
 ## [0.38.1] - 2023-09-21
 

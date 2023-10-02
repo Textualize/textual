@@ -491,6 +491,10 @@ class Input(Widget, can_focus=True):
             self.value = f"{before}{text}{after}"
             self.cursor_position += len(text)
 
+    def clear(self) -> None:
+        """Clear the input."""
+        self.value = ""
+
     def action_cursor_left(self) -> None:
         """Move the cursor one position to the left."""
         self.cursor_position -= 1
