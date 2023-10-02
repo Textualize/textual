@@ -377,7 +377,11 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """User clicked a tab."""
-        assert isinstance(event.tab, ContentTab)
+        if not isinstance(event.tab, ContentTab):
+            # A tab pane could contain its own Tabs widget, so just return
+            # early if the tab activated is not a ContentTab.
+            # https://github.com/Textualize/textual/issues/3412
+            return
         assert isinstance(event.tab.id, str)
         event.stop()
         switcher = self.get_child_by_type(ContentSwitcher)
@@ -392,6 +396,11 @@ class TabbedContent(Widget):
 
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
+        if self.get_child_by_type(Tabs).tab_count != 0:
+            # A tab pane could contain its own Tabs widget, so just return
+            # early if the TabbedContent still contains tabs.
+            # https://github.com/Textualize/textual/issues/3412
+            return
         event.stop()
         self.get_child_by_type(ContentSwitcher).current = None
         self.active = ""
