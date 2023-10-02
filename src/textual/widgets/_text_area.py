@@ -248,6 +248,7 @@ TextArea {
         """
 
         text_area: TextArea
+        """The `text_area` that sent this message."""
 
         @property
         def control(self) -> TextArea:
@@ -261,7 +262,9 @@ TextArea {
         This includes when the cursor moves or when text is selected."""
 
         selection: Selection
+        """The new selection."""
         text_area: TextArea
+        """The `text_area` that sent this message."""
 
         @property
         def control(self) -> TextArea:
