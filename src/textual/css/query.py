@@ -48,9 +48,9 @@ class WrongType(QueryError):
     """Query result was not of the correct type."""
 
 
-QueryType = TypeVar("QueryType", bound=Widget)
+QueryType = TypeVar("QueryType", bound="Widget")
 """Type variable used to type generic queries."""
-ExpectType = TypeVar("ExpectType", bound=Widget)
+ExpectType = TypeVar("ExpectType")
 """Type variable used to further restrict queries."""
 
 
