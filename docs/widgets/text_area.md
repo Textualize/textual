@@ -430,6 +430,11 @@ If you notice some highlights are missing after registering a language, the issu
 | `match_cursor_bracket` | `bool`                   | `True`            | Enable/disable highlighting matching brackets under cursor. |
 | `cursor_blink`         | `bool`                   | `True`            | Enable/disable blinking of the cursor when the widget has focus. |
 
+## Messages
+
+- [TextArea.Changed][textual.widgets._text_area.TextArea.Changed]
+- [TextArea.SelectionChanged][textual.widgets._text_area.TextArea.SelectionChanged]
+
 ## Bindings
 
 The `TextArea` widget defines the following bindings:

@@ -12,13 +12,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
 - App exception when a `Tree` is initialized/mounted with `disabled=True` https://github.com/Textualize/textual/issues/3407
 - Fix location of IME and emoji popups https://github.com/Textualize/textual/pull/3408
+- Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
 
 ### Added
 
 - `OutOfBounds` exception to be raised by `Pilot` https://github.com/Textualize/textual/pull/3360
 - `TextArea.cursor_screen_offset` property for getting the screen-relative position of the cursor https://github.com/Textualize/textual/pull/3408
 - `Input.cursor_screen_offset` property for getting the screen-relative position of the cursor https://github.com/Textualize/textual/pull/3408
+- Reactive `cell_padding` (and respective parameter) to define horizontal cell padding in data table columns https://github.com/Textualize/textual/issues/3435
 - Added `Input.clear` method https://github.com/Textualize/textual/pull/3430
+- Added `TextArea.SelectionChanged` and `TextArea.Changed` messages https://github.com/Textualize/textual/pull/3442
 
 ### Changed
 
