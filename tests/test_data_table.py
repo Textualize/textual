@@ -1220,3 +1220,34 @@ async def test_add_row_expands_column_widths():
             table.ordered_columns[1].get_render_width(table)
             == 10 + 2 * _DEFAULT_CELL_X_PADDING
         )
+
+
+async def test_cell_padding_updates_virtual_size():
+    app = DataTableApp()
+
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("First")
+        table.add_column("Second", width=10)
+        table.add_column("Third")
+
+        width = table.virtual_size.width
+
+        table.cell_padding += 5
+        assert width + 5 * 2 * 3 == table.virtual_size.width
+
+        table.cell_padding -= 2
+        assert width + 3 * 2 * 3 == table.virtual_size.width
+
+        table.cell_padding += 10
+        assert width + 13 * 2 * 3 == table.virtual_size.width
+
+
+async def test_cell_padding_cannot_be_negative():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.cell_padding = -3
+        assert table.cell_padding == 0
+        table.cell_padding = -1234
+        assert table.cell_padding == 0

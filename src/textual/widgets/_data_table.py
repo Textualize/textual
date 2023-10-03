@@ -1055,7 +1055,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def watch_zebra_stripes(self) -> None:
         self._clear_caches()
 
-    def watch_cell_padding(self) -> None:
+    def validate_cell_padding(self, cell_padding: int) -> int:
+        return max(cell_padding, 0)
+
+    def watch_cell_padding(self, old_padding: int, new_padding: int) -> None:
+        # A single side of a single cell will have its width changed by (new - old),
+        # so the total width change is double that per column, times the number of
+        # columns for the whole data table.
+        width_change = 2 * (new_padding - old_padding) * len(self.columns)
+        width, height = self.virtual_size
+        self.virtual_size = Size(width + width_change, height)
+        self._scroll_cursor_into_view()
         self._clear_caches()
 
     def watch_hover_coordinate(self, old: Coordinate, value: Coordinate) -> None:
