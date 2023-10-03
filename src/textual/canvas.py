@@ -10,6 +10,8 @@ from textual.geometry import Offset
 LineType: TypeAlias = Literal["thin", "heavy", "double"]
 OffsetPair: TypeAlias = tuple[int, int]
 
+BORDER_COMBINATIONS = {"┌"}
+
 
 class CanvasStyle(NamedTuple):
     foreground: Color
