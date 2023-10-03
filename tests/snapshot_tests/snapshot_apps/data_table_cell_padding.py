@@ -16,6 +16,12 @@ class TableApp(App):
             dt.add_row("value", "value", "val")
             yield dt
 
+    def key_a(self):
+        self.query(DataTable).last().cell_padding = 20
+
+    def key_b(self):
+        self.query(DataTable).last().cell_padding = 10
+
 
 app = TableApp()
 if __name__ == "__main__":

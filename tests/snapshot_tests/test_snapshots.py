@@ -172,6 +172,13 @@ def test_datatable_cell_padding(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_cell_padding.py")
 
 
+def test_datatable_change_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_cell_padding.py", press=["a", "b"]
+    )
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 

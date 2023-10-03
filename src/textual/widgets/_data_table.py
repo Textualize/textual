@@ -330,6 +330,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     )
     """The coordinate of the `DataTable` that is being hovered."""
 
+    def watch_cell_padding(self) -> None:
+        self._clear_caches()
+
     class CellHighlighted(Message):
         """Posted when the cursor moves to highlight a new cell.
 
@@ -1050,6 +1053,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
 
     def watch_zebra_stripes(self) -> None:
+        self._clear_caches()
+
+    def watch_cell_padding(self) -> None:
         self._clear_caches()
 
     def watch_hover_coordinate(self, old: Coordinate, value: Coordinate) -> None:
