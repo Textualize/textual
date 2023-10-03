@@ -41,7 +41,7 @@ window.onload = async (event) => {
     });
     demos.forEach((element)=>{
       const app = element.dataset.app;
-      const iframe_html = `<div class="textual-web-demo"><iframe width="100%" onload="this.parentElement.classList.add('-loaded');" src="https://textual-web.io/textualize/${app}?delay=y&fontsize=12"></iframe></div>`;
+      const iframe_html = `<div class="textual-web-demo"><iframe width="100%" onload="this.parentElement.classList.add('-loaded');" src="https://textual-web.io/textualize/${app}?delay=y&fontsize=12&ping=https://textual-web-demos.fly.dev/health-check/"></iframe></div>`;
       element.outerHTML = iframe_html;
     });
   }
