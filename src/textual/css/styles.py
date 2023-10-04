@@ -632,7 +632,7 @@ class StylesBase(ABC):
             # parents to compute the correct final text color.
             if self.has_rule("text_opacity") and self.text_opacity < 1:
                 reference_background = (
-                    self.node.background_colors[1]
+                    self.node._opacity_background_colors[1]
                     if self.node is not None
                     else self.background
                 )
