@@ -167,6 +167,18 @@ def test_datatable_add_row_auto_height_sorted(snap_compare):
     )
 
 
+def test_datatable_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_cell_padding.py")
+
+
+def test_datatable_change_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_cell_padding.py", press=["a", "b"]
+    )
+
+
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")
 
@@ -708,7 +720,9 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -760,9 +774,12 @@ I am the final line."""
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
-@pytest.mark.parametrize("theme_name",
-                         [theme.name for theme in TextAreaTheme.builtin_themes()])
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
+@pytest.mark.parametrize(
+    "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
+)
 def test_text_area_themes(snap_compare, theme_name):
     """Each theme should have its own snapshot with at least some Python
     to check that the rendering is sensible. This also ensures that theme

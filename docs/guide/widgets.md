@@ -520,7 +520,7 @@ In this section we will show how to design and build a fully-working app, while 
 
 ### Designing the app
 
-We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this a teaching aid for binary numbers.
+We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this as a teaching aid for binary numbers.
 
 Here's a sketch of what the app should ultimately look like:
 
@@ -534,6 +534,10 @@ Here's a sketch of what the app should ultimately look like:
 </div>
 
 There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them in to logical groups with compound widgets. This will make our app easier to work with.
+
+??? textualize "Try in Textual-web"
+
+    <div class="textual-web-demo" data-app="byte03"></div>
 
 ###  Identifying components
 
