@@ -138,3 +138,18 @@ async def test_create_with_duplicate_id_and_subsequent_non_dupes() -> None:
         assert option_list.option_count == 6
         option_list.add_option(Option("Not a dupe", id="7"))
         assert option_list.option_count == 7
+
+
+async def test_adding_multiple_duplicates_at_once() -> None:
+    """Adding duplicates together than aren't existing duplicates should be an error."""
+    async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 5
+        with pytest.raises(DuplicateID):
+            option_list.add_options(
+                [
+                    Option("dupe", id="42"),
+                    Option("dupe", id="42"),
+                ]
+            )
+        assert option_list.option_count == 5
