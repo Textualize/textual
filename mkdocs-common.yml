@@ -9,6 +9,7 @@ markdown_extensions:
   - admonition
   - def_list
   - meta
+  - footnotes
 
   - toc:
       permalink: true
