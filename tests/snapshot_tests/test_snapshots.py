@@ -708,7 +708,9 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -760,9 +762,12 @@ I am the final line."""
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
-@pytest.mark.parametrize("theme_name",
-                         [theme.name for theme in TextAreaTheme.builtin_themes()])
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
+@pytest.mark.parametrize(
+    "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
+)
 def test_text_area_themes(snap_compare, theme_name):
     """Each theme should have its own snapshot with at least some Python
     to check that the rendering is sensible. This also ensures that theme
@@ -807,3 +812,16 @@ def test_scoped_css(snap_compare) -> None:
 
 def test_unscoped_css(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")
+
+
+def test_component_classes_opacity(snap_compare) -> None:
+    """Regression test for
+
+    - https://github.com/Textualize/textual/issues/3304
+    - https://github.com/Textualize/textual/issues/3342
+    - https://github.com/Textualize/textual/issues/3413
+    """
+    # We _need_ a height of at least 27 to show all the widgets that we're testing.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "component_classes_opacity.py", terminal_size=(80, 30)
+    )

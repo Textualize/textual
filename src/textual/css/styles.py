@@ -627,12 +627,24 @@ class StylesBase(ABC):
         Returns:
             Rich Style object.
         """
-        style = Style(
-            color=(self.color.rich_color if self.has_rule("color") else None),
-            bgcolor=(
-                self.background.rich_color if self.has_rule("background") else None
-            ),
-        )
+        if self.has_rule("color"):
+            # If there is text opacity, we need to get the background color from the
+            # parents to compute the correct final text color.
+            if self.has_rule("text_opacity") and self.text_opacity < 1:
+                reference_background = (
+                    self.node.background_colors[1]
+                    if self.node is not None
+                    else self.background
+                )
+                color = (
+                    reference_background + self.color.multiply_alpha(self.text_opacity)
+                ).rich_color
+            else:
+                color = self.color.rich_color
+        else:
+            color = None
+        bgcolor = self.background.rich_color if self.has_rule("background") else None
+        style = Style(color=color, bgcolor=bgcolor)
         style += self.text_style
         return style
 

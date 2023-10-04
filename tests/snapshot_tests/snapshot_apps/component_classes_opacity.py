@@ -30,7 +30,7 @@ class ComponentClassesOpacity(App[None]):
     Footer > .footer--key,
     Input > .input--placeholder,
     OptionList > .option-list--option-highlighted,
-    ProgressBar Bar > .bar--indeterminate,
+    ProgressBar Bar > .bar--bar,
     RadioButton > .toggle--label,
     SelectionList > .selection-list--button-highlighted,
     Switch > .switch--slider,
@@ -50,7 +50,9 @@ class ComponentClassesOpacity(App[None]):
         yield Footer()
         yield Input(placeholder="this should be invisible")
         yield OptionList(Option("this should be invisible"))
-        yield ProgressBar()
+        pb = ProgressBar(total=100)
+        pb.advance(50)
+        yield pb
         yield RadioButton("this should be invisible")
         yield SelectionList(("this should be invisible", 0))
         yield Switch()
