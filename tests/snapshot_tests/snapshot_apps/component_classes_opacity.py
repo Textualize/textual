@@ -6,6 +6,7 @@ from textual.widgets import (
     DirectoryTree,
     Footer,
     Input,
+    Markdown,
     ProgressBar,
     RadioButton,
     SelectionList,
@@ -29,6 +30,10 @@ class ComponentClassesOpacity(App[None]):
     Footer > .footer--description,
     Footer > .footer--key,
     Input > .input--placeholder,
+    Markdown > .code_inline,
+    Markdown > .em,
+    Markdown > .s,
+    Markdown > .strong,
     OptionList > .option-list--option-highlighted,
     ProgressBar Bar > .bar--bar,
     RadioButton > .toggle--label,
@@ -49,6 +54,11 @@ class ComponentClassesOpacity(App[None]):
         yield DirectoryTree(".")
         yield Footer()
         yield Input(placeholder="this should be invisible")
+        yield Markdown(
+            "You shouldn't be able to read anything after the colon: "
+            + "`this should be invisible` **this should be invisible** "
+            + "_this should be invisible_ ~~this should be invisible~~"
+        )
         yield OptionList(Option("this should be invisible"))
         pb = ProgressBar(total=100)
         pb.advance(50)
