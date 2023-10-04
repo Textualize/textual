@@ -83,7 +83,7 @@ A key design goal of this widget is that you can develop your plots so that
 the resulting code looks very similar to that in the Plotext documentation.
 The core difference is that, where you'd normally import the `plotext`
 module `as plt` and then call functions via `plt`, you instead use the `plt`
-properly made available by the widget.
+property made available by the widget.
 
 You don't even need to call the `build` or `show` functions as
 `textual-plotext` takes care of this for you. You can see this in action in
