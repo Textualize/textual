@@ -278,7 +278,12 @@ class EventMonitor(threading.Thread):
 
                 if keys:
                     # Process keys
-                    for event in parser.feed("".join(keys)):
+                    #
+                    # https://github.com/Textualize/textual/issues/3178 has
+                    # the context for the encode/decode here.
+                    for event in parser.feed(
+                        "".join(keys).encode("utf-16", "surrogatepass").decode("utf-16")
+                    ):
                         self.process_event(event)
                 if new_size is not None:
                     # Process changed size

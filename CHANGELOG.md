@@ -11,16 +11,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
 - App exception when a `Tree` is initialized/mounted with `disabled=True` https://github.com/Textualize/textual/issues/3407
-- `DOMNode.rich_style` didn't take text opacity into account when determining foreground color https://github.com/Textualize/textual/issues/3413
+- `DOMNode.rich_style` didn't take text opacity into account when determining foreground color https://github.com/Textualize/textual/pull/3415
+- `DOMNode.partial_rich_style` didn't take text opacity into account when determining foreground color https://github.com/Textualize/textual/pull/3415
+- Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
 
 ### Added
 
 - `OutOfBounds` exception to be raised by `Pilot` https://github.com/Textualize/textual/pull/3360
+- Reactive `cell_padding` (and respective parameter) to define horizontal cell padding in data table columns https://github.com/Textualize/textual/issues/3435
+- Added `Input.clear` method https://github.com/Textualize/textual/pull/3430
+- Added `TextArea.SelectionChanged` and `TextArea.Changed` messages https://github.com/Textualize/textual/pull/3442
 
 ### Changed
 
 - `Pilot.click`/`Pilot.hover` now raises `OutOfBounds` when clicking outside visible screen https://github.com/Textualize/textual/pull/3360
 - `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector https://github.com/Textualize/textual/pull/3360
+- Added a delay to when the `No Matches` message appears in the command palette, thus removing a flicker https://github.com/Textualize/textual/pull/3399
 
 ## [0.38.1] - 2023-09-21
 

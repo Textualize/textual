@@ -18,7 +18,7 @@ async def test_no_results() -> None:
         assert results.visible is False
         assert results.option_count == 0
         await pilot.press("a")
-        await pilot.pause()
+        await pilot.pause(delay=CommandPalette._NO_MATCHES_COUNTDOWN)
         assert results.visible is True
         assert results.option_count == 1
         assert "No matches found" in str(results.get_option_at_index(0).prompt)
