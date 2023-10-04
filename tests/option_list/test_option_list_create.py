@@ -119,5 +119,8 @@ async def test_add_later() -> None:
 async def test_create_with_duplicate_id() -> None:
     """Adding an option with a duplicate ID should be an error."""
     async with OptionListApp().run_test() as pilot:
+        option_list = pilot.app.query_one(OptionList)
+        assert option_list.option_count == 5
         with pytest.raises(DuplicateID):
-            pilot.app.query_one(OptionList).add_option(Option("dupe", id="3"))
+            option_list.add_option(Option("dupe", id="3"))
+        assert option_list.option_count == 5
