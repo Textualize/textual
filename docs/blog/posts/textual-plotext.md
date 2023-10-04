@@ -102,7 +102,7 @@ it](https://github.com/Textualize/textual-plotext/blob/main/examples/textual_tow
 ![The Textual Towers weather history app](/blog/images/textual-plotext/weather.png)
 
 If you are an existing Plotext user who wants to turn your plots into full
-terminal applications, we think this will be a very familiar and accessible.
+terminal applications, we think this will be very familiar and accessible.
 If you're a Textual user who wants to add plots to your application, we
 think Plotext is a great library for this.
 
