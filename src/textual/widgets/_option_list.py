@@ -564,20 +564,16 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        # Where we'll gather up the duplicates.
-        duplicates = []
         # Get all of the incoming IDs.
         new_option_ids = [
             item.id
             for item in candidate_items
             if isinstance(item, Option) and item.id is not None
         ]
-        # First off, check all of the items against the known existing IDs.
-        for item_id in new_option_ids:
-            if item_id in self._option_ids:
-                duplicates.append(item_id)
-        # Next, check that there's no duplicate to be found amongst the
-        # items we're about to add.
+        # Check for duplicates of already-known IDs.
+        current_ids = self._option_ids
+        duplicates = [item_id for item_id in new_option_ids if item_id in current_ids]
+        # Check for duplicates amongst the incoming IDs.
         duplicates.extend(
             item_id
             for item_id, id_count in Counter(new_option_ids).items()
