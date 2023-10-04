@@ -821,7 +821,34 @@ def test_component_classes_opacity(snap_compare) -> None:
     - https://github.com/Textualize/textual/issues/3342
     - https://github.com/Textualize/textual/issues/3413
     """
-    # We _need_ a height of at least 27 to show all the widgets that we're testing.
+    # We _need_ a height of at least 30 to show all the widgets that we're testing.
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "component_classes_opacity.py", terminal_size=(80, 30)
+    )
+
+
+def test_component_classes_opacity_2(snap_compare) -> None:
+    """Regression test for
+
+    - https://github.com/Textualize/textual/issues/3304
+    - https://github.com/Textualize/textual/issues/3342
+    - https://github.com/Textualize/textual/issues/3413
+    """
+    # We _need_ a height of at least 30 to show all the widgets that we're testing.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "component_classes_opacity_2.py", terminal_size=(80, 30)
+    )
+
+
+def test_component_classes_command_palette_opacity(snap_compare) -> None:
+    """Regression test for
+
+    - https://github.com/Textualize/textual/issues/3304
+    - https://github.com/Textualize/textual/issues/3342
+    - https://github.com/Textualize/textual/issues/3413
+    """
+    # We _need_ a height of at least 30 to show all the widgets that we're testing.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "component_classes_command_palette_opacity.py",
+        press=["ctrl+backslash", "d", "a", "r", "k"],
     )

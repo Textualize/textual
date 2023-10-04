@@ -8,10 +8,18 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
+from contextlib import contextmanager
 from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncGenerator,
+    AsyncIterator,
+    ClassVar,
+    Generator,
+)
 
 import rich.repr
 from rich.align import Align
@@ -26,8 +34,10 @@ from . import on, work
 from ._asyncio import create_task
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
+from .css.styles import RenderStyles
 from .events import Click, Mount
 from .fuzzy import Matcher
+from .message_pump import MessagePump
 from .reactive import var
 from .screen import ModalScreen, Screen
 from .timer import Timer
@@ -47,6 +57,29 @@ __all__ = [
     "Matcher",
     "Provider",
 ]
+
+
+@contextmanager
+def _redirect_component_styles(
+    component_styles: RenderStyles, temporary_parent: MessagePump
+) -> Generator[None, None, None]:
+    """Temporarily move the virtual node of a component class in the DOM.
+
+    Args:
+        component_styles: The component styles whose node we want to redirect.
+        temporary_parent: The temporary parent for the redirected component styles.
+    """
+    parent: MessagePump | None
+    if component_styles.node is not None:
+        parent = component_styles.node._parent
+        component_styles.node._parent = temporary_parent
+    else:
+        parent = None
+    try:
+        yield
+    finally:
+        if component_styles.node is not None:
+            component_styles.node._parent = parent
 
 
 @dataclass
@@ -520,9 +553,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         """Capture the calling screen."""
         self._calling_screen = self.app.screen_stack[-2]
 
-        match_style = self.get_component_rich_style(
-            "command-palette--highlight", partial=True
-        )
+        highlight_styles = self.get_component_styles("command-palette--highlight")
+        with _redirect_component_styles(highlight_styles, self.query_one(CommandList)):
+            match_style = highlight_styles.partial_rich_style
+        # match_style = self.get_component_rich_style("command-palette--highlight")
 
         assert self._calling_screen is not None
         self._providers = [
@@ -747,19 +781,19 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             search_value: The value to search for.
         """
 
+        # Get a reference to the widget that we're going to drop the
+        # (display of) commands into.
+        command_list = self.query_one(CommandList)
+
         # We'll potentially use the help text style a lot so let's grab it
         # the once for use in the loop further down.
-        help_style = self._sans_background(
-            self.get_component_rich_style("command-palette--help-text")
-        )
+        help_text_styles = self.get_component_styles("command-palette--help-text")
+        with _redirect_component_styles(help_text_styles, command_list):
+            help_style = self._sans_background(help_text_styles.rich_style)
 
         # The list to hold on to the commands we've gathered from the
         # command providers.
         gathered_commands: list[Command] = []
-
-        # Get a reference to the widget that we're going to drop the
-        # (display of) commands into.
-        command_list = self.query_one(CommandList)
 
         # If there's just one option in the list, and it's the item that
         # tells the user there were no matches, let's remove that. We're
