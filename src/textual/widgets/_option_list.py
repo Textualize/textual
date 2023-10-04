@@ -570,11 +570,12 @@ class OptionList(ScrollView, can_focus=True):
             for item in candidate_items
             if isinstance(item, Option) and item.id is not None
         ]
-        # Check for duplicates of already-known IDs.
+        # Check for duplicates of already-known IDs and also duplicates
+        # within the list of incoming IDs.
         current_ids = self._option_ids
-        duplicates = [item_id for item_id in new_option_ids if item_id in current_ids]
-        # Check for duplicates amongst the incoming IDs.
-        duplicates.extend(
+        duplicates = {
+            item_id for item_id in new_option_ids if item_id in current_ids
+        }.union(
             item_id
             for item_id, id_count in Counter(new_option_ids).items()
             if id_count > 1
