@@ -558,7 +558,6 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         highlight_styles = self.get_component_styles("command-palette--highlight")
         with _redirect_component_styles(highlight_styles, self.query_one(CommandList)):
             match_style = highlight_styles.partial_rich_style
-        # match_style = self.get_component_rich_style("command-palette--highlight")
 
         assert self._calling_screen is not None
         self._providers = [
