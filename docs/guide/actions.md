@@ -4,7 +4,7 @@ Actions are allow-listed functions with a string syntax you can embed in links a
 
 ## Action methods
 
-Action methods are methods on your app or widgets prefixed with `action_`. Aside from the prefix these are regular methods which you could call directly if you wished.
+Actions are handled by _action methods_ of your app or widgets - methods whose names are prefixed with `action_`. These are regular methods which you can call directly, but normally they are triggered by actions.
 
 !!! information
 
@@ -16,9 +16,9 @@ Let's write an app with a simple action.
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
-The `action_set_background` method is an action which sets the background of the screen. The key handler above will call this action if you press the ++r++ key.
+The `action_set_background` method is an action method that sets the background of the screen. The key handler above will call this action if you press the ++r++ key.
 
-Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an _action string_. For instance, the string `"set_background('red')"` is an action string which would call `self.action_set_background('red')`.
+Although it is possible (and occasionally useful) to call action methods directly in this way, they are more often parsed from an _action string_. For instance, the string `"set_background('red')"` is an action string which would call `action_set_background('red')`.
 
 The following example replaces the immediate call with a call to [run_action()][textual.widgets.Widget.run_action] which parses an action string and dispatches it to the appropriate method.
 
@@ -32,17 +32,24 @@ You will not typically need this in a real app as Textual will run actions in li
 
 ## Syntax
 
+Action handling can only take place in three objects:
+
+  - the widget containing the renderable of which the action string is a part,
+  - the Screen containing that widget, or
+  - the App
+
 Action strings have a simple syntax, which for the most part replicates Python's function call syntax.
 
 !!! important
 
-    As much as they *look* like Python code, Textual does **not** call Python's `eval` function to compile action strings.
+    Though they *look* like Python code, Textual does **not** call Python's `eval` function to compile action strings.
 
-Action strings have the following format:
+You can specify handling in either an app or a screen action method by starting the action string with a namespace (either `"screen"` or `"app"` followed by a dot). Otherwise the appropriate action method is sought first in the widget, then in the screen, and finally in the app. It's important to note the difference between this and the bubbling sequence used to process events.
 
-- The name of an action on is own will call the action method with no parameters. For example, an action string of `"bell"` will call `action_bell()`.
-- Actions may be followed by braces containing Python objects. For example, the action string `set_background("red")` will call `action_set_background("red")`.
-- Actions may be prefixed with a _namespace_ (see below) followed by a dot.
+Action strings therefore have the following format:
+
+- The name of an action (with or without a namespace) on its own will call the action method with no parameters in the given namespace, if any. For example, an action string of `"app.bell"` will call your app's `action_bell()` method.
+- The action name may be followed by parentheses optionally containing a list of Python objects, which become parameters to the action method call. For example, the action string `set_background("red")` will first try to call `action_set_background("red")` as a widget method, then as a screen method, and finally as an app method.
 
 <div class="excalidraw">
 --8<-- "docs/images/actions/format.excalidraw.svg"
@@ -50,7 +57,7 @@ Action strings have the following format:
 
 ### Parameters
 
-If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other Python symbols.
+If the action string contains parameters, these must be valid Python literals. So you can include numbers, strings, dicts, lists etc. but NOT variables or references to any other Python symbols.
 
 Consequently `"set_background('blue')"` is a valid action string, but `"set_background(new_color)"` is not &mdash; because `new_color` is a variable and not a literal.
 
