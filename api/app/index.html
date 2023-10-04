@@ -8008,13 +8008,13 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/release/" class="md-nav__link">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Release
+    DevLog
   
 
     
@@ -8034,13 +8034,13 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../blog/category/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    DevLog
+    Release
   
 
     
@@ -9725,8 +9725,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9751,8 +9751,8 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9844,8 +9844,8 @@ be the currently active screen.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10298,8 +10298,8 @@ If the app wasn't exited yet, this will be <code>None</code>.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10330,8 +10330,8 @@ The new value is always converted to string.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -13709,7 +13709,8 @@ or None to auto-detect.</p></td>
           <td>
                 <code><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[<a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a>], None] | None</code>
           </td>
-          <td><p>An optional callback that will called with every message going through the app.</p></td>
+          <td><p>An optional callback that will be called each time any message arrives at any
+message pump in the app.</p></td>
           <td>
                 <code>None</code>
           </td>

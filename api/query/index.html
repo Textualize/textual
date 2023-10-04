@@ -6059,6 +6059,28 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.css.query.ExpectType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ExpectType
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.css.query.QueryType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryType
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7117,13 +7139,13 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/release/" class="md-nav__link">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    Release
+    DevLog
   
 
     
@@ -7143,13 +7165,13 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../blog/category/devlog/" class="md-nav__link">
+      <a href="../../blog/category/release/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     
   
-    DevLog
+    Release
   
 
     
@@ -7233,6 +7255,28 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         textual.css.query
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.css.query.ExpectType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ExpectType
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.css.query.QueryType" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        QueryType
       
     </span>
   </a>
@@ -7532,6 +7576,52 @@ Additional methods apply actions to all nodes in the query.</p>
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.css.query.ExpectType" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">ExpectType</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.css.query.ExpectType" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ExpectType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;ExpectType&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Type variable used to further restrict queries.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.css.query.QueryType" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">QueryType</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.css.query.QueryType" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">QueryType</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;QueryType&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Widget&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Type variable used to type generic queries.</p>
+  </div>
+
+</div>
+
 
 <div class="doc doc-object doc-class">
 
@@ -7555,7 +7645,7 @@ Additional methods apply actions to all nodes in the query.</p>
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code></p>
+        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code></p>
 
 
   
@@ -7772,7 +7862,7 @@ Additional methods apply actions to all nodes in the query.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code>
           </td>
           <td><p>New DOM query.</p></td>
         </tr>
@@ -7837,7 +7927,7 @@ Additional methods apply actions to all nodes in the query.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code>
           </td>
           <td><p>New DOM Query.</p></td>
         </tr>
@@ -7881,7 +7971,7 @@ Additional methods apply actions to all nodes in the query.</p>
         <tr>
           <td><code>expect_type</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span>] | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a>] | None</code>
           </td>
           <td><p>Require matched node is of this type,
 or None for any type.</p></td>
@@ -7927,7 +8017,7 @@ or None for any type.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><span title="textual.css.query.QueryType">QueryType</span> | <span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a> | <a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a></code>
           </td>
           <td><p>The matching Widget.</p></td>
         </tr>
@@ -7971,7 +8061,7 @@ or None for any type.</p></td>
         <tr>
           <td><code>expect_type</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span>] | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a>] | None</code>
           </td>
           <td><p>Require matched node is of this type,
 or None for any type.</p></td>
@@ -8017,7 +8107,7 @@ or None for any type.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><span title="textual.css.query.QueryType">QueryType</span> | <span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a> | <a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a></code>
           </td>
           <td><p>The matching Widget.</p></td>
         </tr>
@@ -8061,7 +8151,7 @@ or None for any type.</p></td>
         <tr>
           <td><code>expect_type</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span>] | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a>] | None</code>
           </td>
           <td><p>Require matched node is of this type,
 or None for any type.</p></td>
@@ -8113,7 +8203,7 @@ or None for any type.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | <span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a> | <a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a></code>
           </td>
           <td><p>The matching Widget.</p></td>
         </tr>
@@ -8188,7 +8278,7 @@ or None for any type.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code>
           </td>
           <td><p>Query for chaining.</p></td>
         </tr>
@@ -8296,7 +8386,7 @@ or None for any type.</p></td>
         <tr>
           <td><code>filter_type</code></td>
           <td>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span>] | None</code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a>] | None</code>
           </td>
           <td><p>A Widget class to filter results,
 or None for no filter.</p></td>
@@ -8318,7 +8408,7 @@ or None for no filter.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | <span title="textual.css.query.DOMQuery.ExpectType">ExpectType</span></code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a> | <a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a></code>
           </td>
           <td><p>Iterator[Widget | ExpectType]: An iterator of Widget instances.</p></td>
         </tr>
@@ -8383,7 +8473,7 @@ or None for no filter.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code>
           </td>
           <td><p>Self.</p></td>
         </tr>
@@ -8448,7 +8538,7 @@ or None for no filter.</p></td>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<span title="textual.css.query.QueryType">QueryType</span>]</code>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code>
           </td>
           <td><p>Self.</p></td>
         </tr>
