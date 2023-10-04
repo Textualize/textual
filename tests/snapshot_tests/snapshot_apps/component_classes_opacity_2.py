@@ -18,8 +18,6 @@ from textual.widgets.option_list import Option
 
 
 class ComponentClassesOpacity(App[None]):
-    BINDINGS = [("n", "notification", "random Notification")]
-
     CSS = """
     Screen, Container {
         padding: 1 2;
@@ -51,7 +49,6 @@ class ComponentClassesOpacity(App[None]):
     RadioButton > .toggle--label,
     SelectionList > .selection-list--button-highlighted,
     Switch > .switch--slider,
-    Toast > .toast--title,
     Tree > .tree--label {
         text-opacity: 0%;
         color: white;
@@ -87,11 +84,6 @@ class ComponentClassesOpacity(App[None]):
             characters.add_leaf("Jessica")
             characters.add_leaf("Chani")
             yield tree
-
-    def action_notification(self):
-        self.notify(
-            title="this should be invisible", message="this should be invisible"
-        )
 
 
 if __name__ == "__main__":

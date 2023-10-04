@@ -75,9 +75,7 @@ class ComponentClassesOpacity(App[None]):
         yield tree
 
     def action_notification(self):
-        self.notify(
-            title="this should be invisible", message="this should be invisible"
-        )
+        self.notify(title="this should be invisible", message="")
 
 
 if __name__ == "__main__":
