@@ -324,7 +324,7 @@ Here are some other pseudo classes:
 - `:disabled` Matches widgets which are in a disabled state.
 - `:enabled` Matches widgets which are in an enabled state.
 - `:focus` Matches widgets which have input focus.
-- `:focus-within` Matches widgets with a focused a child widget.
+- `:focus-within` Matches widgets with a focused child widget.
 - `:dark` Matches widgets in dark mode (where `App.dark == True`).
 - `:light` Matches widgets in dark mode (where `App.dark == False`).
 

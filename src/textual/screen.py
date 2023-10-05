@@ -515,7 +515,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 chosen = candidate
                 break
 
-        # Go with the what was found.
+        # Go with what was found.
         self.set_focus(chosen)
 
     def _update_focus_styles(

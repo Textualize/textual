@@ -15,7 +15,7 @@ from .. import events
 from .._segment_tools import line_crop
 from ..binding import Binding, BindingType
 from ..events import Blur, Focus, Mount
-from ..geometry import Size
+from ..geometry import Offset, Size
 from ..message import Message
 from ..reactive import reactive
 from ..suggester import Suggester, SuggestionReady
@@ -254,6 +254,7 @@ class Input(Widget, can_focus=True):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if value is not None:
             self.value = value
+
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
@@ -326,6 +327,14 @@ class Input(Widget, can_focus=True):
             self.view_position = view_position
         else:
             self.view_position = self.view_position
+
+        self.app.cursor_position = self.cursor_screen_offset
+
+    @property
+    def cursor_screen_offset(self) -> Offset:
+        """The offset of the cursor of this input in screen-space. (x, y)/(column, row)"""
+        x, y, _width, _height = self.content_region
+        return Offset(x + self._cursor_offset - self.view_position, y)
 
     async def _watch_value(self, value: str) -> None:
         self._suggestion = ""
@@ -425,6 +434,7 @@ class Input(Widget, can_focus=True):
         self.cursor_position = len(self.value)
         if self.cursor_blink:
             self.blink_timer.resume()
+        self.app.cursor_position = self.cursor_screen_offset
 
     async def _on_key(self, event: events.Key) -> None:
         self._cursor_visible = True
@@ -480,6 +490,10 @@ class Input(Widget, can_focus=True):
             after = value[self.cursor_position :]
             self.value = f"{before}{text}{after}"
             self.cursor_position += len(text)
+
+    def clear(self) -> None:
+        """Clear the input."""
+        self.value = ""
 
     def action_cursor_left(self) -> None:
         """Move the cursor one position to the left."""

@@ -41,7 +41,8 @@ CursorType = Literal["cell", "row", "column", "none"]
 """The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
 
-CELL_X_PADDING = 2
+_DEFAULT_CELL_X_PADDING = 1
+"""Default padding to use on each side of a column in the data table."""
 
 
 class CellDoesNotExist(Exception):
@@ -170,14 +171,18 @@ class Column:
     content_width: int = 0
     auto_width: bool = False
 
-    @property
-    def render_width(self) -> int:
-        """Width in cells, required to render a column."""
-        # +2 is to account for space padding either side of the cell
-        if self.auto_width:
-            return self.content_width + CELL_X_PADDING
-        else:
-            return self.width + CELL_X_PADDING
+    def get_render_width(self, data_table: DataTable[Any]) -> int:
+        """Width, in cells, required to render the column with padding included.
+
+        Args:
+            data_table: The data table where the column will be rendered.
+
+        Returns:
+            The width, in cells, required to render the column with padding included.
+        """
+        return 2 * data_table.cell_padding + (
+            self.content_width if self.auto_width else self.width
+        )
 
 
 @dataclass
@@ -309,6 +314,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     show_cursor = Reactive(True)
     cursor_type: Reactive[CursorType] = Reactive[CursorType]("cell")
     """The type of the cursor of the `DataTable`."""
+    cell_padding = Reactive(_DEFAULT_CELL_X_PADDING)
+    """Horizontal padding between cells, applied on each side of each cell."""
 
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
@@ -322,6 +329,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Coordinate(0, 0), repaint=False, always_update=True
     )
     """The coordinate of the `DataTable` that is being hovered."""
+
+    def watch_cell_padding(self) -> None:
+        self._clear_caches()
 
     class CellHighlighted(Message):
         """Posted when the cursor moves to highlight a new cell.
@@ -584,11 +594,43 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
         cursor_type: CursorType = "cell",
+        cell_padding: int = _DEFAULT_CELL_X_PADDING,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialises a widget to display tabular data.
+
+        Args:
+            show_header: Whether the table header should be visible or not.
+            show_row_labels: Whether the row labels should be shown or not.
+            fixed_rows: The number of rows, counting from the top, that should be fixed
+                and still visible when the user scrolls down.
+            fixed_columns: The number of columns, counting from the left, that should be
+                fixed and still visible when the user scrolls right.
+            zebra_stripes: Enables or disables a zebra effect applied to the background
+                color of the rows of the table, where alternate colors are styled
+                differently to improve the readability of the table.
+            header_height: The height, in number of cells, of the data table header.
+            show_cursor: Whether the cursor should be visible when navigating the data
+                table or not.
+            cursor_foreground_priority: If the data associated with a cell is an
+                arbitrary renderable with a set foreground color, this determines whether
+                that color is prioritised over the cursor component class or not.
+            cursor_background_priority: If the data associated with a cell is an
+                arbitrary renderable with a set background color, this determines whether
+                that color is prioritesed over the cursor component class or not.
+            cursor_type: The type of cursor to be used when navigating the data table
+                with the keyboard.
+            cell_padding: The number of cells added on each side of each column. Setting
+                this value to zero will likely make your table very heard to read.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
         """Contains the cells of the table, indexed by row key and column key.
@@ -673,6 +715,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
          in the event where a cell contains a renderable with a background color."""
         self.cursor_type = cursor_type
         """The type of cursor of the `DataTable`."""
+        self.cell_padding = cell_padding
+        """Horizontal padding between cells, applied on each side of each cell."""
 
     @property
     def hover_row(self) -> int:
@@ -996,7 +1040,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_show_row_labels(self, show: bool) -> None:
         width, height = self.virtual_size
-        column_width = self._label_column.render_width
+        column_width = self._label_column.get_render_width(self)
         width_change = column_width if show else -column_width
         self.virtual_size = Size(width + width_change, height)
         self._scroll_cursor_into_view()
@@ -1009,6 +1053,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
 
     def watch_zebra_stripes(self) -> None:
+        self._clear_caches()
+
+    def validate_cell_padding(self, cell_padding: int) -> int:
+        return max(cell_padding, 0)
+
+    def watch_cell_padding(self, old_padding: int, new_padding: int) -> None:
+        # A single side of a single cell will have its width changed by (new - old),
+        # so the total width change is double that per column, times the number of
+        # columns for the whole data table.
+        width_change = 2 * (new_padding - old_padding) * len(self.columns)
+        width, height = self.virtual_size
+        self.virtual_size = Size(width + width_change, height)
+        self._scroll_cursor_into_view()
         self._clear_caches()
 
     def watch_hover_coordinate(self, old: Coordinate, value: Coordinate) -> None:
@@ -1164,7 +1221,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def _row_label_column_width(self) -> int:
         """The render width of the column containing row labels"""
-        return self._label_column.render_width if self._should_render_row_labels else 0
+        return (
+            self._label_column.get_render_width(self)
+            if self._should_render_row_labels
+            else 0
+        )
 
     def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
         """Update the widths of the columns based on the newly updated cell widths."""
@@ -1259,7 +1320,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                         row_index,
                         column_index,
                         style,
-                        column.render_width,
+                        column.get_render_width(self),
                         cursor=should_highlight(
                             cursor_location, cell_location, cursor_type
                         ),
@@ -1269,7 +1330,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     )
                     cell_height = len(rendered_cell)
                     rendered_cells.append(
-                        (rendered_cell, cell_height, column.render_width)
+                        (rendered_cell, cell_height, column.get_render_width(self))
                     )
                     height = max(height, cell_height)
 
@@ -1286,7 +1347,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                             ]
                         )
 
-        data_cells_width = sum(column.render_width for column in self.columns.values())
+        data_cells_width = sum(
+            column.get_render_width(self) for column in self.columns.values()
+        )
         total_width = data_cells_width + self._row_label_column_width
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
@@ -1306,11 +1369,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # The x-coordinate of a cell is the sum of widths of the data cells to the left
         # plus the width of the render width of the longest row label.
         x = (
-            sum(column.render_width for column in self.ordered_columns[:column_index])
+            sum(
+                column.get_render_width(self)
+                for column in self.ordered_columns[:column_index]
+            )
             + self._row_label_column_width
         )
         column_key = self._column_locations.get_key(column_index)
-        width = self.columns[column_key].render_width
+        width = self.columns[column_key].get_render_width(self)
         height = row.height
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
@@ -1327,7 +1393,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
         row_width = (
-            sum(column.render_width for column in self.columns.values())
+            sum(column.get_render_width(self) for column in self.columns.values())
             + self._row_label_column_width
         )
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
@@ -1343,11 +1409,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         columns = self.columns
         x = (
-            sum(column.render_width for column in self.ordered_columns[:column_index])
+            sum(
+                column.get_render_width(self)
+                for column in self.ordered_columns[:column_index]
+            )
             + self._row_label_column_width
         )
         column_key = self._column_locations.get_key(column_index)
-        width = columns[column_key].render_width
+        width = columns[column_key].get_render_width(self)
         header_height = self.header_height if self.show_header else 0
         height = self._total_row_height + header_height
         full_column_region = Region(x, 0, width, height)
@@ -1881,7 +1950,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     )
             lines = self.app.console.render_lines(
                 Styled(
-                    Padding(cell, (0, 1)),
+                    Padding(cell, (0, self.cell_padding)),
                     pre_style=base_style + component_style,
                     post_style=post_style,
                 ),
@@ -2030,7 +2099,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                     row_index,
                     column_index,
                     fixed_style,
-                    column.render_width,
+                    column.get_render_width(self),
                     cursor=should_highlight(
                         cursor_location, cell_location, cursor_type
                     ),
@@ -2047,7 +2116,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row_index,
                 column_index,
                 row_style,
-                column.render_width,
+                column.get_render_width(self),
                 cursor=should_highlight(cursor_location, cell_location, cursor_type),
                 hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
@@ -2057,7 +2126,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget_width = self.size.width
         table_width = (
             sum(
-                column.render_width
+                column.get_render_width(self)
                 for column in self.ordered_columns[self.fixed_columns :]
             )
             + self._row_label_column_width
@@ -2141,7 +2210,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             hover_location=self.hover_coordinate,
         )
         fixed_width = sum(
-            column.render_width for column in self.ordered_columns[: self.fixed_columns]
+            column.get_render_width(self)
+            for column in self.ordered_columns[: self.fixed_columns]
         )
 
         fixed_line: list[Segment] = list(chain.from_iterable(fixed)) if fixed else []
@@ -2260,7 +2330,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         top += sum(row.height for row in self.ordered_rows[: self.fixed_rows])
         left = (
             sum(
-                column.render_width
+                column.get_render_width(self)
                 for column in self.ordered_columns[: self.fixed_columns]
             )
             + self._row_label_column_width
