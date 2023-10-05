@@ -843,7 +843,7 @@ def test_component_classes_opacity(snap_compare) -> None:
 
 # Right now, the snapshot test will show a bunch of faded red text when you inspect the snapshot
 # but the markdown widget should show 4 sentences “this should be invisible” while it doesn't.
-@pytest.mark.skip(  # This should be an xfail but #2282 is preventing me from using xfail
+@pytest.mark.xfail(
     reason="The Markdown component classes won't reload while #3464 is open, https://github.com/Textualize/textual/issues/3464"
 )
 def test_component_classes_opacity_reloading(snap_compare) -> None:
