@@ -564,11 +564,11 @@ class OptionList(ScrollView, can_focus=True):
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
         # We're only interested in options, and only those that have IDs.
-        new_options = {
+        new_options = [
             item
             for item in candidate_items
             if isinstance(item, Option) and item.id is not None
-        }
+        ]
         # Get the set of new IDs that we're being given.
         new_option_ids = set(option.id for option in new_options)
         # Now check for duplicates, both internally amongst the new items
