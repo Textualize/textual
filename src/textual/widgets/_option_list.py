@@ -570,7 +570,7 @@ class OptionList(ScrollView, can_focus=True):
             if isinstance(item, Option) and item.id is not None
         ]
         # Get the set of new IDs that we're being given.
-        new_option_ids = set(option.id for option in new_options)
+        new_option_ids = {option.id for option in new_options}
         # Now check for duplicates, both internally amongst the new items
         # incoming, and also against all the current known IDs.
         if len(new_options) != len(new_option_ids) or not new_option_ids.isdisjoint(
