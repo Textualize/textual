@@ -563,7 +563,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        # We're only interested in options, and only those that IDs.
+        # We're only interested in options, and only those that have IDs.
         new_options = {
             item
             for item in candidate_items
