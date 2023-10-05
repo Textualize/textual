@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from textual.app import App, ComposeResult
 from textual.widgets import (
     Checkbox,
@@ -16,35 +18,41 @@ from textual.widgets import (
 from textual.widgets.option_list import Option
 
 
+CSS_PATH = (Path(__file__) / "../component_classes_opacity.tcss").resolve()
+CSS_PATH.write_text(
+    """
+* {
+    max-height: 3;
+}
+Checkbox > .toggle--label,
+DataTable > .datatable--header,
+DirectoryTree > .directory-tree--file,
+DirectoryTree > .directory-tree--folder,
+Footer > .footer--description,
+Footer > .footer--key,
+Input > .input--placeholder,
+Markdown > .code_inline,
+Markdown > .em,
+Markdown > .s,
+Markdown > .strong,
+OptionList > .option-list--option-highlighted,
+ProgressBar Bar > .bar--bar,
+RadioButton > .toggle--label,
+SelectionList > .selection-list--button-highlighted,
+Switch > .switch--slider,
+Toast > .toast--title,
+Tree > .tree--label {
+    text-opacity: 0%;
+    color: white;
+}
+"""
+)
+
+
 class ComponentClassesOpacity(App[None]):
     BINDINGS = [("n", "notification", "random Notification")]
 
-    CSS = """
-    * {
-        max-height: 3;
-    }
-    Checkbox > .toggle--label,
-    DataTable > .datatable--header,
-    DirectoryTree > .directory-tree--file,
-    DirectoryTree > .directory-tree--folder,
-    Footer > .footer--description,
-    Footer > .footer--key,
-    Input > .input--placeholder,
-    Markdown > .code_inline,
-    Markdown > .em,
-    Markdown > .s,
-    Markdown > .strong,
-    OptionList > .option-list--option-highlighted,
-    ProgressBar Bar > .bar--bar,
-    RadioButton > .toggle--label,
-    SelectionList > .selection-list--button-highlighted,
-    Switch > .switch--slider,
-    Toast > .toast--title,
-    Tree > .tree--label {
-        text-opacity: 0%;
-        color: white;
-    }
-    """
+    CSS_PATH = CSS_PATH
 
     def compose(self) -> ComposeResult:
         yield Checkbox("this should be invisible")

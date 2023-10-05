@@ -841,6 +841,30 @@ def test_component_classes_opacity(snap_compare) -> None:
     )
 
 
+# Right now, the snapshot test will show a bunch of faded red text when you inspect the snapshot
+# but the markdown widget should show 4 sentences “this should be invisible” while it doesn't.
+@pytest.mark.xfail(
+    reason="The Markdown component classes won't reload while #3464 is open, https://github.com/Textualize/textual/issues/3464"
+)
+def test_component_classes_opacity_reloading(snap_compare) -> None:
+    """Make sure that reloading CSS doesn't break"""
+
+    async def run_before(pilot):
+        css_path = pilot.app.CSS_PATH
+        css_path.write_text(
+            css_path.read_text()
+            .replace("color: white;", "color:red;")
+            .replace("text-opacity: 0%;", "text-opacity: 50%;")
+        )
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "component_classes_opacity.py",
+        terminal_size=(80, 30),
+        run_before=run_before,
+    )
+
+
 def test_component_classes_opacity_2(snap_compare) -> None:
     """Regression test for
 

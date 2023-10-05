@@ -1,0 +1,25 @@
+
+* {
+    max-height: 3;
+}
+Checkbox > .toggle--label,
+DataTable > .datatable--header,
+DirectoryTree > .directory-tree--file,
+DirectoryTree > .directory-tree--folder,
+Footer > .footer--description,
+Footer > .footer--key,
+Input > .input--placeholder,
+Markdown > .code_inline,
+Markdown > .em,
+Markdown > .s,
+Markdown > .strong,
+OptionList > .option-list--option-highlighted,
+ProgressBar Bar > .bar--bar,
+RadioButton > .toggle--label,
+SelectionList > .selection-list--button-highlighted,
+Switch > .switch--slider,
+Toast > .toast--title,
+Tree > .tree--label {
+    text-opacity: 50%;
+    color:red;
+}
