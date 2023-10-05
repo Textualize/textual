@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
 - App exception when a `Tree` is initialized/mounted with `disabled=True` https://github.com/Textualize/textual/issues/3407
 - Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
+- Fixed duplicate option ID handling in the `OptionList` https://github.com/Textualize/textual/issues/3455
 
 ### Added
 
