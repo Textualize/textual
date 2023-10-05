@@ -7,7 +7,6 @@ forms of bounce-bar menu.
 
 from __future__ import annotations
 
-from collections import Counter
 from typing import ClassVar, Iterable, NamedTuple
 
 from rich.console import RenderableType
@@ -564,28 +563,19 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        # Get all of the incoming IDs.
-        new_option_ids = [
-            item.id
+        # We're only interested in options, and only those that IDs.
+        new_options = {
+            item
             for item in candidate_items
             if isinstance(item, Option) and item.id is not None
-        ]
-        # Check for duplicates of already-known IDs and also duplicates
-        # within the list of incoming IDs.
-        current_ids = self._option_ids
-        duplicates = {
-            item_id for item_id in new_option_ids if item_id in current_ids
-        }.union(
-            item_id
-            for item_id, id_count in Counter(new_option_ids).items()
-            if id_count > 1
-        )
-        # If there are any duplicates...
-        if duplicates:
-            # ...complain.
-            raise DuplicateID(
-                f"Operation would result in duplicate ids {', '.join(duplicates)}"
-            )
+        }
+        # Get the set of new IDs that we're being given.
+        new_option_ids = set(option.id for option in new_options)
+        # Now check for duplicates, both internally amongst the
+        if len(new_options) != len(new_option_ids) or not new_option_ids.isdisjoint(
+            self._option_ids
+        ):
+            raise DuplicateID("Attempt made to add options with duplicate IDs.")
 
     def add_options(self, items: Iterable[NewOptionListContent]) -> Self:
         """Add new options to the end of the option list.
