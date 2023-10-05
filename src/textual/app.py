@@ -1195,6 +1195,7 @@ class App(Generic[ReturnType], DOMNode):
         tooltips: bool = False,
         notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
+        force_capture: bool = False,
     ) -> AsyncGenerator[Pilot, None]:
         """An asynchronous context manager for testing apps.
 
@@ -1220,6 +1221,8 @@ class App(Generic[ReturnType], DOMNode):
             notifications: Enable notifications when testing.
             message_hook: An optional callback that will be called each time any message arrives at any
                 message pump in the app.
+            force_capture: True to force enable output capturing. When `headless=True`, output
+                capturing is disabled. Setting `force_capture=True` overrides this behaviour.
         """
         from .pilot import Pilot
 
@@ -1241,6 +1244,7 @@ class App(Generic[ReturnType], DOMNode):
                 ready_callback=on_app_ready,
                 headless=headless,
                 terminal_size=size,
+                force_capture=force_capture,
             )
 
         # Launch the app in the "background"
@@ -1272,6 +1276,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
+        force_capture: bool = False,
     ) -> ReturnType | None:
         """Run the app asynchronously.
 
@@ -1280,7 +1285,8 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
-
+            force_capture: True to force enable output capturing. When `headless=True`, output
+                capturing is disabled. Setting `force_capture=True` overrides this behaviour.
         Returns:
             App return value.
         """
@@ -1343,6 +1349,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
+        force_capture: bool = False,
     ) -> ReturnType | None:
         """Run the app.
 
@@ -1351,6 +1358,8 @@ class App(Generic[ReturnType], DOMNode):
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
+            force_capture: True to force enable output capturing. When `headless=True`, output
+                capturing is disabled. Setting `force_capture=True` overrides this behaviour.
 
         Returns:
             App return value.
@@ -1365,6 +1374,7 @@ class App(Generic[ReturnType], DOMNode):
                     headless=headless,
                     size=size,
                     auto_pilot=auto_pilot,
+                    force_capture=force_capture,
                 )
             finally:
                 self._loop = None
@@ -2032,7 +2042,17 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
+        force_capture: bool = False,
     ) -> None:
+        """Begin the loop which processes messages in a Textual app.
+
+        Args:
+            ready_callback: Callback that runs when the app is ready.
+            headless: True if the app is running headless (no output).
+            terminal_size: The size of the terminal.
+            message_hook: Callable to run each time a message is received at any message pump.
+            force_capture: Force stdout/stderr capturing.
+        """
         self._set_active()
         active_message_pump.set(self)
 
@@ -2152,7 +2172,7 @@ class App(Generic[ReturnType], DOMNode):
             if not self._exit:
                 driver.start_application_mode()
                 try:
-                    if headless:
+                    if headless and not force_capture:
                         await run_process_messages()
                     else:
                         with redirect_stdout(self._capture_stdout):
