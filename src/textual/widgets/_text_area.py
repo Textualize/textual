@@ -36,7 +36,7 @@ from textual import events, log
 from textual._cells import cell_len
 from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
-from textual.events import MouseEvent
+from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -203,7 +203,9 @@ TextArea {
     Syntax highlighting is only possible when the `language` attribute is set.
     """
 
-    selection: Reactive[Selection] = reactive(Selection(), always_update=True)
+    selection: Reactive[Selection] = reactive(
+        Selection(), always_update=True, init=False
+    )
     """The selection start and end locations (zero-based line_index, offset).
 
     This represents the cursor location and the current selection.
@@ -236,6 +238,37 @@ TextArea {
     _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
+
+    @dataclass
+    class Changed(Message):
+        """Posted when the content inside the TextArea changes.
+
+        Handle this message using the `on` decorator - `@on(TextArea.Changed)`
+        or a method named `on_text_area_changed`.
+        """
+
+        text_area: TextArea
+        """The `text_area` that sent this message."""
+
+        @property
+        def control(self) -> TextArea:
+            """The `TextArea` that sent this message."""
+            return self.text_area
+
+    @dataclass
+    class SelectionChanged(Message):
+        """Posted when the selection changes.
+
+        This includes when the cursor moves or when text is selected."""
+
+        selection: Selection
+        """The new selection."""
+        text_area: TextArea
+        """The `text_area` that sent this message."""
+
+        @property
+        def control(self) -> TextArea:
+            return self.text_area
 
     def __init__(
         self,
@@ -376,6 +409,8 @@ TextArea {
             match_row, match_column = match_location
             if match_row in range(*self._visible_line_indices):
                 self.refresh_lines(match_row)
+
+        self.post_message(self.SelectionChanged(selection, self))
 
     def find_matching_bracket(
         self, bracket: str, search_from: Location
@@ -919,6 +954,7 @@ TextArea {
         self._refresh_size()
         edit.after(self)
         self._build_highlight_map()
+        self.post_message(self.Changed(self))
         return result
 
     async def _on_key(self, event: events.Key) -> None:
