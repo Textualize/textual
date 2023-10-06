@@ -9,7 +9,7 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable
 
 import rich.repr
 import rich.traceback
@@ -22,6 +22,25 @@ from ._writer_thread import WriterThread
 
 if TYPE_CHECKING:
     from ..app import App
+
+
+class ExceptionHandlingThread(Thread):
+    """
+    Thread that passes any exception from `target` to `exception_handler`
+
+    WARNING: `exception_handler` is called inside the thread. You can
+             schedule calls via `App.call_later`.
+    """
+
+    def __init__(self, *args, exception_handler, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self._exception_handler: Callable = exception_handler
+
+    def run(self) -> None:
+        try:
+            super().run()
+        except BaseException as error:
+            self._exception_handler(error)
 
 
 @rich.repr.auto(angular=True)
@@ -165,7 +184,10 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h\n")
         self.flush()
-        self._key_thread = Thread(target=self.run_input_thread)
+        self._key_thread = ExceptionHandlingThread(
+            target=self.run_input_thread,
+            exception_handler=self._handle_input_thread_exception,
+        )
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
@@ -265,14 +287,15 @@ class LinuxDriver(Driver):
                         unicode_data = decode(read(fileno, 1024))
                         for event in feed(unicode_data):
                             self.process_event(event)
-        except Exception as error:
-            self._app.exit(
-                return_code=1,
-                message=rich.traceback.Traceback.from_exception(
-                    exc_type=type(error),
-                    exc_value=error,
-                    traceback=error.__traceback__,
-                ),
-            )
         finally:
             selector.close()
+
+    def _handle_input_thread_exception(self, error):
+        self._app.call_later(
+            self._app.panic,
+            rich.traceback.Traceback.from_exception(
+                exc_type=type(error),
+                exc_value=error,
+                traceback=error.__traceback__,
+            ),
+        )
