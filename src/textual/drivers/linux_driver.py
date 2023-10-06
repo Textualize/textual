@@ -293,9 +293,5 @@ class LinuxDriver(Driver):
     def _handle_input_thread_exception(self, error):
         self._app.call_later(
             self._app.panic,
-            rich.traceback.Traceback.from_exception(
-                exc_type=type(error),
-                exc_value=error,
-                traceback=error.__traceback__,
-            ),
+            rich.traceback.Traceback(),
         )
