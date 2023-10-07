@@ -49,7 +49,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # work everywhere, with the trade-off that it's no longer possible to
     # handle backspace and control-h individually for the few terminals that
     # support it. (Most terminals send ControlH when backspace is pressed.)
-    # See: http://www.ibb.net/~anne/keyboard.html
+    # See: https://web.archive.org/web/20181010000222/http://www.ibb.net/~anne/keyboard.html
     "\x7f": (Keys.Backspace,),
     "\x1b\x7f": (Keys.ControlW,),
     # Various
