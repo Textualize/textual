@@ -1,3 +1,4 @@
+import platform
 from typing import Mapping, Tuple
 
 from .keys import Keys
@@ -35,9 +36,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x19": (Keys.ControlY,),  # Control-Y (25)
     "\x1a": (Keys.ControlZ,),  # Control-Z
     "\x1b": (Keys.Escape,),  # Also Control-[
-    "\x1b\x1b": (
-        Keys.Escape,
-    ),  # Windows issues esc esc for a single press of escape key
     "\x9b": (Keys.ShiftEscape,),
     "\x1c": (Keys.ControlBackslash,),  # Both Control-\ (also Ctrl-| )
     "\x1d": (Keys.ControlSquareClose,),  # Control-]
@@ -63,7 +61,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[8~": (Keys.End,),  # xrvt
     "\x1b[Z": (Keys.BackTab,),  # shift + tab
     "\x1b\x09": (Keys.BackTab,),  # Linux console
-    "\x1b[~": (Keys.BackTab,),  # Windows console
     # --
     # Function keys.
     "\x1bOP": (Keys.F1,),
@@ -304,6 +301,12 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;8x": (Keys.Escape, Keys.ControlShift8),
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
 }
+
+if platform.system() == "Windows":
+    # Windows issues esc esc for a single press of escape key
+    ANSI_SEQUENCES_KEYS["\x1b\x1b"] = (Keys.Escape,)
+    ANSI_SEQUENCES_KEYS["\x1b[~"] = (Keys.BackTab,)
+
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
 SYNC_START = "\x1b[?2026h"
