@@ -99,10 +99,11 @@ from .renderables.blank import Blank
 from .screen import Screen, ScreenResultCallbackType, ScreenResultType
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
+from .worker import NoActiveWorker, get_current_worker
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
-    from typing_extensions import Coroutine, TypeAlias
+    from typing_extensions import Coroutine, Literal, TypeAlias
 
     from ._types import MessageTarget
 
@@ -244,6 +245,24 @@ class _PrintCapture:
     def fileno(self) -> int:
         """Return invalid fileno."""
         return -1
+
+
+class ScreenAwaitable(Generic[ScreenResultType]):
+    """An optional awaitable to get the result of a screen."""
+
+    def __init__(
+        self, await_mount: AwaitMount, future: asyncio.Future[ScreenResultType]
+    ) -> None:
+        self._await_mount = await_mount
+        self._future = future
+
+    def __await__(self) -> Generator[None, None, ScreenResultType]:
+        async def await_screen() -> ScreenResultType:
+            await self._await_mount
+            await self._future
+            return self._future.result()
+
+        return await_screen().__await__()
 
 
 @rich.repr.auto
@@ -1778,16 +1797,37 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"{screen} REMOVED")
         return screen
 
+    @overload
     def push_screen(
         self,
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+        wait_for_dismiss: Literal[False] = False,
     ) -> AwaitMount:
+        ...
+
+    @overload
+    def push_screen(
+        self,
+        screen: Screen[ScreenResultType] | str,
+        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+        wait_for_dismiss: Literal[True] = True,
+    ) -> ScreenAwaitable[ScreenResultType]:
+        ...
+
+    def push_screen(
+        self,
+        screen: Screen[ScreenResultType] | str,
+        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+        wait_for_dismiss: bool = False,
+    ) -> AwaitMount | ScreenAwaitable[ScreenResultType]:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
             screen: A Screen instance or the name of an installed screen.
             callback: An optional callback function that will be called if the screen is [dismissed][textual.screen.Screen.dismiss] with a result.
+            wait_for_dismiss: If `True`, awaiting this method will return the dismiss value from the screen. When set to `False`, awaiting
+                this method will wait for the screen to be mounted. Note that `wait_for_dismiss` should only be set to `True` when running in a worker.
 
         Returns:
             An optional awaitable that awaits the mounting of the screen and its children.
@@ -1797,6 +1837,9 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
+        loop = asyncio.get_running_loop()
+        future = loop.create_future()
+
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
             self.screen.refresh()
@@ -1805,13 +1848,24 @@ class App(Generic[ReturnType], DOMNode):
             message_pump = active_message_pump.get()
         except LookupError:
             message_pump = self.app
-        next_screen._push_result_callback(message_pump, callback)
+
+        next_screen._push_result_callback(message_pump, callback, future)
         self._load_screen_css(next_screen)
         self._screen_stack.append(next_screen)
         self.stylesheet.update(next_screen)
         next_screen.post_message(events.ScreenResume())
         self.log.system(f"{self.screen} is current (PUSHED)")
-        return await_mount
+        if wait_for_dismiss:
+            try:
+                get_current_worker()
+            except NoActiveWorker:
+                raise NoActiveWorker(
+                    "push_screen must be run from a worker when `wait_for_dismiss` is True"
+                ) from None
+            screen_awaitable = ScreenAwaitable(await_mount, future)
+            return screen_awaitable
+        else:
+            return await_mount
 
     def switch_screen(self, screen: Screen | str) -> AwaitMount:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
