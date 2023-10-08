@@ -274,17 +274,14 @@ class App(Generic[ReturnType], DOMNode):
     and therefore takes priority in the event of a specificity clash."""
 
     # Default (the lowest priority) CSS
-    DEFAULT_CSS: ClassVar[
-        str
-    ] = """
+    DEFAULT_CSS: ClassVar[str]
+    DEFAULT_CSS = """
     App {
         background: $background;
         color: $text;
     }
-
     *:disabled:can-focus {
         opacity: 0.7;
-
     }
     """
 
