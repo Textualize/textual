@@ -247,25 +247,6 @@ class _PrintCapture:
         return -1
 
 
-class ScreenAwaitable(Generic[ScreenResultType]):
-    """An optional awaitable to get the result of a screen."""
-
-    def __init__(
-        self, await_mount: AwaitMount, future: asyncio.Future[ScreenResultType]
-    ) -> None:
-        self._await_mount = await_mount
-        self._future = future
-
-    def __await__(self) -> Generator[None, None, ScreenResultType]:
-        async def await_screen() -> ScreenResultType:
-            """Await the mount and the future."""
-            await self._await_mount
-            await self._future
-            return self._future.result()
-
-        return await_screen().__await__()
-
-
 @rich.repr.auto
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications."""
@@ -1810,7 +1791,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: Literal[True] = True,
-    ) -> ScreenAwaitable[ScreenResultType]:
+    ) -> asyncio.Future[ScreenResultType]:
         ...
 
     def push_screen(
@@ -1818,7 +1799,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: bool = False,
-    ) -> AwaitMount | ScreenAwaitable[ScreenResultType]:
+    ) -> AwaitMount | asyncio.Future[ScreenResultType]:
         """Push a new [screen](/guide/screens) on the screen stack, making it the current screen.
 
         Args:
@@ -1831,7 +1812,8 @@ class App(Generic[ReturnType], DOMNode):
             NoActiveWorker: If using `wait_for_dismiss` outside of a worker.
 
         Returns:
-            An optional awaitable that awaits the mounting of the screen and its children.
+            An optional awaitable that awaits the mounting of the screen and its children, or an asyncio Future
+                to await the result of the screen.
         """
         if not isinstance(screen, (Screen, str)):
             raise TypeError(
@@ -1868,8 +1850,7 @@ class App(Generic[ReturnType], DOMNode):
                 raise NoActiveWorker(
                     "push_screen must be run from a worker when `wait_for_dismiss` is True"
                 ) from None
-            screen_awaitable = ScreenAwaitable(await_mount, future)
-            return screen_awaitable
+            return future
         else:
             return await_mount
 
