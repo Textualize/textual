@@ -258,6 +258,7 @@ class ScreenAwaitable(Generic[ScreenResultType]):
 
     def __await__(self) -> Generator[None, None, ScreenResultType]:
         async def await_screen() -> ScreenResultType:
+            """Await the mount and the future."""
             await self._await_mount
             await self._future
             return self._future.result()
