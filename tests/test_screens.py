@@ -418,7 +418,7 @@ async def test_mouse_move_event_bubbles_to_screen_from_widget():
 async def test_push_screen_wait_for_dismiss() -> None:
     """Test push_screen returns result."""
 
-    class QuitScreen(Screen):
+    class QuitScreen(Screen[bool]):
         BINDINGS = [
             ("y", "quit(True)"),
             ("n", "quit(False)"),
@@ -445,7 +445,7 @@ async def test_push_screen_wait_for_dismiss() -> None:
 
     results.clear()
     app = ScreensApp()
-    # Press X to exit, then Y to dismiss, expect True result
+    # Press X to exit, then Y to dismiss, expect False result
     async with app.run_test() as pilot:
         await pilot.press("x", "n")
     assert results == [False]
@@ -454,7 +454,7 @@ async def test_push_screen_wait_for_dismiss() -> None:
 async def test_push_screen_wait_for_dismiss_no_worker() -> None:
     """Test wait_for_dismiss raises NoActiveWorker when not using workers."""
 
-    class QuitScreen(Screen):
+    class QuitScreen(Screen[bool]):
         BINDINGS = [
             ("y", "quit(True)"),
             ("n", "quit(False)"),
@@ -473,6 +473,7 @@ async def test_push_screen_wait_for_dismiss_no_worker() -> None:
             results.append(result)
 
     app = ScreensApp()
+    # using `wait_for_dismiss` outside of a worker should raise NoActiveWorker
     with pytest.raises(NoActiveWorker):
         async with app.run_test() as pilot:
             await pilot.press("x", "y")
