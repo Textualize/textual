@@ -82,7 +82,7 @@ class ResultCallback(Generic[ScreenResultType]):
         Args:
             requester: The object making a request for the callback.
             callback: The callback function.
-            future: A Future to hold the result
+            future: A Future to hold the result.
         """
         self.requester = requester
         """The object in the DOM that requested the callback."""
