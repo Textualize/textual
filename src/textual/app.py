@@ -1829,6 +1829,9 @@ class App(Generic[ReturnType], DOMNode):
             wait_for_dismiss: If `True`, awaiting this method will return the dismiss value from the screen. When set to `False`, awaiting
                 this method will wait for the screen to be mounted. Note that `wait_for_dismiss` should only be set to `True` when running in a worker.
 
+        Raises:
+            NoActiveWorker: If using `wait_for_dismiss` outside of a worker.
+
         Returns:
             An optional awaitable that awaits the mounting of the screen and its children.
         """
