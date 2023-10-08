@@ -1840,8 +1840,13 @@ class App(Generic[ReturnType], DOMNode):
                 f"push_screen requires a Screen instance or str; not {screen!r}"
             )
 
-        loop = asyncio.get_running_loop()
-        future = loop.create_future()
+        try:
+            loop = asyncio.get_running_loop()
+        except RuntimeError:
+            # Mainly for testing, when push_screen isn't called in an async context
+            future: asyncio.Future[ScreenResultType] = asyncio.Future()
+        else:
+            future = loop.create_future()
 
         if self._screen_stack:
             self.screen.post_message(events.ScreenSuspend())
