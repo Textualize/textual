@@ -1780,8 +1780,8 @@ class App(Generic[ReturnType], DOMNode):
     def push_screen(
         self,
         screen: Screen[ScreenResultType] | str,
-        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
-        wait_for_dismiss: Literal[False] = False,
+        callback: ScreenResultCallbackType[ScreenResultType] | None,
+        wait_for_dismiss: Literal[False],
     ) -> AwaitMount:
         ...
 
@@ -1789,8 +1789,8 @@ class App(Generic[ReturnType], DOMNode):
     def push_screen(
         self,
         screen: Screen[ScreenResultType] | str,
-        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
-        wait_for_dismiss: Literal[True] = True,
+        callback: ScreenResultCallbackType[ScreenResultType] | None,
+        wait_for_dismiss: Literal[True],
     ) -> asyncio.Future[ScreenResultType]:
         ...
 
