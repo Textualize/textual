@@ -445,7 +445,7 @@ async def test_push_screen_wait_for_dismiss() -> None:
 
     results.clear()
     app = ScreensApp()
-    # Press X to exit, then Y to dismiss, expect False result
+    # Press X to exit, then N to dismiss, expect False result
     async with app.run_test() as pilot:
         await pilot.press("x", "n")
     assert results == [False]
