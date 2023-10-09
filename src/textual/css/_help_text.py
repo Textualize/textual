@@ -587,9 +587,7 @@ def scrollbar_size_property_help_text(context: StylingContext) -> HelpText:
                     ),
                 ],
             ).get_by_context(context),
-            Bullet(
-                "<horizontal> and <vertical> must be positive integers, greater than zero"
-            ),
+            Bullet("<horizontal> and <vertical> must be non-negative integers."),
         ],
     )
 
