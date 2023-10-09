@@ -148,6 +148,13 @@ def test_opacity_set_invalid_type_error():
         styles.text_opacity = "invalid value"
 
 
+def test_opacity_set_allows_integer_value():
+    """Regression test for https://github.com/Textualize/textual/issues/3414"""
+    styles = RenderStyles(DOMNode(), Styles(), Styles())
+    styles.text_opacity = 0
+    assert styles.text_opacity == 0.0
+
+
 @pytest.mark.parametrize(
     "size_dimension_input,size_dimension_expected_output",
     [
