@@ -309,6 +309,19 @@ async def test_remove_row():
         assert len(table.rows) == 2
 
 
+async def test_remove_row_and_update():
+    """Regression test for https://github.com/Textualize/textual/issues/3470 -
+    Crash when attempting to remove and update the same cell."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table: DataTable = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "X", update_width=True)
+        table.remove_row("1")
+        await pilot.pause()
+
+
 async def test_remove_column():
     app = DataTableApp()
     async with app.run_test():
@@ -321,6 +334,19 @@ async def test_remove_column():
         assert table.get_row_at(0) == ["0/1"]
         assert table.get_row_at(1) == ["1/1"]
         assert table.get_row_at(2) == ["2/1"]
+
+
+async def test_remove_column_and_update():
+    """Regression test for https://github.com/Textualize/textual/issues/3470 -
+    Crash when attempting to remove and update the same cell."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table: DataTable = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "X", update_width=True)
+        table.remove_column("A")
+        await pilot.pause()
 
 
 async def test_clear():

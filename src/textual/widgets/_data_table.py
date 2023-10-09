@@ -1632,6 +1632,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self._row_locations = new_row_locations
 
+        # Prevent the removed cells from triggering dimension updates
+        for column_key in self._data.get(row_key):
+            self._updated_cells.discard(CellKey(row_key, column_key))
+
         del self.rows[row_key]
         del self._data[row_key]
 
@@ -1668,8 +1672,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._column_locations = new_column_locations
 
         del self.columns[column_key]
-        for row in self._data:
-            del self._data[row][column_key]
+
+        for row_key in self._data:
+            self._updated_cells.discard(CellKey(row_key, column_key))
+            del self._data[row_key][column_key]
 
         self.cursor_coordinate = self.cursor_coordinate
         self.hover_coordinate = self.hover_coordinate
