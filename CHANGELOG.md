@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed duplicate option ID handling in the `OptionList` https://github.com/Textualize/textual/issues/3455
 - Fix crash when removing and updating DataTable cell at same time https://github.com/Textualize/textual/pull/3487
 - Fixed fractional styles to allow integer values https://github.com/Textualize/textual/issues/3414
+- Stop eating stdout/stderr in headless mode - print works again in tests https://github.com/Textualize/textual/pull/3486
 
 ### Added
 

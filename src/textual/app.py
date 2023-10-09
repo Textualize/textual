@@ -532,8 +532,15 @@ class App(Generic[ReturnType], DOMNode):
         self._capture_print: WeakKeyDictionary[
             MessageTarget, tuple[bool, bool]
         ] = WeakKeyDictionary()
+        """Registry of the MessageTargets which are capturing output at any given time."""
         self._capture_stdout = _PrintCapture(self, stderr=False)
+        """File-like object capturing data written to stdout."""
         self._capture_stderr = _PrintCapture(self, stderr=True)
+        """File-like object capturing data written to stderr."""
+        self._original_stdout = sys.__stdout__
+        """The original stdout stream (before redirection etc)."""
+        self._original_stderr = sys.__stderr__
+        """The original stderr stream (before redirection etc)."""
 
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
@@ -1154,7 +1161,10 @@ class App(Generic[ReturnType], DOMNode):
             self._devtools_redirector.flush()
 
     def _print(self, text: str, stderr: bool = False) -> None:
-        """Called with capture print.
+        """Called with captured print.
+
+        Dispatches printed content to appropriate destinations: devtools,
+        widgets currently capturing output, stdout/stderr.
 
         Args:
             text: Text that has been printed.
@@ -1165,6 +1175,13 @@ class App(Generic[ReturnType], DOMNode):
             self._devtools_redirector.write(
                 text, current_frame.f_back if current_frame is not None else None
             )
+
+        # If we're in headless mode, we want printed text to still reach stdout/stderr.
+        if self.is_headless:
+            target_stream = self._original_stderr if stderr else self._original_stdout
+            target_stream.write(text)
+
+        # Send Print events to all widgets that are currently capturing output.
         for target, (_stdout, _stderr) in self._capture_print.items():
             if (_stderr and stderr) or (_stdout and not stderr):
                 target.post_message(events.Print(text, stderr=stderr))
@@ -1174,7 +1191,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Capture content that is printed (or written to stdout / stderr).
 
-        If printing is captured, the `target` will be send an [events.Print][textual.events.Print] message.
+        If printing is captured, the `target` will be sent an [events.Print][textual.events.Print] message.
 
         Args:
             target: The widget where print content will be sent.
