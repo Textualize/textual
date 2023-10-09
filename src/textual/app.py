@@ -1161,7 +1161,10 @@ class App(Generic[ReturnType], DOMNode):
             self._devtools_redirector.flush()
 
     def _print(self, text: str, stderr: bool = False) -> None:
-        """Called with capture print.
+        """Called with captured print.
+
+        Dispatches printed content to appropriate destinations: devtools,
+        widgets currently capturing output, stdout/stderr.
 
         Args:
             text: Text that has been printed.
