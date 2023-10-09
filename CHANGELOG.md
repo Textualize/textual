@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
 - Fixed duplicate option ID handling in the `OptionList` https://github.com/Textualize/textual/issues/3455
 - Fixed fractional styles to allow integer values https://github.com/Textualize/textual/issues/3414
+- Stop eating stdout/stderr in headless mode - print works again in tests https://github.com/Textualize/textual/pull/3486
 
 ### Added
 
