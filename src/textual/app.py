@@ -1176,7 +1176,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Capture content that is printed (or written to stdout / stderr).
 
-        If printing is captured, the `target` will be send an [events.Print][textual.events.Print] message.
+        If printing is captured, the `target` will be sent an [events.Print][textual.events.Print] message.
 
         Args:
             target: The widget where print content will be sent.
