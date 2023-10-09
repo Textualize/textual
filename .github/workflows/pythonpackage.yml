@@ -41,7 +41,7 @@ jobs:
           path: .venv
           key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --extras syntax
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
 #      - name: Typecheck with mypy
 #        run: |
