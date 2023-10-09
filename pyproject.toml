@@ -47,8 +47,11 @@ markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 #rich = {path="../rich", develop=true}
 importlib-metadata = ">=4.11.3"
 typing-extensions = "^4.4.0"
-tree-sitter = "^0.20.1"
-tree_sitter_languages = {version = ">=1.7.0", python = "^3.8"}
+tree-sitter = {version = "^0.20.1", optional = true }
+tree_sitter_languages = {version = ">=1.7.0", optional = true}
+
+[tool.poetry.extras]
+syntax = ["tree-sitter", "tree_sitter_languages"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.3"
