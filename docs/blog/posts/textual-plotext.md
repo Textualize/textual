@@ -22,7 +22,7 @@ Textual applications.
 <!-- more -->
 
 With this in mind we've created
-[`textual-plotext`](https://pypi.org/project/textual-plotext/): a library
+[`textual-plotext`](https://github.com/Textualize/textual-plotext): a library
 that provides a widget for using Plotext plots in your app. In doing this
 we've tried our best to make it as similar as possible to using Plotext in a
 conventional Python script.

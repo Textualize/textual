@@ -410,6 +410,7 @@ TextArea {
             if match_row in range(*self._visible_line_indices):
                 self.refresh_lines(match_row)
 
+        self.app.cursor_position = self.cursor_screen_offset
         self.post_message(self.SelectionChanged(selection, self))
 
     def find_matching_bracket(
@@ -662,7 +663,14 @@ TextArea {
         Returns:
             A tuple (top, bottom) indicating the top and bottom visible line indices.
         """
-        return self.scroll_offset.y, self.scroll_offset.y + self.size.height
+        _, scroll_offset_y = self.scroll_offset
+        return scroll_offset_y, scroll_offset_y + self.size.height
+
+    def _watch_scroll_x(self) -> None:
+        self.app.cursor_position = self.cursor_screen_offset
+
+    def _watch_scroll_y(self) -> None:
+        self.app.cursor_position = self.cursor_screen_offset
 
     def load_text(self, text: str) -> None:
         """Load text into the TextArea.
@@ -1045,6 +1053,7 @@ TextArea {
 
     def _on_focus(self, _: events.Focus) -> None:
         self._restart_blink()
+        self.app.cursor_position = self.cursor_screen_offset
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
@@ -1258,6 +1267,23 @@ TextArea {
         If a selection is in progress, the anchor point will remain.
         """
         self.move_cursor(location, select=not self.selection.is_empty)
+
+    @property
+    def cursor_screen_offset(self) -> Offset:
+        """The offset of the cursor relative to the screen."""
+        cursor_row, cursor_column = self.cursor_location
+        scroll_x, scroll_y = self.scroll_offset
+        region_x, region_y, _width, _height = self.content_region
+
+        offset_x = (
+            region_x
+            + self.get_column_width(cursor_row, cursor_column)
+            - scroll_x
+            + self.gutter_width
+        )
+        offset_y = region_y + cursor_row - scroll_y
+
+        return Offset(offset_x, offset_y)
 
     @property
     def cursor_at_first_line(self) -> bool:

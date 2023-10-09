@@ -1197,7 +1197,7 @@ syntax = ["tree-sitter", "tree_sitter_languages"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7"
-content-hash = "fded2a8f9d809c8e4c057bb54a7892056a9918a586a794ff9ff1a8e337c3c703"
+content-hash = "fdb89c91b37a0d781f9cbfb7bd8cffd737e369e21761d67113c1a91882f28158"
 
 [metadata.files]
 aiohttp = [
