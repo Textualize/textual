@@ -150,8 +150,7 @@ window.onload = async (event) => {
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -501,8 +500,7 @@ window.onload = async (event) => {
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
 
     </a>
     Textual
@@ -5347,6 +5345,17 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#syntax-highlighting-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Syntax highlighting dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#loading-text" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5856,6 +5865,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         cursor_location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.cursor_screen_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_screen_offset
       
     </span>
   </a>
@@ -8952,6 +8972,17 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#syntax-highlighting-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Syntax highlighting dependencies
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#loading-text" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -9461,6 +9492,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         cursor_location
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.cursor_screen_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_screen_offset
       
     </span>
   </a>
@@ -10931,9 +10973,25 @@ Supports syntax highlighting for a selection of languages.</p>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Container</li>
 </ul>
 <h2 id="guide">Guide<a class="headerlink" href="#guide" title="Permanent link">&para;</a></h2>
+<h3 id="syntax-highlighting-dependencies">Syntax highlighting dependencies<a class="headerlink" href="#syntax-highlighting-dependencies" title="Permanent link">&para;</a></h3>
+<p>To enable syntax highlighting, you'll need to install the <code>syntax</code> extra dependencies:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">pip</label><label for="__tabbed_1_2">poetry</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip install &quot;textual[syntax]&quot;
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>poetry add &quot;textual[syntax]&quot;
+</code></pre></div>
+</div>
+</div>
+</div>
+<p>This will install <code>tree-sitter</code> and <code>tree-sitter-languages</code>.
+These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not supported.</p>
 <h3 id="loading-text">Loading text<a class="headerlink" href="#loading-text" title="Permanent link">&para;</a></h3>
 <p>In this example we load some initial text into the <code>TextArea</code>, and set the language to <code>"python"</code> to enable syntax highlighting.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Output</label><label for="__tabbed_1_2">text_area_example.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Output</label><label for="__tabbed_2_2">text_area_example.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><svg class="rich-terminal" viewBox="0 0 531 245.2" xmlns="http://www.w3.org/2000/svg">
@@ -11031,26 +11089,26 @@ Supports syntax highlighting for a selection of languages.</p>
 </p>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="s2">def hello(name):</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="s2">    print(&quot;hello&quot; + name)</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="s2">def goodbye(name):</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="s2">    print(&quot;goodbye&quot; + name)</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="s2">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="k">class</span> <span class="nc">TextAreaExample</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="k">yield</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>
-<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>
-<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaExample</span><span class="p">()</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s2">def hello(name):</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s2">    print(&quot;hello&quot; + name)</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="s2">def goodbye(name):</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="s2">    print(&quot;goodbye&quot; + name)</span>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">class</span> <span class="nc">TextAreaExample</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="k">yield</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
+<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaExample</span><span class="p">()</span>
+<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 </div>
 </div>
@@ -11058,8 +11116,8 @@ Supports syntax highlighting for a selection of languages.</p>
 <p>To load content into the <code>TextArea</code> after it has already been created,
 use the <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.load_text"><code>load_text</code></a> method.</p>
 <p>To update the parser used for syntax highlighting, set the <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.language"><code>language</code></a> reactive attribute:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Set the language to Markdown</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">text_area</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="s2">&quot;markdown&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Set the language to Markdown</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">text_area</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="s2">&quot;markdown&quot;</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -11086,18 +11144,18 @@ This method is the programmatic equivalent of selecting some text and then pasti
 <p>The cursor location is available via the <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.cursor_location"><code>cursor_location</code></a> property, which represents
 the location of the cursor as a tuple <code>(row_index, column_index)</code>. These indices are zero-based.
 Writing a new value to <code>cursor_location</code> will immediately update the location of the cursor.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">()</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_location</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_location</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_location</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">()</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_location</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_location</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_location</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
 </code></pre></div>
 <p><code>cursor_location</code> is a simple way to move the cursor programmatically, but it doesn't let us select text.</p>
 <h4 id="selecting-text">Selecting text<a class="headerlink" href="#selecting-text" title="Permanent link">&para;</a></h4>
 <p>To select text, we can use the <code>selection</code> reactive attribute.
 Let's select the first two lines of text in a document by adding <code>text_area.selection = Selection(start=(0, 0), end=(2, 0))</code> to our code:</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Output</label><label for="__tabbed_2_2">text_area_selection.py</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Output</label><label for="__tabbed_3_2">text_area_selection.py</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><svg class="rich-terminal" viewBox="0 0 531 245.2" xmlns="http://www.w3.org/2000/svg">
@@ -11195,29 +11253,29 @@ Let's select the first two lines of text in a document by adding <code>text_area
 </p>
 </div>
 <div class="tabbed-block">
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span> <span class="nn">textual.widgets.text_area</span> <span class="kn">import</span> <span class="n">Selection</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s2">def hello(name):</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s2">    print(&quot;hello&quot; + name)</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s2">def goodbye(name):</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s2">    print(&quot;goodbye&quot; + name)</span>
-<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s2">&quot;&quot;&quot;</span>
-<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>
-<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>
-<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="k">class</span> <span class="nc">TextAreaSelection</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="hll">        <span class="n">text_area</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (1)!</span>
-</span><a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a>        <span class="k">yield</span> <span class="n">text_area</span>
-<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a>
-<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a>
-<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaSelection</span><span class="p">()</span>
-<a id="__codelineno-3-22" name="__codelineno-3-22" href="#__codelineno-3-22"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-3-23" name="__codelineno-3-23" href="#__codelineno-3-23"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kn">from</span> <span class="nn">textual.widgets.text_area</span> <span class="kn">import</span> <span class="n">Selection</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">TEXT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="s2">def hello(name):</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="s2">    print(&quot;hello&quot; + name)</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="s2">def goodbye(name):</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="s2">    print(&quot;goodbye&quot; + name)</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="k">class</span> <span class="nc">TextAreaSelection</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="hll">        <span class="n">text_area</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (1)!</span>
+</span><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>        <span class="k">yield</span> <span class="n">text_area</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaSelection</span><span class="p">()</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <ol>
 <li>Selects the first two lines of text.</li>
@@ -11244,9 +11302,9 @@ A number of similar methods exist, with names like <code>get_cursor_*_location</
 <h5 id="cursor-movement-methods">Cursor movement methods<a class="headerlink" href="#cursor-movement-methods" title="Permanent link">&para;</a></h5>
 <p>The <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.move_cursor"><code>move_cursor</code></a> method allows you to move the cursor to a new location while selecting
 text, or move the cursor and scroll to keep it centered.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Move the cursor from its current location to row index 4,</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># column index 8, while selecting all the text between.</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">text_area</span><span class="o">.</span><span class="n">move_cursor</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">select</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Move the cursor from its current location to row index 4,</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="c1"># column index 8, while selecting all the text between.</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">text_area</span><span class="o">.</span><span class="n">move_cursor</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">select</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </code></pre></div>
 <p>The <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.move_cursor_relative"><code>move_cursor_relative</code></a> method offers a very similar interface, but moves the cursor relative
 to its current location.</p>
@@ -11262,17 +11320,17 @@ to its current location.</p>
 the cursor, selection, gutter, and more.</p>
 <h4 id="using-builtin-themes">Using builtin themes<a class="headerlink" href="#using-builtin-themes" title="Permanent link">&para;</a></h4>
 <p>The initial theme of the <code>TextArea</code> is determined by the <code>theme</code> parameter.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Create a TextArea with the &#39;dracula&#39; theme.</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">yield</span> <span class="n">TextArea</span><span class="p">(</span><span class="s2">&quot;print(123)&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;dracula&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Create a TextArea with the &#39;dracula&#39; theme.</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="k">yield</span> <span class="n">TextArea</span><span class="p">(</span><span class="s2">&quot;print(123)&quot;</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">theme</span><span class="o">=</span><span class="s2">&quot;dracula&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>You can check which themes are available using the <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.available_themes"><code>available_themes</code></a> property.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">()</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">text_area</span><span class="o">.</span><span class="n">available_themes</span><span class="p">)</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="p">{</span><span class="s1">&#39;dracula&#39;</span><span class="p">,</span> <span class="s1">&#39;github_light&#39;</span><span class="p">,</span> <span class="s1">&#39;monokai&#39;</span><span class="p">,</span> <span class="s1">&#39;vscode_dark&#39;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">()</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">text_area</span><span class="o">.</span><span class="n">available_themes</span><span class="p">)</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="p">{</span><span class="s1">&#39;dracula&#39;</span><span class="p">,</span> <span class="s1">&#39;github_light&#39;</span><span class="p">,</span> <span class="s1">&#39;monokai&#39;</span><span class="p">,</span> <span class="s1">&#39;vscode_dark&#39;</span><span class="p">}</span>
 </code></pre></div>
 <p>After creating a <code>TextArea</code>, you can change the theme by setting the <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.theme"><code>theme</code></a>
 attribute to one of the available themes.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">text_area</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="s2">&quot;vscode_dark&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">text_area</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="s2">&quot;vscode_dark&quot;</span>
 </code></pre></div>
 <p>On setting this attribute the <code>TextArea</code> will immediately refresh to display the updated theme.</p>
 <h4 id="custom-themes">Custom themes<a class="headerlink" href="#custom-themes" title="Permanent link">&para;</a></h4>
@@ -11284,22 +11342,22 @@ attribute to one of the available themes.</p>
 <h5 id="1-creating-a-theme">1. Creating a theme<a class="headerlink" href="#1-creating-a-theme" title="Permanent link">&para;</a></h5>
 <p>Let's create a simple theme, <code>"my_cool_theme"</code>, which colors the cursor <span style="background-color: dodgerblue; color: white; padding: 0 2px;">blue</span>, and the cursor line <span style="background-color: yellow; color: black; padding: 0 2px;">yellow</span>.
 Our theme will also syntax highlight strings as <span style="background-color: red; color: white; padding: 0 2px;">red</span>, and comments as <span style="background-color: magenta; color: black; padding: 0 2px;">magenta</span>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">rich.style</span> <span class="kn">import</span> <span class="n">Style</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span> <span class="nn">textual.widgets.text_area</span> <span class="kn">import</span> <span class="n">TextAreaTheme</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># ...</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">my_theme</span> <span class="o">=</span> <span class="n">TextAreaTheme</span><span class="p">(</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="c1"># This name will be used to refer to the theme...</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_cool_theme&quot;</span><span class="p">,</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="c1"># Basic styles such as background, cursor, selection, gutter, etc...</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="n">cursor_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">),</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="n">cursor_line_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">),</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="c1"># `syntax_styles` is for syntax highlighting.</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="c1"># It maps tokens parsed from the document to Rich styles.</span>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>    <span class="n">syntax_styles</span><span class="o">=</span><span class="p">{</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>        <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">),</span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>        <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">),</span>
-<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>    <span class="p">}</span>
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">from</span> <span class="nn">rich.style</span> <span class="kn">import</span> <span class="n">Style</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="kn">from</span> <span class="nn">textual.widgets.text_area</span> <span class="kn">import</span> <span class="n">TextAreaTheme</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># ...</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">my_theme</span> <span class="o">=</span> <span class="n">TextAreaTheme</span><span class="p">(</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>    <span class="c1"># This name will be used to refer to the theme...</span>
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_cool_theme&quot;</span><span class="p">,</span>
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>    <span class="c1"># Basic styles such as background, cursor, selection, gutter, etc...</span>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>    <span class="n">cursor_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">),</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>    <span class="n">cursor_line_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">),</span>
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>    <span class="c1"># `syntax_styles` is for syntax highlighting.</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>    <span class="c1"># It maps tokens parsed from the document to Rich styles.</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>    <span class="n">syntax_styles</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>        <span class="s2">&quot;string&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">),</span>
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>        <span class="s2">&quot;comment&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">),</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="p">}</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="p">)</span>
 </code></pre></div>
 <p>Attributes like <code>cursor_style</code> and <code>cursor_line_style</code> apply general language-agnostic
 styling to the widget.</p>
@@ -11307,20 +11365,20 @@ styling to the widget.</p>
 depends on the <code>language</code> currently in use.
 For more details, see <a href="#syntax-highlighting">syntax highlighting</a>.</p>
 <p>If you wish to build on an existing theme, you can obtain a reference to it using the <a class="autorefs autorefs-internal" href="#textual._text_area_theme.TextAreaTheme.get_builtin_theme"><code>TextAreaTheme.get_builtin_theme</code></a> classmethod:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span> <span class="nn">textual.widgets.text_area</span> <span class="kn">import</span> <span class="n">TextAreaTheme</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="n">monokai</span> <span class="o">=</span> <span class="n">TextAreaTheme</span><span class="o">.</span><span class="n">get_builtin_theme</span><span class="p">(</span><span class="s2">&quot;monokai&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kn">from</span> <span class="nn">textual.widgets.text_area</span> <span class="kn">import</span> <span class="n">TextAreaTheme</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="n">monokai</span> <span class="o">=</span> <span class="n">TextAreaTheme</span><span class="o">.</span><span class="n">get_builtin_theme</span><span class="p">(</span><span class="s2">&quot;monokai&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h5 id="2-registering-a-theme">2. Registering a theme<a class="headerlink" href="#2-registering-a-theme" title="Permanent link">&para;</a></h5>
 <p>Our theme can now be registered with the <code>TextArea</code> instance.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">text_area</span><span class="o">.</span><span class="n">register_theme</span><span class="p">(</span><span class="n">my_theme</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">text_area</span><span class="o">.</span><span class="n">register_theme</span><span class="p">(</span><span class="n">my_theme</span><span class="p">)</span>
 </code></pre></div>
 <p>After registering a theme, it'll appear in the <code>available_themes</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">text_area</span><span class="o">.</span><span class="n">available_themes</span><span class="p">)</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="p">{</span><span class="s1">&#39;dracula&#39;</span><span class="p">,</span> <span class="s1">&#39;github_light&#39;</span><span class="p">,</span> <span class="s1">&#39;monokai&#39;</span><span class="p">,</span> <span class="s1">&#39;vscode_dark&#39;</span><span class="p">,</span> <span class="s1">&#39;my_cool_theme&#39;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="nb">print</span><span class="p">(</span><span class="n">text_area</span><span class="o">.</span><span class="n">available_themes</span><span class="p">)</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="p">{</span><span class="s1">&#39;dracula&#39;</span><span class="p">,</span> <span class="s1">&#39;github_light&#39;</span><span class="p">,</span> <span class="s1">&#39;monokai&#39;</span><span class="p">,</span> <span class="s1">&#39;vscode_dark&#39;</span><span class="p">,</span> <span class="s1">&#39;my_cool_theme&#39;</span><span class="p">}</span>
 </code></pre></div>
 <p>We can now switch to it:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">text_area</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="s2">&quot;my_cool_theme&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">text_area</span><span class="o">.</span><span class="n">theme</span> <span class="o">=</span> <span class="s2">&quot;my_cool_theme&quot;</span>
 </code></pre></div>
 <p>This immediately updates the appearance of the <code>TextArea</code>:</p>
 <p><svg class="rich-terminal" viewBox="0 0 531 245.2" xmlns="http://www.w3.org/2000/svg">
@@ -11423,9 +11481,9 @@ the <code>text</code> property. The <code>TextArea</code> widget does not suppor
 contains mixed line endings.</p>
 <p>Similarly, newline characters pasted into the <code>TextArea</code> will be converted.</p>
 <p>You can check the line separator of the current document by inspecting <code>TextArea.document.newline</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">()</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">newline</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">()</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="o">&gt;&gt;&gt;</span> <span class="n">text_area</span><span class="o">.</span><span class="n">document</span><span class="o">.</span><span class="n">newline</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
 </code></pre></div>
 <h3 id="line-numbers">Line numbers<a class="headerlink" href="#line-numbers" title="Permanent link">&para;</a></h3>
 <p>The gutter (column on the left containing line numbers) can be toggled by setting
@@ -11439,29 +11497,29 @@ In this section, we'll briefly explore how we can extend the widget to achieve c
 This can be done by over-riding <code>_on_key</code> and adding the required functionality.</p>
 <h5 id="example-closing-parentheses-automatically">Example - closing parentheses automatically<a class="headerlink" href="#example-closing-parentheses-automatically" title="Permanent link">&para;</a></h5>
 <p>Let's extend <code>TextArea</code> to add a feature which automatically closes parentheses and moves the cursor to a sensible location.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
-<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
-<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>
-<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>
-<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a><span class="k">class</span> <span class="nc">ExtendedTextArea</span><span class="p">(</span><span class="n">TextArea</span><span class="p">):</span>
-<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of TextArea with parenthesis-closing functionality.&quot;&quot;&quot;</span>
-<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>
-<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    <span class="k">def</span> <span class="nf">_on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-14-10" name="__codelineno-14-10" href="#__codelineno-14-10"></a>        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">character</span> <span class="o">==</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span>
-<a id="__codelineno-14-11" name="__codelineno-14-11" href="#__codelineno-14-11"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;()&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-12" name="__codelineno-14-12" href="#__codelineno-14-12"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">move_cursor_relative</span><span class="p">(</span><span class="n">columns</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-<a id="__codelineno-14-13" name="__codelineno-14-13" href="#__codelineno-14-13"></a>            <span class="n">event</span><span class="o">.</span><span class="n">prevent_default</span><span class="p">()</span>
-<a id="__codelineno-14-14" name="__codelineno-14-14" href="#__codelineno-14-14"></a>
-<a id="__codelineno-14-15" name="__codelineno-14-15" href="#__codelineno-14-15"></a>
-<a id="__codelineno-14-16" name="__codelineno-14-16" href="#__codelineno-14-16"></a><span class="k">class</span> <span class="nc">TextAreaKeyPressHook</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-14-17" name="__codelineno-14-17" href="#__codelineno-14-17"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-14-18" name="__codelineno-14-18" href="#__codelineno-14-18"></a>        <span class="k">yield</span> <span class="n">ExtendedTextArea</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
-<a id="__codelineno-14-19" name="__codelineno-14-19" href="#__codelineno-14-19"></a>
-<a id="__codelineno-14-20" name="__codelineno-14-20" href="#__codelineno-14-20"></a>
-<a id="__codelineno-14-21" name="__codelineno-14-21" href="#__codelineno-14-21"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaKeyPressHook</span><span class="p">()</span>
-<a id="__codelineno-14-22" name="__codelineno-14-22" href="#__codelineno-14-22"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-14-23" name="__codelineno-14-23" href="#__codelineno-14-23"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="k">class</span> <span class="nc">ExtendedTextArea</span><span class="p">(</span><span class="n">TextArea</span><span class="p">):</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A subclass of TextArea with parenthesis-closing functionality.&quot;&quot;&quot;</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>    <span class="k">def</span> <span class="nf">_on_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="n">events</span><span class="o">.</span><span class="n">Key</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">character</span> <span class="o">==</span> <span class="s2">&quot;(&quot;</span><span class="p">:</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s2">&quot;()&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>            <span class="bp">self</span><span class="o">.</span><span class="n">move_cursor_relative</span><span class="p">(</span><span class="n">columns</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>            <span class="n">event</span><span class="o">.</span><span class="n">prevent_default</span><span class="p">()</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="k">class</span> <span class="nc">TextAreaKeyPressHook</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>        <span class="k">yield</span> <span class="n">ExtendedTextArea</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaKeyPressHook</span><span class="p">()</span>
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <p>This intercepts the key handler when <code>"("</code> is pressed, and inserts <code>"()"</code> instead.
 It then moves the cursor so that it lands between the open and closing parentheses.</p>
@@ -11549,26 +11607,26 @@ This tree is frequently <em>queried</em> to find location ranges relevant to syn
 We give these ranges <em>names</em>, and ultimately map them to Rich styles inside <code>TextAreaTheme.syntax_styles</code>.</p>
 <p>To illustrate how this works, lets look at how the "Monokai" <code>TextAreaTheme</code> highlights Markdown files.</p>
 <p>When the <code>language</code> attribute is set to <code>"markdown"</code>, a highlight query similar to the one below is used (trimmed for brevity).</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="p">(</span><span class="nf">heading_content</span><span class="p">)</span><span class="w"> </span><span class="nv">@heading</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="p">(</span><span class="nb">link</span><span class="p">)</span><span class="w"> </span><span class="nv">@link</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="p">(</span><span class="nf">heading_content</span><span class="p">)</span><span class="w"> </span><span class="nv">@heading</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="p">(</span><span class="nb">link</span><span class="p">)</span><span class="w"> </span><span class="nv">@link</span>
 </code></pre></div>
 <p>This highlight query maps <code>heading_content</code> nodes returned by the Markdown parser to the name <code>@heading</code>,
 and <code>link</code> nodes to the name <code>@link</code>.</p>
 <p>Inside our <code>TextAreaTheme.syntax_styles</code> dict, we can map the name <code>@heading</code> to a Rich style.
 Here's a snippet from the "Monokai" theme which does just that:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">TextAreaTheme</span><span class="p">(</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;monokai&quot;</span><span class="p">,</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="n">base_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#f8f8f2&quot;</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;#272822&quot;</span><span class="p">),</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">gutter_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#90908a&quot;</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;#272822&quot;</span><span class="p">),</span>
-<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>    <span class="c1"># ...</span>
-<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="n">syntax_styles</span><span class="o">=</span><span class="p">{</span>
-<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>        <span class="c1"># Colorise @heading and make them bold</span>
-<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>        <span class="s2">&quot;heading&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#F92672&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>        <span class="c1"># Colorise and underline @link</span>
-<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>        <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#66D9EF&quot;</span><span class="p">,</span> <span class="n">underline</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>        <span class="c1"># ...</span>
-<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>    <span class="p">},</span>
-<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">TextAreaTheme</span><span class="p">(</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;monokai&quot;</span><span class="p">,</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>    <span class="n">base_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#f8f8f2&quot;</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;#272822&quot;</span><span class="p">),</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>    <span class="n">gutter_style</span><span class="o">=</span><span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#90908a&quot;</span><span class="p">,</span> <span class="n">bgcolor</span><span class="o">=</span><span class="s2">&quot;#272822&quot;</span><span class="p">),</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>    <span class="c1"># ...</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a>    <span class="n">syntax_styles</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>        <span class="c1"># Colorise @heading and make them bold</span>
+<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>        <span class="s2">&quot;heading&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#F92672&quot;</span><span class="p">,</span> <span class="n">bold</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>        <span class="c1"># Colorise and underline @link</span>
+<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>        <span class="s2">&quot;link&quot;</span><span class="p">:</span> <span class="n">Style</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;#66D9EF&quot;</span><span class="p">,</span> <span class="n">underline</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>        <span class="c1"># ...</span>
+<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>    <span class="p">},</span>
+<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="p">)</span>
 </code></pre></div>
 <p>To understand which names can be mapped inside <code>syntax_styles</code>, we recommend looking at the existing
 themes and highlighting queries (<code>.scm</code> files) in the Textual repository.</p>
@@ -11587,8 +11645,8 @@ open document.</p>
 </ol>
 <h5 id="example-adding-java-support">Example - adding Java support<a class="headerlink" href="#example-adding-java-support" title="Permanent link">&para;</a></h5>
 <p>The easiest way to obtain a <code>Language</code> object is using the <a href="https://github.com/grantjenks/py-tree-sitter-languages"><code>py-tree-sitter-languages</code></a> package. Here's how we can use this package to obtain a reference to a <code>Language</code> object representing Java:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span> <span class="nn">tree_sitter_languages</span> <span class="kn">import</span> <span class="n">get_language</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">java_language</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">(</span><span class="s2">&quot;java&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kn">from</span> <span class="nn">tree_sitter_languages</span> <span class="kn">import</span> <span class="n">get_language</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="n">java_language</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">(</span><span class="s2">&quot;java&quot;</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -11612,40 +11670,40 @@ and a file showing all the available node types which can be used in highlight q
 pay attention to the commit hash when visiting the repo via <code>repos.txt</code>.</p>
 </div>
 <p>We now have our <code>Language</code> and our highlight query, so we can register Java as a language.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="kn">from</span> <span class="nn">tree_sitter_languages</span> <span class="kn">import</span> <span class="n">get_language</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>
-<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
-<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
-<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a>
-<a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a><span class="n">java_language</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">(</span><span class="s2">&quot;java&quot;</span><span class="p">)</span>
-<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a><span class="n">java_highlight_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;java_highlights.scm&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
-<a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a><span class="n">java_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
-<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a><span class="s2">class HelloWorld {</span>
-<a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a><span class="s2">    public static void main(String[] args) {</span>
-<a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="s2">        System.out.println(&quot;Hello, World!&quot;);</span>
-<a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="s2">    }</span>
-<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a><span class="s2">}</span>
-<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a><span class="s2">&quot;&quot;&quot;</span>
-<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>
-<a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>
-<a id="__codelineno-18-19" name="__codelineno-18-19" href="#__codelineno-18-19"></a><span class="k">class</span> <span class="nc">TextAreaCustomLanguage</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-18-20" name="__codelineno-18-20" href="#__codelineno-18-20"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-18-21" name="__codelineno-18-21" href="#__codelineno-18-21"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">java_code</span><span class="p">)</span>
-<a id="__codelineno-18-22" name="__codelineno-18-22" href="#__codelineno-18-22"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_blink</span> <span class="o">=</span> <span class="kc">False</span>
-<a id="__codelineno-18-23" name="__codelineno-18-23" href="#__codelineno-18-23"></a>
-<a id="__codelineno-18-24" name="__codelineno-18-24" href="#__codelineno-18-24"></a>        <span class="c1"># Register the Java language and highlight query</span>
-<a id="__codelineno-18-25" name="__codelineno-18-25" href="#__codelineno-18-25"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">register_language</span><span class="p">(</span><span class="n">java_language</span><span class="p">,</span> <span class="n">java_highlight_query</span><span class="p">)</span>
-<a id="__codelineno-18-26" name="__codelineno-18-26" href="#__codelineno-18-26"></a>
-<a id="__codelineno-18-27" name="__codelineno-18-27" href="#__codelineno-18-27"></a>        <span class="c1"># Switch to Java</span>
-<a id="__codelineno-18-28" name="__codelineno-18-28" href="#__codelineno-18-28"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="s2">&quot;java&quot;</span>
-<a id="__codelineno-18-29" name="__codelineno-18-29" href="#__codelineno-18-29"></a>        <span class="k">yield</span> <span class="n">text_area</span>
-<a id="__codelineno-18-30" name="__codelineno-18-30" href="#__codelineno-18-30"></a>
-<a id="__codelineno-18-31" name="__codelineno-18-31" href="#__codelineno-18-31"></a>
-<a id="__codelineno-18-32" name="__codelineno-18-32" href="#__codelineno-18-32"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaCustomLanguage</span><span class="p">()</span>
-<a id="__codelineno-18-33" name="__codelineno-18-33" href="#__codelineno-18-33"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-<a id="__codelineno-18-34" name="__codelineno-18-34" href="#__codelineno-18-34"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="kn">from</span> <span class="nn">tree_sitter_languages</span> <span class="kn">import</span> <span class="n">get_language</span>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">TextArea</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="n">java_language</span> <span class="o">=</span> <span class="n">get_language</span><span class="p">(</span><span class="s2">&quot;java&quot;</span><span class="p">)</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="n">java_highlight_query</span> <span class="o">=</span> <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;java_highlights.scm&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="n">java_code</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="s2">class HelloWorld {</span>
+<a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="s2">    public static void main(String[] args) {</span>
+<a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="s2">        System.out.println(&quot;Hello, World!&quot;);</span>
+<a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a><span class="s2">    }</span>
+<a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a><span class="s2">}</span>
+<a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a><span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>
+<a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>
+<a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="k">class</span> <span class="nc">TextAreaCustomLanguage</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">java_code</span><span class="p">)</span>
+<a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_blink</span> <span class="o">=</span> <span class="kc">False</span>
+<a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a>
+<a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a>        <span class="c1"># Register the Java language and highlight query</span>
+<a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">register_language</span><span class="p">(</span><span class="n">java_language</span><span class="p">,</span> <span class="n">java_highlight_query</span><span class="p">)</span>
+<a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a>
+<a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a>        <span class="c1"># Switch to Java</span>
+<a id="__codelineno-20-28" name="__codelineno-20-28" href="#__codelineno-20-28"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">language</span> <span class="o">=</span> <span class="s2">&quot;java&quot;</span>
+<a id="__codelineno-20-29" name="__codelineno-20-29" href="#__codelineno-20-29"></a>        <span class="k">yield</span> <span class="n">text_area</span>
+<a id="__codelineno-20-30" name="__codelineno-20-30" href="#__codelineno-20-30"></a>
+<a id="__codelineno-20-31" name="__codelineno-20-31" href="#__codelineno-20-31"></a>
+<a id="__codelineno-20-32" name="__codelineno-20-32" href="#__codelineno-20-32"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaCustomLanguage</span><span class="p">()</span>
+<a id="__codelineno-20-33" name="__codelineno-20-33" href="#__codelineno-20-33"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-20-34" name="__codelineno-20-34" href="#__codelineno-20-34"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <p>Running our app, we can see that the Java code is highlighted.
 We can freely edit the text, and the syntax highlighting will update immediately.</p>
@@ -12099,8 +12157,8 @@ For example, <code>@string</code> is used in many languages to highlight strings
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12582,8 +12640,8 @@ the strings from this list into <code>TextAreaTheme.get_by_name(theme_name: str)
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.cursor_blink" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12606,8 +12664,8 @@ the strings from this list into <code>TextAreaTheme.get_by_name(theme_name: str)
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.cursor_location" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12618,6 +12676,29 @@ the strings from this list into <code>TextAreaTheme.get_by_name(theme_name: str)
   
       <p>The current location of the cursor in the document.</p>
 <p>This is a utility for accessing the <code>end</code> of <code>TextArea.selection</code>.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._text_area.TextArea.cursor_screen_offset" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">cursor_screen_offset</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets._text_area.TextArea.cursor_screen_offset" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_screen_offset</span><span class="p">:</span> <span class="n">Offset</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The offset of the cursor relative to the screen.</p>
   </div>
 
 </div>
@@ -12718,8 +12799,8 @@ the strings from this list into <code>TextAreaTheme.get_by_name(theme_name: str)
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.indent_width" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12767,8 +12848,8 @@ altering this value will immediately change the display width of the visible tab
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.language" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12795,8 +12876,8 @@ it first using  <a class="autorefs autorefs-internal" href="#textual.widgets._te
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.match_cursor_bracket" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12842,8 +12923,8 @@ it first using  <a class="autorefs autorefs-internal" href="#textual.widgets._te
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.selection" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12872,8 +12953,8 @@ it first using  <a class="autorefs autorefs-internal" href="#textual.widgets._te
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.show_line_numbers" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12920,8 +13001,8 @@ it first using  <a class="autorefs autorefs-internal" href="#textual.widgets._te
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.theme" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -15932,8 +16013,8 @@ provide in order to be used by the TextArea widget.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#textual.document._document.DocumentBase.line_count" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -15956,8 +16037,8 @@ provide in order to be used by the TextArea widget.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#textual.document._document.DocumentBase.newline" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -15980,8 +16061,8 @@ provide in order to be used by the TextArea widget.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-abstractmethod"><code>abstractmethod</code></small>
   </span>
 
 <a href="#textual.document._document.DocumentBase.text" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -16869,8 +16950,8 @@ The selection is inclusive of the minimum point and exclusive of the maximum poi
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.document._document.Selection.end" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -16917,8 +16998,8 @@ The selection is inclusive of the minimum point and exclusive of the maximum poi
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.document._document.Selection.start" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17442,8 +17523,8 @@ and headings in our markdown files will be styled bold cyan.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.base_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17466,8 +17547,8 @@ and headings in our markdown files will be styled bold cyan.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.bracket_matching_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17490,8 +17571,8 @@ and headings in our markdown files will be styled bold cyan.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.cursor_line_gutter_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17515,8 +17596,8 @@ generated.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.cursor_line_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17539,8 +17620,8 @@ generated.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.cursor_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17563,8 +17644,8 @@ generated.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.gutter_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17610,8 +17691,8 @@ generated.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.selection_style" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17634,8 +17715,8 @@ generated.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual._text_area_theme.TextAreaTheme.syntax_styles" class="headerlink" title="Permanent link">&para;</a></h3>

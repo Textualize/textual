@@ -150,8 +150,7 @@ window.onload = async (event) => {
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -501,8 +500,7 @@ window.onload = async (event) => {
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
 
     </a>
     Textual
@@ -5716,6 +5714,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.cursor_position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.dark" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -6193,6 +6202,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         clear_notifications()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.compose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        compose()
       
     </span>
   </a>
@@ -8308,6 +8328,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.cursor_position" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        cursor_position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.dark" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8785,6 +8816,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         clear_notifications()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.compose" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        compose()
       
     </span>
   </a>
@@ -9725,8 +9767,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9751,8 +9793,8 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9839,13 +9881,38 @@ be the currently active screen.</p>
 
 
 
+<h3 id="textual.app.App.cursor_position" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">cursor_position</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.app.App.cursor_position" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cursor_position</span> <span class="o">=</span> <span class="n">Offset</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The position of the terminal cursor in screen-space.</p>
+<p>This can be set by widgets and is useful for controlling the
+positioning of OS IME and emoji popup menus.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.app.App.dark" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">dark</span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10298,8 +10365,8 @@ If the app wasn't exited yet, this will be <code>None</code>.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10330,8 +10397,8 @@ The new value is always converted to string.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11296,7 +11363,7 @@ on the stack.)</p>
   <div class="doc doc-contents ">
   
       <p>Capture content that is printed (or written to stdout / stderr).</p>
-<p>If printing is captured, the <code>target</code> will be send an <a class="autorefs autorefs-internal" href="../events/#textual.events.Print">events.Print</a> message.</p>
+<p>If printing is captured, the <code>target</code> will be sent an <a class="autorefs autorefs-internal" href="../events/#textual.events.Print">events.Print</a> message.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -11719,6 +11786,30 @@ if you wish to <em>simulate</em> a key being pressed.</p>
   <div class="doc doc-contents ">
   
       <p>Clear all the current notifications.</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.compose" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">compose</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.app.App.compose" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Yield child widgets for a container.</p>
+<p>This method should be implemented in a subclass.</p>
 
   </div>
 
@@ -13180,7 +13271,9 @@ For a more graceful exit, see the <a class="autorefs autorefs-internal" href="#t
   </span>
 
 <a href="#textual.app.App.push_screen" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">push_screen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">push_screen</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">wait_for_dismiss</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13218,6 +13311,35 @@ For a more graceful exit, see the <a class="autorefs autorefs-internal" href="#t
                 <code>None</code>
           </td>
         </tr>
+        <tr>
+          <td><code>wait_for_dismiss</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>If <code>True</code>, awaiting this method will return the dismiss value from the screen. When set to <code>False</code>, awaiting
+this method will wait for the screen to be mounted. Note that <code>wait_for_dismiss</code> should only be set to <code>True</code> when running in a worker.</p></td>
+          <td>
+                <code>False</code>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.worker.NoActiveWorker" href="../worker/#textual.worker.NoActiveWorker">NoActiveWorker</a></code>
+          </td>
+          <td><p>If using <code>wait_for_dismiss</code> outside of a worker.</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -13232,9 +13354,10 @@ For a more graceful exit, see the <a class="autorefs autorefs-internal" href="#t
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../widget/#textual.widget.AwaitMount">AwaitMount</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../widget/#textual.widget.AwaitMount">AwaitMount</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio">asyncio</a>.<a class="autorefs autorefs-external" title="asyncio.Future" href="https://docs.python.org/3/library/asyncio-future.html#asyncio.Future">Future</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="../screen/#textual.screen.ScreenResultType">ScreenResultType</a>]</code>
           </td>
-          <td><p>An optional awaitable that awaits the mounting of the screen and its children.</p></td>
+          <td><p>An optional awaitable that awaits the mounting of the screen and its children, or an asyncio Future
+to await the result of the screen.</p></td>
         </tr>
     </tbody>
   </table>

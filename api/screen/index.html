@@ -150,8 +150,7 @@ window.onload = async (event) => {
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -501,8 +500,7 @@ window.onload = async (event) => {
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
 
     </a>
     Textual
@@ -6167,6 +6165,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.ResultCallback.future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        future
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.ResultCallback.requester" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7434,6 +7443,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.ResultCallback.future" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        future
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.ResultCallback.requester" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7915,7 +7935,7 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.screen.ResultCallback" class="headerlink" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requester</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requester</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="n">future</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7958,6 +7978,16 @@ window.onload = async (event) => {
               <em>required</em>
           </td>
         </tr>
+        <tr>
+          <td><code>future</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio">asyncio</a>.<a class="autorefs autorefs-external" title="asyncio.Future" href="https://docs.python.org/3/library/asyncio-future.html#asyncio.Future">Future</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
+          </td>
+          <td><p>A Future to hold the result.</p></td>
+          <td>
+                <code>None</code>
+          </td>
+        </tr>
     </tbody>
   </table>
 
@@ -7991,6 +8021,29 @@ window.onload = async (event) => {
   <div class="doc doc-contents ">
   
       <p>The callback function.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.screen.ResultCallback.future" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">future</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.screen.ResultCallback.future" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">future</span> <span class="o">=</span> <span class="n">future</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>A future for the result</p>
   </div>
 
 </div>
@@ -8298,8 +8351,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.focused" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8409,8 +8462,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.stack_updates" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8433,8 +8486,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8457,8 +8510,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.title" class="headerlink" title="Permanent link">&para;</a></h3>
