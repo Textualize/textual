@@ -24,25 +24,6 @@ if TYPE_CHECKING:
     from ..app import App
 
 
-class ExceptionHandlingThread(Thread):
-    """
-    Thread that passes any exception from `target` to `exception_handler`
-
-    WARNING: `exception_handler` is called inside the thread. You can
-             schedule calls via `App.call_later`.
-    """
-
-    def __init__(self, *args, exception_handler, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        self._exception_handler: Callable = exception_handler
-
-    def run(self) -> None:
-        try:
-            super().run()
-        except BaseException as error:
-            self._exception_handler(error)
-
-
 @rich.repr.auto(angular=True)
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
@@ -184,10 +165,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h\n")
         self.flush()
-        self._key_thread = ExceptionHandlingThread(
-            target=self.run_input_thread,
-            exception_handler=self._handle_input_thread_exception,
-        )
+        self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
@@ -256,6 +234,19 @@ class LinuxDriver(Driver):
         if self._writer_thread is not None:
             self._writer_thread.stop()
 
+    def _run_input_thread(self) -> None:
+        """
+        Key thread target that wraps run_input_thread() to die gracefully if it raises
+        an exception
+        """
+        try:
+            self.run_input_thread()
+        except BaseException as error:
+            self._app.call_later(
+                self._app.panic,
+                rich.traceback.Traceback(),
+            )
+
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
         selector = selectors.DefaultSelector()
@@ -289,9 +280,3 @@ class LinuxDriver(Driver):
                             self.process_event(event)
         finally:
             selector.close()
-
-    def _handle_input_thread_exception(self, error):
-        self._app.call_later(
-            self._app.panic,
-            rich.traceback.Traceback(),
-        )
