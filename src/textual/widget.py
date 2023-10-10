@@ -1220,7 +1220,7 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """The a horizontal scrollbar.
+        """The horizontal scrollbar.
 
         Note:
             This will *create* a scrollbar if one doesn't exist.
@@ -2701,8 +2701,8 @@ class Widget(DOMNode):
                 horizontal_scrollbar_region,
                 scrollbar_corner_gap,
             ) = region.split(
-                -scrollbar_size_vertical,
-                -scrollbar_size_horizontal,
+                region.width - scrollbar_size_vertical,
+                region.height - scrollbar_size_horizontal,
             )
             if scrollbar_corner_gap:
                 yield self.scrollbar_corner, scrollbar_corner_gap
@@ -2719,7 +2719,7 @@ class Widget(DOMNode):
 
         elif show_vertical_scrollbar:
             window_region, scrollbar_region = region.split_vertical(
-                -scrollbar_size_vertical
+                region.width - scrollbar_size_vertical
             )
             if scrollbar_region:
                 scrollbar = self.vertical_scrollbar
@@ -2728,7 +2728,7 @@ class Widget(DOMNode):
                 yield scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
             window_region, scrollbar_region = region.split_horizontal(
-                -scrollbar_size_horizontal
+                region.height - scrollbar_size_horizontal
             )
             if scrollbar_region:
                 scrollbar = self.horizontal_scrollbar

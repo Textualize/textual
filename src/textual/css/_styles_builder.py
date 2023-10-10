@@ -876,11 +876,7 @@ class StylesBuilder:
                 scrollbar_size_error(name, token2)
 
             horizontal = int(token1.value)
-            if horizontal == 0:
-                scrollbar_size_error(name, token1)
             vertical = int(token2.value)
-            if vertical == 0:
-                scrollbar_size_error(name, token2)
             self.styles._rules["scrollbar_size_horizontal"] = horizontal
             self.styles._rules["scrollbar_size_vertical"] = vertical
             self._distribute_importance("scrollbar_size", ("horizontal", "vertical"))
@@ -895,8 +891,6 @@ class StylesBuilder:
             if token.name != "number" or not token.value.isdigit():
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             value = int(token.value)
-            if value == 0:
-                self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_vertical"] = value
 
     def process_scrollbar_size_horizontal(self, name: str, tokens: list[Token]) -> None:
@@ -909,8 +903,6 @@ class StylesBuilder:
             if token.name != "number" or not token.value.isdigit():
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             value = int(token.value)
-            if value == 0:
-                self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_horizontal"] = value
 
     def _process_grid_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
