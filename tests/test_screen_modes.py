@@ -186,15 +186,15 @@ async def test_inactive_stack_is_alive():
         def ping(self) -> None:
             pings.append(str(self.app.query_one(Label).renderable))
 
-        def key_s(self):
-            self.app.switch_mode("smile")
+        async def key_s(self):
+            await self.app.switch_mode("smile")
 
     class SmileScreen(Screen[None]):
         def compose(self) -> ComposeResult:
             yield Label(":)")
 
-        def key_s(self):
-            self.app.switch_mode("fast")
+        async def key_s(self):
+            await self.app.switch_mode("fast")
 
     class ModesApp(App[None]):
         MODES = {
@@ -202,8 +202,8 @@ async def test_inactive_stack_is_alive():
             "smile": SmileScreen,
         }
 
-        def on_mount(self) -> None:
-            self.switch_mode("fast")
+        async def on_mount(self) -> None:
+            await self.switch_mode("fast")
 
     app = ModesApp()
     async with app.run_test() as pilot:

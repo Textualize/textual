@@ -1595,27 +1595,38 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.mount(*widgets, before=before, after=after)
 
-    def _init_mode(self, mode: str) -> None:
+    def _init_mode(self, mode: str) -> AwaitMount:
         """Do internal initialisation of a new screen stack mode.
 
         Args:
             mode: Name of the mode.
+
+        Returns:
+            An optionally awaitable object indicating whether this mode
         """
 
         stack = self._screen_stacks.get(mode, [])
-        if not stack:
+        if stack:
+            await_mount = AwaitMount(stack[0], [])
+        else:
             _screen = self.MODES[mode]
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
-            screen, _ = self._get_screen(new_screen)
+            screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
-        self._screen_stacks[mode] = stack
 
-    def switch_mode(self, mode: str) -> None:
+        self._screen_stacks[mode] = stack
+        return await_mount
+
+    def switch_mode(self, mode: str) -> AwaitMount:
         """Switch to a given mode.
 
         Args:
             mode: The mode to switch to.
+
+        Returns:
+            An optionally awaitable object which waits for the screen associated
+                with the mode to be mounted.
 
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
@@ -1627,12 +1638,18 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.refresh()
 
         if mode not in self._screen_stacks:
-            self._init_mode(mode)
+            await_mount = self._init_mode(mode)
+        else:
+            await_mount = AwaitMount(self.screen, [])
+
         self._current_mode = mode
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
+
         self.log.system(f"{self._current_mode!r} is the current mode")
         self.log.system(f"{self.screen} is active")
+
+        return await_mount
 
     def add_mode(
         self, mode: str, base_screen: str | Screen | Callable[[], Screen]
