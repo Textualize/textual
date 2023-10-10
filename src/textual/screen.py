@@ -963,7 +963,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.set_focus(None)
             else:
                 if isinstance(event, events.MouseDown) and widget.focusable:
-                    self.set_focus(widget)
+                    self.set_focus(widget, scroll_visible=False)
                 elif isinstance(event, events.MouseUp) and widget.focusable:
                     if self.focused is not widget:
                         self.set_focus(widget)
