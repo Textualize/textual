@@ -964,11 +964,6 @@ class Screen(Generic[ScreenResultType], Widget):
             else:
                 if isinstance(event, events.MouseDown) and widget.focusable:
                     self.set_focus(widget, scroll_visible=False)
-                elif isinstance(event, events.MouseUp) and widget.focusable:
-                    if self.focused is not widget:
-                        self.set_focus(widget)
-                        event.stop()
-                        return
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()
