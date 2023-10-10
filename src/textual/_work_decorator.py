@@ -87,7 +87,7 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
+) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator[..., ReturnType]:
     """A decorator used to create [workers](/guide/workers).
 
     Args:
