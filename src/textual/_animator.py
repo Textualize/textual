@@ -309,8 +309,8 @@ class Animator:
             easing=easing,
             on_complete=on_complete,
         )
-        self._complete_event.clear()
         if delay:
+            self._complete_event.clear()
             self._scheduled[(id(obj), attribute)] = self.app.set_timer(
                 delay, animate_callback
             )
