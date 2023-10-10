@@ -3202,7 +3202,7 @@ class Widget(DOMNode):
         self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
-        """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
+        """End print capture (set with [begin_capture_print][textual.widget.Widget.begin_capture_print])."""
         self.app.end_capture_print(self)
 
     def check_message_enabled(self, message: Message) -> bool:
