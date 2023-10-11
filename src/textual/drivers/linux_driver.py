@@ -9,7 +9,7 @@ import termios
 import tty
 from codecs import getincrementaldecoder
 from threading import Event, Thread
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import rich.repr
 import rich.traceback
