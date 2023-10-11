@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.40.0] - 2023-10-11
 
-- Added `loading` reactive property to widgets
+- Added `loading` reactive property to widgets https://github.com/Textualize/textual/pull/3509
 
 ## [0.39.0] - 2023-10-10
 
