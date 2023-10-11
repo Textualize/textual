@@ -1,5 +1,4 @@
 """
-
 A decorator used to create [workers](/guide/workers).
 """
 
@@ -87,7 +86,7 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator[..., ReturnType]:
+) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
     """A decorator used to create [workers](/guide/workers).
 
     Args:
