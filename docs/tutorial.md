@@ -40,7 +40,10 @@ The following is *not* a screenshot, but a fully interactive Textual app running
 
     <div class="textual-web-demo" data-app="tutorial"></div>
 
-See [textual-web](https://github.com/Textualize/textual-web) if you are interested in publishing your apps on the web.
+
+!!! tip
+
+    See [textual-web](https://github.com/Textualize/textual-web) if you are interested in publishing your Textual apps on the web.
 
 
 ### Get the code
