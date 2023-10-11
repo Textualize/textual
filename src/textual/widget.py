@@ -280,6 +280,7 @@ class Widget(DOMNode):
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
     loading: Reactive[bool] = Reactive(False)
+    """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
     def __init__(
         self,
@@ -502,10 +503,10 @@ class Widget(DOMNode):
     def set_loading(self, loading: bool) -> Awaitable:
         """Set or reset the loading state of this widget.
 
-        A loading widget will display a LoadingIndicator that obscures the widget.
+        A widget in a loading state will display a LoadingIndicator that obscures the widget.
 
         Args:
-            loading: `True` to put the widget in to a loading state, or `False` to restore the loading state.
+            loading: `True` to put the widget in to a loading state, or `False` to reset the loading state.
 
         Returns:
             An optional awaitable.

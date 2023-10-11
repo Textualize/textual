@@ -294,6 +294,37 @@ Add a rule to your CSS that targets `Tooltip`. Here's an example:
     ```{.textual path="docs/examples/guide/widgets/tooltip02.py" hover="Button"}
     ```
 
+## Loading indicator
+
+Widgets have a [`loading`][textual.widget.Widget.loading] reactive which when set to `True` will temporarily replace your widget with a [LoadingIndicator](../widgets/loading_indicator.md).
+
+You can use this to indicate to the user that the app is currently working on getting data, and there will be content when that data is available.
+Let's look at an example of this.
+
+=== "loading01.py"
+
+    ```python title="loading01.py"
+    --8<-- "docs/examples/guide/widgets/loading01.py"
+    ```
+
+    1. Shows the loading indicator in place of the data table.
+    2. Insert a random sleep to simulate a network request.
+    3. Show the new data.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/loading01.py"}
+    ```
+
+
+In this example we have four [DataTable](../widgets/data_table.md) widgets, which we put in to a loading state by setting the widget's `loading` property to `True`.
+This will temporarily replace the widget with a loading indicator animation.
+When the (simulated) data has been retrieved, we reset the `loading` property to show the new data.
+
+!!! tip
+
+    See the guide on [Workers](./workers.md) if you want to know more about the `@work` decorator.
+
 ## Line API
 
 A downside of widgets that return Rich renderables is that Textual will redraw the entire widget when its state is updated or it changes size.
