@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1+insiders-4.41.0">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.3.1+insiders-4.41.0">
     
     
       
@@ -6816,6 +6816,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.max_scroll_x" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7667,6 +7678,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         scroll_visible()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.set_loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_loading()
       
     </span>
   </a>
@@ -8802,6 +8824,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        loading
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.max_scroll_x" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -9653,6 +9686,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         scroll_visible()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.set_loading" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        set_loading()
       
     </span>
   </a>
@@ -11054,6 +11098,30 @@ cache-key.</p>
         </tr>
     </tbody>
   </table>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widget.Widget.loading" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">loading</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.loading" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">loading</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>If set to <code>True</code> this widget will temporarily be replaced with a loading indicator.</p>
   </div>
 
 </div>
@@ -16172,6 +16240,72 @@ the scrollable area.</p>
           <td>
                 <code>None</code>
           </td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.set_loading" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">set_loading</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.set_loading" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">set_loading</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loading</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Set or reset the loading state of this widget.</p>
+<p>A widget in a loading state will display a LoadingIndicator that obscures the widget.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>loading</code></td>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p><code>True</code> to put the widget into a loading state, or <code>False</code> to reset the loading state.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Awaitable" href="https://docs.python.org/3/library/typing.html#typing.Awaitable">Awaitable</a></code>
+          </td>
+          <td><p>An optional awaitable.</p></td>
         </tr>
     </tbody>
   </table>

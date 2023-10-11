@@ -24,7 +24,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.2, mkdocs-material-9.3.1+insiders-4.41.0">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.3.1+insiders-4.41.0">
     
     
       
@@ -4913,6 +4913,34 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="LoadingIndicator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._loading_indicator.LoadingIndicator.apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        apply()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._loading_indicator.LoadingIndicator.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -7127,6 +7155,34 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="LoadingIndicator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._loading_indicator.LoadingIndicator.apply" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        apply()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._loading_indicator.LoadingIndicator.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
     </ul>
@@ -7390,6 +7446,137 @@ window.onload = async (event) => {
 
 
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._loading_indicator.LoadingIndicator.apply" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">apply</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._loading_indicator.LoadingIndicator.apply" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Apply the loading indicator to a <code>widget</code>.</p>
+<p>This will overlay the given widget with a loading indicator.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>widget</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../../api/widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>A widget.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+<th>Name</th>        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+<td><code>AwaitMount</code></td>          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../../api/widget/#textual.widget.AwaitMount">AwaitMount</a></code>
+          </td>
+          <td><p>An awaitable for mounting the indicator.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._loading_indicator.LoadingIndicator.clear" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-classmethod"><code>classmethod</code></small>
+  </span>
+
+<a href="#textual.widgets._loading_indicator.LoadingIndicator.clear" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear any loading indicator from the given widget.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Type</th>
+        <th>Description</th>
+        <th>Default</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td><code>widget</code></td>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../../api/widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td><p>Widget to clear the loading indicator from.</p></td>
+          <td>
+              <em>required</em>
+          </td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" title="typing.Awaitable" href="https://docs.python.org/3/library/typing.html#typing.Awaitable">Awaitable</a></code>
+          </td>
+          <td><p>Optional awaitable.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 
 
