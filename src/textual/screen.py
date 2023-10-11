@@ -976,17 +976,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 else:
                     widget._forward_event(event._apply_offset(-region.x, -region.y))
 
-        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y)
-            except errors.NoWidget:
-                return
-            scroll_widget = widget
-            if scroll_widget is not None:
-                if scroll_widget is self:
-                    self.post_message(event)
-                else:
-                    scroll_widget._forward_event(event)
         else:
             self.post_message(event)
 
