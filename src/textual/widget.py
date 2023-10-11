@@ -12,6 +12,7 @@ from operator import attrgetter
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    Awaitable,
     ClassVar,
     Collection,
     Generator,
@@ -278,6 +279,7 @@ class Widget(DOMNode):
     """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
+    loading: Reactive[bool] = Reactive(False)
 
     def __init__(
         self,
@@ -496,6 +498,29 @@ class Widget(DOMNode):
             compose_stack[-1].compose_add_child(composed)
         else:
             self.app._composed[-1].append(composed)
+
+    def set_loading(self, loading: bool) -> Awaitable:
+        """Set or reset the loading state of this widget.
+
+        A loading widget will display a LoadingIndicator that obscures the widget.
+
+        Args:
+            loading: `True` to put the widget in to a loading state, or `False` to restore the loading state.
+
+        Returns:
+            An optional awaitable.
+        """
+        from textual.widgets import LoadingIndicator
+
+        if loading:
+            loading_indicator = LoadingIndicator()
+            return loading_indicator.apply(self)
+        else:
+            return LoadingIndicator.clear(self)
+
+    async def _watch_loading(self, loading: bool) -> None:
+        """Called when the 'loading' reactive is changed."""
+        await self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
