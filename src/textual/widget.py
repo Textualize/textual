@@ -506,7 +506,7 @@ class Widget(DOMNode):
         A widget in a loading state will display a LoadingIndicator that obscures the widget.
 
         Args:
-            loading: `True` to put the widget in to a loading state, or `False` to reset the loading state.
+            loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
 
         Returns:
             An optional awaitable.

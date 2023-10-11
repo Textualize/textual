@@ -296,7 +296,7 @@ Add a rule to your CSS that targets `Tooltip`. Here's an example:
 
 ## Loading indicator
 
-Widgets have a [`loading`][textual.widget.Widget.loading] reactive which when set to `True` will temporarily replace your widget with a [LoadingIndicator](../widgets/loading_indicator.md).
+Widgets have a [`loading`][textual.widget.Widget.loading] reactive which when set to `True` will temporarily replace your widget with a [`LoadingIndicator`](../widgets/loading_indicator.md).
 
 You can use this to indicate to the user that the app is currently working on getting data, and there will be content when that data is available.
 Let's look at an example of this.

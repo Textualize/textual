@@ -367,11 +367,19 @@ async def test_loading():
         label = app.query_one(Label)
         assert label.loading == False
         assert len(label.query(LoadingIndicator)) == 0
+
         label.loading = True
         await pilot.pause()
         assert len(label.query(LoadingIndicator)) == 1
+
         label.loading = True  # Setting to same value is a null-op
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 1
+
         label.loading = False
         await pilot.pause()
         assert len(label.query(LoadingIndicator)) == 0
+
         label.loading = False  # Setting to same value is a null-op
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 0
