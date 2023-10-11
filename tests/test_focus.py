@@ -309,3 +309,35 @@ async def test_focus_chain_handles_inherited_visibility():
             w11,
             w12,
         ]
+
+
+async def test_mouse_down_gives_focus():
+    class MyApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self):
+            yield Button()
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        # Sanity check.
+        assert app.focused is None
+
+        await pilot.mouse_down(Button)
+        assert isinstance(app.focused, Button)
+
+
+async def test_mouse_up_does_not_give_focus():
+    class MyApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self):
+            yield Button()
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        # Sanity check.
+        assert app.focused is None
+
+        await pilot.mouse_up(Button)
+        assert app.focused is None
