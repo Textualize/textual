@@ -57,8 +57,8 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[4~": (Keys.End,),  # tmux
     "\x1b[5~": (Keys.PageUp,),
     "\x1b[6~": (Keys.PageDown,),
-    "\x1b[7~": (Keys.Home,),  # xrvt
-    "\x1b[8~": (Keys.End,),  # xrvt
+    "\x1b[7~": (Keys.Home,),  # rxvt
+    "\x1b[8~": (Keys.End,),  # rxvt
     "\x1b[Z": (Keys.BackTab,),  # shift + tab
     "\x1b\x09": (Keys.Escape, Keys.Tab),  # alt + tab
     # --
