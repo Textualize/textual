@@ -346,7 +346,7 @@ class TabbedContent(Widget):
             await await_clear
             self.post_message(cleared_message)
 
-        # Note that I create the message out here, rather than in
+        # Note that I create the Cleared message out here, rather than in
         # _clear_content, to ensure that the message's internal
         # understanding of who the sender is is correct.
         # https://github.com/Textualize/textual/issues/2750
