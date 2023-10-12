@@ -218,8 +218,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;5B": (Keys.ControlDown,),  # Cursor Mode
     "\x1b[1;5C": (Keys.ControlRight,),  # Cursor Mode
     "\x1b[1;5D": (Keys.ControlLeft,),  # Cursor Mode
-    "\x1bf": (Keys.ControlRight,),  # iTerm natural editing keys
-    "\x1bb": (Keys.ControlLeft,),  # iTerm natural editing keys
     "\x1b[1;5F": (Keys.ControlEnd,),
     "\x1b[1;5H": (Keys.ControlHome,),
     # Tmux sends following keystrokes when control+arrow is pressed, but for
