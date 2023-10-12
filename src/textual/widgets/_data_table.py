@@ -330,9 +330,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     )
     """The coordinate of the `DataTable` that is being hovered."""
 
-    def watch_cell_padding(self) -> None:
-        self._clear_caches()
-
     class CellHighlighted(Message):
         """Posted when the cursor moves to highlight a new cell.
 
@@ -617,10 +614,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 table or not.
             cursor_foreground_priority: If the data associated with a cell is an
                 arbitrary renderable with a set foreground color, this determines whether
-                that color is prioritised over the cursor component class or not.
+                that color is prioritized over the cursor component class or not.
             cursor_background_priority: If the data associated with a cell is an
                 arbitrary renderable with a set background color, this determines whether
-                that color is prioritesed over the cursor component class or not.
+                that color is prioritized over the cursor component class or not.
             cursor_type: The type of cursor to be used when navigating the data table
                 with the keyboard.
             cell_padding: The number of cells added on each side of each column. Setting
