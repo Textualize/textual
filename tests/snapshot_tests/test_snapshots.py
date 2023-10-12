@@ -677,7 +677,7 @@ def test_command_palette(snap_compare) -> None:
         palette_input.cursor_blink = False
         await pilot.press("ctrl+backslash")
         await pilot.press("A")
-        await palette.workers.wait_for_complete()
+        await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
 
