@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import functools
 import os
 import selectors
 import signal
@@ -24,6 +25,13 @@ if TYPE_CHECKING:
     from ..app import App
 
 
+ESCAPE_DELAY_DEFAULT: float = 0.01
+"""
+Default delay before an escape character (or any incomplete escape sequence)
+is interpreted
+"""
+
+
 @rich.repr.auto(angular=True)
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
@@ -34,6 +42,7 @@ class LinuxDriver(Driver):
         *,
         debug: bool = False,
         size: tuple[int, int] | None = None,
+        escape_delay: int | None = None,
     ) -> None:
         """Initialize Linux driver.
 
@@ -49,6 +58,7 @@ class LinuxDriver(Driver):
         self.exit_event = Event()
         self._key_thread: Thread | None = None
         self._writer_thread: WriterThread | None = None
+        self._escape_delay = escape_delay
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._app
@@ -257,7 +267,7 @@ class LinuxDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
             EVENT_READ = selectors.EVENT_READ
-            for key, events in selector.select(0.01):
+            for key, events in selector.select(self._more_data_timeout):
                 if events & EVENT_READ:
                     return True
             return False
@@ -280,3 +290,29 @@ class LinuxDriver(Driver):
                             self.process_event(event)
         finally:
             selector.close()
+
+    @functools.cached_property
+    def _more_data_timeout(self):
+        """
+        Number of seconds to wait before parsing an incomplete escape sequence
+
+        The returned value comes from the following sources. The first existing source
+        in the order below takes precedence.
+
+            - `escape_delay` argument from instantiation
+            - Environment variable `ESCDELAY` (ncurses)
+            - Global constant `ESCAPE_DELAY_DEFAULT`
+        """
+        if self._escape_delay is not None:
+            return self._escape_delay
+
+        # ESCDELAY reference:
+        # https://manpages.debian.org/stable/ncurses-doc/ESCDELAY.3ncurses.en.html#ESCDELAY
+        try:
+            # ESCDELAY is in milliseconds
+            return int(os.environ["ESCDELAY"]) / 1000
+        except (KeyError, ValueError, TypeError):
+            pass
+
+        # Hardcoded default
+        return ESCAPE_DELAY_DEFAULT
