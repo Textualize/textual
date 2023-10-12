@@ -40,6 +40,7 @@ markdown_extensions:
 theme:
   name: material
   custom_dir: docs/custom_theme
+  logo: images/icons/logo light transparent.svg
   features:
     - navigation.tabs
     - navigation.indexes

@@ -294,6 +294,37 @@ Add a rule to your CSS that targets `Tooltip`. Here's an example:
     ```{.textual path="docs/examples/guide/widgets/tooltip02.py" hover="Button"}
     ```
 
+## Loading indicator
+
+Widgets have a [`loading`][textual.widget.Widget.loading] reactive which when set to `True` will temporarily replace your widget with a [`LoadingIndicator`](../widgets/loading_indicator.md).
+
+You can use this to indicate to the user that the app is currently working on getting data, and there will be content when that data is available.
+Let's look at an example of this.
+
+=== "loading01.py"
+
+    ```python title="loading01.py"
+    --8<-- "docs/examples/guide/widgets/loading01.py"
+    ```
+
+    1. Shows the loading indicator in place of the data table.
+    2. Insert a random sleep to simulate a network request.
+    3. Show the new data.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/loading01.py"}
+    ```
+
+
+In this example we have four [DataTable](../widgets/data_table.md) widgets, which we put into a loading state by setting the widget's `loading` property to `True`.
+This will temporarily replace the widget with a loading indicator animation.
+When the (simulated) data has been retrieved, we reset the `loading` property to show the new data.
+
+!!! tip
+
+    See the guide on [Workers](./workers.md) if you want to know more about the `@work` decorator.
+
 ## Line API
 
 A downside of widgets that return Rich renderables is that Textual will redraw the entire widget when its state is updated or it changes size.
@@ -533,7 +564,7 @@ Here's a sketch of what the app should ultimately look like:
 --8<-- "docs/images/byte01.excalidraw.svg"
 </div>
 
-There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them in to logical groups with compound widgets. This will make our app easier to work with.
+There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them into logical groups with compound widgets. This will make our app easier to work with.
 
 ??? textualize "Try in Textual-web"
 
@@ -574,7 +605,7 @@ Note the `compose()` methods of each of the widgets.
 
 - The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.
 
-- The `ByteEditor` yields a `ByteInput` and an `Input` control. The default CSS stacks the two controls on top of each other to divide the screen in to two parts.
+- The `ByteEditor` yields a `ByteInput` and an `Input` control. The default CSS stacks the two controls on top of each other to divide the screen into two parts.
 
 With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like this:
 

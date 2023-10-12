@@ -14,6 +14,7 @@ h3 .doc-heading code {
 }
 
 body[data-md-color-primary="black"] .excalidraw  svg  {
+  will-change: filter;
   filter: invert(100%) hue-rotate(180deg);
 }
 
@@ -98,7 +99,7 @@ td code {
 }
 
 :root {
-  --md-admonition-icon--textualize: url('/images/icons/textualize-logo.svg')
+  --md-admonition-icon--textualize: url('/images/icons/logo light transparent.svg')
 }
 .md-typeset .admonition.textualize,
 .md-typeset details.textualize {

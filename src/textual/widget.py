@@ -12,6 +12,7 @@ from operator import attrgetter
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    Awaitable,
     ClassVar,
     Collection,
     Generator,
@@ -278,6 +279,8 @@ class Widget(DOMNode):
     """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
+    loading: Reactive[bool] = Reactive(False)
+    """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
     def __init__(
         self,
@@ -496,6 +499,29 @@ class Widget(DOMNode):
             compose_stack[-1].compose_add_child(composed)
         else:
             self.app._composed[-1].append(composed)
+
+    def set_loading(self, loading: bool) -> Awaitable:
+        """Set or reset the loading state of this widget.
+
+        A widget in a loading state will display a LoadingIndicator that obscures the widget.
+
+        Args:
+            loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
+
+        Returns:
+            An optional awaitable.
+        """
+        from textual.widgets import LoadingIndicator
+
+        if loading:
+            loading_indicator = LoadingIndicator()
+            return loading_indicator.apply(self)
+        else:
+            return LoadingIndicator.clear(self)
+
+    async def _watch_loading(self, loading: bool) -> None:
+        """Called when the 'loading' reactive is changed."""
+        await self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -1220,7 +1246,7 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """The a horizontal scrollbar.
+        """The horizontal scrollbar.
 
         Note:
             This will *create* a scrollbar if one doesn't exist.
@@ -2701,8 +2727,8 @@ class Widget(DOMNode):
                 horizontal_scrollbar_region,
                 scrollbar_corner_gap,
             ) = region.split(
-                -scrollbar_size_vertical,
-                -scrollbar_size_horizontal,
+                region.width - scrollbar_size_vertical,
+                region.height - scrollbar_size_horizontal,
             )
             if scrollbar_corner_gap:
                 yield self.scrollbar_corner, scrollbar_corner_gap
@@ -2719,7 +2745,7 @@ class Widget(DOMNode):
 
         elif show_vertical_scrollbar:
             window_region, scrollbar_region = region.split_vertical(
-                -scrollbar_size_vertical
+                region.width - scrollbar_size_vertical
             )
             if scrollbar_region:
                 scrollbar = self.vertical_scrollbar
@@ -2728,7 +2754,7 @@ class Widget(DOMNode):
                 yield scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
             window_region, scrollbar_region = region.split_horizontal(
-                -scrollbar_size_horizontal
+                region.height - scrollbar_size_horizontal
             )
             if scrollbar_region:
                 scrollbar = self.horizontal_scrollbar
