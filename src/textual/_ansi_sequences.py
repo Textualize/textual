@@ -143,17 +143,24 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # --
     # Meta/control/escape + pageup/pagedown/insert/delete.
     "\x1b[3;2~": (Keys.ShiftDelete,),  # xterm, gnome-terminal.
+    "\x1b[3$": (Keys.ShiftDelete,),  # rxvt
     "\x1b[5;2~": (Keys.ShiftPageUp,),
     "\x1b[6;2~": (Keys.ShiftPageDown,),
     "\x1b[2;3~": (Keys.Escape, Keys.Insert),
+    "\x1b\x1b[2~": (Keys.Escape, Keys.Insert),  # (rxvt)
     "\x1b[3;3~": (Keys.Escape, Keys.Delete),
+    "\x1b\x1b[3~": (Keys.Escape, Keys.Delete),  # (rxvt)
     "\x1b[5;3~": (Keys.Escape, Keys.PageUp),
+    "\x1b\x1b[5~": (Keys.Escape, Keys.PageUp),  # (rxvt)
     "\x1b[6;3~": (Keys.Escape, Keys.PageDown),
+    "\x1b\x1b[6~": (Keys.Escape, Keys.PageDown),  # (rxvt)
     "\x1b[2;4~": (Keys.Escape, Keys.ShiftInsert),
     "\x1b[3;4~": (Keys.Escape, Keys.ShiftDelete),
+    "\x1b\x1b[3$": (Keys.Escape, Keys.ShiftDelete),  # rxvt
     "\x1b[5;4~": (Keys.Escape, Keys.ShiftPageUp),
     "\x1b[6;4~": (Keys.Escape, Keys.ShiftPageDown),
     "\x1b[3;5~": (Keys.ControlDelete,),  # xterm, gnome-terminal.
+    "\x1b[3^": (Keys.ControlDelete,),  # rxvt
     "\x1b[5;5~": (Keys.ControlPageUp,),
     "\x1b[6;5~": (Keys.ControlPageDown,),
     "\x1b[3;6~": (Keys.ControlShiftDelete,),
@@ -191,6 +198,13 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;2D": (Keys.ShiftLeft,),
     "\x1b[1;2F": (Keys.ShiftEnd,),
     "\x1b[1;2H": (Keys.ShiftHome,),
+    # Shift + arrows (rxvt)
+    "\x1b[a": (Keys.ShiftUp,),
+    "\x1b[b": (Keys.ShiftDown,),
+    "\x1b[c": (Keys.ShiftRight,),
+    "\x1b[d": (Keys.ShiftLeft,),
+    "\x1b[8$": (Keys.ShiftEnd,),
+    "\x1b[7$": (Keys.ShiftHome,),
     # Meta + arrow keys. Several terminals handle this differently.
     # The following sequences are for xterm and gnome-terminal.
     #     (Iterm sends ESC followed by the normal arrow_up/down/left/right
@@ -206,13 +220,32 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;3D": (Keys.Escape, Keys.Left),
     "\x1b[1;3F": (Keys.Escape, Keys.End),
     "\x1b[1;3H": (Keys.Escape, Keys.Home),
-    # Alt+shift+number.
+    # Meta + arrow on rxvt.
+    "\x1b\x1b[A": (Keys.Escape, Keys.Up),
+    "\x1b\x1b[B": (Keys.Escape, Keys.Down),
+    "\x1b\x1b[C": (Keys.Escape, Keys.Right),
+    "\x1b\x1b[D": (Keys.Escape, Keys.Left),
+    "\x1b\x1b[8~": (Keys.Escape, Keys.End),
+    "\x1b\x1b[7~": (Keys.Escape, Keys.Home),
+    # Meta + arrows on (some?) Macs when using iTerm defaults (see issue #483).
+    "\x1b[1;9A": (Keys.Escape, Keys.Up),
+    "\x1b[1;9B": (Keys.Escape, Keys.Down),
+    "\x1b[1;9C": (Keys.Escape, Keys.Right),
+    "\x1b[1;9D": (Keys.Escape, Keys.Left),
+    # Meta + shift + arrows.
     "\x1b[1;4A": (Keys.Escape, Keys.ShiftUp),
     "\x1b[1;4B": (Keys.Escape, Keys.ShiftDown),
     "\x1b[1;4C": (Keys.Escape, Keys.ShiftRight),
     "\x1b[1;4D": (Keys.Escape, Keys.ShiftLeft),
     "\x1b[1;4F": (Keys.Escape, Keys.ShiftEnd),
     "\x1b[1;4H": (Keys.Escape, Keys.ShiftHome),
+    # Meta + shift + arrow on rxvt.
+    "\x1b\x1b[a": (Keys.Escape, Keys.ShiftUp),
+    "\x1b\x1b[b": (Keys.Escape, Keys.ShiftDown),
+    "\x1b\x1b[c": (Keys.Escape, Keys.ShiftRight),
+    "\x1b\x1b[d": (Keys.Escape, Keys.ShiftLeft),
+    "\x1b\x1b[8$": (Keys.Escape, Keys.ShiftEnd),
+    "\x1b\x1b[7$": (Keys.Escape, Keys.ShiftHome),
     # Control + arrows.
     "\x1b[1;5A": (Keys.ControlUp,),  # Cursor Mode
     "\x1b[1;5B": (Keys.ControlDown,),  # Cursor Mode
@@ -227,8 +260,13 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[5B": (Keys.ControlDown,),
     "\x1b[5C": (Keys.ControlRight,),
     "\x1b[5D": (Keys.ControlLeft,),
-    "\x1bOc": (Keys.ControlRight,),  # rxvt
-    "\x1bOd": (Keys.ControlLeft,),  # rxvt
+    # Control + arrows on rxvt.
+    "\x1bOa": (Keys.ControlUp,),
+    "\x1bOb": (Keys.ControlDown,),
+    "\x1bOc": (Keys.ControlRight,),
+    "\x1bOd": (Keys.ControlLeft,),
+    "\x1b[8^": (Keys.ControlEnd,),
+    "\x1b[7^": (Keys.ControlHome,),
     # Control + shift + arrows.
     "\x1b[1;6A": (Keys.ControlShiftUp,),
     "\x1b[1;6B": (Keys.ControlShiftDown,),
@@ -243,18 +281,20 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;7D": (Keys.Escape, Keys.ControlLeft),
     "\x1b[1;7F": (Keys.Escape, Keys.ControlEnd),
     "\x1b[1;7H": (Keys.Escape, Keys.ControlHome),
-    # Meta + Shift + arrows.
+    # Control + Meta + arrows on rxvt.
+    "\x1b\x1bOa": (Keys.Escape, Keys.ControlUp),
+    "\x1b\x1bOb": (Keys.Escape, Keys.ControlDown),
+    "\x1b\x1bOc": (Keys.Escape, Keys.ControlRight),
+    "\x1b\x1bOd": (Keys.Escape, Keys.ControlLeft),
+    "\x1b\x1b[8^": (Keys.Escape, Keys.ControlEnd),
+    "\x1b\x1b[7^": (Keys.Escape, Keys.ControlHome),
+    # Control + Shift + arrows.
     "\x1b[1;8A": (Keys.Escape, Keys.ControlShiftUp),
     "\x1b[1;8B": (Keys.Escape, Keys.ControlShiftDown),
     "\x1b[1;8C": (Keys.Escape, Keys.ControlShiftRight),
     "\x1b[1;8D": (Keys.Escape, Keys.ControlShiftLeft),
     "\x1b[1;8F": (Keys.Escape, Keys.ControlShiftEnd),
     "\x1b[1;8H": (Keys.Escape, Keys.ControlShiftHome),
-    # Meta + arrow on (some?) Macs when using iTerm defaults (see issue #483).
-    "\x1b[1;9A": (Keys.Escape, Keys.Up),
-    "\x1b[1;9B": (Keys.Escape, Keys.Down),
-    "\x1b[1;9C": (Keys.Escape, Keys.Right),
-    "\x1b[1;9D": (Keys.Escape, Keys.Left),
     # --
     # Control/shift/meta + number in mintty.
     # (c-2 will actually send c-@ and c-6 will send c-^.)
