@@ -319,10 +319,8 @@ class TabbedContent(Widget):
             # other means; so allow that to be a no-op.
             pass
 
-        await_complete = AwaitComplete(gather(*removals))
-
         async def _remove_content(cleared_message: TabbedContent.Cleared) -> None:
-            await await_complete
+            await gather(*removals)
             if self.tab_count == 0:
                 self.post_message(cleared_message)
 
@@ -339,11 +337,9 @@ class TabbedContent(Widget):
             An optionally awaitable object which waits for all panes to be removed
             and the Cleared message to be posted.
         """
-        await_clear = AwaitComplete(
-            gather(
-                self.get_child_by_type(Tabs).clear(),
-                self.get_child_by_type(ContentSwitcher).remove_children(),
-            )
+        await_clear = gather(
+            self.get_child_by_type(Tabs).clear(),
+            self.get_child_by_type(ContentSwitcher).remove_children(),
         )
 
         async def _clear_content(cleared_message: TabbedContent.Cleared) -> None:
