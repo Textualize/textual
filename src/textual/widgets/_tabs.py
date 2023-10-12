@@ -9,6 +9,7 @@ from rich.text import Text, TextType
 
 from .. import events
 from ..app import ComposeResult, RenderResult
+from ..await_complete import AwaitComplete
 from ..await_remove import AwaitRemove
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
@@ -362,7 +363,6 @@ class Tabs(Widget, can_focus=True):
     @property
     def _next_active(self) -> Tab | None:
         """Next tab to make active if the active tab is removed."""
-        active_tab = self.active_tab
         tabs = self._potentially_active_tabs
         if self.active_tab is None:
             return None
@@ -469,26 +469,27 @@ class Tabs(Widget, can_focus=True):
         self.call_after_refresh(self.post_message, self.Cleared(self))
         return self.query("#tabs-list > Tab").remove()
 
-    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitRemove:
+    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitComplete:
         """Remove a tab.
 
         Args:
             tab_or_id: The Tab to remove or its id.
 
         Returns:
-            An awaitable object that waits for the tab to be removed.
+            An optionally awaitable object that waits for the tab to be removed.
         """
         if tab_or_id is None:
-            return self.app._remove_nodes([], None)
+            return AwaitComplete(self.app._remove_nodes([], None))
+
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
         else:
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return self.app._remove_nodes([], None)
-        removing_active_tab = remove_tab.has_class("-active")
+                return AwaitComplete(self.app._remove_nodes([], None))
 
+        removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active
         result_message: Tabs.Cleared | Tabs.TabActivated | None = None
         if removing_active_tab and next_tab is not None:
@@ -504,13 +505,11 @@ class Tabs(Widget, can_focus=True):
             if removing_active_tab:
                 if next_tab is not None:
                     next_tab.add_class("-active")
-                self.call_after_refresh(self._highlight_active, animate=True)
+                self._highlight_active(animate=True)
             if result_message is not None:
                 self.post_message(result_message)
 
-        self.call_after_refresh(do_remove)
-
-        return remove_await
+        return AwaitComplete(do_remove())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""

@@ -5,7 +5,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea
+from textual.widgets import TextArea, Input
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -669,9 +669,12 @@ def test_command_palette(snap_compare) -> None:
     from textual.command import CommandPalette
 
     async def run_before(pilot) -> None:
+        palette = pilot.app.query_one(CommandPalette)
+        palette_input = palette.query_one(Input)
+        palette_input.cursor_blink = False
         await pilot.press("ctrl+backslash")
         await pilot.press("A")
-        await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
+        await palette.workers.wait_for_complete()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
 
