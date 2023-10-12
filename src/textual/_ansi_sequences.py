@@ -60,7 +60,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[7~": (Keys.Home,),  # xrvt
     "\x1b[8~": (Keys.End,),  # xrvt
     "\x1b[Z": (Keys.BackTab,),  # shift + tab
-    "\x1b\x09": (Keys.BackTab,),  # Linux console
+    "\x1b\x09": (Keys.Escape, Keys.Tab),  # alt + tab
     # --
     # Function keys.
     "\x1bOP": (Keys.F1,),
