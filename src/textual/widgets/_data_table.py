@@ -2132,16 +2132,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             result = itemgetter(*columns)(row_data)
             return result
 
-        _key = key
-        if key:
-
-            def _key(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
-                _, row_data = row
-                return key(itemgetter(*columns)(row_data))
+        def key_wrapper(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
+            _, row_data = row
+            return key(itemgetter(*columns)(row_data))
 
         ordered_rows = sorted(
             self._data.items(),
-            key=_key if key is not None else sort_by_column_keys,
+            key=key_wrapper if key is not None else sort_by_column_keys,
             reverse=reverse,
         )
         self._row_locations = TwoWayDict(
