@@ -330,6 +330,10 @@ class Input(Widget, can_focus=True):
 
         self.app.cursor_position = self.cursor_screen_offset
 
+    def _watch_cursor_blink(self, blink: bool) -> None:
+        if not blink:
+            self._cursor_visible = True
+
     @property
     def cursor_screen_offset(self) -> Offset:
         """The offset of the cursor of this input in screen-space. (x, y)/(column, row)"""

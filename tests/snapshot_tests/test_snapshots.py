@@ -102,7 +102,10 @@ def test_input_validation(snap_compare):
 
 
 def test_input_suggestions(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+    async def run_before(pilot):
+        pilot.app.query_one(Input).cursor_blink = False
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before)
 
 
 def test_buttons_render(snap_compare):
