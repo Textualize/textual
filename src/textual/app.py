@@ -11,6 +11,7 @@ import asyncio
 import importlib
 import inspect
 import io
+import logging
 import os
 import platform
 import sys
@@ -28,7 +29,7 @@ from contextlib import (
 from datetime import datetime
 from functools import partial
 from pathlib import PurePath
-from time import perf_counter
+from time import monotonic, perf_counter
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -2213,7 +2214,7 @@ class App(Generic[ReturnType], DOMNode):
             )
             driver = self._driver = driver_class(
                 self,
-                debug=constants.DEBUG,
+                debug=self._debug_file_writer,
                 size=terminal_size,
             )
 
@@ -2228,6 +2229,29 @@ class App(Generic[ReturnType], DOMNode):
                     driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
+
+    @property
+    def _debug_file_writer(self):
+        """Function that writes debug messages to a file.
+
+        If `constants.DEBUG` is the literal string `logging`, return the `debug`
+        function of a `logging.Logger` instance with the name `textual`.
+
+        If `constants.DEBUG` is otherwise set, assume it is a file path and return
+        a function that writes any number of arguments to that file.
+        """
+        if constants.DEBUG == "logging":
+            return logging.getLogger("textual").debug
+
+        elif constants.DEBUG:
+
+            def debug_logger(*parts):
+                with open(constants.DEBUG, "at") as f:
+                    message = " ".join((str(part) for part in parts))
+                    f.write(f"{monotonic():.3f}: " + message + "\n")
+                    f.flush()
+
+            return debug_logger
 
     async def _pre_process(self) -> None:
         pass

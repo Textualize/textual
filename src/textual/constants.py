@@ -44,8 +44,31 @@ def get_environ_int(name: str, default: int) -> int:
         return default
 
 
-DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
-"""Enable debug mode."""
+def get_environ_debug() -> str | None:
+    """
+    Get file path for debug messages from environment variable `TEXTUAL_DEBUG`.
+
+    Returns:
+        A hardcoded file path if the env var is "1", `False` if it is "0" or unset,
+        otherwise the variable's value.
+    """
+    name = "TEXTUAL_DEBUG"
+    debug = get_environ(name)
+    if debug == "1":
+        return "textual_debug.log"
+    elif debug != "0":
+        return debug
+    else:
+        return None
+
+
+DEBUG: Final[str | None] = get_environ_debug()
+"""Enable debug mode.
+
+- `0` disables debug mode.
+- `1` writes debug messages to `textual_debug.log`.
+- A file path where debug messages are written to.
+"""
 
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
 """Import for replacement driver."""

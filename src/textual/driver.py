@@ -18,14 +18,14 @@ class Driver(ABC):
         self,
         app: App,
         *,
-        debug: bool = False,
+        debug: Callable[[str], None] | None = None,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize a driver.
 
         Args:
             app: The App instance.
-            debug: Enable debug mode.
+            debug: Function that writes debug message to a file.
             size: Initial size of the terminal or `None` to detect.
         """
         self._app = app

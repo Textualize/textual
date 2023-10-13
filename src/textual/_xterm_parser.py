@@ -25,19 +25,21 @@ _re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
 class XTermParser(Parser[events.Event]):
     _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
 
-    def __init__(self, more_data: Callable[[], bool], debug: bool = False) -> None:
+    def __init__(
+        self,
+        more_data: Callable[[], bool],
+        debug: Callable[[str], None] | None = None,
+    ) -> None:
         self.more_data = more_data
         self.last_x = 0
         self.last_y = 0
-
-        self._debug_log_file = open("keys.log", "wt") if debug else None
-
+        self._debug_logger = debug
         super().__init__()
 
     def debug_log(self, *args: Any) -> None:  # pragma: no cover
-        if self._debug_log_file is not None:
-            self._debug_log_file.write(" ".join(args) + "\n")
-            self._debug_log_file.flush()
+        if self._debug_logger is not None:
+            message = " ".join((str(arg) for arg in args))
+            self._debug_logger(message)
 
     def feed(self, data: str) -> Iterable[events.Event]:
         self.debug_log(f"FEED {data!r}")

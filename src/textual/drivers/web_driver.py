@@ -40,7 +40,11 @@ class WebDriver(Driver):
     """A headless driver that may be run remotely."""
 
     def __init__(
-        self, app: App, *, debug: bool = False, size: tuple[int, int] | None = None
+        self,
+        app: App,
+        *,
+        debug: Callable[[str], None] | None = None,
+        size: tuple[int, int] | None = None,
     ):
         if size is None:
             try:
