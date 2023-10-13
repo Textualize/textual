@@ -385,3 +385,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         select_current = self.query_one(SelectCurrent)
         select_current.has_value = True
         self.expanded = True
+        
+    def clear(self) -> None:
+        """Clear the selected option."""
+        self.value = None
+        self.query_one(SelectCurrent).update(None)
