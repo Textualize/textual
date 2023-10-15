@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
+
 ## [0.40.0] - 2023-10-11
 
 - Added `loading` reactive property to widgets https://github.com/Textualize/textual/pull/3509
