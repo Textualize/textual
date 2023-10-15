@@ -896,7 +896,7 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors_with_self(self) -> list[DOMNode]:
-        """A list of Nodes by tracing a path all the way back to App.
+        """A list of ancestor Nodes found by tracing a path all the way back to App.
 
         Note:
             This is inclusive of ``self``.
@@ -914,7 +914,7 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors(self) -> list[DOMNode]:
-        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App.
+        """A list of ancestor Nodes found by tracing a path all the way back to App.
 
         Returns:
             A list of nodes.
