@@ -183,14 +183,22 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         Args:
             key: Cache key.
         """
-        link = self._cache.get(key)
-        if link is None:
+        if key not in self._cache:
             return
+        link = self._cache[key]
+
         # Remove link from list
         link[0][1] = link[1]  # type: ignore[index]
         link[1][0] = link[0]  # type: ignore[index]
         # Remove link from cache
+
+        if self._head[2] == key:
+            self._head = self._head[1]  # type: ignore[assignment]
+            if self._head[2] == key:  # type: ignore[index]
+                self._head = []
+
         del self._cache[key]
+        self._full = False
 
 
 class FIFOCache(Generic[CacheKey, CacheValue]):
