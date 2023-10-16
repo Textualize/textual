@@ -112,13 +112,13 @@ async def test_switch_unknown_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test():
         with pytest.raises(UnknownModeError):
-            app.switch_mode("unknown mode here")
+            await app.switch_mode("unknown mode here")
 
 
 async def test_remove_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
-        app.switch_mode("two")
+        await app.switch_mode("two")
         await pilot.pause()
         assert str(app.screen.query_one(Label).renderable) == "two"
         app.remove_mode("one")
@@ -136,7 +136,7 @@ async def test_add_mode(ModesApp: Type[App]):
     app = ModesApp()
     async with app.run_test() as pilot:
         app.add_mode("three", BaseScreen("three"))
-        app.switch_mode("three")
+        await app.switch_mode("three")
         await pilot.pause()
         assert str(app.screen.query_one(Label).renderable) == "three"
 
