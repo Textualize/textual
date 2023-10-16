@@ -5,17 +5,17 @@ from typing import Coroutine
 
 
 class AwaitComplete:
-    """An 'optionally-awaitable' object.
-
-    Supply a coroutine object, and it will run in
-    a task which can either be awaited or called without awaiting in order
-    to achieve 'fire-and-forget' behaviour.
-    """
+    """An 'optionally-awaitable' object."""
 
     _instances: list["AwaitComplete"] = []
     """Track all active instances of AwaitComplete."""
 
     def __init__(self, *coroutine: Coroutine) -> None:
+        """Create an AwaitComplete.
+
+        Args:
+            coroutine: One or more coroutines to execute.
+        """
         self.coroutine = coroutine
         AwaitComplete._instances.append(self)
         self._future: Future = gather(*[coroutine for coroutine in self.coroutine])
@@ -38,6 +38,7 @@ class AwaitComplete:
 
     @property
     def exception(self) -> BaseException | None:
+        """An exception if it occurred in any of the coroutines."""
         if self._future and self._future.done():
             return self._future.exception()
         return None
