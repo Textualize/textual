@@ -511,18 +511,12 @@ class Tabs(Widget, can_focus=True):
             removal_complete = asyncio.Event()
 
             async def remove_after_refresh():
-                if removing_active_tab:
-                    if next_tab is not None:
-                        next_tab.add_class("-active")
-                        self.active = next_tab.id
-
-                if removing_active_tab:
-                    if next_tab is not None:
-                        self.active = next_tab.id
-                    self._highlight_active(animate=True)
-
-                if self.tab_count == 0:
-                    self.post_message(self.Cleared(self))
+                if next_tab is None:
+                    self.active = ""
+                elif removing_active_tab:
+                    self.active = next_tab.id
+                    next_tab.add_class("-active")
+                self._highlight_active(animate=True)
 
                 removal_complete.set()
 
