@@ -157,9 +157,6 @@ class Button(Static, can_focus=True):
     variant = reactive("default")
     """The variant name for the button."""
 
-    active_effect_duration = 0.3
-    """Amount of time in seconds the button 'press' animation lasts."""
-
     class Pressed(Message):
         """Event sent when a `Button` is pressed.
 
@@ -208,6 +205,9 @@ class Button(Static, can_focus=True):
         self.label = self.validate_label(label)
 
         self.variant = self.validate_variant(variant)
+
+        self.active_effect_duration = 0.3
+        """Amount of time in seconds the button 'press' animation lasts."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
