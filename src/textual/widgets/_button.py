@@ -3,6 +3,8 @@ from __future__ import annotations
 from functools import partial
 
 import rich.repr
+from rich.console import RenderableType
+from rich.padding import Padding
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
@@ -33,7 +35,7 @@ class Button(Static, can_focus=True):
     Button {
         width: auto;
         min-width: 16;
-        height: 3;
+        height: auto;
         background: $panel;
         color: $text;
         border: none;
@@ -228,10 +230,8 @@ class Button(Static, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> TextType:
-        label = Text.assemble(" ", self.label, " ")
-        label.stylize(self.text_style)
-        return label
+    def render(self) -> RenderableType:
+        return Padding(self.label, (0, 1), expand=False)
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
