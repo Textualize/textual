@@ -501,11 +501,6 @@ class Tabs(Widget, can_focus=True):
 
         removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active
-        result_message: Tabs.Cleared | Tabs.TabActivated | None = None
-        if removing_active_tab and next_tab is not None:
-            result_message = self.TabActivated(self, next_tab)
-        elif self.tab_count == 1:
-            result_message = self.Cleared(self)
 
         remove_await = remove_tab.remove()
 
@@ -520,9 +515,14 @@ class Tabs(Widget, can_focus=True):
                     if next_tab is not None:
                         next_tab.add_class("-active")
                         self.active = next_tab.id
+
+                if removing_active_tab:
+                    if next_tab is not None:
+                        self.active = next_tab.id
                     self._highlight_active(animate=True)
-                if result_message is not None:
-                    self.post_message(result_message)
+
+                if self.tab_count == 0:
+                    self.post_message(self.Cleared(self))
 
                 removal_complete.set()
 

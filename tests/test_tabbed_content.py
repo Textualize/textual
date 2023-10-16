@@ -264,7 +264,6 @@ async def test_tabbed_content_add_after():
         assert tabbed_content.tab_count == 1
         assert tabbed_content.active == "initial-1"
         await tabbed_content.add_pane(TabPane("Added", id="new-1"), after="initial-1")
-        await pilot.pause()
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
         assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
