@@ -930,7 +930,7 @@ TextArea {
         return self.document.text
 
     @text.setter
-    def text(self, value):
+    def text(self, value: str) -> None:
         """Load text into the TextArea.
 
         This will replace the text currently in the TextArea.
