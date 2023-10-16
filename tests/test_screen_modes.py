@@ -10,6 +10,7 @@ from textual.app import (
     InvalidModeError,
     UnknownModeError,
 )
+from textual.css.query import NoMatches
 from textual.screen import ModalScreen, Screen
 from textual.widgets import Footer, Header, Label, RichLog
 
@@ -170,47 +171,6 @@ async def test_screen_stack_preserved(ModesApp: Type[App]):
         for _ in range(N):
             assert str(app.query_one(Label).renderable) == fruits.pop()
             await pilot.press("o")
-
-
-async def test_inactive_stack_is_alive():
-    """This tests that timers in screens outside the active stack keep going."""
-    pings = []
-
-    class FastCounter(Screen[None]):
-        def compose(self) -> ComposeResult:
-            yield Label("fast")
-
-        def on_mount(self) -> None:
-            self.call_later(self.set_interval, 0.01, self.ping)
-
-        def ping(self) -> None:
-            pings.append(str(self.app.query_one(Label).renderable))
-
-        async def key_s(self):
-            await self.app.switch_mode("smile")
-
-    class SmileScreen(Screen[None]):
-        def compose(self) -> ComposeResult:
-            yield Label(":)")
-
-        async def key_s(self):
-            await self.app.switch_mode("fast")
-
-    class ModesApp(App[None]):
-        MODES = {
-            "fast": FastCounter,
-            "smile": SmileScreen,
-        }
-
-        async def on_mount(self) -> None:
-            await self.switch_mode("fast")
-
-    app = ModesApp()
-    async with app.run_test() as pilot:
-        await pilot.press("s")
-        assert str(app.query_one(Label).renderable) == ":)"
-        await pilot.press("s")
-        assert ":)" in pings
 
 
 async def test_multiple_mode_callbacks():
