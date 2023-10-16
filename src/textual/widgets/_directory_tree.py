@@ -244,13 +244,13 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return self.PATH(path)
 
-    def watch_path(self) -> None:
+    async def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.
 
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
-        self.reload()
+        await self.reload()
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
