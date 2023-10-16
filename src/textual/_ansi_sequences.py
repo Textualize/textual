@@ -187,6 +187,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[6;4~": (Keys.Escape, Keys.ShiftPageDown),
     "\x1b[3;5~": (Keys.ControlDelete,),  # xterm, gnome-terminal.
     "\x1b[3^": (Keys.ControlDelete,),  # rxvt
+    "\x1b[2;5~": (Keys.ControlInsert,),
     "\x1b[5;5~": (Keys.ControlPageUp,),
     "\x1b[6;5~": (Keys.ControlPageDown,),
     "\x1b[3;6~": (Keys.ControlShiftDelete,),
