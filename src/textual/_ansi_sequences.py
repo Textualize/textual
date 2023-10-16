@@ -1,3 +1,4 @@
+import os
 import platform
 from typing import Mapping, Tuple
 
@@ -51,31 +52,17 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x7f": (Keys.Backspace,),
     "\x1b\x7f": (Keys.Escape, Keys.Backspace),
     # Various
-    "\x1b[1~": (Keys.Home,),  # tmux
     "\x1b[2~": (Keys.Insert,),
     "\x1b[3~": (Keys.Delete,),
-    "\x1b[4~": (Keys.End,),  # tmux
     "\x1b[5~": (Keys.PageUp,),
     "\x1b[6~": (Keys.PageDown,),
-    "\x1b[7~": (Keys.Home,),  # rxvt
-    "\x1b[8~": (Keys.End,),  # rxvt
     "\x1b[Z": (Keys.BackTab,),  # shift + tab
-    "\x1b\x09": (Keys.Escape, Keys.Tab),  # alt + tab
     # --
     # Function keys.
     "\x1bOP": (Keys.F1,),
     "\x1bOQ": (Keys.F2,),
     "\x1bOR": (Keys.F3,),
     "\x1bOS": (Keys.F4,),
-    "\x1b[[A": (Keys.F1,),  # Linux console.
-    "\x1b[[B": (Keys.F2,),  # Linux console.
-    "\x1b[[C": (Keys.F3,),  # Linux console.
-    "\x1b[[D": (Keys.F4,),  # Linux console.
-    "\x1b[[E": (Keys.F5,),  # Linux console.
-    "\x1b[11~": (Keys.F1,),  # rxvt-unicode
-    "\x1b[12~": (Keys.F2,),  # rxvt-unicode
-    "\x1b[13~": (Keys.F3,),  # rxvt-unicode
-    "\x1b[14~": (Keys.F4,),  # rxvt-unicode
     "\x1b[15~": (Keys.F5,),
     "\x1b[17~": (Keys.F6,),
     "\x1b[18~": (Keys.F7,),
@@ -92,9 +79,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[32~": (Keys.F18,),
     "\x1b[33~": (Keys.F19,),
     "\x1b[34~": (Keys.F20,),
-    # Xterm
-    "\x1b[1;2P": (Keys.F13,),
-    "\x1b[1;2Q": (Keys.F14,),
     # '\x1b[1;2R': Keys.F15,  # Conflicts with CPR response.
     "\x1b[1;2S": (Keys.F16,),
     "\x1b[15;2~": (Keys.F17,),
@@ -118,19 +102,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[21;3~": (Keys.Escape, Keys.F10),
     "\x1b[23;3~": (Keys.Escape, Keys.F11),
     "\x1b[24;3~": (Keys.Escape, Keys.F12),
-    # Meta + Function keys on rxvt.
-    "\x1b\x1b[11~": (Keys.Escape, Keys.F1),
-    "\x1b\x1b[12~": (Keys.Escape, Keys.F2),
-    "\x1b\x1b[13~": (Keys.Escape, Keys.F3),
-    "\x1b\x1b[14~": (Keys.Escape, Keys.F4),
-    "\x1b\x1b[15~": (Keys.Escape, Keys.F5),
-    "\x1b\x1b[17~": (Keys.Escape, Keys.F6),
-    "\x1b\x1b[18~": (Keys.Escape, Keys.F7),
-    "\x1b\x1b[19~": (Keys.Escape, Keys.F8),
-    "\x1b\x1b[20~": (Keys.Escape, Keys.F9),
-    "\x1b\x1b[21~": (Keys.Escape, Keys.F10),
-    "\x1b\x1b[23~": (Keys.Escape, Keys.F11),
-    "\x1b\x1b[24~": (Keys.Escape, Keys.F12),
     # --
     # Control + function keys.
     "\x1b[1;5P": (Keys.ControlF1,),
@@ -169,24 +140,16 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # --
     # Meta/control/escape + pageup/pagedown/insert/delete.
     "\x1b[3;2~": (Keys.ShiftDelete,),  # xterm, gnome-terminal.
-    "\x1b[3$": (Keys.ShiftDelete,),  # rxvt
     "\x1b[5;2~": (Keys.ShiftPageUp,),
     "\x1b[6;2~": (Keys.ShiftPageDown,),
     "\x1b[2;3~": (Keys.Escape, Keys.Insert),
-    "\x1b\x1b[2~": (Keys.Escape, Keys.Insert),  # (rxvt)
     "\x1b[3;3~": (Keys.Escape, Keys.Delete),
-    "\x1b\x1b[3~": (Keys.Escape, Keys.Delete),  # (rxvt)
     "\x1b[5;3~": (Keys.Escape, Keys.PageUp),
-    "\x1b\x1b[5~": (Keys.Escape, Keys.PageUp),  # (rxvt)
     "\x1b[6;3~": (Keys.Escape, Keys.PageDown),
-    "\x1b\x1b[6~": (Keys.Escape, Keys.PageDown),  # (rxvt)
     "\x1b[2;4~": (Keys.Escape, Keys.ShiftInsert),
     "\x1b[3;4~": (Keys.Escape, Keys.ShiftDelete),
-    "\x1b\x1b[3$": (Keys.Escape, Keys.ShiftDelete),  # rxvt
     "\x1b[5;4~": (Keys.Escape, Keys.ShiftPageUp),
     "\x1b[6;4~": (Keys.Escape, Keys.ShiftPageDown),
-    "\x1b[3;5~": (Keys.ControlDelete,),  # xterm, gnome-terminal.
-    "\x1b[3^": (Keys.ControlDelete,),  # rxvt
     "\x1b[2;5~": (Keys.ControlInsert,),
     "\x1b[5;5~": (Keys.ControlPageUp,),
     "\x1b[6;5~": (Keys.ControlPageDown,),
@@ -225,13 +188,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;2D": (Keys.ShiftLeft,),
     "\x1b[1;2F": (Keys.ShiftEnd,),
     "\x1b[1;2H": (Keys.ShiftHome,),
-    # Shift + arrows (rxvt)
-    "\x1b[a": (Keys.ShiftUp,),
-    "\x1b[b": (Keys.ShiftDown,),
-    "\x1b[c": (Keys.ShiftRight,),
-    "\x1b[d": (Keys.ShiftLeft,),
-    "\x1b[8$": (Keys.ShiftEnd,),
-    "\x1b[7$": (Keys.ShiftHome,),
     # Meta + arrow keys. Several terminals handle this differently.
     # The following sequences are for xterm and gnome-terminal.
     #     (Iterm sends ESC followed by the normal arrow_up/down/left/right
@@ -247,13 +203,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;3D": (Keys.Escape, Keys.Left),
     "\x1b[1;3F": (Keys.Escape, Keys.End),
     "\x1b[1;3H": (Keys.Escape, Keys.Home),
-    # Meta + arrow on rxvt.
-    "\x1b\x1b[A": (Keys.Escape, Keys.Up),
-    "\x1b\x1b[B": (Keys.Escape, Keys.Down),
-    "\x1b\x1b[C": (Keys.Escape, Keys.Right),
-    "\x1b\x1b[D": (Keys.Escape, Keys.Left),
-    "\x1b\x1b[8~": (Keys.Escape, Keys.End),
-    "\x1b\x1b[7~": (Keys.Escape, Keys.Home),
     # Meta + arrows on (some?) Macs when using iTerm defaults (see issue #483).
     "\x1b[1;9A": (Keys.Escape, Keys.Up),
     "\x1b[1;9B": (Keys.Escape, Keys.Down),
@@ -266,13 +215,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;4D": (Keys.Escape, Keys.ShiftLeft),
     "\x1b[1;4F": (Keys.Escape, Keys.ShiftEnd),
     "\x1b[1;4H": (Keys.Escape, Keys.ShiftHome),
-    # Meta + shift + arrow on rxvt.
-    "\x1b\x1b[a": (Keys.Escape, Keys.ShiftUp),
-    "\x1b\x1b[b": (Keys.Escape, Keys.ShiftDown),
-    "\x1b\x1b[c": (Keys.Escape, Keys.ShiftRight),
-    "\x1b\x1b[d": (Keys.Escape, Keys.ShiftLeft),
-    "\x1b\x1b[8$": (Keys.Escape, Keys.ShiftEnd),
-    "\x1b\x1b[7$": (Keys.Escape, Keys.ShiftHome),
     # Control + arrows.
     "\x1b[1;5A": (Keys.ControlUp,),  # Cursor Mode
     "\x1b[1;5B": (Keys.ControlDown,),  # Cursor Mode
@@ -287,13 +229,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[5B": (Keys.ControlDown,),
     "\x1b[5C": (Keys.ControlRight,),
     "\x1b[5D": (Keys.ControlLeft,),
-    # Control + arrows on rxvt.
-    "\x1bOa": (Keys.ControlUp,),
-    "\x1bOb": (Keys.ControlDown,),
-    "\x1bOc": (Keys.ControlRight,),
-    "\x1bOd": (Keys.ControlLeft,),
-    "\x1b[8^": (Keys.ControlEnd,),
-    "\x1b[7^": (Keys.ControlHome,),
     # Control + shift + arrows.
     "\x1b[1;6A": (Keys.ControlShiftUp,),
     "\x1b[1;6B": (Keys.ControlShiftDown,),
@@ -308,13 +243,6 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;7D": (Keys.Escape, Keys.ControlLeft),
     "\x1b[1;7F": (Keys.Escape, Keys.ControlEnd),
     "\x1b[1;7H": (Keys.Escape, Keys.ControlHome),
-    # Control + Meta + arrows on rxvt.
-    "\x1b\x1bOa": (Keys.Escape, Keys.ControlUp),
-    "\x1b\x1bOb": (Keys.Escape, Keys.ControlDown),
-    "\x1b\x1bOc": (Keys.Escape, Keys.ControlRight),
-    "\x1b\x1bOd": (Keys.Escape, Keys.ControlLeft),
-    "\x1b\x1b[8^": (Keys.Escape, Keys.ControlEnd),
-    "\x1b\x1b[7^": (Keys.Escape, Keys.ControlHome),
     # Control + Shift + arrows.
     "\x1b[1;8A": (Keys.Escape, Keys.ControlShiftUp),
     "\x1b[1;8B": (Keys.Escape, Keys.ControlShiftDown),
@@ -367,7 +295,109 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
 }
 
-if platform.system() == "Windows":
+_TERM = os.environ.get("TERM", "")
+
+if _TERM.startswith("xterm"):
+    ANSI_SEQUENCES_KEYS.update(
+        {
+            "\x1b[1;2P": (Keys.F13,),
+            "\x1b[1;2Q": (Keys.F14,),
+        }
+    )
+
+# rxvt-unicode, rxvt-unicode-256
+elif _TERM.startswith("rxvt"):
+    ANSI_SEQUENCES_KEYS.update(
+        {
+            # Insert, Delete, Home, End, Page Up, Page Down
+            "\x1b[7~": (Keys.Home,),
+            "\x1b[7^": (Keys.ControlHome,),
+            "\x1b[8~": (Keys.End,),
+            "\x1b[8^": (Keys.ControlEnd,),
+            "\x1b[3^": (Keys.ControlDelete,),
+            "\x1b[3$": (Keys.ShiftDelete,),
+            "\x1b[8$": (Keys.ShiftEnd,),
+            "\x1b[7$": (Keys.ShiftHome,),
+            "\x1b\x1b[2~": (Keys.Escape, Keys.Insert),
+            "\x1b\x1b[3~": (Keys.Escape, Keys.Delete),
+            "\x1b\x1b[5~": (Keys.Escape, Keys.PageUp),
+            "\x1b\x1b[6~": (Keys.Escape, Keys.PageDown),
+            "\x1b\x1b[3$": (Keys.Escape, Keys.ShiftDelete),
+            # Arrows + Shift
+            "\x1b[a": (Keys.ShiftUp,),
+            "\x1b[b": (Keys.ShiftDown,),
+            "\x1b[c": (Keys.ShiftRight,),
+            "\x1b[d": (Keys.ShiftLeft,),
+            # Arrows + Meta
+            "\x1b\x1b[A": (Keys.Escape, Keys.Up),
+            "\x1b\x1b[B": (Keys.Escape, Keys.Down),
+            "\x1b\x1b[C": (Keys.Escape, Keys.Right),
+            "\x1b\x1b[D": (Keys.Escape, Keys.Left),
+            "\x1b\x1b[8~": (Keys.Escape, Keys.End),
+            "\x1b\x1b[7~": (Keys.Escape, Keys.Home),
+            # Arrows + Meta + Shift
+            "\x1b\x1b[a": (Keys.Escape, Keys.ShiftUp),
+            "\x1b\x1b[b": (Keys.Escape, Keys.ShiftDown),
+            "\x1b\x1b[c": (Keys.Escape, Keys.ShiftRight),
+            "\x1b\x1b[d": (Keys.Escape, Keys.ShiftLeft),
+            "\x1b\x1b[8$": (Keys.Escape, Keys.ShiftEnd),
+            "\x1b\x1b[7$": (Keys.Escape, Keys.ShiftHome),
+            # Arrows + Control
+            "\x1bOa": (Keys.ControlUp,),
+            "\x1bOb": (Keys.ControlDown,),
+            "\x1bOc": (Keys.ControlRight,),
+            "\x1bOd": (Keys.ControlLeft,),
+            # Arrows + Control + Meta
+            "\x1b\x1bOa": (Keys.Escape, Keys.ControlUp),
+            "\x1b\x1bOb": (Keys.Escape, Keys.ControlDown),
+            "\x1b\x1bOc": (Keys.Escape, Keys.ControlRight),
+            "\x1b\x1bOd": (Keys.Escape, Keys.ControlLeft),
+            "\x1b\x1b[8^": (Keys.Escape, Keys.ControlEnd),
+            "\x1b\x1b[7^": (Keys.Escape, Keys.ControlHome),
+            # Function keys (F5-Fn work normally)
+            "\x1b[11~": (Keys.F1,),
+            "\x1b[12~": (Keys.F2,),
+            "\x1b[13~": (Keys.F3,),
+            "\x1b[14~": (Keys.F4,),
+            # Function keys + Meta
+            "\x1b\x1b[11~": (Keys.Escape, Keys.F1),
+            "\x1b\x1b[12~": (Keys.Escape, Keys.F2),
+            "\x1b\x1b[13~": (Keys.Escape, Keys.F3),
+            "\x1b\x1b[14~": (Keys.Escape, Keys.F4),
+            "\x1b\x1b[15~": (Keys.Escape, Keys.F5),
+            "\x1b\x1b[17~": (Keys.Escape, Keys.F6),
+            "\x1b\x1b[18~": (Keys.Escape, Keys.F7),
+            "\x1b\x1b[19~": (Keys.Escape, Keys.F8),
+            "\x1b\x1b[20~": (Keys.Escape, Keys.F9),
+            "\x1b\x1b[21~": (Keys.Escape, Keys.F10),
+            "\x1b\x1b[23~": (Keys.Escape, Keys.F11),
+            "\x1b\x1b[24~": (Keys.Escape, Keys.F12),
+        }
+    )
+
+# Linux console
+elif _TERM.startswith("linux"):
+    ANSI_SEQUENCES_KEYS.update(
+        {
+            "\x1b[[A": (Keys.F1,),
+            "\x1b[[B": (Keys.F2,),
+            "\x1b[[C": (Keys.F3,),
+            "\x1b[[D": (Keys.F4,),
+            "\x1b[[E": (Keys.F5,),
+        }
+    )
+
+# tmux
+elif _TERM.startswith("tmux"):
+    ANSI_SEQUENCES_KEYS.update(
+        {
+            "\x1b[1~": (Keys.Home,),
+            "\x1b[4~": (Keys.End,),
+        }
+    )
+
+# TODO: Does Windows Terminal set TERM?
+elif platform.system() == "Windows":
     # Windows issues esc esc for a single press of escape key
     ANSI_SEQUENCES_KEYS["\x1b\x1b"] = (Keys.Escape,)
     ANSI_SEQUENCES_KEYS["\x1b[~"] = (Keys.BackTab,)
