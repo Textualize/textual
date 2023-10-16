@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from asyncio import create_task
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -12,16 +11,15 @@ from rich.text import Text, TextType
 from .. import events
 from ..app import ComposeResult, RenderResult
 from ..await_complete import AwaitComplete
-from ..await_remove import AwaitRemove
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
-from ..events import Event, Mount
+from ..events import Mount
 from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import Bar
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ..widgets import Static
 
 
@@ -488,7 +486,7 @@ class Tabs(Widget, can_focus=True):
         Returns:
             An optionally awaitable object that waits for the tab to be removed.
         """
-        if tab_or_id is None:
+        if not tab_or_id:
             return AwaitComplete(self.app._remove_nodes([], None)())
 
         if isinstance(tab_or_id, Tab):
