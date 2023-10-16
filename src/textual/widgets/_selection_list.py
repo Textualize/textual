@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
 from typing import Callable, ClassVar, Generic, Iterable, TypeVar, cast
 
 from rich.repr import Result
@@ -317,16 +318,30 @@ class SelectionList(Generic[SelectionType], OptionList):
         self.refresh()
         return self
 
-    def _select(self, value: SelectionType) -> bool:
+    def _select(self, value: SelectionType, enabled_only: bool) -> bool:
         """Mark the given value as selected.
 
         Args:
             value: The value to mark as selected.
+            enabled_only: A boolean to mark only if the selection is enabled
 
         Returns:
             `True` if the value was selected, `False` if not.
         """
-        if value not in self._selected:
+        try:
+            # this code below removes some`if` conditions
+            enabled_condition = all(
+                [
+                    enabled_only,
+                    value not in self._selected,
+                    not self._options[value].disabled,
+                ]
+            )
+            not_enabled_condition = all([not enabled_only, value not in self._selected])
+            conditions = [enabled_condition, not_enabled_condition]
+        except (AttributeError, IndexError):
+            conditions = [True]
+        if any(conditions):
             self._selected[value] = None
             self._message_changed()
             return True
@@ -344,54 +359,43 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self._select(
             selection.value
             if isinstance(selection, Selection)
-            else cast(SelectionType, selection)
+            else cast(SelectionType, selection),
+            False,
         ):
             self.refresh()
         return self
 
-    def select_all(self) -> Self:
+    def select_all(self, enabled_only: bool = False) -> Self:
         """Select all items.
 
-        Returns:
-            The [`SelectionList`][textual.widgets.SelectionList] instance.
-        """
-        return self._apply_to_all(self._select)
-
-    def _select_enabled(self, value: SelectionType) -> bool:
-        """Mark the given value as selected if the value is enabled.
-
         Args:
-            value: The value to mark as selected.
-
-        Returns:
-            `True` if the value is enabled, `False` if not.
-        """
-        conditions = [value not in self._selected, not self._options[value].disabled]
-        if all(conditions):
-            self._selected[value] = None
-            self._message_changed()
-            return True
-        return False
-
-    def select_all_enabled(self) -> Self:
-        """Select all items that are enabled.
+            enabled_only: A boolean to mark only if the selection is enabled
 
         Returns:
             The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
-        return self._apply_to_all(self._select_enabled)
+        select = partial(self._select, enabled_only=enabled_only)
+        return self._apply_to_all(select)
 
-    def _deselect(self, value: SelectionType) -> bool:
+    def _deselect(self, value: SelectionType, enabled_only: bool) -> bool:
         """Mark the given selection as not selected.
 
         Args:
             value: The value to mark as not selected.
+            enabled_only: A boolean to mark only if the selection is enabled
 
         Returns:
             `True` if the value was deselected, `False` if not.
         """
         try:
-            del self._selected[value]
+            # this code below removes some`if` conditions
+            enabled_condition = all([enabled_only, not self._options[value].disabled])
+            not_enabled_condition = not enabled_only
+            conditions = [enabled_condition, not_enabled_condition]
+            if any(conditions):
+                del self._selected[value]
+            else:
+                return False
         except KeyError:
             return False
         self._message_changed()
@@ -409,20 +413,22 @@ class SelectionList(Generic[SelectionType], OptionList):
         if self._deselect(
             selection.value
             if isinstance(selection, Selection)
-            else cast(SelectionType, selection)
+            else cast(SelectionType, selection),
+            False,
         ):
             self.refresh()
         return self
 
-    def deselect_all(self) -> Self:
+    def deselect_all(self, enabled_only: bool = False) -> Self:
         """Deselect all items.
 
         Returns:
             The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
-        return self._apply_to_all(self._deselect)
+        deselect = partial(self._deselect, enabled_only=enabled_only)
+        return self._apply_to_all(deselect)
 
-    def _toggle(self, value: SelectionType) -> bool:
+    def _toggle(self, value: SelectionType, enabled_only: bool) -> bool:
         """Toggle the selection state of the given value.
 
         Args:
@@ -431,11 +437,32 @@ class SelectionList(Generic[SelectionType], OptionList):
         Returns:
             `True`.
         """
-        if value in self._selected:
-            self._deselect(value)
-        else:
-            self._select(value)
-        return True
+        # I'd rather use variables than lots of conditionals,
+        # at least the radon lib doesn't complain.
+        # this code below removes some`if` conditions.
+        try:
+            not_disabled = not self._options[value].disabled
+        except (AttributeError, IndexError):
+            not_disabled = False
+        selected = value in self._selected
+        not_selected = value not in self._selected
+        not_enabled_only = not enabled_only
+        enabled_deselect_condition = all([enabled_only, selected, not_disabled])
+        not_enabled_deselect_condition = all([not_enabled_only, selected])
+        deselect_conditions = [
+            enabled_deselect_condition,
+            not_enabled_deselect_condition,
+        ]
+        enabled_select_condition = all([enabled_only, not_selected, not_disabled])
+        not_enabled_select_condition = all([not_enabled_only, not_selected])
+        select_conditions = [enabled_select_condition, not_enabled_select_condition]
+        if any(deselect_conditions):
+            self._deselect(value, enabled_only)
+            return True
+        elif any(select_conditions):
+            self._select(value, enabled_only)
+            return True
+        return False
 
     def toggle(self, selection: Selection[SelectionType] | SelectionType) -> Self:
         """Toggle the selected state of the given selection.
@@ -449,18 +476,20 @@ class SelectionList(Generic[SelectionType], OptionList):
         self._toggle(
             selection.value
             if isinstance(selection, Selection)
-            else cast(SelectionType, selection)
+            else cast(SelectionType, selection),
+            False,
         )
         self.refresh()
         return self
 
-    def toggle_all(self) -> Self:
+    def toggle_all(self, enabled_only: bool = False) -> Self:
         """Toggle all items.
 
         Returns:
             The [`SelectionList`][textual.widgets.SelectionList] instance.
         """
-        return self._apply_to_all(self._toggle)
+        toggle = partial(self._toggle, enabled_only=enabled_only)
+        return self._apply_to_all(toggle)
 
     def _make_selection(
         self,
@@ -497,7 +526,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         # If the initial state for this is that it's selected, add it to the
         # selected collection.
         if selection.initial_state:
-            self._select(selection.value)
+            self._select(selection.value, False)
 
         return selection
 
@@ -649,7 +678,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         Raises:
             IndexError: If there is no selection option of the given index.
         """
-        self._deselect(self.get_option_at_index(index).value)
+        self._deselect(self.get_option_at_index(index).value, False)
         return super()._remove_option(index)
 
     def add_options(
