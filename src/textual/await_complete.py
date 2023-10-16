@@ -3,8 +3,6 @@ from __future__ import annotations
 from asyncio import Future, gather, wait
 from typing import Coroutine
 
-from textual._asyncio import create_task
-
 
 class AwaitComplete:
     """An 'optionally-awaitable' object.
@@ -19,16 +17,14 @@ class AwaitComplete:
 
     def __init__(self, *coroutine: Coroutine) -> None:
         self.coroutine = coroutine
-        self._future: Future | None = None
         AwaitComplete._instances.append(self)
+        self._future: Future = gather(*[coroutine for coroutine in self.coroutine])
+        self._future.add_done_callback(self._on_done)
 
     async def __call__(self):
         await self
 
     def __await__(self):
-        if not self._future:
-            self._future = gather(*self.coroutine)
-            self._future.add_done_callback(self._on_done)
         return self._future.__await__()
 
     def _on_done(self, _: Future) -> None:

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+from asyncio import create_task
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -14,7 +16,7 @@ from ..await_remove import AwaitRemove
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
-from ..events import Mount
+from ..events import Event, Mount
 from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
@@ -464,7 +466,7 @@ class Tabs(Widget, can_focus=True):
 
         return AwaitComplete(mount_await())
 
-    def clear(self) -> AwaitRemove:
+    def clear(self) -> AwaitComplete:
         """Clear all the tabs.
 
         Returns:
@@ -474,7 +476,8 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.call_after_refresh(self.post_message, self.Cleared(self))
-        return self.query("#tabs-list > Tab").remove()
+        self.active = ""
+        return AwaitComplete(self.query("#tabs-list > Tab").remove()())
 
     def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitComplete:
         """Remove a tab.
@@ -498,7 +501,6 @@ class Tabs(Widget, can_focus=True):
 
         removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active
-        print(f"next tab is {next_tab!r}")
         result_message: Tabs.Cleared | Tabs.TabActivated | None = None
         if removing_active_tab and next_tab is not None:
             result_message = self.TabActivated(self, next_tab)
@@ -510,13 +512,22 @@ class Tabs(Widget, can_focus=True):
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_await
-            if removing_active_tab:
-                print(f"inside callback next_tab is {next_tab!r}")
-                if next_tab is not None:
-                    next_tab.add_class("-active")
-                self._highlight_active(animate=True)
-            if result_message is not None:
-                self.post_message(result_message)
+
+            removal_complete = asyncio.Event()
+
+            async def remove_after_refresh():
+                if removing_active_tab:
+                    if next_tab is not None:
+                        next_tab.add_class("-active")
+                        self.active = next_tab.id
+                    self._highlight_active(animate=True)
+                if result_message is not None:
+                    self.post_message(result_message)
+
+                removal_complete.set()
+
+            self.call_after_refresh(remove_after_refresh)
+            await removal_complete.wait()
 
         return AwaitComplete(do_remove())
 
