@@ -151,14 +151,14 @@ class Button(Static, can_focus=True):
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
-    ACTIVE_EFFECT_DURATION = 0.3
-    """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
-
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
     variant = reactive("default")
     """The variant name for the button."""
+
+    active_effect_duration = 0.3
+    """Amount of time in seconds the button 'press' animation lasts."""
 
     class Pressed(Message):
         """Event sent when a `Button` is pressed.
@@ -252,10 +252,11 @@ class Button(Static, can_focus=True):
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
-        self.add_class("-active")
-        self.set_timer(
-            self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
-        )
+        if self.active_effect_duration > 0:
+            self.add_class("-active")
+            self.set_timer(
+                self.active_effect_duration, partial(self.remove_class, "-active")
+            )
 
     def action_press(self) -> None:
         """Activate a press of the button."""

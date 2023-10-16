@@ -5,7 +5,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea, Input
+from textual.widgets import TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -686,7 +686,16 @@ def test_command_palette(snap_compare) -> None:
 
 
 def test_textual_dev_border_preview(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py", press=["enter"])
+    async def run_before(pilot):
+        buttons = pilot.app.query(Button)
+        for button in buttons:
+            button.active_effect_duration = 0
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dev_previews_border.py",
+        press=["enter"],
+        run_before=run_before,
+    )
 
 
 def test_textual_dev_colors_preview(snap_compare):
