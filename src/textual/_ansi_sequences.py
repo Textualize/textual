@@ -151,12 +151,15 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[5;4~": (Keys.Escape, Keys.ShiftPageUp),
     "\x1b[6;4~": (Keys.Escape, Keys.ShiftPageDown),
     "\x1b[2;5~": (Keys.ControlInsert,),
+    "\x1b[3;5~": (Keys.ControlDelete,),
     "\x1b[5;5~": (Keys.ControlPageUp,),
     "\x1b[6;5~": (Keys.ControlPageDown,),
+    "\x1b[2;6~": (Keys.ControlShiftInsert,),
     "\x1b[3;6~": (Keys.ControlShiftDelete,),
     "\x1b[5;6~": (Keys.ControlShiftPageUp,),
     "\x1b[6;6~": (Keys.ControlShiftPageDown,),
     "\x1b[2;7~": (Keys.Escape, Keys.ControlInsert),
+    "\x1b[3;7~": (Keys.Escape, Keys.ControlDelete),
     "\x1b[5;7~": (Keys.Escape, Keys.ControlPageDown),
     "\x1b[6;7~": (Keys.Escape, Keys.ControlPageDown),
     "\x1b[2;8~": (Keys.Escape, Keys.ControlShiftInsert),
@@ -309,20 +312,79 @@ if _TERM.startswith("xterm"):
 elif _TERM.startswith("rxvt"):
     ANSI_SEQUENCES_KEYS.update(
         {
-            # Insert, Delete, Home, End, Page Up, Page Down
+            # Home, End
             "\x1b[7~": (Keys.Home,),
-            "\x1b[7^": (Keys.ControlHome,),
             "\x1b[8~": (Keys.End,),
-            "\x1b[8^": (Keys.ControlEnd,),
+            # Home, etc + Control
+            "\x1b[2^": (Keys.ControlInsert,),
             "\x1b[3^": (Keys.ControlDelete,),
+            "\x1b[7^": (Keys.ControlHome,),
+            "\x1b[8^": (Keys.ControlEnd,),
+            "\x1b[5^": (Keys.ControlPageUp,),
+            "\x1b[6^": (Keys.ControlPageDown,),
+            # Home, etc + Shift
             "\x1b[3$": (Keys.ShiftDelete,),
-            "\x1b[8$": (Keys.ShiftEnd,),
             "\x1b[7$": (Keys.ShiftHome,),
+            "\x1b[8$": (Keys.ShiftEnd,),
+            # Home, etc + Meta + Control + Shift
+            "\x1b[2@": (Keys.ControlShiftInsert,),
+            "\x1b[3@": (Keys.ControlShiftDelete,),
+            "\x1b[7@": (Keys.ControlShiftHome,),
+            "\x1b[8@": (Keys.ControlShiftEnd,),
+            "\x1b[5@": (Keys.ControlShiftPageUp,),
+            "\x1b[6@": (Keys.ControlShiftPageDown,),
+            # Home, etc + Meta
             "\x1b\x1b[2~": (Keys.Escape, Keys.Insert),
             "\x1b\x1b[3~": (Keys.Escape, Keys.Delete),
+            "\x1b\x1b[7~": (Keys.Escape, Keys.Home),
+            "\x1b\x1b[8~": (Keys.Escape, Keys.End),
             "\x1b\x1b[5~": (Keys.Escape, Keys.PageUp),
             "\x1b\x1b[6~": (Keys.Escape, Keys.PageDown),
+            # Home, etc + Meta + Shift
+            "\x1b\x1b[2$": (Keys.Escape, Keys.ShiftInsert),
             "\x1b\x1b[3$": (Keys.Escape, Keys.ShiftDelete),
+            "\x1b\x1b[7$": (Keys.Escape, Keys.ShiftHome),
+            "\x1b\x1b[8$": (Keys.Escape, Keys.ShiftEnd),
+            "\x1b\x1b[5$": (Keys.Escape, Keys.ShiftPageUp),
+            "\x1b\x1b[6$": (Keys.Escape, Keys.ShiftPageDown),
+            # Home, etc + Meta + Control
+            "\x1b\x1b[2^": (Keys.Escape, Keys.ControlInsert),
+            "\x1b\x1b[3^": (Keys.Escape, Keys.ControlDelete),
+            "\x1b\x1b[7^": (
+                Keys.Escape,
+                Keys.ControlHome,
+            ),
+            "\x1b\x1b[8^": (
+                Keys.Escape,
+                Keys.ControlEnd,
+            ),
+            "\x1b\x1b[5^": (
+                Keys.Escape,
+                Keys.ControlPageUp,
+            ),
+            "\x1b\x1b[6^": (
+                Keys.Escape,
+                Keys.ControlPageDown,
+            ),
+            # Home, etc + Meta + Control + Shift
+            "\x1b\x1b[2@": (Keys.Escape, Keys.ControlShiftInsert),
+            "\x1b\x1b[3@": (Keys.Escape, Keys.ControlShiftDelete),
+            "\x1b\x1b[7@": (
+                Keys.Escape,
+                Keys.ControlShiftHome,
+            ),
+            "\x1b\x1b[8@": (
+                Keys.Escape,
+                Keys.ControlShiftEnd,
+            ),
+            "\x1b\x1b[5@": (
+                Keys.Escape,
+                Keys.ControlShiftPageUp,
+            ),
+            "\x1b\x1b[6@": (
+                Keys.Escape,
+                Keys.ControlShiftPageDown,
+            ),
             # Arrows + Shift
             "\x1b[a": (Keys.ShiftUp,),
             "\x1b[b": (Keys.ShiftDown,),
@@ -333,8 +395,6 @@ elif _TERM.startswith("rxvt"):
             "\x1b\x1b[B": (Keys.Escape, Keys.Down),
             "\x1b\x1b[C": (Keys.Escape, Keys.Right),
             "\x1b\x1b[D": (Keys.Escape, Keys.Left),
-            "\x1b\x1b[8~": (Keys.Escape, Keys.End),
-            "\x1b\x1b[7~": (Keys.Escape, Keys.Home),
             # Arrows + Meta + Shift
             "\x1b\x1b[a": (Keys.Escape, Keys.ShiftUp),
             "\x1b\x1b[b": (Keys.Escape, Keys.ShiftDown),
