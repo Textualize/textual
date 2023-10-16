@@ -931,11 +931,10 @@ TextArea {
 
     @text.setter
     def text(self, value: str) -> None:
-        """Load text into the TextArea.
-
-        This will replace the text currently in the TextArea.
-
-        This is an alias of `load_text`.
+        """Replace the text currently in the TextArea. This is an alias of `load_text`.
+        
+        Args:
+            value: The text to load into the TextArea.
         """
         self.load_text(value)
 
