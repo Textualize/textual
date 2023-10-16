@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from asyncio import Future, gather
+from asyncio import Future, gather, wait
 from typing import Coroutine
 
 from textual._asyncio import create_task
@@ -45,3 +45,19 @@ class AwaitComplete:
         if self._future and self._future.done():
             return self._future.exception()
         return None
+
+    @classmethod
+    async def wait_all(cls):
+        """Await all instances of AwaitComplete."""
+        await wait(
+            [instance._future for instance in cls._instances if instance._future],
+            timeout=1.0,
+        )
+
+    @classmethod
+    def nothing(cls):
+        """Returns an already completed instance of AwaitComplete."""
+        instance = cls()
+        instance._future = Future()
+        instance._future.set_result(None)  # Mark it as completed with no result
+        return instance

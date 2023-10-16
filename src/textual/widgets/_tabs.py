@@ -386,7 +386,7 @@ class Tabs(Widget, can_focus=True):
         *,
         before: Tab | str | None = None,
         after: Tab | str | None = None,
-    ) -> AwaitMount:
+    ) -> AwaitComplete:
         """Add a new tab to the end of the tab list.
 
         Args:
@@ -395,7 +395,8 @@ class Tabs(Widget, can_focus=True):
             after: Optional tab or tab ID to add the tab after.
 
         Returns:
-            An awaitable object that waits for the tab to be mounted.
+            An awaitable object that waits for the tab to be mounted and
+            internal state to be fully updated to reflect the new tab.
 
         Raises:
             Tabs.TabError: If there is a problem with the addition request.
@@ -447,15 +448,21 @@ class Tabs(Widget, can_focus=True):
 
             async def refresh_active() -> None:
                 """Wait for things to be mounted before highlighting."""
+                await mount_await
                 self.active = tab_widget.id or ""
                 self._highlight_active(animate=False)
                 self.post_message(activated_message)
 
-            self.call_after_refresh(refresh_active)
+            return AwaitComplete(refresh_active())
         elif before or after:
-            self.call_after_refresh(self._highlight_active, animate=False)
 
-        return mount_await
+            async def refresh_active() -> None:
+                await mount_await
+                self._highlight_active(animate=False)
+
+            return AwaitComplete(refresh_active())
+
+        return AwaitComplete(mount_await())
 
     def clear(self) -> AwaitRemove:
         """Clear all the tabs.
@@ -479,7 +486,7 @@ class Tabs(Widget, can_focus=True):
             An optionally awaitable object that waits for the tab to be removed.
         """
         if tab_or_id is None:
-            return AwaitComplete(self.app._remove_nodes([], None))
+            return AwaitComplete(self.app._remove_nodes([], None)())
 
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
@@ -487,10 +494,11 @@ class Tabs(Widget, can_focus=True):
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return AwaitComplete(self.app._remove_nodes([], None))
+                return AwaitComplete(self.app._remove_nodes([], None)())
 
         removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active
+        print(f"next tab is {next_tab!r}")
         result_message: Tabs.Cleared | Tabs.TabActivated | None = None
         if removing_active_tab and next_tab is not None:
             result_message = self.TabActivated(self, next_tab)
@@ -503,6 +511,7 @@ class Tabs(Widget, can_focus=True):
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_await
             if removing_active_tab:
+                print(f"inside callback next_tab is {next_tab!r}")
                 if next_tab is not None:
                     next_tab.add_class("-active")
                 self._highlight_active(animate=True)
