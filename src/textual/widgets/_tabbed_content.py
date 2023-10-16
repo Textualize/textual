@@ -3,18 +3,16 @@ from __future__ import annotations
 from asyncio import gather
 from dataclasses import dataclass
 from itertools import zip_longest
-from typing import Generator
 
 from rich.repr import Result
 from rich.text import Text, TextType
 
 from ..app import ComposeResult
 from ..await_complete import AwaitComplete
-from ..await_remove import AwaitRemove
 from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ._content_switcher import ContentSwitcher
 from ._tabs import Tab, Tabs
 
@@ -289,12 +287,8 @@ class TabbedContent(Widget):
         assert pane.id is not None
         pane.display = False
         return AwaitComplete(
-            gather(
-                tabs.add_tab(
-                    ContentTab(pane._title, pane.id), before=before, after=after
-                ),
-                self.get_child_by_type(ContentSwitcher).mount(pane),
-            )
+            tabs.add_tab(ContentTab(pane._title, pane.id), before=before, after=after),
+            self.get_child_by_type(ContentSwitcher).mount(pane),
         )
 
     def remove_pane(self, pane_id: str) -> AwaitComplete:

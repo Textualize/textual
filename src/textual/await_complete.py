@@ -1,23 +1,47 @@
-from asyncio import Event, Task
-from typing import Awaitable, Generator
+from __future__ import annotations
+
+from asyncio import Future, gather
+from typing import Coroutine
+
+from textual._asyncio import create_task
 
 
 class AwaitComplete:
-    """An optionally awaitable object that may be awaited to ensure completion of a coroutine."""
+    """An 'optionally-awaitable' object.
 
-    def __init__(self, awaitable: Awaitable) -> None:
-        """Initialise the instance of `AwaitComplete`.
+    Supply a coroutine object, and it will run in
+    a task which can either be awaited or called without awaiting in order
+    to achieve 'fire-and-forget' behaviour.
+    """
 
-        Args:
-            awaitable: An awaitable to (optionally) await completion of.
-        """
-        self._awaitable = awaitable
+    _instances: list["AwaitComplete"] = []
+    """Track all active instances of AwaitComplete."""
 
-    async def __call__(self) -> None:
-        # TODO: Look at how AwaitRemove etc use call_next/call_later here.
-        #  if we dont await things, then we can use these methods to put them
-        #  on to a messagepump and ensure they complete.
+    def __init__(self, *coroutine: Coroutine) -> None:
+        self.coroutine = coroutine
+        self._future: Future | None = None
+        AwaitComplete._instances.append(self)
+
+    async def __call__(self):
         await self
 
-    def __await__(self) -> Generator[None, None, None]:
-        return self._awaitable.__await__()
+    def __await__(self):
+        if not self._future:
+            self._future = gather(*self.coroutine)
+            self._future.add_done_callback(self._on_done)
+        return self._future.__await__()
+
+    def _on_done(self, _: Future) -> None:
+        """Stop tracking this instance once it's done."""
+        AwaitComplete._instances.remove(self)
+
+    @property
+    def is_done(self) -> bool:
+        """Returns True if the task has completed."""
+        return self._future is not None and self._future.done()
+
+    @property
+    def exception(self) -> BaseException | None:
+        if self._future and self._future.done():
+            return self._future.exception()
+        return None
