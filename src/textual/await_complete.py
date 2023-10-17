@@ -7,7 +7,7 @@ from typing import Coroutine
 class AwaitComplete:
     """An 'optionally-awaitable' object."""
 
-    _instances: list["AwaitComplete"] = []
+    _instances: set["AwaitComplete"] = []
     """Track all active instances of AwaitComplete."""
 
     def __init__(self, *coroutine: Coroutine) -> None:
@@ -17,7 +17,7 @@ class AwaitComplete:
             coroutine: One or more coroutines to execute.
         """
         self.coroutine = coroutine
-        AwaitComplete._instances.append(self)
+        AwaitComplete._instances.add(self)
         self._future: Future = gather(*[coroutine for coroutine in self.coroutine])
         self._future.add_done_callback(self._on_done)
 
