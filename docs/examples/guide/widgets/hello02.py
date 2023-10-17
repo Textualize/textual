@@ -10,7 +10,7 @@ class Hello(Widget):
 
 
 class CustomApp(App):
-    CSS_PATH = "hello02.css"
+    CSS_PATH = "hello02.tcss"
 
     def compose(self) -> ComposeResult:
         yield Hello()

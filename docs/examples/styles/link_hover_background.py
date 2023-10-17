@@ -22,4 +22,4 @@ class LinkHoverBackgroundApp(App):
         )
 
 
-app = LinkHoverBackgroundApp(css_path="link_hover_background.css")
+app = LinkHoverBackgroundApp(css_path="link_hover_background.tcss")

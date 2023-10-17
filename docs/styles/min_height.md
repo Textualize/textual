@@ -27,10 +27,10 @@ Then, we set `min-height` individually on each placeholder.
     --8<-- "docs/examples/styles/min_height.py"
     ```
 
-=== "min_height.css"
+=== "min_height.tcss"
 
     ```sass hl_lines="13 17 21 25"
-    --8<-- "docs/examples/styles/min_height.css"
+    --8<-- "docs/examples/styles/min_height.tcss"
     ```
 
     1. This won't affect the placeholder because its height is larger than the minimum height.

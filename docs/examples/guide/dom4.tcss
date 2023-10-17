@@ -1,0 +1,29 @@
+
+/* The top level dialog (a Container) */
+#dialog {
+    height: 100%;
+    margin: 4 8;
+    background: $panel;
+    color: $text;
+    border: tall $background;
+    padding: 1 2;
+}
+
+/* The button class */
+Button {
+    width: 1fr;
+}
+
+/* Matches the question text */
+.question {
+    text-style: bold;
+    height: 100%;
+    content-align: center middle;
+}
+
+/* Matches the button container */
+.buttons {
+    width: 100%;
+    height: auto;
+    dock: bottom;
+}

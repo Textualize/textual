@@ -4,7 +4,7 @@ from textual.widgets import RadioButton, RadioSet
 
 
 class RadioChoicesApp(App[None]):
-    CSS_PATH = "radio_set.css"
+    CSS_PATH = "radio_set.tcss"
 
     def compose(self) -> ComposeResult:
         with Horizontal():

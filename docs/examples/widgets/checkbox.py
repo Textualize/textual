@@ -4,7 +4,7 @@ from textual.widgets import Checkbox
 
 
 class CheckboxApp(App[None]):
-    CSS_PATH = "checkbox.css"
+    CSS_PATH = "checkbox.tcss"
 
     def compose(self) -> ComposeResult:
         with VerticalScroll():

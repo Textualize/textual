@@ -17,4 +17,4 @@ class TextStyleApp(App):
         yield Label(TEXT, id="lbl3")
 
 
-app = TextStyleApp(css_path="text_style.css")
+app = TextStyleApp(css_path="text_style.tcss")

@@ -27,10 +27,10 @@ Then, we set `max-width` individually on each placeholder.
     --8<-- "docs/examples/styles/max_width.py"
     ```
 
-=== "max_width.css"
+=== "max_width.tcss"
 
     ```sass hl_lines="12 16 20 24"
-    --8<-- "docs/examples/styles/max_width.css"
+    --8<-- "docs/examples/styles/max_width.tcss"
     ```
 
     1. This won't affect the placeholder because its width is less than the maximum width.

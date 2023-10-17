@@ -42,6 +42,14 @@ The example below shows an application showing a `RichLog` with different kinds 
 
 This widget sends no messages.
 
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
+
 
 ---
 

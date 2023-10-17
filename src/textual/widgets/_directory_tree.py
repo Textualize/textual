@@ -65,7 +65,7 @@ class DirectoryTree(Tree[DirEntry]):
     PATH: Callable[[str | Path], Path] = Path
     """Callable that returns a fresh path object."""
 
-    class FileSelected(Message, bubble=True):
+    class FileSelected(Message):
         """Posted when a file is selected.
 
         Can be handled using `on_directory_tree_file_selected` in a subclass of
@@ -88,6 +88,31 @@ class DirectoryTree(Tree[DirEntry]):
         @property
         def control(self) -> Tree[DirEntry]:
             """The `Tree` that had a file selected."""
+            return self.node.tree
+
+    class DirectorySelected(Message):
+        """Posted when a directory is selected.
+
+        Can be handled using `on_directory_tree_directory_selected` in a
+        subclass of `DirectoryTree` or in a parent widget in the DOM.
+        """
+
+        def __init__(self, node: TreeNode[DirEntry], path: Path) -> None:
+            """Initialise the DirectorySelected object.
+
+            Args:
+                node: The tree node for the directory that was selected.
+                path: The path of the directory that was selected.
+            """
+            super().__init__()
+            self.node: TreeNode[DirEntry] = node
+            """The tree node of the directory that was selected."""
+            self.path: Path = path
+            """The path of the directory that was selected."""
+
+        @property
+        def control(self) -> Tree[DirEntry]:
+            """The `Tree` that had a directory selected."""
             return self.node.tree
 
     path: var[str | Path] = var["str | Path"](PATH("."), init=False, always_update=True)
@@ -414,5 +439,7 @@ class DirectoryTree(Tree[DirEntry]):
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if not self._safe_is_dir(dir_entry.path):
+        if self._safe_is_dir(dir_entry.path):
+            self.post_message(self.DirectorySelected(event.node, dir_entry.path))
+        else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))

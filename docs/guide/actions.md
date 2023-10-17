@@ -104,10 +104,10 @@ The following example defines a custom widget with its own `set_background` acti
     --8<-- "docs/examples/guide/actions/actions05.py"
     ```
 
-=== "actions05.css"
+=== "actions05.tcss"
 
-    ```sass title="actions05.css"
-    --8<-- "docs/examples/guide/actions/actions05.css"
+    ```sass title="actions05.tcss"
+    --8<-- "docs/examples/guide/actions/actions05.tcss"
     ```
 
 There are two instances of the custom widget mounted. If you click the links in either of them it will changed the background for that widget only. The ++r++, ++g++, and ++b++ key bindings are set on the App so will set the background for the screen.

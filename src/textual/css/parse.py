@@ -85,6 +85,7 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
 
 def parse_rule_set(
+    scope: str,
     tokens: Iterator[Token],
     token: Token,
     is_default_rules: bool = False,
@@ -127,6 +128,19 @@ def parse_rule_set(
         token = next(tokens)
 
     if selectors:
+        if scope and selectors[0].name != scope:
+            scope_selector, scope_specificity = get_selector(
+                scope, (SelectorType.TYPE, (0, 0, 0))
+            )
+            selectors.insert(
+                0,
+                Selector(
+                    name=scope,
+                    combinator=CombinatorType.DESCENDENT,
+                    type=scope_selector,
+                    specificity=scope_specificity,
+                ),
+            )
         rule_selectors.append(selectors[:])
 
     declaration = Declaration(token, "")
@@ -328,6 +342,7 @@ def substitute_references(
 
 
 def parse(
+    scope: str,
     css: str,
     path: str | PurePath,
     variables: dict[str, str] | None = None,
@@ -339,6 +354,7 @@ def parse(
     and generating rule sets from it.
 
     Args:
+        scope: CSS type name
         css: The input CSS
         path: Path to the CSS
         variables: Substitution variables to substitute tokens for.
@@ -357,6 +373,7 @@ def parse(
             break
         if token.name.startswith("selector_start"):
             yield from parse_rule_set(
+                scope,
                 tokens,
                 token,
                 is_default_rules=is_default_rules,

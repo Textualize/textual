@@ -97,15 +97,15 @@ class SelectionList(Generic[SelectionType], OptionList):
         height: auto;
     }
 
-    .-light-mode SelectionList:focus > .selection-list--button-selected {
+    SelectionList:light:focus > .selection-list--button-selected {
         color: $primary;
     }
 
-    .-light-mode SelectionList > .selection-list--button-selected-highlighted {
+    SelectionList:light > .selection-list--button-selected-highlighted {
         color: $primary;
     }
 
-    .-light-mode SelectionList:focus > .selection-list--button-selected-highlighted {
+    SelectionList:light:focus > .selection-list--button-selected-highlighted {
         color: $primary;
     }
 

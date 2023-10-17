@@ -427,3 +427,379 @@ async def test_tabbed_content_clear():
         assert tabbed_content.tab_count == 0
         assert tabbed_content.active == ""
         assert pilot.app.cleared == 1
+
+
+async def test_disabling_does_not_deactivate_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+        def on_mount(self) -> None:
+            self.query_one("Tab#tab-1").disabled = True
+
+    app = TabbedApp()
+    async with app.run_test():
+        assert app.query_one(Tabs).active == "tab-1"
+
+
+async def test_disabled_tab_cannot_be_clicked():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one("Tab#tab-2").disabled = True
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+
+
+async def test_disabling_via_tabbed_content():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one(TabbedContent).disable_tab("tab-2")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+
+
+async def test_disabling_via_tab_pane():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one("TabPane#tab-2").disabled = True
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+
+
+async def test_creating_disabled_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("first"):
+                    yield Label("hello")
+                with TabPane("second", disabled=True):
+                    yield Label("world")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+
+
+async def test_navigation_around_disabled_tabs():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+                yield Label("tab-3")
+                yield Label("tab-4")
+
+        def on_mount(self) -> None:
+            self.query_one("Tab#tab-1").disabled = True
+            self.query_one("Tab#tab-3").disabled = True
+
+    app = TabbedApp()
+    async with app.run_test():
+        tabs = app.query_one(Tabs)
+        assert tabs.active == "tab-1"
+        tabs.action_next_tab()
+        assert tabs.active == "tab-2"
+        tabs.action_next_tab()
+        assert tabs.active == "tab-4"
+        tabs.action_next_tab()
+        assert tabs.active == "tab-2"
+        tabs.action_previous_tab()
+        assert tabs.active == "tab-4"
+
+
+async def test_reenabling_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one("Tab#tab-2").disabled = True
+
+        def reenable(self) -> None:
+            app.query_one("Tab#tab-2").disabled = False
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+        app.reenable()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-2"
+
+
+async def test_reenabling_via_tabbed_content():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one(TabbedContent).disable_tab("tab-2")
+
+        def reenable(self) -> None:
+            self.query_one(TabbedContent).enable_tab("tab-2")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+        app.reenable()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-2"
+
+
+async def test_reenabling_via_tab_pane():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+        def on_mount(self) -> None:
+            self.query_one("TabPane#tab-2").disabled = True
+
+        def reenable(self) -> None:
+            self.query_one("TabPane#tab-2").disabled = False
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-1"
+        app.reenable()
+        await pilot.click("Tab#tab-2")
+        assert app.query_one(Tabs).active == "tab-2"
+
+
+async def test_disabling_unknown_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test():
+        with pytest.raises(Tabs.TabError):
+            app.query_one(TabbedContent).disable_tab("foo")
+
+
+async def test_enabling_unknown_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test():
+        with pytest.raises(Tabs.TabError):
+            app.query_one(TabbedContent).enable_tab("foo")
+
+
+async def test_hide_unknown_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test():
+        with pytest.raises(Tabs.TabError):
+            app.query_one(TabbedContent).hide_tab("foo")
+
+
+async def test_show_unknown_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test():
+        with pytest.raises(Tabs.TabError):
+            app.query_one(TabbedContent).show_tab("foo")
+
+
+async def test_hide_show_messages():
+    hide_msg = False
+    show_msg = False
+
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+        def on_tabs_tab_hidden(self) -> None:
+            nonlocal hide_msg
+            hide_msg = True
+
+        def on_tabs_tab_shown(self) -> None:
+            nonlocal show_msg
+            show_msg = True
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        app.query_one(TabbedContent).hide_tab("tab-1")
+        await pilot.pause()
+        assert hide_msg
+        app.query_one(TabbedContent).show_tab("tab-1")
+        await pilot.pause()
+        assert show_msg
+
+
+async def test_hide_last_tab_means_no_tab_active():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        tabbed_content.hide_tab("tab-1")
+        await pilot.pause()
+        assert not tabbed_content.active
+
+
+async def test_hiding_tabs_moves_active_to_next_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+                yield Label("tab-3")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        tabbed_content.hide_tab("tab-1")
+        await pilot.pause()
+        assert tabbed_content.active == "tab-2"
+        tabbed_content.hide_tab("tab-2")
+        await pilot.pause()
+        assert tabbed_content.active == "tab-3"
+
+
+async def test_showing_tabs_does_not_change_active_tab():
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+                yield Label("tab-3")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        tabbed_content.hide_tab("tab-1")
+        tabbed_content.hide_tab("tab-2")
+        await pilot.pause()
+        # sanity check
+        assert tabbed_content.active == "tab-3"
+
+        tabbed_content.show_tab("tab-1")
+        tabbed_content.show_tab("tab-2")
+        assert tabbed_content.active == "tab-3"
+
+
+@pytest.mark.parametrize("tab_id", ["tab-1", "tab-2"])
+async def test_showing_first_tab_activates_tab(tab_id: str):
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                yield Label("tab-1")
+                yield Label("tab-2")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        tabbed_content.hide_tab("tab-1")
+        tabbed_content.hide_tab("tab-2")
+        await pilot.pause()
+        # sanity check
+        assert not tabbed_content.active
+
+        tabbed_content.show_tab(tab_id)
+        await pilot.pause()
+        assert tabbed_content.active == tab_id
+
+
+async def test_disabling_nested_tabs():
+    """Regression test for https://github.com/Textualize/textual/issues/3145."""
+
+    class TabbedApp(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(id="tabbed-content"):
+                with TabPane("Tab Pane 1"):
+                    yield Label("foo")
+                with TabPane("Tab Pane 2"):
+                    yield Label("bar")
+                with TabPane("Tab Pane 3"):
+                    with TabbedContent():
+                        with TabPane("Inner Pane 1"):
+                            yield Label("fizz")
+                        with TabPane("Inner Pane 2"):
+                            yield Label("bang")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabber = app.query_one("#tabbed-content", expect_type=TabbedContent)
+        tabber.disable_tab("tab-1")
+        await pilot.pause()
+        tabber.enable_tab("tab-1")
+        await pilot.pause()
+
+
+async def test_hiding_nested_tabs():
+    """Regression test for https://github.com/Textualize/textual/issues/3145."""
+
+    class TabbedApp(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(id="tabbed-content"):
+                with TabPane("Tab Pane 1"):
+                    yield Label("foo")
+                with TabPane("Tab Pane 2"):
+                    yield Label("bar")
+                with TabPane("Tab Pane 3"):
+                    with TabbedContent():
+                        with TabPane("Inner Pane 1"):
+                            yield Label("fizz")
+                        with TabPane("Inner Pane 2"):
+                            yield Label("bang")
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabber = app.query_one("#tabbed-content", expect_type=TabbedContent)
+        tabber.hide_tab("tab-1")
+        await pilot.pause()
+        tabber.show_tab("tab-1")
+        await pilot.pause()

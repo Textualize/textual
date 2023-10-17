@@ -12,4 +12,4 @@ class TintApp(App):
             yield widget
 
 
-app = TintApp(css_path="tint.css")
+app = TintApp(css_path="tint.tcss")

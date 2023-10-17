@@ -12,6 +12,7 @@ from operator import attrgetter
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    Awaitable,
     ClassVar,
     Collection,
     Generator,
@@ -45,7 +46,6 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._asyncio import create_task
 from ._cache import FIFOCache
-from ._callback import invoke
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -256,6 +256,12 @@ class Widget(DOMNode):
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
+    BORDER_TITLE: ClassVar[str] = ""
+    """Initial value for border_title attribute."""
+
+    BORDER_SUBTITLE: ClassVar[str] = ""
+    """Initial value for border_subtitle attribute."""
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -273,6 +279,8 @@ class Widget(DOMNode):
     """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
+    loading: Reactive[bool] = Reactive(False)
+    """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
     def __init__(
         self,
@@ -349,6 +357,10 @@ class Widget(DOMNode):
 
         self._add_children(*children)
         self.disabled = disabled
+        if self.BORDER_TITLE:
+            self.border_title = self.BORDER_TITLE
+        if self.BORDER_SUBTITLE:
+            self.border_subtitle = self.BORDER_SUBTITLE
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
@@ -487,6 +499,29 @@ class Widget(DOMNode):
             compose_stack[-1].compose_add_child(composed)
         else:
             self.app._composed[-1].append(composed)
+
+    def set_loading(self, loading: bool) -> Awaitable:
+        """Set or reset the loading state of this widget.
+
+        A widget in a loading state will display a LoadingIndicator that obscures the widget.
+
+        Args:
+            loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
+
+        Returns:
+            An optional awaitable.
+        """
+        from textual.widgets import LoadingIndicator
+
+        if loading:
+            loading_indicator = LoadingIndicator()
+            return loading_indicator.apply(self)
+        else:
+            return LoadingIndicator.clear(self)
+
+    async def _watch_loading(self, loading: bool) -> None:
+        """Called when the 'loading' reactive is changed."""
+        await self.set_loading(loading)
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
@@ -906,9 +941,13 @@ class Widget(DOMNode):
             app: App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker in self._get_default_css():
+        for path, css, tie_breaker, scope in self._get_default_css():
             self.app.stylesheet.add_source(
-                css, path=path, is_default_css=True, tie_breaker=tie_breaker
+                css,
+                path=path,
+                is_default_css=True,
+                tie_breaker=tie_breaker,
+                scope=scope,
             )
 
     def _get_box_model(
@@ -1207,7 +1246,7 @@ class Widget(DOMNode):
 
     @property
     def horizontal_scrollbar(self) -> ScrollBar:
-        """The a horizontal scrollbar.
+        """The horizontal scrollbar.
 
         Note:
             This will *create* a scrollbar if one doesn't exist.
@@ -1498,17 +1537,7 @@ class Widget(DOMNode):
     @property
     def focusable(self) -> bool:
         """Can this widget currently be focused?"""
-        return self.can_focus and not self._self_or_ancestors_disabled
-
-    @property
-    def focusable_children(self) -> list[Widget]:
-        """Get the children which may be focused.
-
-        Returns:
-            List of widgets that can receive focus.
-        """
-        focusable = [child for child in self._nodes if child.display and child.visible]
-        return sorted(focusable, key=attrgetter("_focus_sort_key"))
+        return self.can_focus and self.visible and not self._self_or_ancestors_disabled
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:
@@ -2698,8 +2727,8 @@ class Widget(DOMNode):
                 horizontal_scrollbar_region,
                 scrollbar_corner_gap,
             ) = region.split(
-                -scrollbar_size_vertical,
-                -scrollbar_size_horizontal,
+                region.width - scrollbar_size_vertical,
+                region.height - scrollbar_size_horizontal,
             )
             if scrollbar_corner_gap:
                 yield self.scrollbar_corner, scrollbar_corner_gap
@@ -2716,7 +2745,7 @@ class Widget(DOMNode):
 
         elif show_vertical_scrollbar:
             window_region, scrollbar_region = region.split_vertical(
-                -scrollbar_size_vertical
+                region.width - scrollbar_size_vertical
             )
             if scrollbar_region:
                 scrollbar = self.vertical_scrollbar
@@ -2725,7 +2754,7 @@ class Widget(DOMNode):
                 yield scrollbar, scrollbar_region
         elif show_horizontal_scrollbar:
             window_region, scrollbar_region = region.split_horizontal(
-                -scrollbar_size_horizontal
+                region.height - scrollbar_size_horizontal
             )
             if scrollbar_region:
                 scrollbar = self.horizontal_scrollbar
@@ -2758,6 +2787,7 @@ class Widget(DOMNode):
         except NoScreen:
             pass
         else:
+            yield "dark" if self.app.dark else "light"
             if focused:
                 node = focused
                 while node is not None:
@@ -3187,7 +3217,7 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be send an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
 
         Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
 
@@ -3281,12 +3311,14 @@ class Widget(DOMNode):
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
         self.refresh()
-        self.post_message(events.DescendantFocus())
+        if self.parent is not None:
+            self.parent.post_message(events.DescendantFocus(self))
 
     def _on_blur(self, event: events.Blur) -> None:
         self.has_focus = False
         self.refresh()
-        self.post_message(events.DescendantBlur())
+        if self.parent is not None:
+            self.parent.post_message(events.DescendantBlur(self))
 
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:
@@ -3390,17 +3422,18 @@ class Widget(DOMNode):
         title: str = "",
         severity: SeverityLevel = "information",
         timeout: float = Notification.timeout,
-    ) -> Notification:
+    ) -> None:
         """Create a notification.
+
+        !!! tip
+
+            This method is thread-safe.
 
         Args:
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
             timeout: The timeout for the notification.
-
-        Returns:
-            The new notification.
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.

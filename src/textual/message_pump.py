@@ -1,6 +1,11 @@
 """
 
-A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.
+A `MessagePump` is a base class for any object which processes messages, which includes Widget, Screen, and App.
+
+!!! tip
+
+    Most of the method here are useful in general app development.
+
 """
 from __future__ import annotations
 
@@ -118,7 +123,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._last_idle: float = time()
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
-        self._next_callbacks: list[CallbackType] = []
+        self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
 
     @property
@@ -417,7 +422,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
         """
-        self._next_callbacks.append(partial(callback, *args, **kwargs))
+        callback_message = events.Callback(callback=partial(callback, *args, **kwargs))
+        callback_message._prevent.update(self._get_prevented_messages())
+        self._next_callbacks.append(callback_message)
         self.check_idle()
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
@@ -562,7 +569,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._next_callbacks.clear()
         for callback in callbacks:
             try:
-                await invoke(callback)
+                await self._dispatch_message(callback)
             except Exception as error:
                 self.app._handle_exception(error)
                 break

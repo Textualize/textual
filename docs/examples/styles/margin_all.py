@@ -17,4 +17,4 @@ class MarginAllApp(App):
         )
 
 
-app = MarginAllApp(css_path="margin_all.css")
+app = MarginAllApp(css_path="margin_all.tcss")

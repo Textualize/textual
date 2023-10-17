@@ -245,7 +245,6 @@ class OptionList(ScrollView, can_focus=True):
         background: $accent 60%;
     }
     """
-    """The default styling for an `OptionList`."""
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
@@ -541,10 +540,6 @@ class OptionList(ScrollView, can_focus=True):
                 if content.id is not None:
                     # The option has an ID set, create a mapping from that
                     # ID to the option so we can use it later.
-                    if content.id in option_ids:
-                        raise DuplicateID(
-                            f"The option list already has an option with id '{content.id}'"
-                        )
                     option_ids[content.id] = option
                 option += 1
             else:
@@ -559,6 +554,30 @@ class OptionList(ScrollView, can_focus=True):
         # list, set the virtual size.
         self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
+    def _duplicate_id_check(self, candidate_items: list[OptionListContent]) -> None:
+        """Check the items to be added for any duplicates.
+
+        Args:
+            candidate_items: The items that are going be added.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+        """
+        # We're only interested in options, and only those that have IDs.
+        new_options = [
+            item
+            for item in candidate_items
+            if isinstance(item, Option) and item.id is not None
+        ]
+        # Get the set of new IDs that we're being given.
+        new_option_ids = {option.id for option in new_options}
+        # Now check for duplicates, both internally amongst the new items
+        # incoming, and also against all the current known IDs.
+        if len(new_options) != len(new_option_ids) or not new_option_ids.isdisjoint(
+            self._option_ids
+        ):
+            raise DuplicateID("Attempt made to add options with duplicate IDs.")
+
     def add_options(self, items: Iterable[NewOptionListContent]) -> Self:
         """Add new options to the end of the option list.
 
@@ -570,12 +589,18 @@ class OptionList(ScrollView, can_focus=True):
 
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
+
+        Note:
+            All options are checked for duplicate IDs *before* any option is
+            added. A duplicate ID will cause none of the passed items to be
+            added to the option list.
         """
         # Only work if we have items to add; but don't make a fuss out of
         # zero items to add, just carry on like nothing happened.
         if items:
             # Turn any incoming values into valid content for the list.
             content = [self._make_content(item) for item in items]
+            self._duplicate_id_check(content)
             self._contents.extend(content)
             # Pull out the content that is genuine options and add them to the
             # list of options.
@@ -613,6 +638,7 @@ class OptionList(ScrollView, can_focus=True):
         self._refresh_content_tracking(force=True)
         # Force a re-validation of the highlight.
         self.highlighted = self.highlighted
+        self._mouse_hovering_over = None
         self.refresh()
 
     def remove_option(self, option_id: str) -> Self:

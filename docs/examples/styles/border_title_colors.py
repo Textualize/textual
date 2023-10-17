@@ -3,7 +3,7 @@ from textual.widgets import Label
 
 
 class BorderTitleApp(App):
-    CSS_PATH = "border_title_colors.css"
+    CSS_PATH = "border_title_colors.tcss"
 
     def compose(self) -> ComposeResult:
         yield Label("Hello, World!")

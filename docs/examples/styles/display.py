@@ -9,4 +9,4 @@ class DisplayApp(App):
         yield Static("Widget 3")
 
 
-app = DisplayApp(css_path="display.css")
+app = DisplayApp(css_path="display.tcss")

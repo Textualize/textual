@@ -1,0 +1,34 @@
+Screen {
+    overflow: auto;
+}
+
+#calculator {
+    layout: grid;
+    grid-size: 4;
+    grid-gutter: 1 2;
+    grid-columns: 1fr;
+    grid-rows: 2fr 1fr 1fr 1fr 1fr 1fr;
+    margin: 1 2;
+    min-height: 25;
+    min-width: 26;
+    height: 100%;
+}
+
+Button {
+    width: 100%;
+    height: 100%;
+}
+
+#numbers {
+    column-span: 4;
+    padding: 0 1;
+    height: 100%;
+    background: $primary-lighten-2;
+    color: $text;
+    content-align: center middle;
+    text-align: right;
+}
+
+#number-0 {
+    column-span: 2;
+}

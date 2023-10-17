@@ -10,7 +10,7 @@ A table widget optimized for displaying a lot of data.
 ### Adding data
 
 The following example shows how to fill a table with data.
-First, we use [add_columns][textual.widgets.DataTable.add_rows] to include the `lane`, `swimmer`, `country`, and `time` columns in the table.
+First, we use [add_columns][textual.widgets.DataTable.add_columns] to include the `lane`, `swimmer`, `country`, and `time` columns in the table.
 After that, we use the [add_rows][textual.widgets.DataTable.add_rows] method to insert the rows into the table.
 
 === "Output"
@@ -228,3 +228,8 @@ The data table widget provides the following component classes:
 ::: textual.widgets.DataTable
     options:
       heading_level: 2
+
+::: textual.widgets.data_table
+    options:
+      show_root_heading: true
+      show_root_toc_entry: true

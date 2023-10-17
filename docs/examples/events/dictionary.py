@@ -15,7 +15,7 @@ from textual.widgets import Input, Static
 class DictionaryApp(App):
     """Searches a dictionary API as-you-type."""
 
-    CSS_PATH = "dictionary.css"
+    CSS_PATH = "dictionary.tcss"
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")

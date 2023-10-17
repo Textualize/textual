@@ -52,18 +52,14 @@ The following example presents a `Select` with a number of options.
     --8<-- "docs/examples/widgets/select_widget.py"
     ```
 
-=== "select.css"
+=== "select.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/select.css"
+    --8<-- "docs/examples/widgets/select.tcss"
     ```
 
-## Messages
 
--  [Select.Changed][textual.widgets.Select.Changed]
-
-
-## Reactive attributes
+## Reactive Attributes
 
 
 | Name       | Type                   | Default | Description                         |
@@ -71,6 +67,9 @@ The following example presents a `Select` with a number of options.
 | `expanded` | `bool`                 | `False` | True to expand the options overlay. |
 | `value`    | `SelectType` \| `None` | `None`  | Current value of the Select.        |
 
+## Messages
+
+-  [Select.Changed][textual.widgets.Select.Changed]
 
 ## Bindings
 
@@ -81,6 +80,9 @@ The Select widget defines the following bindings:
       show_root_heading: false
       show_root_toc_entry: false
 
+## Component Classes
+
+This widget has no component classes.
 
 ---
 

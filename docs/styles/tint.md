@@ -27,10 +27,10 @@ This examples shows a green tint with gradually increasing alpha.
 
     1. We set the tint to a `Color` instance with varying levels of opacity, set through the method [with_alpha][textual.color.Color.with_alpha].
 
-=== "tint.css"
+=== "tint.tcss"
 
     ```sass
-    --8<-- "docs/examples/styles/tint.css"
+    --8<-- "docs/examples/styles/tint.tcss"
     ```
 
 ## CSS

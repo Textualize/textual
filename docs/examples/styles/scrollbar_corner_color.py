@@ -16,4 +16,4 @@ class ScrollbarCornerColorApp(App):
         yield Label(TEXT.replace("\n", " ") + "\n" + TEXT * 10)
 
 
-app = ScrollbarCornerColorApp(css_path="scrollbar_corner_color.css")
+app = ScrollbarCornerColorApp(css_path="scrollbar_corner_color.tcss")

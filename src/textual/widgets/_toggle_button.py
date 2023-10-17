@@ -94,16 +94,16 @@ class ToggleButton(Static, can_focus=True):
 
     /* Light mode overrides. */
 
-    App.-light-mode ToggleButton > .toggle--button {
+    ToggleButton:light > .toggle--button {
         color: $background;
         background: $foreground 10%;
     }
 
-    App.-light-mode ToggleButton:focus > .toggle--button {
+    ToggleButton:light:focus > .toggle--button {
         background: $foreground 25%;
     }
 
-    App.-light-mode ToggleButton.-on > .toggle--button {
+    ToggleButton:light.-on > .toggle--button {
         color: $primary;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
@@ -232,7 +232,7 @@ class ToggleButton(Static, can_focus=True):
         """Toggle the value of the widget when clicked with the mouse."""
         self.toggle()
 
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the value of the toggle button changes."""
 
         def __init__(self, toggle_button: ToggleButton, value: bool) -> None:

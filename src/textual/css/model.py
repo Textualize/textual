@@ -174,6 +174,8 @@ class RuleSet:
             elif selector.combinator == CombinatorType.CHILD:
                 tokens.append(" > ")
             tokens.append(selector.css)
+            for pseudo_class in selector.pseudo_classes:
+                tokens.append(f":{pseudo_class}")
         return "".join(tokens).strip()
 
     @property

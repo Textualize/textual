@@ -44,10 +44,10 @@ Short description of the first example.
     --8<-- "docs/examples/styles/style.py"
     ```
 
-=== "style.css"
+=== "style.tcss"
 
     ```sass
-    --8<-- "docs/examples/styles/style.css"
+    --8<-- "docs/examples/styles/style.tcss"
     ```
 -->
 
@@ -66,10 +66,10 @@ Short description of the second example.
     --8<-- "docs/examples/styles/style.py"
     ```
 
-=== "style.css"
+=== "style.tcss"
 
     ```sass
-    --8<-- "docs/examples/styles/style.css"
+    --8<-- "docs/examples/styles/style.tcss"
     ```
 
 -->

@@ -13,4 +13,4 @@ class MaxWidthApp(App):
         )
 
 
-app = MaxWidthApp(css_path="max_width.css")
+app = MaxWidthApp(css_path="max_width.tcss")

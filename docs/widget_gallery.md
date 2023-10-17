@@ -34,6 +34,16 @@ A classic checkbox control.
 ```{.textual path="docs/examples/widgets/checkbox.py"}
 ```
 
+## Collapsible
+
+Content that may be toggled on and off by clicking a title.
+
+[Collapsible reference](./widgets/collapsible.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/collapsible.py"}
+```
+
 
 ## ContentSwitcher
 
@@ -225,6 +235,16 @@ Display and update text in a scrolling panel.
 ```{.textual path="docs/examples/widgets/rich_log.py" press="H,i"}
 ```
 
+## Rule
+
+A rule widget to separate content, similar to a `<hr>` HTML tag.
+
+[Rule reference](./widgets/rule.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/horizontal_rules.py"}
+```
+
 ## Select
 
 Select from a number of possible options.
@@ -261,7 +281,7 @@ Displays simple static content. Typically used as a base class.
 
 ## Switch
 
-A on / off control, inspired by toggle buttons.
+An on / off control, inspired by toggle buttons.
 
 [Switch reference](./widgets/switch.md){ .md-button .md-button--primary }
 
@@ -287,6 +307,14 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
+## TextArea
+
+A multi-line text area which supports syntax highlighting various languages.
+
+[TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
+```
 
 ## Tree
 

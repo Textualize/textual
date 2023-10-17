@@ -11,7 +11,7 @@ class KeyLogger(RichLog):
 class InputApp(App):
     """App to display key events."""
 
-    CSS_PATH = "key03.css"
+    CSS_PATH = "key03.tcss"
 
     def compose(self) -> ComposeResult:
         yield KeyLogger()

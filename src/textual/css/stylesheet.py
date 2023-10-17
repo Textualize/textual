@@ -111,11 +111,14 @@ class CssSource(NamedTuple):
         content: The CSS as a string.
         is_defaults: True if the CSS is default (i.e. that defined at the widget level).
             False if it's user CSS (which will override the defaults).
+        tie_breaker: Specificity tie breaker.
+        scope: Scope of CSS.
     """
 
     content: str
     is_defaults: bool
     tie_breaker: int = 0
+    scope: str = ""
 
 
 @rich.repr.auto(angular=True)
@@ -196,15 +199,16 @@ class Stylesheet:
         path: str | PurePath,
         is_default_rules: bool = False,
         tie_breaker: int = 0,
+        scope: str = "",
     ) -> list[RuleSet]:
         """Parse CSS and return rules.
 
         Args:
-            is_default_rules:
             css: String containing Textual CSS.
             path: Path to CSS or unique identifier
             is_default_rules: True if the rules we're extracting are
                 default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
+            scope: Scope of rules, or empty string for global scope.
 
         Raises:
             StylesheetError: If the CSS is invalid.
@@ -215,6 +219,7 @@ class Stylesheet:
         try:
             rules = list(
                 parse(
+                    scope,
                     css,
                     path,
                     variable_tokens=self._variable_tokens,
@@ -276,6 +281,7 @@ class Stylesheet:
         path: str | PurePath | None = None,
         is_default_css: bool = False,
         tie_breaker: int = 0,
+        scope: str = "",
     ) -> None:
         """Parse CSS from a string.
 
@@ -285,6 +291,7 @@ class Stylesheet:
             is_default_css: True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
             tie_breaker: Integer representing the priority of this source.
+            scope: CSS type name to limit scope or empty string for no scope.
 
         Raises:
             StylesheetError: If the CSS could not be read.
@@ -297,11 +304,11 @@ class Stylesheet:
             path = str(css)
         if path in self.source and self.source[path].content == css:
             # Path already in source, and CSS is identical
-            content, is_defaults, source_tie_breaker = self.source[path]
+            content, is_defaults, source_tie_breaker, scope = self.source[path]
             if source_tie_breaker > tie_breaker:
-                self.source[path] = CssSource(content, is_defaults, tie_breaker)
+                self.source[path] = CssSource(content, is_defaults, tie_breaker, scope)
             return
-        self.source[path] = CssSource(css, is_default_css, tie_breaker)
+        self.source[path] = CssSource(css, is_default_css, tie_breaker, scope)
         self._require_parse = True
 
     def parse(self) -> None:
@@ -313,7 +320,7 @@ class Stylesheet:
         rules: list[RuleSet] = []
         add_rules = rules.extend
 
-        for path, (css, is_default_rules, tie_breaker) in self.source.items():
+        for path, (css, is_default_rules, tie_breaker, scope) in self.source.items():
             if css in self._invalid_css:
                 continue
             try:
@@ -322,6 +329,7 @@ class Stylesheet:
                     path,
                     is_default_rules=is_default_rules,
                     tie_breaker=tie_breaker,
+                    scope=scope,
                 )
             except Exception:
                 self._invalid_css.add(css)
@@ -343,9 +351,13 @@ class Stylesheet:
         """
         # Do this in a fresh Stylesheet so if there are errors we don't break self.
         stylesheet = Stylesheet(variables=self._variables)
-        for path, (css, is_defaults, tie_breaker) in self.source.items():
+        for path, (css, is_defaults, tie_breaker, scope) in self.source.items():
             stylesheet.add_source(
-                css, path, is_default_css=is_defaults, tie_breaker=tie_breaker
+                css,
+                path,
+                is_default_css=is_defaults,
+                tie_breaker=tie_breaker,
+                scope=scope,
             )
         stylesheet.parse()
         self._rules = stylesheet.rules

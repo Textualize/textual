@@ -1,3 +1,16 @@
+"""Filter classes.
+
+!!! note
+
+    Filters are used internally, and not recommended for use by Textual app developers.
+
+Filters are used internally to process terminal output after it has been rendered.
+Currently this is used internally to convert the application to monochrome, when the NO_COLOR env var is set.
+
+In the future, this system will be used to implement accessibility features.
+
+"""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod

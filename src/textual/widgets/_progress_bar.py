@@ -8,15 +8,18 @@ from typing import Callable, Optional
 
 from rich.style import Style
 
-from textual.geometry import clamp
-
+from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
 from ..containers import Horizontal
+from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
 from ..timer import Timer
 from ..widget import Widget
 from ..widgets import Label
+
+UNUSED = UnusedParameter()
+"""Sentinel for method signatures."""
 
 
 class Bar(Widget, can_focus=False):
@@ -276,7 +279,6 @@ class ProgressBar(Widget, can_focus=False):
     """The total number of steps associated with this progress bar, when known.
 
     The value `None` will render an indeterminate progress bar.
-    Once `total` is set to a numerical value, it cannot be set back to `None`.
     """
     percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed.
@@ -398,6 +400,7 @@ class ProgressBar(Widget, can_focus=False):
             ```py
             progress_bar.advance(10)  # Advance 10 steps.
             ```
+
         Args:
             advance: Number of steps to advance progress by.
         """
@@ -406,30 +409,28 @@ class ProgressBar(Widget, can_focus=False):
     def update(
         self,
         *,
-        total: float | None = None,
-        progress: float | None = None,
-        advance: float | None = None,
+        total: None | float | UnusedParameter = UNUSED,
+        progress: float | UnusedParameter = UNUSED,
+        advance: float | UnusedParameter = UNUSED,
     ) -> None:
         """Update the progress bar with the given options.
-
-        Options only affect the progress bar if they are not `None`.
 
         Example:
             ```py
             progress_bar.update(
                 total=200,  # Set new total to 200 steps.
-                progress=None,  # This has no effect.
+                progress=50,  # Set the progress to 50 (out of 200).
             )
             ```
 
         Args:
-            total: New total number of steps (if not `None`).
-            progress: Set the progress to the given number of steps (if not `None`).
-            advance: Advance the progress by this number of steps (if not `None`).
+            total: New total number of steps.
+            progress: Set the progress to the given number of steps.
+            advance: Advance the progress by this number of steps.
         """
-        if total is not None:
+        if not isinstance(total, UnusedParameter):
             self.total = total
-        if progress is not None:
+        if not isinstance(progress, UnusedParameter):
             self.progress = progress
-        if advance is not None:
+        if not isinstance(advance, UnusedParameter):
             self.progress += advance

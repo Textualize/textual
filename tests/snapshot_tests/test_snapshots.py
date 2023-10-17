@@ -1,6 +1,12 @@
+import sys
 from pathlib import Path
 
 import pytest
+
+from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
+from textual.widgets import TextArea
+from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -89,7 +95,8 @@ def test_input_validation(snap_compare):
         "tab",
         "3",  # This is valid, so -valid should be applied
         "tab",
-        *"-2",  # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
+        *"-2",
+        # -2 is invalid, so -invalid should be applied (and :focus, since we stop here)
     ]
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_validation.py", press=press)
 
@@ -146,6 +153,30 @@ def test_datatable_style_ordering(snap_compare):
 def test_datatable_add_column(snap_compare):
     # Checking adding columns after adding rows
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_column.py")
+
+
+def test_datatable_add_row_auto_height(snap_compare):
+    # Check that rows added with auto height computation look right.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py")
+
+
+def test_datatable_add_row_auto_height_sorted(snap_compare):
+    # Check that rows added with auto height computation look right.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py", press=["s"]
+    )
+
+
+def test_datatable_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_cell_padding.py")
+
+
+def test_datatable_change_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_cell_padding.py", press=["a", "b"]
+    )
 
 
 def test_footer_render(snap_compare):
@@ -222,6 +253,11 @@ def test_tabbed_content(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "tabbed_content.py")
 
 
+def test_tabbed_content_with_modified_tabs(snap_compare):
+    # Tabs enabled and hidden.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "modified_tabs.py")
+
+
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
@@ -280,6 +316,14 @@ def test_progress_bar_completed_styled(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_styled_.py", press=["u"])
 
 
+def test_rule_horizontal_rules(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "horizontal_rules.py")
+
+
+def test_rule_vertical_rules(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "vertical_rules.py")
+
+
 def test_select(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
 
@@ -315,6 +359,26 @@ def test_sparkline_render(snap_compare):
 
 def test_sparkline_component_classes_colors(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "sparkline_colors.py")
+
+
+def test_collapsible_render(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py")
+
+
+def test_collapsible_collapsed(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["c"])
+
+
+def test_collapsible_expanded(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible.py", press=["e"])
+
+
+def test_collapsible_nested(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_nested.py")
+
+
+def test_collapsible_custom_symbol(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
 
 
 # --- CSS properties ---
@@ -478,6 +542,20 @@ def test_css_hot_reloading(snap_compare):
     )
 
 
+def test_datatable_hot_reloading(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3312."""
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "datatable_hot_reloading.py", run_before=run_before
+    )
+
+
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
     assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
@@ -579,11 +657,23 @@ def test_blur_on_disabled(snap_compare):
 def test_tooltips_in_compound_widgets(snap_compare):
     # https://github.com/Textualize/textual/issues/2641
     async def run_before(pilot) -> None:
+        await pilot.pause()
         await pilot.hover("ProgressBar")
         await pilot.pause(0.3)
         await pilot.pause()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "tooltips.py", run_before=run_before)
+
+
+def test_command_palette(snap_compare) -> None:
+    from textual.command import CommandPalette
+
+    async def run_before(pilot) -> None:
+        await pilot.press("ctrl+backslash")
+        await pilot.press("A")
+        await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
 
 
 # --- textual-dev library preview tests ---
@@ -630,5 +720,107 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
+@pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
+def test_text_area_language_rendering(language, snap_compare):
+    # This test will fail if we're missing a snapshot test for a valid
+    # language. We should have a snapshot test for each language we support
+    # as the syntax highlighting will be completely different for each of them.
+
+    snippet = SNIPPETS.get(language)
+
+    def setup_language(pilot) -> None:
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(snippet)
+        text_area.language = language
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_language,
+        terminal_size=(80, snippet.count("\n") + 2),
+    )
+
+
+@pytest.mark.parametrize(
+    "selection",
+    [
+        Selection((0, 0), (2, 8)),
+        Selection((1, 0), (0, 0)),
+        Selection((5, 2), (0, 0)),
+        Selection((0, 0), (4, 20)),
+        Selection.cursor((1, 0)),
+        Selection.cursor((2, 6)),
+    ],
+)
+def test_text_area_selection_rendering(snap_compare, selection):
+    text = """I am a line.
+
+I am another line.
+
+I am the final line."""
+
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.show_line_numbers = False
+        text_area.selection = selection
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, text.count("\n") + 1),
+    )
+
+
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
+@pytest.mark.parametrize(
+    "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
+)
+def test_text_area_themes(snap_compare, theme_name):
+    """Each theme should have its own snapshot with at least some Python
+    to check that the rendering is sensible. This also ensures that theme
+    switching results in the display changing correctly."""
+    text = """\
+def hello(name):
+    x = 123
+    while not False:
+        print("hello " + name)
+        continue
+"""
+
+    def setup_theme(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.load_text(text)
+        text_area.language = "python"
+        text_area.selection = Selection((0, 1), (1, 9))
+        text_area.theme = theme_name
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_theme,
+        terminal_size=(48, text.count("\n") + 2),
+    )
+
+
 def test_digits(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
+
+
+def test_auto_grid(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid.py")
+
+
+def test_auto_grid_default_height(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_grid_default_height.py", press=["g"])
+
+
+def test_scoped_css(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scoped_css.py")
+
+
+def test_unscoped_css(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")
