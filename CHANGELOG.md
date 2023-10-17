@@ -10,7 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with LRUCache.discard https://github.com/Textualize/textual/issues/3537
+- Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
+- Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
 
 ### Changed
 
