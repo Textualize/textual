@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from asyncio import Future, gather, wait
-from typing import Coroutine
+from typing import Any, Coroutine, Generator, Generic, TypeVar
+
+ReturnType = TypeVar("ReturnType")
 
 
-class AwaitComplete:
+class AwaitComplete(Generic[ReturnType]):
     """An 'optionally-awaitable' object."""
 
     _instances: set["AwaitComplete"] = []
@@ -21,10 +23,10 @@ class AwaitComplete:
         self._future: Future = gather(*[coroutine for coroutine in self.coroutine])
         self._future.add_done_callback(self._on_done)
 
-    async def __call__(self):
-        await self
+    async def __call__(self) -> ReturnType:
+        return await self
 
-    def __await__(self):
+    def __await__(self) -> Generator[Any, None, ReturnType]:
         return self._future.__await__()
 
     def _on_done(self, _: Future) -> None:
@@ -44,11 +46,15 @@ class AwaitComplete:
         return None
 
     @classmethod
-    async def wait_all(cls):
-        """Await all instances of AwaitComplete."""
+    async def _wait_all(cls, timeout: float = 1.0):
+        """Await all instances of AwaitComplete.
+
+        Args:
+            timeout: The maximum time to wait for, in seconds.
+        """
         await wait(
             [instance._future for instance in cls._instances if instance._future],
-            timeout=1.0,
+            timeout=timeout,
         )
 
     @classmethod
