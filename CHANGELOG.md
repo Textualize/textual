@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue with LRUCache.discard https://github.com/Textualize/textual/issues/3537
+- Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 
 ### Changed
 
