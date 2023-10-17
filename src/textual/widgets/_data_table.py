@@ -1116,9 +1116,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_row = row
         if column is not None:
             cursor_column = column
+
         destination = Coordinate(cursor_row, cursor_column)
         self.cursor_coordinate = destination
-        self._scroll_cursor_into_view(animate=animate)
+        self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""
@@ -1230,6 +1231,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column = self.columns.get(column_key)
             if column is None:
                 continue
+
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
@@ -1286,6 +1288,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             if row.auto_height:
                 auto_height_rows.append((row_index, row, cells_in_row))
+
+        self._clear_caches()
 
         # If there are rows that need to have their height computed, render them correctly
         # so that we can cache this rendering for later.
@@ -1612,9 +1616,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: If the row key does not exist.
         """
+
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
 
+        self._new_rows.discard(row_key)
         self._require_update_dimensions = True
         self.check_idle()
 
@@ -1690,9 +1696,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self._updated_cells:
             # Cell contents have already been updated at this point.
             # Now we only need to worry about measuring column widths.
-            updated_columns = self._updated_cells.copy()
+            updated_cells = self._updated_cells.copy()
             self._updated_cells.clear()
-            self._update_column_widths(updated_columns)
+            self._update_column_widths(updated_cells)
 
         if self._require_update_dimensions:
             # Add the new rows *before* updating the column widths, since

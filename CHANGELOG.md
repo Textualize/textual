@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Input.cursor_blink` reactive not changing blink state after `Input` was mounted https://github.com/Textualize/textual/pull/3498
 - Fixed `Tabs.active` attribute value not being re-assigned after removing a tab or clearing https://github.com/Textualize/textual/pull/3498
 - Fixed `DirectoryTree` race-condition crash when changing path https://github.com/Textualize/textual/pull/3498
-- Fixed issue with LRUCache.discard https://github.com/Textualize/textual/issues/3537
+- Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
+- Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
+- Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
 
 ### Changed
 
