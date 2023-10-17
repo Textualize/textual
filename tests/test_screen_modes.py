@@ -10,7 +10,6 @@ from textual.app import (
     InvalidModeError,
     UnknownModeError,
 )
-from textual.css.query import NoMatches
 from textual.screen import ModalScreen, Screen
 from textual.widgets import Footer, Header, Label, RichLog
 

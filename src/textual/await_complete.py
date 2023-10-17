@@ -20,7 +20,7 @@ class AwaitComplete(Generic[ReturnType]):
         """
         self.coroutine = coroutine
         AwaitComplete._instances.add(self)
-        self._future: Future = gather(*[coroutine for coroutine in self.coroutine])
+        self._future: Future = gather(*list(self.coroutine))
         self._future.add_done_callback(self._on_done)
 
     async def __call__(self) -> ReturnType:
