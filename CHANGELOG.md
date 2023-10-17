@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.41.1] - Unreleased
+
+## Unreleased
 
 ### Fixed
 
 - Fixed issue with LRUCache.discard https://github.com/Textualize/textual/issues/3537
+
+### Changed
+
+- Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
+
 
 ## [0.40.0] - 2023-10-11
 
