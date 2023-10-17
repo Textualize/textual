@@ -9,7 +9,7 @@ ReturnType = TypeVar("ReturnType")
 class AwaitComplete(Generic[ReturnType]):
     """An 'optionally-awaitable' object."""
 
-    _instances: set["AwaitComplete"] = []
+    _instances: set["AwaitComplete"] = set()
     """Track all active instances of AwaitComplete."""
 
     def __init__(self, *coroutine: Coroutine) -> None:
