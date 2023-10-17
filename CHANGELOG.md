@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
 
 ### Fixed
@@ -12,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Input.cursor_blink` reactive not changing blink state after `Input` was mounted https://github.com/Textualize/textual/pull/3498
 - Fixed `Tabs.active` attribute value not being re-assigned after removing a tab or clearing https://github.com/Textualize/textual/pull/3498
 - Fixed `DirectoryTree` race-condition crash when changing path https://github.com/Textualize/textual/pull/3498
+- Fixed issue with LRUCache.discard https://github.com/Textualize/textual/issues/3537
 
 ### Changed
 
