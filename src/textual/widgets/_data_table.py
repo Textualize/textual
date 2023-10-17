@@ -1116,9 +1116,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_row = row
         if column is not None:
             cursor_column = column
+
         destination = Coordinate(cursor_row, cursor_column)
         self.cursor_coordinate = destination
-        self._scroll_cursor_into_view(animate=animate)
+        self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""
@@ -1615,9 +1616,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: If the row key does not exist.
         """
+
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
 
+        self._new_rows.discard(row_key)
         self._require_update_dimensions = True
         self.check_idle()
 
