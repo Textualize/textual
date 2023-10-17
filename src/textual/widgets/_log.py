@@ -294,6 +294,7 @@ class Log(ScrollView, can_focus=True):
             line = Strip(line_text.render(self.app.console), cell_len(_line))
         else:
             line = Strip([Segment(_line, rich_style)], cell_len(_line))
+
         self._render_line_cache[y] = line
         return line
 
