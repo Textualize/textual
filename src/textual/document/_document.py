@@ -91,28 +91,6 @@ class DocumentBase(ABC):
         """Return the line separator used in the document."""
 
     @abstractmethod
-    def get_index_from_location(self, location: Location) -> int:
-        """Given a location, returns the index from the document's text.
-
-        Args:
-            location: The location in the document.
-
-        Returns:
-            The index in the document's text.
-        """
-
-    @abstractmethod
-    def get_location_from_index(self, index: int) -> Location:
-        """Given an index in the document's text, returns the corresponding location.
-
-        Args:
-            index: The index in the document's text.
-
-        Returns:
-            The corresponding location.
-        """
-
-    @abstractmethod
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
 
@@ -351,10 +329,10 @@ class Document(DocumentBase):
         Returns:
             The index in the document's text.
         """
-        row, col = location
-        index = row * len(self.newline) + col
-        for i in range(row):
-            index += len(self.get_line(i))
+        row, column = location
+        index = row * len(self.newline) + column
+        for line_index in range(row):
+            index += len(self.get_line(line_index))
         return index
 
     def get_location_from_index(self, index: int) -> Location:
@@ -366,15 +344,17 @@ class Document(DocumentBase):
         Returns:
             The corresponding location.
         """
-        idx = 0
-        newline_len = len(self.newline)
-        for i in range(self.line_count):
-            next_idx = idx + len(self.get_line(i)) + newline_len
-            if index < next_idx:
-                return (i, index - idx)
-            elif index == next_idx:
-                return (i + 1, 0)
-            idx = next_idx
+        column_index = 0
+        newline_length = len(self.newline)
+        for line_index in range(self.line_count):
+            next_column_index = (
+                column_index + len(self.get_line(line_index)) + newline_length
+            )
+            if index < next_column_index:
+                return (line_index, index - column_index)
+            elif index == next_column_index:
+                return (line_index + 1, 0)
+            column_index = next_column_index
 
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.

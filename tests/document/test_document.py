@@ -98,3 +98,37 @@ def test_get_selected_text_no_newline_at_end_of_file_windows():
     document = Document(TEXT_WINDOWS)
     selection = document.get_text_range((0, 0), (2, 0))
     assert selection == TEXT_WINDOWS
+
+
+@pytest.mark.parametrize(
+    "text", [TEXT, TEXT_NEWLINE, TEXT_WINDOWS, TEXT_WINDOWS_NEWLINE]
+)
+def test_index_from_location(text):
+    document = Document(text)
+    lines = text.split(document.newline)
+    assert document.get_index_from_location((0, 0)) == 0
+    assert document.get_index_from_location((0, len(lines[0]))) == len(lines[0])
+    assert document.get_index_from_location((1, 0)) == len(lines[0]) + len(
+        document.newline
+    )
+    assert document.get_index_from_location((len(lines) - 1, len(lines[-1]))) == len(
+        text
+    )
+
+
+@pytest.mark.parametrize(
+    "text", [TEXT, TEXT_NEWLINE, TEXT_WINDOWS, TEXT_WINDOWS_NEWLINE]
+)
+def test_location_from_index(text):
+    document = Document(text)
+    lines = text.split(document.newline)
+    assert document.get_location_from_index(0) == (0, 0)
+    assert document.get_location_from_index(len(lines[0])) == (0, len(lines[0]))
+    assert document.get_location_from_index(len(lines[0]) + len(document.newline)) == (
+        1,
+        0,
+    )
+    assert document.get_location_from_index(len(text)) == (
+        len(lines) - 1,
+        len(lines[-1]),
+    )
