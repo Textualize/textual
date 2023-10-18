@@ -30,6 +30,26 @@ class LoadingIndicator(Widget):
     }
     """
 
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """Initialize a loading indicator.
+
+        Args:
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+
+        self._start_time: float = 0.0
+        """The time the loading indicator was mounted (a Unix timestamp)."""
+
     def apply(self, widget: Widget) -> AwaitMount:
         """Apply the loading indicator to a `widget`.
 
