@@ -124,6 +124,11 @@ def test_location_from_index(text):
     lines = text.split(document.newline)
     assert document.get_location_from_index(0) == (0, 0)
     assert document.get_location_from_index(len(lines[0])) == (0, len(lines[0]))
+    if len(document.newline) > 1:
+        assert document.get_location_from_index(len(lines[0]) + 1) == (
+            0,
+            len(lines[0]) + 1,
+        )
     assert document.get_location_from_index(len(lines[0]) + len(document.newline)) == (
         1,
         0,
