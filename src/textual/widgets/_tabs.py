@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from asyncio import create_task
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -499,29 +500,26 @@ class Tabs(Widget, can_focus=True):
 
         removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active
-
         remove_await = remove_tab.remove()
+
+        removal_complete = asyncio.Event()
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_await
+            if next_tab is None:
+                self.active = ""
+            elif removing_active_tab:
+                self.active = next_tab.id
+                next_tab.add_class("-active")
 
-            removal_complete = asyncio.Event()
+            self.call_after_refresh(self._highlight_active, animate=True)
+            removal_complete.set()
 
-            async def remove_after_refresh():
-                if next_tab is None:
-                    self.active = ""
-                elif removing_active_tab:
-                    self.active = next_tab.id
-                    next_tab.add_class("-active")
-                self._highlight_active(animate=True)
-
-                removal_complete.set()
-
-            self.call_after_refresh(remove_after_refresh)
+        async def wait_for_state() -> None:
             await removal_complete.wait()
 
-        return AwaitComplete(do_remove())
+        return AwaitComplete(do_remove(), wait_for_state())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
