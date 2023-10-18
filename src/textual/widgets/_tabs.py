@@ -502,7 +502,7 @@ class Tabs(Widget, can_focus=True):
         next_tab = self._next_active
         remove_await = remove_tab.remove()
 
-        removal_complete = asyncio.Event()
+        highlight_updated = asyncio.Event()
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
@@ -514,12 +514,12 @@ class Tabs(Widget, can_focus=True):
                 next_tab.add_class("-active")
 
             self.call_after_refresh(self._highlight_active, animate=True)
-            removal_complete.set()
+            highlight_updated.set()
 
-        async def wait_for_state() -> None:
-            await removal_complete.wait()
+        async def wait_for_highlight_update() -> None:
+            await highlight_updated.wait()
 
-        return AwaitComplete(do_remove(), wait_for_state())
+        return AwaitComplete(do_remove(), wait_for_highlight_update())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
