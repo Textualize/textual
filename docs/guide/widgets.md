@@ -24,7 +24,7 @@ Let's create a simple custom widget to display a greeting.
 --8<-- "docs/examples/guide/widgets/hello01.py"
 ```
 
-The three highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
+The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
 
 Note that the text contains tags in square brackets, i.e. `[b]`. This is [console markup](https://rich.readthedocs.io/en/latest/markup.html) which allows you to embed various styles within your content. If you run this you will find that `World` is in bold.
 
@@ -59,7 +59,7 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 === "hello03.py"
 
-    ```python title="hello03.py" hl_lines="24-36"
+    ```python title="hello03.py" hl_lines="23-35"
     --8<-- "docs/examples/guide/widgets/hello03.py"
     ```
 
@@ -88,7 +88,7 @@ Here's the Hello example again, this time the widget has embedded default CSS:
 
 === "hello04.py"
 
-    ```python title="hello04.py" hl_lines="27-36"
+    ```python title="hello04.py" hl_lines="26-35"
     --8<-- "docs/examples/guide/widgets/hello04.py"
     ```
 
@@ -131,7 +131,7 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 
 === "hello05.py"
 
-    ```python title="hello05.py"  hl_lines="24-33"
+    ```python title="hello05.py"  hl_lines="23-32"
     --8<-- "docs/examples/guide/widgets/hello05.py"
     ```
 
