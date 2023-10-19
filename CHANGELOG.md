@@ -14,6 +14,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
 
+### Added
+
+- Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
+
 ### Changed
 
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
