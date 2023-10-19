@@ -80,6 +80,9 @@ class Underline(Widget):
             background_style=Style.from_color(bar_style.bgcolor),
         )
 
+    def _on_mount(self, event: events.Mount) -> None:
+        print("Underline mounted")
+
     def _on_click(self, event: events.Click):
         """Catch clicks, so that the underline can activate the tabs."""
         event.stop()
@@ -487,6 +490,7 @@ class Tabs(Widget, can_focus=True):
         Returns:
             An optionally awaitable object that waits for the tab to be removed.
         """
+        print("Top of remove_tab")
         if not tab_or_id:
             return AwaitComplete(self.app._remove_nodes([], None)())
 
@@ -513,7 +517,6 @@ class Tabs(Widget, can_focus=True):
                 self.active = next_tab.id
                 next_tab.add_class("-active")
 
-            self.call_after_refresh(self._highlight_active, animate=True)
             highlight_updated.set()
 
         async def wait_for_highlight_update() -> None:
@@ -537,6 +540,7 @@ class Tabs(Widget, can_focus=True):
 
     def _on_mount(self, _: Mount) -> None:
         """Make the first tab active."""
+        print("Top of on_mount")
         if self._first_active is not None:
             self.active = self._first_active
         if not self.active:
@@ -557,15 +561,17 @@ class Tabs(Widget, can_focus=True):
     def watch_active(self, previously_active: str, active: str) -> None:
         """Handle a change to the active tab."""
         if active:
+            print("Top of watch active. (inside if active)")
             try:
                 active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
             except NoMatches:
                 return
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
-            self.call_later(self._highlight_active, animate=previously_active != "")
+            self._highlight_active(animate=previously_active != "")
             self.post_message(self.TabActivated(self, active_tab))
         else:
+            print("Top of watch active. (not active branch)")
             underline = self.query_one(Underline)
             underline.highlight_start = 0
             underline.highlight_end = 0

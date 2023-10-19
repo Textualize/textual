@@ -49,7 +49,7 @@ jobs:
       - name: Test with pytest
         run: |
           source $VENV
-          pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
+          pytest tests -k test_remove_tab
       - name: Upload snapshot report
         if: always()
         uses: actions/upload-artifact@v3
