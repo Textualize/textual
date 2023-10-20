@@ -1,29 +1,46 @@
 from __future__ import annotations
 
+import functools
 import re
-import unicodedata
-from typing import Any, Callable, Generator, Iterable
+from typing import Any, Callable, Generator, Iterable, Literal, Set, Tuple
 
 from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
-from .keys import KEY_NAME_REPLACEMENTS, _character_to_key
+from .keys import Keys, _character_to_key
 
-# When trying to determine whether the current sequence is a supported/valid
-# escape sequence, at which length should we give up and consider our search
-# to be unsuccessful?
-_MAX_SEQUENCE_SEARCH_THRESHOLD = 20
+_ESCAPE = "\x1b"
 
-_re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
-_re_terminal_mode_response = re.compile(
-    "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
-)
-_re_bracketed_paste_start = re.compile(r"^\x1b\[200~$")
-_re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
+# Usually "alt" or "meta"
+ALT_NAME = "alt"
+
+# Sequences that define the beginning and end of bracketed pasting.
+_BRACKETED_PASTE_START = "\x1b[200~"
+_BRACKETED_PASTE_END = "\x1b[201~"
+
+# Maximum length of any escape sequence.
+_MAX_ESCAPE_SEQUENCE_LENGTH = 20
 
 
 class XTermParser(Parser[events.Event]):
-    _re_sgr_mouse = re.compile(r"\x1b\[<(\d+);(\d+);(\d+)([Mm])")
+    _re_terminal_mode_report = re.compile(
+        # fmt: off
+        r"^\x1b\[\?"
+        r"(?P<mode_id>\d+);"
+        r"(?P<setting_parameter>\d)"
+        r"\$y$"
+        # fmt: on
+    )
+    _re_mouse_event = re.compile(
+        # fmt: off
+        r"^\x1b\["
+        r"<(?P<buttons>\d+);"
+        r"(?P<x>\d+);"
+        r"(?P<y>\d+)"
+        r"(?P<state>[Mm])"
+        r"$"
+        # fmt: on
+    )
 
     def __init__(
         self,
@@ -45,216 +62,324 @@ class XTermParser(Parser[events.Event]):
         self.debug_log(f"FEED {data!r}")
         return super().feed(data)
 
-    def parse_mouse_code(self, code: str) -> events.Event | None:
-        sgr_match = self._re_sgr_mouse.match(code)
-        if sgr_match:
-            _buttons, _x, _y, state = sgr_match.groups()
-            buttons = int(_buttons)
-            x = int(_x) - 1
-            y = int(_y) - 1
-            delta_x = x - self.last_x
-            delta_y = y - self.last_y
-            self.last_x = x
-            self.last_y = y
-            event_class: type[events.MouseEvent]
+    def _more_data_available(self) -> bool:
+        # Bytes have been read but not consumed yet?
+        peek = yield self.peek_buffer()
+        if peek:
+            return True
 
-            if buttons & 64:
-                event_class = (
-                    events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
-                )
-                button = 0
-            else:
-                if buttons & 32:
-                    event_class = events.MouseMove
-                else:
-                    event_class = events.MouseDown if state == "M" else events.MouseUp
+        # Bytes buffered by the OS?
+        more_data = self.more_data()
+        if more_data:
+            return True
 
-                button = (buttons + 1) & 3
+        return False
 
-            event = event_class(
-                x,
-                y,
-                delta_x,
-                delta_y,
-                button,
-                bool(buttons & 4),
-                bool(buttons & 8),
-                bool(buttons & 16),
-                screen_x=x,
-                screen_y=y,
-            )
-            return event
-        return None
+    @functools.cached_property
+    def _known_escape_sequences(self) -> set[str]:
+        return {
+            sequence
+            for sequence in ANSI_SEQUENCES_KEYS
+            if sequence[0] == _ESCAPE and len(sequence) >= 2
+        }.union(
+            {
+                # We only need _BRACKETED_PASTE_START to detect the beginning of
+                # a paste. _parse_bracketed_paste() finds _BRACKETED_PASTE_END.
+                _BRACKETED_PASTE_START,
+            }
+        )
 
-    _reissued_sequence_debug_book: Callable[[str], None] | None = None
-    """INTERNAL USE ONLY!
-
-    If this property is set to a callable, it will be called *instead* of
-    the reissued sequence being emitted as key events.
-    """
-
-    def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
-        ESC = "\x1b"
-        read1 = self.read1
-        sequence_to_key_events = self._sequence_to_key_events
-        more_data = self.more_data
-        paste_buffer: list[str] = []
-        bracketed_paste = False
-        use_prior_escape = False
-
-        def reissue_sequence_as_keys(reissue_sequence: str) -> None:
-            if self._reissued_sequence_debug_book is not None:
-                self._reissued_sequence_debug_book(reissue_sequence)
-                return
-            for character in reissue_sequence:
-                key_events = sequence_to_key_events(character)
-                for event in key_events:
-                    if event.key == "escape":
-                        event = events.Key("circumflex_accent", "^")
-                    on_token(event)
-
-        while not self.is_eof:
-            if not bracketed_paste and paste_buffer:
-                # We're at the end of the bracketed paste.
-                # The paste buffer has content, but the bracketed paste has finished,
-                # so we flush the paste buffer. We have to remove the final character
-                # since if bracketed paste has come to an end, we'll have added the
-                # ESC from the closing bracket, since at that point we didn't know what
-                # the full escape code was.
-                pasted_text = "".join(paste_buffer[:-1])
-                # Note the removal of NUL characters: https://github.com/Textualize/textual/issues/1661
-                on_token(events.Paste(pasted_text.replace("\x00", "")))
-                paste_buffer.clear()
-
-            character = ESC if use_prior_escape else (yield read1())
-            use_prior_escape = False
-
-            if bracketed_paste:
-                paste_buffer.append(character)
-
-            self.debug_log(f"character={character!r}")
-            if character == ESC:
-                # Could be the escape key was pressed OR the start of an escape sequence
-                sequence: str = character
-                if not bracketed_paste:
-                    # TODO: There's nothing left in the buffer at the moment,
-                    #  but since we're on an escape, how can we be sure that the
-                    #  data that next gets fed to the parser isn't an escape sequence?
-
-                    #  This problem arises when an ESC falls at the end of a chunk.
-                    #  We'll be at an escape, but peek_buffer will return an empty
-                    #  string because there's nothing in the buffer yet.
-
-                    #  This code makes an assumption that an escape sequence will never be
-                    #  "chopped up", so buffers would never contain partial escape sequences.
-                    peek_buffer = yield self.peek_buffer()
-                    if not peek_buffer:
-                        # An escape arrived without any following characters
-                        on_token(events.Key("escape", "\x1b"))
-                        continue
-                    if peek_buffer and peek_buffer[0] == ESC:
-                        # There is an escape in the buffer, so ESC ESC has arrived
-                        yield read1()
-                        on_token(events.Key("escape", "\x1b"))
-                        # If there is no further data, it is not part of a sequence,
-                        # So we don't need to go in to the loop
-                        if len(peek_buffer) == 1 and not more_data():
-                            continue
-
-                # Look ahead through the suspected escape sequence for a match
-                while True:
-                    # If we run into another ESC at this point, then we've failed
-                    # to find a match, and should issue everything we've seen within
-                    # the suspected sequence as Key events instead.
-                    sequence_character = yield read1()
-                    new_sequence = sequence + sequence_character
-
-                    threshold_exceeded = len(sequence) > _MAX_SEQUENCE_SEARCH_THRESHOLD
-                    found_escape = sequence_character and sequence_character == ESC
-
-                    if threshold_exceeded:
-                        # We exceeded the sequence length threshold, so reissue all the
-                        # characters in that sequence as key-presses.
-                        reissue_sequence_as_keys(new_sequence)
-                        break
-
-                    if found_escape:
-                        # We've hit an escape, so we need to reissue all the keys
-                        # up to but not including it, since this escape could be
-                        # part of an upcoming control sequence.
-                        use_prior_escape = True
-                        reissue_sequence_as_keys(sequence)
-                        break
-
-                    sequence = new_sequence
-
-                    self.debug_log(f"sequence={sequence!r}")
-
-                    bracketed_paste_start_match = _re_bracketed_paste_start.match(
-                        sequence
-                    )
-                    if bracketed_paste_start_match is not None:
-                        bracketed_paste = True
-                        break
-
-                    bracketed_paste_end_match = _re_bracketed_paste_end.match(sequence)
-                    if bracketed_paste_end_match is not None:
-                        bracketed_paste = False
-                        break
-
-                    if not bracketed_paste:
-                        # Was it a pressed key event that we received?
-                        key_events = list(sequence_to_key_events(sequence))
-                        for key_event in key_events:
-                            on_token(key_event)
-                        if key_events:
-                            break
-                        # Or a mouse event?
-                        mouse_match = _re_mouse_event.match(sequence)
-                        if mouse_match is not None:
-                            mouse_code = mouse_match.group(0)
-                            event = self.parse_mouse_code(mouse_code)
-                            if event:
-                                on_token(event)
-                            break
-
-                        # Or a mode report?
-                        # (i.e. the terminal saying it supports a mode we requested)
-                        mode_report_match = _re_terminal_mode_response.match(sequence)
-                        if mode_report_match is not None:
-                            if (
-                                mode_report_match["mode_id"] == "2026"
-                                and int(mode_report_match["setting_parameter"]) > 0
-                            ):
-                                on_token(messages.TerminalSupportsSynchronizedOutput())
-                            break
-            else:
-                if not bracketed_paste:
-                    for event in sequence_to_key_events(character):
-                        on_token(event)
-
-    def _sequence_to_key_events(
-        self, sequence: str, _unicode_name=unicodedata.name
-    ) -> Iterable[events.Key]:
-        """Map a sequence of code points on to a sequence of keys.
+    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
+        """Translate sequence of characters to sequence of Key events.
 
         Args:
-            sequence: Sequence of code points.
+            sequence: Complete sequence of characters.
 
         Returns:
             Keys
         """
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         if keys is not None:
-            for key in keys:
-                yield events.Key(key.value, sequence if len(sequence) == 1 else None)
+            if len(keys) == 2 and keys[0] == Keys.Escape:
+                # Alt key combination from special sequence, e.g. Alt+F1.
+                yield events.Key(
+                    key=f"{ALT_NAME}+{keys[1].value}",
+                    character=None,
+                )
+            else:
+                # Sequence maps to a single key or a sequence that doesn't
+                # start with Escape/Alt.
+                for key in keys:
+                    yield events.Key(
+                        key=key.value,
+                        character=sequence if len(sequence) == 1 else None,
+                    )
+
+        elif len(sequence) == 2 and sequence[0] == _ESCAPE:
+            # Regular Alt combination (e.g. Alt+f, Alt+Enter) or Alt+Ctrl
+            # combination (e.g. Alt+Ctrl+d).
+            if sequence[1] in ANSI_SEQUENCES_KEYS:
+                # The byte after Alt is a control character or otherwise special
+                # (Enter, Space, Backspace, Ctrl+c, etc) and we need the name,
+                # not the literal byte.
+                keys = ANSI_SEQUENCES_KEYS[sequence[1]]
+                assert len(keys) == 1, keys
+                key_name = keys[0].value
+            else:
+                # ASCII or Unicode character with a length of 1, e.g. "a", "%",
+                # "ñ", etc.
+                key_name = sequence[1]
+            yield events.Key(
+                key=f"{ALT_NAME}+{key_name}",
+                character=None,
+            )
+
         elif len(sequence) == 1:
-            try:
-                if not sequence.isalnum():
-                    name = _character_to_key(sequence)
-                else:
-                    name = sequence
-                name = KEY_NAME_REPLACEMENTS.get(name, name)
-                yield events.Key(name, sequence)
-            except:
-                yield events.Key(sequence, sequence)
+            # Not an escape sequence.
+            name = _character_to_key(sequence)
+            yield events.Key(name, sequence)
+
+        elif not self._re_private_escape_sequence.search(sequence):
+            self.debug_log("Exploding escape sequence:", repr(sequence))
+            for character in sequence:
+                yield from self._sequence_to_key_events(character)
+
+        else:
+            self.debug_log("Ignoring unknown private escape sequence:", repr(sequence))
+
+        # Any other sequences should be handled by a _parse_*() method or they
+        # will be silently ignored.
+
+    def _send_sequence_as_key_events(
+        self, sequence: str, on_token: TokenCallback
+    ) -> None:
+        for event in self._sequence_to_key_events(sequence):
+            self.debug_log(event)
+            on_token(event)
+
+    # Match escape sequences.
+    #
+    # - An escape sequence starts with 0x1b followed by ASCII characters from
+    #   0x20 (" ") to 0x7e ("~") (inclusive).
+    #
+    # - Alt+Enter and Alt+Ctrl+<letter> sends 0x1b followed by a ASCII control
+    #   character from 0x00 to 0x1f (inclusive). Note that Backspace (0x7f) is
+    #   outside of that range.
+    #
+    # - Escape key sends 0x1b. Alt+Escape sends 0x1b0x1b.
+    #
+    # - VT terminals (rxvt) send two 0x1b for many Alt combinations,
+    #   e.g. Alt+F1.
+    #
+    # References:
+    # https://en.wikipedia.org/wiki/ANSI_escape_code#Terminal_input_sequences
+    # https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+    _re_escape_sequence = re.compile(r"^\x1b{1,2}[\x21-\x7e]*$")
+
+    @functools.cached_property
+    def _re_alt_key_combination_only(self) -> re.Pattern:
+        # Match escape sequences that cannot be the beginning of any sequence
+        # from ANSI_SEQUENCES_KEYS. For example, "\x1bf" should match because no
+        # escape sequence begins with "\x1bf", but many escape sequences begin
+        # with "\x1b[", so that must not match.
+        continuation_characters = {
+            sequence[1] for sequence in self._known_escape_sequences
+        }
+        return re.compile(
+            # fmt: off
+            r"^" r"\x1b[^"
+            + re.escape("".join(continuation_characters))
+            + "]$"
+            + r"$"
+            # fmt: on
+        )
+
+    # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_(Control_Sequence_Introducer)_sequences
+    _re_private_escape_sequence = re.compile(
+        r"^\x1b"
+        r"(?:"
+        # Any parameter bytes are "<", ">", "=" or "?".
+        r"[^\x1b]*[\<\=\>\?][^\x1b]*"
+        r"|"
+        # The final byte is "p-z", "{", "|", "}" or "~".
+        r"[^\x1b]*[p-z\{\|\}\~]"
+        r")$"
+    )
+
+    def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
+        """Read input and pass each complete sequence to _parse(). A complete
+        sequence can be a single character (e.g. "a", "ñ" or "\x03" / Ctrl+c)
+        or an escape ("\x1b") followed by one or more non-escape characters.
+        """
+        sequence: str = ""
+        remainder: str = ""
+        while True:
+            sequence = remainder
+            remainder = ""
+            # self.debug_log("parse(): old sequence:", repr(sequence))
+            # self.debug_log("parse(): read1: ...")
+            if not sequence:
+                sequence += yield self.read1()
+                self.debug_log("parse(): Read sequence:", repr(sequence))
+
+            if sequence[0] == _ESCAPE:
+                # Read until sequence is complete or reading times out.
+                while (yield from self._more_data_available()):
+                    sequence += yield self.read1()
+
+                    # Optimization that triggers mouse events immediately
+                    # without waiting for a timeout.
+                    if self._re_mouse_event.search(sequence):
+                        self.debug_log("parse(): Mouse sequence:", repr(sequence))
+                        break
+
+                    # Optimization that triggers ANSI_SEQUENCES_KEYS immediately
+                    # without waiting for a timeout.
+                    #
+                    # NOTE: This is problematic if any sequence in
+                    #       ANSI_SEQUENCES_KEYS starts with the same characters
+                    #       as any other complete sequence. For example, with
+                    #       the sequences "\x1bfoo" and "\x1bfooO", "\x1bfooO"
+                    #       is impossible to reach.
+                    elif sequence in self._known_escape_sequences:
+                        self.debug_log(
+                            "parse(): Known escape sequence:", repr(sequence)
+                        )
+                        break
+
+                    # Optimization that triggers most Alt key combinations
+                    # immediately without waiting for a timeout.
+                    elif self._re_alt_key_combination_only.search(sequence):
+                        self.debug_log("parse(): Alt key combination:", repr(sequence))
+                        break
+
+                    # Continue completing escape sequence until we find an
+                    # invalid character.
+                    elif not self._re_escape_sequence.search(sequence):
+                        # We have read one character too much, the one that
+                        # tells us the unknown escape sequence ended.
+                        remainder = sequence[-1:]
+                        sequence = sequence[:-1]
+                        self.debug_log(
+                            "parse(): Escape sequence ended:", repr(sequence)
+                        )
+                        break
+
+                    else:
+                        self.debug_log(
+                            "parse(): Unknown escape sequence continued:",
+                            repr(sequence),
+                        )
+
+                self.debug_log(
+                    "parse(): sequence:", repr(sequence), "remainder:", repr(remainder)
+                )
+                yield from self._parse(sequence, on_token)
+                sequence = ""
+
+            else:
+                self.debug_log("parse(): Not an escape sequence:", repr(sequence))
+                yield from self._parse(sequence, on_token)
+                sequence = ""
+
+    def _parse(
+        self,
+        sequence: str,
+        on_token: TokenCallback,
+    ) -> Generator[Awaitable, str, None]:
+        if sequence == _BRACKETED_PASTE_START:
+            self.debug_log("Bracketed paste starts:", repr(sequence))
+            yield from self._parse_bracketed_paste(on_token)
+
+        elif mouse_event_match := self._re_mouse_event.match(sequence):
+            self._parse_mouse_event(
+                buttons=int(mouse_event_match["buttons"]),
+                position=(
+                    int(mouse_event_match["x"]) - 1,
+                    int(mouse_event_match["y"]) - 1,
+                ),
+                state=mouse_event_match["state"],
+                on_token=on_token,
+            )
+
+        # Mode report (i.e. the terminal saying it supports a mode we requested)
+        elif mode_report_match := self._re_terminal_mode_report.match(sequence):
+            self._parse_mode_report(
+                mode_id=mode_report_match["mode_id"],
+                setting_parameter=int(mode_report_match["setting_parameter"]),
+                on_token=on_token,
+            )
+
+        else:
+            self._send_sequence_as_key_events(sequence, on_token)
+
+    def _parse_bracketed_paste(self, on_token: TokenCallback) -> Generator[None]:
+        paste_buffer: list[str] = []
+        while (yield from self._more_data_available()):
+            character = yield self.read1()
+            paste_buffer.append(character)
+            tail = "".join(paste_buffer[-len(_BRACKETED_PASTE_END) :])
+            if tail == _BRACKETED_PASTE_END:
+                paste_buffer = paste_buffer[: -len(_BRACKETED_PASTE_END)]
+                break
+
+        pasted_text = "".join(paste_buffer)
+        self.debug_log("Pasted:", repr(pasted_text))
+
+        # Remove NUL bytes inserted by Windows Terminal:
+        # https://github.com/Textualize/textual/issues/1661
+        pasted_text = pasted_text.replace("\x00", "")
+
+        on_token(events.Paste(pasted_text))
+
+    def _parse_mouse_event(
+        self,
+        buttons: int,
+        position: Tuple[int, int],
+        state: Literal["m", "M"],
+        on_token: TokenCallback,
+    ) -> None:
+        x, y = position
+        delta_x = x - self.last_x
+        delta_y = y - self.last_y
+        self.last_x = x
+        self.last_y = y
+        event_class: type[events.MouseEvent]
+
+        if buttons & 64:
+            event_class = (
+                events.MouseScrollDown if buttons & 1 else events.MouseScrollUp
+            )
+            button = 0
+        else:
+            if buttons & 32:
+                event_class = events.MouseMove
+            else:
+                event_class = events.MouseDown if state == "M" else events.MouseUp
+
+            button = (buttons + 1) & 3
+
+        event = event_class(
+            x,
+            y,
+            delta_x,
+            delta_y,
+            button,
+            shift=bool(buttons & 4),
+            meta=bool(buttons & 8),
+            ctrl=bool(buttons & 16),
+            screen_x=x,
+            screen_y=y,
+        )
+        self.debug_log("Mouse event:", repr(event))
+        on_token(event)
+
+    def _parse_mode_report(
+        self,
+        mode_id: str,
+        setting_parameter: int,
+        on_token: TokenCallback,
+    ) -> None:
+        self.debug_log("Terminal mode report:", repr(mode_id), repr(setting_parameter))
+        if mode_id == "2026" and int(setting_parameter) > 0:
+            on_token(messages.TerminalSupportsSynchronizedOutput())
