@@ -426,7 +426,7 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
-                    if value is None:
+                    if value is None and not is_default_rules:
                         initial.add(key)
                     rule_attributes[key].append((rule_specificity, value))
 
