@@ -411,6 +411,10 @@ class Stylesheet:
         # Collect the rules defined in the stylesheet
         node._has_hover_style = False
         node._has_focus_within = False
+
+        # Rules that may have an initial value
+        initial: set[str] = set()
+
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
@@ -422,6 +426,8 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
+                    if value is None:
+                        initial.add(key)
                     rule_attributes[key].append((rule_specificity, value))
 
         if not rule_attributes:
@@ -436,6 +442,28 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
+
+        # Set initial values
+        for initial_rule_name in initial:
+            # Rules with a value of None should be set to the default value
+            if node_rules[initial_rule_name] is None:
+                # Exclude non default values
+                # rule[0] is the specificity, rule[0][1] is 0 for default
+                default_rules = [
+                    rule
+                    for rule in rule_attributes[initial_rule_name]
+                    if not rule[0][0]
+                ]
+                if default_rules:
+                    # There is a default value
+                    node_rules[initial_rule_name] = max(
+                        default_rules,
+                        key=get_first_item,
+                    )[1]
+                else:
+                    # No default value
+                    node_rules[initial_rule_name] = None
+
         self.replace_rules(node, node_rules, animate=animate)
 
         component_classes = node._get_component_classes()

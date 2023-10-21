@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `initial` to all css rules, which restores defaults
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS)
 
 ## [0.40.0] - 2023-10-11
 

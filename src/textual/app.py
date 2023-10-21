@@ -372,6 +372,7 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
         """
+        self._start_time = perf_counter()
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
@@ -2239,6 +2240,9 @@ class App(Generic[ReturnType], DOMNode):
 
         May be used as a hook for any operations that should run first.
         """
+
+        ready_time = (perf_counter() - self._start_time) * 1000
+        self.log.info(f"ready in {ready_time:0.0f} milliseconds")
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
