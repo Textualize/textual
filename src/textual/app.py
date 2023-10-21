@@ -2231,6 +2231,7 @@ class App(Generic[ReturnType], DOMNode):
             self._handle_exception(error)
 
     async def _pre_process(self) -> bool:
+        """Special case for the app, which doesn't need the functionality in MessagePump."""
         return True
 
     async def _ready(self) -> None:
