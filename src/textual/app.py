@@ -375,7 +375,6 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._panicked = False
         self._filters: list[LineFilter] = []
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
@@ -2029,7 +2028,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             *renderables: Text or Rich renderable(s) to display on exit.
         """
-        self._panicked = True
         assert all(
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
@@ -2052,7 +2050,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
-        self._panicked = True
         self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
@@ -2158,9 +2155,6 @@ class App(Generic[ReturnType], DOMNode):
 
         async def run_process_messages():
             """The main message loop, invoke below."""
-
-            if self._panicked:
-                return
 
             async def invoke_ready_callback() -> None:
                 if ready_callback is not None:
