@@ -456,12 +456,11 @@ class Stylesheet:
                 ]
                 if default_rules:
                     # There is a default value
-                    node_rules[initial_rule_name] = max(  # type: ignore[literal-required]
+                    new_value = max(
                         default_rules,
                         key=get_first_item,
-                    )[
-                        1
-                    ]
+                    )[1]
+                    node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
                 else:
                     # No default value
                     node_rules[initial_rule_name] = None  # type: ignore[literal-required]
