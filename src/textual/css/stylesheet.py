@@ -446,7 +446,7 @@ class Stylesheet:
         # Set initial values
         for initial_rule_name in initial:
             # Rules with a value of None should be set to the default value
-            if node_rules[initial_rule_name] is None:
+            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
                 # Exclude non default values
                 # rule[0] is the specificity, rule[0][1] is 0 for default
                 default_rules = [
@@ -456,13 +456,15 @@ class Stylesheet:
                 ]
                 if default_rules:
                     # There is a default value
-                    node_rules[initial_rule_name] = max(
+                    node_rules[initial_rule_name] = max(  # type: ignore[literal-required]
                         default_rules,
                         key=get_first_item,
-                    )[1]
+                    )[
+                        1
+                    ]
                 else:
                     # No default value
-                    node_rules[initial_rule_name] = None
+                    node_rules[initial_rule_name] = None  # type: ignore[literal-required]
 
         self.replace_rules(node, node_rules, animate=animate)
 
