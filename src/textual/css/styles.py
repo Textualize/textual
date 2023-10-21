@@ -648,7 +648,6 @@ class Styles(StylesBase):
     _updates: int = 0
 
     important: set[str] = field(default_factory=set)
-    initial: dict[str, None] = field(default_factory=dict)
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
@@ -656,7 +655,6 @@ class Styles(StylesBase):
             node=self.node,
             _rules=self.get_rules(),
             important=self.important,
-            initial=self.initial,
         )
 
     def has_rule(self, rule: str) -> bool:
@@ -720,7 +718,6 @@ class Styles(StylesBase):
         """Reset the rules to initial state."""
         self._updates += 1
         self._rules.clear()  # type: ignore
-        self.initial.clear()
 
     def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
@@ -764,9 +761,7 @@ class Styles(StylesBase):
                 ),
                 rule_value,
             )
-            for rule_name, rule_value in chain(
-                self._rules.items(), self.initial.items()
-            )
+            for rule_name, rule_value in self._rules.items()
         ]
 
         return rules
