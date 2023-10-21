@@ -251,13 +251,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DEFAULT_CSS = """
     DataTable:dark {
-        background:;
+        background: unset;
     }
     DataTable {
         background: $surface ;
         color: $text;
         height: auto;
-        max-height: 100%;
+        max-height: 100vh;
     }
     DataTable > .datatable--header {
         text-style: bold;

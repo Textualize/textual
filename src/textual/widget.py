@@ -246,7 +246,7 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;
+        link-background: unset;
         link-color: $text;
         link-style: underline;
         link-hover-background: $accent;

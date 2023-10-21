@@ -375,6 +375,7 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
+        self._panicked = False
         self._filters: list[LineFilter] = []
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
@@ -1348,6 +1349,7 @@ class App(Generic[ReturnType], DOMNode):
         try:
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
+
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
@@ -2027,7 +2029,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             *renderables: Text or Rich renderable(s) to display on exit.
         """
-
+        self._panicked = True
         assert all(
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
@@ -2039,6 +2041,7 @@ class App(Generic[ReturnType], DOMNode):
 
         pre_rendered = [Segments(render(renderable)) for renderable in renderables]
         self._exit_renderables.extend(pre_rendered)
+
         self._close_messages_no_wait()
 
     def _handle_exception(self, error: Exception) -> None:
@@ -2049,6 +2052,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
+        self._panicked = True
         self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
@@ -2088,7 +2092,7 @@ class App(Generic[ReturnType], DOMNode):
             self.error_console.print(self._exit_renderables[0])
             if error_count > 1:
                 self.error_console.print(
-                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]--dev[/] to see all errors.",
+                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]textual run --dev[/] to see all errors.",
                     markup=True,
                 )
 
@@ -2154,6 +2158,9 @@ class App(Generic[ReturnType], DOMNode):
 
         async def run_process_messages():
             """The main message loop, invoke below."""
+
+            if self._panicked:
+                return
 
             async def invoke_ready_callback() -> None:
                 if ready_callback is not None:
@@ -2229,8 +2236,8 @@ class App(Generic[ReturnType], DOMNode):
         except Exception as error:
             self._handle_exception(error)
 
-    async def _pre_process(self) -> None:
-        pass
+    async def _pre_process(self) -> bool:
+        return True
 
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.
@@ -3023,10 +3030,14 @@ class App(Generic[ReturnType], DOMNode):
     def _refresh_notifications(self) -> None:
         """Refresh the notifications on the current screen, if one is available."""
         # If we've got a screen to hand...
-        if self.screen is not None:
+        try:
+            screen = self.screen
+        except ScreenStackError:
+            pass
+        else:
             try:
                 # ...see if it has a toast rack.
-                toast_rack = self.screen.get_child_by_type(ToastRack)
+                toast_rack = screen.get_child_by_type(ToastRack)
             except NoMatches:
                 # It doesn't. That's fine. Either there won't ever be one,
                 # or one will turn up. Things will work out later.

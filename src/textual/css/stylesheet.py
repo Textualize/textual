@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
+from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
 from typing import Iterable, NamedTuple, Sequence, cast
@@ -57,45 +58,45 @@ class StylesheetErrors:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         error_count = 0
-        for rule in self.rules:
-            for token, message in rule.errors:
-                error_count += 1
+        errors = list(
+            dict.fromkeys(chain.from_iterable(_rule.errors for _rule in self.rules))
+        )
 
-                if token.path:
-                    path = Path(token.path)
-                    filename = path.name
-                else:
-                    path = None
-                    filename = "<unknown>"
+        for token, message in errors:
+            error_count += 1
 
-                if token.referenced_by:
-                    line_idx, col_idx = token.referenced_by.location
-                else:
-                    line_idx, col_idx = token.location
-                line_no, col_no = line_idx + 1, col_idx + 1
-                path_string = (
-                    f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                )
-                link_style = Style(
-                    link=f"file://{path.absolute()}" if path else None,
-                    color="red",
-                    bold=True,
-                    italic=True,
-                )
+            if token.path:
+                path = Path(token.path)
+                filename = path.name
+            else:
+                path = None
+                filename = "<unknown>"
 
-                path_text = Text(path_string, style=link_style)
-                title = Text.assemble(Text("Error at ", style="bold red"), path_text)
-                yield ""
-                yield Panel(
-                    self._get_snippet(
-                        token.referenced_by.code if token.referenced_by else token.code,
-                        line_no,
-                    ),
-                    title=title,
-                    title_align="left",
-                    border_style="red",
-                )
-                yield Padding(message, pad=(0, 0, 1, 3))
+            if token.referenced_by:
+                line_idx, col_idx = token.referenced_by.location
+            else:
+                line_idx, col_idx = token.location
+            line_no, col_no = line_idx + 1, col_idx + 1
+            path_string = f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+            link_style = Style(
+                link=f"file://{path.absolute()}" if path else None,
+                color="red",
+                bold=True,
+                italic=True,
+            )
+            path_text = Text(path_string, style=link_style)
+            title = Text.assemble(Text("Error at ", style="bold red"), path_text)
+            yield ""
+            yield Panel(
+                self._get_snippet(
+                    token.referenced_by.code if token.referenced_by else token.code,
+                    line_no,
+                ),
+                title=title,
+                title_align="left",
+                border_style="red",
+            )
+            yield Padding(message, pad=(0, 0, 1, 3))
 
         yield ""
         yield render(
@@ -336,6 +337,7 @@ class Stylesheet:
                 raise
             if any(rule.errors for rule in css_rules):
                 error_renderable = StylesheetErrors(css_rules)
+                self._invalid_css.add(css)
                 raise StylesheetParseError(error_renderable)
             add_rules(css_rules)
         self._rules = rules

@@ -97,9 +97,17 @@ class StylesBuilder:
         raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
-        if not declaration.tokens:
+        if not declaration.name:
             return
         rule_name = declaration.name.replace("-", "_")
+
+        if not declaration.tokens:
+            self.error(
+                rule_name,
+                declaration.token,
+                f"Missing property value for '{declaration.name}:'",
+            )
+
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
@@ -117,6 +125,11 @@ class StylesBuilder:
             )
 
         tokens = declaration.tokens
+
+        # Check for unset token
+        if tokens[0].name == "token" and tokens[0].value == "unset":
+            self.styles._rules[rule_name] = None
+            return
 
         important = tokens[-1].name == "important"
         if important:
@@ -259,7 +272,7 @@ class StylesBuilder:
 
         Args:
             prefix: The prefix of the style.
-            siffixes: The suffixes to distribute amongst.
+            suffixes: The suffixes to distribute amongst.
 
         A number of styles can be set with the 'prefix' of the style,
         providing the values as a series of parameters; or they can be set

@@ -475,7 +475,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._running = True
         active_message_pump.set(self)
 
-        await self._pre_process()
+        if not await self._pre_process():
+            self._running = False
+            return
 
         try:
             await self._process_messages_loop()
@@ -486,10 +488,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
             for timer in list(self._timers):
                 timer.stop()
 
-    async def _pre_process(self) -> None:
+    async def _pre_process(self) -> bool:
         """Procedure to run before processing messages."""
         # Dispatch compose and mount messages without going through loop
         # These events must occur in this order, and at the start.
+
         try:
             await self._dispatch_message(events.Compose())
             await self._dispatch_message(events.Mount())
@@ -497,9 +500,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
+            return False
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
+        return True
 
     def _post_mount(self):
         """Called after the object has been mounted."""

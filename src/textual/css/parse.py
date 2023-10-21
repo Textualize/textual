@@ -153,11 +153,10 @@ def parse_rule_set(
         if token_name in ("whitespace", "declaration_end"):
             continue
         if token_name == "declaration_name":
-            if declaration.tokens:
-                try:
-                    styles_builder.add_declaration(declaration)
-                except DeclarationError as error:
-                    errors.append((error.token, error.message))
+            try:
+                styles_builder.add_declaration(declaration)
+            except DeclarationError as error:
+                errors.append((error.token, error.message))
             declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
         elif token_name == "declaration_set_end":
@@ -165,11 +164,10 @@ def parse_rule_set(
         else:
             declaration.tokens.append(token)
 
-    if declaration.tokens:
-        try:
-            styles_builder.add_declaration(declaration)
-        except DeclarationError as error:
-            errors.append((error.token, error.message))
+    try:
+        styles_builder.add_declaration(declaration)
+    except DeclarationError as error:
+        errors.append((error.token, error.message))
 
     rule_set = RuleSet(
         list(SelectorSet.from_selectors(rule_selectors)),
@@ -198,7 +196,6 @@ def parse_declarations(css: str, path: str) -> Styles:
 
     declaration: Declaration | None = None
     errors: list[tuple[Token, str | HelpText]] = []
-
     while True:
         token = next(tokens, None)
         if token is None:
@@ -207,7 +204,7 @@ def parse_declarations(css: str, path: str) -> Styles:
         if token_name in ("whitespace", "declaration_end", "eof"):
             continue
         if token_name == "declaration_name":
-            if declaration and declaration.tokens:
+            if declaration:
                 try:
                     styles_builder.add_declaration(declaration)
                 except DeclarationError as error:
@@ -221,7 +218,7 @@ def parse_declarations(css: str, path: str) -> Styles:
             if declaration:
                 declaration.tokens.append(token)
 
-    if declaration and declaration.tokens:
+    if declaration:
         try:
             styles_builder.add_declaration(declaration)
         except DeclarationError as error:
