@@ -251,7 +251,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DEFAULT_CSS = """
     DataTable:dark {
-        background: unset;
+        background: initial;
     }
     DataTable {
         background: $surface ;

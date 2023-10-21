@@ -3,6 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from functools import lru_cache
+from itertools import chain
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
@@ -647,10 +648,16 @@ class Styles(StylesBase):
     _updates: int = 0
 
     important: set[str] = field(default_factory=set)
+    initial: dict[str, None] = field(default_factory=dict)
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
-        return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
+        return Styles(
+            node=self.node,
+            _rules=self.get_rules(),
+            important=self.important,
+            initial=self.initial,
+        )
 
     def has_rule(self, rule: str) -> bool:
         assert rule in RULE_NAMES_SET, f"no such rule {rule!r}"
@@ -713,6 +720,7 @@ class Styles(StylesBase):
         """Reset the rules to initial state."""
         self._updates += 1
         self._rules.clear()  # type: ignore
+        self.initial.clear()
 
     def merge(self, other: StylesBase) -> None:
         """Merge values from another Styles.
@@ -756,8 +764,11 @@ class Styles(StylesBase):
                 ),
                 rule_value,
             )
-            for rule_name, rule_value in self._rules.items()
+            for rule_name, rule_value in chain(
+                self._rules.items(), self.initial.items()
+            )
         ]
+
         return rules
 
     def __rich_repr__(self) -> rich.repr.Result:

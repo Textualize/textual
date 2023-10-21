@@ -489,7 +489,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 timer.stop()
 
     async def _pre_process(self) -> bool:
-        """Procedure to run before processing messages."""
+        """Procedure to run before processing messages.
+
+        Returns:
+            `True` if successful, or `False` if any exception occurred
+
+        """
         # Dispatch compose and mount messages without going through loop
         # These events must occur in this order, and at the start.
 

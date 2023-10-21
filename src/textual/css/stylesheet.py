@@ -426,6 +426,7 @@ class Stylesheet:
 
         if not rule_attributes:
             return
+
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
         node_rules: RulesMap = cast(
@@ -476,6 +477,7 @@ class Stylesheet:
         # Styles currently used on new rules
         modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
+
         current_render_rules = styles.get_render_rules()
 
         # Calculate replacement rules (defaults + new rules)

@@ -126,15 +126,17 @@ class StylesBuilder:
 
         tokens = declaration.tokens
 
-        # Check for unset token
-        if tokens[0].name == "token" and tokens[0].value == "unset":
-            self.styles._rules[rule_name] = None
-            return
-
         important = tokens[-1].name == "important"
         if important:
             tokens = tokens[:-1]
             self.styles.important.add(rule_name)
+
+        # Check for special token(s)
+        if tokens[0].name == "token":
+            value = tokens[0].value
+            if value == "initial":
+                self.styles.initial[rule_name] = None
+                return
         try:
             process_method(declaration.name, tokens)
         except DeclarationError:
