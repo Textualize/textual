@@ -135,7 +135,8 @@ class StylesBuilder:
         if tokens[0].name == "token":
             value = tokens[0].value
             if value == "initial":
-                self.styles.initial[rule_name] = None
+                self.styles._rules[rule_name] = None
+                # self.styles.initial[rule_name] = None
                 return
         try:
             process_method(declaration.name, tokens)
