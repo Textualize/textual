@@ -13,17 +13,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
 - Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
-- Fixed CSS errors being repeated
+- Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
 
 ### Changed
 
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
 - DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
-- Breaking change: empty rules now result in an error
+- Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 
 ### Added
 
-- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS)
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
 
 ## [0.40.0] - 2023-10-11
 
