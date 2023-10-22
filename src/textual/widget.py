@@ -2934,8 +2934,8 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
-        options = self._console.options.update_dimensions(width, height).update(
-            highlight=False
+        options = self._console.options.update(
+            highlight=False, width=width, height=height
         )
 
         segments = self._console.render(renderable, options)

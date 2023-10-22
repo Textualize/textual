@@ -3,6 +3,7 @@ from __future__ import annotations
 from functools import partial
 
 import rich.repr
+from rich.align import Align
 from rich.console import RenderableType
 from rich.padding import Padding
 from rich.text import Text, TextType
@@ -12,6 +13,7 @@ from .. import events
 from ..binding import Binding
 from ..css._error_tools import friendly_list
 from ..message import Message
+from ..pad import HorizontalPad
 from ..reactive import reactive
 from ..widgets import Static
 
@@ -224,14 +226,14 @@ class Button(Static, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    def validate_label(self, label: TextType) -> TextType:
+    def validate_label(self, label: TextType) -> Text:
         """Parse markup for self.label"""
         if isinstance(label, str):
             return Text.from_markup(label)
         return label
 
     def render(self) -> RenderableType:
-        return Padding(self.label, (0, 1), expand=False)
+        return HorizontalPad(self.label, 1, 1)
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
