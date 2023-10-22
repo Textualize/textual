@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
+from functools import lru_cache
 from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
@@ -194,6 +195,7 @@ class Stylesheet:
         self.__variable_tokens = None
         self._invalid_css = set()
 
+    @lru_cache(128)
     def _parse_rules(
         self,
         css: str,
