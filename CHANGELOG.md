@@ -13,11 +13,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
 - Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
+- Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
 
 ### Changed
 
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
 
+### Added
+
+- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
 
 ## [0.40.0] - 2023-10-11
 
