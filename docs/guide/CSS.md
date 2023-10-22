@@ -456,7 +456,7 @@ Button {
 }
 ```
 
-If we want a specific button to use the default color, we can set the value to `initial`.
+If we want a specific button (or buttons) to use the default color, we can set the value to `initial`.
 For instance, if we have a widget with a (CSS) class called `dialog`, we could reset the background color of all buttons inside the dialog with the following CSS:
 
 ```sass
