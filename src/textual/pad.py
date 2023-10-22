@@ -1,4 +1,3 @@
-from rich._loop import loop_last
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.measure import Measurement
 from rich.segment import Segment
@@ -25,13 +24,12 @@ class HorizontalPad:
         new_line = Segment.line()
         left_pad = Segment(" " * self.left)
         right_pad = Segment(" " * self.right)
-        for last, line in loop_last(lines):
+        for line in lines:
             if self.left:
                 yield left_pad
             yield from line
             if self.right:
                 yield right_pad
-
             yield new_line
 
     def __rich_measure__(
