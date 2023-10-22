@@ -8,6 +8,8 @@ class HorizontalPad:
 
     def __init__(self, renderable: RenderableType, left: int, right: int) -> None:
         """
+        Initialize HorizontalPad.
+
         Args:
             renderable: A Rich renderable.
             left: Left padding.
