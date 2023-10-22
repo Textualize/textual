@@ -28,6 +28,8 @@ from .tokenize import Token, tokenize_values
 from .tokenizer import TokenError
 from .types import Specificity3, Specificity6
 
+_DEFAULT_STYLES = Styles()
+
 
 class StylesheetParseError(StylesheetError):
     def __init__(self, errors: StylesheetErrors) -> None:
@@ -416,6 +418,8 @@ class Stylesheet:
 
         # Rules that may have an initial value
         initial: set[str] = set()
+        # Rules in DEFAULT_CSS with an initial value
+        initial_defaults: set[str] = set()
 
         for rule in rules:
             is_default_rules = rule.is_default_rules
@@ -428,8 +432,11 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
-                    if value is None and not is_default_rules:
-                        initial.add(key)
+                    if value is None:
+                        if is_default_rules:
+                            initial_defaults.add(key)
+                        else:
+                            initial.add(key)
                     rule_attributes[key].append((rule_specificity, value))
 
         if not rule_attributes:
@@ -458,14 +465,25 @@ class Stylesheet:
                 ]
                 if default_rules:
                     # There is a default value
-                    new_value = max(
-                        default_rules,
-                        key=get_first_item,
-                    )[1]
+                    new_value = max(default_rules, key=get_first_item)[1]
                     node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
                 else:
                     # No default value
-                    node_rules[initial_rule_name] = None  # type: ignore[literal-required]
+                    initial_defaults.add(initial_rule_name)
+
+        # Rules in DEFAULT_CSS set to initial
+        for initial_rule_name in initial_defaults:
+            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                default_rules = [
+                    rule for rule in rule_attributes[initial_rule_name] if rule[0][0]
+                ]
+                if default_rules:
+                    # There is a default value
+                    new_value = max(default_rules, key=get_first_item)[1]
+                    node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
+                else:
+                    initial_value = getattr(_DEFAULT_STYLES, initial_rule_name)
+                    node_rules[initial_rule_name] = initial_value  # type: ignore[literal-required]
 
         self.replace_rules(node, node_rules, animate=animate)
 
