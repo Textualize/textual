@@ -3,9 +3,7 @@ from __future__ import annotations
 from functools import partial
 
 import rich.repr
-from rich.align import Align
 from rich.console import RenderableType
-from rich.padding import Padding
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
