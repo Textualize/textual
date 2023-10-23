@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from functools import lru_cache
 from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
@@ -17,6 +16,7 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
+from .._cache import LRUCache
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -135,6 +135,7 @@ class Stylesheet:
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
         self._invalid_css: set[str] = set()
+        self._parse_cache = LRUCache(64)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
@@ -196,8 +197,8 @@ class Stylesheet:
         self._variables = variables
         self.__variable_tokens = None
         self._invalid_css = set()
+        self._parse_cache.clear()
 
-    @lru_cache(128)
     def _parse_rules(
         self,
         css: str,
@@ -221,6 +222,11 @@ class Stylesheet:
         Returns:
             List of RuleSets.
         """
+        cache_key = (css, path, is_default_rules, tie_breaker, scope)
+        try:
+            return self._parse_cache[cache_key]
+        except KeyError:
+            pass
         try:
             rules = list(
                 parse(
@@ -237,6 +243,7 @@ class Stylesheet:
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
 
+        self._parse_cache[cache_key] = rules
         return rules
 
     def read(self, filename: str | PurePath) -> None:
