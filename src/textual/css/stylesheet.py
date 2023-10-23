@@ -135,7 +135,7 @@ class Stylesheet:
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
         self._invalid_css: set[str] = set()
-        self._parse_cache = LRUCache(64)
+        self._parse_cache: LRUCache[tuple, list[RuleSet]] = LRUCache(64)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
