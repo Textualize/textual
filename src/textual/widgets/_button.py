@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from functools import partial
+from typing import cast
 
 import rich.repr
-from rich.console import RenderableType
+from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
@@ -41,6 +42,7 @@ class Button(Static, can_focus=True):
         border: none;
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
+        text-align: center;
         content-align: center middle;
         text-style: bold;
     }
@@ -231,7 +233,19 @@ class Button(Static, can_focus=True):
         return label
 
     def render(self) -> RenderableType:
-        return HorizontalPad(self.label, 1, 1)
+        assert isinstance(self.label, Text)
+        label = self.label.copy()
+        label.stylize(self.rich_style)
+        return HorizontalPad(
+            label,
+            1,
+            1,
+            self.rich_style,
+            self._get_rich_justify() or "center",
+        )
+
+    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+        return cast(ConsoleRenderable, renderable)
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()

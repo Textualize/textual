@@ -2817,16 +2817,21 @@ class Widget(DOMNode):
         )
         return pseudo_classes
 
+    def _get_rich_justify(self) -> JustifyMethod | None:
+        text_justify: JustifyMethod | None = None
+        if self.styles.has_rule("text_align"):
+            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
+            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+        return text_justify
+
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         Returns:
             A new renderable.
         """
-        text_justify: JustifyMethod | None = None
-        if self.styles.has_rule("text_align"):
-            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
-            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+
+        text_justify = self._get_rich_justify()
 
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
