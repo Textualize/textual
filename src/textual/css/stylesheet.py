@@ -457,7 +457,7 @@ class Stylesheet:
             # Rules with a value of None should be set to the default value
             if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
                 # Exclude non default values
-                # rule[0] is the specificity, rule[0][1] is 0 for default
+                # rule[0] is the specificity, rule[0][0] is 0 for default rules
                 default_rules = [
                     rule
                     for rule in rule_attributes[initial_rule_name]
