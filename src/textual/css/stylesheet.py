@@ -418,7 +418,7 @@ class Stylesheet:
 
         # Rules that may be set to the special value `initial`
         initial: set[str] = set()
-        # Rules in DEFAULT_CSS with an initial value
+        # Rules in DEFAULT_CSS set to the special value `initial`
         initial_defaults: set[str] = set()
 
         for rule in rules:
