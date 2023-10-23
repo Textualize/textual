@@ -416,7 +416,7 @@ class Stylesheet:
         node._has_hover_style = False
         node._has_focus_within = False
 
-        # Rules that may have an initial value
+        # Rules that may be set to the special value `initial`
         initial: set[str] = set()
         # Rules in DEFAULT_CSS with an initial value
         initial_defaults: set[str] = set()
