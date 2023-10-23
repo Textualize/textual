@@ -2818,6 +2818,7 @@ class Widget(DOMNode):
         return pseudo_classes
 
     def _get_rich_justify(self) -> JustifyMethod | None:
+        """Get the justify method that may be passed to a Rich renderable."""
         text_justify: JustifyMethod | None = None
         if self.styles.has_rule("text_align"):
             text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
