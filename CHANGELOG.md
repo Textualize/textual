@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
 - DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
-- Improved startup time by caching CSS parsing
+- Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
 
 ### Added
 
