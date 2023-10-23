@@ -1221,7 +1221,7 @@ class App(Generic[ReturnType], DOMNode):
         tooltips: bool = False,
         notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
-    ) -> AsyncGenerator[Pilot, None]:
+    ) -> AsyncGenerator[Pilot[ReturnType], None]:
         """An asynchronous context manager for testing apps.
 
         !!! tip

@@ -94,7 +94,7 @@ This will write to the file `tests/snapshot_tests/__snapshots__/test_snapshots.a
 ## Join the community
 
 Seems a little overwhelming?
-Join our community on [Discord](https://discord.gg/uNRPEGCV) to get help!
+Join our community on [Discord](https://discord.gg/Enf6Z3qhVr) to get help!
 
 ## Makefile commands
 
