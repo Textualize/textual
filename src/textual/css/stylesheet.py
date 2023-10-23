@@ -479,11 +479,10 @@ class Stylesheet:
                 ]
                 if default_rules:
                     # There is a default value
-                    new_value = max(default_rules, key=get_first_item)[1]
-                    node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
+                    rule_value = max(default_rules, key=get_first_item)[1]
                 else:
-                    initial_value = getattr(_DEFAULT_STYLES, initial_rule_name)
-                    node_rules[initial_rule_name] = initial_value  # type: ignore[literal-required]
+                    rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
+                node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
 
         self.replace_rules(node, node_rules, animate=animate)
 

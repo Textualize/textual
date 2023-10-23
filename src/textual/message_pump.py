@@ -492,7 +492,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Procedure to run before processing messages.
 
         Returns:
-            `True` if successful, or `False` if any exception occurred
+            `True` if successful, or `False` if any exception occurred.
 
         """
         # Dispatch compose and mount messages without going through loop
