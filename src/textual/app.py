@@ -372,6 +372,7 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
         """
+        self._start_time = perf_counter()
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
@@ -1348,6 +1349,7 @@ class App(Generic[ReturnType], DOMNode):
         try:
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
+
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
@@ -2027,7 +2029,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             *renderables: Text or Rich renderable(s) to display on exit.
         """
-
         assert all(
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
@@ -2039,6 +2040,7 @@ class App(Generic[ReturnType], DOMNode):
 
         pre_rendered = [Segments(render(renderable)) for renderable in renderables]
         self._exit_renderables.extend(pre_rendered)
+
         self._close_messages_no_wait()
 
     def _handle_exception(self, error: Exception) -> None:
@@ -2088,7 +2090,7 @@ class App(Generic[ReturnType], DOMNode):
             self.error_console.print(self._exit_renderables[0])
             if error_count > 1:
                 self.error_console.print(
-                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]--dev[/] to see all errors.",
+                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]textual run --dev[/] to see all errors.",
                     markup=True,
                 )
 
@@ -2229,14 +2231,18 @@ class App(Generic[ReturnType], DOMNode):
         except Exception as error:
             self._handle_exception(error)
 
-    async def _pre_process(self) -> None:
-        pass
+    async def _pre_process(self) -> bool:
+        """Special case for the app, which doesn't need the functionality in MessagePump."""
+        return True
 
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.
 
         May be used as a hook for any operations that should run first.
         """
+
+        ready_time = (perf_counter() - self._start_time) * 1000
+        self.log.info(f"ready in {ready_time:0.0f} milliseconds")
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
@@ -3023,10 +3029,14 @@ class App(Generic[ReturnType], DOMNode):
     def _refresh_notifications(self) -> None:
         """Refresh the notifications on the current screen, if one is available."""
         # If we've got a screen to hand...
-        if self.screen is not None:
+        try:
+            screen = self.screen
+        except ScreenStackError:
+            pass
+        else:
             try:
                 # ...see if it has a toast rack.
-                toast_rack = self.screen.get_child_by_type(ToastRack)
+                toast_rack = screen.get_child_by_type(ToastRack)
             except NoMatches:
                 # It doesn't. That's fine. Either there won't ever be one,
                 # or one will turn up. Things will work out later.

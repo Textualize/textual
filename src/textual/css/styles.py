@@ -650,7 +650,11 @@ class Styles(StylesBase):
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
-        return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
+        return Styles(
+            node=self.node,
+            _rules=self.get_rules(),
+            important=self.important,
+        )
 
     def has_rule(self, rule: str) -> bool:
         assert rule in RULE_NAMES_SET, f"no such rule {rule!r}"
@@ -758,6 +762,7 @@ class Styles(StylesBase):
             )
             for rule_name, rule_value in self._rules.items()
         ]
+
         return rules
 
     def __rich_repr__(self) -> rich.repr.Result:
