@@ -99,12 +99,16 @@ class StylesheetErrors:
                 widget_text = Text(
                     f" in {widget_var}:{line_no}:{col_no}", style="bold red"
                 )
+                link_url = f"file://{link_path}" if link_path else None
             else:
                 path_string = f"{link_path or filename}:{line_no}:{col_no}"
                 widget_text = Text()
+                link_url = (
+                    f"file://{link_path}#{line_no}:{col_no}" if link_path else None
+                )
 
             link_style = Style(
-                link=f"file://{link_path}" if link_path else None,
+                link=link_url,
                 color="red",
                 bold=True,
                 italic=True,
