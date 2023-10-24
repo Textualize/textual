@@ -2242,7 +2242,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         ready_time = (perf_counter() - self._start_time) * 1000
-        self.log.info(f"ready in {ready_time:0.0f} milliseconds")
+        self.log.system(f"ready in {ready_time:0.0f} milliseconds")
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
@@ -2677,7 +2677,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         _rich_traceback_guard = True
 
-        log(
+        log.system(
             "<action>",
             namespace=namespace,
             action_name=action_name,
@@ -2693,13 +2693,13 @@ class App(Generic[ReturnType], DOMNode):
             if callable(public_method):
                 await invoke(public_method, *params)
                 return True
-            log(
+            log.system(
                 f"<action> {action_name!r} has no target."
                 f" Could not find methods '_action_{action_name}' or 'action_{action_name}'"
             )
         except SkipAction:
             # The action method raised this to explicitly not handle the action
-            log(f"<action> {action_name!r} skipped.")
+            log.system(f"<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
@@ -2744,7 +2744,7 @@ class App(Generic[ReturnType], DOMNode):
             await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log("shutdown request")
+        log.system("shutdown request")
         await self._close_messages()
 
     async def _on_resize(self, event: events.Resize) -> None:
