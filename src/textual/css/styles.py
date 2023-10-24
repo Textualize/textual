@@ -69,6 +69,7 @@ from .types import (
 if TYPE_CHECKING:
     from .._layout import Layout
     from ..dom import DOMNode
+    from .types import CSSLocation
 
 
 class RulesMap(TypedDict, total=False):
@@ -534,12 +535,14 @@ class StylesBase(ABC):
 
     @classmethod
     @lru_cache(maxsize=1024)
-    def parse(cls, css: str, path: str, *, node: DOMNode | None = None) -> Styles:
+    def parse(
+        cls, css: str, read_from: CSSLocation, *, node: DOMNode | None = None
+    ) -> Styles:
         """Parse CSS and return a Styles object.
 
         Args:
             css: Textual CSS.
-            path: Path or string indicating source of CSS.
+            read_from: Location where the CSS was read from.
             node: Node to associate with the Styles.
 
         Returns:
@@ -547,7 +550,7 @@ class StylesBase(ABC):
         """
         from .parse import parse_declarations
 
-        styles = parse_declarations(css, path)
+        styles = parse_declarations(css, read_from)
         styles.node = node
         return styles
 

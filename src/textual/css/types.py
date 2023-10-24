@@ -42,3 +42,12 @@ Overlay = Literal["none", "screen"]
 
 Specificity3 = Tuple[int, int, int]
 Specificity6 = Tuple[int, int, int, int, int, int]
+
+CSSLocation = Tuple[str, str]
+"""Represents the definition location of a piece of CSS code.
+
+The first element of the tuple is the file path from where the CSS was read.
+If the CSS was read from a Python source file, the second element contains the class
+variable from where the CSS was read (e.g., "Widget.DEFAULT_CSS"), otherwise it's an
+empty string.
+"""

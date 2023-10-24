@@ -941,10 +941,10 @@ class Widget(DOMNode):
             app: App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker, scope in self._get_default_css():
+        for read_from, css, tie_breaker, scope in self._get_default_css():
             self.app.stylesheet.add_source(
                 css,
-                path=path,
+                read_from=read_from,
                 is_default_css=True,
                 tie_breaker=tie_breaker,
                 scope=scope,

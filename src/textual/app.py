@@ -1753,20 +1753,19 @@ class App(Generic[ReturnType], DOMNode):
 
         update = False
         for path in screen.css_path:
-            if not self.stylesheet.has_source(path):
+            if not self.stylesheet.has_source((str(path), "")):
                 self.stylesheet.read(path)
                 update = True
         if screen.CSS:
             try:
-                screen_css_path = (
-                    f"{inspect.getfile(screen.__class__)}:{screen.__class__.__name__}"
-                )
+                screen_path = inspect.getfile(screen.__class__)
             except (TypeError, OSError):
-                screen_css_path = f"{screen.__class__.__name__}"
-            if not self.stylesheet.has_source(screen_css_path):
+                screen_path = ""
+            read_from = (screen_path, f"{screen.__class__.__name__}.CSS")
+            if not self.stylesheet.has_source(read_from):
                 self.stylesheet.add_source(
                     screen.CSS,
-                    path=screen_css_path,
+                    read_from=read_from,
                     is_default_css=False,
                     scope=screen._css_type_name if screen.SCOPED_CSS else "",
                 )
@@ -2127,23 +2126,22 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path:
                 self.stylesheet.read_all(self.css_path)
-            for path, css, tie_breaker, scope in self._get_default_css():
+            for read_from, css, tie_breaker, scope in self._get_default_css():
                 self.stylesheet.add_source(
                     css,
-                    path=path,
+                    read_from=read_from,
                     is_default_css=True,
                     tie_breaker=tie_breaker,
                     scope=scope,
                 )
             if self.CSS:
                 try:
-                    app_css_path = (
-                        f"{inspect.getfile(self.__class__)}:{self.__class__.__name__}"
-                    )
+                    app_path = inspect.getfile(self.__class__)
                 except (TypeError, OSError):
-                    app_css_path = f"{self.__class__.__name__}"
+                    app_path = ""
+                read_from = (app_path, f"{self.__class__.__name__}.CSS")
                 self.stylesheet.add_source(
-                    self.CSS, path=app_css_path, is_default_css=False
+                    self.CSS, read_from=read_from, is_default_css=False
                 )
         except Exception as error:
             self._handle_exception(error)

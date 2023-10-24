@@ -416,33 +416,41 @@ class DOMNode(MessagePump):
         if hasattr(self, "_classes") and self._classes:
             yield "classes", " ".join(self._classes)
 
-    def _get_default_css(self) -> list[tuple[str, str, int, str]]:
+    def _get_default_css(self) -> list[tuple[tuple[str, str], str, int, str]]:
         """Gets the CSS for this class and inherited from bases.
 
         Default CSS is inherited from base classes, unless `inherit_css` is set to
         `False` when subclassing.
 
         Returns:
-            A list of tuples containing (PATH, SOURCE, SPECIFICITY, SCOPE) for this
-                and inherited from base classes.
+            A list of tuples containing (LOCATION, SOURCE, SPECIFICITY, SCOPE) for this
+                class and inherited from base classes.
         """
 
-        css_stack: list[tuple[str, str, int, str]] = []
+        css_stack: list[tuple[tuple[str, str], str, int, str]] = []
 
-        def get_path(base: Type[DOMNode]) -> str:
-            """Get a path to the DOM Node"""
+        def get_location(base: Type[DOMNode]) -> tuple[str, str]:
+            """Get the original location of this DEFAULT_CSS.
+
+            Args:
+                base: The class from which the default css was extracted.
+
+            Returns:
+                The filename where the class was defined (if possible) and the class
+                    variable the CSS was extracted from.
+            """
             try:
-                return f"{getfile(base)}:{base.__name__}"
+                return (getfile(base), f"{base.__name__}.DEFAULT_CSS")
             except (TypeError, OSError):
-                return f"{base.__name__}"
+                return ("", f"{base.__name__}.DEFAULT_CSS")
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css: str = base.__dict__.get("DEFAULT_CSS", "").strip()
+            css: str = base.__dict__.get("DEFAULT_CSS", "")
             if css:
                 scoped: bool = base.__dict__.get("SCOPED_CSS", True)
                 css_stack.append(
                     (
-                        get_path(base),
+                        get_location(base),
                         css,
                         -tie_breaker,
                         base._css_type_name if scoped else "",
@@ -1136,7 +1144,7 @@ class DOMNode(MessagePump):
 
         if css is not None:
             try:
-                new_styles = parse_declarations(css, path="set_styles")
+                new_styles = parse_declarations(css, read_from=("set_styles", ""))
             except DeclarationError as error:
                 raise DeclarationError(error.name, error.token, error.message) from None
             self._inline_styles.merge(new_styles)
