@@ -35,6 +35,15 @@ class TextAreaApp(App):
         yield text_area
 
 
+async def test_text_setter():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        new_text = "hello\nworld\n"
+        text_area.text = new_text
+        assert text_area.text == new_text
+
+
 async def test_insert_text_start_maintain_selection_offset():
     """Ensure that we can maintain the offset between the location
     an insert happens and the location of the selection."""
