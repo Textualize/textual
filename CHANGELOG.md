@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
 - Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
+- Fixed `OptionList` event leakage from `CommandPalette` to `App`.
 
 ### Changed
 
