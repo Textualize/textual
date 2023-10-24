@@ -1604,7 +1604,8 @@ class App(Generic[ReturnType], DOMNode):
             mode: Name of the mode.
 
         Returns:
-            An optionally awaitable object indicating whether this mode
+            An optionally awaitable object which can be awaited until the screen
+            associated with the mode has been mounted.
         """
 
         stack = self._screen_stacks.get(mode, [])

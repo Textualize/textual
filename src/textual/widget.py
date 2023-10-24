@@ -8,7 +8,6 @@ from asyncio import wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
-from operator import attrgetter
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
