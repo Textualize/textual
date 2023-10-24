@@ -17,12 +17,12 @@ from textual.layouts.vertical import VerticalLayout
 class TestVariableReferenceSubstitution:
     def test_simple_reference(self):
         css = "$x: 1; #some-widget{border: $x;}"
-        variables = substitute_references(tokenize(css, ""))
+        variables = substitute_references(tokenize(css, ("", "")))
         assert list(variables) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -30,7 +30,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -38,7 +38,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=None,
@@ -46,7 +46,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value=";",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 5),
                 referenced_by=None,
@@ -54,7 +54,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 6),
                 referenced_by=None,
@@ -62,7 +62,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="selector_start_id",
                 value="#some-widget",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 7),
                 referenced_by=None,
@@ -70,7 +70,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_start",
                 value="{",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 19),
                 referenced_by=None,
@@ -78,7 +78,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_name",
                 value="border:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 20),
                 referenced_by=None,
@@ -86,7 +86,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 27),
                 referenced_by=None,
@@ -94,7 +94,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=ReferencedBy(
@@ -104,7 +104,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_end",
                 value=";",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 30),
                 referenced_by=None,
@@ -112,7 +112,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_end",
                 value="}",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 31),
                 referenced_by=None,
@@ -121,12 +121,12 @@ class TestVariableReferenceSubstitution:
 
     def test_simple_reference_no_whitespace(self):
         css = "$x:1; #some-widget{border: $x;}"
-        variables = substitute_references(tokenize(css, ""))
+        variables = substitute_references(tokenize(css, ("", "")))
         assert list(variables) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -134,7 +134,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -142,7 +142,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value=";",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=None,
@@ -150,7 +150,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 5),
                 referenced_by=None,
@@ -158,7 +158,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="selector_start_id",
                 value="#some-widget",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 6),
                 referenced_by=None,
@@ -166,7 +166,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_start",
                 value="{",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 18),
                 referenced_by=None,
@@ -174,7 +174,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_name",
                 value="border:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 19),
                 referenced_by=None,
@@ -182,7 +182,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 26),
                 referenced_by=None,
@@ -190,7 +190,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=ReferencedBy(
@@ -200,7 +200,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_end",
                 value=";",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 29),
                 referenced_by=None,
@@ -208,7 +208,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_end",
                 value="}",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 30),
                 referenced_by=None,
@@ -218,11 +218,11 @@ class TestVariableReferenceSubstitution:
     def test_undefined_variable(self):
         css = ".thing { border: $not-defined; }"
         with pytest.raises(UnresolvedVariableError):
-            list(substitute_references(tokenize(css, "")))
+            list(substitute_references(tokenize(css, ("", ""))))
 
     def test_empty_variable(self):
         css = "$x:\n* { background:$x; }"
-        result = list(substitute_references(tokenize(css, "")))
+        result = list(substitute_references(tokenize(css, ("", ""))))
         assert [(t.name, t.value) for t in result] == [
             ("variable_name", "$x:"),
             ("variable_value_end", "\n"),
@@ -238,11 +238,11 @@ class TestVariableReferenceSubstitution:
 
     def test_transitive_reference(self):
         css = "$x: 1\n$y: $x\n.thing { border: $y }"
-        assert list(substitute_references(tokenize(css, ""))) == [
+        assert list(substitute_references(tokenize(css, ("", "")))) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -250,7 +250,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -258,7 +258,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=None,
@@ -266,7 +266,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value="\n",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 5),
                 referenced_by=None,
@@ -274,7 +274,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_name",
                 value="$y:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 0),
                 referenced_by=None,
@@ -282,7 +282,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 3),
                 referenced_by=None,
@@ -290,7 +290,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=ReferencedBy(
@@ -300,7 +300,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value="\n",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 6),
                 referenced_by=None,
@@ -308,7 +308,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="selector_start_class",
                 value=".thing",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 0),
                 referenced_by=None,
@@ -316,7 +316,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 6),
                 referenced_by=None,
@@ -324,7 +324,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_start",
                 value="{",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 7),
                 referenced_by=None,
@@ -332,7 +332,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 8),
                 referenced_by=None,
@@ -340,7 +340,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_name",
                 value="border:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 9),
                 referenced_by=None,
@@ -348,7 +348,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 16),
                 referenced_by=None,
@@ -356,7 +356,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=ReferencedBy(
@@ -366,7 +366,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 19),
                 referenced_by=None,
@@ -374,7 +374,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_end",
                 value="}",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 20),
                 referenced_by=None,
@@ -383,11 +383,11 @@ class TestVariableReferenceSubstitution:
 
     def test_multi_value_variable(self):
         css = "$x: 2 4\n$y: 6 $x 2\n.thing { border: $y }"
-        assert list(substitute_references(tokenize(css, ""))) == [
+        assert list(substitute_references(tokenize(css, ("", "")))) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -395,7 +395,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -403,7 +403,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="2",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=None,
@@ -411,7 +411,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 5),
                 referenced_by=None,
@@ -419,7 +419,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="4",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 6),
                 referenced_by=None,
@@ -427,7 +427,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value="\n",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 7),
                 referenced_by=None,
@@ -435,7 +435,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_name",
                 value="$y:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 0),
                 referenced_by=None,
@@ -443,7 +443,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 3),
                 referenced_by=None,
@@ -451,7 +451,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="6",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 4),
                 referenced_by=None,
@@ -459,7 +459,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 5),
                 referenced_by=None,
@@ -467,7 +467,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="2",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=ReferencedBy(
@@ -477,7 +477,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 5),
                 referenced_by=ReferencedBy(
@@ -487,7 +487,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="4",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 6),
                 referenced_by=ReferencedBy(
@@ -497,7 +497,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 8),
                 referenced_by=None,
@@ -505,7 +505,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="2",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 9),
                 referenced_by=None,
@@ -513,7 +513,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value="\n",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 10),
                 referenced_by=None,
@@ -521,7 +521,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="selector_start_class",
                 value=".thing",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 0),
                 referenced_by=None,
@@ -529,7 +529,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 6),
                 referenced_by=None,
@@ -537,7 +537,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_start",
                 value="{",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 7),
                 referenced_by=None,
@@ -545,7 +545,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 8),
                 referenced_by=None,
@@ -553,7 +553,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_name",
                 value="border:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 9),
                 referenced_by=None,
@@ -561,7 +561,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 16),
                 referenced_by=None,
@@ -569,7 +569,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="6",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 4),
                 referenced_by=ReferencedBy(
@@ -579,7 +579,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 5),
                 referenced_by=ReferencedBy(
@@ -589,7 +589,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="2",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=ReferencedBy(
@@ -599,7 +599,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 5),
                 referenced_by=ReferencedBy(
@@ -609,7 +609,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="4",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 6),
                 referenced_by=ReferencedBy(
@@ -619,7 +619,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 8),
                 referenced_by=ReferencedBy(
@@ -629,7 +629,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="2",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 9),
                 referenced_by=ReferencedBy(
@@ -639,7 +639,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 19),
                 referenced_by=None,
@@ -647,7 +647,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_end",
                 value="}",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(2, 20),
                 referenced_by=None,
@@ -656,11 +656,11 @@ class TestVariableReferenceSubstitution:
 
     def test_variable_used_inside_property_value(self):
         css = "$x: red\n.thing { border: on $x; }"
-        assert list(substitute_references(tokenize(css, ""))) == [
+        assert list(substitute_references(tokenize(css, ("", "")))) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -668,7 +668,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -676,7 +676,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="token",
                 value="red",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=None,
@@ -684,7 +684,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value="\n",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 7),
                 referenced_by=None,
@@ -692,7 +692,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="selector_start_class",
                 value=".thing",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 0),
                 referenced_by=None,
@@ -700,7 +700,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 6),
                 referenced_by=None,
@@ -708,7 +708,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_start",
                 value="{",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 7),
                 referenced_by=None,
@@ -716,7 +716,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 8),
                 referenced_by=None,
@@ -724,7 +724,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_name",
                 value="border:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 9),
                 referenced_by=None,
@@ -732,7 +732,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 16),
                 referenced_by=None,
@@ -740,7 +740,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="token",
                 value="on",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 17),
                 referenced_by=None,
@@ -748,7 +748,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 19),
                 referenced_by=None,
@@ -756,7 +756,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="token",
                 value="red",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=ReferencedBy(
@@ -766,7 +766,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_end",
                 value=";",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 22),
                 referenced_by=None,
@@ -774,7 +774,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 23),
                 referenced_by=None,
@@ -782,7 +782,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_end",
                 value="}",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(1, 24),
                 referenced_by=None,
@@ -791,11 +791,11 @@ class TestVariableReferenceSubstitution:
 
     def test_variable_definition_eof(self):
         css = "$x: 1"
-        assert list(substitute_references(tokenize(css, ""))) == [
+        assert list(substitute_references(tokenize(css, ("", "")))) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -803,7 +803,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -811,7 +811,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="1",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 4),
                 referenced_by=None,
@@ -820,11 +820,11 @@ class TestVariableReferenceSubstitution:
 
     def test_variable_reference_whitespace_trimming(self):
         css = "$x:    123;.thing{border: $x}"
-        assert list(substitute_references(tokenize(css, ""))) == [
+        assert list(substitute_references(tokenize(css, ("", "")))) == [
             Token(
                 name="variable_name",
                 value="$x:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 0),
                 referenced_by=None,
@@ -832,7 +832,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value="    ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 3),
                 referenced_by=None,
@@ -840,7 +840,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="123",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 7),
                 referenced_by=None,
@@ -848,7 +848,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="variable_value_end",
                 value=";",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 10),
                 referenced_by=None,
@@ -856,7 +856,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="selector_start_class",
                 value=".thing",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 11),
                 referenced_by=None,
@@ -864,7 +864,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_start",
                 value="{",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 17),
                 referenced_by=None,
@@ -872,7 +872,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_name",
                 value="border:",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 18),
                 referenced_by=None,
@@ -880,7 +880,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="whitespace",
                 value=" ",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 25),
                 referenced_by=None,
@@ -888,7 +888,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="number",
                 value="123",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 7),
                 referenced_by=ReferencedBy(
@@ -898,7 +898,7 @@ class TestVariableReferenceSubstitution:
             Token(
                 name="declaration_set_end",
                 value="}",
-                path="",
+                read_from=("", ""),
                 code=css,
                 location=(0, 28),
                 referenced_by=None,
