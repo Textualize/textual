@@ -69,10 +69,13 @@ class StylesheetErrors:
             error_count += 1
 
             if token.path:
-                path = Path(token.path)
-                filename = path.name
+                # The display path may end with a ":SomeWidget".
+                display_path = Path(token.path).absolute()
+                link_path = str(display_path).split(":")[0]
+                filename = display_path.name
             else:
-                path = None
+                display_path = ""
+                link_path = ""
                 filename = "<unknown>"
 
             if token.referenced_by:
@@ -80,13 +83,14 @@ class StylesheetErrors:
             else:
                 line_idx, col_idx = token.location
             line_no, col_no = line_idx + 1, col_idx + 1
-            path_string = f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+            path_string = f"{display_path or filename}:{line_no}:{col_no}"
             link_style = Style(
-                link=f"file://{path.absolute()}" if path else None,
+                link=f"file://{link_path}" if link_path else None,
                 color="red",
                 bold=True,
                 italic=True,
             )
+
             path_text = Text(path_string, style=link_style)
             title = Text.assemble(Text("Error at ", style="bold red"), path_text)
             yield ""
