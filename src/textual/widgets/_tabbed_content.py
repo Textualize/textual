@@ -329,7 +329,7 @@ class TabbedContent(Widget):
 
         Returns:
             An optionally awaitable object which waits for all panes to be removed
-            and the Cleared message to be posted.
+                and the Cleared message to be posted.
         """
         await_clear = gather(
             self.get_child_by_type(Tabs).clear(),
