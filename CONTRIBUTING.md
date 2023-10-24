@@ -60,6 +60,13 @@ The command `make docs-serve-offline` should start a server that will let you pr
 
 ([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
+We strive to write our documentation in a clear and accessible way so, if you find any issues with the documentation, we encourage you to open an issue where you can enumerate the things you think should be changed or added.
+
+Opening an issue or a discussion is typically better than opening a PR directly.
+That's because there are many subjective considerations that go into writing documentation and we cannot expect you, a well-intentioned external contributor, to be aware of those subjective considerations that we take into account when writing our documentation.
+
+Of course, this does not apply to objective/technical issues with the documentation like bugs or broken links.
+
 ## After opening a PR
 
 When you open a PR, your code will be reviewed by one of the Textual maintainers.
