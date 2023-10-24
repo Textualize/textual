@@ -159,6 +159,10 @@ class DirectoryTree(Tree[DirEntry]):
 
         Args:
             node: The node to add to the load queue.
+
+        Returns:
+            An optionally awaitable object that can be awaited until the
+            load queue has finished processing.
         """
         assert node.data is not None
         if not node.data.loaded:
@@ -430,7 +434,7 @@ class DirectoryTree(Tree[DirEntry]):
                 # Mark this iteration as done.
                 self._load_queue.task_done()
 
-    async def _on_tree_node_expanded(self, event: Tree.NodeExpanded):
+    async def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
