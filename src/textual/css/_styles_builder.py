@@ -65,19 +65,6 @@ from .transition import Transition
 from .types import BoxSizing, Display, EdgeType, Overflow, Visibility
 
 
-def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
-    """Convert tokens into a string by joining their values
-
-    Args:
-        tokens: Tokens to join
-        joiner: String to join on.
-
-    Returns:
-        The tokens, joined together to form a string.
-    """
-    return joiner.join(token.value for token in tokens)
-
-
 class StylesBuilder:
     """
     The StylesBuilder object takes tokens parsed from the CSS and converts
