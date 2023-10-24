@@ -707,6 +707,23 @@ def test_notifications_through_modes(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")
 
 
+def test_notification_with_inline_link(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notification_with_inline_link.py")
+
+
+def test_notification_with_inline_link_hover(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    async def run_before(pilot) -> None:
+        await pilot.pause()
+        await pilot.hover("Toast", offset=(8, 1))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "notification_with_inline_link.py",
+        run_before=run_before,
+    )
+
+
 def test_print_capture(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "capture_print.py")
 
@@ -824,3 +841,7 @@ def test_scoped_css(snap_compare) -> None:
 
 def test_unscoped_css(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")
+
+
+def test_big_buttons(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")

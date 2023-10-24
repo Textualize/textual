@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
 - Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
+- Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
+- Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
+- Fixed `OptionList` event leakage from `CommandPalette` to `App`.
+
+### Added
+
+- Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
 
 ### Added
 
@@ -21,6 +28,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
+- DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
+- Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
+- Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
+
+### Added
+
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
+- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
 
 
 ## [0.40.0] - 2023-10-11
@@ -79,6 +94,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: CSS in DEFAULT_CSS is now automatically scoped to the widget (set SCOPED_CSS=False) to disable
+- Breaking change: Changed `Markdown.goto_anchor` to return a boolean (if the anchor was found) instead of `None` https://github.com/Textualize/textual/pull/3334
 
 ## [0.37.1] - 2023-09-16
 
@@ -86,10 +102,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
 - Fixed `Input` event leakage from `CommandPalette` to `App`.
-
-### Changed
-
-- Breaking change: Changed `Markdown.goto_anchor` to return a boolean (if the anchor was found) instead of `None` https://github.com/Textualize/textual/pull/3334
 
 ## [0.37.0] - 2023-09-15
 

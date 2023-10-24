@@ -246,7 +246,7 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;
+        link-background: initial;
         link-color: $text;
         link-style: underline;
         link-hover-background: $accent;
@@ -2817,16 +2817,22 @@ class Widget(DOMNode):
         )
         return pseudo_classes
 
+    def _get_rich_justify(self) -> JustifyMethod | None:
+        """Get the justify method that may be passed to a Rich renderable."""
+        text_justify: JustifyMethod | None = None
+        if self.styles.has_rule("text_align"):
+            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
+            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+        return text_justify
+
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         Returns:
             A new renderable.
         """
-        text_justify: JustifyMethod | None = None
-        if self.styles.has_rule("text_align"):
-            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
-            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+
+        text_justify = self._get_rich_justify()
 
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
@@ -2934,8 +2940,8 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
-        options = self._console.options.update_dimensions(width, height).update(
-            highlight=False
+        options = self._console.options.update(
+            highlight=False, width=width, height=height
         )
 
         segments = self._console.render(renderable, options)

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
+from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
 from typing import Iterable, NamedTuple, Sequence, cast
@@ -15,6 +16,7 @@ from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
+from .._cache import LRUCache
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -25,6 +27,8 @@ from .styles import RulesMap, Styles
 from .tokenize import Token, tokenize_values
 from .tokenizer import TokenError
 from .types import Specificity3, Specificity6
+
+_DEFAULT_STYLES = Styles()
 
 
 class StylesheetParseError(StylesheetError):
@@ -57,45 +61,45 @@ class StylesheetErrors:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         error_count = 0
-        for rule in self.rules:
-            for token, message in rule.errors:
-                error_count += 1
+        errors = list(
+            dict.fromkeys(chain.from_iterable(_rule.errors for _rule in self.rules))
+        )
 
-                if token.path:
-                    path = Path(token.path)
-                    filename = path.name
-                else:
-                    path = None
-                    filename = "<unknown>"
+        for token, message in errors:
+            error_count += 1
 
-                if token.referenced_by:
-                    line_idx, col_idx = token.referenced_by.location
-                else:
-                    line_idx, col_idx = token.location
-                line_no, col_no = line_idx + 1, col_idx + 1
-                path_string = (
-                    f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                )
-                link_style = Style(
-                    link=f"file://{path.absolute()}" if path else None,
-                    color="red",
-                    bold=True,
-                    italic=True,
-                )
+            if token.path:
+                path = Path(token.path)
+                filename = path.name
+            else:
+                path = None
+                filename = "<unknown>"
 
-                path_text = Text(path_string, style=link_style)
-                title = Text.assemble(Text("Error at ", style="bold red"), path_text)
-                yield ""
-                yield Panel(
-                    self._get_snippet(
-                        token.referenced_by.code if token.referenced_by else token.code,
-                        line_no,
-                    ),
-                    title=title,
-                    title_align="left",
-                    border_style="red",
-                )
-                yield Padding(message, pad=(0, 0, 1, 3))
+            if token.referenced_by:
+                line_idx, col_idx = token.referenced_by.location
+            else:
+                line_idx, col_idx = token.location
+            line_no, col_no = line_idx + 1, col_idx + 1
+            path_string = f"{path.absolute() if path else filename}:{line_no}:{col_no}"
+            link_style = Style(
+                link=f"file://{path.absolute()}" if path else None,
+                color="red",
+                bold=True,
+                italic=True,
+            )
+            path_text = Text(path_string, style=link_style)
+            title = Text.assemble(Text("Error at ", style="bold red"), path_text)
+            yield ""
+            yield Panel(
+                self._get_snippet(
+                    token.referenced_by.code if token.referenced_by else token.code,
+                    line_no,
+                ),
+                title=title,
+                title_align="left",
+                border_style="red",
+            )
+            yield Padding(message, pad=(0, 0, 1, 3))
 
         yield ""
         yield render(
@@ -131,6 +135,7 @@ class Stylesheet:
         self.source: dict[str, CssSource] = {}
         self._require_parse = False
         self._invalid_css: set[str] = set()
+        self._parse_cache: LRUCache[tuple, list[RuleSet]] = LRUCache(64)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
@@ -192,6 +197,7 @@ class Stylesheet:
         self._variables = variables
         self.__variable_tokens = None
         self._invalid_css = set()
+        self._parse_cache.clear()
 
     def _parse_rules(
         self,
@@ -216,6 +222,11 @@ class Stylesheet:
         Returns:
             List of RuleSets.
         """
+        cache_key = (css, path, is_default_rules, tie_breaker, scope)
+        try:
+            return self._parse_cache[cache_key]
+        except KeyError:
+            pass
         try:
             rules = list(
                 parse(
@@ -232,6 +243,7 @@ class Stylesheet:
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
 
+        self._parse_cache[cache_key] = rules
         return rules
 
     def read(self, filename: str | PurePath) -> None:
@@ -336,6 +348,7 @@ class Stylesheet:
                 raise
             if any(rule.errors for rule in css_rules):
                 error_renderable = StylesheetErrors(css_rules)
+                self._invalid_css.add(css)
                 raise StylesheetParseError(error_renderable)
             add_rules(css_rules)
         self._rules = rules
@@ -409,6 +422,12 @@ class Stylesheet:
         # Collect the rules defined in the stylesheet
         node._has_hover_style = False
         node._has_focus_within = False
+
+        # Rules that may be set to the special value `initial`
+        initial: set[str] = set()
+        # Rules in DEFAULT_CSS set to the special value `initial`
+        initial_defaults: set[str] = set()
+
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
@@ -420,10 +439,16 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
+                    if value is None:
+                        if is_default_rules:
+                            initial_defaults.add(key)
+                        else:
+                            initial.add(key)
                     rule_attributes[key].append((rule_specificity, value))
 
         if not rule_attributes:
             return
+
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
         node_rules: RulesMap = cast(
@@ -433,6 +458,39 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
+
+        # Set initial values
+        for initial_rule_name in initial:
+            # Rules with a value of None should be set to the default value
+            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                # Exclude non default values
+                # rule[0] is the specificity, rule[0][0] is 0 for default rules
+                default_rules = [
+                    rule
+                    for rule in rule_attributes[initial_rule_name]
+                    if not rule[0][0]
+                ]
+                if default_rules:
+                    # There is a default value
+                    new_value = max(default_rules, key=get_first_item)[1]
+                    node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
+                else:
+                    # No default value
+                    initial_defaults.add(initial_rule_name)
+
+        # Rules in DEFAULT_CSS set to initial
+        for initial_rule_name in initial_defaults:
+            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                default_rules = [
+                    rule for rule in rule_attributes[initial_rule_name] if rule[0][0]
+                ]
+                if default_rules:
+                    # There is a default value
+                    rule_value = max(default_rules, key=get_first_item)[1]
+                else:
+                    rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
+                node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
+
         self.replace_rules(node, node_rules, animate=animate)
 
         component_classes = node._get_component_classes()
@@ -474,6 +532,7 @@ class Stylesheet:
         # Styles currently used on new rules
         modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
+
         current_render_rules = styles.get_render_rules()
 
         # Calculate replacement rules (defaults + new rules)
