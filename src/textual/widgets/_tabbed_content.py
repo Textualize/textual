@@ -298,8 +298,8 @@ class TabbedContent(Widget):
             pane_id: The ID of the pane to remove.
 
         Returns:
-            An awaitable object that waits for the pane to be removed
-            and the Cleared message to be posted.
+            An optionally awaitable object that waits for the pane to be removed
+                and the Cleared message to be posted.
         """
         removal_awaitables = [self.get_child_by_type(Tabs).remove_tab(pane_id)]
         try:
