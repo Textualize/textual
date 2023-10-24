@@ -1199,8 +1199,33 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
         assert not table._show_hover_cursor
 
 
-async def test_sort_by_multiple_columns():
-    """Test sorting a `DataTable` my multiple columns."""
+async def test_sort_by_all_columns_no_key():
+    """Test sorting a `DataTable` by all columns."""
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(1, 3, 8)
+        table.add_row(2, 9, 5)
+        table.add_row(1, 1, 9)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [2, 9, 5]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+        table.sort()
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(reverse=True)
+        assert table.get_row_at(0) == [2, 9, 5]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+
+async def test_sort_by_multiple_columns_no_key():
+    """Test sorting a `DataTable` by multiple columns."""
 
     app = DataTableApp()
     async with app.run_test():
@@ -1364,6 +1389,8 @@ async def test_sort_by_function_retuning_multiple_values():
         sorted_row_data = (row_data[4], row_data[2], row_data[3], row_data[1])
         for i, row in enumerate(sorted_row_data):
             assert table.get_row_at(i) == row
+
+
 @pytest.mark.parametrize(
     ["cell", "height"],
     [

@@ -2366,20 +2366,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             The `DataTable` instance.
         """
 
-        def sort_by_column_keys(
-            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
-        ) -> Any:
-            _, row_data = row
-            result = itemgetter(*columns)(row_data)
-            return result
-
         def key_wrapper(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
             _, row_data = row
-            return key(itemgetter(*columns)(row_data))
+            if columns:
+                result = itemgetter(*columns)(row_data)
+            else:
+                result = tuple(row_data.values())
+            if key is not None:
+                return key(result)
+            return result
 
         ordered_rows = sorted(
             self._data.items(),
-            key=key_wrapper if key is not None else sort_by_column_keys,
+            key=key_wrapper,
             reverse=reverse,
         )
         self._row_locations = TwoWayDict(

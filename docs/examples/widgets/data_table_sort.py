@@ -22,6 +22,7 @@ class TableApp(App):
         ("a", "sort_by_average_time", "Sort By Average Time"),
         ("n", "sort_by_last_name", "Sort By Last Name"),
         ("c", "sort_by_country", "Sort By Country"),
+        ("d", "sort_by_columns", "Sort By Columns (Only)"),
     ]
 
     current_sorts: set = set()
@@ -79,6 +80,11 @@ class TableApp(App):
             key=lambda country: country.plain,
             reverse=self.sort_reverse("country"),
         )
+
+    def action_sort_by_columns(self) -> None:
+        """Sort DataTable without a key."""
+        table = self.query_one(DataTable)
+        table.sort("swimmer", "lane", reverse=self.sort_reverse("columns"))
 
 
 app = TableApp()
