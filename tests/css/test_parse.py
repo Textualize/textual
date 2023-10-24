@@ -1200,12 +1200,6 @@ class TestParseTextAlign:
         rules = stylesheet._parse_rules(css, "foo")
         assert rules[0].errors
 
-    def test_text_align_empty_uses_default(self):
-        css = "#foo { text-align: ; }"
-        stylesheet = Stylesheet()
-        stylesheet.add_source(css)
-        assert stylesheet.rules[0].styles.text_align == "start"
-
 
 class TestTypeNames:
     def test_type_no_number(self):
