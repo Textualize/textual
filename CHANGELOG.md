@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
 
+### Added
+
+- Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
+
 ### Changed
 
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539

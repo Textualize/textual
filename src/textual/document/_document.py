@@ -320,6 +320,42 @@ class Document(DocumentBase):
         """Returns the number of lines in the document."""
         return len(self._lines)
 
+    def get_index_from_location(self, location: Location) -> int:
+        """Given a location, returns the index from the document's text.
+
+        Args:
+            location: The location in the document.
+
+        Returns:
+            The index in the document's text.
+        """
+        row, column = location
+        index = row * len(self.newline) + column
+        for line_index in range(row):
+            index += len(self.get_line(line_index))
+        return index
+
+    def get_location_from_index(self, index: int) -> Location:
+        """Given an index in the document's text, returns the corresponding location.
+
+        Args:
+            index: The index in the document's text.
+
+        Returns:
+            The corresponding location.
+        """
+        column_index = 0
+        newline_length = len(self.newline)
+        for line_index in range(self.line_count):
+            next_column_index = (
+                column_index + len(self.get_line(line_index)) + newline_length
+            )
+            if index < next_column_index:
+                return (line_index, index - column_index)
+            elif index == next_column_index:
+                return (line_index + 1, 0)
+            column_index = next_column_index
+
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
 
