@@ -961,6 +961,11 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
                 self.workers.cancel_all()
                 self.dismiss(self._selected_command.command)
 
+    @on(OptionList.OptionHighlighted)
+    def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
+        """Stop any unused events so they don't leak to the application."""
+        event.stop()
+
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
         if self._list_visible:
