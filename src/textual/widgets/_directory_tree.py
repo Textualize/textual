@@ -225,6 +225,10 @@ class DirectoryTree(Tree[DirEntry]):
     def reload_node(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Reload the given node's contents.
 
+        The return value may be awaited to ensure the DirectoryTree has reached
+        a stable state and is no longer performing any node reloading (of this node
+        or any other nodes).
+
         Args:
             node: The node to reload.
         """

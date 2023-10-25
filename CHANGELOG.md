@@ -26,12 +26,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `Input.blink_timer` made private (renamed to `Input._blink_timer`) https://github.com/Textualize/textual/pull/3498
 - Breaking change: `Input.cursor_blink` reactive updated to not run on mount (now `init=False`) https://github.com/Textualize/textual/pull/3498
 - Breaking change: `AwaitTabbedContent` class removed https://github.com/Textualize/textual/pull/3498
-- Breaking change: `TabbedContent.add_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
-- Breaking change: `TabbedContent.remove_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
-- Breaking change: `TabbedContent.clear_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
-- Breaking change: `Tabs.add_tab` now returns an `AwaitComplete` instead of an `AwaitMount` https://github.com/Textualize/textual/pull/3498
 - Breaking change: `Tabs.remove_tab` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
 - Breaking change: `Tabs.clear` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.add_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.remove_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.clear_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `Tabs.add_tab` now returns an `AwaitComplete` instead of an `AwaitMount` https://github.com/Textualize/textual/pull/3498
 - `DirectoryTree.reload` now returns an `AwaitComplete`, which may be awaited to ensure the node has finished being processed by the internal queue https://github.com/Textualize/textual/pull/3498
 - `Tabs.remove_tab` now returns an `AwaitComplete`, which may be awaited to ensure the tab is unmounted and internal state is updated https://github.com/Textualize/textual/pull/3498
 - `App.switch_mode` now returns an `AwaitMount`, which may be awaited to ensure the screen is mounted https://github.com/Textualize/textual/pull/3498
