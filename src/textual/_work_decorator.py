@@ -141,15 +141,9 @@ def work(
                 except Exception:
                     debug_description = "<worker>"
 
-            # If we're creating/running a worker from inside a secondary thread,
-            # do so in a thread-safe way.
-            if self.app._thread_id != threading.get_ident():
-                runner = partial(self.app.call_from_thread, self.run_worker)
-            else:
-                runner = self.run_worker
             worker = cast(
                 "Worker[ReturnType]",
-                runner(
+                self.run_worker(
                     partial(method, *args, **kwargs),
                     name=name or method.__name__,
                     group=group,

@@ -1,5 +1,4 @@
 """
-
 A DOMNode is a base class for any object within the Textual Document Object Model,
 which includes all Widgets, Screens, and Apps.
 """
@@ -8,7 +7,8 @@ which includes all Widgets, Screens, and Apps.
 from __future__ import annotations
 
 import re
-from functools import lru_cache
+import threading
+from functools import lru_cache, partial
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
@@ -267,7 +267,14 @@ class DOMNode(MessagePump):
         Returns:
             New Worker instance.
         """
-        worker: Worker[ResultType] = self.workers._new_worker(
+
+        # If we're running a worker from inside a secondary thread,
+        # do so in a thread-safe way.
+        if self.app._thread_id != threading.get_ident():
+            runner = partial(self.app.call_from_thread, self.workers._new_worker)
+        else:
+            runner = self.workers._new_worker
+        worker: Worker[ResultType] = runner(
             work,
             self,
             name=name,
