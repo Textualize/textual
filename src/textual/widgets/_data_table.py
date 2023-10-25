@@ -1118,6 +1118,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_column = column
         destination = Coordinate(cursor_row, cursor_column)
         self.cursor_coordinate = destination
+
+        # Scroll the cursor after refresh to ensure the virtual height
+        # (calculated in on_idle) has settled. If we tried to scroll before
+        # the virtual size has been set, then it might fail if we added a bunch
+        # of rows then tried to immediately move the cursor.
         self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
