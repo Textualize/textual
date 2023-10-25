@@ -1,10 +1,11 @@
 import asyncio
 from time import sleep
-from typing import Callable
+from typing import Callable, List, Tuple
 
 import pytest
 
 from textual import work
+from textual._callback import _invoke
 from textual._work_decorator import WorkerDeclarationError
 from textual.app import App
 from textual.worker import Worker, WorkerState, WorkType
@@ -88,3 +89,115 @@ def test_decorate_non_async_no_thread_is_false() -> None:
             @work(thread=False)
             def foo(self) -> None:
                 pass
+
+
+class NestedWorkersApp(App[None]):
+    def __init__(self, call_stack: List[str]):
+        self.call_stack = call_stack
+        super().__init__()
+
+    def call_from_stack(self):
+        if self.call_stack:
+            call_now = self.call_stack.pop()
+            getattr(self, call_now)()
+
+    @work(thread=False)
+    async def async_no_thread(self):
+        self.call_from_stack()
+
+    @work(thread=True)
+    async def async_thread(self):
+        self.call_from_stack()
+
+    @work(thread=True)
+    def thread(self):
+        self.call_from_stack()
+
+
+@pytest.mark.parametrize(
+    "call_stack",
+    [  # from itertools import product; list(product("async_no_thread async_thread thread".split(), repeat=3))
+        ("async_no_thread", "async_no_thread", "async_no_thread"),
+        ("async_no_thread", "async_no_thread", "async_thread"),
+        ("async_no_thread", "async_no_thread", "thread"),
+        ("async_no_thread", "async_thread", "async_no_thread"),
+        ("async_no_thread", "async_thread", "async_thread"),
+        ("async_no_thread", "async_thread", "thread"),
+        ("async_no_thread", "thread", "async_no_thread"),
+        ("async_no_thread", "thread", "async_thread"),
+        ("async_no_thread", "thread", "thread"),
+        ("async_thread", "async_no_thread", "async_no_thread"),
+        ("async_thread", "async_no_thread", "async_thread"),
+        ("async_thread", "async_no_thread", "thread"),
+        ("async_thread", "async_thread", "async_no_thread"),
+        ("async_thread", "async_thread", "async_thread"),
+        ("async_thread", "async_thread", "thread"),
+        ("async_thread", "thread", "async_no_thread"),
+        ("async_thread", "thread", "async_thread"),
+        ("async_thread", "thread", "thread"),
+        ("thread", "async_no_thread", "async_no_thread"),
+        ("thread", "async_no_thread", "async_thread"),
+        ("thread", "async_no_thread", "thread"),
+        ("thread", "async_thread", "async_no_thread"),
+        ("thread", "async_thread", "async_thread"),
+        ("thread", "async_thread", "thread"),
+        ("thread", "thread", "async_no_thread"),
+        ("thread", "thread", "async_thread"),
+        ("thread", "thread", "thread"),
+    ],
+)
+async def test_calling_workers_from_within_workers(call_stack: Tuple[str]):
+    """Regression test for https://github.com/Textualize/textual/issues/3472.
+
+    This makes sure we can nest worker calls without a problem.
+    """
+    app = NestedWorkersApp(list(call_stack))
+    async with app.run_test():
+        app.call_from_stack()
+        # We need multiple awaits because we're creating a chain of workers that may
+        # have multiple async workers, each of which may need the await to have enough
+        # time to call the next one in the chain.
+        for _ in range(len(call_stack)):
+            await app.workers.wait_for_complete()
+        assert app.call_stack == []
+
+
+async def test_calling_workers_from_within_workers_deep():
+    """Regression test for https://github.com/Textualize/textual/issues/3472.
+
+    This test creates a deep call stack to stress test this.
+    """
+    call_stack = [
+        "async_no_thread",
+        "async_no_thread",
+        "thread",
+        "thread",
+        "async_thread",
+        "async_thread",
+        "async_no_thread",
+        "async_thread",
+        "async_no_thread",
+        "async_thread",
+        "thread",
+        "async_thread",
+        "async_thread",
+        "async_no_thread",
+        "async_no_thread",
+        "thread",
+        "thread",
+        "async_no_thread",
+        "async_no_thread",
+        "thread",
+        "async_no_thread",
+        "thread",
+        "thread",
+    ]
+    app = NestedWorkersApp(call_stack)
+    async with app.run_test():
+        app.call_from_stack()
+        # We need multiple awaits because we're creating a chain of workers that may
+        # have multiple async workers, each of which may need the await to have enough
+        # time to call the next one in the chain.
+        for _ in range(len(call_stack)):
+            await app.workers.wait_for_complete()
+        assert app.call_stack == []
