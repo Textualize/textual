@@ -1,37 +1,31 @@
 from __future__ import annotations
 
-from asyncio import Future, gather, wait
+from asyncio import Future, gather
 from typing import Any, Coroutine, Generator, Generic, TypeVar
+
+import rich.repr
 
 ReturnType = TypeVar("ReturnType")
 
 
+@rich.repr.auto(angular=True)
 class AwaitComplete(Generic[ReturnType]):
     """An 'optionally-awaitable' object."""
 
-    _instances: set["AwaitComplete"] = set()
-    """Track all active instances of AwaitComplete."""
-
-    def __init__(self, *coroutine: Coroutine) -> None:
+    def __init__(self, *coroutine: Coroutine[Any, Any, ReturnType]) -> None:
         """Create an AwaitComplete.
 
         Args:
             coroutine: One or more coroutines to execute.
         """
         self.coroutine = coroutine
-        AwaitComplete._instances.add(self)
         self._future: Future = gather(*list(self.coroutine))
-        self._future.add_done_callback(self._on_done)
 
     async def __call__(self) -> ReturnType:
         return await self
 
     def __await__(self) -> Generator[Any, None, ReturnType]:
         return self._future.__await__()
-
-    def _on_done(self, _: Future) -> None:
-        """Stop tracking this instance once it's done."""
-        AwaitComplete._instances.remove(self)
 
     @property
     def is_done(self) -> bool:
@@ -44,18 +38,6 @@ class AwaitComplete(Generic[ReturnType]):
         if self._future and self._future.done():
             return self._future.exception()
         return None
-
-    @classmethod
-    async def _wait_all(cls, timeout: float = 1.0):
-        """Await all instances of AwaitComplete.
-
-        Args:
-            timeout: The maximum time to wait for, in seconds.
-        """
-        await wait(
-            [instance._future for instance in cls._instances if instance._future],
-            timeout=timeout,
-        )
 
     @classmethod
     def nothing(cls):
