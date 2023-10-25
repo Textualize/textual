@@ -45,7 +45,7 @@ class Toast(Static, inherit_css=False):
         padding: 1 1;
         background: $panel;
         tint: white 5%;
-        link-background:;
+        link-background: initial;
         link-color: $text;
         link-style: underline;
         link-hover-background: $accent;

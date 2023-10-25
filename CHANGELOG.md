@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
+- Fixed `Toast` CSS that should use `initial` instead of empty value.
 
 ### Added
 
