@@ -12,7 +12,6 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
-from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
@@ -68,20 +67,19 @@ class StylesheetErrors:
         for token, message in errors:
             error_count += 1
 
-            if token.read_from:
-                display_path, widget_var = token.read_from
-                link_path = str(Path(display_path).absolute())
-                filename = Path(link_path).name
-            else:
-                link_path = display_path = widget_var = ""
-                filename = "<unknown>"
-
             if token.referenced_by:
                 line_idx, col_idx = token.referenced_by.location
             else:
                 line_idx, col_idx = token.location
             line_no, col_no = line_idx + 1, col_idx + 1
 
+            display_path, widget_var = token.read_from
+            if display_path:
+                link_path = str(Path(display_path).absolute())
+                filename = Path(link_path).name
+            else:
+                link_path = ""
+                filename = "<unknown>"
             # If we have a widget/variable from where the CSS was read, then line/column
             # numbers are relative to the inline CSS and we'll display them next to the
             # widget/variable.
@@ -287,16 +285,17 @@ class Stylesheet:
         for path in paths:
             self.read(path)
 
-    def has_source(self, read_from: CSSLocation) -> bool:
+    def has_source(self, path: str, class_var: str = "") -> bool:
         """Check if the stylesheet has this CSS source already.
 
         Args:
-            read_from: The location source of the CSS.
+            path: The file path of the source in question.
+            class_var: The widget class variable we might be reading the CSS from.
 
         Returns:
             Whether the stylesheet is aware of this CSS source or not.
         """
-        return read_from in self.source
+        return (path, class_var) in self.source
 
     def add_source(
         self,

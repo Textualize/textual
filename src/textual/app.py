@@ -1753,7 +1753,7 @@ class App(Generic[ReturnType], DOMNode):
 
         update = False
         for path in screen.css_path:
-            if not self.stylesheet.has_source((str(path), "")):
+            if not self.stylesheet.has_source(str(path), ""):
                 self.stylesheet.read(path)
                 update = True
         if screen.CSS:
@@ -1761,8 +1761,9 @@ class App(Generic[ReturnType], DOMNode):
                 screen_path = inspect.getfile(screen.__class__)
             except (TypeError, OSError):
                 screen_path = ""
-            read_from = (screen_path, f"{screen.__class__.__name__}.CSS")
-            if not self.stylesheet.has_source(read_from):
+            screen_class_var = f"{screen.__class__.__name__}.CSS"
+            read_from = (screen_path, screen_class_var)
+            if not self.stylesheet.has_source(screen_path, screen_class_var):
                 self.stylesheet.add_source(
                     screen.CSS,
                     read_from=read_from,
