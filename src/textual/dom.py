@@ -50,6 +50,7 @@ if TYPE_CHECKING:
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
+    from .css.types import CSSLocation
     from .message import Message
     from .screen import Screen
     from .widget import Widget
@@ -416,7 +417,7 @@ class DOMNode(MessagePump):
         if hasattr(self, "_classes") and self._classes:
             yield "classes", " ".join(self._classes)
 
-    def _get_default_css(self) -> list[tuple[tuple[str, str], str, int, str]]:
+    def _get_default_css(self) -> list[tuple[CSSLocation, str, int, str]]:
         """Gets the CSS for this class and inherited from bases.
 
         Default CSS is inherited from base classes, unless `inherit_css` is set to
@@ -427,9 +428,9 @@ class DOMNode(MessagePump):
                 class and inherited from base classes.
         """
 
-        css_stack: list[tuple[tuple[str, str], str, int, str]] = []
+        css_stack: list[tuple[CSSLocation, str, int, str]] = []
 
-        def get_location(base: Type[DOMNode]) -> tuple[str, str]:
+        def get_location(base: Type[DOMNode]) -> CSSLocation:
             """Get the original location of this DEFAULT_CSS.
 
             Args:

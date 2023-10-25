@@ -290,6 +290,9 @@ class Stylesheet:
     def has_source(self, read_from: CSSLocation) -> bool:
         """Check if the stylesheet has this CSS source already.
 
+        Args:
+            read_from: The location source of the CSS.
+
         Returns:
             Whether the stylesheet is aware of this CSS source or not.
         """
@@ -307,8 +310,7 @@ class Stylesheet:
 
         Args:
             css: String with CSS source.
-            location: The original location of the CSS as a pair of file path and class
-                variable (for the case where the CSS comes from a Python source file).
+            read_from: The original source location of the CSS.
             path: The path of the source if a file, or some other identifier.
             is_default_css: True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
