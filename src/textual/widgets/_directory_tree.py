@@ -211,6 +211,7 @@ class DirectoryTree(Tree[DirEntry]):
         """Clear the subtree and reset the given node.
 
         Args:
+            node: The node to reset.
             label: The label for the node.
             data: Optional data for the node.
 
