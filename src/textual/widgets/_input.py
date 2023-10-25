@@ -19,6 +19,7 @@ from ..geometry import Offset, Size
 from ..message import Message
 from ..reactive import reactive
 from ..suggester import Suggester, SuggestionReady
+from ..timer import Timer
 from ..validation import ValidationResult, Validator
 from ..widget import Widget
 
@@ -157,7 +158,7 @@ class Input(Widget, can_focus=True):
     }
     """
 
-    cursor_blink = reactive(True)
+    cursor_blink = reactive(True, init=False)
     value = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
     cursor_position = reactive(0)
@@ -255,6 +256,9 @@ class Input(Widget, can_focus=True):
         if value is not None:
             self.value = value
 
+        self._blink_timer: Timer | None = None
+        """Timer controlling the blinking of the cursor, instantiated in `on_mount`."""
+
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
@@ -329,6 +333,15 @@ class Input(Widget, can_focus=True):
             self.view_position = self.view_position
 
         self.app.cursor_position = self.cursor_screen_offset
+
+    def _watch_cursor_blink(self, blink: bool) -> None:
+        """Ensure we handle updating the cursor blink at runtime."""
+        if self._blink_timer is not None:
+            if blink:
+                self._blink_timer.resume()
+            else:
+                self._cursor_visible = True
+                self._blink_timer.pause()
 
     @property
     def cursor_screen_offset(self) -> Offset:
@@ -419,27 +432,27 @@ class Input(Widget, can_focus=True):
         self._cursor_visible = not self._cursor_visible
 
     def _on_mount(self, _: Mount) -> None:
-        self.blink_timer = self.set_interval(
+        self._blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor,
             pause=not (self.cursor_blink and self.has_focus),
         )
 
     def _on_blur(self, _: Blur) -> None:
-        self.blink_timer.pause()
+        self._blink_timer.pause()
         if "blur" in self.validate_on:
             self.validate(self.value)
 
     def _on_focus(self, _: Focus) -> None:
         self.cursor_position = len(self.value)
         if self.cursor_blink:
-            self.blink_timer.resume()
+            self._blink_timer.resume()
         self.app.cursor_position = self.cursor_screen_offset
 
     async def _on_key(self, event: events.Key) -> None:
         self._cursor_visible = True
         if self.cursor_blink:
-            self.blink_timer.reset()
+            self._blink_timer.reset()
 
         if event.is_printable:
             event.stop()

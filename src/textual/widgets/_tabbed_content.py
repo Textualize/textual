@@ -3,17 +3,16 @@ from __future__ import annotations
 from asyncio import gather
 from dataclasses import dataclass
 from itertools import zip_longest
-from typing import Generator
 
 from rich.repr import Result
 from rich.text import Text, TextType
 
 from ..app import ComposeResult
-from ..await_remove import AwaitRemove
+from ..await_complete import AwaitComplete
 from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ._content_switcher import ContentSwitcher
 from ._tabs import Tab, Tabs
 
@@ -102,25 +101,6 @@ class TabPane(Widget):
     def _watch_disabled(self, disabled: bool) -> None:
         """Notify the parent `TabbedContent` that a tab pane was enabled/disabled."""
         self.post_message(self.Disabled(self) if disabled else self.Enabled(self))
-
-
-class AwaitTabbedContent:
-    """An awaitable returned by [`TabbedContent`][textual.widgets.TabbedContent] methods that modify the tabs."""
-
-    def __init__(self, *awaitables: AwaitMount | AwaitRemove) -> None:
-        """Initialise the awaitable.
-
-        Args:
-            *awaitables: The collection of awaitables to await.
-        """
-        super().__init__()
-        self._awaitables = awaitables
-
-    def __await__(self) -> Generator[None, None, None]:
-        async def await_tabbed_content() -> None:
-            await gather(*self._awaitables)
-
-        return await_tabbed_content().__await__()
 
 
 class TabbedContent(Widget):
@@ -280,7 +260,7 @@ class TabbedContent(Widget):
         *,
         before: TabPane | str | None = None,
         after: TabPane | str | None = None,
-    ) -> AwaitTabbedContent:
+    ) -> AwaitComplete:
         """Add a new pane to the tabbed content.
 
         Args:
@@ -289,7 +269,7 @@ class TabbedContent(Widget):
             after: Optional pane or pane ID to add the pane after.
 
         Returns:
-            An awaitable object that waits for the pane to be added.
+            An optionally awaitable object that waits for the pane to be added.
 
         Raises:
             Tabs.TabError: If there is a problem with the addition request.
@@ -306,23 +286,24 @@ class TabbedContent(Widget):
         pane = self._set_id(pane, tabs.tab_count + 1)
         assert pane.id is not None
         pane.display = False
-        return AwaitTabbedContent(
+        return AwaitComplete(
             tabs.add_tab(ContentTab(pane._title, pane.id), before=before, after=after),
             self.get_child_by_type(ContentSwitcher).mount(pane),
         )
 
-    def remove_pane(self, pane_id: str) -> AwaitTabbedContent:
+    def remove_pane(self, pane_id: str) -> AwaitComplete:
         """Remove a given pane from the tabbed content.
 
         Args:
             pane_id: The ID of the pane to remove.
 
         Returns:
-            An awaitable object that waits for the pane to be removed.
+            An optionally awaitable object that waits for the pane to be removed
+                and the Cleared message to be posted.
         """
-        removals = [self.get_child_by_type(Tabs).remove_tab(pane_id)]
+        removal_awaitables = [self.get_child_by_type(Tabs).remove_tab(pane_id)]
         try:
-            removals.append(
+            removal_awaitables.append(
                 self.get_child_by_type(ContentSwitcher)
                 .get_child_by_id(pane_id)
                 .remove()
@@ -331,25 +312,26 @@ class TabbedContent(Widget):
             # It's possible that the content itself may have gone away via
             # other means; so allow that to be a no-op.
             pass
-        await_remove = AwaitTabbedContent(*removals)
 
         async def _remove_content(cleared_message: TabbedContent.Cleared) -> None:
-            await await_remove
+            await gather(*removal_awaitables)
             if self.tab_count == 0:
                 self.post_message(cleared_message)
 
-        # Note that I create the message out here, rather than in
+        # Note that I create the Cleared message out here, rather than in
         # _remove_content, to ensure that the message's internal
         # understanding of who the sender is is correct.
-        #
         # https://github.com/Textualize/textual/issues/2750
-        self.call_after_refresh(_remove_content, self.Cleared(self))
+        return AwaitComplete(_remove_content(self.Cleared(self)))
 
-        return await_remove
+    def clear_panes(self) -> AwaitComplete:
+        """Remove all the panes in the tabbed content.
 
-    def clear_panes(self) -> AwaitTabbedContent:
-        """Remove all the panes in the tabbed content."""
-        await_clear = AwaitTabbedContent(
+        Returns:
+            An optionally awaitable object which waits for all panes to be removed
+                and the Cleared message to be posted.
+        """
+        await_clear = gather(
             self.get_child_by_type(Tabs).clear(),
             self.get_child_by_type(ContentSwitcher).remove_children(),
         )
@@ -358,14 +340,11 @@ class TabbedContent(Widget):
             await await_clear
             self.post_message(cleared_message)
 
-        # Note that I create the message out here, rather than in
+        # Note that I create the Cleared message out here, rather than in
         # _clear_content, to ensure that the message's internal
         # understanding of who the sender is is correct.
-        #
         # https://github.com/Textualize/textual/issues/2750
-        self.call_after_refresh(_clear_content, self.Cleared(self))
-
-        return await_clear
+        return AwaitComplete(_clear_content(self.Cleared(self)))
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.

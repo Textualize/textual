@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
 
+from ..await_complete import AwaitComplete
+
 if TYPE_CHECKING:
     from typing_extensions import Self
 
@@ -152,18 +154,26 @@ class DirectoryTree(Tree[DirEntry]):
         )
         self.path = path
 
-    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> None:
+    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Add the given node to the load queue.
+
+        The return value can optionally be awaited until the queue is empty.
 
         Args:
             node: The node to add to the load queue.
+
+        Returns:
+            An optionally awaitable object that can be awaited until the
+            load queue has finished processing.
         """
         assert node.data is not None
         if not node.data.loaded:
             node.data.loaded = True
             self._load_queue.put_nowait(node)
 
-    def reload(self) -> None:
+        return AwaitComplete(self._load_queue.join())
+
+    def reload(self) -> AwaitComplete:
         """Reload the `DirectoryTree` contents."""
         self.reset(str(self.path), DirEntry(self.PATH(self.path)))
         # Orphan the old queue...
@@ -172,7 +182,8 @@ class DirectoryTree(Tree[DirEntry]):
         self._loader()
         # We have a fresh queue, we have a fresh loader, get the fresh root
         # loading up.
-        self._add_to_load_queue(self.root)
+        queue_processed = self._add_to_load_queue(self.root)
+        return queue_processed
 
     def clear_node(self, node: TreeNode[DirEntry]) -> Self:
         """Clear all nodes under the given node.
@@ -202,6 +213,7 @@ class DirectoryTree(Tree[DirEntry]):
         """Clear the subtree and reset the given node.
 
         Args:
+            node: The node to reset.
             label: The label for the node.
             data: Optional data for the node.
 
@@ -213,8 +225,12 @@ class DirectoryTree(Tree[DirEntry]):
         node.data = data
         return self
 
-    def reload_node(self, node: TreeNode[DirEntry]) -> None:
+    def reload_node(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Reload the given node's contents.
+
+        The return value may be awaited to ensure the DirectoryTree has reached
+        a stable state and is no longer performing any node reloading (of this node
+        or any other nodes).
 
         Args:
             node: The node to reload.
@@ -222,7 +238,7 @@ class DirectoryTree(Tree[DirEntry]):
         self.reset_node(
             node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
         )
-        self._add_to_load_queue(node)
+        return self._add_to_load_queue(node)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -239,13 +255,13 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return self.PATH(path)
 
-    def watch_path(self) -> None:
+    async def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.
 
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
-        self.reload()
+        await self.reload()
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
@@ -421,16 +437,17 @@ class DirectoryTree(Tree[DirEntry]):
                 # the tree.
                 if content:
                     self._populate_node(node, content)
-            # Mark this iteration as done.
-            self._load_queue.task_done()
+            finally:
+                # Mark this iteration as done.
+                self._load_queue.task_done()
 
-    def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
+    async def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
         if self._safe_is_dir(dir_entry.path):
-            self._add_to_load_queue(event.node)
+            await self._add_to_load_queue(event.node)
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
 

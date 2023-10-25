@@ -1116,9 +1116,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_row = row
         if column is not None:
             cursor_column = column
-
         destination = Coordinate(cursor_row, cursor_column)
         self.cursor_coordinate = destination
+
+        # Scroll the cursor after refresh to ensure the virtual height
+        # (calculated in on_idle) has settled. If we tried to scroll before
+        # the virtual size has been set, then it might fail if we added a bunch
+        # of rows then tried to immediately move the cursor.
         self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
@@ -1231,7 +1235,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column = self.columns.get(column_key)
             if column is None:
                 continue
-
             console = self.app.console
             label_width = measure(console, column.label, 1)
             content_width = column.content_width
@@ -1288,8 +1291,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
             if row.auto_height:
                 auto_height_rows.append((row_index, row, cells_in_row))
-
-        self._clear_caches()
 
         # If there are rows that need to have their height computed, render them correctly
         # so that we can cache this rendering for later.
@@ -1616,11 +1617,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Raises:
             RowDoesNotExist: If the row key does not exist.
         """
-
         if row_key not in self._row_locations:
             raise RowDoesNotExist(f"Row key {row_key!r} is not valid.")
 
-        self._new_rows.discard(row_key)
         self._require_update_dimensions = True
         self.check_idle()
 

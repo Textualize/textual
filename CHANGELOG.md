@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `Input.cursor_blink` reactive not changing blink state after `Input` was mounted https://github.com/Textualize/textual/pull/3498
+- Fixed `Tabs.active` attribute value not being re-assigned after removing a tab or clearing https://github.com/Textualize/textual/pull/3498
+- Fixed `DirectoryTree` race-condition crash when changing path https://github.com/Textualize/textual/pull/3498
 - Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
 - Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
@@ -23,6 +26,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Breaking change: `Button.ACTIVE_EFFECT_DURATION` classvar converted to `Button.active_effect_duration` attribute https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Input.blink_timer` made private (renamed to `Input._blink_timer`) https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Input.cursor_blink` reactive updated to not run on mount (now `init=False`) https://github.com/Textualize/textual/pull/3498
+- Breaking change: `AwaitTabbedContent` class removed https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Tabs.remove_tab` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Tabs.clear` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.add_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.remove_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.clear_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `Tabs.add_tab` now returns an `AwaitComplete` instead of an `AwaitMount` https://github.com/Textualize/textual/pull/3498
+- `DirectoryTree.reload` now returns an `AwaitComplete`, which may be awaited to ensure the node has finished being processed by the internal queue https://github.com/Textualize/textual/pull/3498
+- `Tabs.remove_tab` now returns an `AwaitComplete`, which may be awaited to ensure the tab is unmounted and internal state is updated https://github.com/Textualize/textual/pull/3498
+- `App.switch_mode` now returns an `AwaitMount`, which may be awaited to ensure the screen is mounted https://github.com/Textualize/textual/pull/3498
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
 - DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
@@ -33,8 +49,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
 - Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
 
+### Added
+
+- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
 
 ## [0.40.0] - 2023-10-11
+
+### Added
 
 - Added `loading` reactive property to widgets https://github.com/Textualize/textual/pull/3509
 
