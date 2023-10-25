@@ -82,13 +82,6 @@ class StylesheetErrors:
                 line_idx, col_idx = token.location
             line_no, col_no = line_idx + 1, col_idx + 1
 
-            if widget_var:
-                path_string = (
-                    f"{link_path or filename} in {widget_var}:{line_no}:{col_no}"
-                )
-            else:
-                path_string = f"{link_path or filename}:{line_no}:{col_no}"
-
             # If we have a widget/variable from where the CSS was read, then line/column
             # numbers are relative to the inline CSS and we'll display them next to the
             # widget/variable.
@@ -96,27 +89,13 @@ class StylesheetErrors:
             # next to the file path.
             if widget_var:
                 path_string = link_path or filename
-                widget_text = Text(
-                    f" in {widget_var}:{line_no}:{col_no}", style="bold red"
-                )
-                link_url = f"file://{link_path}" if link_path else None
+                widget_string = f" in {widget_var}:{line_no}:{col_no}"
             else:
                 path_string = f"{link_path or filename}:{line_no}:{col_no}"
-                widget_text = Text()
-                link_url = (
-                    f"file://{link_path}#{line_no}:{col_no}" if link_path else None
-                )
-
-            link_style = Style(
-                link=link_url,
-                color="red",
-                bold=True,
-                italic=True,
-            )
-            path_text = Text(path_string, style=link_style)
+                widget_string = ""
 
             title = Text.assemble(
-                Text("Error at ", style="bold red"), path_text, widget_text
+                "Error at ", path_string, widget_string, style="bold red"
             )
             yield ""
             yield Panel(
