@@ -271,10 +271,10 @@ class DOMNode(MessagePump):
         # If we're running a worker from inside a secondary thread,
         # do so in a thread-safe way.
         if self.app._thread_id != threading.get_ident():
-            runner = partial(self.app.call_from_thread, self.workers._new_worker)
+            creator = partial(self.app.call_from_thread, self.workers._new_worker)
         else:
-            runner = self.workers._new_worker
-        worker: Worker[ResultType] = runner(
+            creator = self.workers._new_worker
+        worker: Worker[ResultType] = creator(
             work,
             self,
             name=name,
