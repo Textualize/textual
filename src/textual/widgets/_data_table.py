@@ -1118,7 +1118,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             cursor_column = column
         destination = Coordinate(cursor_row, cursor_column)
         self.cursor_coordinate = destination
-        self._scroll_cursor_into_view(animate=animate)
+        self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""
