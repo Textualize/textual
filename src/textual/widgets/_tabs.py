@@ -396,8 +396,8 @@ class Tabs(Widget, can_focus=True):
             after: Optional tab or tab ID to add the tab after.
 
         Returns:
-            An awaitable object that waits for the tab to be mounted and
-            internal state to be fully updated to reflect the new tab.
+            An optionally awaitable object that waits for the tab to be mounted and
+                internal state to be fully updated to reflect the new tab.
 
         Raises:
             Tabs.TabError: If there is a problem with the addition request.
