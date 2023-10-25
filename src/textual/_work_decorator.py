@@ -6,6 +6,7 @@ A decorator used to create [workers](/guide/workers).
 
 from __future__ import annotations
 
+import threading
 from functools import partial, wraps
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
@@ -139,9 +140,16 @@ def work(
                     debug_description = f"{method.__name__}({', '.join(token for token in tokens if token)})"
                 except Exception:
                     debug_description = "<worker>"
+
+            # If we're creating/running a worker from inside a secondary thread,
+            # do so in a thread-safe way.
+            if self.app._thread_id != threading.get_ident():
+                runner = partial(self.app.call_from_thread, self.run_worker)
+            else:
+                runner = self.run_worker
             worker = cast(
                 "Worker[ReturnType]",
-                self.run_worker(
+                runner(
                     partial(method, *args, **kwargs),
                     name=name or method.__name__,
                     group=group,
