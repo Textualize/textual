@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from asyncio import Future, gather
-from typing import Any, Coroutine, Generator, Generic, TypeVar
+from typing import Any, Coroutine, Generator, Generic, Iterator, TypeVar
 
 import rich.repr
 
@@ -9,10 +9,10 @@ ReturnType = TypeVar("ReturnType")
 
 
 @rich.repr.auto(angular=True)
-class AwaitComplete(Generic[ReturnType]):
+class AwaitComplete:
     """An 'optionally-awaitable' object."""
 
-    def __init__(self, *coroutine: Coroutine[Any, Any, ReturnType]) -> None:
+    def __init__(self, *coroutine: Coroutine[Any, Any, Any]) -> None:
         """Create an AwaitComplete.
 
         Args:
@@ -21,10 +21,10 @@ class AwaitComplete(Generic[ReturnType]):
         self.coroutine = coroutine
         self._future: Future = gather(*list(self.coroutine))
 
-    async def __call__(self) -> ReturnType:
+    async def __call__(self) -> Any:
         return await self
 
-    def __await__(self) -> Generator[Any, None, ReturnType]:
+    def __await__(self) -> Iterator[None]:
         return self._future.__await__()
 
     @property
