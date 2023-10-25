@@ -5,7 +5,6 @@ from typing import Callable, List, Tuple
 import pytest
 
 from textual import work
-from textual._callback import _invoke
 from textual._work_decorator import WorkerDeclarationError
 from textual.app import App
 from textual.worker import Worker, WorkerState, WorkType
