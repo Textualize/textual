@@ -157,6 +157,8 @@ class DirectoryTree(Tree[DirEntry]):
     def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Add the given node to the load queue.
 
+        The return value can optionally be awaited until the queue is empty.
+
         Args:
             node: The node to add to the load queue.
 
