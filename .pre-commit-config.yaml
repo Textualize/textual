@@ -4,10 +4,19 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.3.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
+      - id: check-ast
+      - id: check-builtin-literals
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-json
+      - id: check-toml
       - id: check-yaml
         args: [ '--unsafe' ]
+      - id: check-shebang-scripts-are-executable
+      - id: check-vcs-permalinks
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: trailing-whitespace
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
@@ -19,4 +28,9 @@ repos:
     rev: 23.1.0
     hooks:
       - id: black
+  - repo: https://github.com/hadialqattan/pycln
+    rev: v2.3.0
+    hooks:
+      - id: pycln
+        args: [--all]
 exclude: ^tests/snapshot_tests
