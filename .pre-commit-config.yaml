@@ -4,18 +4,18 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.3.0
     hooks:
-      - id: check-ast
-      - id: check-builtin-literals
-      - id: check-case-conflict
-      - id: check-merge-conflict
-      - id: check-json
-      - id: check-toml
-      - id: check-yaml
-        args: [ '--unsafe' ]
-      - id: check-shebang-scripts-are-executable
-      - id: check-vcs-permalinks
-      - id: end-of-file-fixer
-      - id: mixed-line-ending
+      - id: check-ast  # simply checks whether the files parse as valid python
+      - id: check-builtin-literals  # requires literal syntax when initializing empty or zero python builtin types
+      - id: check-case-conflict  # checks for files that would conflict in case-insensitive filesystems
+      - id: check-merge-conflict  # checks for files that contain merge conflict strings
+      - id: check-json  # checks json files for parseable syntax
+      - id: check-toml  # checks toml files for parseable syntax
+      - id: check-yaml  # checks yaml files for parseable syntax
+        args: [ '--unsafe' ]  # Instead of loading the files, simply parse them for syntax.
+      - id: check-shebang-scripts-are-executable  # ensures that (non-binary) files with a shebang are executable
+      - id: check-vcs-permalinks  # ensures that links to vcs websites are permalinks
+      - id: end-of-file-fixer  # ensures that a file is either empty, or ends with one newline
+      - id: mixed-line-ending  # replaces or checks mixed line ending
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
@@ -27,7 +27,7 @@ repos:
     rev: 23.1.0
     hooks:
       - id: black
-  - repo: https://github.com/hadialqattan/pycln
+  - repo: https://github.com/hadialqattan/pycln  # removes unused imports
     rev: v2.3.0
     hooks:
       - id: pycln
