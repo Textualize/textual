@@ -6,7 +6,6 @@ A decorator used to create [workers](/guide/workers).
 
 from __future__ import annotations
 
-import threading
 from functools import partial, wraps
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
@@ -140,7 +139,6 @@ def work(
                     debug_description = f"{method.__name__}({', '.join(token for token in tokens if token)})"
                 except Exception:
                     debug_description = "<worker>"
-
             worker = cast(
                 "Worker[ReturnType]",
                 self.run_worker(
