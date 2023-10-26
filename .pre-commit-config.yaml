@@ -16,7 +16,6 @@ repos:
       - id: check-vcs-permalinks
       - id: end-of-file-fixer
       - id: mixed-line-ending
-      - id: trailing-whitespace
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
     hooks:
