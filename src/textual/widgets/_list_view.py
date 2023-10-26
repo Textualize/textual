@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Iterable, Optional
+from typing import ClassVar, Generic, Iterable, Optional, TypeVar
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -12,8 +12,19 @@ from textual.reactive import reactive
 from textual.widget import AwaitMount, Widget
 from textual.widgets._list_item import ListItem
 
+ListItemType = TypeVar("ListItemType", bound=ListItem)
+"""The type of the ListItem for a given instance of a [ListView][textual.widgets.ListView]."""
 
-class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
+EventListItemType = TypeVar("EventListItemType")
+"""The type of the ListItem for a given instance of a [ListView][textual.widgets.ListView].
+
+Similar to [ListItemType][textual.widgets._list_view.ListItemType] but used for
+``ListView`` messages."""
+
+
+class ListView(
+    Generic[ListItemType], VerticalScroll, can_focus=True, can_focus_children=False
+):
     """A vertical list view widget.
 
     Displays a vertical list of `ListItem`s which can be highlighted and
@@ -38,7 +49,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     index = reactive[Optional[int]](0, always_update=True)
 
-    class Highlighted(Message):
+    class Highlighted(Generic[EventListItemType], Message):
         """Posted when the highlighted item changes.
 
         Highlighted item is controlled using up/down keys.
@@ -49,15 +60,15 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         ALLOW_SELECTOR_MATCH = {"item"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
-        def __init__(self, list_view: ListView, item: ListItem | None) -> None:
+        def __init__(self, list_view: ListView, item: EventListItemType | None) -> None:
             super().__init__()
-            self.list_view: ListView = list_view
+            self.list_view: ListView[EventListItemType] = list_view
             """The view that contains the item highlighted."""
-            self.item: ListItem | None = item
+            self.item: EventListItemType | None = item
             """The highlighted item, if there is one highlighted."""
 
         @property
-        def control(self) -> ListView:
+        def control(self) -> ListView[EventListItemType]:
             """The view that contains the item highlighted.
 
             This is an alias for [`Highlighted.list_view`][textual.widgets.ListView.Highlighted.list_view]
@@ -65,7 +76,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             """
             return self.list_view
 
-    class Selected(Message):
+    class Selected(Generic[EventListItemType], Message):
         """Posted when a list item is selected, e.g. when you press the enter key on it.
 
         Can be handled using `on_list_view_selected` in a subclass of `ListView` or in
@@ -75,15 +86,17 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         ALLOW_SELECTOR_MATCH = {"item"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
-        def __init__(self, list_view: ListView, item: ListItem) -> None:
+        def __init__(
+            self, list_view: ListView[EventListItemType], item: ListItemType
+        ) -> None:
             super().__init__()
-            self.list_view: ListView = list_view
+            self.list_view: ListView[EventListItemType] = list_view
             """The view that contains the item selected."""
-            self.item: ListItem = item
+            self.item: EventListItemType = item
             """The selected item."""
 
         @property
-        def control(self) -> ListView:
+        def control(self) -> ListView[EventListItemType]:
             """The view that contains the item selected.
 
             This is an alias for [`Selected.list_view`][textual.widgets.ListView.Selected.list_view]
@@ -93,7 +106,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     def __init__(
         self,
-        *children: ListItem,
+        *children: ListItemType,
         initial_index: int | None = 0,
         name: str | None = None,
         id: str | None = None,
@@ -121,7 +134,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         self.index = self._index
 
     @property
-    def highlighted_child(self) -> ListItem | None:
+    def highlighted_child(self) -> ListItemType | None:
         """The currently highlighted ListItem, or None if nothing is highlighted."""
         if self.index is not None and 0 <= self.index < len(self._nodes):
             list_item = self._nodes[self.index]
@@ -172,7 +185,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         self._scroll_highlighted_region()
         self.post_message(self.Highlighted(self, new_child))
 
-    def extend(self, items: Iterable[ListItem]) -> AwaitMount:
+    def extend(self, items: Iterable[ListItemType]) -> AwaitMount:
         """Append multiple new ListItems to the end of the ListView.
 
         Args:
@@ -187,7 +200,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             self.index = 0
         return await_mount
 
-    def append(self, item: ListItem) -> AwaitMount:
+    def append(self, item: ListItemType) -> AwaitMount:
         """Append a new ListItem to the end of the ListView.
 
         Args:
@@ -231,7 +244,9 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             return
         self.index -= 1
 
-    def _on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
+    def _on_list_item__child_clicked(
+        self, event: EventListItemType._ChildClicked
+    ) -> None:
         self.focus()
         self.index = self._nodes.index(event.item)
         self.post_message(self.Selected(self, event.item))
