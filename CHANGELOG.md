@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
+- Add setter for `TextArea.text` https://github.com/Textualize/textual/discussions/3525
 
 ### Changed
 

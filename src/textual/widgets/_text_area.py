@@ -929,6 +929,15 @@ TextArea {
         """The entire text content of the document."""
         return self.document.text
 
+    @text.setter
+    def text(self, value: str) -> None:
+        """Replace the text currently in the TextArea. This is an alias of `load_text`.
+
+        Args:
+            value: The text to load into the TextArea.
+        """
+        self.load_text(value)
+
     @property
     def selected_text(self) -> str:
         """The text between the start and end points of the current selection."""
