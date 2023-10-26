@@ -520,3 +520,11 @@ async def test_replace_fully_within_selection():
             end_location=(0, 4),
         )
         assert text_area.selected_text == "XX56"
+
+async def test_text_setter():
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        new_text = "hello\nworld\n"
+        text_area.text = new_text
+        assert text_area.text == new_text
