@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.containers import Container, Grid
+from textual.containers import Grid
 from textual.widgets import Placeholder
 
 

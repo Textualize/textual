@@ -6,10 +6,10 @@ import pytest
 
 from textual import work
 from textual.app import App, ComposeResult, ScreenStackError
-from textual.events import MouseMove, MouseScrollDown, MouseScrollUp
+from textual.events import MouseMove
 from textual.geometry import Offset
 from textual.screen import Screen
-from textual.widgets import Button, DataTable, Input, Label
+from textual.widgets import Button, Input, Label
 from textual.worker import NoActiveWorker
 
 skip_py310 = pytest.mark.skipif(

@@ -47,7 +47,7 @@ from .transition import Transition
 
 if TYPE_CHECKING:
     from .._layout import Layout
-    from .styles import Styles, StylesBase
+    from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 

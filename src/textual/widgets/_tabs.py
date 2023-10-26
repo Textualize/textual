@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-from asyncio import create_task
 from dataclasses import dataclass
 from typing import ClassVar
 

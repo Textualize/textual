@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
 
 from rich.style import Style
 from rich.text import Text
+from typing_extensions import Literal, Protocol, runtime_checkable
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER
@@ -30,11 +31,9 @@ from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
     from tree_sitter import Language
-    from tree_sitter.binding import Query
 
 from textual import events, log
 from textual._cells import cell_len
-from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
