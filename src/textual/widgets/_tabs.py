@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+from asyncio import create_task
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -9,7 +11,7 @@ from rich.text import Text, TextType
 
 from .. import events
 from ..app import ComposeResult, RenderResult
-from ..await_remove import AwaitRemove
+from ..await_complete import AwaitComplete
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
@@ -18,7 +20,7 @@ from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import Bar
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ..widgets import Static
 
 
@@ -362,7 +364,6 @@ class Tabs(Widget, can_focus=True):
     @property
     def _next_active(self) -> Tab | None:
         """Next tab to make active if the active tab is removed."""
-        active_tab = self.active_tab
         tabs = self._potentially_active_tabs
         if self.active_tab is None:
             return None
@@ -386,7 +387,7 @@ class Tabs(Widget, can_focus=True):
         *,
         before: Tab | str | None = None,
         after: Tab | str | None = None,
-    ) -> AwaitMount:
+    ) -> AwaitComplete:
         """Add a new tab to the end of the tab list.
 
         Args:
@@ -395,7 +396,8 @@ class Tabs(Widget, can_focus=True):
             after: Optional tab or tab ID to add the tab after.
 
         Returns:
-            An awaitable object that waits for the tab to be mounted.
+            An optionally awaitable object that waits for the tab to be mounted and
+                internal state to be fully updated to reflect the new tab.
 
         Raises:
             Tabs.TabError: If there is a problem with the addition request.
@@ -447,17 +449,23 @@ class Tabs(Widget, can_focus=True):
 
             async def refresh_active() -> None:
                 """Wait for things to be mounted before highlighting."""
+                await mount_await
                 self.active = tab_widget.id or ""
                 self._highlight_active(animate=False)
                 self.post_message(activated_message)
 
-            self.call_after_refresh(refresh_active)
+            return AwaitComplete(refresh_active())
         elif before or after:
-            self.call_after_refresh(self._highlight_active, animate=False)
 
-        return mount_await
+            async def refresh_active() -> None:
+                await mount_await
+                self._highlight_active(animate=False)
 
-    def clear(self) -> AwaitRemove:
+            return AwaitComplete(refresh_active())
+
+        return AwaitComplete(mount_await())
+
+    def clear(self) -> AwaitComplete:
         """Clear all the tabs.
 
         Returns:
@@ -467,50 +475,50 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.call_after_refresh(self.post_message, self.Cleared(self))
-        return self.query("#tabs-list > Tab").remove()
+        self.active = ""
+        return AwaitComplete(self.query("#tabs-list > Tab").remove()())
 
-    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitRemove:
+    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitComplete:
         """Remove a tab.
 
         Args:
             tab_or_id: The Tab to remove or its id.
 
         Returns:
-            An awaitable object that waits for the tab to be removed.
+            An optionally awaitable object that waits for the tab to be removed.
         """
-        if tab_or_id is None:
-            return self.app._remove_nodes([], None)
+        if not tab_or_id:
+            return AwaitComplete(self.app._remove_nodes([], None)())
+
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
         else:
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return self.app._remove_nodes([], None)
+                return AwaitComplete(self.app._remove_nodes([], None)())
+
         removing_active_tab = remove_tab.has_class("-active")
-
         next_tab = self._next_active
-        result_message: Tabs.Cleared | Tabs.TabActivated | None = None
-        if removing_active_tab and next_tab is not None:
-            result_message = self.TabActivated(self, next_tab)
-        elif self.tab_count == 1:
-            result_message = self.Cleared(self)
-
         remove_await = remove_tab.remove()
+
+        highlight_updated = asyncio.Event()
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_await
-            if removing_active_tab:
-                if next_tab is not None:
-                    next_tab.add_class("-active")
-                self.call_after_refresh(self._highlight_active, animate=True)
-            if result_message is not None:
-                self.post_message(result_message)
+            if next_tab is None:
+                self.active = ""
+            elif removing_active_tab:
+                self.active = next_tab.id
+                next_tab.add_class("-active")
 
-        self.call_after_refresh(do_remove)
+            highlight_updated.set()
 
-        return remove_await
+        async def wait_for_highlight_update() -> None:
+            await highlight_updated.wait()
+
+        return AwaitComplete(do_remove(), wait_for_highlight_update())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
@@ -554,7 +562,7 @@ class Tabs(Widget, can_focus=True):
                 return
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
-            self.call_later(self._highlight_active, animate=previously_active != "")
+            self._highlight_active(animate=previously_active != "")
             self.post_message(self.TabActivated(self, active_tab))
         else:
             underline = self.query_one(Underline)
