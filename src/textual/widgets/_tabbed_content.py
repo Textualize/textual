@@ -356,21 +356,31 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_activated(self, event: Tabs.TabActivated) -> None:
         """User clicked a tab."""
-        assert isinstance(event.tab, ContentTab)
-        assert isinstance(event.tab.id, str)
-        event.stop()
-        switcher = self.get_child_by_type(ContentSwitcher)
-        switcher.current = event.tab.id
-        self.active = event.tab.id
-        self.post_message(
-            TabbedContent.TabActivated(
-                tabbed_content=self,
-                tab=event.tab,
+
+        # Ignore events that are from Tabs that aren't relevant to this TabbedContent.
+        # For example, Tabs widgets that aren't direct children of this TabbedContent
+        # should not be able to affect the state of it.
+        is_child = event.tabs in self.children
+        is_content_tab = not isinstance(event.tab, ContentTab)
+        if is_child or is_content_tab:
+            # The message is relevant, so consume it and update state accordingly.
+            event.stop()
+            switcher = self.get_child_by_type(ContentSwitcher)
+            switcher.current = event.tab.id
+            self.active = event.tab.id
+            self.post_message(
+                TabbedContent.TabActivated(
+                    tabbed_content=self,
+                    tab=event.tab,
+                )
             )
-        )
 
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """All tabs were removed."""
+        is_child = event.tabs in self.children
+        if not is_child:
+            return
+
         event.stop()
         self.get_child_by_type(ContentSwitcher).current = None
         self.active = ""
