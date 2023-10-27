@@ -400,7 +400,8 @@ class TabbedContent(Widget):
             )
 
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
-        """All tabs were removed."""
+        """Called when there are no active tabs. The tabs may have been cleared,
+        or they may all be hidden."""
         if self._is_associated_tabs(event.tabs):
             event.stop()
             self.get_child_by_type(ContentSwitcher).current = None

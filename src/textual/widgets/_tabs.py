@@ -266,7 +266,10 @@ class Tabs(Widget, can_focus=True):
         """Sent when a tab is shown."""
 
     class Cleared(Message):
-        """Sent when there are no active tabs."""
+        """Sent when there are no active tabs.
+
+        This can occur when Tabs are cleared, or if all tabs are hidden.
+        """
 
         def __init__(self, tabs: Tabs) -> None:
             """Initialize the event.
