@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from operator import itemgetter
-
 import pytest
 from rich.panel import Panel
 from rich.text import Text
