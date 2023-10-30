@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
 - Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
 - Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
+- Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
 
 ### Added
 
