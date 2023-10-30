@@ -45,11 +45,3 @@ async def test_same_selection_does_not_post_message():
         await pilot.click(SelectOverlay, offset=(2, 3))
         await pilot.pause()
         assert len(app.changed_messages) == 1
-
-
-async def test_assigning_to_value_posts_message():
-    app = SelectApp()
-    async with app.run_test() as pilot:
-        app.query_one(Select).value = 1
-        await pilot.pause()
-        assert len(app.changed_messages) == 1

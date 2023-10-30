@@ -232,7 +232,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         This message can be handled using a `on_select_changed` method.
         """
 
-        def __init__(self, select: Select, value: SelectType | None) -> None:
+        def __init__(
+            self, select: Select[SelectType], value: SelectType | None
+        ) -> None:
             """
             Initialize the Changed message.
             """
@@ -243,7 +245,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             """The value of the Select when it changed."""
 
         @property
-        def control(self) -> Select:
+        def control(self) -> Select[SelectType]:
             """The Select that sent the message."""
             return self.select
 
@@ -275,6 +277,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._allow_blank = allow_blank
         self.prompt = prompt
         self._initial_options = list(options)
+        self._legal_values = {value for _, value in self._initial_options}
         self._value: SelectType | None = value
         self._options = options
 
@@ -285,6 +288,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             options: An iterable of tuples containing (STRING, VALUE).
         """
         self._options: list[tuple[RenderableType, SelectType | None]] = list(options)
+        self._legal_values = {value for _, value in self._options}
 
         if self._allow_blank:
             self._options.insert(0, ("", None))
@@ -303,6 +307,12 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         for option in self._select_options:
             option_list.add_option(option)
 
+    def _validate_value(self, value: SelectType | None) -> SelectType | None:
+        """Ensure the new value is a valid option or None."""
+        if value is not None and value in self._legal_values:
+            return value
+        return None
+
     def _watch_value(self, value: SelectType | None) -> None:
         """Update the current value when it changes."""
         self._value = value
@@ -320,10 +330,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                         select_overlay.highlighted = index
                         select_current.update(prompt)
                         break
-                else:
-                    select_current.update(None)
-                    value = None  # Update this so the message has the correct value.
-            self.post_message(self.Changed(self, value))
 
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
@@ -372,7 +378,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Update the current selection."""
         event.stop()
         value = self._options[event.option_index][1]
-        self.value = value
+        if value != self.value:
+            self.value = value
+            self.post_message(self.Changed(self, value))
 
         async def update_focus() -> None:
             """Update focus and reset overlay."""
