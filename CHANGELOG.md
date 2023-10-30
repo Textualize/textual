@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
 - Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
+- `Select.Changed` not posted when reactive `Select.value` was assigned to https://github.com/Textualize/textual/issues/3611
 
 ### Added
 
