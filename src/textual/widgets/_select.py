@@ -223,7 +223,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | None] = var[Optional[SelectType]](None)
+    value: var[SelectType | None] = var[Optional[SelectType]](None, init=False)
     """The value of the select."""
 
     class Changed(Message):
@@ -312,16 +312,18 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             pass
         else:
             if value is None:
-                self.query_one(SelectCurrent).update(None)
+                select_current.update(None)
             else:
                 for index, (prompt, _value) in enumerate(self._options):
                     if _value == value:
                         select_overlay = self.query_one(SelectOverlay)
                         select_overlay.highlighted = index
-                        self.query_one(SelectCurrent).update(prompt)
+                        select_current.update(prompt)
                         break
                 else:
-                    self.query_one(SelectCurrent).update(None)
+                    select_current.update(None)
+                    value = None  # Update this so the message has the correct value.
+            self.post_message(self.Changed(self, value))
 
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
@@ -378,7 +380,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             self.expanded = False
 
         self.call_after_refresh(update_focus)  # Prevents a little flicker
-        self.post_message(self.Changed(self, value))
 
     def action_show_overlay(self) -> None:
         """Show the overlay."""
