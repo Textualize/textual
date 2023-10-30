@@ -23,3 +23,15 @@ async def test_initial_value_is_validated():
     app = SelectApp(1)
     async with app.run_test():
         assert app.query_one(Select).value == 1
+
+
+async def test_initial_value_inside_compose_is_validated():
+    class SelectApp(App[None]):
+        def compose(self):
+            s = Select[int]([(str(n), n) for n in range(3)])
+            s.value = 73
+            yield s
+
+    app = SelectApp()
+    async with app.run_test():
+        assert app.query_one(Select).value is None
