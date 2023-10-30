@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
+- Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
+- Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
 
 ### Added
 
@@ -44,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
+- Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
 
 ### Added
 
@@ -91,6 +94,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Pilot.click`/`Pilot.hover` now raises `OutOfBounds` when clicking outside visible screen https://github.com/Textualize/textual/pull/3360
 - `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector https://github.com/Textualize/textual/pull/3360
 - Added a delay to when the `No Matches` message appears in the command palette, thus removing a flicker https://github.com/Textualize/textual/pull/3399
+- Timer callbacks are now typed more loosely https://github.com/Textualize/textual/issues/3434
 
 ## [0.38.1] - 2023-09-21
 
