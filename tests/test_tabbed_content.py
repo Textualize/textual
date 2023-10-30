@@ -796,3 +796,49 @@ async def test_hiding_nested_tabs():
         await pilot.pause()
         tabber.show_tab("tab-1")
         await pilot.pause()
+
+
+async def test_tabs_nested_in_tabbed_content_doesnt_crash():
+    """Regression test for https://github.com/Textualize/textual/issues/3412"""
+
+    class TabsNestedInTabbedContent(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("Outer TabPane"):
+                    yield Tabs("Inner Tab")
+
+    app = TabsNestedInTabbedContent()
+    async with app.run_test() as pilot:
+        await pilot.pause()
+
+
+async def test_tabs_nested_doesnt_interfere_with_ancestor_tabbed_content():
+    """When a Tabs is nested as a descendant in the DOM of a TabbedContent,
+    the messages posted from that Tabs should not interfere with the TabbedContent.
+    A TabbedContent should only handle messages from Tabs which are direct children.
+
+    Relates to https://github.com/Textualize/textual/issues/3412
+    """
+
+    class TabsNestedInTabbedContent(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("OuterTab", id="outer1"):
+                    yield Tabs(
+                        Tab("Tab1", id="tab1"),
+                        Tab("Tab2", id="tab2"),
+                        id="inner-tabs",
+                    )
+
+    app = TabsNestedInTabbedContent()
+    async with app.run_test():
+        inner_tabs = app.query_one("#inner-tabs", Tabs)
+        tabbed_content = app.query_one(TabbedContent)
+
+        assert inner_tabs.active_tab.id == "tab1"
+        assert tabbed_content.active == "outer1"
+
+        await inner_tabs.clear()
+
+        assert inner_tabs.active_tab is None
+        assert tabbed_content.active == "outer1"
