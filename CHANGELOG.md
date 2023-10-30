@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
+- Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
 
 ### Added
 
