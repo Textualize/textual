@@ -15,7 +15,7 @@ from textual.widgets._list_item import ListItem
 ListItemType = TypeVar("ListItemType", bound=ListItem)
 """The type of the ListItem for a given instance of a [ListView][textual.widgets.ListView]."""
 
-EventListItemType = TypeVar("EventListItemType")
+EventListItemType = TypeVar("EventListItemType", bound=ListItem)
 """The type of the ListItem for a given instance of a [ListView][textual.widgets.ListView].
 
 Similar to [ListItemType][textual.widgets._list_view.ListItemType] but used for
@@ -62,7 +62,7 @@ class ListView(
 
         def __init__(self, list_view: ListView, item: EventListItemType | None) -> None:
             super().__init__()
-            self.list_view: ListView[EventListItemType] = list_view
+            self.list_view: ListView = list_view
             """The view that contains the item highlighted."""
             self.item: EventListItemType | None = item
             """The highlighted item, if there is one highlighted."""
@@ -86,11 +86,9 @@ class ListView(
         ALLOW_SELECTOR_MATCH = {"item"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
-        def __init__(
-            self, list_view: ListView[EventListItemType], item: ListItemType
-        ) -> None:
+        def __init__(self, list_view: ListView, item: EventListItemType) -> None:
             super().__init__()
-            self.list_view: ListView[EventListItemType] = list_view
+            self.list_view: ListView = list_view
             """The view that contains the item selected."""
             self.item: EventListItemType = item
             """The selected item."""
@@ -244,9 +242,7 @@ class ListView(
             return
         self.index -= 1
 
-    def _on_list_item__child_clicked(
-        self, event: EventListItemType._ChildClicked
-    ) -> None:
+    def _on_list_item__child_clicked(self, event: ListItem._ChildClicked) -> None:
         self.focus()
         self.index = self._nodes.index(event.item)
         self.post_message(self.Selected(self, event.item))
