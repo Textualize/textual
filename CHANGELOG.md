@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
 - Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
+- Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
 - `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 
 ### Added
