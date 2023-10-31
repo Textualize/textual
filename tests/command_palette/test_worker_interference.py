@@ -16,7 +16,20 @@ class SimpleSource(Provider):
             yield Hit(1, query, goes_nowhere_does_nothing, query)
 
 
-class CommandPaletteApp(App[None]):
+class CommandPaletteNoWorkerApp(App[None]):
+    COMMANDS = {SimpleSource}
+
+
+async def test_no_command_palette_worker_droppings() -> None:
+    """The command palette should not leave any workers behind.."""
+    async with CommandPaletteNoWorkerApp().run_test() as pilot:
+        assert len(pilot.app.workers) == 0
+        pilot.app.action_command_palette()
+        await pilot.press("a", "enter")
+        assert len(pilot.app.workers) == 0
+
+
+class CommandPaletteWithWorkerApp(App[None]):
     COMMANDS = {SimpleSource}
 
     def on_mount(self) -> None:
@@ -30,7 +43,7 @@ class CommandPaletteApp(App[None]):
 
 async def test_innocent_worker_is_untouched() -> None:
     """Using the command palette should not halt other workers."""
-    async with CommandPaletteApp().run_test() as pilot:
+    async with CommandPaletteWithWorkerApp().run_test() as pilot:
         assert len(pilot.app.workers) > 0
         pilot.app.action_command_palette()
         await pilot.press("a", "enter")
