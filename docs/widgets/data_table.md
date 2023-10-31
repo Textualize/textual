@@ -143,11 +143,22 @@ visible as you scroll through the data table.
 
 ### Sorting
 
-The `DataTable` can be sorted using the [sort][textual.widgets.DataTable.sort] method.
-In order to sort your data by a column, you must have supplied a `key` to the `add_column` method
-when you added it.
-You can then pass this key to the `sort` method to sort by that column.
-Additionally, you can sort by multiple columns by passing multiple keys to `sort`.
+The `DataTable` can be sorted using the [sort][textual.widgets.DataTable.sort] method. In order to sort your data by a column, you can provide the `key` you supplied to the `add_column` method or a `ColumnKey`. You can then pass one more column keys to the `sort` method to sort by one or more columns.
+
+Additionally, you can sort your `DataTable` with a custom function (or other callable) via the `key` argument. Similar to the `key` parameter of the built-in [sorted()](https://docs.python.org/3/library/functions.html#sorted) function, your function (or other callable) should take a single argument (row) and return a key to use for sorting purposes.
+
+Providing both `columns` and `key` will limit the row information sent to your `key` function (or other callable) to only the columns specified.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/data_table_sort.py"}
+    ```
+
+=== "data_table_sort.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/data_table_sort.py"
+    ```
 
 ### Labelled rows
 

@@ -27,6 +27,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
 - Add setter for `TextArea.text` https://github.com/Textualize/textual/discussions/3525
+- Added `key` argument to the `DataTable.sort()` method, allowing the table to be sorted using a custom function (or other callable) https://github.com/Textualize/textual/pull/3090
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
+- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
+- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
+
 
 ### Changed
 
@@ -48,15 +53,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
 - Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
-
-### Added
-
-- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
-- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
-
-### Added
-
-- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
 
 ## [0.40.0] - 2023-10-11
 
@@ -250,7 +246,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - DescendantBlur and DescendantFocus can now be used with @on decorator
-
 
 ## [0.32.0] - 2023-08-03
 

@@ -4,7 +4,7 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -2348,30 +2348,40 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def sort(
         self,
         *columns: ColumnKey | str,
+        key: Callable[[Any], Any] | None = None,
         reverse: bool = False,
     ) -> Self:
-        """Sort the rows in the `DataTable` by one or more column keys.
+        """Sort the rows in the `DataTable` by one or more column keys or a
+        key function (or other callable). If both columns and a key function
+        are specified, only data from those columns will sent to the key function.
 
         Args:
             columns: One or more columns to sort by the values in.
+            key: A function (or other callable) that returns a key to
+            use for sorting purposes.
             reverse: If True, the sort order will be reversed.
 
         Returns:
             The `DataTable` instance.
         """
 
-        def sort_by_column_keys(
-            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
-        ) -> Any:
+        def key_wrapper(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
             _, row_data = row
-            result = itemgetter(*columns)(row_data)
+            if columns:
+                result = itemgetter(*columns)(row_data)
+            else:
+                result = tuple(row_data.values())
+            if key is not None:
+                return key(result)
             return result
 
         ordered_rows = sorted(
-            self._data.items(), key=sort_by_column_keys, reverse=reverse
+            self._data.items(),
+            key=key_wrapper,
+            reverse=reverse,
         )
         self._row_locations = TwoWayDict(
-            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
+            {row_key: new_index for new_index, (row_key, _) in enumerate(ordered_rows)}
         )
         self._update_count += 1
         self.refresh()
