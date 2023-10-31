@@ -7032,72 +7032,77 @@ Children that have no ID will be hidden and ignored.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>*children</code></td>
           <td>
+            <strong><code>*children</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>The widgets to switch between.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>The widgets to switch between.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The name of the content switcher.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The ID of the content switcher in the DOM.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The CSS classes of the content switcher.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Whether the content switcher is disabled or not.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Whether the content switcher is disabled or not.</p></td>
         </tr>
         <tr>
-          <td><code>initial</code></td>
           <td>
+            <strong><code>initial</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The ID of the initial widget to show, <code>None</code> or empty string for the first tab.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The ID of the initial widget to show, <code>None</code> or empty string for the first tab.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7126,8 +7131,8 @@ Children that have no ID will be hidden and ignored.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._content_switcher.ContentSwitcher.current" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7198,32 +7203,33 @@ Children that have no ID will be hidden and ignored.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>old</code></td>
           <td>
+            <strong><code>old</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>The old widget ID (or <code>None</code> if there was no widget).</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>new</code></td>
           <td>
+            <strong><code>new</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The new widget ID (or <code>None</code> if nothing should be shown).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The new widget ID (or <code>None</code> if nothing should be shown).</p></td>
         </tr>
     </tbody>
   </table>

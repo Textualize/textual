@@ -7888,82 +7888,88 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>node</code></td>
           <td>
+            <strong><code>node</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
           </td>
-          <td><p>The widget, screen, or App that initiated the work.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The widget, screen, or App that initiated the work.</p></td>
         </tr>
         <tr>
-          <td><code>work</code></td>
           <td>
+            <strong><code>work</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.worker.WorkType" href="#textual.worker.WorkType">WorkType</a> | None</code>
           </td>
-          <td><p>A callable, coroutine, or other awaitable object to run in the worker.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A callable, coroutine, or other awaitable object to run in the worker.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <code>&#39;&#39;</code>
           </td>
           <td><p>Name of the worker (short string to help identify when debugging).</p></td>
-          <td>
-                <code>&#39;&#39;</code>
-          </td>
         </tr>
         <tr>
-          <td><code>group</code></td>
           <td>
+            <strong><code>group</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <code>&#39;default&#39;</code>
           </td>
           <td><p>The worker group.</p></td>
-          <td>
-                <code>&#39;default&#39;</code>
-          </td>
         </tr>
         <tr>
-          <td><code>description</code></td>
           <td>
+            <strong><code>description</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Description of the worker (longer string with more details).</p></td>
           <td>
-                <code>&#39;&#39;</code>
+            <code>&#39;&#39;</code>
           </td>
+          <td><p>Description of the worker (longer string with more details).</p></td>
         </tr>
         <tr>
-          <td><code>exit_on_error</code></td>
           <td>
+            <strong><code>exit_on_error</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Exit the app if the worker raises an error. Set to <code>False</code> to suppress exceptions.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>thread</code></td>
           <td>
+            <strong><code>thread</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Mark the worker as a thread worker.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Mark the worker as a thread worker.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8244,32 +8250,33 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>worker</code></td>
           <td>
+            <strong><code>worker</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.worker.Worker" href="#textual.worker.Worker">Worker</a></code>
           </td>
-          <td><p>The worker object.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The worker object.</p></td>
         </tr>
         <tr>
-          <td><code>state</code></td>
           <td>
+            <strong><code>state</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.worker.WorkerState" href="#textual.worker.WorkerState">WorkerState</a></code>
           </td>
-          <td><p>New state.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>New state.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8319,22 +8326,22 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>steps</code></td>
           <td>
+            <strong><code>steps</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Number of steps to advance.</p></td>
           <td>
-                <code>1</code>
+            <code>1</code>
           </td>
+          <td><p>Number of steps to advance.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8431,32 +8438,33 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>completed_steps</code></td>
           <td>
+            <strong><code>completed_steps</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The number of completed seps, or <code>None</code> to not change.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>total_steps</code></td>
           <td>
+            <strong><code>total_steps</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
           </td>
-          <td><p>The total number of steps, <code>None</code> for indeterminate, or -1 to leave unchanged.</p></td>
           <td>
-                <code>-1</code>
+            <code>-1</code>
           </td>
+          <td><p>The total number of steps, <code>None</code> for indeterminate, or -1 to leave unchanged.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8690,8 +8698,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.CANCELLED" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8714,8 +8722,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.ERROR" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8738,8 +8746,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.PENDING" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8762,8 +8770,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.RUNNING" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8786,8 +8794,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.SUCCESS" class="headerlink" title="Permanent link">&para;</a></h3>

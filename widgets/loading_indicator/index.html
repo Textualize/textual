@@ -7424,7 +7424,10 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.widgets.LoadingIndicator" class="headerlink" title="Permanent link">&para;</a></h2>
-
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">):</span>
+</code></pre></div>
 
   <div class="doc doc-contents first">
       <p class="doc doc-class-bases">
@@ -7433,6 +7436,64 @@ window.onload = async (event) => {
   
       <p>Display an animated loading indicator.</p>
 
+  
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>name</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>The name of the widget.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>id</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>The ID of the widget in the DOM.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>classes</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>The CSS classes for the widget.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>disabled</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Whether the widget is disabled or not.</p></td>
+        </tr>
+    </tbody>
+  </table>
 
 
   
@@ -7471,22 +7532,22 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../../api/widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>A widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A widget.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7536,22 +7597,22 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../../api/widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>Widget to clear the loading indicator from.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Widget to clear the loading indicator from.</p></td>
         </tr>
     </tbody>
   </table>

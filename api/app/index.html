@@ -9495,46 +9495,48 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>driver_class</code></td>
           <td>
+            <strong><code>driver_class</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Type" href="https://docs.python.org/3/library/typing.html#typing.Type">Type</a>[<span title="textual.driver.Driver">Driver</span>] | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Driver class or <code>None</code> to auto-detect.
 This will be used by some Textual tools.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>css_path</code></td>
           <td>
+            <strong><code>css_path</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.app.CSSPathType" href="#textual.app.CSSPathType">CSSPathType</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Path to CSS or <code>None</code> to use the <code>CSS_PATH</code> class variable.
 To load multiple CSS files, pass a list of strings or paths which
 will be loaded in order.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>watch_css</code></td>
           <td>
+            <strong><code>watch_css</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>Reload CSS if the files changed. This is set automatically if
 you are using <code>textual run</code> with the <code>dev</code> switch.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -9767,8 +9769,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9793,8 +9795,8 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9911,8 +9913,8 @@ positioning of OS IME and emoji popup menus.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10512,32 +10514,33 @@ will be ignored.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Selects the widget to add the class to.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>class_name</code></td>
           <td>
+            <strong><code>class_name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The class to add to the selected widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The class to add to the selected widget.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10621,22 +10624,22 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>key</code></td>
           <td>
+            <strong><code>key</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The key to process.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The key to process.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10691,22 +10694,22 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget_id</code></td>
           <td>
+            <strong><code>widget_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>ID of widget to focus.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>ID of widget to focus.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10807,22 +10810,22 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Name of the screen.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Name of the screen.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10877,32 +10880,33 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Selects the widget to remove the class from.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>class_name</code></td>
           <td>
+            <strong><code>class_name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The class to remove from  the selected widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The class to remove from  the selected widget.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10934,32 +10938,33 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>filename</code></td>
           <td>
+            <strong><code>filename</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Filename of screenshot, or None to auto-generate.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Filename of screenshot, or None to auto-generate.</p></td>
         </tr>
         <tr>
-          <td><code>path</code></td>
           <td>
+            <strong><code>path</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Path to directory. Defaults to current working directory.</p></td>
           <td>
-                <code>&#39;./&#39;</code>
+            <code>&#39;./&#39;</code>
           </td>
+          <td><p>Path to directory. Defaults to current working directory.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11014,22 +11019,22 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Name of the screen.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Name of the screen.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11061,32 +11066,33 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Selects the widget to toggle the class on.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>class_name</code></td>
           <td>
+            <strong><code>class_name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The class to toggle on the selected widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The class to toggle on the selected widget.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11141,32 +11147,33 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>mode</code></td>
           <td>
+            <strong><code>mode</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The new mode.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The new mode.</p></td>
         </tr>
         <tr>
-          <td><code>base_screen</code></td>
           <td>
+            <strong><code>base_screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a> | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>]</code>
           </td>
-          <td><p>The base screen associated with the given mode.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The base screen associated with the given mode.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11228,92 +11235,99 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>attribute</code></td>
           <td>
+            <strong><code>attribute</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Name of the attribute to animate.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Name of the attribute to animate.</p></td>
         </tr>
         <tr>
-          <td><code>value</code></td>
           <td>
+            <strong><code>value</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | <a class="autorefs autorefs-internal" title="textual._animator.Animatable" href="../types/#textual.types.Animatable">Animatable</a></code>
           </td>
-          <td><p>The value to animate to.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The value to animate to.</p></td>
         </tr>
         <tr>
-          <td><code>final_value</code></td>
           <td>
+            <strong><code>final_value</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
           </td>
-          <td><p>The final value of the animation.</p></td>
           <td>
-                <code>Ellipsis</code>
+            <code>Ellipsis</code>
           </td>
+          <td><p>The final value of the animation.</p></td>
         </tr>
         <tr>
-          <td><code>duration</code></td>
           <td>
+            <strong><code>duration</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The duration of the animate.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>speed</code></td>
           <td>
+            <strong><code>speed</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>The speed of the animation.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The speed of the animation.</p></td>
         </tr>
         <tr>
-          <td><code>delay</code></td>
           <td>
+            <strong><code>delay</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>A delay (in seconds) before the animation starts.</p></td>
           <td>
-                <code>0.0</code>
+            <code>0.0</code>
           </td>
+          <td><p>A delay (in seconds) before the animation starts.</p></td>
         </tr>
         <tr>
-          <td><code>easing</code></td>
           <td>
+            <strong><code>easing</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual._animator.EasingFunction" href="../types/#textual.types.EasingFunction">EasingFunction</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>An easing method.</p></td>
           <td>
-                <code>DEFAULT_EASING</code>
+            <code>DEFAULT_EASING</code>
           </td>
+          <td><p>An easing method.</p></td>
         </tr>
         <tr>
-          <td><code>on_complete</code></td>
           <td>
+            <strong><code>on_complete</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.messages.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
           </td>
-          <td><p>A callable to invoke when the animation is finished.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11369,42 +11383,44 @@ on the stack.)</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>target</code></td>
           <td>
+            <strong><code>target</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual._types.MessageTarget" href="../types/#textual.types.MessageTarget">MessageTarget</a></code>
           </td>
-          <td><p>The widget where print content will be sent.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The widget where print content will be sent.</p></td>
         </tr>
         <tr>
-          <td><code>stdout</code></td>
           <td>
+            <strong><code>stdout</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Capture stdout.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>stderr</code></td>
           <td>
+            <strong><code>stderr</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Capture stderr.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Capture stderr.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11469,62 +11485,66 @@ Some terminals may make no sound or display a visual bell indicator, depending o
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>keys</code></td>
           <td>
+            <strong><code>keys</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>A comma separated list of keys, i.e.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>action</code></td>
           <td>
+            <strong><code>action</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Action to bind to.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>description</code></td>
           <td>
+            <strong><code>description</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Short description of action.</p></td>
           <td>
-                <code>&#39;&#39;</code>
+            <code>&#39;&#39;</code>
           </td>
+          <td><p>Short description of action.</p></td>
         </tr>
         <tr>
-          <td><code>show</code></td>
           <td>
+            <strong><code>show</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Show key in UI.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Show key in UI.</p></td>
         </tr>
         <tr>
-          <td><code>key_display</code></td>
           <td>
+            <strong><code>key_display</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Replacement text for key, or None to use default.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Replacement text for key, or None to use default.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11563,42 +11583,44 @@ or set attributes on Textual objects from a thread, you may get unpredictable re
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[..., <span title="textual.app.CallThreadReturnType">CallThreadReturnType</span> | <a class="autorefs autorefs-external" title="typing.Awaitable" href="https://docs.python.org/3/library/typing.html#typing.Awaitable">Awaitable</a>[<span title="textual.app.CallThreadReturnType">CallThreadReturnType</span>]]</code>
           </td>
-          <td><p>A callable to run.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A callable to run.</p></td>
         </tr>
         <tr>
-          <td><code>*args</code></td>
           <td>
+            <strong><code>*args</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
+          </td>
+          <td>
+            <code>()</code>
           </td>
           <td><p>Arguments to the callback.</p></td>
-          <td>
-                <code>()</code>
-          </td>
         </tr>
         <tr>
-          <td><code>**kwargs</code></td>
           <td>
+            <strong><code>**kwargs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
           </td>
-          <td><p>Keyword arguments for the callback.</p></td>
           <td>
-                <code>{}</code>
+            <code>{}</code>
           </td>
+          <td><p>Keyword arguments for the callback.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11667,22 +11689,22 @@ thread where the app is running.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
           </td>
-          <td><p>If a widget, capture mouse event, or <code>None</code> to end mouse capture.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>If a widget, capture mouse event, or <code>None</code> to end mouse capture.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11716,32 +11738,33 @@ if you wish to <em>simulate</em> a key being pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>key</code></td>
           <td>
+            <strong><code>key</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>A key.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A key.</p></td>
         </tr>
         <tr>
-          <td><code>priority</code></td>
           <td>
+            <strong><code>priority</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>If <code>True</code> check from <code>App</code> down, otherwise from focused up.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>If <code>True</code> check from <code>App</code> down, otherwise from focused up.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11838,22 +11861,22 @@ if you wish to <em>simulate</em> a key being pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>target</code></td>
           <td>
+            <strong><code>target</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual._types.MessageTarget" href="../types/#textual.types.MessageTarget">MessageTarget</a></code>
           </td>
-          <td><p>The widget that was capturing prints.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The widget that was capturing prints.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11885,42 +11908,44 @@ if you wish to <em>simulate</em> a key being pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>result</code></td>
           <td>
+            <strong><code>result</code></strong>
+            <br>
                 <code><span title="textual.app.ReturnType">ReturnType</span> | None</code>
           </td>
-          <td><p>Return value.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Return value.</p></td>
         </tr>
         <tr>
-          <td><code>return_code</code></td>
           <td>
+            <strong><code>return_code</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>The return code. Use non-zero values for error codes.</p></td>
           <td>
-                <code>0</code>
+            <code>0</code>
           </td>
+          <td><p>The return code. Use non-zero values for error codes.</p></td>
         </tr>
         <tr>
-          <td><code>message</code></td>
           <td>
+            <strong><code>message</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="rich.console.RenderableType" href="https://rich.readthedocs.io/en/stable/reference/console.html#rich.console.RenderableType">RenderableType</a> | None</code>
           </td>
-          <td><p>Optional message to display on exit.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Optional message to display on exit.</p></td>
         </tr>
     </tbody>
   </table>
@@ -11953,23 +11978,23 @@ if you wish to <em>simulate</em> a key being pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>title</code></td>
           <td>
+            <strong><code>title</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The title of the exported screenshot or None
 to use app title.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -12001,33 +12026,34 @@ to use app title.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID of the node to search for.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID of the node to search for.</p></td>
         </tr>
         <tr>
-          <td><code>expect_type</code></td>
           <td>
+            <strong><code>expect_type</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.app.App.ExpectType">ExpectType</span>] | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Require the object be of the supplied type,
 or use <code>None</code> to apply no type restriction.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -12101,22 +12127,22 @@ or use <code>None</code> to apply no type restriction.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>expect_type</code></td>
           <td>
+            <strong><code>expect_type</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.app.App.ExpectType">ExpectType</span>]</code>
           </td>
-          <td><p>The type of the expected child.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The type of the expected child.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12274,22 +12300,22 @@ needing to add a key_display to every binding.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>key</code></td>
           <td>
+            <strong><code>key</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The binding key string.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The binding key string.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12339,22 +12365,22 @@ needing to add a key_display to every binding.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Either a Screen object or screen name (the <code>name</code> argument when installed).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Either a Screen object or screen name (the <code>name</code> argument when installed).</p></td>
         </tr>
     </tbody>
   </table>
@@ -12422,32 +12448,33 @@ needing to add a key_display to every binding.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>x</code></td>
           <td>
+            <strong><code>x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>X coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>y</code></td>
           <td>
+            <strong><code>y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Y coordinate.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Y coordinate.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12500,33 +12527,34 @@ To get the screen, use <code>self.screen</code>.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID to search for in the subtree</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID to search for in the subtree</p></td>
         </tr>
         <tr>
-          <td><code>expect_type</code></td>
           <td>
+            <strong><code>expect_type</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<span title="textual.app.App.ExpectType">ExpectType</span>] | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Require the object be of the supplied type, or None for any type.
 Defaults to None.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -12603,32 +12631,33 @@ or <a class="autorefs autorefs-internal" href="#textual.app.App.switch_screen">s
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a></code>
           </td>
-          <td><p>Screen to install.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Screen to install.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Unique name to identify the screen.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Unique name to identify the screen.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12696,22 +12725,22 @@ or <a class="autorefs autorefs-internal" href="#textual.app.App.switch_screen">s
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>A widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A widget.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12761,22 +12790,22 @@ or <a class="autorefs autorefs-internal" href="#textual.app.App.switch_screen">s
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Either a Screen object or screen name (the <code>name</code> argument when installed).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Either a Screen object or screen name (the <code>name</code> argument when installed).</p></td>
         </tr>
     </tbody>
   </table>
@@ -12826,46 +12855,48 @@ or <a class="autorefs autorefs-internal" href="#textual.app.App.switch_screen">s
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>*widgets</code></td>
           <td>
+            <strong><code>*widgets</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>The widget(s) to mount.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>The widget(s) to mount.</p></td>
         </tr>
         <tr>
-          <td><code>before</code></td>
           <td>
+            <strong><code>before</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional location to mount before. An <code>int</code> is the index
 of the child to mount before, a <code>str</code> is a <code>query_one</code> query to
 find the widget to mount before.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>after</code></td>
           <td>
+            <strong><code>after</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional location to mount after. An <code>int</code> is the index
 of the child to mount after, a <code>str</code> is a <code>query_one</code> query to
 find the widget to mount after.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -12938,46 +12969,48 @@ provided a <code>MountError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widgets</code></td>
           <td>
+            <strong><code>widgets</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>]</code>
           </td>
-          <td><p>An iterable of widgets.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>An iterable of widgets.</p></td>
         </tr>
         <tr>
-          <td><code>before</code></td>
           <td>
+            <strong><code>before</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional location to mount before. An <code>int</code> is the index
 of the child to mount before, a <code>str</code> is a <code>query_one</code> query to
 find the widget to mount before.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>after</code></td>
           <td>
+            <strong><code>after</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional location to mount after. An <code>int</code> is the index
 of the child to mount after, a <code>str</code> is a <code>query_one</code> query to
 find the widget to mount after.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -13061,52 +13094,55 @@ provided a <code>MountError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>message</code></td>
           <td>
+            <strong><code>message</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>The message for the notification.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>title</code></td>
           <td>
+            <strong><code>title</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The title for the notification.</p></td>
           <td>
-                <code>&#39;&#39;</code>
+            <code>&#39;&#39;</code>
           </td>
+          <td><p>The title for the notification.</p></td>
         </tr>
         <tr>
-          <td><code>severity</code></td>
           <td>
+            <strong><code>severity</code></strong>
+            <br>
                 <code><span title="textual.notifications.SeverityLevel">SeverityLevel</span></code>
           </td>
-          <td><p>The severity of the notification.</p></td>
           <td>
-                <code>&#39;information&#39;</code>
+            <code>&#39;information&#39;</code>
           </td>
+          <td><p>The severity of the notification.</p></td>
         </tr>
         <tr>
-          <td><code>timeout</code></td>
           <td>
+            <strong><code>timeout</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>The timeout for the notification.</p></td>
           <td>
-                <code>Notification.timeout</code>
+            <code>Notification.timeout</code>
           </td>
+          <td><p>The timeout for the notification.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13171,22 +13207,22 @@ For a more graceful exit, see the <a class="autorefs autorefs-internal" href="#t
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>*renderables</code></td>
           <td>
+            <strong><code>*renderables</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="rich.console.RenderableType" href="https://rich.readthedocs.io/en/stable/reference/console.html#rich.console.RenderableType">RenderableType</a></code>
           </td>
-          <td><p>Text or Rich renderable(s) to display on exit.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>Text or Rich renderable(s) to display on exit.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13284,43 +13320,45 @@ For a more graceful exit, see the <a class="autorefs autorefs-internal" href="#t
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="../screen/#textual.screen.ScreenResultType">ScreenResultType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>A Screen instance or the name of an installed screen.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A Screen instance or the name of an installed screen.</p></td>
         </tr>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultCallbackType" href="../screen/#textual.screen.ScreenResultCallbackType">ScreenResultCallbackType</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="../screen/#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
           </td>
-          <td><p>An optional callback function that will be called if the screen is <a class="autorefs autorefs-internal" href="../screen/#textual.screen.Screen.dismiss">dismissed</a> with a result.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>An optional callback function that will be called if the screen is <a class="autorefs autorefs-internal" href="../screen/#textual.screen.Screen.dismiss">dismissed</a> with a result.</p></td>
         </tr>
         <tr>
-          <td><code>wait_for_dismiss</code></td>
           <td>
+            <strong><code>wait_for_dismiss</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>If <code>True</code>, awaiting this method will return the dismiss value from the screen. When set to <code>False</code>, awaiting
 this method will wait for the screen to be mounted. Note that <code>wait_for_dismiss</code> should only be set to <code>True</code> when running in a worker.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -13389,22 +13427,22 @@ to await the result of the screen.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>animate</code></td>
           <td>
+            <strong><code>animate</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Also execute CSS animations.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Also execute CSS animations.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13437,22 +13475,22 @@ to await the result of the screen.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>mode</code></td>
           <td>
+            <strong><code>mode</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The mode to remove. It can't be the active mode.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The mode to remove. It can't be the active mode.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13508,43 +13546,45 @@ to await the result of the screen.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>headless</code></td>
           <td>
+            <strong><code>headless</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Run in headless mode (no output).</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Run in headless mode (no output).</p></td>
         </tr>
         <tr>
-          <td><code>size</code></td>
           <td>
+            <strong><code>size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>] | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Force terminal size to <code>(WIDTH, HEIGHT)</code>,
 or None to auto-detect.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>auto_pilot</code></td>
           <td>
+            <strong><code>auto_pilot</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.app.AutopilotCallbackType" href="#textual.app.AutopilotCallbackType">AutopilotCallbackType</a> | None</code>
           </td>
-          <td><p>An auto pilot coroutine.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>An auto pilot coroutine.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13595,33 +13635,34 @@ or None to auto-detect.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>action</code></td>
           <td>
+            <strong><code>action</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.actions.ActionParseResult" href="../types/#textual.types.ActionParseResult">ActionParseResult</a></code>
           </td>
-          <td><p>Action encoded in a string.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Action encoded in a string.</p></td>
         </tr>
         <tr>
-          <td><code>default_namespace</code></td>
           <td>
+            <strong><code>default_namespace</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Namespace to use if not provided in the action,
 or None to use app.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -13673,43 +13714,45 @@ or None to use app.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>headless</code></td>
           <td>
+            <strong><code>headless</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Run in headless mode (no output).</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Run in headless mode (no output).</p></td>
         </tr>
         <tr>
-          <td><code>size</code></td>
           <td>
+            <strong><code>size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>] | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Force terminal size to <code>(WIDTH, HEIGHT)</code>,
 or None to auto-detect.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>auto_pilot</code></td>
           <td>
+            <strong><code>auto_pilot</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.app.AutopilotCallbackType" href="#textual.app.AutopilotCallbackType">AutopilotCallbackType</a> | None</code>
           </td>
-          <td><p>An auto pilot coroutine.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>An auto pilot coroutine.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13779,64 +13822,68 @@ or None to auto-detect.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>headless</code></td>
           <td>
+            <strong><code>headless</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Run in headless mode (no output or input).</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Run in headless mode (no output or input).</p></td>
         </tr>
         <tr>
-          <td><code>size</code></td>
           <td>
+            <strong><code>size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>] | None</code>
+          </td>
+          <td>
+            <code>(80, 24)</code>
           </td>
           <td><p>Force terminal size to <code>(WIDTH, HEIGHT)</code>,
 or None to auto-detect.</p></td>
-          <td>
-                <code>(80, 24)</code>
-          </td>
         </tr>
         <tr>
-          <td><code>tooltips</code></td>
           <td>
+            <strong><code>tooltips</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>Enable tooltips when testing.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
         <tr>
-          <td><code>notifications</code></td>
           <td>
+            <strong><code>notifications</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Enable notifications when testing.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Enable notifications when testing.</p></td>
         </tr>
         <tr>
-          <td><code>message_hook</code></td>
           <td>
+            <strong><code>message_hook</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[<a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a>], None] | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>An optional callback that will be called each time any message arrives at any
 message pump in the app.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -13870,44 +13917,46 @@ message pump in the app.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>filename</code></td>
           <td>
+            <strong><code>filename</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Filename of SVG screenshot, or None to auto-generate
 a filename with the date and time.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>path</code></td>
           <td>
+            <strong><code>path</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Path to directory for output. Defaults to current working directory.</p></td>
           <td>
-                <code>&#39;./&#39;</code>
+            <code>&#39;./&#39;</code>
           </td>
+          <td><p>Path to directory for output. Defaults to current working directory.</p></td>
         </tr>
         <tr>
-          <td><code>time_format</code></td>
           <td>
+            <strong><code>time_format</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Date and time format to use if filename is None.
 Defaults to a format like ISO 8601 with some reserved characters replaced with underscores.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -13957,32 +14006,33 @@ Defaults to a format like ISO 8601 with some reserved characters replaced with u
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
           </td>
-          <td><p>Widget to focus.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Widget to focus.</p></td>
         </tr>
         <tr>
-          <td><code>scroll_visible</code></td>
           <td>
+            <strong><code>scroll_visible</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Scroll widget in to view.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Scroll widget in to view.</p></td>
         </tr>
     </tbody>
   </table>
@@ -14014,32 +14064,33 @@ Defaults to a format like ISO 8601 with some reserved characters replaced with u
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>attribute</code></td>
           <td>
+            <strong><code>attribute</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Name of the attribute whose animation should be stopped.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Name of the attribute whose animation should be stopped.</p></td>
         </tr>
         <tr>
-          <td><code>complete</code></td>
           <td>
+            <strong><code>complete</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Should the animation be set to its final value?</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Should the animation be set to its final value?</p></td>
         </tr>
     </tbody>
   </table>
@@ -14075,22 +14126,41 @@ Defaults to a format like ISO 8601 with some reserved characters replaced with u
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>mode</code></td>
           <td>
+            <strong><code>mode</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The mode to switch to.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The mode to switch to.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../widget/#textual.widget.AwaitMount">AwaitMount</a></code>
+          </td>
+          <td><p>An optionally awaitable object which waits for the screen associated
+with the mode to be mounted.</p></td>
         </tr>
     </tbody>
   </table>
@@ -14140,22 +14210,22 @@ Defaults to a format like ISO 8601 with some reserved characters replaced with u
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Either a Screen object or screen name (the <code>name</code> argument when installed).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Either a Screen object or screen name (the <code>name</code> argument when installed).</p></td>
         </tr>
     </tbody>
   </table>
@@ -14192,22 +14262,22 @@ Textual will also uninstall screens automatically on exit.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The screen to uninstall or the name of a installed screen.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The screen to uninstall or the name of a installed screen.</p></td>
         </tr>
     </tbody>
   </table>

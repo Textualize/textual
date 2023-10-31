@@ -7129,42 +7129,44 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>size</code></td>
           <td>
+            <strong><code>size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../../api/geometry/#textual.geometry.Size">Size</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>The new size of the Widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>virtual_size</code></td>
           <td>
+            <strong><code>virtual_size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../../api/geometry/#textual.geometry.Size">Size</a></code>
           </td>
-          <td><p>The virtual size (scrollable size) of the Widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The virtual size (scrollable size) of the Widget.</p></td>
         </tr>
         <tr>
-          <td><code>container_size</code></td>
           <td>
+            <strong><code>container_size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../../api/geometry/#textual.geometry.Size">Size</a> | None</code>
           </td>
-          <td><p>The size of the Widget's container widget.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The size of the Widget's container widget.</p></td>
         </tr>
     </tbody>
   </table>

@@ -8979,8 +8979,8 @@ fourth "alpha" value which defines where the color lies on a gradient of opaque 
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.color.Color.a" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9463,42 +9463,44 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>destination</code></td>
           <td>
+            <strong><code>destination</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
           </td>
-          <td><p>Another color.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Another color.</p></td>
         </tr>
         <tr>
-          <td><code>factor</code></td>
           <td>
+            <strong><code>factor</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>A blend factor, 0 -&gt; 1.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A blend factor, 0 -&gt; 1.</p></td>
         </tr>
         <tr>
-          <td><code>alpha</code></td>
           <td>
+            <strong><code>alpha</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>New alpha for result.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>New alpha for result.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9548,32 +9550,33 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>amount</code></td>
           <td>
+            <strong><code>amount</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>Value between 0-1 to reduce luminance by.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Value between 0-1 to reduce luminance by.</p></td>
         </tr>
         <tr>
-          <td><code>alpha</code></td>
           <td>
+            <strong><code>alpha</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>Alpha component for new color or None to copy alpha.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Alpha component for new color or None to copy alpha.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9623,42 +9626,44 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>h</code></td>
           <td>
+            <strong><code>h</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Hue.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>l</code></td>
           <td>
+            <strong><code>l</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Lightness.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>s</code></td>
           <td>
+            <strong><code>s</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>Saturation.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Saturation.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9708,22 +9713,22 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>rich_color</code></td>
           <td>
+            <strong><code>rich_color</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="rich.color.Color" href="https://rich.readthedocs.io/en/stable/reference/color.html#rich.color.Color">RichColor</a></code>
           </td>
-          <td><p>An instance of <a class="autorefs autorefs-external" href="https://rich.readthedocs.io/en/stable/reference/color.html#rich.color.Color">Rich color</a>.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>An instance of <a class="autorefs autorefs-external" href="https://rich.readthedocs.io/en/stable/reference/color.html#rich.color.Color">Rich color</a>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9773,22 +9778,22 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>alpha</code></td>
           <td>
+            <strong><code>alpha</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>An alpha value to apply to the result.</p></td>
           <td>
-                <code>0.95</code>
+            <code>0.95</code>
           </td>
+          <td><p>An alpha value to apply to the result.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9838,32 +9843,33 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>amount</code></td>
           <td>
+            <strong><code>amount</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>Value between 0-1 to increase luminance by.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Value between 0-1 to increase luminance by.</p></td>
         </tr>
         <tr>
-          <td><code>alpha</code></td>
           <td>
+            <strong><code>alpha</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>Alpha component for new color or None to copy alpha.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Alpha component for new color or None to copy alpha.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9913,22 +9919,22 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>alpha</code></td>
           <td>
+            <strong><code>alpha</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>A value to multiple the alpha by (expected to be in the range 0 to 1).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A value to multiple the alpha by (expected to be in the range 0 to 1).</p></td>
         </tr>
     </tbody>
   </table>
@@ -10011,23 +10017,23 @@ A value of <code>gradient</code> between the two extremes produces a color somew
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>color_text</code></td>
           <td>
+            <strong><code>color_text</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Text with a valid color format. Color objects will
 be returned unmodified.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -10095,22 +10101,22 @@ be returned unmodified.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>alpha</code></td>
           <td>
+            <strong><code>alpha</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>New value for alpha.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>New value for alpha.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10174,32 +10180,33 @@ be returned unmodified.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>message</code></td>
           <td>
+            <strong><code>message</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The error message</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The error message</p></td>
         </tr>
         <tr>
-          <td><code>suggested_color</code></td>
           <td>
+            <strong><code>suggested_color</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>A close color we can suggest.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A close color we can suggest.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10257,22 +10264,22 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>stops</code></td>
           <td>
+            <strong><code>stops</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a>, <a class="autorefs autorefs-internal" title="textual.color.Color" href="#textual.color.Color">Color</a>]</code>
           </td>
-          <td><p>A colors stop.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>A colors stop.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10332,22 +10339,22 @@ The stop indicate the color at that point on a spectrum between 0 and 1.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>position</code></td>
           <td>
+            <strong><code>position</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>A number between 0 and 1, where 0 is the first stop, and 1 is the last.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A number between 0 and 1, where 0 is the first stop, and 1 is the last.</p></td>
         </tr>
     </tbody>
   </table>

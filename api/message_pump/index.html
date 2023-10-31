@@ -7738,22 +7738,22 @@ has been refreshed. Positional and keyword arguments are passed to the callable.
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><span title="textual.message_pump.Callback">Callback</span></code>
           </td>
-          <td><p>A callable.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A callable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7805,42 +7805,44 @@ Positional and keywords arguments are passed to the callable.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><span title="textual.message_pump.Callback">Callback</span></code>
           </td>
-          <td><p>Callable to call next.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Callable to call next.</p></td>
         </tr>
         <tr>
-          <td><code>*args</code></td>
           <td>
+            <strong><code>*args</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+          </td>
+          <td>
+            <code>()</code>
           </td>
           <td><p>Positional arguments to pass to the callable.</p></td>
-          <td>
-                <code>()</code>
-          </td>
         </tr>
         <tr>
-          <td><code>**kwargs</code></td>
           <td>
+            <strong><code>**kwargs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
           </td>
-          <td><p>Keyword arguments to pass to the callable.</p></td>
           <td>
-                <code>{}</code>
+            <code>{}</code>
           </td>
+          <td><p>Keyword arguments to pass to the callable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7891,42 +7893,44 @@ scheduled (may occur if the message pump was closed or closing).</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><span title="textual.message_pump.Callback">Callback</span></code>
           </td>
-          <td><p>Callable to run after current event.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Callable to run after current event.</p></td>
         </tr>
         <tr>
-          <td><code>*args</code></td>
           <td>
+            <strong><code>*args</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+          </td>
+          <td>
+            <code>()</code>
           </td>
           <td><p>Positional arguments to pass to the callable.</p></td>
-          <td>
-                <code>()</code>
-          </td>
         </tr>
         <tr>
-          <td><code>**kwargs</code></td>
           <td>
+            <strong><code>**kwargs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
           </td>
-          <td><p>Keyword arguments to pass to the callable.</p></td>
           <td>
-                <code>{}</code>
+            <code>{}</code>
           </td>
+          <td><p>Keyword arguments to pass to the callable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7981,22 +7985,22 @@ scheduled (may occur if the message pump was closed or closing).</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>message</code></td>
           <td>
+            <strong><code>message</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code>
           </td>
-          <td><p>A message object.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A message object.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8072,22 +8076,22 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>event</code></td>
           <td>
+            <strong><code>event</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.events" href="../events/#textual.events">events</a>.<a class="autorefs autorefs-internal" title="textual.events.Key" href="../../events/key/#textual.events.Key">Key</a></code>
           </td>
-          <td><p>A key event.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A key event.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8178,22 +8182,22 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>event</code></td>
           <td>
+            <strong><code>event</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.events" href="../events/#textual.events">events</a>.<a class="autorefs autorefs-internal" title="textual.events.Event" href="../events/#textual.events.Event">Event</a></code>
           </td>
-          <td><p>An Event object.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>An Event object.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8225,22 +8229,22 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>message</code></td>
           <td>
+            <strong><code>message</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a></code>
           </td>
-          <td><p>A message (including Event).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A message (including Event).</p></td>
         </tr>
     </tbody>
   </table>
@@ -8328,62 +8332,66 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>interval</code></td>
           <td>
+            <strong><code>interval</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>Time between calls.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Time between calls.</p></td>
         </tr>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.timer.TimerCallback" href="../timer/#textual.timer.TimerCallback">TimerCallback</a> | None</code>
           </td>
-          <td><p>Function to call.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Function to call.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Name of the timer object.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Name of the timer object.</p></td>
         </tr>
         <tr>
-          <td><code>repeat</code></td>
           <td>
+            <strong><code>repeat</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Number of times to repeat the call or 0 for continuous.</p></td>
           <td>
-                <code>0</code>
+            <code>0</code>
           </td>
+          <td><p>Number of times to repeat the call or 0 for continuous.</p></td>
         </tr>
         <tr>
-          <td><code>pause</code></td>
           <td>
+            <strong><code>pause</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Start the timer paused.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Start the timer paused.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8435,52 +8443,55 @@ If multiple handlers exist that match the key, an exception is raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>delay</code></td>
           <td>
+            <strong><code>delay</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>Time to wait before invoking callback.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Time to wait before invoking callback.</p></td>
         </tr>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.timer.TimerCallback" href="../timer/#textual.timer.TimerCallback">TimerCallback</a> | None</code>
           </td>
-          <td><p>Callback to call after time has expired.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Callback to call after time has expired.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Name of the timer (for debug).</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Name of the timer (for debug).</p></td>
         </tr>
         <tr>
-          <td><code>pause</code></td>
           <td>
+            <strong><code>pause</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Start timer paused.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Start timer paused.</p></td>
         </tr>
     </tbody>
   </table>

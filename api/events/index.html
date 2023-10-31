@@ -8599,32 +8599,33 @@ through the usual message queue.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>key</code></td>
           <td>
+            <strong><code>key</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The key that was pressed.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The key that was pressed.</p></td>
         </tr>
         <tr>
-          <td><code>character</code></td>
           <td>
+            <strong><code>character</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>A printable character or <code>None</code> if it is not printable.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A printable character or <code>None</code> if it is not printable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8896,22 +8897,22 @@ configuration and binding keys.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>mouse_position</code></td>
           <td>
+            <strong><code>mouse_position</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
           </td>
-          <td><p>The position of the mouse when captured.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The position of the mouse when captured.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9018,122 +9019,132 @@ configuration and binding keys.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>x</code></td>
           <td>
+            <strong><code>x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>The relative x coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>y</code></td>
           <td>
+            <strong><code>y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>The relative y coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>delta_x</code></td>
           <td>
+            <strong><code>delta_x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Change in x since the last message.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>delta_y</code></td>
           <td>
+            <strong><code>delta_y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>Change in y since the last message.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>button</code></td>
           <td>
+            <strong><code>button</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Indexed of the pressed button.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Indexed of the pressed button.</p></td>
         </tr>
         <tr>
-          <td><code>shift</code></td>
           <td>
+            <strong><code>shift</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>True if the shift key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>meta</code></td>
           <td>
+            <strong><code>meta</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>True if the meta key is pressed.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>ctrl</code></td>
           <td>
+            <strong><code>ctrl</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>True if the ctrl key is pressed.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>True if the ctrl key is pressed.</p></td>
         </tr>
         <tr>
-          <td><code>screen_x</code></td>
           <td>
+            <strong><code>screen_x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The absolute x coordinate.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>screen_y</code></td>
           <td>
+            <strong><code>screen_y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
           </td>
-          <td><p>The absolute y coordinate.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The absolute y coordinate.</p></td>
         </tr>
         <tr>
-          <td><code>style</code></td>
           <td>
+            <strong><code>style</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="rich.style.Style" href="https://rich.readthedocs.io/en/stable/reference/style.html#rich.style.Style">Style</a> | None</code>
           </td>
-          <td><p>The Rich Style under the mouse cursor.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The Rich Style under the mouse cursor.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9322,22 +9333,22 @@ configuration and binding keys.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>Widget receiving the event.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Widget receiving the event.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9388,22 +9399,22 @@ configuration and binding keys.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>Widget receiving the event.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Widget receiving the event.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9505,22 +9516,22 @@ configuration and binding keys.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>mouse_position</code></td>
           <td>
+            <strong><code>mouse_position</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="../geometry/#textual.geometry.Offset">Offset</a></code>
           </td>
-          <td><p>The position of the mouse when released.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The position of the mouse when released.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9685,22 +9696,22 @@ and disable it when the app shuts down.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>text</code></td>
           <td>
+            <strong><code>text</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The text that has been pasted.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The text that has been pasted.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9760,32 +9771,33 @@ and disable it when the app shuts down.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>text</code></td>
           <td>
+            <strong><code>text</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Text that was printed.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Text that was printed.</p></td>
         </tr>
         <tr>
-          <td><code>stderr</code></td>
           <td>
+            <strong><code>stderr</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>True if the print was to stderr, or False for stdout.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>True if the print was to stderr, or False for stdout.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9879,42 +9891,44 @@ and disable it when the app shuts down.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>size</code></td>
           <td>
+            <strong><code>size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>The new size of the Widget.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>virtual_size</code></td>
           <td>
+            <strong><code>virtual_size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a></code>
           </td>
-          <td><p>The virtual size (scrollable size) of the Widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The virtual size (scrollable size) of the Widget.</p></td>
         </tr>
         <tr>
-          <td><code>container_size</code></td>
           <td>
+            <strong><code>container_size</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="../geometry/#textual.geometry.Size">Size</a> | None</code>
           </td>
-          <td><p>The size of the Widget's container widget.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The size of the Widget's container widget.</p></td>
         </tr>
     </tbody>
   </table>

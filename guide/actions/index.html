@@ -7166,7 +7166,7 @@ window.onload = async (event) => {
 <p class="admonition-title">Information</p>
 <p>Action methods may be coroutines (defined with the <code>async</code> keyword).</p>
 </div>
-<p>Let's write an app with a simple action.</p>
+<p>Let's write an app with a simple action method.</p>
 <div class="highlight"><span class="filename">actions01.py</span><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
@@ -7184,7 +7184,7 @@ window.onload = async (event) => {
 <a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">ActionsApp</span><span class="p">()</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
-<p>The <code>action_set_background</code> method is an action which sets the background of the screen. The key handler above will call this action if you press the <span class="keys"><kbd class="key-r">R</kbd></span> key.</p>
+<p>The <code>action_set_background</code> method is an action method which sets the background of the screen. The key handler above will call this action method if you press the <span class="keys"><kbd class="key-r">R</kbd></span> key.</p>
 <p>Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an <em>action string</em>. For instance, the string <code>"set_background('red')"</code> is an action string which would call <code>self.action_set_background('red')</code>.</p>
 <p>The following example replaces the immediate call with a call to <a class="autorefs autorefs-internal" href="../../api/widget/#textual.widget.Widget.run_action">run_action()</a> which parses an action string and dispatches it to the appropriate method.</p>
 <div class="highlight"><span class="filename">actions02.py</span><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">textual</span> <span class="kn">import</span> <span class="n">events</span>
@@ -7214,9 +7214,9 @@ window.onload = async (event) => {
 </div>
 <p>Action strings have the following format:</p>
 <ul>
-<li>The name of an action on is own will call the action method with no parameters. For example, an action string of <code>"bell"</code> will call <code>action_bell()</code>.</li>
-<li>Actions may be followed by braces containing Python objects. For example, the action string <code>set_background("red")</code> will call <code>action_set_background("red")</code>.</li>
-<li>Actions may be prefixed with a <em>namespace</em> (see below) followed by a dot.</li>
+<li>The name of an action on its own will call the action method with no parameters. For example, an action string of <code>"bell"</code> will call <code>action_bell()</code>.</li>
+<li>Action strings may be followed by parenthesis containing Python objects. For example, the action string <code>set_background("red")</code> will call <code>action_set_background("red")</code>.</li>
+<li>Action strings may be prefixed with a <em>namespace</em> (<a href="#namespaces">see below</a>) and a dot.</li>
 </ul>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 523.7197225172156 202.93462915912693" width="523.7197225172156" height="202.93462915912693">
@@ -7238,10 +7238,10 @@ window.onload = async (event) => {
 </div>
 
 <h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
-<p>If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other Python symbols.</p>
+<p>If the action string contains parameters, these must be valid Python literals, which means you can include numbers, strings, dicts, lists, etc., but you can't include variables or references to any other Python symbols.</p>
 <p>Consequently <code>"set_background('blue')"</code> is a valid action string, but <code>"set_background(new_color)"</code> is not &mdash; because <code>new_color</code> is a variable and not a literal.</p>
 <h2 id="links">Links<a class="headerlink" href="#links" title="Permanent link">&para;</a></h2>
-<p>Actions may be embedded as links within console markup. You can create such links with a  <code>@click</code> tag.</p>
+<p>Actions may be embedded as links within console markup. You can create such links with a <code>@click</code> tag.</p>
 <p>The following example mounts simple static text with embedded action links.</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">actions03.py</label><label for="__tabbed_1_2">Output</label></div>
 <div class="tabbed-content">
@@ -7681,7 +7681,7 @@ window.onload = async (event) => {
 </div>
 </div>
 </div>
-<p>There are two instances of the custom widget mounted. If you click the links in either of them it will changed the background for that widget only. The <span class="keys"><kbd class="key-r">R</kbd></span>, <span class="keys"><kbd class="key-g">G</kbd></span>, and <span class="keys"><kbd class="key-b">B</kbd></span> key bindings are set on the App so will set the background for the screen.</p>
+<p>There are two instances of the custom widget mounted. If you click the links in either of them it will change the background for that widget only. The <span class="keys"><kbd class="key-r">R</kbd></span>, <span class="keys"><kbd class="key-g">G</kbd></span>, and <span class="keys"><kbd class="key-b">B</kbd></span> key bindings are set on the App so will set the background for the screen.</p>
 <p>You can optionally prefix an action with a <em>namespace</em>, which tells Textual to run actions for a different object.</p>
 <p>Textual supports the following action namespaces:</p>
 <ul>

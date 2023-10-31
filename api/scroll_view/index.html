@@ -7214,32 +7214,33 @@ on the compositor to render children).</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>y_start</code></td>
           <td>
+            <strong><code>y_start</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>First line to refresh.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>line_count</code></td>
           <td>
+            <strong><code>line_count</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Total number of lines to refresh.</p></td>
           <td>
-                <code>1</code>
+            <code>1</code>
           </td>
+          <td><p>Total number of lines to refresh.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7282,92 +7283,99 @@ on the compositor to render children).</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>x</code></td>
           <td>
+            <strong><code>x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>X coordinate (column) to scroll to, or <code>None</code> for no change.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>y</code></td>
           <td>
+            <strong><code>y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Y coordinate (row) to scroll to, or <code>None</code> for no change.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>animate</code></td>
           <td>
+            <strong><code>animate</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Animate to new scroll position.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>speed</code></td>
           <td>
+            <strong><code>speed</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Speed of scroll if <code>animate</code> is <code>True</code>; or <code>None</code> to use <code>duration</code>.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>duration</code></td>
           <td>
+            <strong><code>duration</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>Duration of animation, if <code>animate</code> is <code>True</code> and <code>speed</code> is <code>None</code>.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Duration of animation, if <code>animate</code> is <code>True</code> and <code>speed</code> is <code>None</code>.</p></td>
         </tr>
         <tr>
-          <td><code>easing</code></td>
           <td>
+            <strong><code>easing</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual._animator.EasingFunction" href="../types/#textual.types.EasingFunction">EasingFunction</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>An easing method for the scrolling animation.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>An easing method for the scrolling animation.</p></td>
         </tr>
         <tr>
-          <td><code>force</code></td>
           <td>
+            <strong><code>force</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Force scrolling even when prohibited by overflow styling.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Force scrolling even when prohibited by overflow styling.</p></td>
         </tr>
         <tr>
-          <td><code>on_complete</code></td>
           <td>
+            <strong><code>on_complete</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual._types.CallbackType" href="../types/#textual.types.CallbackType">CallbackType</a> | None</code>
           </td>
-          <td><p>A callable to invoke when the animation is finished.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
     </tbody>
   </table>

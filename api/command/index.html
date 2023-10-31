@@ -7948,52 +7948,55 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>prompt</code></td>
           <td>
+            <strong><code>prompt</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="rich.console.RenderableType" href="https://rich.readthedocs.io/en/stable/reference/console.html#rich.console.RenderableType">RenderableType</a></code>
           </td>
-          <td><p>The prompt for the option.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The prompt for the option.</p></td>
         </tr>
         <tr>
-          <td><code>command</code></td>
           <td>
+            <strong><code>command</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.command.Hit" href="#textual.command.Hit">Hit</a></code>
           </td>
-          <td><p>The details of the command associated with the option.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The details of the command associated with the option.</p></td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The optional ID for the option.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The optional ID for the option.</p></td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>The initial enabled/disabled state. Enabled by default.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>The initial enabled/disabled state. Enabled by default.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8347,22 +8350,22 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>app</code></td>
           <td>
+            <strong><code>app</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.app.App" href="../app/#textual.app.App">App</a></code>
           </td>
-          <td><p>The app to test.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The app to test.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8509,8 +8512,8 @@ button should be pressed.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.command.Hit.help" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8580,8 +8583,8 @@ button should be pressed.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.command.Hit.text" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8638,42 +8641,44 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>query</code></td>
           <td>
+            <strong><code>query</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>A query as typed in by the user.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A query as typed in by the user.</p></td>
         </tr>
         <tr>
-          <td><code>match_style</code></td>
           <td>
+            <strong><code>match_style</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="rich.style.Style" href="https://rich.readthedocs.io/en/stable/reference/style.html#rich.style.Style">Style</a> | None</code>
           </td>
-          <td><p>The style to use to highlight matched portions of a string.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The style to use to highlight matched portions of a string.</p></td>
         </tr>
         <tr>
-          <td><code>case_sensitive</code></td>
           <td>
+            <strong><code>case_sensitive</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Should matching be case sensitive?</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Should matching be case sensitive?</p></td>
         </tr>
     </tbody>
   </table>
@@ -8806,22 +8811,22 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>candidate</code></td>
           <td>
+            <strong><code>candidate</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The candidate string to match against the query.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The candidate string to match against the query.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8871,22 +8876,22 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>candidate</code></td>
           <td>
+            <strong><code>candidate</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Candidate string to match against the query.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Candidate string to match against the query.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8954,22 +8959,22 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>screen</code></td>
           <td>
+            <strong><code>screen</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a>]</code>
           </td>
-          <td><p>A reference to the active screen.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A reference to the active screen.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9103,32 +9108,33 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>user_input</code></td>
           <td>
+            <strong><code>user_input</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The text that the user has input.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The text that the user has input.</p></td>
         </tr>
         <tr>
-          <td><code>case_sensitive</code></td>
           <td>
+            <strong><code>case_sensitive</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Should matching be case sensitive?</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Should matching be case sensitive?</p></td>
         </tr>
     </tbody>
   </table>
@@ -9179,22 +9185,22 @@ button should be pressed.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>query</code></td>
           <td>
+            <strong><code>query</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The user input to be matched.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The user input to be matched.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9321,8 +9327,8 @@ button should be pressed.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.command.SearchIcon.icon" class="headerlink" title="Permanent link">&para;</a></h3>

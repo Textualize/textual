@@ -7660,72 +7660,77 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>markdown</code></td>
           <td>
+            <strong><code>markdown</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>String containing Markdown, or None to leave blank.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>show_table_of_contents</code></td>
           <td>
+            <strong><code>show_table_of_contents</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Show a table of contents in a sidebar.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Show a table of contents in a sidebar.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The name of the widget.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The ID of the widget in the DOM.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The CSS classes of the widget.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The CSS classes of the widget.</p></td>
         </tr>
         <tr>
-          <td><code>parser_factory</code></td>
           <td>
+            <strong><code>parser_factory</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[[], <span title="markdown_it.MarkdownIt">MarkdownIt</span>] | None</code>
           </td>
-          <td><p>A factory function to return a configured MarkdownIt instance. If <code>None</code>, a "gfm-like" parser is used.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A factory function to return a configured MarkdownIt instance. If <code>None</code>, a "gfm-like" parser is used.</p></td>
         </tr>
     </tbody>
   </table>

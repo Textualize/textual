@@ -7187,7 +7187,7 @@ window.onload = async (event) => {
 
 <a href="#textual.timer.TimerCallback" class="headerlink" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">TimerCallback</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="kc">None</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="kc">None</span><span class="p">]</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]],</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Any</span><span class="p">]</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">]</span>
 </code></pre></div>
 
@@ -7236,82 +7236,88 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>event_target</code></td>
           <td>
+            <strong><code>event_target</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual._types.MessageTarget" href="../types/#textual.types.MessageTarget">MessageTarget</a></code>
           </td>
-          <td><p>The object which will receive the timer events.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The object which will receive the timer events.</p></td>
         </tr>
         <tr>
-          <td><code>interval</code></td>
           <td>
+            <strong><code>interval</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></code>
           </td>
-          <td><p>The time between timer events, in seconds.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The time between timer events, in seconds.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>A name to assign the event (for debugging).</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A name to assign the event (for debugging).</p></td>
         </tr>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.timer.TimerCallback" href="#textual.timer.TimerCallback">TimerCallback</a> | None</code>
           </td>
-          <td><p>A optional callback to invoke when the event is handled.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A optional callback to invoke when the event is handled.</p></td>
         </tr>
         <tr>
-          <td><code>repeat</code></td>
           <td>
+            <strong><code>repeat</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
           </td>
-          <td><p>The number of times to repeat the timer, or None to repeat forever.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The number of times to repeat the timer, or None to repeat forever.</p></td>
         </tr>
         <tr>
-          <td><code>skip</code></td>
           <td>
+            <strong><code>skip</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Enable skipping of scheduled events that couldn't be sent in time.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>pause</code></td>
           <td>
+            <strong><code>pause</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Start the timer paused.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Start the timer paused.</p></td>
         </tr>
     </tbody>
   </table>

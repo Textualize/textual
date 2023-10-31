@@ -7022,84 +7022,90 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>method</code></td>
           <td>
+            <strong><code>method</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[<span title="textual._work_decorator.FactoryParamSpec">FactoryParamSpec</span>, <span title="textual._work_decorator.ReturnType">ReturnType</span>] | <a class="autorefs autorefs-external" title="typing.Callable" href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a>[<span title="textual._work_decorator.FactoryParamSpec">FactoryParamSpec</span>, <a class="autorefs autorefs-external" title="typing.Coroutine" href="https://docs.python.org/3/library/typing.html#typing.Coroutine">Coroutine</a>[None, None, <span title="textual._work_decorator.ReturnType">ReturnType</span>]] | None</code>
           </td>
-          <td><p>A function or coroutine.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A function or coroutine.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <code>&#39;&#39;</code>
           </td>
           <td><p>A short string to identify the worker (in logs and debugging).</p></td>
-          <td>
-                <code>&#39;&#39;</code>
-          </td>
         </tr>
         <tr>
-          <td><code>group</code></td>
           <td>
+            <strong><code>group</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>A short string to identify a group of workers.</p></td>
           <td>
-                <code>&#39;default&#39;</code>
+            <code>&#39;default&#39;</code>
           </td>
+          <td><p>A short string to identify a group of workers.</p></td>
         </tr>
         <tr>
-          <td><code>exit_on_error</code></td>
           <td>
+            <strong><code>exit_on_error</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Exit the app if the worker raises an error. Set to <code>False</code> to suppress exceptions.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>exclusive</code></td>
           <td>
+            <strong><code>exclusive</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Cancel all workers in the same group.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Cancel all workers in the same group.</p></td>
         </tr>
         <tr>
-          <td><code>description</code></td>
           <td>
+            <strong><code>description</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Readable description of the worker for debugging purposes.
 By default, it uses a string representation of the decorated method
 and its arguments.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>thread</code></td>
           <td>
+            <strong><code>thread</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Mark the method as a thread worker.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Mark the method as a thread worker.</p></td>
         </tr>
     </tbody>
   </table>

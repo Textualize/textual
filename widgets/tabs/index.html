@@ -8422,72 +8422,77 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>*tabs</code></td>
           <td>
+            <strong><code>*tabs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <span title="rich.text.TextType">TextType</span></code>
           </td>
-          <td><p>Positional argument should be explicit Tab objects, or a str or Text.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>Positional argument should be explicit Tab objects, or a str or Text.</p></td>
         </tr>
         <tr>
-          <td><code>active</code></td>
           <td>
+            <strong><code>active</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>ID of the tab which should be active on start.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional name for the input widget.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional ID for the widget.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Optional initial classes for the widget.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Optional initial classes for the widget.</p></td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Whether the input is disabled or not.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Whether the input is disabled or not.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8557,8 +8562,8 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.active" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8643,6 +8648,7 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
 
   
       <p>Sent when there are no active tabs.</p>
+<p>This can occur when Tabs are cleared, or if all tabs are hidden.</p>
 
   
 
@@ -8650,22 +8656,22 @@ You can then use <code>event.tab.id</code> attribute to perform any related acti
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tabs</code></td>
           <td>
+            <strong><code>tabs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tabs" href="#textual.widgets.Tabs">Tabs</a></code>
           </td>
-          <td><p>The tabs widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The tabs widget.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8920,32 +8926,33 @@ is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tabs</code></td>
           <td>
+            <strong><code>tabs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tabs" href="#textual.widgets.Tabs">Tabs</a></code>
           </td>
-          <td><p>The Tabs widget.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The Tabs widget.</p></td>
         </tr>
         <tr>
-          <td><code>tab</code></td>
           <td>
+            <strong><code>tab</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a></code>
           </td>
-          <td><p>The tab that is the object of this message.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The tab that is the object of this message.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8970,8 +8977,8 @@ is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._tabs.Tabs.TabMessage.ALLOW_SELECTOR_MATCH" class="headerlink" title="Permanent link">&para;</a></h4>
@@ -9166,42 +9173,44 @@ is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tab</code></td>
           <td>
+            <strong><code>tab</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" title="rich.text.Text" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.Text">Text</a></code>
           </td>
-          <td><p>A new tab object, or a label (str or Text).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A new tab object, or a label (str or Text).</p></td>
         </tr>
         <tr>
-          <td><code>before</code></td>
           <td>
+            <strong><code>before</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional tab or tab ID to add the tab before.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>after</code></td>
           <td>
+            <strong><code>after</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Optional tab or tab ID to add the tab after.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Optional tab or tab ID to add the tab after.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9217,9 +9226,10 @@ is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../../api/widget/#textual.widget.AwaitMount">AwaitMount</a></code>
+                <code><span title="textual.await_complete.AwaitComplete">AwaitComplete</span></code>
           </td>
-          <td><p>An awaitable object that waits for the tab to be mounted.</p></td>
+          <td><p>An optionally awaitable object that waits for the tab to be mounted and
+internal state to be fully updated to reflect the new tab.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9281,7 +9291,7 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../../api/await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
+                <code><span title="textual.await_complete.AwaitComplete">AwaitComplete</span></code>
           </td>
           <td><p>An awaitable object that waits for the tabs to be removed.</p></td>
         </tr>
@@ -9315,22 +9325,22 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tab_id</code></td>
           <td>
+            <strong><code>tab_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to disable.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to disable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9398,22 +9408,22 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tab_id</code></td>
           <td>
+            <strong><code>tab_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to enable.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to enable.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9481,22 +9491,22 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tab_id</code></td>
           <td>
+            <strong><code>tab_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to hide.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to hide.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9564,22 +9574,22 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tab_or_id</code></td>
           <td>
+            <strong><code>tab_or_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="#textual.widgets.Tab">Tab</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The Tab to remove or its id.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The Tab to remove or its id.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9595,9 +9605,9 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
     <tbody>
         <tr>
           <td>
-                <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../../api/await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
+                <code><span title="textual.await_complete.AwaitComplete">AwaitComplete</span></code>
           </td>
-          <td><p>An awaitable object that waits for the tab to be removed.</p></td>
+          <td><p>An optionally awaitable object that waits for the tab to be removed.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9629,22 +9639,22 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>tab_id</code></td>
           <td>
+            <strong><code>tab_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to show.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID of the <a class="autorefs autorefs-internal" href="#textual.widgets.Tab"><code>Tab</code></a> to show.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9777,52 +9787,55 @@ provided a <code>Tabs.TabError</code> will be raised.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>label</code></td>
           <td>
+            <strong><code>label</code></strong>
+            <br>
                 <code><span title="rich.text.TextType">TextType</span></code>
           </td>
-          <td><p>The label to use in the tab.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The label to use in the tab.</p></td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>Optional ID for the widget.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>Space separated list of class names.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Space separated list of class names.</p></td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Whether the tab is disabled or not.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Whether the tab is disabled or not.</p></td>
         </tr>
     </tbody>
   </table>

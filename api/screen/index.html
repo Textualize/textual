@@ -7951,42 +7951,44 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>requester</code></td>
           <td>
+            <strong><code>requester</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
           </td>
-          <td><p>The object making a request for the callback.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The object making a request for the callback.</p></td>
         </tr>
         <tr>
-          <td><code>callback</code></td>
           <td>
+            <strong><code>callback</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultCallbackType" href="#textual.screen.ScreenResultCallbackType">ScreenResultCallbackType</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
           </td>
-          <td><p>The callback function.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The callback function.</p></td>
         </tr>
         <tr>
-          <td><code>future</code></td>
           <td>
+            <strong><code>future</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/asyncio.html#module-asyncio">asyncio</a>.<a class="autorefs autorefs-external" title="asyncio.Future" href="https://docs.python.org/3/library/asyncio-future.html#asyncio.Future">Future</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a>] | None</code>
           </td>
-          <td><p>A Future to hold the result.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>A Future to hold the result.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8112,42 +8114,44 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The name of the screen.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The ID of the screen in the DOM.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The CSS classes for the screen.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The CSS classes for the screen.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8351,8 +8355,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.focused" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8462,8 +8466,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.stack_updates" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8550,22 +8554,22 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>result</code></td>
           <td>
+            <strong><code>result</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a> | <a class="autorefs autorefs-external" title="typing.Type" href="https://docs.python.org/3/library/typing.html#typing.Type">Type</a>[<span title="textual.screen.Screen._NoResult">_NoResult</span>]</code>
           </td>
-          <td><p>The optional result to be passed to the result callback.</p></td>
           <td>
-                <code>_NoResult</code>
+            <code>_NoResult</code>
           </td>
+          <td><p>The optional result to be passed to the result callback.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8599,22 +8603,22 @@ There are other reasons why a widget may not be visible.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>A widget that is a descendant of self.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A widget that is a descendant of self.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8666,22 +8670,22 @@ the callback will be invoked with <code>result</code>.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>result</code></td>
           <td>
+            <strong><code>result</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="#textual.screen.ScreenResultType">ScreenResultType</a> | <a class="autorefs autorefs-external" title="typing.Type" href="https://docs.python.org/3/library/typing.html#typing.Type">Type</a>[<span title="textual.screen.Screen._NoResult">_NoResult</span>]</code>
           </td>
-          <td><p>The optional result to be passed to the result callback.</p></td>
           <td>
-                <code>_NoResult</code>
+            <code>_NoResult</code>
           </td>
+          <td><p>The optional result to be passed to the result callback.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8732,22 +8736,22 @@ the stack.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>A Widget within the composition.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A Widget within the composition.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8817,23 +8821,23 @@ If no focusable widget matches the given CSS selector, focus is set to <code>Non
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
+          </td>
+          <td>
+            <code>&#39;*&#39;</code>
           </td>
           <td><p>CSS selector to filter
 what nodes can be focused.</p></td>
-          <td>
-                <code>&#39;*&#39;</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -8887,23 +8891,23 @@ If no focusable widget matches the given CSS selector, focus is set to <code>Non
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
+          </td>
+          <td>
+            <code>&#39;*&#39;</code>
           </td>
           <td><p>CSS selector to filter
 what nodes can be focused.</p></td>
-          <td>
-                <code>&#39;*&#39;</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -8955,22 +8959,22 @@ the CSS selectors given in the argument.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
           </td>
-          <td><p>A widget</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A widget</p></td>
         </tr>
     </tbody>
   </table>
@@ -9020,32 +9024,33 @@ the CSS selectors given in the argument.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>x</code></td>
           <td>
+            <strong><code>x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>X Coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>y</code></td>
           <td>
+            <strong><code>y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Y Coordinate.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Y Coordinate.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9095,32 +9100,33 @@ the CSS selectors given in the argument.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>x</code></td>
           <td>
+            <strong><code>x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>X Coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>y</code></td>
           <td>
+            <strong><code>y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Y Coordinate.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Y Coordinate.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9170,32 +9176,33 @@ the CSS selectors given in the argument.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>x</code></td>
           <td>
+            <strong><code>x</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>X coordinate.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>y</code></td>
           <td>
+            <strong><code>y</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Y coordinate.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Y coordinate.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9245,32 +9252,33 @@ the CSS selectors given in the argument.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>widget</code></td>
           <td>
+            <strong><code>widget</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a> | None</code>
           </td>
-          <td><p>Widget to focus, or None to un-focus.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Widget to focus, or None to un-focus.</p></td>
         </tr>
         <tr>
-          <td><code>scroll_visible</code></td>
           <td>
+            <strong><code>scroll_visible</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Scroll widget in to view.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Scroll widget in to view.</p></td>
         </tr>
     </tbody>
   </table>

@@ -7408,67 +7408,71 @@ the offset specified and it must be within the visible area of the screen.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>A selector to specify a widget that should be used as the reference
 for the click offset. If this is not specified, the offset is interpreted
 relative to the screen. You can use this parameter to try to click on a
 specific widget. However, if the widget is currently hidden or obscured by
 another widget, the click may not land on the widget you specified.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>offset</code></td>
           <td>
+            <strong><code>offset</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+          </td>
+          <td>
+            <code>(0, 0)</code>
           </td>
           <td><p>The offset to click. The offset is relative to the selector provided
 or to the screen, if no selector is provided.</p></td>
-          <td>
-                <code>(0, 0)</code>
-          </td>
         </tr>
         <tr>
-          <td><code>shift</code></td>
           <td>
+            <strong><code>shift</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>Click with the shift key held down.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
         <tr>
-          <td><code>meta</code></td>
           <td>
+            <strong><code>meta</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>Click with the meta key held down.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
         <tr>
-          <td><code>control</code></td>
           <td>
+            <strong><code>control</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Click with the control key held down.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Click with the control key held down.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7537,22 +7541,22 @@ widget, False otherwise.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>result</code></td>
           <td>
+            <strong><code>result</code></strong>
+            <br>
                 <code><span title="textual.app.ReturnType">ReturnType</span></code>
           </td>
-          <td><p>The app result returned by <code>run</code> or <code>run_async</code>.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The app result returned by <code>run</code> or <code>run_async</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7586,37 +7590,38 @@ the offset specified and it must be within the visible area of the screen.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>A selector to specify a widget that should be used as the reference
 for the hover offset. If this is not specified, the offset is interpreted
 relative to the screen. You can use this parameter to try to hover a
 specific widget. However, if the widget is currently hidden or obscured by
 another widget, the hover may not land on the widget you specified.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>offset</code></td>
           <td>
+            <strong><code>offset</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+          </td>
+          <td>
+            <code>(0, 0)</code>
           </td>
           <td><p>The offset to hover. The offset is relative to the selector provided
 or to the screen, if no selector is provided.</p></td>
-          <td>
-                <code>(0, 0)</code>
-          </td>
         </tr>
     </tbody>
   </table>
@@ -7685,22 +7690,22 @@ widget, False otherwise.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>delay</code></td>
           <td>
+            <strong><code>delay</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
           </td>
-          <td><p>Seconds to pause, or None to wait for cpu idle.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Seconds to pause, or None to wait for cpu idle.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7732,22 +7737,22 @@ widget, False otherwise.</p></td>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>*keys</code></td>
           <td>
+            <strong><code>*keys</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Keys to press.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>Keys to press.</p></td>
         </tr>
     </tbody>
   </table>

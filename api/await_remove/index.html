@@ -7082,32 +7082,33 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>finished_flag</code></td>
           <td>
+            <strong><code>finished_flag</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="asyncio.Event" href="https://docs.python.org/3/library/asyncio-sync.html#asyncio.Event">Event</a></code>
           </td>
-          <td><p>The asyncio event to wait on.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The asyncio event to wait on.</p></td>
         </tr>
         <tr>
-          <td><code>task</code></td>
           <td>
+            <strong><code>task</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="asyncio.Task" href="https://docs.python.org/3/library/asyncio-task.html#asyncio.Task">Task</a></code>
           </td>
-          <td><p>The task which does the remove (required to keep a reference).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The task which does the remove (required to keep a reference).</p></td>
         </tr>
     </tbody>
   </table>

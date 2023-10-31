@@ -7227,22 +7227,22 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>app</code></td>
           <td>
+            <strong><code>app</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.app.App" href="../app/#textual.app.App">App</a></code>
           </td>
-          <td><p>An App instance.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>An App instance.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7283,42 +7283,44 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>worker</code></td>
           <td>
+            <strong><code>worker</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.worker.Worker" href="../worker/#textual.worker.Worker">Worker</a></code>
           </td>
-          <td><p>A Worker instance.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A Worker instance.</p></td>
         </tr>
         <tr>
-          <td><code>start</code></td>
           <td>
+            <strong><code>start</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Start the worker if True, otherwise the worker must be started manually.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>exclusive</code></td>
           <td>
+            <strong><code>exclusive</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Cancel all workers in the same group as <code>worker</code>.</p></td>
           <td>
-                <code>True</code>
+            <code>True</code>
           </td>
+          <td><p>Cancel all workers in the same group as <code>worker</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7373,32 +7375,33 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>node</code></td>
           <td>
+            <strong><code>node</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
           </td>
-          <td><p>Worker DOM node.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Worker DOM node.</p></td>
         </tr>
         <tr>
-          <td><code>group</code></td>
           <td>
+            <strong><code>group</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>A group name.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A group name.</p></td>
         </tr>
     </tbody>
   </table>
@@ -7448,22 +7451,22 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>node</code></td>
           <td>
+            <strong><code>node</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
           </td>
-          <td><p>A DOM node (widget, screen, or App).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>A DOM node (widget, screen, or App).</p></td>
         </tr>
     </tbody>
   </table>
@@ -7536,22 +7539,22 @@ have a worker manager accessibly via a <code>workers</code> attribute.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>workers</code></td>
           <td>
+            <strong><code>workers</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.worker.Worker" href="../worker/#textual.worker.Worker">Worker</a>] | None</code>
           </td>
-          <td><p>An iterable of workers or None to wait for all workers in the manager.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>An iterable of workers or None to wait for all workers in the manager.</p></td>
         </tr>
     </tbody>
   </table>

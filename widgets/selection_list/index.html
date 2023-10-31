@@ -8896,62 +8896,66 @@ makes use of the following component classes:</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>*selections</code></td>
           <td>
+            <strong><code>*selections</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]</code>
           </td>
-          <td><p>The content for the selection list.</p></td>
           <td>
-                <code>()</code>
+            <code>()</code>
           </td>
+          <td><p>The content for the selection list.</p></td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The name of the selection list.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The ID of the selection list in the DOM.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The CSS classes of the selection list.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The CSS classes of the selection list.</p></td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Whether the selection list is disabled or not.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Whether the selection list is disabled or not.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8976,8 +8980,8 @@ makes use of the following component classes:</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._selection_list.SelectionList.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9242,32 +9246,33 @@ values takes place; either by user interaction or by API calls.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selection_list</code></td>
           <td>
+            <strong><code>selection_list</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList" href="#textual.widgets.SelectionList">SelectionList</a></code>
           </td>
-          <td><p>The selection list that owns the selection.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The selection list that owns the selection.</p></td>
         </tr>
         <tr>
-          <td><code>index</code></td>
           <td>
+            <strong><code>index</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>The index of the selection that the message relates to.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The index of the selection that the message relates to.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9457,22 +9462,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>item</code></td>
           <td>
+            <strong><code>item</code></strong>
+            <br>
                 <code><span title="textual.widgets._option_list.NewOptionListContent">NewOptionListContent</span> | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]</code>
           </td>
-          <td><p>The new item to add.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The new item to add.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9546,22 +9551,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>items</code></td>
           <td>
+            <strong><code>items</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<span title="textual.widgets._option_list.NewOptionListContent">NewOptionListContent</span> | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]]</code>
           </td>
-          <td><p>The new items to add.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The new items to add.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9676,22 +9681,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selection</code></td>
           <td>
+            <strong><code>selection</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a></code>
           </td>
-          <td><p>The selection to mark as not selected.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The selection to mark as not selected.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9782,22 +9787,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>option_id</code></td>
           <td>
+            <strong><code>option_id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>The ID of the selection option to get.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The ID of the selection option to get.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9865,22 +9870,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>index</code></td>
           <td>
+            <strong><code>index</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>The index of the selection option to get.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The index of the selection option to get.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9948,22 +9953,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selection</code></td>
           <td>
+            <strong><code>selection</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a></code>
           </td>
-          <td><p>The selection to mark as selected.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The selection to mark as selected.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10054,22 +10059,22 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>selection</code></td>
           <td>
+            <strong><code>selection</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a></code>
           </td>
-          <td><p>The selection to toggle.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The selection to toggle.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10246,62 +10251,66 @@ selected values.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>prompt</code></td>
           <td>
+            <strong><code>prompt</code></strong>
+            <br>
                 <code><span title="rich.text.TextType">TextType</span></code>
           </td>
-          <td><p>The prompt for the selection.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The prompt for the selection.</p></td>
         </tr>
         <tr>
-          <td><code>value</code></td>
           <td>
+            <strong><code>value</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a></code>
           </td>
-          <td><p>The value for the selection.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The value for the selection.</p></td>
         </tr>
         <tr>
-          <td><code>initial_state</code></td>
           <td>
+            <strong><code>initial_state</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>The initial selected state of the selection.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The optional ID for the selection.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The optional ID for the selection.</p></td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>The initial enabled/disabled state. Enabled by default.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>The initial enabled/disabled state. Enabled by default.</p></td>
         </tr>
     </tbody>
   </table>

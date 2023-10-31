@@ -7681,82 +7681,88 @@ window.onload = async (event) => {
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>highlight</code></td>
           <td>
+            <strong><code>highlight</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
           </td>
           <td><p>Enable highlighting.</p></td>
-          <td>
-                <code>False</code>
-          </td>
         </tr>
         <tr>
-          <td><code>max_lines</code></td>
           <td>
+            <strong><code>max_lines</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a> | None</code>
           </td>
-          <td><p>Maximum number of lines to display.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Maximum number of lines to display.</p></td>
         </tr>
         <tr>
-          <td><code>auto_scroll</code></td>
           <td>
+            <strong><code>auto_scroll</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
           </td>
           <td><p>Scroll to end on new lines.</p></td>
-          <td>
-                <code>True</code>
-          </td>
         </tr>
         <tr>
-          <td><code>name</code></td>
           <td>
+            <strong><code>name</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The name of the text log.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>id</code></td>
           <td>
+            <strong><code>id</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>The ID of the text log in the DOM.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>classes</code></td>
           <td>
+            <strong><code>classes</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
-          <td><p>The CSS classes of the text log.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>The CSS classes of the text log.</p></td>
         </tr>
         <tr>
-          <td><code>disabled</code></td>
           <td>
+            <strong><code>disabled</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>Whether the text log is disabled or not.</p></td>
           <td>
-                <code>False</code>
+            <code>False</code>
           </td>
+          <td><p>Whether the text log is disabled or not.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8003,32 +8009,33 @@ Changing the lines will not update the Log's contents.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>y_start</code></td>
           <td>
+            <strong><code>y_start</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
           </td>
           <td><p>First line to refresh.</p></td>
-          <td>
-              <em>required</em>
-          </td>
         </tr>
         <tr>
-          <td><code>line_count</code></td>
           <td>
+            <strong><code>line_count</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
           </td>
-          <td><p>Total number of lines to refresh.</p></td>
           <td>
-                <code>1</code>
+            <code>1</code>
           </td>
+          <td><p>Total number of lines to refresh.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8060,32 +8067,33 @@ Changing the lines will not update the Log's contents.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>data</code></td>
           <td>
+            <strong><code>data</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Data to write.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>Data to write.</p></td>
         </tr>
         <tr>
-          <td><code>scroll_end</code></td>
           <td>
+            <strong><code>scroll_end</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
           </td>
-          <td><p>Scroll to the end after writing, or <code>None</code> to use <code>self.auto_scroll</code>.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Scroll to the end after writing, or <code>None</code> to use <code>self.auto_scroll</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8135,22 +8143,22 @@ Changing the lines will not update the Log's contents.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>line</code></td>
           <td>
+            <strong><code>line</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>String to write to the log.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>String to write to the log.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8200,32 +8208,33 @@ Changing the lines will not update the Log's contents.</p>
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>lines</code></td>
           <td>
+            <strong><code>lines</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>]</code>
           </td>
-          <td><p>An iterable of strings to write.</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>An iterable of strings to write.</p></td>
         </tr>
         <tr>
-          <td><code>scroll_end</code></td>
           <td>
+            <strong><code>scroll_end</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
           </td>
-          <td><p>Scroll to the end after writing, or <code>None</code> to use <code>self.auto_scroll</code>.</p></td>
           <td>
-                <code>None</code>
+            <code>None</code>
           </td>
+          <td><p>Scroll to the end after writing, or <code>None</code> to use <code>self.auto_scroll</code>.</p></td>
         </tr>
     </tbody>
   </table>

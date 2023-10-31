@@ -7050,43 +7050,45 @@ listed in <a class="autorefs autorefs-internal" href="../message/#textual.messag
   <table>
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Type</th>
-        <th>Description</th>
+        <th>Parameter</th>
         <th>Default</th>
+        <th>Description</th>
       </tr>
     </thead>
     <tbody>
         <tr>
-          <td><code>message_type</code></td>
           <td>
+            <strong><code>message_type</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.message.Message" href="../message/#textual.message.Message">Message</a>]</code>
           </td>
-          <td><p>The message type (i.e. the class).</p></td>
           <td>
-              <em>required</em>
+            <em>required</em>
           </td>
+          <td><p>The message type (i.e. the class).</p></td>
         </tr>
         <tr>
-          <td><code>selector</code></td>
           <td>
+            <strong><code>selector</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
           </td>
           <td><p>An optional <a href="/guide/CSS#selectors">selector</a>. If supplied, the handler will only be called if <code>selector</code>
 matches the widget from the <code>control</code> attribute of the message.</p></td>
-          <td>
-                <code>None</code>
-          </td>
         </tr>
         <tr>
-          <td><code>**kwargs</code></td>
           <td>
+            <strong><code>**kwargs</code></strong>
+            <br>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
           </td>
-          <td><p>Additional selectors for other attributes of the message.</p></td>
           <td>
-                <code>{}</code>
+            <code>{}</code>
           </td>
+          <td><p>Additional selectors for other attributes of the message.</p></td>
         </tr>
     </tbody>
   </table>
