@@ -138,7 +138,9 @@ class CellKey(NamedTuple):
     can still be used to retrieve it, regardless of where it currently is."""
 
     row_key: RowKey
+    """The key of this cell's row."""
     column_key: ColumnKey
+    """The key of this cell's column."""
 
     def __rich_repr__(self):
         yield "row_key", self.row_key
