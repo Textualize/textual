@@ -389,10 +389,19 @@ class Stylesheet:
                 tie_breaker=tie_breaker,
                 scope=scope,
             )
-        stylesheet.parse()
-        self._rules = stylesheet.rules
-        self._rules_map = None
-        self.source = stylesheet.source
+        try:
+            stylesheet.parse()
+        except Exception:
+            # If we don't update self's invalid CSS, we might end up reparsing this CSS
+            # before Textual quits application mode.
+            # See https://github.com/Textualize/textual/issues/3581.
+            self._invalid_css.update(stylesheet._invalid_css)
+            raise
+        else:
+            self._rules = stylesheet.rules
+            self._rules_map = None
+            self.source = stylesheet.source
+            self._require_parse = False
 
     @classmethod
     def _check_rule(

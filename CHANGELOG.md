@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
+
 ### Changed
 
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
