@@ -166,7 +166,7 @@ class XTermParser(Parser[events.Event]):
     # References:
     # https://en.wikipedia.org/wiki/ANSI_escape_code#Terminal_input_sequences
     # https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-    _re_escape_sequence = re.compile(r"^\x1b{1,2}[\x21-\x7e]*$")
+    _re_escape_sequence = re.compile(r"^\x1b{1,2}[\x20-\x7e]*$")
 
     @functools.cached_property
     def _re_alt_key_combination_only(self) -> re.Pattern:
