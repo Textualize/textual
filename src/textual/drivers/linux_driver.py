@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any
 import rich.repr
 import rich.traceback
 
-from .. import events, log
+from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size

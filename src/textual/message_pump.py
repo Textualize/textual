@@ -26,7 +26,6 @@ from ._context import message_hook as message_hook_context_var
 from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
-from ._types import CallbackType
 from .case import camel_to_snake
 from .css.match import match
 from .errors import DuplicateKeyHandlers

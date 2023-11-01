@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import re
-from pathlib import PurePath
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
-from textual.css.tokenizer import Expect, Token, Tokenizer
+from .tokenizer import Expect, Token, Tokenizer
+
+if TYPE_CHECKING:
+    from .types import CSSLocation
 
 PERCENT = r"-?\d+\.?\d*%"
 DECIMAL = r"-?\d+\.?\d*"
@@ -157,8 +159,8 @@ class TokenizerState:
         "declaration_set_end": expect_root_scope,
     }
 
-    def __call__(self, code: str, path: str | PurePath) -> Iterable[Token]:
-        tokenizer = Tokenizer(code, path=path)
+    def __call__(self, code: str, read_from: CSSLocation) -> Iterable[Token]:
+        tokenizer = Tokenizer(code, read_from=read_from)
         expect = self.EXPECT
         get_token = tokenizer.get_token
         get_state = self.STATE_MAP.get
@@ -194,7 +196,7 @@ tokenize_value = ValueTokenizerState()
 
 
 def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
-    """Tokens the values in a dict of strings.
+    """Tokenizes the values in a dict of strings.
 
     Args:
         values: A mapping of CSS variable name on to a value, to be
@@ -204,6 +206,7 @@ def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
         A mapping of name on to a list of tokens,
     """
     value_tokens = {
-        name: list(tokenize_value(value, "__name__")) for name, value in values.items()
+        name: list(tokenize_value(value, ("__name__", "")))
+        for name, value in values.items()
     }
     return value_tokens

@@ -5,12 +5,13 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
 
+from typing_extensions import Literal, get_args
+
 if TYPE_CHECKING:
     from tree_sitter import Node
     from tree_sitter.binding import Query
 
 from textual._cells import cell_len
-from textual._types import Literal, get_args
 from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
