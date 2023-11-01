@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## [0.41.0] - 2023-10-31
 
 ### Fixed
 
@@ -21,12 +21,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `OptionList` event leakage from `CommandPalette` to `App`.
 - Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
 - Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
+- Fixed the command palette cancelling other workers https://github.com/Textualize/textual/issues/3615
 - `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 
 ### Added
 
 - Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
 - Add setter for `TextArea.text` https://github.com/Textualize/textual/discussions/3525
+- Added `key` argument to the `DataTable.sort()` method, allowing the table to be sorted using a custom function (or other callable) https://github.com/Textualize/textual/pull/3090
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
+- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
+- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
 - Exceptions to `textual.widgets.select` https://github.com/Textualize/textual/pull/3614
   - `InvalidSelectValueError` for when setting a `Select` to an invalid value
   - `EmptySelectError` when creating/setting a `Select` to have no options when `allow_blank` is `False`
@@ -56,15 +61,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
 - Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
 - Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
-
-### Added
-
-- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
-- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
-
-### Added
-
-- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
 
 ## [0.40.0] - 2023-10-11
 
@@ -258,7 +254,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - DescendantBlur and DescendantFocus can now be used with @on decorator
-
 
 ## [0.32.0] - 2023-08-03
 
@@ -1407,6 +1402,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/Textualize/textual/compare/v0.38.1...v0.39.0
 [0.38.1]: https://github.com/Textualize/textual/compare/v0.38.0...v0.38.1
