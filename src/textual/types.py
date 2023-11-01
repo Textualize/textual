@@ -16,6 +16,7 @@ from .actions import ActionParseResult
 from .css.styles import RenderStyles
 from .widgets._data_table import CursorType
 from .widgets._input import InputValidationOn
+from .widgets._select import NoSelection, SelectType
 
 __all__ = [
     "ActionParseResult",
@@ -29,7 +30,9 @@ __all__ = [
     "InputValidationOn",
     "MessageTarget",
     "NoActiveAppError",
+    "NoSelection",
     "RenderStyles",
+    "SelectType",
     "UnusedParameter",
     "WatchCallbackType",
 ]

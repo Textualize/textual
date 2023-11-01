@@ -7,7 +7,6 @@ from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events, on
-from ..app import ComposeResult
 from ..containers import Horizontal, Vertical
 from ..css.query import NoMatches
 from ..message import Message
@@ -18,15 +17,17 @@ from ._option_list import Option, OptionList
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
+    from ..app import ComposeResult
 
-class _NoSelection:
-    """Used by the `Select` widget to flag the unselected state."""
+
+class NoSelection:
+    """Used by the `Select` widget to flag the unselected state. See [`Select.BLANK`][textual.widgets.Select.BLANK]."""
 
     def __repr__(self) -> str:
         return "Select.BLANK"
 
 
-BLANK = _NoSelection()
+BLANK = NoSelection()
 
 
 class InvalidSelectValueError(Exception):
@@ -140,9 +141,9 @@ class SelectCurrent(Horizontal):
         """
         super().__init__()
         self.placeholder = placeholder
-        self.label: RenderableType | _NoSelection = Select.BLANK
+        self.label: RenderableType | NoSelection = Select.BLANK
 
-    def update(self, label: RenderableType | _NoSelection) -> None:
+    def update(self, label: RenderableType | NoSelection) -> None:
         """Update the content in the widget.
 
         Args:
@@ -151,7 +152,7 @@ class SelectCurrent(Horizontal):
         self.label = label
         self.has_value = label is not Select.BLANK
         self.query_one("#label", Static).update(
-            self.placeholder if isinstance(label, _NoSelection) else label
+            self.placeholder if isinstance(label, NoSelection) else label
         )
 
     def compose(self) -> ComposeResult:
@@ -235,11 +236,11 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | _NoSelection] = var[Union[SelectType, _NoSelection]](BLANK)
+    value: var[SelectType | NoSelection] = var[Union[SelectType, NoSelection]](BLANK)
     """The value of the selection.
 
     If the widget has no selection, its value will be [`Select.BLANK`][textual.widgets.Select.BLANK].
-    Setting this to an illegal value will raise a [`UnknownSelectValueError`][textual.widgets.select.UnknownSelectValueError]
+    Setting this to an illegal value will raise a [`InvalidSelectValueError`][textual.widgets.select.InvalidSelectValueError]
     exception.
     """
 
@@ -250,7 +251,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """
 
         def __init__(
-            self, select: Select[SelectType], value: SelectType | _NoSelection
+            self, select: Select[SelectType], value: SelectType | NoSelection
         ) -> None:
             """
             Initialize the Changed message.
@@ -272,7 +273,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         *,
         prompt: str = "Select",
         allow_blank: bool = True,
-        value: SelectType | _NoSelection = BLANK,
+        value: SelectType | NoSelection = BLANK,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -312,7 +313,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         This method sets up `self._options` and `self._legal_values`.
         """
-        self._options: list[tuple[RenderableType, SelectType | _NoSelection]] = []
+        self._options: list[tuple[RenderableType, SelectType | NoSelection]] = []
         if self._allow_blank:
             self._options.append(("", self.BLANK))
         self._options.extend(options)
@@ -322,7 +323,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                 "Select options cannot be empty if selection can't be blank."
             )
 
-        self._legal_values: set[SelectType | _NoSelection] = {
+        self._legal_values: set[SelectType | NoSelection] = {
             value for _, value in self._options
         }
 
@@ -342,7 +343,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         for option in self._select_options:
             option_list.add_option(option)
 
-    def _init_selected_option(self, hint: SelectType | _NoSelection = BLANK) -> None:
+    def _init_selected_option(self, hint: SelectType | NoSelection = BLANK) -> None:
         """Initialises the selected option for the `Select`."""
         if hint == self.BLANK and not self._allow_blank:
             hint = self._options[0][1]
@@ -367,15 +368,15 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._init_selected_option()
 
     def _validate_value(
-        self, value: SelectType | _NoSelection
-    ) -> SelectType | _NoSelection:
+        self, value: SelectType | NoSelection
+    ) -> SelectType | NoSelection:
         """Ensure the new value is a valid option.
 
         If `allow_blank` is `True`, `None` is also a valid value and corresponds to no
             selection.
 
         Raises:
-            UnknownSelectValueError: If the new value does not correspond to any known
+            InvalidSelectValueError: If the new value does not correspond to any known
                 value.
         """
         if value not in self._legal_values:
@@ -389,7 +390,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
         return value
 
-    def _watch_value(self, value: SelectType | _NoSelection) -> None:
+    def _watch_value(self, value: SelectType | NoSelection) -> None:
         """Update the current value when it changes."""
         self._value = value
         try:

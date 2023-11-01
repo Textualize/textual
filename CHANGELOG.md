@@ -27,6 +27,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
 - Add setter for `TextArea.text` https://github.com/Textualize/textual/discussions/3525
+- Exceptions to `textual.widgets.select` https://github.com/Textualize/textual/pull/3614
+  - `InvalidSelectValueError` for when setting a `Select` to an invalid value
+  - `EmptySelectError` when creating/setting a `Select` to have no options when `allow_blank` is `False`
+- `Select` methods https://github.com/Textualize/textual/pull/3614
+  - `clear`
+  - `is_blank`
+- Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
 
 ### Changed
 
@@ -48,6 +55,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
 - Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
+- Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
 
 ### Added
 
