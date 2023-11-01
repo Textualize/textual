@@ -2,7 +2,6 @@ import pytest
 
 from textual import on
 from textual.app import App, ComposeResult
-from textual.events import Blur
 from textual.validation import Number, ValidationResult
 from textual.widgets import Input
 

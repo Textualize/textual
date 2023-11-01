@@ -515,7 +515,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         method of dismissing the palette.
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
-            self.workers.cancel_all()
+            self._cancel_gather_commands()
             self.dismiss()
 
     def on_mount(self, _: Mount) -> None:
@@ -774,7 +774,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     _NO_MATCHES: Final[str] = "--no-matches"
     """The ID to give the disabled option that shows there were no matches."""
 
-    @work(exclusive=True)
+    _GATHER_COMMANDS_GROUP: Final[str] = "--textual-command-palette-gather-commands"
+    """The group name of the command gathering worker."""
+
+    @work(exclusive=True, group=_GATHER_COMMANDS_GROUP)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
 
@@ -895,6 +898,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         if command_list.option_count == 0 and not worker.is_cancelled:
             self._start_no_matches_countdown()
 
+    def _cancel_gather_commands(self) -> None:
+        """Cancel any operation that is gather commands."""
+        self.workers.cancel_group(self, self._GATHER_COMMANDS_GROUP)
+
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
         """React to input in the command palette.
@@ -903,7 +910,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             event: The input event.
         """
         event.stop()
-        self.workers.cancel_all()
+        self._cancel_gather_commands()
         self._stop_no_matches_countdown()
 
         search_value = event.value.strip()
@@ -921,7 +928,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             event: The option selection event.
         """
         event.stop()
-        self.workers.cancel_all()
+        self._cancel_gather_commands()
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
@@ -958,15 +965,20 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             if self._selected_command is not None:
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
-                self.workers.cancel_all()
+                self._cancel_gather_commands()
                 self.dismiss(self._selected_command.command)
+
+    @on(OptionList.OptionHighlighted)
+    def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
+        """Stop any unused events so they don't leak to the application."""
+        event.stop()
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
         if self._list_visible:
             self._list_visible = False
         else:
-            self.workers.cancel_all()
+            self._cancel_gather_commands()
             self.dismiss()
 
     def _action_command_list(self, action: str) -> None:

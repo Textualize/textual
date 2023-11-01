@@ -5,7 +5,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea
+from textual.widgets import TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -102,7 +102,10 @@ def test_input_validation(snap_compare):
 
 
 def test_input_suggestions(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+    async def run_before(pilot):
+        pilot.app.query_one(Input).cursor_blink = False
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before)
 
 
 def test_buttons_render(snap_compare):
@@ -669,6 +672,9 @@ def test_command_palette(snap_compare) -> None:
     from textual.command import CommandPalette
 
     async def run_before(pilot) -> None:
+        palette = pilot.app.query_one(CommandPalette)
+        palette_input = palette.query_one(Input)
+        palette_input.cursor_blink = False
         await pilot.press("ctrl+backslash")
         await pilot.press("A")
         await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
@@ -680,7 +686,16 @@ def test_command_palette(snap_compare) -> None:
 
 
 def test_textual_dev_border_preview(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py", press=["enter"])
+    async def run_before(pilot):
+        buttons = pilot.app.query(Button)
+        for button in buttons:
+            button.active_effect_duration = 0
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dev_previews_border.py",
+        press=["enter"],
+        run_before=run_before,
+    )
 
 
 def test_textual_dev_colors_preview(snap_compare):
@@ -705,6 +720,23 @@ def test_notifications_through_screens(snap_compare) -> None:
 
 def test_notifications_through_modes(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")
+
+
+def test_notification_with_inline_link(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notification_with_inline_link.py")
+
+
+def test_notification_with_inline_link_hover(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    async def run_before(pilot) -> None:
+        await pilot.pause()
+        await pilot.hover("Toast", offset=(8, 1))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "notification_with_inline_link.py",
+        run_before=run_before,
+    )
 
 
 def test_print_capture(snap_compare) -> None:

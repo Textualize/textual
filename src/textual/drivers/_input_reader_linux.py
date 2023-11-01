@@ -4,8 +4,6 @@ import sys
 from threading import Event
 from typing import Iterator
 
-from textual import log
-
 
 class InputReader:
     """Read input from stdin."""

@@ -1,5 +1,4 @@
 """
-
 A decorator used to create [workers](/guide/workers).
 """
 

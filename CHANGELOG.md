@@ -8,30 +8,62 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
+- inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
+
+## [0.41.0] - 2023-10-31
+
 ### Fixed
 
+- Fixed `Input.cursor_blink` reactive not changing blink state after `Input` was mounted https://github.com/Textualize/textual/pull/3498
+- Fixed `Tabs.active` attribute value not being re-assigned after removing a tab or clearing https://github.com/Textualize/textual/pull/3498
+- Fixed `DirectoryTree` race-condition crash when changing path https://github.com/Textualize/textual/pull/3498
 - Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
 - Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
 - Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
 - Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
 - Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
+- Fixed `OptionList` event leakage from `CommandPalette` to `App`.
+- Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
+- Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
+- Fixed the command palette cancelling other workers https://github.com/Textualize/textual/issues/3615
+
+### Added
+
+- Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
+- Add setter for `TextArea.text` https://github.com/Textualize/textual/discussions/3525
+- Added `key` argument to the `DataTable.sort()` method, allowing the table to be sorted using a custom function (or other callable) https://github.com/Textualize/textual/pull/3090
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
+- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
+- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
+
 
 ### Changed
 
+- Breaking change: `Button.ACTIVE_EFFECT_DURATION` classvar converted to `Button.active_effect_duration` attribute https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Input.blink_timer` made private (renamed to `Input._blink_timer`) https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Input.cursor_blink` reactive updated to not run on mount (now `init=False`) https://github.com/Textualize/textual/pull/3498
+- Breaking change: `AwaitTabbedContent` class removed https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Tabs.remove_tab` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Tabs.clear` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.add_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.remove_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.clear_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `Tabs.add_tab` now returns an `AwaitComplete` instead of an `AwaitMount` https://github.com/Textualize/textual/pull/3498
+- `DirectoryTree.reload` now returns an `AwaitComplete`, which may be awaited to ensure the node has finished being processed by the internal queue https://github.com/Textualize/textual/pull/3498
+- `Tabs.remove_tab` now returns an `AwaitComplete`, which may be awaited to ensure the tab is unmounted and internal state is updated https://github.com/Textualize/textual/pull/3498
+- `App.switch_mode` now returns an `AwaitMount`, which may be awaited to ensure the screen is mounted https://github.com/Textualize/textual/pull/3498
 - Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
 - DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
-- CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
-- inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
-
-### Added
-
-- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
-- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
-
+- Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
 
 ## [0.40.0] - 2023-10-11
+
+### Added
 
 - Added `loading` reactive property to widgets https://github.com/Textualize/textual/pull/3509
 
@@ -66,6 +98,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Pilot.click`/`Pilot.hover` now raises `OutOfBounds` when clicking outside visible screen https://github.com/Textualize/textual/pull/3360
 - `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector https://github.com/Textualize/textual/pull/3360
 - Added a delay to when the `No Matches` message appears in the command palette, thus removing a flicker https://github.com/Textualize/textual/pull/3399
+- Timer callbacks are now typed more loosely https://github.com/Textualize/textual/issues/3434
 
 ## [0.38.1] - 2023-09-21
 
@@ -220,7 +253,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - DescendantBlur and DescendantFocus can now be used with @on decorator
-
 
 ## [0.32.0] - 2023-08-03
 
@@ -1369,6 +1401,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/Textualize/textual/compare/v0.38.1...v0.39.0
 [0.38.1]: https://github.com/Textualize/textual/compare/v0.38.0...v0.38.1
