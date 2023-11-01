@@ -154,17 +154,14 @@ class XTermParser(Parser[events.Event]):
 
     # Match escape sequences.
     #
-    # - An escape sequence starts with 0x1b followed by ASCII characters from
-    #   0x20 (" ") to 0x7e ("~") (inclusive).
-    #
-    # - Alt+Enter and Alt+Ctrl+<letter> sends 0x1b followed by a ASCII control
-    #   character from 0x00 to 0x1f (inclusive). Note that Backspace (0x7f) is
-    #   outside of that range.
+    # - Alt+Enter, Alt+Tab and Alt+Ctrl+<letter> sends 0x1b followed by a ASCII
+    #   control character from 0x00 to 0x1f (inclusive). Note that Backspace
+    #   (0x7f) is outside of that range.
     #
     # - Escape key sends 0x1b. Alt+Escape sends 0x1b0x1b.
     #
-    # - VT terminals (rxvt) send two 0x1b for many Alt combinations,
-    #   e.g. Alt+F1.
+    # - VT terminals (rxvt) send sequences that start with two 0x1b for many Alt
+    #   combinations, e.g. Alt+F1.
     #
     # References:
     # https://en.wikipedia.org/wiki/ANSI_escape_code#Terminal_input_sequences
@@ -211,7 +208,9 @@ class XTermParser(Parser[events.Event]):
                     sequence += yield self.read1()
 
                     # Optimization that triggers mouse events immediately
-                    # without waiting for a timeout.
+                    # without waiting for a timeout. Because mouse events come
+                    # from a fire hose, we detect them first to make mouse
+                    # interaction as smooth as possible.
                     if self._re_mouse_event.search(sequence):
                         self.debug_log("parse(): Mouse sequence:", repr(sequence))
                         break
@@ -240,7 +239,7 @@ class XTermParser(Parser[events.Event]):
                     # invalid character.
                     elif not self._re_escape_sequence.search(sequence):
                         # We have read one character too much, the one that
-                        # tells us the unknown escape sequence ended.
+                        # tells us the escape sequence ended.
                         remainder = sequence[-1:]
                         sequence = sequence[:-1]
                         self.debug_log(
