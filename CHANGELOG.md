@@ -6,6 +6,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## Unreleased
+
+### Fixed
+
+- `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
+
+### Added
+
+- Exceptions to `textual.widgets.select` https://github.com/Textualize/textual/pull/3614
+  - `InvalidSelectValueError` for when setting a `Select` to an invalid value
+  - `EmptySelectError` when creating/setting a `Select` to have no options when `allow_blank` is `False`
+- `Select` methods https://github.com/Textualize/textual/pull/3614
+  - `clear`
+  - `is_blank`
+- Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
+
+### Changed
+
+- Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
+
+
 ## [0.41.0] - 2023-10-31
 
 ### Fixed
@@ -22,7 +43,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
 - Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
 - Fixed the command palette cancelling other workers https://github.com/Textualize/textual/issues/3615
-- `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 
 ### Added
 
@@ -32,13 +52,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
 - Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
 - Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
-- Exceptions to `textual.widgets.select` https://github.com/Textualize/textual/pull/3614
-  - `InvalidSelectValueError` for when setting a `Select` to an invalid value
-  - `EmptySelectError` when creating/setting a `Select` to have no options when `allow_blank` is `False`
-- `Select` methods https://github.com/Textualize/textual/pull/3614
-  - `clear`
-  - `is_blank`
-- Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
 
 ### Changed
 
@@ -60,7 +73,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
 - Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
 - Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
-- Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
 
 ## [0.40.0] - 2023-10-11
 
