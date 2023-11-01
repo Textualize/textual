@@ -17,6 +17,16 @@ class SelectApp(App[None]):
         self.changed_messages.append(event)
 
 
+async def test_message_control():
+    app = SelectApp()
+    async with app.run_test() as pilot:
+        await pilot.click(Select)
+        await pilot.click(SelectOverlay, offset=(2, 3))
+        await pilot.pause()
+        message = app.changed_messages[0]
+        assert message.control is app.query_one(Select)
+
+
 async def test_selecting_posts_message():
     app = SelectApp()
     async with app.run_test() as pilot:
