@@ -139,11 +139,6 @@ class XTermParser(Parser[events.Event]):
             name = _character_to_key(sequence)
             yield events.Key(name, sequence)
 
-        elif not self._re_private_escape_sequence.search(sequence):
-            self.debug_log("Exploding escape sequence:", repr(sequence))
-            for character in sequence:
-                yield from self._sequence_to_key_events(character)
-
         else:
             self.debug_log("Ignoring unknown private escape sequence:", repr(sequence))
 
@@ -193,18 +188,6 @@ class XTermParser(Parser[events.Event]):
             + r"$"
             # fmt: on
         )
-
-    # https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_(Control_Sequence_Introducer)_sequences
-    _re_private_escape_sequence = re.compile(
-        r"^\x1b"
-        r"(?:"
-        # Any parameter bytes are "<", ">", "=" or "?".
-        r"[^\x1b]*[\<\=\>\?][^\x1b]*"
-        r"|"
-        # The final byte is "p-z", "{", "|", "}" or "~".
-        r"[^\x1b]*[p-z\{\|\}\~]"
-        r")$"
-    )
 
     def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
         """Read input and pass each complete sequence to _parse(). A complete

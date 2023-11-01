@@ -220,46 +220,38 @@ def test_multiple_escape_sequences_in_chunks(sequence, exp_events, chunk_size):
     assert_events_equal(chunks.as_events, exp_events)
 
 
-@pytest.mark.parametrize("private_parameter_byte_position", (2, 4))
 @pytest.mark.parametrize(
-    argnames="private_parameter_byte, exp_sequence_is_ignored_because_of_parameter_byte",
-    argvalues=((byte, bool(byte)) for byte in ([""] + list("?<>="))),
-    ids=lambda v: (v if isinstance(v, str) else ("Private" if v else "Not Private")),
+    argnames="sequence, exp_events",
+    argvalues=(
+        pytest.param(
+            "\x1b[foo",
+            [],
+            id="Nothing",
+        ),
+        pytest.param(
+            "\x1b[foo\x1b[2~",
+            [Key(key="insert", character=None)],
+            id="Normal escape sequence",
+        ),
+        pytest.param(
+            "\x1b[foo\x1bOP",
+            [Key(key="f1", character=None)],
+            id="Exotic escape sequence",
+        ),
+        pytest.param(
+            "\x1b[foo\r",
+            [Key(key="enter", character="\r")],
+            id="Control character",
+        ),
+        pytest.param(
+            "\x1b[fooş",
+            [Key(key="ş", character="ş")],
+            id="Non-ASCII character",
+        ),
+    ),
+    ids=lambda v: repr(v),
 )
-@pytest.mark.parametrize(
-    argnames="private_final_byte, exp_sequence_is_ignored_because_of_final_byte",
-    argvalues=((byte, bool(byte)) for byte in ([""] + list("pqrstuvwxyz{|}~"))),
-    ids=lambda v: (v if isinstance(v, str) else ("Private" if v else "Not Private")),
-)
-def test_unknown_escape_sequence(
-    private_parameter_byte,
-    exp_sequence_is_ignored_because_of_parameter_byte,
-    private_parameter_byte_position,
-    private_final_byte,
-    exp_sequence_is_ignored_because_of_final_byte,
-):
-    sequence = "\x1b[foo"
-    sequence = (
-        sequence[:private_parameter_byte_position]
-        + private_parameter_byte
-        + sequence[private_parameter_byte_position:]
-        + private_final_byte
-    )
-    print("sequence:", repr(sequence))
-
-    exp_events = []
-    if (
-        not exp_sequence_is_ignored_because_of_parameter_byte
-        and not exp_sequence_is_ignored_because_of_final_byte
-    ):
-        for character in sequence:
-            if character == "\x1b":
-                exp_events.append(Key(key="escape", character="\x1b"))
-            elif character == "[":
-                exp_events.append(Key(key="left_square_bracket", character="["))
-            else:
-                exp_events.append(Key(key=character, character=character))
-
+def test_unknown_escape_sequence_followed_by(sequence, exp_events):
     chunks = Chunks(sequence=sequence)
     assert_events_equal(chunks.as_events, exp_events)
 
