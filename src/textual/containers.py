@@ -26,7 +26,7 @@ class Container(Widget):
     """
 
 
-class ScrollableContainer(Widget, inherit_bindings=False):
+class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     """A scrollable container with vertical layout, and auto scrollbars on both axis."""
 
     DEFAULT_CSS = """

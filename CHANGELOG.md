@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
+- Fixed `ScrollableContainer` to receive focus
 
 ### Changed
 
