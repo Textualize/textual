@@ -76,7 +76,7 @@ class Vertical(Widget, inherit_bindings=False):
     """
 
 
-class VerticalScroll(ScrollableContainer, can_focus=True):
+class VerticalScroll(ScrollableContainer):
     """A container with vertical layout and an automatic scrollbar on the Y axis."""
 
     DEFAULT_CSS = """
@@ -101,7 +101,7 @@ class Horizontal(Widget, inherit_bindings=False):
     """
 
 
-class HorizontalScroll(ScrollableContainer, can_focus=True):
+class HorizontalScroll(ScrollableContainer):
     """A container with horizontal layout and an automatic scrollbar on the Y axis."""
 
     DEFAULT_CSS = """
