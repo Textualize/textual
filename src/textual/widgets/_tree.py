@@ -918,6 +918,9 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         Args:
             line: Line number.
         """
+        node = self.get_node_at_line(line)
+        if node:
+            node._updates += 1
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
         self.refresh(region)
 
