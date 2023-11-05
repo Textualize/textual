@@ -9,6 +9,7 @@ markdown_extensions:
   - admonition
   - def_list
   - meta
+  - footnotes
 
   - toc:
       permalink: true
@@ -34,10 +35,12 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.snippets
   - markdown.extensions.attr_list
+  - pymdownx.details
 
 theme:
   name: material
   custom_dir: docs/custom_theme
+  logo: images/icons/logo light transparent.svg
   features:
     - navigation.tabs
     - navigation.indexes
@@ -80,7 +83,8 @@ plugins:
             - "!^can_replace$"
             # Hide some methods that Widget subclasses implement but that we don't want
             # to be shown in the docs.
-            # This is then overridden in widget.md so that it shows in the base class.
+            # This is then overridden in widget.md and app.md so that it shows in the
+            # base class.
             - "!^compose$"
             - "!^render$"
             - "!^render_line$"

@@ -12,6 +12,25 @@ Supports syntax highlighting for a selection of languages.
 
 ## Guide
 
+### Syntax highlighting dependencies
+
+To enable syntax highlighting, you'll need to install the `syntax` extra dependencies:
+
+=== "pip"
+
+    ```
+    pip install "textual[syntax]"
+    ```
+
+=== "poetry"
+
+    ```
+    poetry add "textual[syntax]"
+    ```
+
+This will install `tree-sitter` and `tree-sitter-languages`.
+These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not supported.
+
 ### Loading text
 
 In this example we load some initial text into the `TextArea`, and set the language to `"python"` to enable syntax highlighting.
@@ -429,6 +448,11 @@ If you notice some highlights are missing after registering a language, the issu
 | `indent_width`         | `int`                    | `4`                | The number of spaces to indent and width of tabs. |
 | `match_cursor_bracket` | `bool`                   | `True`            | Enable/disable highlighting matching brackets under cursor. |
 | `cursor_blink`         | `bool`                   | `True`            | Enable/disable blinking of the cursor when the widget has focus. |
+
+## Messages
+
+- [TextArea.Changed][textual.widgets._text_area.TextArea.Changed]
+- [TextArea.SelectionChanged][textual.widgets._text_area.TextArea.SelectionChanged]
 
 ## Bindings
 

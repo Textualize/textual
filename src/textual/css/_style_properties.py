@@ -47,7 +47,7 @@ from .transition import Transition
 
 if TYPE_CHECKING:
     from .._layout import Layout
-    from .styles import Styles, StylesBase
+    from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
@@ -1063,8 +1063,8 @@ class FractionalProperty:
                 obj.refresh(children=self.children)
             return
 
-        if isinstance(value, float):
-            float_value = value
+        if isinstance(value, (int, float)):
+            float_value = float(value)
         elif isinstance(value, str) and value.endswith("%"):
             float_value = float(Scalar.parse(value).value) / 100
         else:

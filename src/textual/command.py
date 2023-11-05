@@ -458,6 +458,8 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
+        self._no_matches_timer: Timer | None = None
+        """Keeps track of if there are 'No matches found' message waiting to be displayed."""
         self._providers: list[Provider] = []
         """List of Provider instances involved in searches."""
 
@@ -513,7 +515,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         method of dismissing the palette.
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
-            self.workers.cancel_all()
+            self._cancel_gather_commands()
             self.dismiss()
 
     def on_mount(self, _: Mount) -> None:
@@ -558,6 +560,38 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
                 self._show_busy = True
 
         self._busy_timer = self.set_timer(self._BUSY_COUNTDOWN, _become_busy)
+
+    def _stop_no_matches_countdown(self) -> None:
+        """Stop any 'No matches' countdown that's in effect."""
+        if self._no_matches_timer is not None:
+            self._no_matches_timer.stop()
+            self._no_matches_timer = None
+
+    _NO_MATCHES_COUNTDOWN: Final[float] = 0.5
+    """How many seconds to wait before showing 'No matches found'."""
+
+    def _start_no_matches_countdown(self) -> None:
+        """Start a countdown to showing that there are no matches for the query.
+
+        Adds a 'No matches found' option to the command list after `_NO_MATCHES_COUNTDOWN` seconds.
+        """
+        self._stop_no_matches_countdown()
+
+        def _show_no_matches() -> None:
+            command_list = self.query_one(CommandList)
+            command_list.add_option(
+                Option(
+                    Align.center(Text("No matches found")),
+                    disabled=True,
+                    id=self._NO_MATCHES,
+                )
+            )
+            self._list_visible = True
+
+        self._no_matches_timer = self.set_timer(
+            self._NO_MATCHES_COUNTDOWN,
+            _show_no_matches,
+        )
 
     def _watch__list_visible(self) -> None:
         """React to the list visible flag being toggled."""
@@ -732,6 +766,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         command_list.clear_options().add_options(sorted(commands, reverse=True))
         if highlighted is not None:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
+        self._list_visible = bool(command_list.option_count)
 
     _RESULT_BATCH_TIME: Final[float] = 0.25
     """How long to wait before adding commands to the command list."""
@@ -739,7 +774,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     _NO_MATCHES: Final[str] = "--no-matches"
     """The ID to give the disabled option that shows there were no matches."""
 
-    @work(exclusive=True)
+    _GATHER_COMMANDS_GROUP: Final[str] = "--textual-command-palette-gather-commands"
+    """The group name of the command gathering worker."""
+
+    @work(exclusive=True, group=_GATHER_COMMANDS_GROUP)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
 
@@ -780,10 +818,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # grab a reference to that.
         worker = get_current_worker()
 
-        # We're ready to show results, ensure the list is visible.
-        self._list_visible = True
-
-        # Go into a busy mode.
+        # Reset busy mode.
         self._show_busy = False
 
         # A flag to keep track of if the current content of the command hit
@@ -861,13 +896,11 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
-            command_list.add_option(
-                Option(
-                    Align.center(Text("No matches found")),
-                    disabled=True,
-                    id=self._NO_MATCHES,
-                )
-            )
+            self._start_no_matches_countdown()
+
+    def _cancel_gather_commands(self) -> None:
+        """Cancel any operation that is gather commands."""
+        self.workers.cancel_group(self, self._GATHER_COMMANDS_GROUP)
 
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
@@ -877,7 +910,9 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             event: The input event.
         """
         event.stop()
-        self.workers.cancel_all()
+        self._cancel_gather_commands()
+        self._stop_no_matches_countdown()
+
         search_value = event.value.strip()
         if search_value:
             self._gather_commands(search_value)
@@ -893,7 +928,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             event: The option selection event.
         """
         event.stop()
-        self.workers.cancel_all()
+        self._cancel_gather_commands()
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
@@ -930,15 +965,20 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             if self._selected_command is not None:
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
-                self.workers.cancel_all()
+                self._cancel_gather_commands()
                 self.dismiss(self._selected_command.command)
+
+    @on(OptionList.OptionHighlighted)
+    def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
+        """Stop any unused events so they don't leak to the application."""
+        event.stop()
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
         if self._list_visible:
             self._list_visible = False
         else:
-            self.workers.cancel_all()
+            self._cancel_gather_commands()
             self.dismiss()
 
     def _action_command_list(self, action: str) -> None:

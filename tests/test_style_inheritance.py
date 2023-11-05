@@ -1,5 +1,3 @@
-from rich.style import Style
-
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Static
 

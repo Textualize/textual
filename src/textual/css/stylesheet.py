@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
+from itertools import chain
 from operator import itemgetter
 from pathlib import Path, PurePath
 from typing import Iterable, NamedTuple, Sequence, cast
@@ -11,10 +12,10 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
-from rich.style import Style
 from rich.syntax import Syntax
 from rich.text import Text
 
+from .._cache import LRUCache
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -24,7 +25,9 @@ from .parse import parse
 from .styles import RulesMap, Styles
 from .tokenize import Token, tokenize_values
 from .tokenizer import TokenError
-from .types import Specificity3, Specificity6
+from .types import CSSLocation, Specificity3, Specificity6
+
+_DEFAULT_STYLES = Styles()
 
 
 class StylesheetParseError(StylesheetError):
@@ -57,45 +60,52 @@ class StylesheetErrors:
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
         error_count = 0
-        for rule in self.rules:
-            for token, message in rule.errors:
-                error_count += 1
+        errors = list(
+            dict.fromkeys(chain.from_iterable(_rule.errors for _rule in self.rules))
+        )
 
-                if token.path:
-                    path = Path(token.path)
-                    filename = path.name
-                else:
-                    path = None
-                    filename = "<unknown>"
+        for token, message in errors:
+            error_count += 1
 
-                if token.referenced_by:
-                    line_idx, col_idx = token.referenced_by.location
-                else:
-                    line_idx, col_idx = token.location
-                line_no, col_no = line_idx + 1, col_idx + 1
-                path_string = (
-                    f"{path.absolute() if path else filename}:{line_no}:{col_no}"
-                )
-                link_style = Style(
-                    link=f"file://{path.absolute()}" if path else None,
-                    color="red",
-                    bold=True,
-                    italic=True,
-                )
+            if token.referenced_by:
+                line_idx, col_idx = token.referenced_by.location
+            else:
+                line_idx, col_idx = token.location
+            line_no, col_no = line_idx + 1, col_idx + 1
 
-                path_text = Text(path_string, style=link_style)
-                title = Text.assemble(Text("Error at ", style="bold red"), path_text)
-                yield ""
-                yield Panel(
-                    self._get_snippet(
-                        token.referenced_by.code if token.referenced_by else token.code,
-                        line_no,
-                    ),
-                    title=title,
-                    title_align="left",
-                    border_style="red",
-                )
-                yield Padding(message, pad=(0, 0, 1, 3))
+            display_path, widget_var = token.read_from
+            if display_path:
+                link_path = str(Path(display_path).absolute())
+                filename = Path(link_path).name
+            else:
+                link_path = ""
+                filename = "<unknown>"
+            # If we have a widget/variable from where the CSS was read, then line/column
+            # numbers are relative to the inline CSS and we'll display them next to the
+            # widget/variable.
+            # Otherwise, they're absolute positions in a TCSS file and we can show them
+            # next to the file path.
+            if widget_var:
+                path_string = link_path or filename
+                widget_string = f" in {widget_var}:{line_no}:{col_no}"
+            else:
+                path_string = f"{link_path or filename}:{line_no}:{col_no}"
+                widget_string = ""
+
+            title = Text.assemble(
+                "Error at ", path_string, widget_string, style="bold red"
+            )
+            yield ""
+            yield Panel(
+                self._get_snippet(
+                    token.referenced_by.code if token.referenced_by else token.code,
+                    line_no,
+                ),
+                title=title,
+                title_align="left",
+                border_style="red",
+            )
+            yield Padding(message, pad=(0, 0, 1, 3))
 
         yield ""
         yield render(
@@ -128,9 +138,10 @@ class Stylesheet:
         self._rules_map: dict[str, list[RuleSet]] | None = None
         self._variables = variables or {}
         self.__variable_tokens: dict[str, list[Token]] | None = None
-        self.source: dict[str, CssSource] = {}
+        self.source: dict[CSSLocation, CssSource] = {}
         self._require_parse = False
         self._invalid_css: set[str] = set()
+        self._parse_cache: LRUCache[tuple, list[RuleSet]] = LRUCache(64)
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield list(self.source.keys())
@@ -192,11 +203,12 @@ class Stylesheet:
         self._variables = variables
         self.__variable_tokens = None
         self._invalid_css = set()
+        self._parse_cache.clear()
 
     def _parse_rules(
         self,
         css: str,
-        path: str | PurePath,
+        read_from: CSSLocation,
         is_default_rules: bool = False,
         tie_breaker: int = 0,
         scope: str = "",
@@ -205,7 +217,7 @@ class Stylesheet:
 
         Args:
             css: String containing Textual CSS.
-            path: Path to CSS or unique identifier
+            read_from: Original CSS location.
             is_default_rules: True if the rules we're extracting are
                 default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
             scope: Scope of rules, or empty string for global scope.
@@ -216,12 +228,17 @@ class Stylesheet:
         Returns:
             List of RuleSets.
         """
+        cache_key = (css, read_from, is_default_rules, tie_breaker, scope)
+        try:
+            return self._parse_cache[cache_key]
+        except KeyError:
+            pass
         try:
             rules = list(
                 parse(
                     scope,
                     css,
-                    path,
+                    read_from,
                     variable_tokens=self._variable_tokens,
                     is_default_rules=is_default_rules,
                     tie_breaker=tie_breaker,
@@ -232,6 +249,7 @@ class Stylesheet:
         except Exception as error:
             raise StylesheetError(f"failed to parse css; {error}")
 
+        self._parse_cache[cache_key] = rules
         return rules
 
     def read(self, filename: str | PurePath) -> None:
@@ -251,7 +269,7 @@ class Stylesheet:
             path = os.path.abspath(filename)
         except Exception:
             raise StylesheetError(f"unable to read CSS file {filename!r}") from None
-        self.source[str(path)] = CssSource(css, False, 0)
+        self.source[(str(path), "")] = CssSource(css, False, 0)
         self._require_parse = True
 
     def read_all(self, paths: Sequence[PurePath]) -> None:
@@ -267,18 +285,22 @@ class Stylesheet:
         for path in paths:
             self.read(path)
 
-    def has_source(self, path: str | PurePath) -> bool:
+    def has_source(self, path: str, class_var: str = "") -> bool:
         """Check if the stylesheet has this CSS source already.
+
+        Args:
+            path: The file path of the source in question.
+            class_var: The widget class variable we might be reading the CSS from.
 
         Returns:
             Whether the stylesheet is aware of this CSS source or not.
         """
-        return str(path) in self.source
+        return (path, class_var) in self.source
 
     def add_source(
         self,
         css: str,
-        path: str | PurePath | None = None,
+        read_from: CSSLocation | None = None,
         is_default_css: bool = False,
         tie_breaker: int = 0,
         scope: str = "",
@@ -287,6 +309,7 @@ class Stylesheet:
 
         Args:
             css: String with CSS source.
+            read_from: The original source location of the CSS.
             path: The path of the source if a file, or some other identifier.
             is_default_css: True if the CSS is defined in the Widget, False if the CSS is defined
                 in a user stylesheet.
@@ -298,17 +321,18 @@ class Stylesheet:
             StylesheetParseError: If the CSS is invalid.
         """
 
-        if path is None:
-            path = str(hash(css))
-        elif isinstance(path, PurePath):
-            path = str(css)
-        if path in self.source and self.source[path].content == css:
-            # Path already in source, and CSS is identical
-            content, is_defaults, source_tie_breaker, scope = self.source[path]
+        if read_from is None:
+            read_from = ("", str(hash(css)))
+
+        if read_from in self.source and self.source[read_from].content == css:
+            # Location already in source and CSS is identical.
+            content, is_defaults, source_tie_breaker, scope = self.source[read_from]
             if source_tie_breaker > tie_breaker:
-                self.source[path] = CssSource(content, is_defaults, tie_breaker, scope)
+                self.source[read_from] = CssSource(
+                    content, is_defaults, tie_breaker, scope
+                )
             return
-        self.source[path] = CssSource(css, is_default_css, tie_breaker, scope)
+        self.source[read_from] = CssSource(css, is_default_css, tie_breaker, scope)
         self._require_parse = True
 
     def parse(self) -> None:
@@ -320,13 +344,18 @@ class Stylesheet:
         rules: list[RuleSet] = []
         add_rules = rules.extend
 
-        for path, (css, is_default_rules, tie_breaker, scope) in self.source.items():
+        for read_from, (
+            css,
+            is_default_rules,
+            tie_breaker,
+            scope,
+        ) in self.source.items():
             if css in self._invalid_css:
                 continue
             try:
                 css_rules = self._parse_rules(
                     css,
-                    path,
+                    read_from=read_from,
                     is_default_rules=is_default_rules,
                     tie_breaker=tie_breaker,
                     scope=scope,
@@ -336,6 +365,7 @@ class Stylesheet:
                 raise
             if any(rule.errors for rule in css_rules):
                 error_renderable = StylesheetErrors(css_rules)
+                self._invalid_css.add(css)
                 raise StylesheetParseError(error_renderable)
             add_rules(css_rules)
         self._rules = rules
@@ -351,18 +381,27 @@ class Stylesheet:
         """
         # Do this in a fresh Stylesheet so if there are errors we don't break self.
         stylesheet = Stylesheet(variables=self._variables)
-        for path, (css, is_defaults, tie_breaker, scope) in self.source.items():
+        for read_from, (css, is_defaults, tie_breaker, scope) in self.source.items():
             stylesheet.add_source(
                 css,
-                path,
+                read_from=read_from,
                 is_default_css=is_defaults,
                 tie_breaker=tie_breaker,
                 scope=scope,
             )
-        stylesheet.parse()
-        self._rules = stylesheet.rules
-        self._rules_map = None
-        self.source = stylesheet.source
+        try:
+            stylesheet.parse()
+        except Exception:
+            # If we don't update self's invalid CSS, we might end up reparsing this CSS
+            # before Textual quits application mode.
+            # See https://github.com/Textualize/textual/issues/3581.
+            self._invalid_css.update(stylesheet._invalid_css)
+            raise
+        else:
+            self._rules = stylesheet.rules
+            self._rules_map = None
+            self.source = stylesheet.source
+            self._require_parse = False
 
     @classmethod
     def _check_rule(
@@ -409,6 +448,12 @@ class Stylesheet:
         # Collect the rules defined in the stylesheet
         node._has_hover_style = False
         node._has_focus_within = False
+
+        # Rules that may be set to the special value `initial`
+        initial: set[str] = set()
+        # Rules in DEFAULT_CSS set to the special value `initial`
+        initial_defaults: set[str] = set()
+
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
@@ -420,10 +465,16 @@ class Stylesheet:
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
                 ):
+                    if value is None:
+                        if is_default_rules:
+                            initial_defaults.add(key)
+                        else:
+                            initial.add(key)
                     rule_attributes[key].append((rule_specificity, value))
 
         if not rule_attributes:
             return
+
         # For each rule declared for this node, keep only the most specific one
         get_first_item = itemgetter(0)
         node_rules: RulesMap = cast(
@@ -433,6 +484,39 @@ class Stylesheet:
                 for name, specificity_rules in rule_attributes.items()
             },
         )
+
+        # Set initial values
+        for initial_rule_name in initial:
+            # Rules with a value of None should be set to the default value
+            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                # Exclude non default values
+                # rule[0] is the specificity, rule[0][0] is 0 for default rules
+                default_rules = [
+                    rule
+                    for rule in rule_attributes[initial_rule_name]
+                    if not rule[0][0]
+                ]
+                if default_rules:
+                    # There is a default value
+                    new_value = max(default_rules, key=get_first_item)[1]
+                    node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
+                else:
+                    # No default value
+                    initial_defaults.add(initial_rule_name)
+
+        # Rules in DEFAULT_CSS set to initial
+        for initial_rule_name in initial_defaults:
+            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                default_rules = [
+                    rule for rule in rule_attributes[initial_rule_name] if rule[0][0]
+                ]
+                if default_rules:
+                    # There is a default value
+                    rule_value = max(default_rules, key=get_first_item)[1]
+                else:
+                    rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
+                node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
+
         self.replace_rules(node, node_rules, animate=animate)
 
         component_classes = node._get_component_classes()
@@ -474,6 +558,7 @@ class Stylesheet:
         # Styles currently used on new rules
         modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
+
         current_render_rules = styles.get_render_rules()
 
         # Calculate replacement rules (defaults + new rules)

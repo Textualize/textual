@@ -5,6 +5,7 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
+import asyncio
 from functools import partial
 from operator import attrgetter
 from typing import (
@@ -74,17 +75,21 @@ class ResultCallback(Generic[ScreenResultType]):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
+        future: asyncio.Future[ScreenResultType] | None = None,
     ) -> None:
         """Initialise the result callback object.
 
         Args:
             requester: The object making a request for the callback.
             callback: The callback function.
+            future: A Future to hold the result.
         """
         self.requester = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
+        self.future = future
+        """A future for the result"""
 
     def __call__(self, result: ScreenResultType) -> None:
         """Call the callback, passing the given result.
@@ -95,6 +100,8 @@ class ResultCallback(Generic[ScreenResultType]):
         Note:
             If the requested or the callback are `None` this will be a no-op.
         """
+        if self.future is not None:
+            self.future.set_result(result)
         if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
 
@@ -515,7 +522,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 chosen = candidate
                 break
 
-        # Go with the what was found.
+        # Go with what was found.
         self.set_focus(chosen)
 
     def _update_focus_styles(
@@ -687,15 +694,17 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
+        future: asyncio.Future[ScreenResultType] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 
         Args:
             requester: The object requesting the callback.
             callback: The callback.
+            future: A Future to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[ScreenResultType](requester, callback)
+            ResultCallback[ScreenResultType](requester, callback, future)
         )
 
     def _pop_result_callback(self) -> None:
@@ -967,17 +976,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 else:
                     widget._forward_event(event._apply_offset(-region.x, -region.y))
 
-        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y)
-            except errors.NoWidget:
-                return
-            scroll_widget = widget
-            if scroll_widget is not None:
-                if scroll_widget is self:
-                    self.post_message(event)
-                else:
-                    scroll_widget._forward_event(event)
         else:
             self.post_message(event)
 

@@ -128,7 +128,7 @@ If you combine this with a selector, then the offset will be relative to the wid
 Here's how you would click the line *above* a button.
 
 ```python
-await pilot.click(Button, offset(0, -1))
+await pilot.click(Button, offset=(0, -1))
 ```
 
 ### Modifier keys
@@ -169,23 +169,18 @@ If you are interested in how we write tests, see the [tests/](https://github.com
 
 ## Snapshot testing
 
-A _snapshot_ is a record of what an application looked like at a given point in time.
+Snapshot testing is the process of recording the output of a test, and comparing it against the output from previous runs.
 
-_Snapshot testing_ is the process of creating a snapshot of an application while a test runs, and comparing it to a historical version.
-If there's a mismatch, the snapshot testing framework flags it for review.
+Textual uses snapshot testing internally to ensure that the builtin widgets look and function correctly in every release.
+We've made the pytest plugin we built available for public use.
 
-This offers a simple, automated way of checking our application displays like we expect.
+The [official Textual pytest plugin](https://github.com/Textualize/pytest-textual-snapshot) can help you catch otherwise difficult to detect visual changes in your app.
 
-### pytest-textual-snapshot
+It works by generating an SVG _screenshot_ (such as the images in these docs) from your app.
+If the screenshot changes in any test run, you will have the opportunity to visually compare the new output against previous runs.
 
-You can use [`pytest-textual-snapshot`](https://github.com/Textualize/pytest-textual-snapshot) to snapshot test your Textual app.
-This is a plugin for pytest which adds support for snapshot testing Textual apps, and it's maintained by the developers of Textual.
 
-A test using this package saves a snapshot (in this case, an SVG screenshot) of a running Textual app to disk.
-The next time the test runs, it takes another snapshot and compares it to the previously saved one.
-If the snapshots differ, the test fails, and you can view a side-by-side diff showing the visual change.
-
-#### Installation
+### Installing the plugin
 
 You can install `pytest-textual-snapshot` using your favorite package manager (`pip`, `poetry`, etc.).
 
@@ -193,7 +188,7 @@ You can install `pytest-textual-snapshot` using your favorite package manager (`
 pip install pytest-textual-snapshot
 ```
 
-#### Creating a snapshot test
+### Creating a snapshot test
 
 With the package installed, you now have access to the `snap_compare` pytest fixture.
 
@@ -248,7 +243,7 @@ pytest --snapshot-update
 Now that our snapshot is saved, if we run `pytest` (with no arguments) again, the test will pass.
 This is because the screenshot taken during this test run matches the one we saved earlier.
 
-#### Catching a bug
+### Catching a bug
 
 The real power of snapshot testing comes from its ability to catch visual regressions which could otherwise easily be missed.
 
@@ -274,7 +269,7 @@ our new developer has also deleted the number 4!
     report is just an HTML file which can be exported as a build artifact.
 
 
-#### Pressing keys
+### Pressing keys
 
 You can simulate pressing keys before the snapshot is captured using the `press` parameter.
 
@@ -283,7 +278,7 @@ def test_calculator_pressing_numbers(snap_compare):
     assert snap_compare("path/to/calculator.py", press=["1", "2", "3"])
 ```
 
-#### Changing the terminal size
+### Changing the terminal size
 
 To capture the snapshot with a different terminal size, pass a tuple `(width, height)` as the `terminal_size` parameter.
 
@@ -292,7 +287,7 @@ def test_calculator(snap_compare):
     assert snap_compare("path/to/calculator.py", terminal_size=(50, 100))
 ```
 
-#### Running setup code
+### Running setup code
 
 You can also run arbitrary code before the snapshot is captured using the `run_before` parameter.
 
