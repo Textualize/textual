@@ -266,33 +266,44 @@ class Compositor:
     """Responsible for storing information regarding the relative positions of Widgets and rendering them."""
 
     def __init__(self) -> None:
-        # A mapping of Widget on to its "render location" (absolute position / depth)
         self._full_map: CompositorMap = {}
+        """A mapping of Widget on to its "render location" (absolute position / depth)."""
+
         self._full_map_invalidated = True
-        self._visible_map: CompositorMap | None = None
+        """Controls cache-invalidation for the full_map."""
+
         self._layers: list[tuple[Widget, MapGeometry]] | None = None
 
-        # All widgets considered in the arrangement
-        # Note this may be a superset of self.full_map.keys() as some widgets may be invisible for various reasons
         self.widgets: set[Widget] = set()
+        """All widgets in the arrangement, including those with visible=False and
+        those which may be off-screen."""
 
-        # Mapping of visible widgets on to their region, and clip region
-        self._visible_widgets: dict[Widget, tuple[Region, Region]] | None = None
+        self._visible_widgets: set[Widget] = set()
+        """The set of widgets which are visible (i.e. visible=True).
+        Even though a widget is visible, it might not be on-screen. By "visible", we are
+        referring to the visibility attribute. This property completely disregards the render
+        location of the widget, and whether the widget overlaps with the screen."""
 
-        # The top level widget
+        self._on_screen_map: CompositorMap | None = None
+        """A mapping of Widgets which overlap with the screen to position/depth information."""
+
+        self._on_screen_widgets: dict[Widget, tuple[Region, Region]] | None = None
+        """Mapping of visible widgets on to their region, and clip region"""
+
         self.root: Widget | None = None
+        """The top level widget (root of the tree)."""
 
-        # Dimensions of the arrangement
         self.size = Size(0, 0)
+        """The dimensions of the arrangement."""
 
-        # The points in each line where the line bisects the left and right edges of the widget
         self._cuts: list[list[int]] | None = None
+        """The points in each line where the line bisects the left and right edges of the widget."""
 
-        # Regions that require an update
         self._dirty_regions: set[Region] = set()
+        """Regions that require an update."""
 
-        # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
+        """Mapping of line numbers on to lists of widget and regions"""
 
     @classmethod
     def _regions_to_spans(
@@ -349,8 +360,8 @@ class Compositor:
         self._cuts = None
         self._layers = None
         self._layers_visible = None
-        self._visible_widgets = None
-        self._visible_map = None
+        self._on_screen_widgets = None
+        self._on_screen_map = None
         self.root = parent
         self.size = size
 
@@ -358,18 +369,35 @@ class Compositor:
         old_map = self._full_map
         old_widgets = old_map.keys()
 
-        map, widgets = self._arrange_root(parent, size, visible_only=False)
+        map, widgets = self._arrange_root(parent, size, on_screen_only=False)
 
         new_widgets = map.keys()
 
         # Newly visible widgets
         shown_widgets = new_widgets - old_widgets
-        # Newly hidden widgets
-        hidden_widgets = self.widgets - widgets
+
+        def _is_visible(widget: Widget) -> bool:
+            """Determine whether the widget is visible (from a CSS pov)."""
+            styles = widget.styles
+            visibility = styles.get_rule("visibility")
+            visible = visibility == "visible" if visibility is not None else True
+            print(f"widget {widget} visible = {visible}")
+            return visible
+
+        # Widgets that are visible now (may include off-screen widgets with visible=True)
+        currently_visible = {widget for widget in new_widgets if _is_visible(widget)}
+
+        # Diff the previously visible widget set with the currently visible set
+        made_invisible = self._visible_widgets.difference(currently_visible)
+
+        no_longer_there = self.widgets - widgets
+
+        hidden_widgets = made_invisible.union(no_longer_there)
 
         # Replace map and widgets
         self._full_map = map
         self.widgets = widgets
+        self._visible_widgets = currently_visible
 
         # Contains widgets + geometry for every widget that changed (added, removed, or updated)
         changes = map.items() ^ old_map.items()
@@ -417,19 +445,21 @@ class Compositor:
         self._cuts = None
         self._layers = None
         self._layers_visible = None
-        self._visible_widgets = None
+        self._on_screen_widgets = None
         self._full_map_invalidated = True
         self.root = parent
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
         old_map = (
-            self._visible_map if self._visible_map is not None else self._full_map or {}
+            self._on_screen_map
+            if self._on_screen_map is not None
+            else self._full_map or {}
         )
-        map, widgets = self._arrange_root(parent, size, visible_only=True)
+        map, widgets = self._arrange_root(parent, size, on_screen_only=True)
 
         # Replace map and widgets
-        self._visible_map = map
+        self._on_screen_map = map
         self.widgets = widgets
 
         exposed_widgets = map.keys() - old_map.keys()
@@ -460,25 +490,28 @@ class Compositor:
             return {}
         if self._full_map_invalidated:
             self._full_map_invalidated = False
-            map, _widgets = self._arrange_root(self.root, self.size, visible_only=False)
+            map, _widgets = self._arrange_root(
+                self.root, self.size, on_screen_only=False
+            )
             self._full_map = map
-            self._visible_widgets = None
-            self._visible_map = None
+            self._on_screen_widgets = None
+            self._on_screen_map = None
 
         return self._full_map
 
     @property
-    def visible_widgets(self) -> dict[Widget, tuple[Region, Region]]:
-        """Get a mapping of widgets on to region and clip.
+    def on_screen_widgets(self) -> dict[Widget, tuple[Region, Region]]:
+        """Get a mapping of widgets which overlap with the screen.
 
         Returns:
-            Visible widget mapping.
+             A mapping of widgets to the their region and their clip
+             region (the region of overlap between the widget and screen).
         """
 
-        if self._visible_widgets is None:
+        if self._on_screen_widgets is None:
             map = (
-                self._visible_map
-                if self._visible_map is not None
+                self._on_screen_map
+                if self._on_screen_map is not None
                 else (self._full_map or {})
             )
             screen = self.size.region
@@ -486,16 +519,16 @@ class Compositor:
             overlaps = Region.overlaps
 
             # Widgets and regions in render order
-            visible_widgets = [
+            on_screen_widgets = [
                 (order, widget, region, clip)
                 for widget, (region, order, clip, _, _, _, _) in map.items()
                 if in_screen(region) and overlaps(clip, region)
             ]
-            visible_widgets.sort(key=itemgetter(0), reverse=True)
-            self._visible_widgets = {
-                widget: (region, clip) for _, widget, region, clip in visible_widgets
+            on_screen_widgets.sort(key=itemgetter(0), reverse=True)
+            self._on_screen_widgets = {
+                widget: (region, clip) for _, widget, region, clip in on_screen_widgets
             }
-        return self._visible_widgets
+        return self._on_screen_widgets
 
     def _constrain(
         self, styles: RenderStyles, region: Region, constrain_region: Region
@@ -530,12 +563,14 @@ class Compositor:
         return region
 
     def _arrange_root(
-        self, root: Widget, size: Size, visible_only: bool = True
+        self, root: Widget, size: Size, on_screen_only: bool = True
     ) -> tuple[CompositorMap, set[Widget]]:
         """Arrange a widget's children based on its layout attribute.
 
         Args:
             root: Top level widget.
+            size: The Size to arrange within.
+            on_screen_only: Only arrange widgets which overlap with the Size.
 
         Returns:
             Compositor map and set of widgets.
@@ -608,7 +643,7 @@ class Compositor:
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
-                    if visible_only:
+                    if on_screen_only:
                         placements = arrange_result.get_visible_placements(
                             container_size.region + widget.scroll_offset
                         )
@@ -723,7 +758,7 @@ class Compositor:
     @property
     def layers(self) -> list[tuple[Widget, MapGeometry]]:
         """Get widgets and geometry in layer order."""
-        map = self._visible_map if self._visible_map is not None else self._full_map
+        map = self._on_screen_map if self._on_screen_map is not None else self._full_map
         if self._layers is None:
             self._layers = sorted(
                 map.items(), key=lambda item: item[1].order, reverse=True
@@ -740,7 +775,7 @@ class Compositor:
             layers_visible_appends = [layer.append for layer in layers_visible]
             intersection = Region.intersection
             _range = range
-            for widget, (region, clip) in self.visible_widgets.items():
+            for widget, (region, clip) in self.on_screen_widgets.items():
                 cropped_region = intersection(region, clip)
                 _x, region_y, _width, region_height = cropped_region
                 if region_height:
@@ -753,9 +788,9 @@ class Compositor:
     def get_offset(self, widget: Widget) -> Offset:
         """Get the offset of a widget."""
         try:
-            if self._visible_map is not None:
+            if self._on_screen_map is not None:
                 try:
-                    return self._visible_map[widget].region.offset
+                    return self._on_screen_map[widget].region.offset
                 except KeyError:
                     pass
             return self.full_map[widget].region.offset
@@ -812,7 +847,7 @@ class Compositor:
             widget, region = self.get_widget_at(x, y)
         except errors.NoWidget:
             return Style.null()
-        if widget not in self.visible_widgets:
+        if widget not in self.on_screen_widgets:
             return Style.null()
 
         x -= region.x
@@ -850,9 +885,9 @@ class Compositor:
                     return self._full_map[widget]
                 except KeyError:
                     pass
-            if self._visible_map is not None:
+            if self._on_screen_map is not None:
                 try:
-                    return self._visible_map[widget]
+                    return self._on_screen_map[widget]
                 except KeyError:
                     pass
             region = self.full_map[widget]
@@ -880,7 +915,7 @@ class Compositor:
         intersection = Region.intersection
         extend = list.extend
 
-        for region, clip in self.visible_widgets.values():
+        for region, clip in self.on_screen_widgets.values():
             region = intersection(region, clip)
             if region and (region in screen_region):
                 x, y, region_width, region_height = region
@@ -910,7 +945,7 @@ class Compositor:
 
         _Region = Region
 
-        visible_widgets = self.visible_widgets
+        visible_widgets = self.on_screen_widgets
 
         if crop:
             crop_overlaps = crop.overlaps
@@ -1067,14 +1102,14 @@ class Compositor:
 
         # If there are any *new* widgets we need to invalidate the full map
         if not self._full_map_invalidated and not widgets.issubset(
-            self.visible_widgets.keys()
+            self.on_screen_widgets.keys()
         ):
             self._full_map_invalidated = True
 
         regions: list[Region] = []
         add_region = regions.append
-        get_widget = self.visible_widgets.__getitem__
-        for widget in self.visible_widgets.keys() & widgets:
+        get_widget = self.on_screen_widgets.__getitem__
+        for widget in self.on_screen_widgets.keys() & widgets:
             region, clip = get_widget(widget)
             offset = region.offset
             intersection = clip.intersection
