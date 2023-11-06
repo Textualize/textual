@@ -31,7 +31,7 @@ class CommandPaletteApp(App[None]):
 async def test_command_source_environment() -> None:
     """The command source should see the app and default screen."""
     async with CommandPaletteApp().run_test() as pilot:
-        base_screen = pilot.app.query_one(CommandPalette)._calling_screen
+        base_screen = CommandPalette.current_screen(pilot.app)
         assert base_screen is not None
         await pilot.press(*"test")
         assert len(SimpleSource.environment) == 1

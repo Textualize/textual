@@ -600,7 +600,7 @@ class App(Generic[ReturnType], DOMNode):
             A sequence of widgets.
         """
         try:
-            return (self.screen,)
+            return (CommandPalette.current_screen(self),)
         except ScreenError:
             return ()
 
