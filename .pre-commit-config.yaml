@@ -31,5 +31,6 @@ repos:
     rev: v2.3.0
     hooks:
       - id: pycln
+        language_version: "3.11"
         args: [--all]
 exclude: ^tests/snapshot_tests
