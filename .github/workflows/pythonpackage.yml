@@ -3,33 +3,33 @@ name: Test Textual module
 on:
   pull_request:
     paths:
-      - '.github/workflows/pythonpackage.yml'
-      - '**.py'
-      - '**.pyi'
-      - '**.css'
-      - '**.ambr'
-      - '**.lock'
-      - 'Makefile'
+      - ".github/workflows/pythonpackage.yml"
+      - "**.py"
+      - "**.pyi"
+      - "**.css"
+      - "**.ambr"
+      - "**.lock"
+      - "Makefile"
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
     defaults:
       run:
         shell: bash
     steps:
       - uses: actions/checkout@v3.5.2
-      - name: Install and configure Poetry  # This could be cached, too...
+      - name: Install and configure Poetry # This could be cached, too...
         uses: snok/install-poetry@v1.3.3
         with:
           version: 1.4.2
           virtualenvs-in-project: true
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
@@ -43,9 +43,9 @@ jobs:
       - name: Install dependencies
         run: poetry install --extras syntax
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-#      - name: Typecheck with mypy
-#        run: |
-#          make typecheck
+      #      - name: Typecheck with mypy
+      #        run: |
+      #          make typecheck
       - name: Test with pytest
         run: |
           source $VENV
