@@ -2527,9 +2527,19 @@ class App(Generic[ReturnType], DOMNode):
                         self._handle_exception(error)
                     else:
                         if WINDOWS:
+                            # Combat a problem with Python on Windows.
+                            #
+                            # https://github.com/Textualize/textual/issues/2548
+                            # https://github.com/python/cpython/issues/82052
+                            CHUNK_SIZE = 8192
                             write = self._driver.write
-                            for line in terminal_sequence.split("\n"):
-                                write(line)
+                            for chunk in (
+                                terminal_sequence[offset : offset + CHUNK_SIZE]
+                                for offset in range(
+                                    0, len(terminal_sequence), CHUNK_SIZE
+                                )
+                            ):
+                                write(chunk)
                         else:
                             self._driver.write(terminal_sequence)
                 finally:
