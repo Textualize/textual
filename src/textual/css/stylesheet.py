@@ -440,7 +440,7 @@ class Stylesheet:
         css_path_nodes = node.css_path_nodes
 
         rules: Iterable[RuleSet]
-        if limit_rules:
+        if limit_rules is not None:
             rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
         else:
             rules = reversed(self.rules)
@@ -639,11 +639,11 @@ class Stylesheet:
         for node in nodes:
             rules = {
                 rule
-                for name in node._selector_names
-                if name in rules_map
+                for name in rules_map.keys() & node._selector_names
                 for rule in rules_map[name]
             }
-            apply(node, limit_rules=rules, animate=animate)
+            if rules:
+                apply(node, limit_rules=rules, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
                     apply(node.vertical_scrollbar)
