@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
+- Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 
 ### Changed
 
