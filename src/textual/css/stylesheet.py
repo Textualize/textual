@@ -636,18 +636,28 @@ class Stylesheet:
         rules_map = self.rules_map
         apply = self.apply
 
-        for node in nodes:
-            rules = {
+        def get_rules(node: DOMNode) -> set[RuleSet]:
+            """Get set of rules for the given node."""
+            return {
                 rule
                 for name in rules_map.keys() & node._selector_names
                 for rule in rules_map[name]
             }
+
+        for node in nodes:
+            rules = get_rules(node)
             if rules:
                 apply(node, limit_rules=rules, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
-                    apply(node.vertical_scrollbar)
+                    rules = get_rules(node.vertical_scrollbar)
+                    if rules:
+                        apply(node.vertical_scrollbar, limit_rules=rules)
                 if node.show_horizontal_scrollbar:
-                    apply(node.horizontal_scrollbar)
+                    rules = get_rules(node.horizontal_scrollbar)
+                    if rules:
+                        apply(node.horizontal_scrollbar, limit_rules=rules)
                 if node.show_horizontal_scrollbar and node.show_vertical_scrollbar:
-                    apply(node.scrollbar_corner)
+                    rules = get_rules(node.scrollbar_corner)
+                    if rules:
+                        apply(node.scrollbar_corner, limit_rules=rules)
