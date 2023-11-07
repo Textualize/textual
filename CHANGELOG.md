@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
 - Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
 - ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
+- Fixed erroneous mouse 'ButtonDown' reporting for mouse movement when any-event mode is enabled in xterm. https://github.com/Textualize/textual/pull/3647
 
 ## [0.47.1] - 2023-01-05
 
