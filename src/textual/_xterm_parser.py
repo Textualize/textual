@@ -73,12 +73,13 @@ class XTermParser(Parser[events.Event]):
                 )
                 button = 0
             else:
-                if buttons & 32:
+                button = (buttons + 1) & 3
+                # XTerm events for mouse movement can look like mouse button down events. But if there is no key pressed,
+                # it's a mouse move event.
+                if buttons & 32 or button == 0:
                     event_class = events.MouseMove
                 else:
                     event_class = events.MouseDown if state == "M" else events.MouseUp
-
-                button = (buttons + 1) & 3
 
             event = event_class(
                 x,
