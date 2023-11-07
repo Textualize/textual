@@ -2526,7 +2526,12 @@ class App(Generic[ReturnType], DOMNode):
                     except Exception as error:
                         self._handle_exception(error)
                     else:
-                        self._driver.write(terminal_sequence)
+                        if WINDOWS:
+                            write = self._driver.write
+                            for line in terminal_sequence.split("\n"):
+                                write(line)
+                        else:
+                            self._driver.write(terminal_sequence)
                 finally:
                     self._end_update()
 
