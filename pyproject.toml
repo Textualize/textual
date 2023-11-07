@@ -55,7 +55,7 @@ syntax = ["tree-sitter", "tree_sitter_languages"]
 
 [tool.poetry.group.dev.dependencies]
 frozenlist = "1.4.0"
-aiohttp = "3.8.6"
+aiohttp = "3.9.0b1"
 pytest = "^7.1.3"
 black = "^23.1.0"
 mypy = "^1.0.0"
