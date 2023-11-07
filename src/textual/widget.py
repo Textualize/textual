@@ -2779,6 +2779,8 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
+        else:
+            yield "blur"
         if self.can_focus:
             yield "can-focus"
         try:
