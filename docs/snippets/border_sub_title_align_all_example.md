@@ -8,7 +8,7 @@ Open the code tabs to see the details of the code examples.
 
 === "border_sub_title_align_all.py"
 
-    ```py hl_lines="6 18 24 30 39 40 42 45 51 57 63"
+    ```py hl_lines="6 20 26 32 41 42 44 47 53 59 65"
     --8<-- "docs/examples/styles/border_sub_title_align_all.py"
     ```
 
