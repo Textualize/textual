@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class LinkStyleApp(App):
+    CSS_PATH = "link_style.tcss"
+
     def compose(self):
         yield Label(
             "Visit the [link=https://textualize.io]Textualize[/link] website.",
@@ -22,4 +24,6 @@ class LinkStyleApp(App):
         )
 
 
-app = LinkStyleApp(css_path="link_style.tcss")
+if __name__ == "__main__":
+    app = LinkStyleApp()
+    app.run()

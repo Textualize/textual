@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class AllContentAlignApp(App):
+    CSS_PATH = "content_align_all.tcss"
+
     def compose(self):
         yield Label("left top", id="left-top")
         yield Label("center top", id="center-top")
@@ -15,4 +17,6 @@ class AllContentAlignApp(App):
         yield Label("right bottom", id="right-bottom")
 
 
-app = AllContentAlignApp(css_path="content_align_all.tcss")
+if __name__ == "__main__":
+    app = AllContentAlignApp()
+    app.run()
