@@ -39,7 +39,7 @@ It also shows that `link-hover-style` does not affect hyperlinks.
 
 === "link_hover_style.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-19 22-23"
     --8<-- "docs/examples/styles/link_hover_style.py"
     ```
 
