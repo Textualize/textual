@@ -85,6 +85,7 @@ clean: clean-screenshot-cache clean-offline-docs
 .PHONY: setup
 setup:
 	poetry install
+	poetry install --extras syntax
 
 .PHONY: update
 update:
@@ -97,3 +98,7 @@ install-pre-commit:
 .PHONY: demo
 demo:
 	$(run) python -m textual
+
+.PHONY: repl
+repl:
+	$(run) python
