@@ -30,7 +30,7 @@ It also shows that `link-color` does not affect hyperlinks.
     --8<-- "docs/examples/styles/link_color.py"
     ```
 
-    1. This label has an hyperlink so it won't be affected by the `link-color` rule.
+    1. This label has a hyperlink so it won't be affected by the `link-color` rule.
     2. This label has an "action link" that can be styled with `link-color`.
     3. This label has an "action link" that can be styled with `link-color`.
     4. This label has an "action link" that can be styled with `link-color`.
