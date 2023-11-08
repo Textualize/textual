@@ -98,3 +98,7 @@ install-pre-commit:
 .PHONY: demo
 demo:
 	$(run) python -m textual
+
+.PHONY: repl
+repl:
+	$(run) python
