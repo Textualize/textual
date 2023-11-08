@@ -31,7 +31,7 @@ class FileMonitor:
 
     def _get_last_modified_time(self) -> float:
         """Get the most recent modified time out of all files being watched."""
-        return max(os.stat(path).st_mtime for path in self._paths)
+        return max((os.stat(path).st_mtime for path in self._paths), default=0)
 
     def check(self) -> bool:
         """Check the monitored files. Return True if any were changed since the last modification time."""
