@@ -1,14 +1,23 @@
 from __future__ import annotations
 
-from asyncio import Queue
+from asyncio import Event, Queue
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    ClassVar,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+)
 
 from ..await_complete import AwaitComplete
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing_extensions import Self, TypeAlias
 
 from rich.style import Style
 from rich.text import Text, TextType
@@ -18,6 +27,8 @@ from ..message import Message
 from ..reactive import var
 from ..worker import Worker, WorkerCancelled, WorkerFailed, get_current_worker
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
+
+TreeState: TypeAlias = Tuple[Path, List["TreeState"]]
 
 
 @dataclass
@@ -143,7 +154,13 @@ class DirectoryTree(Tree[DirEntry]):
             classes: A space-separated list of classes, or None for no classes.
             disabled: Whether the directory tree is disabled or not.
         """
-        self._load_queue: Queue[TreeNode[DirEntry]] = Queue()
+        self._load_queue: Queue[
+            tuple[
+                TreeNode[DirEntry],
+                Optional[TreeState],
+                Optional[tuple[list[Path], list[Path]]],
+            ],
+        ] = Queue()
         super().__init__(
             str(path),
             data=DirEntry(self.PATH(path)),
@@ -153,8 +170,16 @@ class DirectoryTree(Tree[DirEntry]):
             disabled=disabled,
         )
         self.path = path
+        self._to_restore_count = 0
+        self._to_restore_event = Event()
+        self._to_restore_event.set()
 
-    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> AwaitComplete:
+    def _add_to_load_queue(
+        self,
+        node: TreeNode[DirEntry],
+        state: TreeState | None,
+        to_highlight: tuple[list[Path], list[Path]] | None,
+    ) -> AwaitComplete:
         """Add the given node to the load queue.
 
         The return value can optionally be awaited until the queue is empty.
@@ -169,21 +194,19 @@ class DirectoryTree(Tree[DirEntry]):
         assert node.data is not None
         if not node.data.loaded:
             node.data.loaded = True
-            self._load_queue.put_nowait(node)
+            self._load_queue.put_nowait((node, state, to_highlight))
 
-        return AwaitComplete(self._load_queue.join())
+        return AwaitComplete(self._load_queue.join(), self._to_restore_event.wait())
 
-    def reload(self) -> AwaitComplete:
+    def reload(self, keep_state: bool = True) -> AwaitComplete:
         """Reload the `DirectoryTree` contents."""
-        self.reset(str(self.path), DirEntry(self.PATH(self.path)))
         # Orphan the old queue...
         self._load_queue = Queue()
-        # ...and replace the old load with a new one.
+        # ... reset the root node...
+        processed = self.reload_node(self.root, keep_state)
+        # ... and replace the old load with a new one.
         self._loader()
-        # We have a fresh queue, we have a fresh loader, get the fresh root
-        # loading up.
-        queue_processed = self._add_to_load_queue(self.root)
-        return queue_processed
+        return processed
 
     def clear_node(self, node: TreeNode[DirEntry]) -> Self:
         """Clear all nodes under the given node.
@@ -225,7 +248,34 @@ class DirectoryTree(Tree[DirEntry]):
         node.data = data
         return self
 
-    def reload_node(self, node: TreeNode[DirEntry]) -> AwaitComplete:
+    def _compute_state(self, node: TreeNode[DirEntry]) -> TreeState:
+        """Compute the state of the subtree rooted at the given node.
+
+        Args:
+            node: The root of the subtree for which we want the state computed.
+
+        Returns:
+            A recursive structure indicating all nodes that were expanded.
+        """
+        state: TreeState = (node.data.path, [])
+        node_stack: list[tuple[list[TreeState], TreeNode[DirEntry]]] = [
+            (state[1], node)
+        ]
+        # Find children that are expanded so that we can keep them expanded after
+        # reloading the node.
+        while node_stack:
+            stack_state_list, stack_node = node_stack.pop()
+            for child in stack_node.children:
+                if child.is_expanded:
+                    new_state: TreeState = (child.data.path, [])
+                    stack_state_list.append(new_state)
+                    node_stack.append((new_state[1], child))
+
+        return state
+
+    def reload_node(
+        self, node: TreeNode[DirEntry], keep_state: bool = True
+    ) -> AwaitComplete:
         """Reload the given node's contents.
 
         The return value may be awaited to ensure the DirectoryTree has reached
@@ -235,10 +285,48 @@ class DirectoryTree(Tree[DirEntry]):
         Args:
             node: The node to reload.
         """
+        state: TreeState | None
+        to_highlight: tuple[list[Path], list[Path]] | None
+        if keep_state and node.is_expanded:
+            state = self._compute_state(node)
+            self._to_restore_count = 1
+            self._to_restore_event.clear()
+
+            # WE DON'T NEED TO DO THIS IF THE CURRENTLY HIGHLIGHTED ISN'T PART
+            # OF THE SUBTREE THAT IS BEING RELOADED.
+            # IN THAT CASE, SKIP!
+            # Create a list of paths we'd like to highlight, ordered by priority.
+            # First is the same path, then all the siblings that come after, then all
+            # of the siblings that came before (in reverse order), and finally all
+            # the parent directories.
+            siblings_to_highlight: list[Path] = []
+            highlighted_node = self.get_node_at_line(self.cursor_line)
+            if highlighted_node is not None:
+                parent = highlighted_node.parent
+                if parent is not None:
+                    siblings = parent.children
+                    node_at = siblings.index(highlighted_node)
+                    siblings_to_highlight.extend(
+                        sibling.data.path for sibling in siblings[node_at:]
+                    )
+                    siblings_to_highlight.extend(
+                        sibling.data.path for sibling in reversed(siblings[:node_at])
+                    )
+                else:
+                    siblings_to_highlight.append(highlighted_node.data.path)
+                to_highlight = (
+                    siblings_to_highlight,
+                    list(highlighted_node.data.path.parents),
+                )
+
+        else:
+            state = to_highlight = None
+
         self.reset_node(
             node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
         )
-        return self._add_to_load_queue(node)
+
+        return self._add_to_load_queue(node, state, to_highlight)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -261,7 +349,7 @@ class DirectoryTree(Tree[DirEntry]):
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
-        await self.reload()
+        await self.reload(keep_state=False)
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
@@ -411,14 +499,89 @@ class DirectoryTree(Tree[DirEntry]):
             key=lambda path: (not self._safe_is_dir(path), path.name.lower()),
         )
 
+    def _restore_highlighting(
+        self,
+        node: TreeNode[DirEntry],
+        siblings_to_highlight: list[Path],
+    ) -> None:
+        """Try to restore cursor highlighting into the children of the given node.
+
+        Args:
+            node: The node who contained the node that was selected/had the cursor before
+                reloading the tree.
+            siblings_to_highlight: A list of possible siblings that could be highlighted,
+                ordered in terms of highlighting priority.
+        """
+
+        children_paths = {child.data.path for child in node.children}
+        for could_be_highlighted in siblings_to_highlight:
+            if could_be_highlighted in children_paths:
+                node_to_highlight = next(
+                    child
+                    for child in node.children
+                    if child.data.path == could_be_highlighted
+                )
+                self.cursor_line = node_to_highlight.line
+                break
+        else:
+            self.cursor_line = node.line
+
+    @work(group="_state_restoration")
+    async def _restore_state(
+        self,
+        node: TreeNode[DirEntry],
+        state: TreeState,
+        to_highlight: tuple[list[Path], list[Path]],
+    ) -> None:
+        """Restore the state of the tree to what is was before reloading.
+
+        This method will try to preserve as much of the state of the tree as possible,
+        expanding nodes that were already expanded and putting the cursor on top of the
+        node that had it before (if still present) or the closest node possible.
+
+        Args:
+            node: The node that is having its state restored.
+            state: A record of the state of the subtree whose root is the given node.
+            to_highlight: Information about the tree nodes that we'll try to highlight.
+        """
+        to_restore = [(node, state)]
+        self._to_restore_count -= 1
+
+        siblings_to_highlight, parents = to_highlight
+        to_highlight_parent = parents[0]
+        if node.data.path == to_highlight_parent:
+            self._restore_highlighting(node, siblings_to_highlight)
+        elif node.data.path in parents:
+            self.cursor_line = node.line
+
+        while to_restore:
+            node, state = to_restore.pop()
+            if not node.is_expanded:
+                self._to_restore_count += 1
+                self._add_to_load_queue(node, state, to_highlight)
+
+            # See if the paths that were previously represented in the tree and expanded
+            # still exist. If so, flag that node (and its state) for restoring.
+            paths_to_children = {
+                child.data.path: child for child in node.children if child.allow_expand
+            }
+            for expanded in state[1]:
+                expanded_path = expanded[0]
+                child_node = paths_to_children.get(expanded_path, None)
+                if child_node is not None:
+                    to_restore.append((child_node, expanded))
+
+        if not self._to_restore_count:
+            self._to_restore_event.set()
+
     @work(exclusive=True)
     async def _loader(self) -> None:
         """Background loading queue processor."""
         worker = get_current_worker()
         while not worker.is_cancelled:
-            # Get the next node that needs loading off the queue. Note that
+            # Get the next node that needs loading of the queue. Note that
             # this blocks if the queue is empty.
-            node = await self._load_queue.get()
+            node, state, to_highlight = await self._load_queue.get()
             content: list[Path] = []
             try:
                 # Spin up a short-lived thread that will load the content of
@@ -436,7 +599,11 @@ class DirectoryTree(Tree[DirEntry]):
                 # We're still here and we have directory content, get it into
                 # the tree.
                 if content:
-                    self._populate_node(node, content)
+                    with self.prevent(Tree.NodeExpanded):
+                        self._populate_node(node, content)
+                # Restore the state of the node we just reloaded.
+                if state is not None:
+                    self._restore_state(node, state, to_highlight)
             finally:
                 # Mark this iteration as done.
                 self._load_queue.task_done()
@@ -447,7 +614,7 @@ class DirectoryTree(Tree[DirEntry]):
         if dir_entry is None:
             return
         if self._safe_is_dir(dir_entry.path):
-            await self._add_to_load_queue(event.node)
+            await self._add_to_load_queue(event.node, None, None)
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
 
