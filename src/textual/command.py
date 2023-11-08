@@ -29,7 +29,7 @@ from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .fuzzy import Matcher
 from .reactive import var
-from .screen import ModalScreen, Screen
+from .screen import Screen, _SystemModalScreen
 from .timer import Timer
 from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
@@ -329,7 +329,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
+class CommandPalette(_SystemModalScreen[CallbackType]):
     """The Textual command palette."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
