@@ -18,3 +18,7 @@ class AlignAllApp(App):
         yield Container(Label("left bottom"), id="left-bottom")
         yield Container(Label("center bottom"), id="center-bottom")
         yield Container(Label("right bottom"), id="right-bottom")
+
+
+if __name__ == "__main__":
+    AlignAllApp().run()
