@@ -85,6 +85,7 @@ clean: clean-screenshot-cache clean-offline-docs
 .PHONY: setup
 setup:
 	poetry install
+	poetry install --extras syntax
 
 .PHONY: update
 update:
