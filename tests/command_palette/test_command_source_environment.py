@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from textual.app import App, ComposeResult
-from textual.command import CommandPalette, Hit, Hits, Provider
+from textual.command import Hit, Hits, Provider
 from textual.screen import Screen
 from textual.widget import Widget
 from textual.widgets import Input
@@ -31,7 +31,7 @@ class CommandPaletteApp(App[None]):
 async def test_command_source_environment() -> None:
     """The command source should see the app and default screen."""
     async with CommandPaletteApp().run_test() as pilot:
-        base_screen = CommandPalette.current_screen(pilot.app)
+        base_screen, *_ = pilot.app.children
         assert base_screen is not None
         await pilot.press(*"test")
         assert len(SimpleSource.environment) == 1

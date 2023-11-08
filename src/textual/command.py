@@ -475,21 +475,6 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         """
         return app.screen.id == CommandPalette._PALETTE_ID
 
-    @staticmethod
-    def current_screen(app: App) -> Screen:
-        """Get the current screen.
-
-        This method gets the current screen for the app, ignoring the
-        command palette.
-
-        Args:
-            app: The app to get the screen for.
-
-        Returns:
-            The current screen for the application, excluding the command palette.
-        """
-        return app.screen_stack[-2] if CommandPalette.is_open(app) else app.screen
-
     @property
     def _provider_classes(self) -> set[type[Provider]]:
         """The currently available command providers.
@@ -535,7 +520,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
     def on_mount(self, _: Mount) -> None:
         """Configure the command palette once the DOM is ready."""
-        self._calling_screen = self.current_screen(self.app)
+        self._calling_screen = self.app.screen_stack[-2]
 
         match_style = self.get_component_rich_style(
             "command-palette--highlight", partial=True
