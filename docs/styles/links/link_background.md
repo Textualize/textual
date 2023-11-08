@@ -26,7 +26,7 @@ It also shows that `link-background` does not affect hyperlinks.
 
 === "link_background.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-20 22-23"
     --8<-- "docs/examples/styles/link_background.py"
     ```
 
