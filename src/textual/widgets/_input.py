@@ -32,7 +32,7 @@ _POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
 
 _RESTRICT_TYPES = {
     "integer": r"[-+]?\d*",
-    "number": r"[-+]?\d*\.?\d*[eE]?\d*",
+    "number": r"[-+]?\d*\.?\d*[eE]?-?\d*",
     "text": None,
 }
 
