@@ -182,7 +182,7 @@ class Input(Widget, can_focus=True):
     """A completion suggestion for the current value in the input."""
     restrict = var["str | None"](None)
     """A regular expression that must match incoming characters."""
-    type = var[str]("text")
+    type = var("text")
     """The type of the input."""
     max_length = var["int | None"](None)
     """The maximum length of the input, in characters."""
