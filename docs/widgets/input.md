@@ -26,8 +26,14 @@ The example below shows how you might create a simple form using two `Input` wid
 ### Input Types
 
 The `Input` widget supports a `type` parameter which will prevent the user from typing invalid characters.
-There are three valid values for `type`: `"integer"` will limit input to a valid integer, `"number"` will limit input to a floating point number.
-The default value for the `type` parameter is `"text"` which will not limit the input.
+You can set `type` to any of the following values:
+
+
+| input.type  | Description                                 |
+| ----------- | ------------------------------------------- |
+| `"integer"` | Restricts input to integers.                |
+| `"number"`  | Restricts input to a floating point number. |
+| `"text"`    | Allow all text (no restrictions).           |
 
 === "Output"
 
@@ -117,7 +123,7 @@ If you set `valid_empty=True` then empty values will bypass any validators, and 
 | `cursor_blink`    | `bool` | `True`   | True if cursor blinking is enabled.                             |
 | `value`           | `str`  | `""`     | The value currently in the text input.                          |
 | `cursor_position` | `int`  | `0`      | The index of the cursor in the value string.                    |
-| `placeholder`     | `str`  | `str`    | The dimmed placeholder text to display when the input is empty. |
+| `placeholder`     | `str`  | `""`     | The dimmed placeholder text to display when the input is empty. |
 | `password`        | `bool` | `False`  | True if the input should be masked.                             |
 | `restrict`        | `str`  | `None`   | Optional regular expression to restrict input.                  |
 | `type`            | `str`  | `"text"` | The type of the input.                                          |
