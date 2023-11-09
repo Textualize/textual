@@ -14,10 +14,11 @@ from typing_extensions import Literal
 from .. import events
 from .._segment_tools import line_crop
 from ..binding import Binding, BindingType
+from ..css._error_tools import friendly_list
 from ..events import Blur, Focus, Mount
 from ..geometry import Offset, Size
 from ..message import Message
-from ..reactive import reactive
+from ..reactive import reactive, var
 from ..suggester import Suggester, SuggestionReady
 from ..timer import Timer
 from ..validation import ValidationResult, Validator
@@ -27,6 +28,13 @@ InputValidationOn = Literal["blur", "changed", "submitted"]
 """Possible messages that trigger input validation."""
 _POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
 """Set literal with the legal values for the type `InputValidationOn`."""
+
+
+_RESTRICT_TYPES = {
+    "integer": r"[-+]?\d*",
+    "number": r"[-+]?\d*\.?\d?(e?\d+)?",
+    "text": r".*",
+}
 
 
 class _InputRenderable:
@@ -173,6 +181,14 @@ class Input(Widget, can_focus=True):
     """The suggester used to provide completions as the user types."""
     _suggestion = reactive("")
     """A completion suggestion for the current value in the input."""
+    restrict = var[str | None](None)
+    """A regular expression that must match incoming characters."""
+    type = var[str]("text")
+    """The type of the input."""
+    max_length = var[int | None](None)
+    """The maximum length of the input, in characters."""
+    valid_empty = var(False)
+    """Empty values should pass validation."""
 
     @dataclass
     class Changed(Message):
@@ -226,9 +242,13 @@ class Input(Widget, can_focus=True):
         highlighter: Highlighter | None = None,
         password: bool = False,
         *,
+        restrict: str | None = None,
+        type: str = "text",
+        max_length: int = 0,
         suggester: Suggester | None = None,
         validators: Validator | Iterable[Validator] | None = None,
         validate_on: Iterable[InputValidationOn] | None = None,
+        valid_empty: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -241,20 +261,22 @@ class Input(Widget, can_focus=True):
             placeholder: Optional placeholder text for the input.
             highlighter: An optional highlighter for the input.
             password: Flag to say if the field should obfuscate its content.
+            restrict: A regex to restrict character inputs.
+            type: The type of the input.
+            max_length: The maximum length of the input, or 0 for no maximum length.
             suggester: [`Suggester`][textual.suggester.Suggester] associated with this
                 input instance.
             validators: An iterable of validators that the Input value will be checked against.
             validate_on: Zero or more of the values "blur", "changed", and "submitted",
                 which determine when to do input validation. The default is to do
                 validation for all messages.
+            valid_empty: Empty values are valid.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
             disabled: Whether the input is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        if value is not None:
-            self.value = value
 
         self._blink_timer: Timer | None = None
         """Timer controlling the blinking of the cursor, instantiated in `on_mount`."""
@@ -263,6 +285,7 @@ class Input(Widget, can_focus=True):
         self.highlighter = highlighter
         self.password = password
         self.suggester = suggester
+
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
             self.validators: list[Validator] = [validators]
@@ -288,6 +311,26 @@ class Input(Widget, can_focus=True):
             input = Input(validate_on=["submitted"])
             ```
         """
+        self.valid_empty = valid_empty
+        self._valid = True
+
+        self.restrict = restrict
+        if type not in _RESTRICT_TYPES:
+            raise ValueError(
+                f"Input type must be one of {friendly_list(_RESTRICT_TYPES.keys())}; not {type!r}"
+            )
+        self.type = type
+        self.max_length = max_length
+        if not self.validators:
+            from ..validation import Integer, Number
+
+            if self.type == "integer":
+                self.validators.append(Integer())
+            elif self.type == "number":
+                self.validators.append(Number())
+
+        if value is not None:
+            self.value = value
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
@@ -349,7 +392,7 @@ class Input(Widget, can_focus=True):
         x, y, _width, _height = self.content_region
         return Offset(x + self._cursor_offset - self.view_position, y)
 
-    async def _watch_value(self, value: str) -> None:
+    def _watch_value(self, value: str) -> None:
         self._suggestion = ""
         if self.suggester and value:
             self.run_worker(self.suggester._get_suggestion(self, value))
@@ -375,17 +418,37 @@ class Input(Widget, can_focus=True):
                 That is, if *any* validator fails, the result will be an unsuccessful
                 validation.
         """
+
+        def set_classes() -> None:
+            """Set classes for valid flag."""
+            valid = self._valid
+            self.set_class(not valid, "-invalid")
+            self.set_class(valid, "-valid")
+
         # If no validators are supplied, and therefore no validation occurs, we return None.
         if not self.validators:
+            self._valid = True
+            set_classes()
+            return None
+
+        if self.valid_empty and not value:
+            self._valid = True
+            set_classes()
             return None
 
         validation_results: list[ValidationResult] = [
             validator.validate(value) for validator in self.validators
         ]
         combined_result = ValidationResult.merge(validation_results)
-        self.set_class(not combined_result.is_valid, "-invalid")
-        self.set_class(combined_result.is_valid, "-valid")
+        self._valid = combined_result.is_valid
+        set_classes()
+
         return combined_result
+
+    @property
+    def is_valid(self) -> bool:
+        """Check if the value has passed validation."""
+        return self._valid
 
     @property
     def cursor_width(self) -> int:
@@ -494,15 +557,51 @@ class Input(Widget, can_focus=True):
         Args:
             text: New text to insert.
         """
+
+        def check_allowed_character(value: str) -> bool:
+            """Check if new value is restricted."""
+            # Check max length
+            if self.max_length and len(value) > self.max_length:
+                return False
+            # Check explicit restrict
+            if self.restrict and re.fullmatch(self.restrict, value) is None:
+                return False
+            # Check type restrict
+            if self.type:
+                type_restrict = _RESTRICT_TYPES.get(self.type, None)
+                if (
+                    type_restrict is not None
+                    and re.fullmatch(type_restrict, value) is None
+                ):
+                    return False
+            # Character is allowed
+            return True
+
         if self.cursor_position >= len(self.value):
-            self.value += text
-            self.cursor_position = len(self.value)
+            new_value = self.value + text
+            if check_allowed_character(new_value):
+                self.value = new_value
+                self.cursor_position = len(self.value)
+            else:
+                self.restricted()
         else:
             value = self.value
             before = value[: self.cursor_position]
             after = value[self.cursor_position :]
-            self.value = f"{before}{text}{after}"
-            self.cursor_position += len(text)
+            new_value = f"{before}{text}{after}"
+            if check_allowed_character(new_value):
+                self.value = new_value
+                self.cursor_position += len(text)
+            else:
+                self.restricted()
+
+    def restricted(self) -> None:
+        """Called when a character has been restricted.
+
+        The default behavior is to play the system bell.
+        You may want to override this method if you want to change or disable the bell.
+        """
+        self.app.bell()
 
     def clear(self) -> None:
         """Clear the input."""

@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
+- Added `restrict`, `type`, `max_length`, and `valid_empty` to Inpuy
 
 ## [0.41.0] - 2023-10-31
 

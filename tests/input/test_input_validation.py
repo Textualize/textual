@@ -30,6 +30,7 @@ async def test_input_changed_message_validation_failure():
     async with app.run_test() as pilot:
         input = app.query_one(Input)
         input.value = "8"
+        assert not input.is_valid
         await pilot.pause()
         assert len(app.messages) == 1
         assert app.messages[0].validation_result == ValidationResult.failure(

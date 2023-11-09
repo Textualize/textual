@@ -22,6 +22,42 @@ The example below shows how you might create a simple form using two `Input` wid
     --8<-- "docs/examples/widgets/input.py"
     ```
 
+
+### Input Types
+
+The `Input` widgets support a `type` parameter which will prevent the user from typing invalid data.
+There are three valid values for type: `"integer"` will limit input to a valid integer, `"number"` will limit input to a floating point number.
+The default value for the `type` parameter is `"text"` which will not limit the input.
+
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/input_types.py" press="1234"}
+    ```
+
+=== "input_types.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/input_types.py"
+    ```
+
+If you set `type` to something other than text, then the `Input` will apply the appropriate [validator](#validating-input).
+
+### Restricting Input
+
+You can limit input to particular characters by supplying the `restrict` parameter, which should be a regular expression.
+The `Input` widget will prevent the addition of any characters that would cause the regex to no longer match.
+For instance, if you wanted to limit characters to binary you could set `restrict=r"[01]*"`.
+
+!!! note
+
+    The `restrict` regular expression is applied to the full value and not just to the new character.
+
+### Maximum Length
+
+You can limit the length of the input by setting `max_length` to a value greater than zero.
+This will prevent the user from typing any more characters when the maximum has been reached.
+
 ### Validating Input
 
 You can supply one or more *[validators][textual.validation.Validator]* to the `Input` widget to validate the value.
@@ -71,15 +107,22 @@ Textual offers several [built-in validators][textual.validation] for common requ
 but you can easily roll your own by extending [Validator][textual.validation.Validator],
 as seen for `Palindrome` in the example above.
 
+#### Validate Empty
+
+If you set `valid_empty=True` then empty values will bypass any validators, and empty values will be considered valid.
+
 ## Reactive Attributes
 
-| Name              | Type   | Default | Description                                                     |
-|-------------------|--------|---------|-----------------------------------------------------------------|
-| `cursor_blink`    | `bool` | `True`  | True if cursor blinking is enabled.                             |
-| `value`           | `str`  | `""`    | The value currently in the text input.                          |
-| `cursor_position` | `int`  | `0`     | The index of the cursor in the value string.                    |
-| `placeholder`     | `str`  | `str`   | The dimmed placeholder text to display when the input is empty. |
-| `password`        | `bool` | `False` | True if the input should be masked.                             |
+| Name              | Type   | Default  | Description                                                     |
+| ----------------- | ------ | -------- | --------------------------------------------------------------- |
+| `cursor_blink`    | `bool` | `True`   | True if cursor blinking is enabled.                             |
+| `value`           | `str`  | `""`     | The value currently in the text input.                          |
+| `cursor_position` | `int`  | `0`      | The index of the cursor in the value string.                    |
+| `placeholder`     | `str`  | `str`    | The dimmed placeholder text to display when the input is empty. |
+| `password`        | `bool` | `False`  | True if the input should be masked.                             |
+| `restrict`        | `str`  | `None`   | Optional regular expression to restrict input.                  |
+| `type`            | `str`  | `"text"` | The type of the input.                                          |
+| `max_length`      | `int`  | `None`   | Maximum length of the input value.                              |
 
 ## Messages
 
