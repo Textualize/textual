@@ -561,7 +561,7 @@ class Input(Widget, can_focus=True):
             text: New text to insert.
         """
 
-        def check_allowed_character(value: str) -> bool:
+        def check_allowed_value(value: str) -> bool:
             """Check if new value is restricted."""
             # Check max length
             if self.max_length and len(value) > self.max_length:
@@ -582,7 +582,7 @@ class Input(Widget, can_focus=True):
 
         if self.cursor_position >= len(self.value):
             new_value = self.value + text
-            if check_allowed_character(new_value):
+            if check_allowed_value(new_value):
                 self.value = new_value
                 self.cursor_position = len(self.value)
             else:
@@ -592,7 +592,7 @@ class Input(Widget, can_focus=True):
             before = value[: self.cursor_position]
             after = value[self.cursor_position :]
             new_value = f"{before}{text}{after}"
-            if check_allowed_character(new_value):
+            if check_allowed_value(new_value):
                 self.value = new_value
                 self.cursor_position += len(text)
             else:
