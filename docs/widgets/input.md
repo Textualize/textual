@@ -122,6 +122,7 @@ If you set `valid_empty=True` then empty values will bypass any validators, and 
 | `restrict`        | `str`  | `None`   | Optional regular expression to restrict input.                  |
 | `type`            | `str`  | `"text"` | The type of the input.                                          |
 | `max_length`      | `int`  | `None`   | Maximum length of the input value.                              |
+| `valid_empty`     | `bool` | `False`  | Allow empty values to bypass validation.                        |
 
 ## Messages
 
