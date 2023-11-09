@@ -176,16 +176,15 @@ class Input(Widget, can_focus=True):
     width = reactive(1)
     _cursor_visible = reactive(True)
     password = reactive(False)
-    max_size: reactive[int | None] = reactive(None)
     suggester: Suggester | None
     """The suggester used to provide completions as the user types."""
     _suggestion = reactive("")
     """A completion suggestion for the current value in the input."""
-    restrict = var[str | None](None)
+    restrict = var["str | None"](None)
     """A regular expression that must match incoming characters."""
     type = var[str]("text")
     """The type of the input."""
-    max_length = var[int | None](None)
+    max_length = var["int | None"](None)
     """The maximum length of the input, in characters."""
     valid_empty = var(False)
     """Empty values should pass validation."""
