@@ -526,6 +526,7 @@ class DirectoryTree(Tree[DirEntry]):
         else:
             self.cursor_line = node.line
 
+    @work
     async def _restore_state(
         self,
         node: TreeNode[DirEntry],
@@ -545,17 +546,15 @@ class DirectoryTree(Tree[DirEntry]):
         """
         self._to_restore_count -= 1
 
-        # siblings_to_highlight, parents = to_highlight
-        # to_highlight_parent = parents[0]
-        # if node.data.path == to_highlight_parent:
-        #     print("Digging")
-        #     self._restore_highlighting(node, siblings_to_highlight)
-        # elif node.data.path in parents:
-        #     print("Parent")
-        #     self.cursor_line = node.line
+        siblings_to_highlight, parents = to_highlight
+        to_highlight_parent = parents[0]
+        if node.data.path == to_highlight_parent:
+            self._restore_highlighting(node, siblings_to_highlight)
+        elif node.data.path in parents:
+            self.cursor_line = node.line
 
         # See if the paths that were previously represented in the tree and expanded
-        # still exist. If so, flag that node (and its state) for restoring.
+        # still exist. If so, flag that node (and its state) for reloading & restoring.
         paths_to_children = {
             child.data.path: child for child in node.children if child.allow_expand
         }
@@ -598,7 +597,7 @@ class DirectoryTree(Tree[DirEntry]):
                         self._populate_node(node, content)
                 # Restore the state of the node we just reloaded.
                 if state is not None:
-                    await self._restore_state(node, state, to_highlight)
+                    self._restore_state(node, state, to_highlight)
             finally:
                 # Mark this iteration as done.
                 self._load_queue.task_done()
