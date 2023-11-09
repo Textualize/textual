@@ -25,10 +25,9 @@ The example below shows how you might create a simple form using two `Input` wid
 
 ### Input Types
 
-The `Input` widgets support a `type` parameter which will prevent the user from typing invalid data.
-There are three valid values for type: `"integer"` will limit input to a valid integer, `"number"` will limit input to a floating point number.
+The `Input` widget supports a `type` parameter which will prevent the user from typing invalid characters.
+There are three valid values for `type`: `"integer"` will limit input to a valid integer, `"number"` will limit input to a floating point number.
 The default value for the `type` parameter is `"text"` which will not limit the input.
-
 
 === "Output"
 
@@ -41,7 +40,7 @@ The default value for the `type` parameter is `"text"` which will not limit the 
     --8<-- "docs/examples/widgets/input_types.py"
     ```
 
-If you set `type` to something other than text, then the `Input` will apply the appropriate [validator](#validating-input).
+If you set `type` to something other than `"text"`, then the `Input` will apply the appropriate [validator](#validating-input).
 
 ### Restricting Input
 
