@@ -5,11 +5,10 @@ from sys import intern
 from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 
 from rich.console import Console
-from rich.segment import Segment, Segments
+from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 
-from . import log
 from ._border import get_box, render_border_label, render_row
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
@@ -465,11 +464,6 @@ class StylesCache:
             right = get_box(outline_right, inner, outer, right_style)[1][2]
             line = line_trim(list(line), outline_left != "", outline_right != "")
             if outline_left and outline_right:
-                print(f"left = {left!r}")
-                print(f"line = {line!r}")
-                log(Segments(line))
-
-                print(f"right = {right!r}")
                 line = [left, *line, right]
             elif outline_left:
                 line = [left, *line]
