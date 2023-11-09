@@ -32,8 +32,8 @@ _POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
 
 _RESTRICT_TYPES = {
     "integer": r"[-+]?\d*",
-    "number": r"[-+]?\d*\.?\d?(e?\d+)?",
-    "text": r".*",
+    "number": r"[-+]?\d*\.?\d?(e?\d*)?",
+    "text": None,
 }
 
 
@@ -181,7 +181,7 @@ class Input(Widget, can_focus=True):
     _suggestion = reactive("")
     """A completion suggestion for the current value in the input."""
     restrict = var["str | None"](None)
-    """A regular expression that must match incoming characters."""
+    """A regular expression to limit changes in value."""
     type = var("text")
     """The type of the input."""
     max_length = var["int | None"](None)
@@ -402,6 +402,10 @@ class Input(Widget, can_focus=True):
             self.validate(value) if "changed" in self.validate_on else None
         )
         self.post_message(self.Changed(self, value, validation_result))
+
+    def _watch_valid_empty(self) -> None:
+        """Repeat validation when valid_empty changes."""
+        self._watch_value(self.value)
 
     def validate(self, value: str) -> ValidationResult | None:
         """Run all the validators associated with this Input on the supplied value.

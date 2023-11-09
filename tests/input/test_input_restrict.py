@@ -16,6 +16,7 @@ def test_input_number_type():
     assert re.fullmatch(number, ".0")
     assert re.fullmatch(number, "1.1")
     assert re.fullmatch(number, "1e1")
+    assert re.fullmatch(number, "1.2e")
     assert re.fullmatch(number, "1.2e10")
     assert not re.fullmatch(number, "1.2e10e")
     assert not re.fullmatch(number, "1f2")
