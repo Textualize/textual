@@ -131,12 +131,16 @@ class ColumnKey(StringKey):
 class CellKey(NamedTuple):
     """A unique identifier for a cell in the DataTable.
 
+    A cell key is a `(row_key, column_key)` tuple.
+
     Even if the cell changes
     visual location (i.e. moves to a different coordinate in the table), this key
     can still be used to retrieve it, regardless of where it currently is."""
 
     row_key: RowKey
+    """The key of this cell's row."""
     column_key: ColumnKey
+    """The key of this cell's column."""
 
     def __rich_repr__(self):
         yield "row_key", self.row_key

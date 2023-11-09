@@ -521,7 +521,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
-            if ((watch_css or self.debug) and self.css_path)
+            if watch_css or self.debug
             else None
         )
         self._screenshot: str | None = None
@@ -1407,8 +1407,10 @@ class App(Generic[ReturnType], DOMNode):
         return self.return_value
 
     async def _on_css_change(self) -> None:
-        """Called when the CSS changes (if watch_css is True)."""
-        css_paths = self.css_path
+        """Callback for the file monitor, called when CSS files change."""
+        css_paths = (
+            self.css_monitor._paths if self.css_monitor is not None else self.css_path
+        )
         if css_paths:
             try:
                 time = perf_counter()
@@ -1771,20 +1773,20 @@ class App(Generic[ReturnType], DOMNode):
 
         update = False
         for path in screen.css_path:
-            if not self.stylesheet.has_source(path):
+            if not self.stylesheet.has_source(str(path), ""):
                 self.stylesheet.read(path)
                 update = True
         if screen.CSS:
             try:
-                screen_css_path = (
-                    f"{inspect.getfile(screen.__class__)}:{screen.__class__.__name__}"
-                )
+                screen_path = inspect.getfile(screen.__class__)
             except (TypeError, OSError):
-                screen_css_path = f"{screen.__class__.__name__}"
-            if not self.stylesheet.has_source(screen_css_path):
+                screen_path = ""
+            screen_class_var = f"{screen.__class__.__name__}.CSS"
+            read_from = (screen_path, screen_class_var)
+            if not self.stylesheet.has_source(screen_path, screen_class_var):
                 self.stylesheet.add_source(
                     screen.CSS,
-                    path=screen_css_path,
+                    read_from=read_from,
                     is_default_css=False,
                     scope=screen._css_type_name if screen.SCOPED_CSS else "",
                 )
@@ -2145,23 +2147,22 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path:
                 self.stylesheet.read_all(self.css_path)
-            for path, css, tie_breaker, scope in self._get_default_css():
+            for read_from, css, tie_breaker, scope in self._get_default_css():
                 self.stylesheet.add_source(
                     css,
-                    path=path,
+                    read_from=read_from,
                     is_default_css=True,
                     tie_breaker=tie_breaker,
                     scope=scope,
                 )
             if self.CSS:
                 try:
-                    app_css_path = (
-                        f"{inspect.getfile(self.__class__)}:{self.__class__.__name__}"
-                    )
+                    app_path = inspect.getfile(self.__class__)
                 except (TypeError, OSError):
-                    app_css_path = f"{self.__class__.__name__}"
+                    app_path = ""
+                read_from = (app_path, f"{self.__class__.__name__}.CSS")
                 self.stylesheet.add_source(
-                    self.CSS, path=app_css_path, is_default_css=False
+                    self.CSS, read_from=read_from, is_default_css=False
                 )
         except Exception as error:
             self._handle_exception(error)
@@ -2527,7 +2528,22 @@ class App(Generic[ReturnType], DOMNode):
                     except Exception as error:
                         self._handle_exception(error)
                     else:
-                        self._driver.write(terminal_sequence)
+                        if WINDOWS:
+                            # Combat a problem with Python on Windows.
+                            #
+                            # https://github.com/Textualize/textual/issues/2548
+                            # https://github.com/python/cpython/issues/82052
+                            CHUNK_SIZE = 8192
+                            write = self._driver.write
+                            for chunk in (
+                                terminal_sequence[offset : offset + CHUNK_SIZE]
+                                for offset in range(
+                                    0, len(terminal_sequence), CHUNK_SIZE
+                                )
+                            ):
+                                write(chunk)
+                        else:
+                            self._driver.write(terminal_sequence)
                 finally:
                     self._end_update()
 

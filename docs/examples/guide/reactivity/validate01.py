@@ -30,7 +30,7 @@ class ValidateApp(App):
             self.count += 1
         else:
             self.count -= 1
-        self.query_one(RichLog).write(f"{self.count=}")
+        self.query_one(RichLog).write(f"count = {self.count}")
 
 
 if __name__ == "__main__":

@@ -11,8 +11,12 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class OutlineApp(App):
+    CSS_PATH = "outline.tcss"
+
     def compose(self):
         yield Label(TEXT)
 
 
-app = OutlineApp(css_path="outline.tcss")
+if __name__ == "__main__":
+    app = OutlineApp()
+    app.run()

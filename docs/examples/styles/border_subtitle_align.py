@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class BorderSubtitleAlignApp(App):
+    CSS_PATH = "border_subtitle_align.tcss"
+
     def compose(self):
         lbl = Label("My subtitle is on the left.", id="label1")
         lbl.border_subtitle = "< Left"
@@ -17,4 +19,6 @@ class BorderSubtitleAlignApp(App):
         yield lbl
 
 
-app = BorderSubtitleAlignApp(css_path="border_subtitle_align.tcss")
+if __name__ == "__main__":
+    app = BorderSubtitleAlignApp()
+    app.run()

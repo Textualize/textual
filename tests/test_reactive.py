@@ -298,8 +298,6 @@ async def test_reactive_inheritance():
     class Tertiary(Secondary):
         baz = reactive("baz")
 
-    from rich import print
-
     primary = Primary()
     secondary = Secondary()
     tertiary = Tertiary()

@@ -115,7 +115,7 @@ def test_get_opacity_default():
 
 def test_styles_css_property():
     css = "opacity: 50%; text-opacity: 20%; background: green; color: red; tint: dodgerblue 20%;"
-    styles = Styles().parse(css, path="")
+    styles = Styles().parse(css, read_from=("", ""))
     assert styles.css == (
         "background: #008000;\n"
         "color: #FF0000;\n"

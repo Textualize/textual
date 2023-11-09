@@ -407,7 +407,7 @@ class DOMQuery(Generic[QueryType]):
             node.set_styles(**update_styles)
         if css is not None:
             try:
-                new_styles = parse_declarations(css, path="set_styles")
+                new_styles = parse_declarations(css, read_from=("set_styles", ""))
             except DeclarationError as error:
                 raise DeclarationError(error.name, error.token, error.message) from None
             for node in self:

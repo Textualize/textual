@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
+- Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
+- Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
+- Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
 - `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 
 ### Added
@@ -24,6 +28,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
+- inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
 - Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
 
 
