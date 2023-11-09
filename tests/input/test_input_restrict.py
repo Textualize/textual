@@ -8,6 +8,7 @@ from textual.widgets._input import _RESTRICT_TYPES
 
 
 def test_input_number_type():
+    """Test number type regex."""
     number = _RESTRICT_TYPES["number"]
     assert re.fullmatch(number, "0")
     assert re.fullmatch(number, "0.")
@@ -23,6 +24,7 @@ def test_input_number_type():
 
 
 def test_input_integer_type():
+    """Test input type regex"""
     integer = _RESTRICT_TYPES["integer"]
     assert re.fullmatch(integer, "0")
     assert re.fullmatch(integer, "1")
@@ -32,6 +34,8 @@ def test_input_integer_type():
     assert re.fullmatch(integer, "+")
     assert re.fullmatch(integer, "-1")
     assert re.fullmatch(integer, "+2")
+    assert not re.fullmatch(integer, "+2e")
+    assert not re.fullmatch(integer, "foo")
 
 
 async def test_bad_type():
@@ -39,12 +43,12 @@ async def test_bad_type():
 
     class InputApp(App):
         def compose(self) -> ComposeResult:
-            yield Input(type="foo")
+            yield Input(type="foo")  # Bad type
 
     app = InputApp()
 
     with pytest.raises(ValueError):
-        async with app.run_test() as pilot:
+        async with app.run_test():
             pass
 
 
@@ -68,6 +72,14 @@ async def test_max_length():
         assert input_widget.value == "12345"
         await pilot.press("7")
         assert input_widget.value == "12345"
+        # Backspace is ok
+        await pilot.press("backspace")
+        assert input_widget.value == "1234"
+        await pilot.press("0")
+        assert input_widget.value == "12340"
+        # Back to maximum
+        await pilot.press("1")
+        assert input_widget.value == "12340"
 
 
 async def test_restrict():
