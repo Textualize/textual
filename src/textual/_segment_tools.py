@@ -129,19 +129,29 @@ def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
         A new list of segments.
     """
     segments = segments.copy()
-    if segments and start:
-        _, first_segment = segments[0].split_cells(1)
-        if first_segment.text:
-            segments[0] = first_segment
+
+    # Empty segments should be ignored as they don't contribute to cell width
+    while segments and start:
+        segment = segments[0]
+        if segment.text:
+            _, first_segment = segments[0].split_cells(1)
+            if first_segment.text:
+                segments[0] = first_segment
+            break
         else:
             segments.pop(0)
-    if segments and end:
-        last_segment = segments[-1]
-        last_segment, _ = last_segment.split_cells(len(last_segment.text) - 1)
-        if last_segment.text:
-            segments[-1] = last_segment
+
+    while segments and end:
+        segment = segments[-1]
+        if segment.text:
+            last_segment = segments[-1]
+            last_segment, _ = last_segment.split_cells(len(last_segment.text) - 1)
+            if last_segment.text:
+                segments[-1] = last_segment
+            break
         else:
             segments.pop()
+
     return segments
 
 
