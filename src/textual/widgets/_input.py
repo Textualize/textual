@@ -598,7 +598,7 @@ class Input(Widget, can_focus=True):
         """Called when a character has been restricted.
 
         The default behavior is to play the system bell.
-        You may want to override this method if you want to change or disable the bell.
+        You may want to override this method if you want to disable the bell or do something else entirely.
         """
         self.app.bell()
 
