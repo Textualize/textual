@@ -3,6 +3,7 @@ from textual.widgets import Button
 
 
 class ButtonIssue(App[None]):
+    AUTO_FOCUS = None
     CSS = """
     Button {
         outline: white;
