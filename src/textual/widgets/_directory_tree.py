@@ -266,7 +266,7 @@ class DirectoryTree(Tree[DirEntry]):
         while node_stack:
             stack_state_list, stack_node = node_stack.pop()
             for child in stack_node.children:
-                if child.is_expanded:
+                if child.allow_expand and child.is_expanded:
                     new_state: TreeState = (child.data.path, [])
                     stack_state_list.append(new_state)
                     node_stack.append((new_state[1], child))
@@ -526,7 +526,6 @@ class DirectoryTree(Tree[DirEntry]):
         else:
             self.cursor_line = node.line
 
-    @work(group="_state_restoration")
     async def _restore_state(
         self,
         node: TreeNode[DirEntry],
@@ -544,32 +543,28 @@ class DirectoryTree(Tree[DirEntry]):
             state: A record of the state of the subtree whose root is the given node.
             to_highlight: Information about the tree nodes that we'll try to highlight.
         """
-        to_restore = [(node, state)]
         self._to_restore_count -= 1
 
-        siblings_to_highlight, parents = to_highlight
-        to_highlight_parent = parents[0]
-        if node.data.path == to_highlight_parent:
-            self._restore_highlighting(node, siblings_to_highlight)
-        elif node.data.path in parents:
-            self.cursor_line = node.line
+        # siblings_to_highlight, parents = to_highlight
+        # to_highlight_parent = parents[0]
+        # if node.data.path == to_highlight_parent:
+        #     print("Digging")
+        #     self._restore_highlighting(node, siblings_to_highlight)
+        # elif node.data.path in parents:
+        #     print("Parent")
+        #     self.cursor_line = node.line
 
-        while to_restore:
-            node, state = to_restore.pop()
-            if not node.is_expanded:
+        # See if the paths that were previously represented in the tree and expanded
+        # still exist. If so, flag that node (and its state) for restoring.
+        paths_to_children = {
+            child.data.path: child for child in node.children if child.allow_expand
+        }
+        for expanded in state[1]:
+            expanded_path = expanded[0]
+            child_node = paths_to_children.get(expanded_path, None)
+            if child_node is not None:
                 self._to_restore_count += 1
-                self._add_to_load_queue(node, state, to_highlight)
-
-            # See if the paths that were previously represented in the tree and expanded
-            # still exist. If so, flag that node (and its state) for restoring.
-            paths_to_children = {
-                child.data.path: child for child in node.children if child.allow_expand
-            }
-            for expanded in state[1]:
-                expanded_path = expanded[0]
-                child_node = paths_to_children.get(expanded_path, None)
-                if child_node is not None:
-                    to_restore.append((child_node, expanded))
+                self._add_to_load_queue(child_node, expanded, to_highlight)
 
         if not self._to_restore_count:
             self._to_restore_event.set()
@@ -603,7 +598,7 @@ class DirectoryTree(Tree[DirEntry]):
                         self._populate_node(node, content)
                 # Restore the state of the node we just reloaded.
                 if state is not None:
-                    self._restore_state(node, state, to_highlight)
+                    await self._restore_state(node, state, to_highlight)
             finally:
                 # Mark this iteration as done.
                 self._load_queue.task_done()
