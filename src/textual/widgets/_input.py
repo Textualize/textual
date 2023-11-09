@@ -310,7 +310,7 @@ class Input(Widget, can_focus=True):
             input = Input(validate_on=["submitted"])
             ```
         """
-        self.valid_empty = valid_empty
+        self._reactive_valid_empty = valid_empty
         self._valid = True
 
         self.restrict = restrict
