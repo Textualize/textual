@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
 - Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 - Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
+- Fixed outline not rendering correctly in some scenarios (e.g. on Button widgets) https://github.com/Textualize/textual/issues/3628
 
 ### Changed
 
