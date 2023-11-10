@@ -526,7 +526,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
-            if ((watch_css or self.debug) and self.css_path)
+            if watch_css or self.debug
             else None
         )
         self._screenshot: str | None = None
@@ -1418,8 +1418,10 @@ class App(Generic[ReturnType], DOMNode):
         return self.return_value
 
     async def _on_css_change(self) -> None:
-        """Called when the CSS changes (if watch_css is True)."""
-        css_paths = self.css_path
+        """Callback for the file monitor, called when CSS files change."""
+        css_paths = (
+            self.css_monitor._paths if self.css_monitor is not None else self.css_path
+        )
         if css_paths:
             try:
                 time = perf_counter()

@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class MaxWidthApp(App):
+    CSS_PATH = "max_width.tcss"
+
     def compose(self):
         yield VerticalScroll(
             Placeholder("max-width: 50h", id="p1"),
@@ -13,4 +15,6 @@ class MaxWidthApp(App):
         )
 
 
-app = MaxWidthApp(css_path="max_width.tcss")
+if __name__ == "__main__":
+    app = MaxWidthApp()
+    app.run()

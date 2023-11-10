@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 - Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
 - Fixed app-level queries causing a crash when the command palette is active https://github.com/Textualize/textual/issues/3633
+- Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
 
 ### Changed
 
