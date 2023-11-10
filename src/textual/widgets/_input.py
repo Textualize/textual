@@ -329,7 +329,7 @@ class Input(Widget, can_focus=True):
                 self.validators.append(Number())
 
         if value is not None:
-            self._reactive_value = value
+            self.value = value
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""
