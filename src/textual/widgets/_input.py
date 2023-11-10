@@ -35,6 +35,7 @@ _RESTRICT_TYPES = {
     "number": r"[-+]?\d*\.?\d*[eE]?[-+]?\d*",
     "text": None,
 }
+InputType = Literal["integer", "number", "text"]
 
 
 class _InputRenderable:
@@ -182,7 +183,7 @@ class Input(Widget, can_focus=True):
     """A completion suggestion for the current value in the input."""
     restrict = var["str | None"](None)
     """A regular expression to limit changes in value."""
-    type = var("text")
+    type = var[InputType]("text")
     """The type of the input."""
     max_length = var["int | None"](None)
     """The maximum length of the input, in characters."""
@@ -242,7 +243,7 @@ class Input(Widget, can_focus=True):
         password: bool = False,
         *,
         restrict: str | None = None,
-        type: str = "text",
+        type: InputType = "text",
         max_length: int = 0,
         suggester: Suggester | None = None,
         validators: Validator | Iterable[Validator] | None = None,
