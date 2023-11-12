@@ -39,11 +39,11 @@ It also shows that `link-hover-style` does not affect hyperlinks.
 
 === "link_hover_style.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-19 22-23"
     --8<-- "docs/examples/styles/link_hover_style.py"
     ```
 
-    1. This label has an hyperlink so it won't be affected by the `link-hover-style` rule.
+    1. This label has a hyperlink so it won't be affected by the `link-hover-style` rule.
     2. This label has an "action link" that can be styled with `link-hover-style`.
     3. This label has an "action link" that can be styled with `link-hover-style`.
     4. This label has an "action link" that can be styled with `link-hover-style`.

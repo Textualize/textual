@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
 
 from rich.style import Style
 from rich.text import Text
+from typing_extensions import Literal, Protocol, runtime_checkable
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER
@@ -30,11 +31,9 @@ from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
     from tree_sitter import Language
-    from tree_sitter.binding import Query
 
 from textual import events, log
 from textual._cells import cell_len
-from textual._types import Literal, Protocol, runtime_checkable
 from textual.binding import Binding
 from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
@@ -410,6 +409,7 @@ TextArea {
             if match_row in range(*self._visible_line_indices):
                 self.refresh_lines(match_row)
 
+        self.app.cursor_position = self.cursor_screen_offset
         self.post_message(self.SelectionChanged(selection, self))
 
     def find_matching_bracket(
@@ -644,7 +644,9 @@ TextArea {
                 self._highlight_query = document.prepare_query(highlight_query)
         elif language and not TREE_SITTER:
             log.warning(
-                "tree-sitter not available in this environment. Parsing disabled."
+                "tree-sitter not available in this environment. Parsing disabled.\n"
+                "You may need to install the `syntax` extras alongside textual.\n"
+                "Try `pip install 'textual[syntax]'` or '`poetry add textual[syntax]'."
             )
             document = Document(text)
         else:
@@ -660,7 +662,14 @@ TextArea {
         Returns:
             A tuple (top, bottom) indicating the top and bottom visible line indices.
         """
-        return self.scroll_offset.y, self.scroll_offset.y + self.size.height
+        _, scroll_offset_y = self.scroll_offset
+        return scroll_offset_y, scroll_offset_y + self.size.height
+
+    def _watch_scroll_x(self) -> None:
+        self.app.cursor_position = self.cursor_screen_offset
+
+    def _watch_scroll_y(self) -> None:
+        self.app.cursor_position = self.cursor_screen_offset
 
     def load_text(self, text: str) -> None:
         """Load text into the TextArea.
@@ -919,6 +928,15 @@ TextArea {
         """The entire text content of the document."""
         return self.document.text
 
+    @text.setter
+    def text(self, value: str) -> None:
+        """Replace the text currently in the TextArea. This is an alias of `load_text`.
+
+        Args:
+            value: The text to load into the TextArea.
+        """
+        self.load_text(value)
+
     @property
     def selected_text(self) -> str:
         """The text between the start and end points of the current selection."""
@@ -1043,6 +1061,7 @@ TextArea {
 
     def _on_focus(self, _: events.Focus) -> None:
         self._restart_blink()
+        self.app.cursor_position = self.cursor_screen_offset
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
@@ -1256,6 +1275,23 @@ TextArea {
         If a selection is in progress, the anchor point will remain.
         """
         self.move_cursor(location, select=not self.selection.is_empty)
+
+    @property
+    def cursor_screen_offset(self) -> Offset:
+        """The offset of the cursor relative to the screen."""
+        cursor_row, cursor_column = self.cursor_location
+        scroll_x, scroll_y = self.scroll_offset
+        region_x, region_y, _width, _height = self.content_region
+
+        offset_x = (
+            region_x
+            + self.get_column_width(cursor_row, cursor_column)
+            - scroll_x
+            + self.gutter_width
+        )
+        offset_y = region_y + cursor_row - scroll_y
+
+        return Offset(offset_x, offset_y)
 
     @property
     def cursor_at_first_line(self) -> bool:

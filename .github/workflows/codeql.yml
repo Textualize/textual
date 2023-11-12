@@ -6,6 +6,13 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ 'main' ]
+    paths:
+      - '.github/workflows/codeql.yml'
+      - '**.py'
+      - '**.pyi'
+      - '**.lock'
+      - '**.js'
+      - '**.ts'
   schedule:
     - cron: '10 20 * * 4'
 

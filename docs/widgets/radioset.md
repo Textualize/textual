@@ -58,7 +58,12 @@ Here is an example of using the message to react to changes in a `RadioSet`:
 
 ## Bindings
 
-This widget has no bindings.
+The `RadioSet` widget defines the following bindings:
+
+::: textual.widgets.RadioSet.BINDINGS
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## Component Classes
 

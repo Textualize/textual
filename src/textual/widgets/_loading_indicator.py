@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 from time import time
+from typing import Awaitable
 
 from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
 from ..color import Gradient
+from ..css.query import NoMatches
 from ..events import Mount
-from ..widget import Widget
+from ..widget import AwaitMount, Widget
 
 
 class LoadingIndicator(Widget):
@@ -22,7 +24,68 @@ class LoadingIndicator(Widget):
         content-align: center middle;
         color: $accent;
     }
+    LoadingIndicator.-overlay {
+        overlay: screen;
+        background: $boost;
+    }
     """
+
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """Initialize a loading indicator.
+
+        Args:
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+
+        self._start_time: float = 0.0
+        """The time the loading indicator was mounted (a Unix timestamp)."""
+
+    def apply(self, widget: Widget) -> AwaitMount:
+        """Apply the loading indicator to a `widget`.
+
+        This will overlay the given widget with a loading indicator.
+
+        Args:
+            widget: A widget.
+
+        Returns:
+            AwaitMount: An awaitable for mounting the indicator.
+        """
+        self.add_class("-overlay")
+        await_mount = widget.mount(self, before=0)
+        return await_mount
+
+    @classmethod
+    def clear(cls, widget: Widget) -> Awaitable:
+        """Clear any loading indicator from the given widget.
+
+        Args:
+            widget: Widget to clear the loading indicator from.
+
+        Returns:
+            Optional awaitable.
+        """
+        try:
+            await_remove = widget.get_child_by_type(cls).remove()
+        except NoMatches:
+
+            async def null() -> None:
+                """Nothing to remove"""
+                return None
+
+            return null()
+
+        return await_remove
 
     def _on_mount(self, _: Mount) -> None:
         self._start_time = time()

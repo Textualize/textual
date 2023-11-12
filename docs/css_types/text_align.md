@@ -29,7 +29,7 @@ A [`<text-align>`](./text_align.md) can be any of the following values:
 
 ```sass
 Label {
-    rule: justify;
+    text-align: justify;
 }
 ```
 

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import re
-from pathlib import PurePath
-from typing import NamedTuple
+from typing import TYPE_CHECKING, NamedTuple
 
 import rich.repr
 from rich.console import Group, RenderableType
@@ -16,13 +15,16 @@ from ..suggestions import get_suggestion
 from ._error_tools import friendly_list
 from .constants import VALID_PSEUDO_CLASSES
 
+if TYPE_CHECKING:
+    from .types import CSSLocation
+
 
 class TokenError(Exception):
     """Error raised when the CSS cannot be tokenized (syntax error)."""
 
     def __init__(
         self,
-        path: str,
+        read_from: CSSLocation,
         code: str,
         start: tuple[int, int],
         message: str,
@@ -30,14 +32,14 @@ class TokenError(Exception):
     ) -> None:
         """
         Args:
-            path: Path to source or "<object>" if source is parsed from a literal.
+            read_from: The location where the CSS was read from.
             code: The code being parsed.
             start: Line number of the error.
             message: A message associated with the error.
             end: End location of token, or None if not known.
         """
 
-        self.path = path
+        self.read_from = read_from
         self.code = code
         self.start = start
         self.end = end or start
@@ -72,7 +74,12 @@ class TokenError(Exception):
 
         line_no, col_no = self.start
 
-        errors.append(highlighter(f" {self.path or '<unknown>'}:{line_no}:{col_no}"))
+        path, widget_variable = self.read_from
+        if widget_variable:
+            css_location = f" {path}, {widget_variable}:{line_no}:{col_no}"
+        else:
+            css_location = f" {path}:{line_no}:{col_no}"
+        errors.append(highlighter(css_location))
         errors.append(self._get_snippet())
 
         final_message = "\n".join(
@@ -126,7 +133,7 @@ class ReferencedBy(NamedTuple):
 class Token(NamedTuple):
     name: str
     value: str
-    path: str
+    read_from: CSSLocation
     code: str
     location: tuple[int, int]
     referenced_by: ReferencedBy | None = None
@@ -153,7 +160,7 @@ class Token(NamedTuple):
         return Token(
             name=self.name,
             value=self.value,
-            path=self.path,
+            read_from=self.read_from,
             code=self.code,
             location=self.location,
             referenced_by=by,
@@ -165,15 +172,18 @@ class Token(NamedTuple):
     def __rich_repr__(self) -> rich.repr.Result:
         yield "name", self.name
         yield "value", self.value
-        yield "path", self.path
+        yield (
+            "read_from",
+            self.read_from[0] if not self.read_from[1] else self.read_from,
+        )
         yield "code", self.code if len(self.code) < 40 else self.code[:40] + "..."
         yield "location", self.location
         yield "referenced_by", self.referenced_by, None
 
 
 class Tokenizer:
-    def __init__(self, text: str, path: str | PurePath = "") -> None:
-        self.path = str(path)
+    def __init__(self, text: str, read_from: CSSLocation = ("", "")) -> None:
+        self.read_from = read_from
         self.code = text
         self.lines = text.splitlines(keepends=True)
         self.line_no = 0
@@ -187,14 +197,14 @@ class Tokenizer:
                 return Token(
                     "eof",
                     "",
-                    self.path,
+                    self.read_from,
                     self.code,
                     (line_no + 1, col_no + 1),
                     None,
                 )
             else:
                 raise EOFError(
-                    self.path,
+                    self.read_from,
                     self.code,
                     (line_no + 1, col_no + 1),
                     "Unexpected end of file",
@@ -205,7 +215,7 @@ class Tokenizer:
             expected = friendly_list(" ".join(name.split("_")) for name in expect.names)
             message = f"Expected one of {expected}.; Did you forget a semicolon at the end of a line?"
             raise TokenError(
-                self.path,
+                self.read_from,
                 self.code,
                 (line_no, col_no),
                 message,
@@ -224,7 +234,7 @@ class Tokenizer:
         token = Token(
             name,
             value,
-            self.path,
+            self.read_from,
             self.code,
             (line_no, col_no),
             referenced_by=None,
@@ -239,14 +249,14 @@ class Tokenizer:
             all_valid = f"must be one of {friendly_list(VALID_PSEUDO_CLASSES)}"
             if suggestion:
                 raise TokenError(
-                    self.path,
+                    self.read_from,
                     self.code,
                     (line_no, col_no),
                     f"unknown pseudo-class {pseudo_class!r}; did you mean {suggestion!r}?; {all_valid}",
                 )
             else:
                 raise TokenError(
-                    self.path,
+                    self.read_from,
                     self.code,
                     (line_no, col_no),
                     f"unknown pseudo-class {pseudo_class!r}; {all_valid}",
@@ -267,7 +277,10 @@ class Tokenizer:
         while True:
             if line_no >= len(self.lines):
                 raise EOFError(
-                    self.path, self.code, (line_no, col_no), "Unexpected end of file"
+                    self.read_from,
+                    self.code,
+                    (line_no, col_no),
+                    "Unexpected end of file",
                 )
             line = self.lines[line_no]
             match = expect.search(line, col_no)

@@ -11,8 +11,12 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class ScrollbarGutterApp(App):
+    CSS_PATH = "scrollbar_gutter.tcss"
+
     def compose(self):
         yield Static(TEXT, id="text-box")
 
 
-app = ScrollbarGutterApp(css_path="scrollbar_gutter.tcss")
+if __name__ == "__main__":
+    app = ScrollbarGutterApp()
+    app.run()

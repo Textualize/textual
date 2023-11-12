@@ -5,7 +5,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea
+from textual.widgets import TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -102,7 +102,10 @@ def test_input_validation(snap_compare):
 
 
 def test_input_suggestions(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+    async def run_before(pilot):
+        pilot.app.query_one(Input).cursor_blink = False
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before)
 
 
 def test_buttons_render(snap_compare):
@@ -164,6 +167,18 @@ def test_datatable_add_row_auto_height_sorted(snap_compare):
     # Check that rows added with auto height computation look right.
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "data_table_add_row_auto_height.py", press=["s"]
+    )
+
+
+def test_datatable_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_cell_padding.py")
+
+
+def test_datatable_change_cell_padding(snap_compare):
+    # Check that horizontal cell padding is respected.
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "data_table_cell_padding.py", press=["a", "b"]
     )
 
 
@@ -516,8 +531,10 @@ def test_scrollbar_thumb_height(snap_compare):
     )
 
 
-def test_css_hot_reloading(snap_compare):
+def test_css_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/2063."""
+
+    monkeypatch.setenv("TEXTUAL", "debug")  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
@@ -530,8 +547,26 @@ def test_css_hot_reloading(snap_compare):
     )
 
 
-def test_datatable_hot_reloading(snap_compare):
+def test_css_hot_reloading_on_screen(snap_compare, monkeypatch):
+    """Regression test for https://github.com/Textualize/textual/issues/3454."""
+
+    monkeypatch.setenv("TEXTUAL", "debug")  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.screen.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "hot_reloading_app_with_screen_css.py", run_before=run_before
+    )
+
+
+def test_datatable_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3312."""
+
+    monkeypatch.setenv("TEXTUAL", "debug")  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
@@ -657,6 +692,9 @@ def test_command_palette(snap_compare) -> None:
     from textual.command import CommandPalette
 
     async def run_before(pilot) -> None:
+        palette = pilot.app.query_one(CommandPalette)
+        palette_input = palette.query_one(Input)
+        palette_input.cursor_blink = False
         await pilot.press("ctrl+backslash")
         await pilot.press("A")
         await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
@@ -668,7 +706,16 @@ def test_command_palette(snap_compare) -> None:
 
 
 def test_textual_dev_border_preview(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py", press=["enter"])
+    async def run_before(pilot):
+        buttons = pilot.app.query(Button)
+        for button in buttons:
+            button.active_effect_duration = 0
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dev_previews_border.py",
+        press=["enter"],
+        run_before=run_before,
+    )
 
 
 def test_textual_dev_colors_preview(snap_compare):
@@ -695,6 +742,23 @@ def test_notifications_through_modes(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")
 
 
+def test_notification_with_inline_link(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notification_with_inline_link.py")
+
+
+def test_notification_with_inline_link_hover(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    async def run_before(pilot) -> None:
+        await pilot.pause()
+        await pilot.hover("Toast", offset=(8, 1))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "notification_with_inline_link.py",
+        run_before=run_before,
+    )
+
+
 def test_print_capture(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "capture_print.py")
 
@@ -708,7 +772,9 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -760,9 +826,12 @@ I am the final line."""
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
-@pytest.mark.parametrize("theme_name",
-                         [theme.name for theme in TextAreaTheme.builtin_themes()])
+@pytest.mark.skipif(
+    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
+)
+@pytest.mark.parametrize(
+    "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
+)
 def test_text_area_themes(snap_compare, theme_name):
     """Each theme should have its own snapshot with at least some Python
     to check that the rendering is sensible. This also ensures that theme
@@ -807,3 +876,7 @@ def test_scoped_css(snap_compare) -> None:
 
 def test_unscoped_css(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")
+
+
+def test_big_buttons(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")

@@ -1,5 +1,4 @@
 """
-
 A DOMNode is a base class for any object within the Textual Document Object Model,
 which includes all Widgets, Screens, and Apps.
 """
@@ -8,7 +7,8 @@ which includes all Widgets, Screens, and Apps.
 from __future__ import annotations
 
 import re
-from functools import lru_cache
+import threading
+from functools import lru_cache, partial
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
@@ -50,6 +50,7 @@ if TYPE_CHECKING:
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
+    from .css.types import CSSLocation
     from .message import Message
     from .screen import Screen
     from .widget import Widget
@@ -267,7 +268,14 @@ class DOMNode(MessagePump):
         Returns:
             New Worker instance.
         """
-        worker: Worker[ResultType] = self.workers._new_worker(
+
+        # If we're running a worker from inside a secondary thread,
+        # do so in a thread-safe way.
+        if self.app._thread_id != threading.get_ident():
+            creator = partial(self.app.call_from_thread, self.workers._new_worker)
+        else:
+            creator = self.workers._new_worker
+        worker: Worker[ResultType] = creator(
             work,
             self,
             name=name,
@@ -416,33 +424,41 @@ class DOMNode(MessagePump):
         if hasattr(self, "_classes") and self._classes:
             yield "classes", " ".join(self._classes)
 
-    def _get_default_css(self) -> list[tuple[str, str, int, str]]:
+    def _get_default_css(self) -> list[tuple[CSSLocation, str, int, str]]:
         """Gets the CSS for this class and inherited from bases.
 
         Default CSS is inherited from base classes, unless `inherit_css` is set to
         `False` when subclassing.
 
         Returns:
-            A list of tuples containing (PATH, SOURCE, SPECIFICITY, SCOPE) for this
-                and inherited from base classes.
+            A list of tuples containing (LOCATION, SOURCE, SPECIFICITY, SCOPE) for this
+                class and inherited from base classes.
         """
 
-        css_stack: list[tuple[str, str, int, str]] = []
+        css_stack: list[tuple[CSSLocation, str, int, str]] = []
 
-        def get_path(base: Type[DOMNode]) -> str:
-            """Get a path to the DOM Node"""
+        def get_location(base: Type[DOMNode]) -> CSSLocation:
+            """Get the original location of this DEFAULT_CSS.
+
+            Args:
+                base: The class from which the default css was extracted.
+
+            Returns:
+                The filename where the class was defined (if possible) and the class
+                    variable the CSS was extracted from.
+            """
             try:
-                return f"{getfile(base)}:{base.__name__}"
+                return (getfile(base), f"{base.__name__}.DEFAULT_CSS")
             except (TypeError, OSError):
-                return f"{base.__name__}"
+                return ("", f"{base.__name__}.DEFAULT_CSS")
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css: str = base.__dict__.get("DEFAULT_CSS", "").strip()
+            css: str = base.__dict__.get("DEFAULT_CSS", "")
             if css:
                 scoped: bool = base.__dict__.get("SCOPED_CSS", True)
                 css_stack.append(
                     (
-                        get_path(base),
+                        get_location(base),
                         css,
                         -tie_breaker,
                         base._css_type_name if scoped else "",
@@ -896,7 +912,7 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors_with_self(self) -> list[DOMNode]:
-        """A list of Nodes by tracing a path all the way back to App.
+        """A list of ancestor nodes found by tracing a path all the way back to App.
 
         Note:
             This is inclusive of ``self``.
@@ -914,7 +930,7 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors(self) -> list[DOMNode]:
-        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App.
+        """A list of ancestor nodes found by tracing a path all the way back to App.
 
         Returns:
             A list of nodes.
@@ -1136,7 +1152,7 @@ class DOMNode(MessagePump):
 
         if css is not None:
             try:
-                new_styles = parse_declarations(css, path="set_styles")
+                new_styles = parse_declarations(css, read_from=("set_styles", ""))
             except DeclarationError as error:
                 raise DeclarationError(error.name, error.token, error.message) from None
             self._inline_styles.merge(new_styles)

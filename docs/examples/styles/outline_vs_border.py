@@ -11,10 +11,14 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class OutlineBorderApp(App):
+    CSS_PATH = "outline_vs_border.tcss"
+
     def compose(self):
         yield Label(TEXT, classes="outline")
         yield Label(TEXT, classes="border")
         yield Label(TEXT, classes="outline border")
 
 
-app = OutlineBorderApp(css_path="outline_vs_border.tcss")
+if __name__ == "__main__":
+    app = OutlineBorderApp()
+    app.run()

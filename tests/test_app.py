@@ -30,14 +30,25 @@ async def test_hover_update_styles():
     app = MyApp()
     async with app.run_test() as pilot:
         button = app.query_one(Button)
-        assert button.pseudo_classes == {"enabled", "can-focus", "dark"}
+        assert button.pseudo_classes == {
+            "blur",
+            "can-focus",
+            "dark",
+            "enabled",
+        }
 
         # Take note of the initial background colour
         initial_background = button.styles.background
         await pilot.hover(Button)
 
         # We've hovered, so ensure the pseudoclass is present and background changed
-        assert button.pseudo_classes == {"enabled", "hover", "can-focus", "dark"}
+        assert button.pseudo_classes == {
+            "blur",
+            "can-focus",
+            "dark",
+            "enabled",
+            "hover",
+        }
         assert button.styles.background != initial_background
 
 

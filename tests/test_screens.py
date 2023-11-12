@@ -4,11 +4,13 @@ import threading
 
 import pytest
 
-from textual.app import App, ScreenStackError, ComposeResult
+from textual import work
+from textual.app import App, ComposeResult, ScreenStackError
 from textual.events import MouseMove
 from textual.geometry import Offset
 from textual.screen import Screen
 from textual.widgets import Button, Input, Label
+from textual.worker import NoActiveWorker
 
 skip_py310 = pytest.mark.skipif(
     sys.version_info.minor == 10 and sys.version_info.major == 3,
@@ -302,6 +304,25 @@ async def test_dismiss_non_top_screen():
             app.bottom.dismiss()
 
 
+async def test_dismiss_action():
+    class ConfirmScreen(Screen[bool]):
+        BINDINGS = [("y", "dismiss(True)", "Dismiss")]
+
+    class MyApp(App[None]):
+        bingo = False
+
+        def on_mount(self) -> None:
+            self.push_screen(ConfirmScreen(), callback=self.callback)
+
+        def callback(self, result: bool) -> None:
+            self.bingo = result
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.press("y")
+        assert app.bingo
+
+
 async def test_switch_screen_no_op():
     """Regression test for https://github.com/Textualize/textual/issues/2650"""
 
@@ -407,4 +428,71 @@ async def test_mouse_move_event_bubbles_to_screen_from_widget():
 
     assert len(MouseMoveRecordingScreen.mouse_events) == 1
     mouse_event = MouseMoveRecordingScreen.mouse_events[0]
-    assert mouse_event.x, mouse_event.y == (label_offset.x + mouse_offset.x, label_offset.y + mouse_offset.y)
+    assert mouse_event.x, mouse_event.y == (
+        label_offset.x + mouse_offset.x,
+        label_offset.y + mouse_offset.y,
+    )
+
+
+async def test_push_screen_wait_for_dismiss() -> None:
+    """Test push_screen returns result."""
+
+    class QuitScreen(Screen[bool]):
+        BINDINGS = [
+            ("y", "quit(True)"),
+            ("n", "quit(False)"),
+        ]
+
+        def action_quit(self, quit: bool) -> None:
+            self.dismiss(quit)
+
+    results: list[bool] = []
+
+    class ScreensApp(App):
+        BINDINGS = [("x", "exit")]
+
+        @work
+        async def action_exit(self) -> None:
+            result = await self.push_screen(QuitScreen(), wait_for_dismiss=True)
+            results.append(result)
+
+    app = ScreensApp()
+    # Press X to exit, then Y to dismiss, expect True result
+    async with app.run_test() as pilot:
+        await pilot.press("x", "y")
+    assert results == [True]
+
+    results.clear()
+    app = ScreensApp()
+    # Press X to exit, then N to dismiss, expect False result
+    async with app.run_test() as pilot:
+        await pilot.press("x", "n")
+    assert results == [False]
+
+
+async def test_push_screen_wait_for_dismiss_no_worker() -> None:
+    """Test wait_for_dismiss raises NoActiveWorker when not using workers."""
+
+    class QuitScreen(Screen[bool]):
+        BINDINGS = [
+            ("y", "quit(True)"),
+            ("n", "quit(False)"),
+        ]
+
+        def action_quit(self, quit: bool) -> None:
+            self.dismiss(quit)
+
+    results: list[bool] = []
+
+    class ScreensApp(App):
+        BINDINGS = [("x", "exit")]
+
+        async def action_exit(self) -> None:
+            result = await self.push_screen(QuitScreen(), wait_for_dismiss=True)
+            results.append(result)
+
+    app = ScreensApp()
+    # using `wait_for_dismiss` outside of a worker should raise NoActiveWorker
+    with pytest.raises(NoActiveWorker):
+        async with app.run_test() as pilot:
+            await pilot.press("x", "y")

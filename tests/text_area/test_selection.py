@@ -18,10 +18,12 @@ class TextAreaApp(App):
         yield text_area
 
 
-def test_default_selection():
+async def test_default_selection():
     """The cursor starts at (0, 0) in the document."""
-    text_area = TextArea()
-    assert text_area.selection == Selection.cursor((0, 0))
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        assert text_area.selection == Selection.cursor((0, 0))
 
 
 async def test_cursor_location_get():
@@ -294,3 +296,41 @@ async def test_select_line(index, content, expected_selection):
         text_area.select_line(index)
 
         assert text_area.selection == expected_selection
+
+
+async def test_cursor_screen_offset_and_terminal_cursor_position_update():
+    class TextAreaCursorScreenOffset(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea("abc\ndef")
+
+    app = TextAreaCursorScreenOffset()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+
+        assert app.cursor_position == (3, 0)
+
+        text_area.cursor_location = (1, 1)
+
+        assert text_area.cursor_screen_offset == (4, 1)
+
+        # Also ensure that this update has been reported back to the app
+        # for the benefit of IME/emoji popups.
+        assert app.cursor_position == (4, 1)
+
+
+async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
+    class TextAreaCursorScreenOffset(App):
+        def compose(self) -> ComposeResult:
+            yield TextArea("AB\nAB\nAB\nAB\nAB\nAB\n")
+
+    app = TextAreaCursorScreenOffset()
+    async with app.run_test(size=(80, 2)) as pilot:
+        text_area = app.query_one(TextArea)
+
+        assert app.cursor_position == (3, 0)
+
+        text_area.cursor_location = (5, 0)
+        await pilot.pause()
+
+        assert text_area.cursor_screen_offset == (3, 1)
+        assert app.cursor_position == (3, 1)
