@@ -1,27 +1,18 @@
+from __future__ import annotations
+
 from array import array
 from dataclasses import dataclass
 from typing import NamedTuple
 
 from typing_extensions import Literal, Self, TypeAlias
 
-from ._box_drawing import box_combine_quad
-from ._loop import loop_first_last
+from ._box_drawing import BOX_CHARACTERS, Quad, box_combine_quads
 from .color import Color
 from .geometry import Offset
 
 LineType: TypeAlias = Literal["thin", "heavy", "double"]
 OffsetPair: TypeAlias = tuple[int, int]
 
-_HORIZONTAL = {
-    "thin": "╶─╴",
-    "heavy": "╺━╸",
-    "double": "╺═╸",
-}
-_VERTICAL = {
-    "thin": "╷│╵",
-    "heavy": "╻┃╹",
-    "double": "╻║╹",
-}
 
 _LINE_TYPE_INDEX = {"thin": 1, "heavy": 2, "double": 3}
 
@@ -56,7 +47,7 @@ Spans: TypeAlias = list[list[_Span]]
 
 
 class Primitive:
-    def render(self, lines: Lines, spans: Spans) -> None:
+    def render(self, canvas: Canvas) -> None:
         raise NotImplementedError()
 
 
@@ -66,20 +57,25 @@ class HorizontalLine(Primitive):
     length: int
     style: CanvasStyle | None = None
     line_type: LineType = "thin"
-    start: bool = True
-    end: bool = True
 
-    def render(self, lines: Lines, spans: Spans) -> None:
+    def render(self, canvas: Canvas) -> None:
         x, y = self.origin
-        line = lines[y]
+        box = canvas.box
+        box_line = box[y]
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
-        for start, end, x in loop_first_last(range(x, x + self.length)):
-            line[x] = box_combine_quad(
-                line[x],
-                (0, 0 if end else line_type_index, 0, 0 if start else line_type_index),
-            )
+        combine_quads = box_combine_quads
+
+        right = x + self.length - 1
+
+        box_line[x] = combine_quads(box_line[x], (0, line_type_index, 0, 0))
+        box_line[right] = combine_quads(box_line[right], (0, 0, 0, line_type_index))
+
+        line_quad = (0, line_type_index, 0, line_type_index)
+        for x in range(x + 1, x + self.length):
+            box_line[x] = combine_quads(box_line[x], line_quad)
+
         if self.style is not None:
-            spans[y].append(_Span(x, x + self.length, self.style))
+            canvas.spans[y].append(_Span(x, x + self.length, self.style))
 
 
 @dataclass
@@ -89,18 +85,23 @@ class VerticalLine(Primitive):
     style: CanvasStyle | None = None
     line_type: LineType = "thin"
 
-    def render(self, lines: Lines, spans: Spans) -> None:
+    def render(self, canvas: Canvas) -> None:
         x, y = self.origin
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
-        for start, end, y in loop_first_last(range(y, y + self.length)):
-            lines[y][x] = box_combine_quad(
-                lines[y][x],
-                (0 if start else line_type_index, 0, 0 if end else line_type_index, 0),
-            )
+        box = canvas.box
+        combine_quads = box_combine_quads
+        box[y][x] = combine_quads(box[y][x], (0, 0, line_type_index, 0))
+        bottom = y + self.length - 1
+        box[bottom][x] = combine_quads(box[bottom][x], (line_type_index, 0, 0, 0))
+        line_quad = (line_type_index, 0, line_type_index, 0)
 
+        for y in range(y + 1, y + self.length - 1):
+            box[y][x] = combine_quads(box[y][x], line_quad)
+
+        spans = canvas.spans
         if self.style is not None:
             span = _Span(x, x + 1, self.style)
-            for start, end, y in loop_first_last(range(y, y + self.length)):
+            for y in range(y, y + self.length):
                 spans[y][x] = span
 
 
@@ -114,28 +115,26 @@ class _Rectangle(Primitive):
 class Canvas:
     """A character canvas."""
 
-    def __init__(self) -> None:
-        self._primitives: list[Primitive] = []
+    def __init__(self, width: int, height: int) -> None:
+        self._width = width
+        self._height = height
+        self.box: list[list[Quad]] = [[(0, 0, 0, 0)] * width for _ in range(height)]
+        self.spans = [[] for _ in range(height)]
 
-    def clear(self) -> None:
-        self._primitives.clear()
+    def render(self, primitives: list[Primitive]):
+        for primitive in primitives:
+            primitive.render(self)
 
-    def add(self, primitive: Primitive) -> None:
-        self._primitives.append(primitive)
-
-    def render(self, width: int, height: int):
-        lines = [array("u", " " * width) for _ in range(height)]
-        spans: list[list[_Span]] = [[] for _ in range(height)]
-
-        for primitive in self._primitives:
-            primitive.render(lines, spans)
-
-        for line in lines:
-            print(line.tounicode())
+        get_box = BOX_CHARACTERS.__getitem__
+        for box_line in self.box:
+            text = "".join([get_box(quad) for quad in box_line])
+            print(text)
 
 
 if __name__ == "__main__":
-    canvas = Canvas()
-    canvas.add(HorizontalLine(Offset(2, 3), 10))
-    canvas.add(VerticalLine(Offset(2, 3), 5, line_type="heavy"))
-    canvas.render(20, 10)
+    canvas = Canvas(20, 10)
+    primitives = [
+        HorizontalLine(Offset(2, 3), 10),
+        VerticalLine(Offset(2, 3), 5, line_type="heavy"),
+    ]
+    canvas.render(primitives)
