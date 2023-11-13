@@ -75,7 +75,7 @@ class Log(ScrollView, can_focus=True):
 
     @property
     def lines(self) -> Sequence[str]:
-        """The raw lines in the TextLog.
+        """The raw lines in the Log.
 
         Note that this attribute is read only.
         Changing the lines will not update the Log's contents.
