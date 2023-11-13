@@ -2,7 +2,8 @@ import pytest
 from rich.segment import Segment
 from rich.style import Style
 
-from textual._segment_tools import line_crop, line_pad, line_trim
+from textual._segment_tools import align_lines, line_crop, line_pad, line_trim
+from textual.geometry import Size
 
 
 def test_line_crop():
@@ -126,3 +127,85 @@ def test_line_pad():
     ]
 
     assert line_pad(segments, 0, 0, style) == segments
+
+
+def test_align_lines_vertical_middle():
+    """Regression test for an issue found while working on
+    https://github.com/Textualize/textual/issues/3628 - an extra vertical line
+    was being produced when aligning. If you passed in a Size of height=1 to
+    `align_lines`, it was producing a result containing 2 lines instead of 1."""
+    lines = [[Segment("  "), Segment("hello"), Segment("   ")]]
+    result = align_lines(
+        lines, Style(), size=Size(10, 3), horizontal="center", vertical="middle"
+    )
+    assert list(result) == [
+        [Segment("          ", Style())],
+        [Segment("  "), Segment("hello"), Segment("   ")],
+        [Segment("          ", Style())],
+    ]
+
+
+def test_align_lines_top_left():
+    lines = [
+        [Segment("hello")],
+        [Segment("world")],
+    ]
+
+    result = align_lines(
+        lines, Style(), size=Size(10, 4), horizontal="left", vertical="top"
+    )
+
+    assert list(result) == [
+        [Segment("hello"), Segment("     ", Style())],
+        [Segment("world"), Segment("     ", Style())],
+        [Segment("          ", Style())],
+        [Segment("          ", Style())],
+    ]
+
+
+def test_align_lines_top_right():
+    lines = [
+        [Segment("hello")],
+        [Segment("world")],
+    ]
+
+    result = align_lines(
+        lines, Style(), size=Size(10, 4), horizontal="right", vertical="top"
+    )
+
+    assert list(result) == [
+        [Segment("     ", Style()), Segment("hello")],
+        [Segment("     ", Style()), Segment("world")],
+        [Segment("          ", Style())],
+        [Segment("          ", Style())],
+    ]
+
+
+def test_align_lines_perfect_fit_horizontal_left():
+    lines = [[Segment("  "), Segment("hello"), Segment("   ")]]  # 10 cells
+    result = align_lines(
+        lines, Style(), size=Size(10, 1), horizontal="left", vertical="middle"
+    )
+    assert list(result) == [[Segment("  "), Segment("hello"), Segment("   ")]]
+
+
+def test_align_lines_perfect_fit_horizontal_center():
+    """When the content perfectly fits the available horizontal space,
+    no empty segments should be produced. This is a regression test for
+    the issue https://github.com/Textualize/textual/issues/3628."""
+    lines = [[Segment("  "), Segment("hello"), Segment("   ")]]  # 10 cells of content
+    result = align_lines(
+        lines, Style(), size=Size(10, 1), horizontal="center", vertical="middle"
+    )
+    assert list(result) == [[Segment("  "), Segment("hello"), Segment("   ")]]
+
+
+def test_align_lines_perfect_fit_horizontal_right():
+    """When the content perfectly fits the available horizontal space,
+    no empty segments should be produced. This is a regression test for
+    the issue https://github.com/Textualize/textual/issues/3628."""
+    lines = [[Segment("  "), Segment("hello"), Segment("   ")]]  # 10 cells of content
+    result = align_lines(
+        lines, Style(), size=Size(10, 1), horizontal="right", vertical="middle"
+    )
+    assert list(result) == [[Segment("  "), Segment("hello"), Segment("   ")]]
