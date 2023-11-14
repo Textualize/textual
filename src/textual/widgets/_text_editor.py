@@ -58,15 +58,11 @@ class ThemeDoesNotExist(Exception):
     This means a theme which is not builtin, or has not been registered.
     """
 
-    pass
-
 
 class LanguageDoesNotExist(Exception):
     """Raised when the user tries to use a language which does not exist.
     This means a language which is not builtin, or has not been registered.
     """
-
-    pass
 
 
 @dataclass
