@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import calendar
 import datetime
+from typing import Optional
 
 from rich.text import Text
 from textual.app import ComposeResult
@@ -19,10 +20,9 @@ class InvalidWeekdayNumber(Exception):
 
 
 class MonthCalendar(Widget):
-    year: Reactive[int | None] = Reactive[int | None](None)
-    month: Reactive[int | None] = Reactive[int | None](None)
+    year: Reactive[int | None] = Reactive[Optional[int]](None)
+    month: Reactive[int | None] = Reactive[Optional[int]](None)
     first_weekday: Reactive[int] = Reactive(0)
-    _calendar: var[calendar.Calendar] = var(calendar.Calendar())
 
     def __init__(
         self,
@@ -39,6 +39,7 @@ class MonthCalendar(Widget):
         self.year = year
         self.month = month
         self.first_weekday = first_weekday
+        self._calendar = calendar.Calendar(first_weekday)
 
     def compose(self) -> ComposeResult:
         yield DataTable()
@@ -76,9 +77,6 @@ class MonthCalendar(Widget):
             formatted_day.style = "grey37"
         return formatted_day
 
-    def _compute__calendar(self) -> calendar.Calendar:
-        return calendar.Calendar(self.first_weekday)
-
     def validate_year(self, year: int | None) -> int:
         if year is None:
             current_year = datetime.date.today().year
@@ -102,6 +100,10 @@ class MonthCalendar(Widget):
 
     # def watch_year(self) -> None:
     #     self._update_calendar_days()
-
+    #
     # def _watch_month(self) -> None:
     #     self._update_calendar_days()
+
+    # def watch_first_weekday(self) -> None:
+    #     self._calendar = calendar.Calendar(self.firstweekday)
+    #     self._update_week_header()

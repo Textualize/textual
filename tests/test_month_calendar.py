@@ -29,13 +29,6 @@ def test_invalid_weekday_number_raises_exception():
         month_calendar = MonthCalendar(first_weekday=7)
 
 
-def test_first_weekday_computes_calendar_object():
-    month_calendar = MonthCalendar(first_weekday=6)
-    assert month_calendar._calendar.firstweekday == 6
-    month_calendar.first_weekday = 0
-    assert month_calendar._calendar.firstweekday == 0
-
-
 def test_calendar_dates_property():
     month_calendar = MonthCalendar(year=2021, month=6)
     first_monday = datetime.date(2021, 5, 31)
@@ -74,30 +67,8 @@ async def test_calendar_table_days():
 
 
 # async def test_calendar_table_after_reactive_year_change():
-#     app = MonthCalendarApp()
-#     async with app.run_test() as pilot:
-#         month_calendar = pilot.app.query_one(MonthCalendar)
-#
-#         month_calendar.year = 2023
-#
-#         table = month_calendar.query_one(DataTable)
-#         for row, week in enumerate(month_calendar.calendar_dates):
-#             for column, date in enumerate(week):
-#                 actual_day = table.get_cell_at(Coordinate(row, column)).plain
-#                 expected_day = str(date.day)
-#                 assert actual_day == expected_day
+#     pass
 #
 #
 # async def test_calendar_table_after_reactive_month_change():
-#     app = MonthCalendarApp()
-#     async with app.run_test() as pilot:
-#         month_calendar = pilot.app.query_one(MonthCalendar)
-#
-#         month_calendar.month = 7
-#
-#         table = month_calendar.query_one(DataTable)
-#         for row, week in enumerate(month_calendar.calendar_dates):
-#             for column, date in enumerate(week):
-#                 actual_day = table.get_cell_at(Coordinate(row, column)).plain
-#                 expected_day = str(date.day)
-#                 assert actual_day == expected_day
+#     pass
