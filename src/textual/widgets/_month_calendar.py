@@ -6,6 +6,7 @@ from typing import Optional
 
 from rich.text import Text
 from textual.app import ComposeResult
+from textual.events import Mount
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import DataTable
@@ -44,7 +45,7 @@ class MonthCalendar(Widget):
     def compose(self) -> ComposeResult:
         yield DataTable()
 
-    def on_mount(self) -> None:
+    def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()
 
@@ -98,12 +99,13 @@ class MonthCalendar(Widget):
             )
         return first_weekday
 
-    # def watch_year(self) -> None:
-    #     self._update_calendar_days()
-    #
-    # def _watch_month(self) -> None:
-    #     self._update_calendar_days()
+    def watch_year(self) -> None:
+        self.call_after_refresh(self._update_calendar_days)
+
+    def watch_month(self) -> None:
+        self.call_after_refresh(self._update_calendar_days)
 
     # def watch_first_weekday(self) -> None:
-    #     self._calendar = calendar.Calendar(self.firstweekday)
+    #     self._calendar = calendar.Calendar(self.first_weekday)
     #     self._update_week_header()
+    #     self._update_calendar_days()
