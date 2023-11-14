@@ -121,9 +121,9 @@ def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
     """Optionally remove a cell from the start and / or end of a list of segments.
 
     Args:
-        segments (list[Segment]): A line (list of Segments)
-        start (bool): Remove cell from start.
-        end (bool): Remove cell from end.
+        segments: A line (list of Segments)
+        start: Remove cell from start.
+        end: Remove cell from end.
 
     Returns:
         A new list of segments.
