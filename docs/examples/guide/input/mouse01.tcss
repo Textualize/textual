@@ -2,7 +2,7 @@ Screen {
     layers: log ball;
 }
 
-TextLog {
+RichLog {
     layer: log;
 }
 

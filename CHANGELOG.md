@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
 - Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 - Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
+- Fixed outline not rendering correctly in some scenarios (e.g. on Button widgets) https://github.com/Textualize/textual/issues/3628
 - Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
 - `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `clear`
   - `is_blank`
 - Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
+- Added `restrict`, `type`, `max_length`, and `valid_empty` to Input https://github.com/Textualize/textual/pull/3657
 
 ### Changed
 

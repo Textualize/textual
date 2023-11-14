@@ -894,3 +894,11 @@ def test_unscoped_css(snap_compare) -> None:
 
 def test_big_buttons(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")
+
+
+def test_button_outline(snap_compare):
+    """Outline style rendered incorrectly when applied to a `Button` widget.
+
+    Regression test for https://github.com/Textualize/textual/issues/3628
+    """
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_outline.py")
