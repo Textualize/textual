@@ -6,11 +6,6 @@ RichLog {
     layer: log;
 }
 
-PlayArea {
-    opacity: 0%;
-    layer: ball;
-
-}
 Ball {
     layer: ball;
     width: auto;
