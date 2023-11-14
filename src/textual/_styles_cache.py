@@ -231,14 +231,16 @@ class StylesCache:
             else:
                 strip = self._cache[y]
 
+            if filters:
+                for filter in filters:
+                    strip = strip.apply_filter(filter, background)
+
             if DEBUG:
                 if any([not (segment.control or segment.text) for segment in strip]):
                     log.warning(f"Strip contains invalid empty Segments: {strip!r}.")
 
-            if filters:
-                for filter in filters:
-                    strip = strip.apply_filter(filter, background)
             add_strip(strip)
+
         self._dirty_lines.difference_update(crop.line_range)
 
         if crop.column_span != (0, width):
