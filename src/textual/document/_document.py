@@ -66,7 +66,7 @@ def _detect_newline_style(text: str) -> Newline:
 
 class DocumentBase(ABC):
     """Describes the minimum functionality a Document implementation must
-    provide in order to be used by the TextArea widget."""
+    provide in order to be used by the TextEditor widget."""
 
     @abstractmethod
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
@@ -96,7 +96,7 @@ class DocumentBase(ABC):
         """Returns the line with the given index from the document.
 
         This is used in rendering lines, and will be called by the
-        TextArea for each line that is rendered.
+        TextEditor for each line that is rendered.
 
         Args:
             index: The index of the line in the document.

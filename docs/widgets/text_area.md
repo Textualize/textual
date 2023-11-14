@@ -1,5 +1,5 @@
 
-# TextArea
+# TextEditor
 
 !!! tip "Added in version 0.38.0"
 
@@ -33,27 +33,27 @@ These packages are distributed as binary wheels, so it may limit your applicatio
 
 ### Loading text
 
-In this example we load some initial text into the `TextArea`, and set the language to `"python"` to enable syntax highlighting.
+In this example we load some initial text into the `TextEditor`, and set the language to `"python"` to enable syntax highlighting.
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
+    ```{.textual path="docs/examples/widgets/text_editor_example.py" columns="42" lines="8"}
     ```
 
-=== "text_area_example.py"
+=== "text_editor_example.py"
 
     ```python
-    --8<-- "docs/examples/widgets/text_area_example.py"
+    --8<-- "docs/examples/widgets/text_editor_example.py"
     ```
 
-To load content into the `TextArea` after it has already been created,
-use the [`load_text`][textual.widgets._text_area.TextArea.load_text] method.
+To load content into the `TextEditor` after it has already been created,
+use the [`load_text`][textual.widgets._text_editor.TextEditor.load_text] method.
 
-To update the parser used for syntax highlighting, set the [`language`][textual.widgets._text_area.TextArea.language] reactive attribute:
+To update the parser used for syntax highlighting, set the [`language`][textual.widgets._text_editor.TextEditor.language] reactive attribute:
 
 ```python
 # Set the language to Markdown
-text_area.language = "markdown"
+text_editor.language = "markdown"
 ```
 
 !!! note
@@ -63,37 +63,37 @@ text_area.language = "markdown"
     More built-in languages will be added in the future. For now, you can [add your own](#adding-support-for-custom-languages).
 
 
-### Reading content from `TextArea`
+### Reading content from `TextEditor`
 
-There are a number of ways to retrieve content from the `TextArea`:
+There are a number of ways to retrieve content from the `TextEditor`:
 
-- The [`TextArea.text`][textual.widgets._text_area.TextArea.text] property returns all content in the text area as a string.
-- The [`TextArea.selected_text`][textual.widgets._text_area.TextArea.selected_text] property returns the text corresponding to the current selection.
-- The [`TextArea.get_text_range`][textual.widgets._text_area.TextArea.get_text_range] method returns the text between two locations.
+- The [`TextEditor.text`][textual.widgets._text_editor.TextEditor.text] property returns all content in the text area as a string.
+- The [`TextEditor.selected_text`][textual.widgets._text_editor.TextEditor.selected_text] property returns the text corresponding to the current selection.
+- The [`TextEditor.get_text_range`][textual.widgets._text_editor.TextEditor.get_text_range] method returns the text between two locations.
 
 In all cases, when multiple lines of text are retrieved, the [document line separator](#line-separators) will be used.
 
-### Editing content inside `TextArea`
+### Editing content inside `TextEditor`
 
-The content of the `TextArea` can be updated using the [`replace`][textual.widgets._text_area.TextArea.replace] method.
+The content of the `TextEditor` can be updated using the [`replace`][textual.widgets._text_editor.TextEditor.replace] method.
 This method is the programmatic equivalent of selecting some text and then pasting.
 
-Some other convenient methods are available, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
+Some other convenient methods are available, such as [`insert`][textual.widgets._text_editor.TextEditor.insert], [`delete`][textual.widgets._text_editor.TextEditor.delete], and [`clear`][textual.widgets._text_editor.TextEditor.clear].
 
 ### Working with the cursor
 
 #### Moving the cursor
 
-The cursor location is available via the [`cursor_location`][textual.widgets._text_area.TextArea.cursor_location] property, which represents
+The cursor location is available via the [`cursor_location`][textual.widgets._text_editor.TextEditor.cursor_location] property, which represents
 the location of the cursor as a tuple `(row_index, column_index)`. These indices are zero-based.
 Writing a new value to `cursor_location` will immediately update the location of the cursor.
 
 ```python
->>> text_area = TextArea()
->>> text_area.cursor_location
+>>> text_editor = TextEditor()
+>>> text_editor.cursor_location
 (0, 0)
->>> text_area.cursor_location = (0, 4)
->>> text_area.cursor_location
+>>> text_editor.cursor_location = (0, 4)
+>>> text_editor.cursor_location
 (0, 4)
 ```
 
@@ -102,17 +102,17 @@ Writing a new value to `cursor_location` will immediately update the location of
 #### Selecting text
 
 To select text, we can use the `selection` reactive attribute.
-Let's select the first two lines of text in a document by adding `text_area.selection = Selection(start=(0, 0), end=(2, 0))` to our code:
+Let's select the first two lines of text in a document by adding `text_editor.selection = Selection(start=(0, 0), end=(2, 0))` to our code:
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/text_area_selection.py" columns="42" lines="8"}
+    ```{.textual path="docs/examples/widgets/text_editor_selection.py" columns="42" lines="8"}
     ```
 
-=== "text_area_selection.py"
+=== "text_editor_selection.py"
 
     ```python hl_lines="17"
-    --8<-- "docs/examples/widgets/text_area_selection.py"
+    --8<-- "docs/examples/widgets/text_editor_selection.py"
     ```
 
     1. Selects the first two lines of text.
@@ -121,8 +121,8 @@ Note that selections can happen in both directions, so `Selection((2, 0), (0, 0)
 
 !!! tip
 
-    The `end` attribute of the `selection` is always equal to `TextArea.cursor_location`. In other words,
-    the `cursor_location` attribute is simply a convenience for accessing `text_area.selection.end`.
+    The `end` attribute of the `selection` is always equal to `TextEditor.cursor_location`. In other words,
+    the `cursor_location` attribute is simply a convenience for accessing `text_editor.selection.end`.
 
 #### More cursor utilities
 
@@ -130,75 +130,75 @@ There are a number of additional utility methods available for interacting with 
 
 ##### Location information
 
-A number of properties exist on `TextArea` which give information about the current cursor location.
+A number of properties exist on `TextEditor` which give information about the current cursor location.
 These properties begin with `cursor_at_`, and return booleans.
-For example, [`cursor_at_start_of_line`][textual.widgets._text_area.TextArea.cursor_at_start_of_line] tells us if the cursor is at a start of line.
+For example, [`cursor_at_start_of_line`][textual.widgets._text_editor.TextEditor.cursor_at_start_of_line] tells us if the cursor is at a start of line.
 
 We can also check the location the cursor _would_ arrive at if we were to move it.
-For example, [`get_cursor_right_location`][textual.widgets._text_area.TextArea.get_cursor_right_location] returns the location
+For example, [`get_cursor_right_location`][textual.widgets._text_editor.TextEditor.get_cursor_right_location] returns the location
 the cursor would move to if it were to move right.
 A number of similar methods exist, with names like `get_cursor_*_location`.
 
 ##### Cursor movement methods
 
-The [`move_cursor`][textual.widgets._text_area.TextArea.move_cursor] method allows you to move the cursor to a new location while selecting
+The [`move_cursor`][textual.widgets._text_editor.TextEditor.move_cursor] method allows you to move the cursor to a new location while selecting
 text, or move the cursor and scroll to keep it centered.
 
 ```python
 # Move the cursor from its current location to row index 4,
 # column index 8, while selecting all the text between.
-text_area.move_cursor((4, 8), select=True)
+text_editor.move_cursor((4, 8), select=True)
 ```
 
-The [`move_cursor_relative`][textual.widgets._text_area.TextArea.move_cursor_relative] method offers a very similar interface, but moves the cursor relative
+The [`move_cursor_relative`][textual.widgets._text_editor.TextEditor.move_cursor_relative] method offers a very similar interface, but moves the cursor relative
 to its current location.
 
 ##### Common selections
 
 There are some methods available which make common selections easier:
 
-- [`select_line`][textual.widgets._text_area.TextArea.select_line] selects a line by index. Bound to ++f6++ by default.
-- [`select_all`][textual.widgets._text_area.TextArea.select_all] selects all text. Bound to ++f7++ by default.
+- [`select_line`][textual.widgets._text_editor.TextEditor.select_line] selects a line by index. Bound to ++f6++ by default.
+- [`select_all`][textual.widgets._text_editor.TextEditor.select_all] selects all text. Bound to ++f7++ by default.
 
 ### Themes
 
-`TextArea` ships with some builtin themes, and you can easily add your own.
+`TextEditor` ships with some builtin themes, and you can easily add your own.
 
 Themes give you control over the look and feel, including syntax highlighting,
 the cursor, selection, gutter, and more.
 
 #### Using builtin themes
 
-The initial theme of the `TextArea` is determined by the `theme` parameter.
+The initial theme of the `TextEditor` is determined by the `theme` parameter.
 
 ```python
-# Create a TextArea with the 'dracula' theme.
-yield TextArea("print(123)", language="python", theme="dracula")
+# Create a TextEditor with the 'dracula' theme.
+yield TextEditor("print(123)", language="python", theme="dracula")
 ```
 
-You can check which themes are available using the [`available_themes`][textual.widgets._text_area.TextArea.available_themes] property.
+You can check which themes are available using the [`available_themes`][textual.widgets._text_editor.TextEditor.available_themes] property.
 
 ```python
->>> text_area = TextArea()
->>> print(text_area.available_themes)
+>>> text_editor = TextEditor()
+>>> print(text_editor.available_themes)
 {'dracula', 'github_light', 'monokai', 'vscode_dark'}
 ```
 
-After creating a `TextArea`, you can change the theme by setting the [`theme`][textual.widgets._text_area.TextArea.theme]
+After creating a `TextEditor`, you can change the theme by setting the [`theme`][textual.widgets._text_editor.TextEditor.theme]
 attribute to one of the available themes.
 
 ```python
-text_area.theme = "vscode_dark"
+text_editor.theme = "vscode_dark"
 ```
 
-On setting this attribute the `TextArea` will immediately refresh to display the updated theme.
+On setting this attribute the `TextEditor` will immediately refresh to display the updated theme.
 
 #### Custom themes
 
 Using custom (non-builtin) themes is two-step process:
 
-1. Create an instance of [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
-2. Register it using [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme].
+1. Create an instance of [`TextEditorTheme`][textual.widgets.text_editor.TextEditorTheme].
+2. Register it using [`TextEditor.register_theme`][textual.widgets._text_editor.TextEditor.register_theme].
 
 ##### 1. Creating a theme
 
@@ -207,9 +207,9 @@ Our theme will also syntax highlight strings as <span style="background-color: r
 
 ```python
 from rich.style import Style
-from textual.widgets.text_area import TextAreaTheme
+from textual.widgets.text_editor import TextEditorTheme
 # ...
-my_theme = TextAreaTheme(
+my_theme = TextEditorTheme(
     # This name will be used to refer to the theme...
     name="my_cool_theme",
     # Basic styles such as background, cursor, selection, gutter, etc...
@@ -227,42 +227,42 @@ my_theme = TextAreaTheme(
 Attributes like `cursor_style` and `cursor_line_style` apply general language-agnostic
 styling to the widget.
 
-The `syntax_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
+The `syntax_styles` attribute of `TextEditorTheme` is used for syntax highlighting and
 depends on the `language` currently in use.
 For more details, see [syntax highlighting](#syntax-highlighting).
 
-If you wish to build on an existing theme, you can obtain a reference to it using the [`TextAreaTheme.get_builtin_theme`][textual.widgets.text_area.TextAreaTheme.get_builtin_theme] classmethod:
+If you wish to build on an existing theme, you can obtain a reference to it using the [`TextEditorTheme.get_builtin_theme`][textual.widgets.text_editor.TextEditorTheme.get_builtin_theme] classmethod:
 
 ```python
-from textual.widgets.text_area import TextAreaTheme
+from textual.widgets.text_editor import TextEditorTheme
 
-monokai = TextAreaTheme.get_builtin_theme("monokai")
+monokai = TextEditorTheme.get_builtin_theme("monokai")
 ```
 
 ##### 2. Registering a theme
 
-Our theme can now be registered with the `TextArea` instance.
+Our theme can now be registered with the `TextEditor` instance.
 
 ```python
-text_area.register_theme(my_theme)
+text_editor.register_theme(my_theme)
 ```
 
 After registering a theme, it'll appear in the `available_themes`:
 
 ```python
->>> print(text_area.available_themes)
+>>> print(text_editor.available_themes)
 {'dracula', 'github_light', 'monokai', 'vscode_dark', 'my_cool_theme'}
 ```
 
 We can now switch to it:
 
 ```python
-text_area.theme = "my_cool_theme"
+text_editor.theme = "my_cool_theme"
 ```
 
-This immediately updates the appearance of the `TextArea`:
+This immediately updates the appearance of the `TextEditor`:
 
-```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
+```{.textual path="docs/examples/widgets/text_editor_custom_theme.py" columns="42" lines="8"}
 ```
 
 ### Indentation
@@ -273,20 +273,20 @@ If `indent_type == "spaces"`, pressing ++tab++ will insert up to `indent_width` 
 
 ### Line separators
 
-When content is loaded into `TextArea`, the content is scanned from beginning to end
+When content is loaded into `TextEditor`, the content is scanned from beginning to end
 and the first occurrence of a line separator is recorded.
 
-This separator will then be used when content is later read from the `TextArea` via
-the `text` property. The `TextArea` widget does not support exporting text which
+This separator will then be used when content is later read from the `TextEditor` via
+the `text` property. The `TextEditor` widget does not support exporting text which
 contains mixed line endings.
 
-Similarly, newline characters pasted into the `TextArea` will be converted.
+Similarly, newline characters pasted into the `TextEditor` will be converted.
 
-You can check the line separator of the current document by inspecting `TextArea.document.newline`:
+You can check the line separator of the current document by inspecting `TextEditor.document.newline`:
 
 ```python
->>> text_area = TextArea()
->>> text_area.document.newline
+>>> text_editor = TextEditor()
+>>> text_editor.document.newline
 '\n'
 ```
 
@@ -295,11 +295,11 @@ You can check the line separator of the current document by inspecting `TextArea
 The gutter (column on the left containing line numbers) can be toggled by setting
 the `show_line_numbers` attribute to `True` or `False`.
 
-Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
+Setting this attribute will immediately repaint the `TextEditor` to reflect the new value.
 
-### Extending `TextArea`
+### Extending `TextEditor`
 
-Sometimes, you may wish to subclass `TextArea` to add some extra functionality.
+Sometimes, you may wish to subclass `TextEditor` to add some extra functionality.
 In this section, we'll briefly explore how we can extend the widget to achieve common goals.
 
 #### Hooking into key presses
@@ -309,31 +309,31 @@ This can be done by over-riding `_on_key` and adding the required functionality.
 
 ##### Example - closing parentheses automatically
 
-Let's extend `TextArea` to add a feature which automatically closes parentheses and moves the cursor to a sensible location.
+Let's extend `TextEditor` to add a feature which automatically closes parentheses and moves the cursor to a sensible location.
 
 ```python
---8<-- "docs/examples/widgets/text_area_extended.py"
+--8<-- "docs/examples/widgets/text_editor_extended.py"
 ```
 
 This intercepts the key handler when `"("` is pressed, and inserts `"()"` instead.
 It then moves the cursor so that it lands between the open and closing parentheses.
 
-Typing `def hello(` into the `TextArea` results in the bracket automatically being closed:
+Typing `def hello(` into the `TextEditor` results in the bracket automatically being closed:
 
-```{.textual path="docs/examples/widgets/text_area_extended.py" columns="36" lines="4" press="d,e,f,space,h,e,l,l,o,left_parenthesis"}
+```{.textual path="docs/examples/widgets/text_editor_extended.py" columns="36" lines="4" press="d,e,f,space,h,e,l,l,o,left_parenthesis"}
 ```
 
 ### Advanced concepts
 
 #### Syntax highlighting
 
-Syntax highlighting inside the `TextArea` is powered by a library called [`tree-sitter`](https://tree-sitter.github.io/tree-sitter/).
+Syntax highlighting inside the `TextEditor` is powered by a library called [`tree-sitter`](https://tree-sitter.github.io/tree-sitter/).
 
-Each time you update the document in a `TextArea`, an internal syntax tree is updated.
+Each time you update the document in a `TextEditor`, an internal syntax tree is updated.
 This tree is frequently _queried_ to find location ranges relevant to syntax highlighting.
-We give these ranges _names_, and ultimately map them to Rich styles inside `TextAreaTheme.syntax_styles`.
+We give these ranges _names_, and ultimately map them to Rich styles inside `TextEditorTheme.syntax_styles`.
 
-To illustrate how this works, lets look at how the "Monokai" `TextAreaTheme` highlights Markdown files.
+To illustrate how this works, lets look at how the "Monokai" `TextEditorTheme` highlights Markdown files.
 
 When the `language` attribute is set to `"markdown"`, a highlight query similar to the one below is used (trimmed for brevity).
 
@@ -345,11 +345,11 @@ When the `language` attribute is set to `"markdown"`, a highlight query similar 
 This highlight query maps `heading_content` nodes returned by the Markdown parser to the name `@heading`,
 and `link` nodes to the name `@link`.
 
-Inside our `TextAreaTheme.syntax_styles` dict, we can map the name `@heading` to a Rich style.
+Inside our `TextEditorTheme.syntax_styles` dict, we can map the name `@heading` to a Rich style.
 Here's a snippet from the "Monokai" theme which does just that:
 
 ```python
-TextAreaTheme(
+TextEditorTheme(
     name="monokai",
     base_style=Style(color="#f8f8f2", bgcolor="#272822"),
     gutter_style=Style(color="#90908a", bgcolor="#272822"),
@@ -369,13 +369,13 @@ themes and highlighting queries (`.scm` files) in the Textual repository.
 
 !!! tip
 
-    You may also wish to take a look at the contents of `TextArea._highlights` on an
-    active `TextArea` instance to see which highlights have been generated for the
+    You may also wish to take a look at the contents of `TextEditor._highlights` on an
+    active `TextEditor` instance to see which highlights have been generated for the
     open document.
 
 #### Adding support for custom languages
 
-To add support for a language to a `TextArea`, use the [`register_language`][textual.widgets._text_area.TextArea.register_language] method.
+To add support for a language to a `TextEditor`, use the [`register_language`][textual.widgets._text_editor.TextEditor.register_language] method.
 
 To register a language, we require two things:
 
@@ -417,19 +417,19 @@ Be sure to check the license in the repo to ensure it can be freely copied.
 We now have our `Language` and our highlight query, so we can register Java as a language.
 
 ```python
---8<-- "docs/examples/widgets/text_area_custom_language.py"
+--8<-- "docs/examples/widgets/text_editor_custom_language.py"
 ```
 
 Running our app, we can see that the Java code is highlighted.
 We can freely edit the text, and the syntax highlighting will update immediately.
 
-```{.textual path="docs/examples/widgets/text_area_custom_language.py" columns="52" lines="8"}
+```{.textual path="docs/examples/widgets/text_editor_custom_language.py" columns="52" lines="8"}
 ```
 
-Recall that we map names (like `@heading`) from the tree-sitter highlight query to Rich style objects inside the `TextAreaTheme.syntax_styles` dictionary.
+Recall that we map names (like `@heading`) from the tree-sitter highlight query to Rich style objects inside the `TextEditorTheme.syntax_styles` dictionary.
 If you notice some highlights are missing after registering a language, the issue may be:
 
-1. The current `TextAreaTheme` doesn't contain a mapping for the name in the highlight query. Adding a new to `syntax_styles` should resolve the issue.
+1. The current `TextEditorTheme` doesn't contain a mapping for the name in the highlight query. Adding a new to `syntax_styles` should resolve the issue.
 2. The highlight query doesn't assign a name to the pattern you expect to be highlighted. In this case you'll need to update the highlight query to assign to the name.
 
 !!! tip
@@ -442,7 +442,7 @@ If you notice some highlights are missing after registering a language, the issu
 | Name                   | Type                     | Default            | Description                                      |
 |------------------------|--------------------------|--------------------|--------------------------------------------------|
 | `language`             | `str | None`             | `None`               | The language to use for syntax highlighting.     |
-| `theme`                | `str | None`             | `TextAreaTheme.default()` | The theme to use for syntax highlighting.         |
+| `theme`                | `str | None`             | `TextEditorTheme.default()` | The theme to use for syntax highlighting.         |
 | `selection`            | `Selection`              | `Selection()`      | The current selection.                           |
 | `show_line_numbers`    | `bool`                   | `True`             | Show or hide line numbers.                       |
 | `indent_width`         | `int`                    | `4`                | The number of spaces to indent and width of tabs. |
@@ -451,14 +451,14 @@ If you notice some highlights are missing after registering a language, the issu
 
 ## Messages
 
-- [TextArea.Changed][textual.widgets._text_area.TextArea.Changed]
-- [TextArea.SelectionChanged][textual.widgets._text_area.TextArea.SelectionChanged]
+- [TextEditor.Changed][textual.widgets._text_editor.TextEditor.Changed]
+- [TextEditor.SelectionChanged][textual.widgets._text_editor.TextEditor.SelectionChanged]
 
 ## Bindings
 
-The `TextArea` widget defines the following bindings:
+The `TextEditor` widget defines the following bindings:
 
-::: textual.widgets._text_area.TextArea.BINDINGS
+::: textual.widgets._text_editor.TextEditor.BINDINGS
     options:
       show_root_heading: false
       show_root_toc_entry: false
@@ -466,26 +466,26 @@ The `TextArea` widget defines the following bindings:
 
 ## Component classes
 
-The `TextArea` widget defines no component classes.
+The `TextEditor` widget defines no component classes.
 
-Styling should be done exclusively via [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
+Styling should be done exclusively via [`TextEditorTheme`][textual.widgets.text_editor.TextEditorTheme].
 
 ## See also
 
 - [`Input`][textual.widgets.Input] - for single-line text input.
-- [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme] - for theming the `TextArea`.
+- [`TextEditorTheme`][textual.widgets.text_editor.TextEditorTheme] - for theming the `TextEditor`.
 - The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
 - `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
 
 ---
 
-::: textual.widgets._text_area.TextArea
+::: textual.widgets._text_editor.TextEditor
     options:
       heading_level: 2
 
 ---
 
-::: textual.widgets.text_area
+::: textual.widgets.text_editor
     options:
       heading_level: 2

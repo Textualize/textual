@@ -1,4 +1,4 @@
-from textual.widgets.text_area import Document
+from textual.widgets.text_editor import Document
 
 TEXT = """I must not fear.
 Fear is the mind-killer."""

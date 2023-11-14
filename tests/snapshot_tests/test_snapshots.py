@@ -4,9 +4,9 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
-from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea, Input, Button
-from textual.widgets.text_area import TextAreaTheme
+from textual.widgets.text_editor import Selection, BUILTIN_LANGUAGES
+from textual.widgets import TextEditor, Input, Button
+from textual.widgets.text_editor import TextEditorTheme
 
 # These paths should be relative to THIS directory.
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
@@ -777,7 +777,7 @@ def test_nested_fr(snap_compare) -> None:
     sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
 )
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
-def test_text_area_language_rendering(language, snap_compare):
+def test_text_editor_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
     # language. We should have a snapshot test for each language we support
     # as the syntax highlighting will be completely different for each of them.
@@ -785,12 +785,12 @@ def test_text_area_language_rendering(language, snap_compare):
     snippet = SNIPPETS.get(language)
 
     def setup_language(pilot) -> None:
-        text_area = pilot.app.query_one(TextArea)
-        text_area.load_text(snippet)
-        text_area.language = language
+        text_editor = pilot.app.query_one(TextEditor)
+        text_editor.load_text(snippet)
+        text_editor.language = language
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area.py",
+        SNAPSHOT_APPS_DIR / "text_editor.py",
         run_before=setup_language,
         terminal_size=(80, snippet.count("\n") + 2),
     )
@@ -807,7 +807,7 @@ def test_text_area_language_rendering(language, snap_compare):
         Selection.cursor((2, 6)),
     ],
 )
-def test_text_area_selection_rendering(snap_compare, selection):
+def test_text_editor_selection_rendering(snap_compare, selection):
     text = """I am a line.
 
 I am another line.
@@ -815,13 +815,13 @@ I am another line.
 I am the final line."""
 
     def setup_selection(pilot):
-        text_area = pilot.app.query_one(TextArea)
-        text_area.load_text(text)
-        text_area.show_line_numbers = False
-        text_area.selection = selection
+        text_editor = pilot.app.query_one(TextEditor)
+        text_editor.load_text(text)
+        text_editor.show_line_numbers = False
+        text_editor.selection = selection
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area.py",
+        SNAPSHOT_APPS_DIR / "text_editor.py",
         run_before=setup_selection,
         terminal_size=(30, text.count("\n") + 1),
     )
@@ -831,9 +831,9 @@ I am the final line."""
     sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
 )
 @pytest.mark.parametrize(
-    "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
+    "theme_name", [theme.name for theme in TextEditorTheme.builtin_themes()]
 )
-def test_text_area_themes(snap_compare, theme_name):
+def test_text_editor_themes(snap_compare, theme_name):
     """Each theme should have its own snapshot with at least some Python
     to check that the rendering is sensible. This also ensures that theme
     switching results in the display changing correctly."""
@@ -846,14 +846,14 @@ def hello(name):
 """
 
     def setup_theme(pilot):
-        text_area = pilot.app.query_one(TextArea)
-        text_area.load_text(text)
-        text_area.language = "python"
-        text_area.selection = Selection((0, 1), (1, 9))
-        text_area.theme = theme_name
+        text_editor = pilot.app.query_one(TextEditor)
+        text_editor.load_text(text)
+        text_editor.language = "python"
+        text_editor.selection = Selection((0, 1), (1, 9))
+        text_editor.theme = theme_name
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area.py",
+        SNAPSHOT_APPS_DIR / "text_editor.py",
         run_before=setup_theme,
         terminal_size=(48, text.count("\n") + 2),
     )

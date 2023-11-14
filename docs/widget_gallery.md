@@ -307,13 +307,13 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
-## TextArea
+## TextEditor
 
 A multi-line text area which supports syntax highlighting various languages.
 
-[TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
+[TextEditor reference](./widgets/text_editor.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
+```{.textual path="docs/examples/widgets/text_editor_example.py" columns="42" lines="8"}
 ```
 
 ## Tree
