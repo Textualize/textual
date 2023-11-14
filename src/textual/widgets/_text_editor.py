@@ -26,7 +26,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocumentError,
 )
 from textual.expand_tabs import expand_tabs_inline
-from textual.widgets._text_area import TextArea
+from textual.widgets._text_area import Edit, TextArea
 
 if TYPE_CHECKING:
     from tree_sitter import Language
@@ -35,7 +35,7 @@ from textual import events, log
 from textual._cells import cell_len
 from textual.binding import Binding
 from textual.events import Message, MouseEvent
-from textual.geometry import Size, clamp
+from textual.geometry import clamp
 from textual.reactive import Reactive, reactive
 from textual.strip import Strip
 
@@ -667,12 +667,6 @@ TextEditor {
                 yield line[column], (row, column)
                 column -= 1
             row -= 1
-
-    def _refresh_size(self) -> None:
-        """Update the virtual size of the TextEditor."""
-        width, height = self.document.get_size(self.indent_width)
-        # +1 width to make space for the cursor resting at the end of the line
-        self.virtual_size = Size(width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         """Render a single line of the TextEditor. Called by Textual.

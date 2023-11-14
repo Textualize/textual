@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from typing import Any
 
 from rich.text import Text
 
@@ -9,8 +10,9 @@ from textual import events
 from textual._cells import cell_len
 from textual.binding import Binding
 from textual.document._document import Document, EditResult, Location, Selection
+from textual.events import MouseEvent
 from textual.expand_tabs import expand_tabs_inline
-from textual.geometry import Offset, Region, Spacing, clamp
+from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.message import Message
 from textual.reactive import Reactive, reactive
 from textual.scroll_view import ScrollView
@@ -212,6 +214,11 @@ class TextArea(ScrollView, can_focus=True):
         self._selecting = False
         """True if we're currently selecting text using the mouse, otherwise False."""
 
+        self._last_intentional_cell_width: int = 0
+        """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
+        visually moves rather than logical characters) the user explicitly navigated to so that we can reset to it
+        whenever possible."""
+
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
@@ -266,6 +273,12 @@ class TextArea(ScrollView, can_focus=True):
         )
         return scroll_offset
 
+    def _refresh_size(self) -> None:
+        """Update the virtual size of the TextEditor."""
+        width, height = self.document.get_size(self.indent_width)
+        # +1 width to make space for the cursor resting at the end of the line
+        self.virtual_size = Size(width + self.gutter_width + 1, height)
+
     def render_line(self, widget_y: int) -> Strip:
         """Render a single line of the TextEditor. Called by Textual.
 
@@ -286,15 +299,20 @@ class TextArea(ScrollView, can_focus=True):
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        # Get the line from the Document.
-        line_string = document.get_line(line_index)
-        line = Text(line_string, end="")
-
-        line_character_count = len(line)
-        line.tab_size = self.indent_width
         virtual_width, virtual_height = self.virtual_size
         expanded_length = max(virtual_width, self.size.width)
-        line.set_length(expanded_length)
+        line = self.get_line_render_text(line_index, expanded_length)
+        line_segments = self.app.console.render(line)
+
+        return Strip(line_segments, cell_length=expanded_length)
+
+    def get_line_render_text(self, line_index: int, width: int) -> Text:
+        """Get the raw Text of the line in Document space."""
+        line_string = self.document.get_line(line_index)
+        line = Text(line_string, end="")
+        line.tab_size = self.indent_width
+        line.set_length(width)
+        return line
 
     @property
     def cursor_location(self) -> Location:
@@ -920,7 +938,6 @@ class TextArea(ScrollView, can_focus=True):
         result = edit.do(self)
         self._refresh_size()
         edit.after(self)
-        self._build_highlight_map()
         self.post_message(self.Changed(self))
         return result
 
@@ -984,22 +1001,6 @@ class TextArea(ScrollView, can_focus=True):
         return target_row, target_column
 
     # --- Lower level event/key handling
-    @property
-    def gutter_width(self) -> int:
-        """The width of the gutter (the left column containing line numbers).
-
-        Returns:
-            The cell-width of the line number column. If `show_line_numbers` is `False` returns 0.
-        """
-        # The longest number in the gutter plus two extra characters: `│ `.
-        gutter_margin = 2
-        gutter_width = (
-            len(str(self.document.line_count + 1)) + gutter_margin
-            if self.show_line_numbers
-            else 0
-        )
-        return gutter_width
-
     def _on_mount(self, _: events.Mount) -> None:
         self.blink_timer = self.set_interval(
             0.5,
