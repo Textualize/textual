@@ -50,6 +50,14 @@ class MonthCalendar(Widget):
             show_cursor=self.show_cursor,
         )
 
+    def previous_year(self) -> None:
+        assert self.year is not None
+        self.year -= 1
+
+    def next_year(self) -> None:
+        assert self.year is not None
+        self.year += 1
+
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()

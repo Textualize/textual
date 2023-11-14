@@ -120,3 +120,29 @@ async def test_show_cursor():
         assert table.show_cursor is True
         month_calendar.show_cursor = False
         assert table.show_cursor is False
+
+
+async def test_previous_year():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.previous_year()
+        await pilot.pause()
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2020, 6, 1)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "1"
+
+
+async def test_next_year():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.next_year()
+        await pilot.pause()
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2022, 5, 30)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
