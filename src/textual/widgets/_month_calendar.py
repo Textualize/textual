@@ -6,7 +6,7 @@ from typing import Optional
 
 from rich.text import Text
 from textual.app import ComposeResult
-from textual.reactive import Reactive, var
+from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import DataTable
 
