@@ -24,12 +24,14 @@ class MonthCalendar(Widget):
     year: Reactive[int | None] = Reactive[Optional[int]](None)
     month: Reactive[int | None] = Reactive[Optional[int]](None)
     first_weekday: Reactive[int] = Reactive(0)
+    show_cursor: Reactive[bool] = Reactive(True)
 
     def __init__(
         self,
         year: int | None = None,
         month: int | None = None,
         first_weekday: int = 0,
+        show_cursor: bool = True,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -41,9 +43,12 @@ class MonthCalendar(Widget):
         self.month = month
         self.first_weekday = first_weekday
         self._calendar = calendar.Calendar(first_weekday)
+        self.show_cursor = show_cursor
 
     def compose(self) -> ComposeResult:
-        yield DataTable()
+        yield DataTable(
+            show_cursor=self.show_cursor,
+        )
 
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
@@ -109,3 +114,7 @@ class MonthCalendar(Widget):
     #     self._calendar = calendar.Calendar(self.first_weekday)
     #     self._update_week_header()
     #     self._update_calendar_days()
+
+    def watch_show_cursor(self, show_cursor: bool) -> None:
+        table = self.query_one(DataTable)
+        table.show_cursor = show_cursor

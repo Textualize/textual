@@ -110,3 +110,13 @@ async def test_calendar_table_after_reactive_month_change():
 #         actual_first_sunday = month_calendar.calendar_dates[0][0]
 #         assert actual_first_sunday == expected_first_sunday
 #         assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
+
+
+async def test_show_cursor():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        assert table.show_cursor is True
+        month_calendar.show_cursor = False
+        assert table.show_cursor is False
