@@ -203,6 +203,10 @@ class WebDriver(Driver):
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
             self._app.post_message(events.Resize(size, size))
+        elif packet_type == "focus":
+            self._app.post_message(events.GlobalFocus())
+        elif packet_type == "blur":
+            self._app.post_message(events.GlobalBlur())
         elif packet_type == "quit":
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":

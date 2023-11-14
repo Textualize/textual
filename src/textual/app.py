@@ -351,6 +351,11 @@ class App(Generic[ReturnType], DOMNode):
         self.app.dark = not self.app.dark  # Toggle dark mode
         ```
     """
+    global_focus = Reactive(False, compute=False)
+    """Indicates if the app has focus.
+    
+    This manages which instance has focus when running in the browser.
+    """
 
     def __init__(
         self,
@@ -2640,6 +2645,10 @@ class App(Generic[ReturnType], DOMNode):
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
+            if not self.global_focus and isinstance(
+                event, (events.Key, events.MouseDown)
+            ):
+                self.global_focus = True
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
@@ -2943,6 +2952,15 @@ class App(Generic[ReturnType], DOMNode):
 
         await root._close_messages(wait=True)
         self._unregister(root)
+
+    def _watch_global_focus(self, focus: bool) -> None:
+        """Respond to changes in global focus."""
+        if focus:
+            focused = self.screen.focused
+            self.screen.set_focus(None)
+            self.screen.set_focus(focused)
+        else:
+            self.screen.set_focus(None)
 
     async def action_check_bindings(self, key: str) -> None:
         """An [action](/guide/actions) to handle a key press using the binding system.
