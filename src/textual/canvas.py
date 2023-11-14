@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from array import array
 from dataclasses import dataclass
-from typing import NamedTuple
+from typing import NamedTuple, Sequence
 
 from typing_extensions import Literal, Self, TypeAlias
 
@@ -71,7 +71,7 @@ class HorizontalLine(Primitive):
         box_line[right] = combine_quads(box_line[right], (0, 0, 0, line_type_index))
 
         line_quad = (0, line_type_index, 0, line_type_index)
-        for x in range(x + 1, x + self.length):
+        for x in range(x + 1, x + self.length - 1):
             box_line[x] = combine_quads(box_line[x], line_quad)
 
         if self.style is not None:
@@ -106,10 +106,23 @@ class VerticalLine(Primitive):
 
 
 @dataclass
-class _Rectangle(Primitive):
+class Rectangle(Primitive):
     origin: Offset
     width: int
     height: int
+    style: CanvasStyle | None = None
+    line_type: LineType = "thin"
+
+    def render(self, canvas: Canvas) -> None:
+        origin = self.origin
+        width = self.width
+        height = self.height
+        style = self.style
+        line_type = self.line_type
+        HorizontalLine(origin, width, style, line_type).render(canvas)
+        HorizontalLine(origin + (0, height - 1), width, style, line_type).render(canvas)
+        VerticalLine(origin, height, style, line_type).render(canvas)
+        VerticalLine(origin + (width - 1, 0), height, style, line_type).render(canvas)
 
 
 class Canvas:
@@ -121,7 +134,7 @@ class Canvas:
         self.box: list[list[Quad]] = [[(0, 0, 0, 0)] * width for _ in range(height)]
         self.spans = [[] for _ in range(height)]
 
-    def render(self, primitives: list[Primitive]):
+    def render(self, primitives: Sequence[Primitive]):
         for primitive in primitives:
             primitive.render(self)
 
@@ -132,9 +145,9 @@ class Canvas:
 
 
 if __name__ == "__main__":
-    canvas = Canvas(20, 10)
+    canvas = Canvas(20, 12)
     primitives = [
-        HorizontalLine(Offset(2, 3), 10),
-        VerticalLine(Offset(2, 3), 5, line_type="heavy"),
+        Rectangle(Offset(5, 5), 6, 4),
+        Rectangle(Offset(6, 6), 8, 5, line_type="double"),
     ]
     canvas.render(primitives)

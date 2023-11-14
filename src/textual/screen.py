@@ -562,7 +562,6 @@ class Screen(Generic[ScreenResultType], Widget):
             # Widget is already focused
             return
 
-        global_focus = self.app.global_focus
         focused: Widget | None = None
         blurred: Widget | None = None
 
@@ -582,7 +581,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 # Change focus
                 self.focused = widget
                 # Send focus event
-                if scroll_visible and global_focus:
+                if scroll_visible:
 
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
@@ -590,8 +589,8 @@ class Screen(Generic[ScreenResultType], Widget):
                             self.screen.scroll_to_center(widget, origin_visible=True)
 
                     self.call_after_refresh(scroll_to_center, widget)
-                if global_focus:
-                    widget.post_message(events.Focus())
+
+                widget.post_message(events.Focus())
                 focused = widget
 
                 self.log.debug(widget, "was focused")
@@ -837,12 +836,6 @@ class Screen(Generic[ScreenResultType], Widget):
         self._screen_resized(event.size)
         for screen in self.app._background_screens:
             screen._screen_resized(event.size)
-
-    async def _on_global_focus(self, event: events.GlobalFocus) -> None:
-        self.global_focus = True
-
-    async def _on_global_blur(self, event: events.GlobalFocus) -> None:
-        self.global_focus = False
 
     def _update_tooltip(self, widget: Widget) -> None:
         """Update the content of the tooltip."""
