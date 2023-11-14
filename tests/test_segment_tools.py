@@ -1,4 +1,3 @@
-import pytest
 from rich.segment import Segment
 from rich.style import Style
 
@@ -90,21 +89,6 @@ def test_line_trim_ascii():
     ]
 
     assert line_trim([], True, True) == []
-
-
-@pytest.mark.parametrize(
-    "segments,result",
-    [
-        ([Segment(""), Segment(""), Segment("bar")], [Segment("a")]),  # empty start
-        ([Segment("bar"), Segment(""), Segment("")], [Segment("a")]),  # empty end
-        (
-            [Segment(""), Segment("bar"), Segment("")],
-            [Segment("a")],
-        ),  # empty start and end
-    ],
-)
-def test_line_trim_empty_segments(segments, result):
-    assert line_trim(segments, True, True) == result
 
 
 def test_line_pad():

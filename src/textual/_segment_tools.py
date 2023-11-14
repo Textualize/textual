@@ -121,47 +121,27 @@ def line_trim(segments: list[Segment], start: bool, end: bool) -> list[Segment]:
     """Optionally remove a cell from the start and / or end of a list of segments.
 
     Args:
-        segments: A line (list of Segments)
-        start: Remove cell from start.
-        end: Remove cell from end.
+        segments (list[Segment]): A line (list of Segments)
+        start (bool): Remove cell from start.
+        end (bool): Remove cell from end.
 
     Returns:
         A new list of segments.
     """
     segments = segments.copy()
-
-    # Empty segments should be ignored as they don't contribute to cell width
-    while segments and start:
-        first_segment = segments[0]
-        if not first_segment.text:
-            # Keep discarding segments until we arrive at a non-empty one
+    if segments and start:
+        _, first_segment = segments[0].split_cells(1)
+        if first_segment.text:
+            segments[0] = first_segment
+        else:
             segments.pop(0)
-        else:
-            # We've arrived at a non-empty segment, now trim the leftmost cell.
-            _, first_segment = first_segment.split_cells(1)
-            if first_segment.text:
-                # The first segment contained more than one cell.
-                segments[0] = first_segment
-            else:
-                # The first segment contained a single cell, discard it.
-                segments.pop(0)
-            break
-
-    # Same process as above, but working from end of list backwards.
-    while segments and end:
+    if segments and end:
         last_segment = segments[-1]
-        if not last_segment.text:
-            # Discard until we get to a segment that contributes cell width.
-            segments.pop()
+        last_segment, _ = last_segment.split_cells(len(last_segment.text) - 1)
+        if last_segment.text:
+            segments[-1] = last_segment
         else:
-            # We've arrived at a non-empty segment, trim the rightmost cell.
-            last_segment, _ = last_segment.split_cells(len(last_segment.text) - 1)
-            if last_segment.text:
-                segments[-1] = last_segment
-            else:
-                segments.pop()
-            break
-
+            segments.pop()
     return segments
 
 
