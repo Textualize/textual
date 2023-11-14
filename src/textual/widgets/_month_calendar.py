@@ -58,6 +58,22 @@ class MonthCalendar(Widget):
         assert self.year is not None
         self.year += 1
 
+    def previous_month(self) -> None:
+        assert self.year is not None and self.month is not None
+        if self.month == 1:
+            self.year -= 1
+            self.month = 12
+        else:
+            self.month -= 1
+
+    def next_month(self) -> None:
+        assert self.year is not None and self.month is not None
+        if self.month == 12:
+            self.year += 1
+            self.month = 1
+        else:
+            self.month += 1
+
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()

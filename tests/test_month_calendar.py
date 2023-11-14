@@ -146,3 +146,57 @@ async def test_next_year():
         actual_first_monday = month_calendar.calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
+
+
+async def test_previous_month():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.previous_month()
+        await pilot.pause()
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2021, 4, 26)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "26"
+
+
+async def test_previous_month_when_month_is_january():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.month = 1
+        month_calendar.previous_month()
+        await pilot.pause()
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2020, 11, 30)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
+
+
+async def test_next_month():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.next_month()
+        await pilot.pause()
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2021, 6, 28)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "28"
+
+
+async def test_next_month_when_month_is_december():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.month = 12
+        month_calendar.next_month()
+        await pilot.pause()
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2021, 12, 27)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "27"
