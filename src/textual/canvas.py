@@ -148,6 +148,7 @@ if __name__ == "__main__":
     canvas = Canvas(20, 12)
     primitives = [
         Rectangle(Offset(5, 5), 6, 4),
-        Rectangle(Offset(6, 6), 8, 5, line_type="double"),
+        Rectangle(Offset(6, 6), 8, 5, line_type="heavy"),
+        Rectangle(Offset(8, 4), 4, 2, line_type="thin"),
     ]
     canvas.render(primitives)
