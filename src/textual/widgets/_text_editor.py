@@ -28,7 +28,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocumentError,
 )
 from textual.expand_tabs import expand_tabs_inline
-from textual.widgets._text_area import TEXT_AREA_BINDINGS
+from textual.widgets._text_area import TextArea
 
 if TYPE_CHECKING:
     from tree_sitter import Language
@@ -39,7 +39,6 @@ from textual.binding import Binding
 from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
 from textual.reactive import Reactive, reactive
-from textual.scroll_view import ScrollView
 from textual.strip import Strip
 
 _OPENING_BRACKETS = {"{": "}", "[": "]", "(": ")"}
@@ -81,7 +80,7 @@ class TextEditorLanguage:
     highlight_query: str
 
 
-class TextEditor(ScrollView, can_focus=True):
+class TextEditor(TextArea, can_focus=True):
     DEFAULT_CSS = """\
 TextEditor {
     width: 1fr;
@@ -91,7 +90,6 @@ TextEditor {
 
     BINDINGS = [
         Binding("escape", "screen.focus_next", "Shift Focus", show=False),
-        *TEXT_AREA_BINDINGS,
     ]
     """
     | Key(s)                 | Description                                  |
