@@ -215,3 +215,16 @@ async def test_next_month_when_month_is_december():
         actual_first_monday = month_calendar.calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)).plain == "27"
+
+
+async def test_move_cursor():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        await pilot.pause()
+        destination_date = datetime.date(2021, 6, 3)
+        month_calendar.move_cursor(destination_date)
+        table = month_calendar.query_one(DataTable)
+        expected_coordinate = month_calendar.get_date_coordinate(destination_date)
+        actual_coordinate = table.cursor_coordinate
+        assert actual_coordinate == expected_coordinate

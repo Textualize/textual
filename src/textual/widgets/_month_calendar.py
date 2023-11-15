@@ -75,6 +75,11 @@ class MonthCalendar(Widget):
         else:
             self.month += 1
 
+    def move_cursor(self, date: datetime.date) -> None:
+        date_coordinate = self.get_date_coordinate(date)
+        table = self.query_one(DataTable)
+        table.cursor_coordinate = date_coordinate
+
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()
