@@ -197,7 +197,6 @@ def align_lines(
     Returns:
         Aligned lines.
     """
-
     width, height = size
     shape_width, shape_height = Segment.get_shape(lines)
 
@@ -211,7 +210,7 @@ def align_lines(
         bottom_blank_lines = vertical_excess_space
     elif vertical == "middle":
         top_blank_lines = vertical_excess_space // 2
-        bottom_blank_lines = height - top_blank_lines
+        bottom_blank_lines = vertical_excess_space - top_blank_lines
     elif vertical == "bottom":
         top_blank_lines = vertical_excess_space
 
@@ -220,6 +219,7 @@ def align_lines(
     horizontal_excess_space = max(0, width - shape_width)
 
     adjust_line_length = Segment.adjust_line_length
+
     if horizontal == "left":
         for line in lines:
             yield adjust_line_length(line, width, style, pad=True)
@@ -227,8 +227,9 @@ def align_lines(
     elif horizontal == "center":
         left_space = horizontal_excess_space // 2
         for line in lines:
+            left_padding = [Segment(" " * left_space, style)] if left_space else []
             yield [
-                Segment(" " * left_space, style),
+                *left_padding,
                 *adjust_line_length(line, width - left_space, style, pad=True),
             ]
 
@@ -236,6 +237,7 @@ def align_lines(
         get_line_length = Segment.get_line_length
         for line in lines:
             left_space = width - get_line_length(line)
-            yield [Segment(" " * left_space, style), *line]
+            left_padding = [Segment(" " * left_space, style)] if left_space else []
+            yield [*left_padding, *line]
 
     yield from blank_lines(bottom_blank_lines)
