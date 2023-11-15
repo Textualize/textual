@@ -62,8 +62,8 @@ class MonthCalendarApp(App):
 async def test_calendar_table_week_header():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
-        month_calendar = pilot.app.query_one(MonthCalendar)
         await pilot.pause()
+        month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
         actual_labels = [col.label.plain for col in table.columns.values()]
         expected_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -73,8 +73,8 @@ async def test_calendar_table_week_header():
 async def test_calendar_table_days():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
-        month_calendar = pilot.app.query_one(MonthCalendar)
         await pilot.pause()
+        month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
         for row, week in enumerate(month_calendar.calendar_dates):
             for column, date in enumerate(week):
@@ -86,6 +86,7 @@ async def test_calendar_table_days():
 async def test_calendar_table_after_reactive_year_change():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.year = 2023
         await pilot.pause()
@@ -99,6 +100,7 @@ async def test_calendar_table_after_reactive_year_change():
 async def test_calendar_table_after_reactive_month_change():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.month = 7
         await pilot.pause()
@@ -113,6 +115,7 @@ async def test_calendar_table_after_reactive_month_change():
 #     app = MonthCalendarApp()
 #     async with app.run_test() as pilot:
 #         month_calendar = pilot.app.query_one(MonthCalendar)
+#         await pilot.pause()
 #         month_calendar.first_weekday = 6  # Sunday
 #         await pilot.pause()
 #         table = month_calendar.query_one(DataTable)
@@ -130,6 +133,7 @@ async def test_calendar_table_after_reactive_month_change():
 async def test_show_cursor():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
         assert table.show_cursor is True
@@ -140,6 +144,7 @@ async def test_show_cursor():
 async def test_previous_year():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.previous_year()
         await pilot.pause()
@@ -153,6 +158,7 @@ async def test_previous_year():
 async def test_next_year():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.next_year()
         await pilot.pause()
@@ -166,6 +172,7 @@ async def test_next_year():
 async def test_previous_month():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.previous_month()
         await pilot.pause()
@@ -179,6 +186,7 @@ async def test_previous_month():
 async def test_previous_month_when_month_is_january():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.month = 1
         month_calendar.previous_month()
@@ -193,6 +201,7 @@ async def test_previous_month_when_month_is_january():
 async def test_next_month():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.next_month()
         await pilot.pause()
@@ -206,6 +215,7 @@ async def test_next_month():
 async def test_next_month_when_month_is_december():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
+        await pilot.pause()
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.month = 12
         month_calendar.next_month()
@@ -220,10 +230,11 @@ async def test_next_month_when_month_is_december():
 async def test_move_cursor():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
-        month_calendar = pilot.app.query_one(MonthCalendar)
         await pilot.pause()
+        month_calendar = pilot.app.query_one(MonthCalendar)
         destination_date = datetime.date(2021, 6, 3)
         month_calendar.move_cursor(destination_date)
+        await pilot.pause()
         table = month_calendar.query_one(DataTable)
         expected_coordinate = month_calendar.get_date_coordinate(destination_date)
         actual_coordinate = table.cursor_coordinate
