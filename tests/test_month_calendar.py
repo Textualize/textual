@@ -39,6 +39,21 @@ def test_calendar_dates_property():
             expected_date += datetime.timedelta(days=1)
 
 
+def test_get_date_coordinate():
+    month_calendar = MonthCalendar(year=2021, month=6)
+    expected_coordinate = Coordinate(0, 3)
+    actual_coordinate = month_calendar.get_date_coordinate(
+        datetime.date(2021, 6, 3),
+    )
+    assert actual_coordinate == expected_coordinate
+
+
+def test_get_date_coordinate_when_out_of_range():
+    month_calendar = MonthCalendar(year=2021, month=6)
+    with pytest.raises(ValueError):
+        month_calendar.get_date_coordinate(datetime.date(2021, 1, 1))
+
+
 class MonthCalendarApp(App):
     def compose(self) -> ComposeResult:
         yield MonthCalendar(year=2021, month=6)

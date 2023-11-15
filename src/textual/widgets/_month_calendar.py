@@ -6,6 +6,7 @@ from typing import Optional
 
 from rich.text import Text
 from textual.app import ComposeResult
+from textual.coordinate import Coordinate
 from textual.events import Mount
 from textual.reactive import Reactive
 from textual.widget import Widget
@@ -100,6 +101,14 @@ class MonthCalendar(Widget):
         assert self.year is not None and self.month is not None
         dates = list(self._calendar.itermonthdates(self.year, self.month))
         return [dates[i : i + 7] for i in range(0, len(dates), 7)]
+
+    def get_date_coordinate(self, date: datetime.date) -> Coordinate:
+        for week_index, week in enumerate(self.calendar_dates):
+            try:
+                return Coordinate(week_index, week.index(date))
+            except ValueError:
+                pass
+        raise ValueError("Date is out of range for this month calendar.")
 
     def _format_day(self, date: datetime.date) -> Text:
         formatted_day = Text(str(date.day), justify="center")
