@@ -216,6 +216,9 @@ TextArea {
     The text selected in the document is available via the `TextArea.selected_text` property.
     """
 
+    soft_wrap: Reactive[bool] = reactive(False)
+    """Enable or disable soft wrapping."""
+
     show_line_numbers: Reactive[bool] = reactive(True)
     """True to show the line number column on the left edge, otherwise False.
 
@@ -275,6 +278,7 @@ TextArea {
         *,
         language: str | None = None,
         theme: str | None = None,
+        soft_wrap: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -339,6 +343,9 @@ TextArea {
         self.language = language
 
         self.theme = theme
+
+        self.soft_wrap = soft_wrap
+        """Enable or disable soft wrapping."""
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
