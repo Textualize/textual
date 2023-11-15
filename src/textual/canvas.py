@@ -145,10 +145,11 @@ class Canvas:
 
 
 if __name__ == "__main__":
-    canvas = Canvas(20, 12)
+    canvas = Canvas(20, 20)
     primitives = [
         Rectangle(Offset(5, 5), 6, 4),
         Rectangle(Offset(6, 6), 8, 5, line_type="heavy"),
-        Rectangle(Offset(8, 4), 4, 2, line_type="thin"),
+        Rectangle(Offset(8, 4), 10, 10, line_type="thin"),
+        Rectangle(Offset(10, 11), 7, 4, line_type="double"),
     ]
     canvas.render(primitives)
