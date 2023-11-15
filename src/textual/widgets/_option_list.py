@@ -851,7 +851,7 @@ class OptionList(ScrollView, can_focus=True):
         """
         return self.get_option_at_index(self.get_option_index(option_id))
 
-    def get_option_index(self, option_id) -> int:
+    def get_option_index(self, option_id: str) -> int:
         """Get the index of the option with the given ID.
 
         Args:
