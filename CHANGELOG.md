@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
 - `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 - Off-by-one in CSS error reporting https://github.com/Textualize/textual/issues/3625
+- Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
+- Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
 
 ### Added
 
