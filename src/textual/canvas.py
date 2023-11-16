@@ -16,7 +16,6 @@ from .geometry import Offset
 from .strip import Strip
 
 LineType: TypeAlias = Literal["thin", "heavy", "double"]
-OffsetPair: TypeAlias = tuple[int, int]
 
 
 _LINE_TYPE_INDEX = {"thin": 1, "heavy": 2, "double": 3}
@@ -34,11 +33,18 @@ class Primitive:
     """Base class for a canvas primitive."""
 
     def render(self, canvas: Canvas) -> None:
+        """Render to the canvas.
+
+        Args:
+            canvas: Canvas instance.
+        """
         raise NotImplementedError()
 
 
 @dataclass
 class HorizontalLine(Primitive):
+    """A horizontal line."""
+
     origin: Offset
     length: int
     color: Color
@@ -65,6 +71,8 @@ class HorizontalLine(Primitive):
 
 @dataclass
 class VerticalLine(Primitive):
+    """A vertical line."""
+
     origin: Offset
     length: int
     color: Color
@@ -91,6 +99,8 @@ class VerticalLine(Primitive):
 
 @dataclass
 class Rectangle(Primitive):
+    """A rectangle."""
+
     origin: Offset
     width: int
     height: int
@@ -122,6 +132,15 @@ class Canvas:
         self.spans: list[list[_Span]] = [[] for _ in range(height)]
 
     def render(self, primitives: Sequence[Primitive], base_style: Style) -> list[Strip]:
+        """Render the canvas.
+
+        Args:
+            primitives: A sequence of primitives.
+            base_style: The base style of the canvas.
+
+        Returns:
+            A list of strips.
+        """
         for primitive in primitives:
             primitive.render(self)
 
@@ -141,15 +160,20 @@ class Canvas:
 
             if raw_spans:
                 segments: list[Segment] = []
-
-                enumerated_spans = list(enumerate(raw_spans, 1))
-                style_map = {index: span.color for index, span in enumerated_spans}
-                style_map[0] = color
-
+                color_map = {
+                    index: span.color for index, span in enumerate(raw_spans, 1)
+                }
+                color_map[0] = color
                 spans = [
                     (0, False, 0),
-                    *((span.start, False, index) for index, span in enumerated_spans),
-                    *((span.end, True, index) for index, span in enumerated_spans),
+                    *(
+                        (span.start, False, index)
+                        for index, span in enumerate(raw_spans, 1)
+                    ),
+                    *(
+                        (span.end, True, index)
+                        for index, span in enumerate(raw_spans, 1)
+                    ),
                     (width, True, 0),
                 ]
                 spans.sort(key=span_sort_key)
@@ -164,10 +188,7 @@ class Canvas:
                     else:
                         stack_append(style_id)
                     if next_offset > offset:
-                        segment_color = color
-                        for _color in sorted(stack):
-                            segment_color += style_map[_color]
-
+                        segment_color = color + color_map[max(stack)]
                         segments.append(
                             _Segment(
                                 text[offset:next_offset],
@@ -184,7 +205,7 @@ class Canvas:
 if __name__ == "__main__":
     canvas = Canvas(30, 20)
     primitives = [
-        Rectangle(Offset(5, 5), 6, 4, Color.parse("rgba(255, 0,0,0.5)")),
+        Rectangle(Offset(5, 5), 6, 4, Color.parse("rgb(255,0,0)")),
         Rectangle(Offset(6, 6), 8, 5, Color.parse("green"), line_type="heavy"),
         Rectangle(Offset(8, 4), 10, 10, Color.parse("blue"), line_type="thin"),
         Rectangle(Offset(10, 11), 7, 4, Color.parse("magenta"), line_type="double"),
