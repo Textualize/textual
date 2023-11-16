@@ -13,7 +13,7 @@ class CommandPaletteApp(App[None]):
 async def test_no_results() -> None:
     """Receiving no results from a search for a command should not be a problem."""
     async with CommandPaletteApp().run_test() as pilot:
-        assert len(pilot.app.query(CommandPalette)) == 1
+        assert CommandPalette.is_open(pilot.app)
         results = pilot.app.screen.query_one(OptionList)
         assert results.visible is False
         assert results.option_count == 0
