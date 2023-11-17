@@ -492,3 +492,13 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             raise InvalidSelectValueError(
                 "Can't clear selection if allow_blank is set to False."
             ) from None
+
+    def _watch_prompt(self, prompt: str) -> None:
+        try:
+            select_current = self.query_one(SelectCurrent)
+        except NoMatches:
+            return
+        select_current.placeholder = prompt
+        if self.value == self.BLANK:
+            select_current.update(self.BLANK)
+        self._setup_options_renderables()
