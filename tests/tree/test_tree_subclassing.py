@@ -69,7 +69,10 @@ class TreeApp(App[None]):
 
 
 async def test_refresh_leaf() -> None:
-    """A leaf node re-renders when refresh_line is invoked."""
+    """A leaf node re-renders when refresh_line is invoked.
+
+    Regression test for https://github.com/Textualize/textual/issues/3637
+    """
     async with TreeApp().run_test() as pilot:
         tree = pilot.app.query_one(Tree)
 
@@ -83,7 +86,10 @@ async def test_refresh_leaf() -> None:
 
 
 async def test_refresh_branch() -> None:
-    """A branch node re-renders when refresh_line is invoked."""
+    """A branch node re-renders when refresh_line is invoked.
+
+    Regression test for https://github.com/Textualize/textual/issues/3637
+    """
     async with TreeApp().run_test() as pilot:
         tree = pilot.app.query_one(Tree)
 
