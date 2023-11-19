@@ -87,6 +87,9 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
+_NULL_STYLE = Style()
+
+
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
@@ -2963,7 +2966,7 @@ class Widget(DOMNode):
         lines = list(
             align_lines(
                 lines,
-                Style(),
+                _NULL_STYLE,
                 self.size,
                 align_horizontal,
                 align_vertical,
