@@ -206,8 +206,6 @@ def align_lines(
     shape_width = max(line_lengths)
     shape_height = len(line_lengths)
 
-    shape_width, shape_height = Segment.get_shape(lines)
-
     def blank_lines(count: int) -> list[list[Segment]]:
         """Create blank lines.
 
