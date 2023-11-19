@@ -198,7 +198,6 @@ def align_lines(
         Aligned lines.
     """
     if not lines:
-        yield from []
         return
     width, height = size
     get_line_length = Segment.get_line_length
