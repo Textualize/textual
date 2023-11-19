@@ -125,7 +125,8 @@ class Canvas:
     def __init__(self, width: int, height: int) -> None:
         self._width = width
         self._height = height
-        self.lines: list[array[str]] = [array("u", " " * width) for _ in range(height)]
+        blank_line = " " * width
+        self.lines: list[array[str]] = [array("u", blank_line) for _ in range(height)]
         self.box: list[defaultdict[int, Quad]] = [
             defaultdict(lambda: (0, 0, 0, 0)) for _ in range(height)
         ]
