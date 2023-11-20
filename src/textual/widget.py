@@ -87,6 +87,9 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
+_NULL_STYLE = Style()
+
+
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
@@ -391,6 +394,11 @@ class Widget(DOMNode):
     """A title to show in the bottom border (if there is one)."""
 
     @property
+    def is_mounted(self) -> bool:
+        """Check if this widget is mounted."""
+        return self._mounted_event.is_set()
+
+    @property
     def siblings(self) -> list[Widget]:
         """Get the widget's siblings (self is removed from the return list).
 
@@ -603,16 +611,18 @@ class Widget(DOMNode):
         raise NoMatches(f"No descendant found with id={id!r}")
 
     def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
-        """Get a child of a give type.
+        """Get the first immediate child of a given type.
+
+        Only returns exact matches, and so will not match subclasses of the given type.
 
         Args:
-            expect_type: The type of the expected child.
+            expect_type: The type of the child to search for.
 
         Raises:
-            NoMatches: If no valid child is found.
+            NoMatches: If no matching child is found.
 
         Returns:
-            A widget.
+            The first immediate child widget with the expected type.
         """
         for child in self._nodes:
             # We want the child with the exact type (not subclasses)
@@ -2961,7 +2971,7 @@ class Widget(DOMNode):
         lines = list(
             align_lines(
                 lines,
-                Style(),
+                _NULL_STYLE,
                 self.size,
                 align_horizontal,
                 align_vertical,

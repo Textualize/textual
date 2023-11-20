@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from time import time
-from typing import Awaitable
+from typing import Awaitable, ClassVar
+from weakref import WeakKeyDictionary
 
 from rich.console import RenderableType
 from rich.style import Style
@@ -25,9 +26,20 @@ class LoadingIndicator(Widget):
         color: $accent;
     }
     LoadingIndicator.-overlay {
-        overlay: screen;
+        layer: _loading;
         background: $boost;
     }
+    """
+
+    _widget_state: ClassVar[
+        WeakKeyDictionary[Widget, tuple[bool, str, str]]
+    ] = WeakKeyDictionary()
+    """Widget state that must be restore after loading.
+    
+    The tuples indicate the original values of the:
+     - widget disabled state;
+     - widget style overflow_x rule; and
+     - widget style overflow_y rule.
     """
 
     def __init__(
@@ -62,11 +74,19 @@ class LoadingIndicator(Widget):
             AwaitMount: An awaitable for mounting the indicator.
         """
         self.add_class("-overlay")
-        await_mount = widget.mount(self, before=0)
+        await_mount = widget.mount(self)
+        self._widget_state[widget] = (
+            widget.disabled,
+            widget.styles.overflow_x,
+            widget.styles.overflow_y,
+        )
+        widget.styles.overflow_x = "hidden"
+        widget.styles.overflow_y = "hidden"
+        widget.disabled = True
         return await_mount
 
     @classmethod
-    def clear(cls, widget: Widget) -> Awaitable:
+    def clear(cls, widget: Widget) -> Awaitable[None]:
         """Clear any loading indicator from the given widget.
 
         Args:
@@ -83,7 +103,13 @@ class LoadingIndicator(Widget):
                 """Nothing to remove"""
                 return None
 
-            return null()
+            await_remove = null()
+
+        if widget in cls._widget_state:
+            disabled, overflow_x, overflow_y = cls._widget_state[widget]
+            widget.disabled = disabled
+            widget.styles.overflow_x = overflow_x
+            widget.styles.overflow_y = overflow_y
 
         return await_remove
 

@@ -34,9 +34,9 @@ class TokenError(Exception):
         Args:
             read_from: The location where the CSS was read from.
             code: The code being parsed.
-            start: Line number of the error.
+            start: Line and column number of the error (1-indexed).
             message: A message associated with the error.
-            end: End location of token, or None if not known.
+            end: End location of token (1-indexed), or None if not known.
         """
 
         self.read_from = read_from
@@ -60,9 +60,13 @@ class TokenError(Exception):
             line_numbers=True,
             indent_guides=True,
             line_range=(max(0, line_no - 2), line_no + 2),
-            highlight_lines={line_no + 1},
+            highlight_lines={line_no},
         )
-        syntax.stylize_range("reverse bold", self.start, self.end)
+        syntax.stylize_range(
+            "reverse bold",
+            (self.start[0], self.start[1] - 1),
+            (self.end[0], self.end[1] - 1),
+        )
         return Panel(syntax, border_style="red")
 
     def __rich__(self) -> RenderableType:
@@ -136,19 +140,20 @@ class Token(NamedTuple):
     read_from: CSSLocation
     code: str
     location: tuple[int, int]
+    """Token starting location, 0-indexed."""
     referenced_by: ReferencedBy | None = None
 
     @property
     def start(self) -> tuple[int, int]:
-        """Start line and column (1 indexed)."""
+        """Start line and column (1-indexed)."""
         line, offset = self.location
-        return (line + 1, offset)
+        return (line + 1, offset + 1)
 
     @property
     def end(self) -> tuple[int, int]:
-        """End line and column (1 indexed)."""
+        """End line and column (1-indexed)."""
         line, offset = self.location
-        return (line + 1, offset + len(self.value))
+        return (line + 1, offset + len(self.value) + 1)
 
     def with_reference(self, by: ReferencedBy | None) -> "Token":
         """Return a copy of the Token, with reference information attached.
@@ -199,7 +204,7 @@ class Tokenizer:
                     "",
                     self.read_from,
                     self.code,
-                    (line_no + 1, col_no + 1),
+                    (line_no, col_no),
                     None,
                 )
             else:
@@ -217,7 +222,7 @@ class Tokenizer:
             raise TokenError(
                 self.read_from,
                 self.code,
-                (line_no, col_no),
+                (line_no + 1, col_no + 1),
                 message,
             )
         iter_groups = iter(match.groups())
@@ -251,14 +256,14 @@ class Tokenizer:
                 raise TokenError(
                     self.read_from,
                     self.code,
-                    (line_no, col_no),
+                    (line_no + 1, col_no + 1),
                     f"unknown pseudo-class {pseudo_class!r}; did you mean {suggestion!r}?; {all_valid}",
                 )
             else:
                 raise TokenError(
                     self.read_from,
                     self.code,
-                    (line_no, col_no),
+                    (line_no + 1, col_no + 1),
                     f"unknown pseudo-class {pseudo_class!r}; {all_valid}",
                 )
 
