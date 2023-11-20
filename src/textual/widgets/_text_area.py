@@ -27,7 +27,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
 )
-from textual.document._wrapped_document import WrappedDocumentView
+from textual.document._wrapped_document import WrappedDocument
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -344,7 +344,7 @@ TextArea {
         self.soft_wrap = soft_wrap
         """Enable or disable soft wrapping."""
 
-        self._wrapped_document: WrappedDocumentView = WrappedDocumentView()
+        self._wrapped_document = WrappedDocument()
         """"""
 
     @staticmethod
@@ -661,7 +661,7 @@ TextArea {
 
         self.document = document
 
-        self._wrapped_document = WrappedDocumentView(document)
+        self._wrapped_document = WrappedDocument(document)
         self._wrapped_document.wrap_all()
 
         self._build_highlight_map()
