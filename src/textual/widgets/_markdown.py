@@ -937,7 +937,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
                     node.allow_expand = True
                 else:
                     node = node.add(NUMERALS[level], expand=True)
-            node_label = Text.from_markup(f"[dim]{NUMERALS[level]}[/] ") + Text(name)
+            node_label = Text.assemble((f"{NUMERALS[level]} ", Style(dim=True)), name)
             node.add_leaf(node_label, {"block_id": block_id})
 
     async def _on_tree_node_selected(self, message: Tree.NodeSelected) -> None:
