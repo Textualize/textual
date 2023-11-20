@@ -11,8 +11,12 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class PaddingApp(App):
+    CSS_PATH = "padding.tcss"
+
     def compose(self):
         yield Label(TEXT)
 
 
-app = PaddingApp(css_path="padding.tcss")
+if __name__ == "__main__":
+    app = PaddingApp()
+    app.run()

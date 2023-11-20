@@ -4,6 +4,8 @@ from textual.widgets import Label
 
 
 class LayoutApp(App):
+    CSS_PATH = "layout.tcss"
+
     def compose(self):
         yield Container(
             Label("Layout"),
@@ -19,4 +21,6 @@ class LayoutApp(App):
         )
 
 
-app = LayoutApp(css_path="layout.tcss")
+if __name__ == "__main__":
+    app = LayoutApp()
+    app.run()

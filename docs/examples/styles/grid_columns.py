@@ -4,6 +4,8 @@ from textual.widgets import Label
 
 
 class MyApp(App):
+    CSS_PATH = "grid_columns.tcss"
+
     def compose(self):
         yield Grid(
             Label("1fr"),
@@ -19,4 +21,6 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="grid_columns.tcss")
+if __name__ == "__main__":
+    app = MyApp()
+    app.run()

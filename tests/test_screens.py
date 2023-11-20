@@ -304,6 +304,25 @@ async def test_dismiss_non_top_screen():
             app.bottom.dismiss()
 
 
+async def test_dismiss_action():
+    class ConfirmScreen(Screen[bool]):
+        BINDINGS = [("y", "dismiss(True)", "Dismiss")]
+
+    class MyApp(App[None]):
+        bingo = False
+
+        def on_mount(self) -> None:
+            self.push_screen(ConfirmScreen(), callback=self.callback)
+
+        def callback(self, result: bool) -> None:
+            self.bingo = result
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.press("y")
+        assert app.bingo
+
+
 async def test_switch_screen_no_op():
     """Regression test for https://github.com/Textualize/textual/issues/2650"""
 

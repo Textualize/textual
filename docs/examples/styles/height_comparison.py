@@ -10,6 +10,8 @@ class Ruler(Static):
 
 
 class HeightComparisonApp(App):
+    CSS_PATH = "height_comparison.tcss"
+
     def compose(self):
         yield VerticalScroll(
             Placeholder(id="cells"),  # (1)!
@@ -25,4 +27,6 @@ class HeightComparisonApp(App):
         yield Ruler()
 
 
-app = HeightComparisonApp(css_path="height_comparison.tcss")
+if __name__ == "__main__":
+    app = HeightComparisonApp()
+    app.run()

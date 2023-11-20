@@ -3,9 +3,13 @@ from textual.widgets import Static
 
 
 class BoxSizingApp(App):
+    CSS_PATH = "box_sizing.tcss"
+
     def compose(self):
         yield Static("I'm using border-box!", id="static1")
         yield Static("I'm using content-box!", id="static2")
 
 
-app = BoxSizingApp(css_path="box_sizing.tcss")
+if __name__ == "__main__":
+    app = BoxSizingApp()
+    app.run()

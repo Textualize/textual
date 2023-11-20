@@ -65,19 +65,6 @@ from .transition import Transition
 from .types import BoxSizing, Display, EdgeType, Overflow, Visibility
 
 
-def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
-    """Convert tokens into a string by joining their values
-
-    Args:
-        tokens: Tokens to join
-        joiner: String to join on.
-
-    Returns:
-        The tokens, joined together to form a string.
-    """
-    return joiner.join(token.value for token in tokens)
-
-
 class StylesBuilder:
     """
     The StylesBuilder object takes tokens parsed from the CSS and converts
@@ -97,9 +84,17 @@ class StylesBuilder:
         raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
-        if not declaration.tokens:
+        if not declaration.name:
             return
         rule_name = declaration.name.replace("-", "_")
+
+        if not declaration.tokens:
+            self.error(
+                rule_name,
+                declaration.token,
+                f"Missing property value for '{declaration.name}:'",
+            )
+
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
@@ -122,6 +117,13 @@ class StylesBuilder:
         if important:
             tokens = tokens[:-1]
             self.styles.important.add(rule_name)
+
+        # Check for special token(s)
+        if tokens[0].name == "token":
+            value = tokens[0].value
+            if value == "initial":
+                self.styles._rules[rule_name] = None
+                return
         try:
             process_method(declaration.name, tokens)
         except DeclarationError:
@@ -259,7 +261,7 @@ class StylesBuilder:
 
         Args:
             prefix: The prefix of the style.
-            siffixes: The suffixes to distribute amongst.
+            suffixes: The suffixes to distribute amongst.
 
         A number of styles can be set with the 'prefix' of the style,
         providing the values as a series of parameters; or they can be set

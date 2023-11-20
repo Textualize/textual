@@ -8,10 +8,10 @@ from asyncio import wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
-from operator import attrgetter
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    Awaitable,
     ClassVar,
     Collection,
     Generator,
@@ -85,6 +85,9 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+
+_NULL_STYLE = Style()
 
 
 class AwaitMount:
@@ -245,7 +248,7 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;
+        link-background: initial;
         link-color: $text;
         link-style: underline;
         link-hover-background: $accent;
@@ -278,6 +281,8 @@ class Widget(DOMNode):
     """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
+    loading: Reactive[bool] = Reactive(False)
+    """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
     def __init__(
         self,
@@ -497,6 +502,29 @@ class Widget(DOMNode):
         else:
             self.app._composed[-1].append(composed)
 
+    def set_loading(self, loading: bool) -> Awaitable:
+        """Set or reset the loading state of this widget.
+
+        A widget in a loading state will display a LoadingIndicator that obscures the widget.
+
+        Args:
+            loading: `True` to put the widget into a loading state, or `False` to reset the loading state.
+
+        Returns:
+            An optional awaitable.
+        """
+        from textual.widgets import LoadingIndicator
+
+        if loading:
+            loading_indicator = LoadingIndicator()
+            return loading_indicator.apply(self)
+        else:
+            return LoadingIndicator.clear(self)
+
+    async def _watch_loading(self, loading: bool) -> None:
+        """Called when the 'loading' reactive is changed."""
+        await self.set_loading(loading)
+
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
     @overload
@@ -578,16 +606,18 @@ class Widget(DOMNode):
         raise NoMatches(f"No descendant found with id={id!r}")
 
     def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
-        """Get a child of a give type.
+        """Get the first immediate child of a given type.
+
+        Only returns exact matches, and so will not match subclasses of the given type.
 
         Args:
-            expect_type: The type of the expected child.
+            expect_type: The type of the child to search for.
 
         Raises:
-            NoMatches: If no valid child is found.
+            NoMatches: If no matching child is found.
 
         Returns:
-            A widget.
+            The first immediate child widget with the expected type.
         """
         for child in self._nodes:
             # We want the child with the exact type (not subclasses)
@@ -915,10 +945,10 @@ class Widget(DOMNode):
             app: App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker, scope in self._get_default_css():
+        for read_from, css, tie_breaker, scope in self._get_default_css():
             self.app.stylesheet.add_source(
                 css,
-                path=path,
+                read_from=read_from,
                 is_default_css=True,
                 tie_breaker=tie_breaker,
                 scope=scope,
@@ -2754,6 +2784,8 @@ class Widget(DOMNode):
             yield "hover"
         if self.has_focus:
             yield "focus"
+        else:
+            yield "blur"
         if self.can_focus:
             yield "can-focus"
         try:
@@ -2791,16 +2823,22 @@ class Widget(DOMNode):
         )
         return pseudo_classes
 
+    def _get_rich_justify(self) -> JustifyMethod | None:
+        """Get the justify method that may be passed to a Rich renderable."""
+        text_justify: JustifyMethod | None = None
+        if self.styles.has_rule("text_align"):
+            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
+            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+        return text_justify
+
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         Returns:
             A new renderable.
         """
-        text_justify: JustifyMethod | None = None
-        if self.styles.has_rule("text_align"):
-            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
-            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+
+        text_justify = self._get_rich_justify()
 
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
@@ -2908,8 +2946,8 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
-        options = self._console.options.update_dimensions(width, height).update(
-            highlight=False
+        options = self._console.options.update(
+            highlight=False, width=width, height=height
         )
 
         segments = self._console.render(renderable, options)
@@ -2928,7 +2966,7 @@ class Widget(DOMNode):
         lines = list(
             align_lines(
                 lines,
-                Style(),
+                _NULL_STYLE,
                 self.size,
                 align_horizontal,
                 align_vertical,

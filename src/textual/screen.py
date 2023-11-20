@@ -244,7 +244,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             Tuple of layer names.
         """
-        extras = []
+        extras = ["_loading"]
         if not self.app._disable_notifications:
             extras.append("_toastrack")
         if not self.app._disable_tooltips:
@@ -971,17 +971,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 else:
                     widget._forward_event(event._apply_offset(-region.x, -region.y))
 
-        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y)
-            except errors.NoWidget:
-                return
-            scroll_widget = widget
-            if scroll_widget is not None:
-                if scroll_widget is self:
-                    self.post_message(event)
-                else:
-                    scroll_widget._forward_event(event)
         else:
             self.post_message(event)
 
@@ -1073,3 +1062,15 @@ class ModalScreen(Screen[ScreenResultType]):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
         self._modal = True
+
+
+class _SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
+    """A variant of `ModalScreen` for internal use.
+
+    This version of `ModalScreen` allows us to build system-level screens;
+    the type being used to indicate that the screen should be isolated from
+    the main application.
+
+    Note:
+        This screen is set to *not* inherit CSS.
+    """

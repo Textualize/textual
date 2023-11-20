@@ -12,8 +12,12 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 
 class ScrollbarCornerColorApp(App):
+    CSS_PATH = "scrollbar_corner_color.tcss"
+
     def compose(self):
         yield Label(TEXT.replace("\n", " ") + "\n" + TEXT * 10)
 
 
-app = ScrollbarCornerColorApp(css_path="scrollbar_corner_color.tcss")
+if __name__ == "__main__":
+    app = ScrollbarCornerColorApp()
+    app.run()

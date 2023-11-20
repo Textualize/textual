@@ -96,7 +96,12 @@ from .messages import CallbackType
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
-from .screen import Screen, ScreenResultCallbackType, ScreenResultType
+from .screen import (
+    Screen,
+    ScreenResultCallbackType,
+    ScreenResultType,
+    _SystemModalScreen,
+)
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -372,6 +377,7 @@ class App(Generic[ReturnType], DOMNode):
         Raises:
             CssPathError: When the supplied CSS path(s) are an unexpected type.
         """
+        self._start_time = perf_counter()
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
@@ -520,7 +526,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.css_monitor = (
             FileMonitor(self.css_path, self._on_css_change)
-            if ((watch_css or self.debug) and self.css_path)
+            if watch_css or self.debug
             else None
         )
         self._screenshot: str | None = None
@@ -599,8 +605,14 @@ class App(Generic[ReturnType], DOMNode):
             A sequence of widgets.
         """
         try:
-            return (self.screen,)
-        except ScreenError:
+            return (
+                next(
+                    screen
+                    for screen in reversed(self._screen_stack)
+                    if not isinstance(screen, _SystemModalScreen)
+                ),
+            )
+        except StopIteration:
             return ()
 
     @contextmanager
@@ -1220,7 +1232,7 @@ class App(Generic[ReturnType], DOMNode):
         tooltips: bool = False,
         notifications: bool = False,
         message_hook: Callable[[Message], None] | None = None,
-    ) -> AsyncGenerator[Pilot, None]:
+    ) -> AsyncGenerator[Pilot[ReturnType], None]:
         """An asynchronous context manager for testing apps.
 
         !!! tip
@@ -1348,6 +1360,7 @@ class App(Generic[ReturnType], DOMNode):
         try:
             app._loop = asyncio.get_running_loop()
             app._thread_id = threading.get_ident()
+
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
@@ -1405,8 +1418,10 @@ class App(Generic[ReturnType], DOMNode):
         return self.return_value
 
     async def _on_css_change(self) -> None:
-        """Called when the CSS changes (if watch_css is True)."""
-        css_paths = self.css_path
+        """Callback for the file monitor, called when CSS files change."""
+        css_paths = (
+            self.css_monitor._paths if self.css_monitor is not None else self.css_path
+        )
         if css_paths:
             try:
                 time = perf_counter()
@@ -1595,27 +1610,39 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.mount(*widgets, before=before, after=after)
 
-    def _init_mode(self, mode: str) -> None:
+    def _init_mode(self, mode: str) -> AwaitMount:
         """Do internal initialisation of a new screen stack mode.
 
         Args:
             mode: Name of the mode.
+
+        Returns:
+            An optionally awaitable object which can be awaited until the screen
+            associated with the mode has been mounted.
         """
 
         stack = self._screen_stacks.get(mode, [])
-        if not stack:
+        if stack:
+            await_mount = AwaitMount(stack[0], [])
+        else:
             _screen = self.MODES[mode]
             new_screen: Screen | str = _screen() if callable(_screen) else _screen
-            screen, _ = self._get_screen(new_screen)
+            screen, await_mount = self._get_screen(new_screen)
             stack.append(screen)
             self._load_screen_css(screen)
-        self._screen_stacks[mode] = stack
 
-    def switch_mode(self, mode: str) -> None:
+        self._screen_stacks[mode] = stack
+        return await_mount
+
+    def switch_mode(self, mode: str) -> AwaitMount:
         """Switch to a given mode.
 
         Args:
             mode: The mode to switch to.
+
+        Returns:
+            An optionally awaitable object which waits for the screen associated
+                with the mode to be mounted.
 
         Raises:
             UnknownModeError: If trying to switch to an unknown mode.
@@ -1627,12 +1654,18 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.refresh()
 
         if mode not in self._screen_stacks:
-            self._init_mode(mode)
+            await_mount = self._init_mode(mode)
+        else:
+            await_mount = AwaitMount(self.screen, [])
+
         self._current_mode = mode
         self.screen._screen_resized(self.size)
         self.screen.post_message(events.ScreenResume())
+
         self.log.system(f"{self._current_mode!r} is the current mode")
         self.log.system(f"{self.screen} is active")
+
+        return await_mount
 
     def add_mode(
         self, mode: str, base_screen: str | Screen | Callable[[], Screen]
@@ -1751,20 +1784,20 @@ class App(Generic[ReturnType], DOMNode):
 
         update = False
         for path in screen.css_path:
-            if not self.stylesheet.has_source(path):
+            if not self.stylesheet.has_source(str(path), ""):
                 self.stylesheet.read(path)
                 update = True
         if screen.CSS:
             try:
-                screen_css_path = (
-                    f"{inspect.getfile(screen.__class__)}:{screen.__class__.__name__}"
-                )
+                screen_path = inspect.getfile(screen.__class__)
             except (TypeError, OSError):
-                screen_css_path = f"{screen.__class__.__name__}"
-            if not self.stylesheet.has_source(screen_css_path):
+                screen_path = ""
+            screen_class_var = f"{screen.__class__.__name__}.CSS"
+            read_from = (screen_path, screen_class_var)
+            if not self.stylesheet.has_source(screen_path, screen_class_var):
                 self.stylesheet.add_source(
                     screen.CSS,
-                    path=screen_css_path,
+                    read_from=read_from,
                     is_default_css=False,
                     scope=screen._css_type_name if screen.SCOPED_CSS else "",
                 )
@@ -2027,7 +2060,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             *renderables: Text or Rich renderable(s) to display on exit.
         """
-
         assert all(
             is_renderable(renderable) for renderable in renderables
         ), "Can only call panic with strings or Rich renderables"
@@ -2039,6 +2071,7 @@ class App(Generic[ReturnType], DOMNode):
 
         pre_rendered = [Segments(render(renderable)) for renderable in renderables]
         self._exit_renderables.extend(pre_rendered)
+
         self._close_messages_no_wait()
 
     def _handle_exception(self, error: Exception) -> None:
@@ -2088,7 +2121,7 @@ class App(Generic[ReturnType], DOMNode):
             self.error_console.print(self._exit_renderables[0])
             if error_count > 1:
                 self.error_console.print(
-                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]--dev[/] to see all errors.",
+                    f"\n[b]NOTE:[/b] 1 of {error_count} errors shown. Run with [b]textual run --dev[/] to see all errors.",
                     markup=True,
                 )
 
@@ -2125,23 +2158,22 @@ class App(Generic[ReturnType], DOMNode):
         try:
             if self.css_path:
                 self.stylesheet.read_all(self.css_path)
-            for path, css, tie_breaker, scope in self._get_default_css():
+            for read_from, css, tie_breaker, scope in self._get_default_css():
                 self.stylesheet.add_source(
                     css,
-                    path=path,
+                    read_from=read_from,
                     is_default_css=True,
                     tie_breaker=tie_breaker,
                     scope=scope,
                 )
             if self.CSS:
                 try:
-                    app_css_path = (
-                        f"{inspect.getfile(self.__class__)}:{self.__class__.__name__}"
-                    )
+                    app_path = inspect.getfile(self.__class__)
                 except (TypeError, OSError):
-                    app_css_path = f"{self.__class__.__name__}"
+                    app_path = ""
+                read_from = (app_path, f"{self.__class__.__name__}.CSS")
                 self.stylesheet.add_source(
-                    self.CSS, path=app_css_path, is_default_css=False
+                    self.CSS, read_from=read_from, is_default_css=False
                 )
         except Exception as error:
             self._handle_exception(error)
@@ -2229,14 +2261,18 @@ class App(Generic[ReturnType], DOMNode):
         except Exception as error:
             self._handle_exception(error)
 
-    async def _pre_process(self) -> None:
-        pass
+    async def _pre_process(self) -> bool:
+        """Special case for the app, which doesn't need the functionality in MessagePump."""
+        return True
 
     async def _ready(self) -> None:
         """Called immediately prior to processing messages.
 
         May be used as a hook for any operations that should run first.
         """
+
+        ready_time = (perf_counter() - self._start_time) * 1000
+        self.log.info(f"ready in {ready_time:0.0f} milliseconds")
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
@@ -2503,7 +2539,22 @@ class App(Generic[ReturnType], DOMNode):
                     except Exception as error:
                         self._handle_exception(error)
                     else:
-                        self._driver.write(terminal_sequence)
+                        if WINDOWS:
+                            # Combat a problem with Python on Windows.
+                            #
+                            # https://github.com/Textualize/textual/issues/2548
+                            # https://github.com/python/cpython/issues/82052
+                            CHUNK_SIZE = 8192
+                            write = self._driver.write
+                            for chunk in (
+                                terminal_sequence[offset : offset + CHUNK_SIZE]
+                                for offset in range(
+                                    0, len(terminal_sequence), CHUNK_SIZE
+                                )
+                            ):
+                                write(chunk)
+                        else:
+                            self._driver.write(terminal_sequence)
                 finally:
                     self._end_update()
 
@@ -3023,10 +3074,14 @@ class App(Generic[ReturnType], DOMNode):
     def _refresh_notifications(self) -> None:
         """Refresh the notifications on the current screen, if one is available."""
         # If we've got a screen to hand...
-        if self.screen is not None:
+        try:
+            screen = self.screen
+        except ScreenStackError:
+            pass
+        else:
             try:
                 # ...see if it has a toast rack.
-                toast_rack = self.screen.get_child_by_type(ToastRack)
+                toast_rack = screen.get_child_by_type(ToastRack)
             except NoMatches:
                 # It doesn't. That's fine. Either there won't ever be one,
                 # or one will turn up. Things will work out later.

@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class ColorApp(App):
+    CSS_PATH = "color_auto.tcss"
+
     def compose(self):
         yield Label("The quick brown fox jumps over the lazy dog!", id="lbl1")
         yield Label("The quick brown fox jumps over the lazy dog!", id="lbl2")
@@ -11,4 +13,6 @@ class ColorApp(App):
         yield Label("The quick brown fox jumps over the lazy dog!", id="lbl5")
 
 
-app = ColorApp(css_path="color_auto.tcss")
+if __name__ == "__main__":
+    app = ColorApp()
+    app.run()
