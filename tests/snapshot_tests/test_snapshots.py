@@ -927,3 +927,8 @@ def test_missing_vertical_scroll(snap_compare):
 def test_vertical_min_height(snap_compare):
     """Test vertical min height takes border in to account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_min_height.py")
+
+
+def test_vertical_max_height(snap_compare):
+    """Test vertical min height takes border in to account."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
