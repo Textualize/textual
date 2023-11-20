@@ -54,7 +54,14 @@ class WrappedDocumentView:
             new_end: The new end location of the edit in document-space.
         """
 
-        # Get the start and the end lines of the edit in document space
+        # Get all the text on the lines between start and end in document space
+        start_row, _ = start
+        end_row, _ = new_end
+        new_text = self._document.lines[start_row:]
+
+        # Wrap the text on these lines
+        wrapped_new_text = chop_cells(new_text, self._width)
+
         # Convert to wrapped space (remember that the line numbers in wrapped
         # space correspond to the line numbers in coordinate space).
 
