@@ -1,6 +1,10 @@
 """A view into a Document which wraps the document at a certain
 width and can be queried to retrieve lines from the *wrapped* version
-of the document."""
+of the document.
+
+Allows for incremental updates, ensuring that we only re-wrap ranges of the document
+that were influenced by edits.
+"""
 from __future__ import annotations
 
 from rich.cells import chop_cells
@@ -8,7 +12,7 @@ from rich.cells import chop_cells
 from textual.document._document import DocumentBase, Location
 
 
-class WrappedDocumentView:
+class WrappedDocument:
     def __init__(
         self,
         document: DocumentBase,
@@ -40,13 +44,25 @@ class WrappedDocumentView:
 
         self._wrapped_lines = new_wrapped_lines
 
-    def refresh_range(
+    @property
+    def lines(self) -> list[list[str]]:
+        """The lines of the wrapped version of the Document.
+
+        Each index in the returned list represents a line index in the raw
+        document. The list[str] at each index is the content of the raw document line
+        split into multiple lines via wrapping.
+        """
+        return self._wrapped_lines
+
+    def recompute_range(
         self,
         start: Location,
         old_end: Location,
         new_end: Location,
     ) -> None:
         """Incrementally recompute wrapping based on a performed edit.
+
+        This must be called *after* the source document has been edited.
 
         Args:
             start: The start location of the edit that was performed in document-space.
