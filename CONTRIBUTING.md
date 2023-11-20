@@ -20,9 +20,11 @@ You can follow these steps:
  1. Make sure you have Poetry installed ([see instructions here](https://python-poetry.org))
  2. Clone the Textual repository
  3. Run `poetry shell` to create a virtual environment for the dependencies
- 4. Run `make setup` to install all dependencies ([read this](#makefile-commands) if the command `make` doesn't work for you.)
+ 4. Run `make setup` to install all dependencies
  5. Make sure the latest version of Textual was installed by running the command `textual --version`
  6. Install the pre-commit hooks with the command `pre-commit install`
+
+([Read this](#makefile-commands) if the command `make` doesn't work for you.)
 
 ## Demo
 
