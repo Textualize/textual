@@ -5,13 +5,13 @@ from __future__ import annotations
 
 from rich.cells import chop_cells
 
-from textual.document._document import Document, Location
+from textual.document._document import DocumentBase, Location
 
 
 class WrappedDocumentView:
     def __init__(
         self,
-        document: Document,
+        document: DocumentBase,
         width: int = 0,
     ) -> None:
         """Construct a WrappedDocumentView.
@@ -29,17 +29,7 @@ class WrappedDocumentView:
         self._wrapped_lines: list[list[str]] = []
         """Cached wrapped document lines."""
 
-        self._wrap_all()
-
-        self._last_edit_count = document.edit_count
-        """The edit_count of the document last time we wrapped.
-        
-        If the edit_count has not changed since we last performed
-        wrapping, we can rely on any cached data since we know the
-        document must be identical.
-        """
-
-    def _wrap_all(self) -> None:
+    def wrap_all(self) -> None:
         """Wrap and cache all lines in the document."""
         new_wrapped_lines = []
         append_wrapped_line = new_wrapped_lines.append
@@ -63,6 +53,10 @@ class WrappedDocumentView:
             old_end: The old end location of the edit in document-space.
             new_end: The new end location of the edit in document-space.
         """
+
+        # Get the start and the end lines of the edit in document space
+        # Convert to wrapped space (remember that the line numbers in wrapped
+        # space correspond to the line numbers in coordinate space).
 
 
 '''
@@ -124,6 +118,5 @@ there should be an efficient means of converting more than one location which pr
 and similarly for the reverse direction!
 
 ---
-
 
 '''

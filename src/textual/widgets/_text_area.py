@@ -27,6 +27,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
 )
+from textual.document._wrapped_document import WrappedDocumentView
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -343,6 +344,9 @@ TextArea {
         self.soft_wrap = soft_wrap
         """Enable or disable soft wrapping."""
 
+        self._wrapped_document: WrappedDocumentView = WrappedDocumentView()
+        """"""
+
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
         """Get the highlight query for a builtin language.
@@ -656,6 +660,10 @@ TextArea {
             document = Document(text)
 
         self.document = document
+
+        self._wrapped_document = WrappedDocumentView(document)
+        self._wrapped_document.wrap_all()
+
         self._build_highlight_map()
 
     @property

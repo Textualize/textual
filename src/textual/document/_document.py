@@ -91,6 +91,16 @@ class DocumentBase(ABC):
     def newline(self) -> Newline:
         """Return the line separator used in the document."""
 
+    @property
+    @abstractmethod
+    def lines(self) -> list[str]:
+        """Get the lines of the document as a list of strings.
+
+        The strings should *not* include newline characters. The newline
+        character used for the document can be retrieved via the newline
+        property.
+        """
+
     @abstractmethod
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
