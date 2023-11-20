@@ -394,6 +394,11 @@ class Widget(DOMNode):
     """A title to show in the bottom border (if there is one)."""
 
     @property
+    def is_mounted(self) -> bool:
+        """Check if this widget is mounted."""
+        return self._mounted_event.is_set()
+
+    @property
     def siblings(self) -> list[Widget]:
         """Get the widget's siblings (self is removed from the return list).
 
