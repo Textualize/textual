@@ -54,7 +54,7 @@ class WrappedDocument:
         """
         return self._wrapped_lines
 
-    def recompute_range(
+    def refresh_range(
         self,
         start: Location,
         old_end: Location,
@@ -71,8 +71,20 @@ class WrappedDocument:
         """
 
         # Get the start and the end lines of the edit in document space
-        # Convert to wrapped space (remember that the line numbers in wrapped
-        # space correspond to the line numbers in coordinate space).
+        start_row, _ = start
+        end_row, _ = new_end
+
+        # +1 since we go to the start of the next row, and +1 for inclusive.
+        new_lines = self._document.lines[start_row : end_row + 2]
+
+        wrapped_new_lines = []
+        for line in new_lines:
+            wrapped_line = chop_cells(line, self._width)
+            wrapped_new_lines.append(wrapped_line)
+
+        # Replace the range start->old with the new wrapped lines
+        old_end_row, _ = old_end
+        self._wrapped_lines[start_row:old_end_row] = wrapped_new_lines
 
 
 '''
