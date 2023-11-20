@@ -5,6 +5,7 @@ import datetime
 from typing import Optional
 
 from rich.text import Text
+
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
 from textual.events import Mount
@@ -143,10 +144,14 @@ class MonthCalendar(Widget):
         return first_weekday
 
     def watch_year(self) -> None:
-        self.call_after_refresh(self._update_calendar_days)
+        if not self.is_mounted:
+            return
+        self._update_calendar_days()
 
     def watch_month(self) -> None:
-        self.call_after_refresh(self._update_calendar_days)
+        if not self.is_mounted:
+            return
+        self._update_calendar_days()
 
     # def watch_first_weekday(self) -> None:
     #     self._calendar = calendar.Calendar(self.first_weekday)
@@ -154,5 +159,7 @@ class MonthCalendar(Widget):
     #     self._update_calendar_days()
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
+        if not self.is_mounted:
+            return
         table = self.query_one(DataTable)
         table.show_cursor = show_cursor
