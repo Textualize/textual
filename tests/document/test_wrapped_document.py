@@ -42,7 +42,7 @@ def test_wrapped_document_refresh_range():
     )
 
     # Now confirm the resulting wrapped version is as we would expect
-    assert wrapped_document.lines == [["1234", "567"], ["123"], [""]]
+    assert wrapped_document.lines == [["1234", "567"], ["123"]]
 
 
 def test_wrapped_document_refresh_range_new_text_wrapped():
@@ -74,6 +74,5 @@ def test_wrapped_document_refresh_range_new_text_wrapped():
     # Now confirm the resulting wrapped version is as we would expect
     assert wrapped_document.lines == [
         ["1234", "567"],
-        ["12 3", "4567", " 890", "1"],
-        [""],
+        ["12 ", "3456", "7 ", "8901"],
     ]

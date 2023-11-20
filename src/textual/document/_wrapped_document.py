@@ -7,7 +7,8 @@ that were influenced by edits.
 """
 from __future__ import annotations
 
-from rich.cells import chop_cells
+from rich._wrap import divide_line
+from rich.text import Text
 
 from textual.document._document import DocumentBase, Location
 
@@ -30,8 +31,9 @@ class WrappedDocument:
         self._width = width
         """The maximum cell-width per line."""
 
-        self._wrapped_lines: list[list[str]] = []
-        """Cached wrapped document lines."""
+        self._wrap_offsets: list[list[int]] = []
+        """Maps line indices to the offsets within the line wrapping
+        breaks should be added."""
 
     def wrap_all(self) -> None:
         """Wrap and cache all lines in the document."""
@@ -40,9 +42,9 @@ class WrappedDocument:
         width = self._width
 
         for line in self._document.lines:
-            append_wrapped_line(chop_cells(line, width))
+            append_wrapped_line(divide_line(line, width))
 
-        self._wrapped_lines = new_wrapped_lines
+        self._wrap_offsets = new_wrapped_lines
 
     @property
     def lines(self) -> list[list[str]]:
@@ -52,7 +54,11 @@ class WrappedDocument:
         document. The list[str] at each index is the content of the raw document line
         split into multiple lines via wrapping.
         """
-        return self._wrapped_lines
+        wrapped_lines = []
+        for line_index, line in enumerate(self._document.lines):
+            divided = Text(line).divide(self._wrap_offsets[line_index])
+            wrapped_lines.append([section.plain for section in divided])
+        return wrapped_lines
 
     def refresh_range(
         self,
@@ -77,14 +83,14 @@ class WrappedDocument:
         # +1 since we go to the start of the next row, and +1 for inclusive.
         new_lines = self._document.lines[start_row : end_row + 2]
 
-        wrapped_new_lines = []
+        new_wrap_offsets = []
         for line in new_lines:
-            wrapped_line = chop_cells(line, self._width)
-            wrapped_new_lines.append(wrapped_line)
+            wrapped_line = divide_line(line, self._width)
+            new_wrap_offsets.append(wrapped_line)
 
         # Replace the range start->old with the new wrapped lines
         old_end_row, _ = old_end
-        self._wrapped_lines[start_row:old_end_row] = wrapped_new_lines
+        self._wrap_offsets[start_row:old_end_row] = new_wrap_offsets
 
 
 '''
