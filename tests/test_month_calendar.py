@@ -55,6 +55,15 @@ def test_get_date_coordinate_when_out_of_range():
         month_calendar.get_date_coordinate(datetime.date(2021, 1, 1))
 
 
+def test_calendar_is_current_month():
+    month_calendar = MonthCalendar(year=2021, month=6)
+    assert month_calendar.is_current_month is False
+    today = datetime.date.today()
+    month_calendar.year = today.year
+    month_calendar.month = today.month
+    assert month_calendar.is_current_month is True
+
+
 class MonthCalendarApp(App):
     def compose(self) -> ComposeResult:
         yield MonthCalendar(year=2021, month=6)

@@ -52,6 +52,11 @@ class MonthCalendar(Widget):
             show_cursor=self.show_cursor,
         )
 
+    @property
+    def is_current_month(self) -> bool:
+        today = datetime.date.today()
+        return self.year == today.year and self.month == today.month
+
     def previous_year(self) -> None:
         assert self.year is not None
         self.year -= 1
