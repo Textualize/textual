@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import ClassVar, Iterable, Optional
 
+from typing_extensions import TypeGuard
+
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
 from textual.containers import VerticalScroll
@@ -148,7 +150,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         last_index = max(len(self._nodes) - 1, 0)
         return clamp(index, 0, last_index)
 
-    def _is_valid_index(self, index: int | None) -> bool:
+    def _is_valid_index(self, index: int | None) -> TypeGuard[int]:
         """Return True if the current index is valid given the current list of children"""
         if index is None:
             return False
@@ -157,14 +159,12 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     def watch_index(self, old_index: int | None, new_index: int | None) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
-            assert old_index is not None
             old_child = self._nodes[old_index]
             assert isinstance(old_child, ListItem)
             old_child.highlighted = False
 
         new_child: Widget | None
         if self._is_valid_index(new_index):
-            assert new_index is not None
             new_child = self._nodes[new_index]
             assert isinstance(new_child, ListItem)
             new_child.highlighted = True
