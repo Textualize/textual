@@ -154,15 +154,17 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             return False
         return 0 <= index < len(self._nodes)
 
-    def watch_index(self, old_index: int, new_index: int) -> None:
+    def watch_index(self, old_index: int | None, new_index: int | None) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
+            assert old_index is not None
             old_child = self._nodes[old_index]
             assert isinstance(old_child, ListItem)
             old_child.highlighted = False
 
         new_child: Widget | None
         if self._is_valid_index(new_index):
+            assert new_index is not None
             new_child = self._nodes[new_index]
             assert isinstance(new_child, ListItem)
             new_child.highlighted = True
