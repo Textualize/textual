@@ -4,6 +4,8 @@ from textual.widgets import Label
 
 
 class TintApp(App):
+    CSS_PATH = "tint.tcss"
+
     def compose(self):
         color = Color.parse("green")
         for tint_alpha in range(0, 101, 10):
@@ -12,4 +14,6 @@ class TintApp(App):
             yield widget
 
 
-app = TintApp(css_path="tint.tcss")
+if __name__ == "__main__":
+    app = TintApp()
+    app.run()

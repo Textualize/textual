@@ -3,8 +3,12 @@ from textual.widget import Widget
 
 
 class HeightApp(App):
+    CSS_PATH = "height.tcss"
+
     def compose(self):
         yield Widget()
 
 
-app = HeightApp(css_path="height.tcss")
+if __name__ == "__main__":
+    app = HeightApp()
+    app.run()

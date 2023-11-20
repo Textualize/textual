@@ -20,6 +20,6 @@ class CommandPaletteApp(App[None]):
 async def test_clicking_outside_command_palette_closes_it() -> None:
     """Clicking 'outside' the command palette should make it go away."""
     async with CommandPaletteApp().run_test() as pilot:
-        assert len(pilot.app.query(CommandPalette)) == 1
+        assert isinstance(pilot.app.screen, CommandPalette)
         await pilot.click()
-        assert len(pilot.app.query(CommandPalette)) == 0
+        assert not isinstance(pilot.app.screen, CommandPalette)
