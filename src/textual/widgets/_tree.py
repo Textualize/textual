@@ -393,6 +393,20 @@ class TreeNode(Generic[TreeDataType]):
         self._remove_children()
         self._tree._invalidate()
 
+    def refresh(self) -> None:
+        """Initiate a refresh (repaint) of this node.
+
+        This method sets an internal flag to perform a refresh, which will be
+        done on the next idle event. Only one refresh will be done even if this
+        method is called multiple times.
+
+        Use of this method is only required in special cases, such as in code
+        that subclasses the `Tree` class and over-rides or extends its
+        `render_label` method.
+        """
+        self._updates += 1
+        self._tree.refresh_line(self._line)
+
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     """A widget for displaying and navigating data in a tree."""
@@ -913,14 +927,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self.scroll_to_line(line, animate=animate)
 
     def refresh_line(self, line: int) -> None:
-        """Refresh (repaint) a given line in the tree.
-
-        Args:
-            line: Line number.
-        """
-        node = self.get_node_at_line(line)
-        if node:
-            node._updates += 1
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
         self.refresh(region)
 

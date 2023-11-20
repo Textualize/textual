@@ -65,7 +65,7 @@ class TreeApp(App[None]):
             node = self.branch
         tree = self.query_one(Tree)
         tree.test_counter += 1
-        tree.refresh_line(node.line)
+        node.refresh()
 
 
 async def test_refresh_leaf() -> None:
