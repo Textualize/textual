@@ -899,3 +899,12 @@ def test_button_outline(snap_compare):
     Regression test for https://github.com/Textualize/textual/issues/3628
     """
     assert snap_compare(SNAPSHOT_APPS_DIR / "button_outline.py")
+
+
+def test_notifications_loading_overlap_order(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3677.
+
+    This tests that notifications stay on top of loading indicators and it also
+    tests that loading a widget will remove its scrollbars.
+    """
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notifications_above_loading.py", terminal_size=(80, 20))
