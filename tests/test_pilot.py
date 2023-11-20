@@ -6,6 +6,7 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
+from textual.events import MouseDown, MouseUp
 from textual.pilot import OutOfBounds
 from textual.widgets import Button, Label
 
@@ -142,6 +143,42 @@ async def test_pilot_hover_screen():
         ("hover", (5, 5), (-1, -1)),  # Top-left of screen.
         ("hover", (5, 5), (3, -1)),  # Above screen.
         ("hover", (5, 5), (7, -1)),  # Top-right of screen.
+        #
+        ("mouse_down", (80, 24), (100, 12)),  # Right of screen.
+        ("mouse_down", (80, 24), (100, 36)),  # Bottom-right of screen.
+        ("mouse_down", (80, 24), (50, 36)),  # Under screen.
+        ("mouse_down", (80, 24), (-10, 36)),  # Bottom-left of screen.
+        ("mouse_down", (80, 24), (-10, 12)),  # Left of screen.
+        ("mouse_down", (80, 24), (-10, -2)),  # Top-left of screen.
+        ("mouse_down", (80, 24), (50, -2)),  # Above screen.
+        ("mouse_down", (80, 24), (100, -2)),  # Top-right of screen.
+        #
+        ("mouse_down", (5, 5), (7, 3)),  # Right of screen.
+        ("mouse_down", (5, 5), (7, 7)),  # Bottom-right of screen.
+        ("mouse_down", (5, 5), (3, 7)),  # Under screen.
+        ("mouse_down", (5, 5), (-1, 7)),  # Bottom-left of screen.
+        ("mouse_down", (5, 5), (-1, 3)),  # Left of screen.
+        ("mouse_down", (5, 5), (-1, -1)),  # Top-left of screen.
+        ("mouse_down", (5, 5), (3, -1)),  # Above screen.
+        ("mouse_down", (5, 5), (7, -1)),  # Top-right of screen.
+        #
+        ("mouse_up", (80, 24), (100, 12)),  # Right of screen.
+        ("mouse_up", (80, 24), (100, 36)),  # Bottom-right of screen.
+        ("mouse_up", (80, 24), (50, 36)),  # Under screen.
+        ("mouse_up", (80, 24), (-10, 36)),  # Bottom-left of screen.
+        ("mouse_up", (80, 24), (-10, 12)),  # Left of screen.
+        ("mouse_up", (80, 24), (-10, -2)),  # Top-left of screen.
+        ("mouse_up", (80, 24), (50, -2)),  # Above screen.
+        ("mouse_up", (80, 24), (100, -2)),  # Top-right of screen.
+        #
+        ("mouse_up", (5, 5), (7, 3)),  # Right of screen.
+        ("mouse_up", (5, 5), (7, 7)),  # Bottom-right of screen.
+        ("mouse_up", (5, 5), (3, 7)),  # Under screen.
+        ("mouse_up", (5, 5), (-1, 7)),  # Bottom-left of screen.
+        ("mouse_up", (5, 5), (-1, 3)),  # Left of screen.
+        ("mouse_up", (5, 5), (-1, -1)),  # Top-left of screen.
+        ("mouse_up", (5, 5), (3, -1)),  # Above screen.
+        ("mouse_up", (5, 5), (7, -1)),  # Top-right of screen.
     ],
 )
 async def test_pilot_target_outside_screen_errors(method, screen_size, offset):
@@ -175,6 +212,26 @@ async def test_pilot_target_outside_screen_errors(method, screen_size, offset):
         ("hover", (40, 23)),  # Bottom-left corner.
         ("hover", (0, 12)),  # Left edge.
         ("hover", (40, 12)),  # Right in the middle.
+        #
+        ("mouse_down", (0, 0)),  # Top-left corner.
+        ("mouse_down", (40, 0)),  # Top edge.
+        ("mouse_down", (79, 0)),  # Top-right corner.
+        ("mouse_down", (79, 12)),  # Right edge.
+        ("mouse_down", (79, 23)),  # Bottom-right corner.
+        ("mouse_down", (40, 23)),  # Bottom edge.
+        ("mouse_down", (40, 23)),  # Bottom-left corner.
+        ("mouse_down", (0, 12)),  # Left edge.
+        ("mouse_down", (40, 12)),  # Right in the middle.
+        #
+        ("mouse_up", (0, 0)),  # Top-left corner.
+        ("mouse_up", (40, 0)),  # Top edge.
+        ("mouse_up", (79, 0)),  # Top-right corner.
+        ("mouse_up", (79, 12)),  # Right edge.
+        ("mouse_up", (79, 23)),  # Bottom-right corner.
+        ("mouse_up", (40, 23)),  # Bottom edge.
+        ("mouse_up", (40, 23)),  # Bottom-left corner.
+        ("mouse_up", (0, 12)),  # Left edge.
+        ("mouse_up", (40, 12)),  # Right in the middle.
     ],
 )
 async def test_pilot_target_inside_screen_is_fine_with_correct_coordinate_system(
@@ -203,6 +260,14 @@ async def test_pilot_target_inside_screen_is_fine_with_correct_coordinate_system
         ("hover", "#label0"),
         ("hover", "#label90"),
         ("hover", Button),
+        #
+        ("mouse_down", "#label0"),
+        ("mouse_down", "#label90"),
+        ("mouse_down", Button),
+        #
+        ("mouse_up", "#label0"),
+        ("mouse_up", "#label90"),
+        ("mouse_up", Button),
     ],
 )
 async def test_pilot_target_on_widget_that_is_not_visible_errors(method, target):
@@ -217,7 +282,7 @@ async def test_pilot_target_on_widget_that_is_not_visible_errors(method, target)
             await pilot_method(target)
 
 
-@pytest.mark.parametrize("method", ["click", "hover"])
+@pytest.mark.parametrize("method", ["click", "hover", "mouse_down", "mouse_up"])
 async def test_pilot_target_widget_under_another_widget(method):
     """The targeting method should return False when the targeted widget is covered."""
 
@@ -243,7 +308,7 @@ async def test_pilot_target_widget_under_another_widget(method):
         assert (await pilot_method(Button)) is False
 
 
-@pytest.mark.parametrize("method", ["click", "hover"])
+@pytest.mark.parametrize("method", ["click", "hover", "mouse_down", "mouse_up"])
 async def test_pilot_target_visible_widget(method):
     """The targeting method should return True when the targeted widget is hit."""
 
@@ -270,6 +335,16 @@ async def test_pilot_target_visible_widget(method):
         ("hover", (2, 0)),
         ("hover", (10, 23)),
         ("hover", (70, 0)),
+        #
+        ("mouse_down", (0, 0)),
+        ("mouse_down", (2, 0)),
+        ("mouse_down", (10, 23)),
+        ("mouse_down", (70, 0)),
+        #
+        ("mouse_up", (0, 0)),
+        ("mouse_up", (2, 0)),
+        ("mouse_up", (10, 23)),
+        ("mouse_up", (70, 0)),
     ],
 )
 async def test_pilot_target_screen_always_true(method, offset):

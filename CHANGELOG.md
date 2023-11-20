@@ -31,6 +31,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `is_blank`
 - Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
 - Added `restrict`, `type`, `max_length`, and `valid_empty` to Input https://github.com/Textualize/textual/pull/3657
+- Added `Pilot.mouse_down` to simulate `MouseDown` events https://github.com/Textualize/textual/pull/3495
+- Added `Pilot.mouse_up` to simulate `MouseUp` events https://github.com/Textualize/textual/pull/3495
 
 ### Changed
 
@@ -38,6 +40,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
 - Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
 - Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
+- Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
+- Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
 
 
 ## [0.41.0] - 2023-10-31
