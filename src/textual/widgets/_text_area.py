@@ -750,8 +750,6 @@ TextArea {
         Returns:
             A rendered line.
         """
-        width = self.size.width
-
         document = self.document
         scroll_x, scroll_y = self.scroll_offset
 
