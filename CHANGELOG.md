@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
 - Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
 - Method render on a widget could be called before mounting said widget https://github.com/Textualize/textual/issues/2914
+- Fixed `Select` not updating after changing the `prompt` reactive https://github.com/Textualize/textual/issues/2983
 
 ### Added
 
