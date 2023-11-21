@@ -927,6 +927,11 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             self.scroll_to_line(line, animate=animate)
 
     def refresh_line(self, line: int) -> None:
+        """Refresh (repaint) a given line in the tree.
+
+        Args:
+            line: Line number.
+        """
         region = Region(0, line - self.scroll_offset.y, self.size.width, 1)
         self.refresh(region)
 
