@@ -9,7 +9,7 @@ SIMPLE_TEXT = "1234567\n12345\n123456789\n"
 def test_wrap_all():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap_all()
+    wrapped_document.wrap()
 
     assert wrapped_document.lines == [
         ["1234", "567"],
@@ -23,7 +23,7 @@ def test_refresh_range():
     """The post-edit content is not wrapped."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap_all()
+    wrapped_document.wrap()
 
     # Before the document was edited, it wraps as normal.
     assert wrapped_document.lines == [
@@ -51,7 +51,7 @@ def test_refresh_range_new_text_wrapped():
     """The post-edit content itself must be wrapped."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap_all()
+    wrapped_document.wrap()
 
     # Before the document was edited, it wraps as normal.
     assert wrapped_document.lines == [
@@ -83,7 +83,7 @@ def test_refresh_range_new_text_wrapped():
 def test_offset_to_line_index_empty_document():
     document = Document("")
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap_all()
+    wrapped_document.wrap()
 
     assert wrapped_document.lines == [[""]]
 
@@ -104,6 +104,16 @@ def test_offset_to_line_index_empty_document():
 def test_offset_to_line_index(offset, line_index):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap_all()
+    wrapped_document.wrap()
 
     assert wrapped_document.offset_to_line_index(offset) == line_index
+
+
+@pytest.mark.parametrize("offset", [-3, 1000])
+def test_offset_to_line_index_invalid_offset_raises_exception(offset):
+    document = Document(SIMPLE_TEXT)
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap()
+
+    with pytest.raises(ValueError):
+        wrapped_document.offset_to_line_index(offset)

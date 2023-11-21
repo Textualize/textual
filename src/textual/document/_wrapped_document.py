@@ -39,7 +39,7 @@ class WrappedDocument:
         """Allows us to quickly go from a y-offset within the wrapped document
         to the index of the line in the raw document."""
 
-    def wrap_all(self) -> None:
+    def wrap(self) -> None:
         """Wrap and cache all lines in the document."""
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
@@ -103,13 +103,22 @@ class WrappedDocument:
         Args:
             offset: The y-offset within the document.
 
+        Raises:
+            ValueError: When the given offset does not correspond to a line
+                in the document.
+
         Returns:
             The line index corresponding to the given y-offset.
         """
 
-        # The offset will always be greater than or equal to the line index,
-        #  since a wrapped line is always equal to or greater than a line in terms of
-        #  height/y-offset.
+        def invalid_offset_error():
+            raise ValueError(
+                f"No line exists at wrapped document offset {offset!r}. "
+                f"Document wrapped with width {self._width!r}. "
+            )
+
+        if offset < 0:
+            invalid_offset_error()
 
         current_offset = 0
         for line_index, line_offsets in enumerate(self._wrap_offsets):
@@ -117,6 +126,8 @@ class WrappedDocument:
             current_offset += wrapped_line_height
             if current_offset > offset:
                 return line_index
+
+        invalid_offset_error()  # Offset is greater than wrapped document height.
 
     def get_offsets(self, line_index: int) -> list[int]:
         """Given a line index, get the offsets within that line where wrapping
