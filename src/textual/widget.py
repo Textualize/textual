@@ -54,6 +54,8 @@ from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
+from .canvas import Canvas, Rectangle
+from .color import Color
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -3097,8 +3099,18 @@ class Widget(DOMNode):
         Returns:
             Any renderable.
         """
-        render: Text | str = "" if self.is_container else self.css_identifier_styled
-        return render
+        if self.is_container:
+            canvas = Canvas(self.outer_size.width, self.outer_size.height)
+
+            def get_rectangle(widget: Widget) -> Rectangle:
+                offset = widget.region.offset - self.region.offset - (1, 1)
+                width, height = widget.region.size + (2, 2)
+                return Rectangle(offset, width, height, Color.parse("green"))
+
+            primitives = [get_rectangle(widget) for widget in self.children]
+            canvas_renderable = canvas.render(primitives, self.rich_style)
+            return canvas_renderable
+        return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.

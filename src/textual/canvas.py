@@ -13,7 +13,7 @@ from typing_extensions import Literal, TypeAlias
 from ._box_drawing import BOX_CHARACTERS, Quad, box_combine_quads
 from .color import Color
 from .geometry import Offset, clamp
-from .strip import Strip
+from .strip import Strip, StripRenderable
 
 LineType: TypeAlias = Literal["thin", "heavy", "double"]
 
@@ -187,7 +187,9 @@ class Canvas:
             clamp(end, 0, self._height),
         )
 
-    def render(self, primitives: Sequence[Primitive], base_style: Style) -> list[Strip]:
+    def render(
+        self, primitives: Sequence[Primitive], base_style: Style
+    ) -> StripRenderable:
         """Render the canvas.
 
         Args:
@@ -255,7 +257,7 @@ class Canvas:
             else:
                 strips.append(Strip([_Segment(text, base_style)], width))
 
-        return strips
+        return StripRenderable(strips)
 
 
 if __name__ == "__main__":
