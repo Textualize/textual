@@ -500,4 +500,5 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         select_current.placeholder = prompt
         if self.value == self.BLANK:
             select_current.update(self.BLANK)
-        self._setup_options_renderables()
+        option_list = self.query_one(SelectOverlay)
+        option_list.replace_option_prompt_at_index(0, Text(prompt, style="dim"))
