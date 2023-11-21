@@ -396,7 +396,7 @@ class Widget(DOMNode):
     @property
     def is_mounted(self) -> bool:
         """Check if this widget is mounted."""
-        return self._mounted_event.is_set()
+        return self._is_mounted
 
     @property
     def siblings(self) -> list[Widget]:

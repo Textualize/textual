@@ -573,6 +573,9 @@ class Compositor:
                 visible: Whether the widget should be visible by default.
                     This may be overridden by the CSS rule `visibility`.
             """
+            if not widget._is_mounted:
+                return
+
             styles = widget.styles
             visibility = styles.get_rule("visibility")
             if visibility is not None:
