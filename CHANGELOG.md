@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
 - Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
 - Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
+- Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
 
 
 ## [0.41.0] - 2023-10-31

@@ -206,7 +206,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         width: 1fr;
         display: none;
         height: auto;
-        max-height: 10;
+        max-height: 12;
         overlay: screen;
         constrain: y;
     }
