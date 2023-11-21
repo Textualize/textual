@@ -117,3 +117,13 @@ def test_get_offsets(line_index, offsets):
     wrapped_document.wrap()
 
     assert wrapped_document.get_offsets(line_index) == offsets
+
+
+@pytest.mark.parametrize("line_index", [-4, 10000])
+def test_get_offsets_invalid_line_index(line_index):
+    document = Document(SIMPLE_TEXT)
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap()
+
+    with pytest.raises(ValueError):
+        wrapped_document.get_offsets(line_index)
