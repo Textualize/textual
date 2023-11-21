@@ -518,7 +518,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             self._cancel_gather_commands()
             self.dismiss()
 
-    def on_mount(self, _: Mount) -> None:
+    def _on_mount(self, _: Mount) -> None:
         """Configure the command palette once the DOM is ready."""
         self._calling_screen = self.app.screen_stack[-2]
 
@@ -534,7 +534,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         for provider in self._providers:
             provider._post_init()
 
-    async def on_unmount(self) -> None:
+    async def _on_unmount(self) -> None:
         """Shutdown providers when command palette is closed."""
         if self._providers:
             await wait(

@@ -2202,6 +2202,7 @@ class App(Generic[ReturnType], DOMNode):
                         self.check_idle()
                     finally:
                         self._mounted_event.set()
+                        self._is_mounted = True
 
                     Reactive._initialize_object(self)
 

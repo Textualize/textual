@@ -13,11 +13,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
 - Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 - Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
+- Fixed `ScrollableContainer` to receive focus https://github.com/Textualize/textual/pull/3632
 - Fixed app-level queries causing a crash when the command palette is active https://github.com/Textualize/textual/issues/3633
 - Fixed outline not rendering correctly in some scenarios (e.g. on Button widgets) https://github.com/Textualize/textual/issues/3628
 - Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
 - `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
 - Off-by-one in CSS error reporting https://github.com/Textualize/textual/issues/3625
+- Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
+- Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
+- Method render on a widget could be called before mounting said widget https://github.com/Textualize/textual/issues/2914
 
 ### Added
 
@@ -29,12 +33,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `is_blank`
 - Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
 - Added `restrict`, `type`, `max_length`, and `valid_empty` to Input https://github.com/Textualize/textual/pull/3657
+- Added `Pilot.mouse_down` to simulate `MouseDown` events https://github.com/Textualize/textual/pull/3495
+- Added `Pilot.mouse_up` to simulate `MouseUp` events https://github.com/Textualize/textual/pull/3495
+- Added `Widget.is_mounted` property https://github.com/Textualize/textual/pull/3709
 
 ### Changed
 
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
 - Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
+- Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
+- Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
+- Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
+- Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
 
 
 ## [0.41.0] - 2023-10-31
