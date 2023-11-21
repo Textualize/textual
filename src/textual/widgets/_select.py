@@ -278,6 +278,12 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._value: SelectType | None = value
         self._options = options
 
+    @classmethod
+    def from_values(cls, opts: [SelectType]):
+        opts_iterator = [(str(o), o) for o in opts]
+
+        return cls(opts_iterator)
+
     def set_options(self, options: Iterable[tuple[RenderableType, SelectType]]) -> None:
         """Set the options for the Select.
 
