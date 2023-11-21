@@ -405,7 +405,7 @@ class TreeNode(Generic[TreeDataType]):
         `render_label` method.
         """
         self._updates += 1
-        self._tree.refresh_line(self._line)
+        self._tree._refresh_line(self._line)
 
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
@@ -926,7 +926,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if line != -1:
             self.scroll_to_line(line, animate=animate)
 
-    def refresh_line(self, line: int) -> None:
+    def _refresh_line(self, line: int) -> None:
         """Refresh (repaint) a given line in the tree.
 
         Args:
@@ -951,7 +951,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         visible_lines = self._tree_lines[scroll_y : scroll_y + height]
         for line_no, line in enumerate(visible_lines, scroll_y):
             if node in line.path:
-                self.refresh_line(line_no)
+                self._refresh_line(line_no)
 
     @property
     def _tree_lines(self) -> list[_TreeLine]:
