@@ -35,16 +35,20 @@ class WrappedDocument:
         """Maps line indices to the offsets within the line wrapping
         breaks should be added."""
 
+        self._offset_to_document_line: list[int] = []
+        """Allows us to quickly go from a y-offset within the wrapped document
+        to the index of the line in the raw document."""
+
     def wrap_all(self) -> None:
         """Wrap and cache all lines in the document."""
-        new_wrapped_lines = []
-        append_wrapped_line = new_wrapped_lines.append
+        new_wrap_offsets = []
+        append_wrap_offset = new_wrap_offsets.append
         width = self._width
 
         for line in self._document.lines:
-            append_wrapped_line(divide_line(line, width))
+            append_wrap_offset(divide_line(line, width))
 
-        self._wrap_offsets = new_wrapped_lines
+        self._wrap_offsets = new_wrap_offsets
 
     @property
     def lines(self) -> list[list[str]]:
@@ -84,10 +88,44 @@ class WrappedDocument:
         new_lines = self._document.lines[start_row : end_row + 2]
 
         new_wrap_offsets = []
-        for line in new_lines:
-            wrapped_line = divide_line(line, self._width)
-            new_wrap_offsets.append(wrapped_line)
+        for line_index, line in enumerate(new_lines, start_row):
+            wrap_offsets = divide_line(line, self._width)
+            new_wrap_offsets.append(wrap_offsets)
 
         # Replace the range start->old with the new wrapped lines
         old_end_row, _ = old_end
         self._wrap_offsets[start_row:old_end_row] = new_wrap_offsets
+
+    def offset_to_line_index(self, offset: int) -> int:
+        """Given an offset within the wrapped/visual display of the document,
+        return the corresponding line index.
+
+        Args:
+            offset: The y-offset within the document.
+
+        Returns:
+            The line index corresponding to the given y-offset.
+        """
+
+        # The offset will always be greater than or equal to the line index,
+        #  since a wrapped line is always equal to or greater than a line in terms of
+        #  height/y-offset.
+
+        current_offset = 0
+        for line_index, line_offsets in enumerate(self._wrap_offsets):
+            wrapped_line_height = len(line_offsets) + 1
+            current_offset += wrapped_line_height
+            if current_offset >= offset:
+                return line_index
+
+    def get_offsets(self, line_index: int) -> list[int]:
+        """Given a line index, get the offsets within that line where wrapping
+        should occur for the current document.
+
+        Args:
+            line_index: The index of the line within the document.
+
+        Returns:
+            The offsets within the line where wrapping should occur.
+        """
+        return self._wrap_offsets[line_index]

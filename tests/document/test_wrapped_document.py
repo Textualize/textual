@@ -4,7 +4,7 @@ from textual.document._wrapped_document import WrappedDocument
 SIMPLE_TEXT = "1234567\n12345\n123456789\n"
 
 
-def test_wrapped_document_lines():
+def test_wrap_all():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
     wrapped_document.wrap_all()
@@ -17,7 +17,7 @@ def test_wrapped_document_lines():
     ]
 
 
-def test_wrapped_document_refresh_range():
+def test_refresh_range():
     """The post-edit content is not wrapped."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
@@ -45,7 +45,7 @@ def test_wrapped_document_refresh_range():
     assert wrapped_document.lines == [["1234", "567"], ["123"]]
 
 
-def test_wrapped_document_refresh_range_new_text_wrapped():
+def test_refresh_range_new_text_wrapped():
     """The post-edit content itself must be wrapped."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
@@ -54,9 +54,9 @@ def test_wrapped_document_refresh_range_new_text_wrapped():
     # Before the document was edited, it wraps as normal.
     assert wrapped_document.lines == [
         ["1234", "567"],
-        ["1234", "5"],
+        ["1234", "5"],  # selection starts at start of this line
         ["1234", "5678", "9"],
-        [""],
+        [""],  # selection ends here, and includes this line
     ]
 
     start_location = (1, 0)
@@ -76,3 +76,11 @@ def test_wrapped_document_refresh_range_new_text_wrapped():
         ["1234", "567"],
         ["12 ", "3456", "7 ", "8901"],
     ]
+
+
+def test_offset_to_line_index_empty_document():
+    document = Document("")
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap_all()
+
+    assert wrapped_document.lines == [[""]]
