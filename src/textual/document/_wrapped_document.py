@@ -138,6 +138,9 @@ class WrappedDocument:
         Args:
             line_index: The index of the line within the document.
 
+        Raises:
+            ValueError: When `line_index` is out of bounds.
+
         Returns:
             The offsets within the line where wrapping should occur.
         """
