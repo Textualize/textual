@@ -920,7 +920,6 @@ def test_notifications_loading_overlap_order(snap_compare):
 
 def test_missing_vertical_scroll(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/3687"""
-
     assert snap_compare(SNAPSHOT_APPS_DIR / "missing_vertical_scroll.py")
 
 
@@ -930,5 +929,5 @@ def test_vertical_min_height(snap_compare):
 
 
 def test_vertical_max_height(snap_compare):
-    """Test vertical min height takes border in to account."""
+    """Test vertical max height takes border in to account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
