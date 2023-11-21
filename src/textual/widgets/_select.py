@@ -498,6 +498,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             return
         select_current = self.query_one(SelectCurrent)
         select_current.placeholder = prompt
+        if not self._allow_blank:
+            return
         if self.value == self.BLANK:
             select_current.update(self.BLANK)
         option_list = self.query_one(SelectOverlay)
