@@ -139,4 +139,11 @@ class WrappedDocument:
         Returns:
             The offsets within the line where wrapping should occur.
         """
-        return self._wrap_offsets[line_index]
+        wrap_offsets = self._wrap_offsets
+        out_of_bounds = line_index < 0 or line_index >= len(wrap_offsets)
+        if out_of_bounds:
+            raise ValueError(
+                f"The document line index {line_index!r} is out of bounds. "
+                f"The document contains {len(wrap_offsets)!r} lines."
+            )
+        return wrap_offsets[line_index]

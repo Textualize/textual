@@ -3,7 +3,7 @@ import pytest
 from textual.document._document import Document
 from textual.document._wrapped_document import WrappedDocument
 
-SIMPLE_TEXT = "1234567\n12345\n123456789\n"
+SIMPLE_TEXT = "123 4567\n12345\n123456789\n"
 
 
 def test_wrap_all():
@@ -12,7 +12,7 @@ def test_wrap_all():
     wrapped_document.wrap()
 
     assert wrapped_document.lines == [
-        ["1234", "567"],
+        ["123 ", "4567"],
         ["1234", "5"],
         ["1234", "5678", "9"],
         [""],
@@ -25,14 +25,6 @@ def test_refresh_range():
     wrapped_document = WrappedDocument(document, width=4)
     wrapped_document.wrap()
 
-    # Before the document was edited, it wraps as normal.
-    assert wrapped_document.lines == [
-        ["1234", "567"],
-        ["1234", "5"],
-        ["1234", "5678", "9"],
-        [""],
-    ]
-
     start_location = (1, 0)
     old_end_location = (3, 0)
 
@@ -44,7 +36,7 @@ def test_refresh_range():
     )
 
     # Now confirm the resulting wrapped version is as we would expect
-    assert wrapped_document.lines == [["1234", "567"], ["123"]]
+    assert wrapped_document.lines == [["123 ", "4567"], ["123"]]
 
 
 def test_refresh_range_new_text_wrapped():
@@ -52,14 +44,6 @@ def test_refresh_range_new_text_wrapped():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
     wrapped_document.wrap()
-
-    # Before the document was edited, it wraps as normal.
-    assert wrapped_document.lines == [
-        ["1234", "567"],
-        ["1234", "5"],  # selection starts at start of this line
-        ["1234", "5678", "9"],
-        [""],  # selection ends here, and includes this line
-    ]
 
     start_location = (1, 0)
     old_end_location = (3, 0)
@@ -75,7 +59,7 @@ def test_refresh_range_new_text_wrapped():
 
     # Now confirm the resulting wrapped version is as we would expect
     assert wrapped_document.lines == [
-        ["1234", "567"],
+        ["123 ", "4567"],
         ["12 ", "3456", "7 ", "8901"],
     ]
 
@@ -117,3 +101,19 @@ def test_offset_to_line_index_invalid_offset_raises_exception(offset):
 
     with pytest.raises(ValueError):
         wrapped_document.offset_to_line_index(offset)
+
+
+@pytest.mark.parametrize(
+    "line_index, offsets",
+    [
+        (0, [4]),
+        (1, [4]),
+        (2, [4, 8]),
+    ],
+)
+def test_get_offsets(line_index, offsets):
+    document = Document(SIMPLE_TEXT)
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap()
+
+    assert wrapped_document.get_offsets(line_index) == offsets
