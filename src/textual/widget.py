@@ -935,9 +935,8 @@ class Widget(DOMNode):
             ```python
             def compose(self) -> ComposeResult:
                 yield Header()
-                yield Container(
-                    Tree(), Viewer()
-                )
+                yield Label("Press the button below:")
+                yield Button()
                 yield Footer()
             ```
         """
