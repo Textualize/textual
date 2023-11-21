@@ -494,10 +494,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             ) from None
 
     def _watch_prompt(self, prompt: str) -> None:
-        try:
-            select_current = self.query_one(SelectCurrent)
-        except NoMatches:
+        if not self.is_mounted:
             return
+        select_current = self.query_one(SelectCurrent)
         select_current.placeholder = prompt
         if self.value == self.BLANK:
             select_current.update(self.BLANK)
