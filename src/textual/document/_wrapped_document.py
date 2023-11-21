@@ -19,7 +19,7 @@ class WrappedDocument:
         document: DocumentBase,
         width: int = 0,
     ) -> None:
-        """Construct a WrappedDocumentView.
+        """Construct a WrappedDocument.
 
         Args:
             document: The document to wrap.
@@ -115,7 +115,7 @@ class WrappedDocument:
         for line_index, line_offsets in enumerate(self._wrap_offsets):
             wrapped_line_height = len(line_offsets) + 1
             current_offset += wrapped_line_height
-            if current_offset >= offset:
+            if current_offset > offset:
                 return line_index
 
     def get_offsets(self, line_index: int) -> list[int]:

@@ -1,3 +1,5 @@
+import pytest
+
 from textual.document._document import Document
 from textual.document._wrapped_document import WrappedDocument
 
@@ -84,3 +86,24 @@ def test_offset_to_line_index_empty_document():
     wrapped_document.wrap_all()
 
     assert wrapped_document.lines == [[""]]
+
+
+@pytest.mark.parametrize(
+    "offset,line_index",
+    [
+        (0, 0),
+        (1, 0),
+        (2, 1),
+        (3, 1),
+        (4, 2),
+        (5, 2),
+        (6, 2),
+        (7, 3),
+    ],
+)
+def test_offset_to_line_index(offset, line_index):
+    document = Document(SIMPLE_TEXT)
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap_all()
+
+    assert wrapped_document.offset_to_line_index(offset) == line_index
