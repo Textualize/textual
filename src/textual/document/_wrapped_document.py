@@ -25,7 +25,7 @@ class WrappedDocument:
             document: The document to wrap.
             width: The cell-width to wrap at.
         """
-        self._document = document
+        self.document = document
         """The document wrapping is performed on."""
 
         self._width = width
@@ -45,7 +45,7 @@ class WrappedDocument:
         append_wrap_offset = new_wrap_offsets.append
         width = self._width
 
-        for line in self._document.lines:
+        for line in self.document.lines:
             append_wrap_offset(divide_line(line, width))
 
         self._wrap_offsets = new_wrap_offsets
@@ -59,9 +59,10 @@ class WrappedDocument:
         split into multiple lines via wrapping.
         """
         wrapped_lines = []
-        for line_index, line in enumerate(self._document.lines):
+        append = wrapped_lines.append
+        for line_index, line in enumerate(self.document.lines):
             divided = Text(line).divide(self._wrap_offsets[line_index])
-            wrapped_lines.append([section.plain for section in divided])
+            append([section.plain for section in divided])
         return wrapped_lines
 
     def refresh_range(
@@ -85,12 +86,13 @@ class WrappedDocument:
         end_row, _ = new_end
 
         # +1 since we go to the start of the next row, and +1 for inclusive.
-        new_lines = self._document.lines[start_row : end_row + 2]
+        new_lines = self.document.lines[start_row : end_row + 2]
 
         new_wrap_offsets = []
+        append_wrap_offset = new_wrap_offsets.append
         for line_index, line in enumerate(new_lines, start_row):
             wrap_offsets = divide_line(line, self._width)
-            new_wrap_offsets.append(wrap_offsets)
+            append_wrap_offset(wrap_offsets)
 
         # Replace the range start->old with the new wrapped lines
         old_end_row, _ = old_end
