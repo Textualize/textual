@@ -12,7 +12,7 @@ from typing_extensions import Literal, TypeAlias
 
 from ._box_drawing import BOX_CHARACTERS, Quad, box_combine_quads
 from .color import Color
-from .geometry import Offset
+from .geometry import Offset, clamp
 from .strip import Strip
 
 LineType: TypeAlias = Literal["thin", "heavy", "double"]
@@ -52,18 +52,25 @@ class HorizontalLine(Primitive):
 
     def render(self, canvas: Canvas) -> None:
         x, y = self.origin
+        if y < 0 or y > canvas.height - 1:
+            return
         box = canvas.box
         box_line = box[y]
+
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
         combine_quads = box_combine_quads
 
         right = x + self.length - 1
 
-        box_line[x] = combine_quads(box_line[x], (0, line_type_index, 0, 0))
-        box_line[right] = combine_quads(box_line[right], (0, 0, 0, line_type_index))
+        x_range = canvas.x_range(x, x + self.length)
+
+        if x in x_range:
+            box_line[x] = combine_quads(box_line[x], (0, line_type_index, 0, 0))
+        if right in x_range:
+            box_line[right] = combine_quads(box_line[right], (0, 0, 0, line_type_index))
 
         line_quad = (0, line_type_index, 0, line_type_index)
-        for box_x in range(x + 1, x + self.length - 1):
+        for box_x in canvas.x_range(x + 1, x + self.length - 1):
             box_line[box_x] = combine_quads(box_line[box_x], line_quad)
 
         canvas.spans[y].append(_Span(x, x + self.length, self.color))
@@ -80,20 +87,28 @@ class VerticalLine(Primitive):
 
     def render(self, canvas: Canvas) -> None:
         x, y = self.origin
+        if x < 0 or x >= canvas.width:
+            return
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
         box = canvas.box
         combine_quads = box_combine_quads
-        box[y][x] = combine_quads(box[y][x], (0, 0, line_type_index, 0))
+
+        y_range = canvas.y_range(y, y + self.length)
+
+        if y in y_range:
+            box[y][x] = combine_quads(box[y][x], (0, 0, line_type_index, 0))
         bottom = y + self.length - 1
-        box[bottom][x] = combine_quads(box[bottom][x], (line_type_index, 0, 0, 0))
+
+        if bottom in y_range:
+            box[bottom][x] = combine_quads(box[bottom][x], (line_type_index, 0, 0, 0))
         line_quad = (line_type_index, 0, line_type_index, 0)
 
-        for box_y in range(y + 1, y + self.length - 1):
+        for box_y in canvas.y_range(y + 1, y + self.length - 1):
             box[box_y][x] = combine_quads(box[box_y][x], line_quad)
 
         spans = canvas.spans
         span = _Span(x, x + 1, self.color)
-        for y in range(y, y + self.length):
+        for y in y_range:
             spans[y].append(span)
 
 
@@ -131,6 +146,46 @@ class Canvas:
             defaultdict(lambda: (0, 0, 0, 0)) for _ in range(height)
         ]
         self.spans: list[list[_Span]] = [[] for _ in range(height)]
+
+    @property
+    def width(self) -> int:
+        """The canvas width."""
+        return self._width
+
+    @property
+    def height(self) -> int:
+        """The canvas height."""
+        return self._height
+
+    def x_range(self, start: int, end: int) -> range:
+        """Range of x values, with clipping to valid range.
+
+        Args:
+            start: Start index.
+            end: End index.
+
+        Returns:
+            range.
+        """
+        return range(
+            clamp(start, 0, self._width),
+            clamp(end, 0, self._width),
+        )
+
+    def y_range(self, start: int, end: int) -> range:
+        """Range of y values, with clipping to valid range.
+
+        Args:
+            start: Start index.
+            end: End index.
+
+        Returns:
+            range.
+        """
+        return range(
+            clamp(start, 0, self._height),
+            clamp(end, 0, self._height),
+        )
 
     def render(self, primitives: Sequence[Primitive], base_style: Style) -> list[Strip]:
         """Render the canvas.
@@ -210,6 +265,7 @@ if __name__ == "__main__":
         Rectangle(Offset(6, 6), 8, 5, Color.parse("green"), line_type="heavy"),
         Rectangle(Offset(8, 4), 10, 10, Color.parse("blue"), line_type="thin"),
         Rectangle(Offset(10, 11), 7, 4, Color.parse("magenta"), line_type="double"),
+        Rectangle(Offset(-5, -6), 20, 10, Color.parse("magenta"), line_type="double"),
     ]
     strips = canvas.render(primitives, Style.parse("white on #000000"))
 
