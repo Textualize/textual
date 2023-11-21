@@ -394,16 +394,7 @@ class TreeNode(Generic[TreeDataType]):
         self._tree._invalidate()
 
     def refresh(self) -> None:
-        """Initiate a refresh (repaint) of this node.
-
-        This method sets an internal flag to perform a refresh, which will be
-        done on the next idle event. Only one refresh will be done even if this
-        method is called multiple times.
-
-        Use of this method is only required in special cases, such as in code
-        that subclasses the `Tree` class and over-rides or extends its
-        `render_label` method.
-        """
+        """Initiate a refresh (repaint) of this node."""
         self._updates += 1
         self._tree._refresh_line(self._line)
 
