@@ -1,15 +1,18 @@
+import importlib
+import locale
 import re
 
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.widgets import Input
-from textual.widgets._input import _RESTRICT_TYPES
+from textual.widgets import Input, _input
 
 
 def test_input_number_type():
     """Test number type regex."""
-    number = _RESTRICT_TYPES["number"]
+    locale._override_localeconv = {"decimal_point": "."}
+    importlib.reload(_input)
+    number = _input._RESTRICT_TYPES["number"]
     assert re.fullmatch(number, "0")
     assert re.fullmatch(number, "0.")
     assert re.fullmatch(number, ".")
@@ -27,9 +30,31 @@ def test_input_number_type():
     assert not re.fullmatch(number, "nan")
 
 
+def test_input_number_type_non_period_decimal_point():
+    """Test number type regex for locales with different decimal points."""
+    locale._override_localeconv = {"decimal_point": ","}
+    importlib.reload(_input)
+    number = _input._RESTRICT_TYPES["number"]
+    assert re.fullmatch(number, "0")
+    assert re.fullmatch(number, "0,")
+    assert re.fullmatch(number, ",")
+    assert re.fullmatch(number, ",0")
+    assert re.fullmatch(number, "1,1")
+    assert re.fullmatch(number, "1e1")
+    assert re.fullmatch(number, "1,2e")
+    assert re.fullmatch(number, "1,2e10")
+    assert re.fullmatch(number, "1,2E10")
+    assert re.fullmatch(number, "1,2e-")
+    assert re.fullmatch(number, "1,2e-10")
+    assert not re.fullmatch(number, "1,2e10e")
+    assert not re.fullmatch(number, "1f2")
+    assert not re.fullmatch(number, "inf")
+    assert not re.fullmatch(number, "nan")
+
+
 def test_input_integer_type():
     """Test input type regex"""
-    integer = _RESTRICT_TYPES["integer"]
+    integer = _input._RESTRICT_TYPES["integer"]
     assert re.fullmatch(integer, "0")
     assert re.fullmatch(integer, "1")
     assert re.fullmatch(integer, "10")

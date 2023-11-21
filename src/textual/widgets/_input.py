@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import locale
 import re
 from dataclasses import dataclass
 from typing import ClassVar, Iterable
@@ -32,7 +33,7 @@ _POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
 
 _RESTRICT_TYPES = {
     "integer": r"[-+]?\d*",
-    "number": r"[-+]?\d*\.?\d*[eE]?[-+]?\d*",
+    "number": rf"[-+]?\d*[\.{locale.localeconv().get('decimal_point')}]?\d*[eE]?[-+]?\d*",
     "text": None,
 }
 InputType = Literal["integer", "number", "text"]
