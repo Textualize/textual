@@ -92,6 +92,11 @@ class MonthCalendar(Widget):
 
     def _update_week_header(self) -> None:
         table = self.query_one(DataTable)
+        table.clear()
+        old_columns = table.columns.copy()
+        for old_column in old_columns:
+            table.remove_column(old_column)
+
         day_names = calendar.day_abbr
         for day in self._calendar.iterweekdays():
             table.add_column(day_names[day])
@@ -158,10 +163,12 @@ class MonthCalendar(Widget):
             return
         self._update_calendar_days()
 
-    # def watch_first_weekday(self) -> None:
-    #     self._calendar = calendar.Calendar(self.first_weekday)
-    #     self._update_week_header()
-    #     self._update_calendar_days()
+    def watch_first_weekday(self) -> None:
+        self._calendar = calendar.Calendar(self.first_weekday)
+        if not self.is_mounted:
+            return
+        self._update_week_header()
+        self._update_calendar_days()
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
         if not self.is_mounted:

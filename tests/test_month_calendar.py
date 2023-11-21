@@ -115,21 +115,21 @@ async def test_calendar_table_after_reactive_month_change():
         assert table.get_cell_at(Coordinate(0, 0)).plain == "28"
 
 
-# async def test_calendar_table_after_reactive_first_weekday_change():
-#     app = MonthCalendarApp()
-#     async with app.run_test() as pilot:
-#         month_calendar = pilot.app.query_one(MonthCalendar)
-#         month_calendar.first_weekday = 6  # Sunday
-#         table = month_calendar.query_one(DataTable)
-#
-#         actual_labels = [col.label.plain for col in table.columns.values()]
-#         expected_labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-#         assert actual_labels == expected_labels
-#
-#         expected_first_sunday = datetime.date(2021, 5, 30)
-#         actual_first_sunday = month_calendar.calendar_dates[0][0]
-#         assert actual_first_sunday == expected_first_sunday
-#         assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
+async def test_calendar_table_after_reactive_first_weekday_change():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.first_weekday = 6  # Sunday
+        table = month_calendar.query_one(DataTable)
+
+        actual_labels = [col.label.plain for col in table.columns.values()]
+        expected_labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        assert actual_labels == expected_labels
+
+        expected_first_sunday = datetime.date(2021, 5, 30)
+        actual_first_sunday = month_calendar.calendar_dates[0][0]
+        assert actual_first_sunday == expected_first_sunday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "30"
 
 
 async def test_show_cursor():
