@@ -96,7 +96,12 @@ from .messages import CallbackType
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
-from .screen import Screen, ScreenResultCallbackType, ScreenResultType
+from .screen import (
+    Screen,
+    ScreenResultCallbackType,
+    ScreenResultType,
+    _SystemModalScreen,
+)
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -600,8 +605,14 @@ class App(Generic[ReturnType], DOMNode):
             A sequence of widgets.
         """
         try:
-            return (self.screen,)
-        except ScreenError:
+            return (
+                next(
+                    screen
+                    for screen in reversed(self._screen_stack)
+                    if not isinstance(screen, _SystemModalScreen)
+                ),
+            )
+        except StopIteration:
             return ()
 
     @contextmanager
@@ -2191,6 +2202,7 @@ class App(Generic[ReturnType], DOMNode):
                         self.check_idle()
                     finally:
                         self._mounted_event.set()
+                        self._is_mounted = True
 
                     Reactive._initialize_object(self)
 
