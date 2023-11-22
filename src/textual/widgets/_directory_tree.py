@@ -297,7 +297,7 @@ class DirectoryTree(Tree[DirEntry]):
 
         if node._allow_expand:
             prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
-            if self.app.is_mounted(self):
+            if self.is_mounted:
                 node_label.stylize_before(
                     self.get_component_rich_style(
                         "directory-tree--folder", partial=True
@@ -308,7 +308,7 @@ class DirectoryTree(Tree[DirEntry]):
                 "📄 ",
                 base_style,
             )
-            if self.app.is_mounted(self):
+            if self.is_mounted:
                 node_label.stylize_before(
                     self.get_component_rich_style("directory-tree--file", partial=True),
                 )
@@ -319,7 +319,7 @@ class DirectoryTree(Tree[DirEntry]):
                 ),
             )
 
-        if node_label.plain.startswith(".") and self.app.is_mounted(self):
+        if node_label.plain.startswith(".") and self.is_mounted:
             node_label.stylize_before(
                 self.get_component_rich_style("directory-tree--hidden")
             )
