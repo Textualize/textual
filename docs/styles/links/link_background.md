@@ -12,7 +12,7 @@ The `link-background` style sets the background color of the link.
 link-background: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`link-background` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of text enclosed in Textual action links.
+`link-background` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of text enclosed in Textual action links.
 
 ## Example
 
@@ -26,19 +26,19 @@ It also shows that `link-background` does not affect hyperlinks.
 
 === "link_background.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-20 22-23"
     --8<-- "docs/examples/styles/link_background.py"
     ```
 
-    1. This label has an hyperlink so it won't be affected by the `link-background` rule.
+    1. This label has a hyperlink so it won't be affected by the `link-background` rule.
     2. This label has an "action link" that can be styled with `link-background`.
     3. This label has an "action link" that can be styled with `link-background`.
     4. This label has an "action link" that can be styled with `link-background`.
 
-=== "link_background.css"
+=== "link_background.tcss"
 
     ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_background.css"
+    --8<-- "docs/examples/styles/link_background.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.

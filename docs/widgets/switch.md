@@ -20,10 +20,10 @@ The example below shows switches in various states.
     --8<-- "docs/examples/widgets/switch.py"
     ```
 
-=== "switch.css"
+=== "switch.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/switch.css"
+    --8<-- "docs/examples/widgets/switch.tcss"
     ```
 
 ## Reactive Attributes
@@ -31,6 +31,10 @@ The example below shows switches in various states.
 | Name    | Type   | Default | Description              |
 | ------- | ------ | ------- | ------------------------ |
 | `value` | `bool` | `False` | The value of the switch. |
+
+## Messages
+
+- [Switch.Changed][textual.widgets.Switch.Changed]
 
 ## Bindings
 
@@ -49,10 +53,6 @@ The switch widget provides the following component classes:
     options:
       show_root_heading: false
       show_root_toc_entry: false
-
-## Messages
-
-- [Switch.Changed][textual.widgets.Switch.Changed]
 
 ## Additional Notes
 

@@ -34,15 +34,20 @@ In this example we modify the size of the widget's scrollbar to be _much_ larger
     --8<-- "docs/examples/styles/scrollbar_size.py"
     ```
 
-=== "scrollbar_size.css"
+=== "scrollbar_size.tcss"
 
     ```sass hl_lines="13"
-    --8<-- "docs/examples/styles/scrollbar_size.css"
+    --8<-- "docs/examples/styles/scrollbar_size.tcss"
     ```
 
 ### Scrollbar sizes comparison
 
 In the next example we show three containers with differently sized scrollbars.
+
+!!! tip
+
+    If you want to hide the scrollbar but still allow the container to scroll
+    using the mousewheel or keyboard, you can set the scrollbar size to `0`.
 
 === "Output"
 
@@ -55,10 +60,10 @@ In the next example we show three containers with differently sized scrollbars.
     --8<-- "docs/examples/styles/scrollbar_size2.py"
     ```
 
-=== "scrollbar_size2.css"
+=== "scrollbar_size2.tcss"
 
     ```sass hl_lines="6 11 16"
-    --8<-- "docs/examples/styles/scrollbar_size2.css"
+    --8<-- "docs/examples/styles/scrollbar_size2.tcss"
     ```
 
 ## CSS

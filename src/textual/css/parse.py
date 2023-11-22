@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from pathlib import PurePath
 from typing import Iterable, Iterator, NoReturn
 
 from ..suggestions import get_suggestion
@@ -19,7 +18,7 @@ from .model import (
 from .styles import Styles
 from .tokenize import Token, tokenize, tokenize_declarations, tokenize_values
 from .tokenizer import EOFError, ReferencedBy
-from .types import Specificity3
+from .types import CSSLocation, Specificity3
 
 SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "selector": (SelectorType.TYPE, (0, 0, 1)),
@@ -38,7 +37,7 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
     if not css_selectors.strip():
         return ()
 
-    tokens = iter(tokenize(css_selectors, ""))
+    tokens = iter(tokenize(css_selectors, ("", "")))
 
     get_selector = SELECTOR_MAP.get
     combinator: CombinatorType | None = CombinatorType.DESCENDENT
@@ -85,6 +84,7 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
 
 def parse_rule_set(
+    scope: str,
     tokens: Iterator[Token],
     token: Token,
     is_default_rules: bool = False,
@@ -127,6 +127,19 @@ def parse_rule_set(
         token = next(tokens)
 
     if selectors:
+        if scope and selectors[0].name != scope:
+            scope_selector, scope_specificity = get_selector(
+                scope, (SelectorType.TYPE, (0, 0, 0))
+            )
+            selectors.insert(
+                0,
+                Selector(
+                    name=scope,
+                    combinator=CombinatorType.DESCENDENT,
+                    type=scope_selector,
+                    specificity=scope_specificity,
+                ),
+            )
         rule_selectors.append(selectors[:])
 
     declaration = Declaration(token, "")
@@ -139,11 +152,10 @@ def parse_rule_set(
         if token_name in ("whitespace", "declaration_end"):
             continue
         if token_name == "declaration_name":
-            if declaration.tokens:
-                try:
-                    styles_builder.add_declaration(declaration)
-                except DeclarationError as error:
-                    errors.append((error.token, error.message))
+            try:
+                styles_builder.add_declaration(declaration)
+            except DeclarationError as error:
+                errors.append((error.token, error.message))
             declaration = Declaration(token, "")
             declaration.name = token.value.rstrip(":")
         elif token_name == "declaration_set_end":
@@ -151,11 +163,10 @@ def parse_rule_set(
         else:
             declaration.tokens.append(token)
 
-    if declaration.tokens:
-        try:
-            styles_builder.add_declaration(declaration)
-        except DeclarationError as error:
-            errors.append((error.token, error.message))
+    try:
+        styles_builder.add_declaration(declaration)
+    except DeclarationError as error:
+        errors.append((error.token, error.message))
 
     rule_set = RuleSet(
         list(SelectorSet.from_selectors(rule_selectors)),
@@ -168,23 +179,22 @@ def parse_rule_set(
     yield rule_set
 
 
-def parse_declarations(css: str, path: str) -> Styles:
+def parse_declarations(css: str, read_from: CSSLocation) -> Styles:
     """Parse declarations and return a Styles object.
 
     Args:
         css: String containing CSS.
-        path: Path to the CSS, or something else to identify the location.
+        read_from: The location where the CSS was read from.
 
     Returns:
         A styles object.
     """
 
-    tokens = iter(tokenize_declarations(css, path))
+    tokens = iter(tokenize_declarations(css, read_from))
     styles_builder = StylesBuilder()
 
     declaration: Declaration | None = None
     errors: list[tuple[Token, str | HelpText]] = []
-
     while True:
         token = next(tokens, None)
         if token is None:
@@ -193,7 +203,7 @@ def parse_declarations(css: str, path: str) -> Styles:
         if token_name in ("whitespace", "declaration_end", "eof"):
             continue
         if token_name == "declaration_name":
-            if declaration and declaration.tokens:
+            if declaration:
                 try:
                     styles_builder.add_declaration(declaration)
                 except DeclarationError as error:
@@ -207,7 +217,7 @@ def parse_declarations(css: str, path: str) -> Styles:
             if declaration:
                 declaration.tokens.append(token)
 
-    if declaration and declaration.tokens:
+    if declaration:
         try:
             styles_builder.add_declaration(declaration)
         except DeclarationError as error:
@@ -234,7 +244,7 @@ def _unresolved(variable_name: str, variables: Iterable[str], token: Token) -> N
         message += f"; did you mean '${suggested_variable}'?"
 
     raise UnresolvedVariableError(
-        token.path,
+        token.read_from,
         token.code,
         token.start,
         message,
@@ -328,8 +338,9 @@ def substitute_references(
 
 
 def parse(
+    scope: str,
     css: str,
-    path: str | PurePath,
+    read_from: CSSLocation,
     variables: dict[str, str] | None = None,
     variable_tokens: dict[str, list[Token]] | None = None,
     is_default_rules: bool = False,
@@ -339,8 +350,9 @@ def parse(
     and generating rule sets from it.
 
     Args:
-        css: The input CSS
-        path: Path to the CSS
+        scope: CSS type name.
+        css: The input CSS.
+        read_from: The source location of the CSS.
         variables: Substitution variables to substitute tokens for.
         is_default_rules: True if the rules we're extracting are
             default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
@@ -350,13 +362,14 @@ def parse(
     if variable_tokens:
         reference_tokens.update(variable_tokens)
 
-    tokens = iter(substitute_references(tokenize(css, path), variable_tokens))
+    tokens = iter(substitute_references(tokenize(css, read_from), variable_tokens))
     while True:
         token = next(tokens, None)
         if token is None:
             break
         if token.name.startswith("selector_start"):
             yield from parse_rule_set(
+                scope,
                 tokens,
                 token,
                 is_default_rules=is_default_rules,

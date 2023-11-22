@@ -55,6 +55,14 @@ class Option:
         """The prompt for the option."""
         return self.__prompt
 
+    def set_prompt(self, prompt: RenderableType) -> None:
+        """Set the prompt for the option.
+
+        Args:
+            prompt: The new prompt for the option.
+        """
+        self.__prompt = prompt
+
     @property
     def id(self) -> str | None:
         """The optional ID for the option."""
@@ -130,8 +138,8 @@ class OptionList(ScrollView, can_focus=True):
         Binding("end", "last", "Last", show=False),
         Binding("enter", "select", "Select", show=False),
         Binding("home", "first", "First", show=False),
-        Binding("page_down", "page_down", "Page Down", show=False),
-        Binding("page_up", "page_up", "Page Up", show=False),
+        Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("pageup", "page_up", "Page Up", show=False),
         Binding("up", "cursor_up", "Up", show=False),
     ]
     """
@@ -141,8 +149,8 @@ class OptionList(ScrollView, can_focus=True):
     | end | Move the highlight to the last option. |
     | enter | Select the current option. |
     | home | Move the highlight to the first option. |
-    | page_down | Move the highlight down a page of options. |
-    | page_up | Move the highlight up a page of options. |
+    | pagedown | Move the highlight down a page of options. |
+    | pageup | Move the highlight up a page of options. |
     | up | Move the highlight up. |
     """
 
@@ -237,7 +245,6 @@ class OptionList(ScrollView, can_focus=True):
         background: $accent 60%;
     }
     """
-    """The default styling for an `OptionList`."""
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
@@ -533,10 +540,6 @@ class OptionList(ScrollView, can_focus=True):
                 if content.id is not None:
                     # The option has an ID set, create a mapping from that
                     # ID to the option so we can use it later.
-                    if content.id in option_ids:
-                        raise DuplicateID(
-                            f"The option list already has an option with id '{content.id}'"
-                        )
                     option_ids[content.id] = option
                 option += 1
             else:
@@ -551,6 +554,30 @@ class OptionList(ScrollView, can_focus=True):
         # list, set the virtual size.
         self.virtual_size = Size(self.scrollable_content_region.width, len(self._lines))
 
+    def _duplicate_id_check(self, candidate_items: list[OptionListContent]) -> None:
+        """Check the items to be added for any duplicates.
+
+        Args:
+            candidate_items: The items that are going be added.
+
+        Raises:
+            DuplicateID: If there is an attempt to use a duplicate ID.
+        """
+        # We're only interested in options, and only those that have IDs.
+        new_options = [
+            item
+            for item in candidate_items
+            if isinstance(item, Option) and item.id is not None
+        ]
+        # Get the set of new IDs that we're being given.
+        new_option_ids = {option.id for option in new_options}
+        # Now check for duplicates, both internally amongst the new items
+        # incoming, and also against all the current known IDs.
+        if len(new_options) != len(new_option_ids) or not new_option_ids.isdisjoint(
+            self._option_ids
+        ):
+            raise DuplicateID("Attempt made to add options with duplicate IDs.")
+
     def add_options(self, items: Iterable[NewOptionListContent]) -> Self:
         """Add new options to the end of the option list.
 
@@ -562,12 +589,18 @@ class OptionList(ScrollView, can_focus=True):
 
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
+
+        Note:
+            All options are checked for duplicate IDs *before* any option is
+            added. A duplicate ID will cause none of the passed items to be
+            added to the option list.
         """
         # Only work if we have items to add; but don't make a fuss out of
         # zero items to add, just carry on like nothing happened.
         if items:
             # Turn any incoming values into valid content for the list.
             content = [self._make_content(item) for item in items]
+            self._duplicate_id_check(content)
             self._contents.extend(content)
             # Pull out the content that is genuine options and add them to the
             # list of options.
@@ -605,6 +638,7 @@ class OptionList(ScrollView, can_focus=True):
         self._refresh_content_tracking(force=True)
         # Force a re-validation of the highlight.
         self.highlighted = self.highlighted
+        self._mouse_hovering_over = None
         self.refresh()
 
     def remove_option(self, option_id: str) -> Self:
@@ -619,12 +653,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            self._remove_option(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        self._remove_option(self.get_option_index(option_id))
         return self
 
     def remove_option_at_index(self, index: int) -> Self:
@@ -645,6 +674,54 @@ class OptionList(ScrollView, can_focus=True):
             raise OptionDoesNotExist(
                 f"There is no option with an index of {index}"
             ) from None
+        return self
+
+    def _replace_option_prompt(self, index: int, prompt: RenderableType) -> None:
+        """Replace the prompt of an option in the list.
+
+        Args:
+            index: The index of the option to replace the prompt of.
+            prompt: The new prompt for the option.
+
+        Raises:
+            OptionDoesNotExist: If there is no option with the given index.
+        """
+        self.get_option_at_index(index).set_prompt(prompt)
+        self._refresh_content_tracking(force=True)
+        self.refresh()
+
+    def replace_option_prompt(self, option_id: str, prompt: RenderableType) -> Self:
+        """Replace the prompt of the option with the given ID.
+
+        Args:
+            option_id: The ID of the option to replace the prompt of.
+            prompt: The new prompt for the option.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            OptionDoesNotExist: If no option has the given ID.
+        """
+        self._replace_option_prompt(self.get_option_index(option_id), prompt)
+        return self
+
+    def replace_option_prompt_at_index(
+        self, index: int, prompt: RenderableType
+    ) -> Self:
+        """Replace the prompt of the option at the given index.
+
+        Args:
+            index: The index of the option to replace the prompt of.
+            prompt: The new prompt for the option.
+
+        Returns:
+            The `OptionList` instance.
+
+        Raises:
+            OptionDoesNotExist: If there is no option with the given index.
+        """
+        self._replace_option_prompt(index, prompt)
         return self
 
     def clear_options(self) -> Self:
@@ -720,12 +797,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            return self.enable_option_at_index(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        return self.enable_option_at_index(self.get_option_index(option_id))
 
     def disable_option(self, option_id: str) -> Self:
         """Disable the option with the given ID.
@@ -739,12 +811,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
-        try:
-            return self.disable_option_at_index(self._option_ids[option_id])
-        except KeyError:
-            raise OptionDoesNotExist(
-                f"There is no option with an ID of '{option_id}'"
-            ) from None
+        return self.disable_option_at_index(self.get_option_index(option_id))
 
     @property
     def option_count(self) -> int:
@@ -761,7 +828,7 @@ class OptionList(ScrollView, can_focus=True):
             The option at that index.
 
         Raises:
-            OptionDoesNotExist: If there is no option with the index.
+            OptionDoesNotExist: If there is no option with the given index.
         """
         try:
             return self._options[index]
@@ -782,8 +849,22 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             OptionDoesNotExist: If no option has the given ID.
         """
+        return self.get_option_at_index(self.get_option_index(option_id))
+
+    def get_option_index(self, option_id: str) -> int:
+        """Get the index of the option with the given ID.
+
+        Args:
+            option_id: The ID of the option to get the index of.
+
+        Returns:
+            The index of the item with the given ID.
+
+        Raises:
+            OptionDoesNotExist: If no option has the given ID.
+        """
         try:
-            return self.get_option_at_index(self._option_ids[option_id])
+            return self._option_ids[option_id]
         except KeyError:
             raise OptionDoesNotExist(
                 f"There is no option with an ID of '{option_id}'"

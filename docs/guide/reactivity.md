@@ -79,10 +79,10 @@ Let's look at an example which illustrates this. In the following app, the value
     --8<-- "docs/examples/guide/reactivity/refresh01.py"
     ```
 
-=== "refresh01.css"
+=== "refresh01.tcss"
 
     ```sass
-    --8<-- "docs/examples/guide/reactivity/refresh01.css"
+    --8<-- "docs/examples/guide/reactivity/refresh01.tcss"
     ```
 
 === "Output"
@@ -123,10 +123,10 @@ The following example modifies "refresh01.py" so that the greeting has an automa
 
     1. This attribute will update the layout when changed.
 
-=== "refresh02.css"
+=== "refresh02.tcss"
 
     ```sass hl_lines="7-9"
-    --8<-- "docs/examples/guide/reactivity/refresh02.css"
+    --8<-- "docs/examples/guide/reactivity/refresh02.tcss"
     ```
 
 === "Output"
@@ -150,10 +150,10 @@ A common use for this is to restrict numbers to a given range. The following exa
     --8<-- "docs/examples/guide/reactivity/validate01.py"
     ```
 
-=== "validate01.css"
+=== "validate01.tcss"
 
     ```sass
-    --8<-- "docs/examples/guide/reactivity/validate01.css"
+    --8<-- "docs/examples/guide/reactivity/validate01.tcss"
     ```
 
 === "Output"
@@ -183,10 +183,10 @@ The following app will display any color you type in to the input. Try it with a
     2. Called when `self.color` is changed.
     3. New color is assigned here.
 
-=== "watch01.css"
+=== "watch01.tcss"
 
     ```sass
-    --8<-- "docs/examples/guide/reactivity/watch01.css"
+    --8<-- "docs/examples/guide/reactivity/watch01.tcss"
     ```
 
 === "Output"
@@ -219,10 +219,10 @@ The following example uses a computed attribute. It displays three inputs for ea
     1. Combines color components in to a Color object.
     2. The watch method is called when the _result_ of `compute_color` changes.
 
-=== "computed01.css"
+=== "computed01.tcss"
 
     ```sass
-    --8<-- "docs/examples/guide/reactivity/computed01.css"
+    --8<-- "docs/examples/guide/reactivity/computed01.tcss"
     ```
 
 === "Output"

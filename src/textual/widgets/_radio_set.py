@@ -76,7 +76,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
     """The index of the currently-selected radio button."""
 
     @rich.repr.auto
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the pressed button in the set changes.
 
         This message can be handled using an `on_radio_set_changed` method.
@@ -124,7 +124,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         """Initialise the radio set.
 
         Args:
-            buttons: A collection of labels or [`RadioButton`][textual.widgets.RadioButton]s to group together.
+            buttons: The labels or [`RadioButton`][textual.widgets.RadioButton]s to group together.
             name: The name of the radio set.
             id: The ID of the radio set in the DOM.
             classes: The CSS classes of the radio set.

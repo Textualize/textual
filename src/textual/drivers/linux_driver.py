@@ -12,8 +12,9 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING, Any
 
 import rich.repr
+import rich.traceback
 
-from .. import events, log
+from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -164,7 +165,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h\n")
         self.flush()
-        self._key_thread = Thread(target=self.run_input_thread)
+        self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
@@ -233,6 +234,19 @@ class LinuxDriver(Driver):
         if self._writer_thread is not None:
             self._writer_thread.stop()
 
+    def _run_input_thread(self) -> None:
+        """
+        Key thread target that wraps run_input_thread() to die gracefully if it raises
+        an exception
+        """
+        try:
+            self.run_input_thread()
+        except BaseException as error:
+            self._app.call_later(
+                self._app.panic,
+                rich.traceback.Traceback(),
+            )
+
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
         selector = selectors.DefaultSelector()
@@ -242,8 +256,9 @@ class LinuxDriver(Driver):
 
         def more_data() -> bool:
             """Check if there is more data to parse."""
+            EVENT_READ = selectors.EVENT_READ
             for key, events in selector.select(0.01):
-                if events:
+                if events & EVENT_READ:
                     return True
             return False
 
@@ -259,11 +274,9 @@ class LinuxDriver(Driver):
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
-                    if mask | EVENT_READ:
+                    if mask & EVENT_READ:
                         unicode_data = decode(read(fileno, 1024))
                         for event in feed(unicode_data):
                             self.process_event(event)
-        except Exception as error:
-            log(error)
         finally:
             selector.close()

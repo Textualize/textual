@@ -9,6 +9,7 @@ markdown_extensions:
   - admonition
   - def_list
   - meta
+  - footnotes
 
   - toc:
       permalink: true
@@ -34,10 +35,12 @@ markdown_extensions:
       alternate_style: true
   - pymdownx.snippets
   - markdown.extensions.attr_list
+  - pymdownx.details
 
 theme:
   name: material
   custom_dir: docs/custom_theme
+  logo: images/icons/logo light transparent.svg
   features:
     - navigation.tabs
     - navigation.indexes
@@ -46,18 +49,18 @@ theme:
     - content.code.annotate
     - content.code.copy
   palette:
-  - media: "(prefers-color-scheme: light)"
-    scheme: default
-    accent: purple
-    toggle:
-      icon: material/weather-sunny
-      name: Switch to dark mode
-  - media: "(prefers-color-scheme: dark)"
-    scheme: slate
-    primary: black
-    toggle:
-      icon: material/weather-night
-      name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      accent: purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
 
 plugins:
   search:
@@ -78,6 +81,17 @@ plugins:
             - "!^_"
             - "^__init__$"
             - "!^can_replace$"
+            # Hide some methods that Widget subclasses implement but that we don't want
+            # to be shown in the docs.
+            # This is then overridden in widget.md and app.md so that it shows in the
+            # base class.
+            - "!^compose$"
+            - "!^render$"
+            - "!^render_line$"
+            - "!^render_lines$"
+            - "!^get_content_width$"
+            - "!^get_content_height$"
+            - "!^compose_add_child$"
     watch:
       - mkdocs-common.yml
       - mkdocs-nav.yml
@@ -89,10 +103,8 @@ plugins:
       - "**/_template.md"
       - "snippets/*"
 
-
 extra_css:
   - stylesheets/custom.css
-
 
 extra:
   social:

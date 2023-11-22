@@ -2,13 +2,13 @@
 
 Textual uses CSS to apply style to widgets. If you have any exposure to web development you will have encountered CSS, but don't worry if you haven't: this chapter will get you up to speed.
 
+!!! tip "VSCode User?"
+
+    The official [Textual CSS](https://marketplace.visualstudio.com/items?itemName=Textualize.textual-syntax-highlighter) extension adds syntax highlighting for both external files and inline CSS.
+
 ## Stylesheets
 
-CSS stands for _Cascading Stylesheets_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets, but otherwise it is the same idea.
-
-When Textual loads CSS it sets attributes on your widgets' `style` object. The effect is the same as if you had set attributes in Python.
-
-CSS is typically stored in an external file with the extension `.css` alongside your Python code.
+CSS stands for _Cascading Stylesheet_. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies [styles](./styles.md) to widgets, but otherwise it is the same idea.
 
 Let's look at some Textual CSS.
 
@@ -51,6 +51,7 @@ Header {
 The lines inside the curly braces contains CSS _rules_, which consist of a rule name and rule value separated by a colon and ending in a semicolon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semicolons.
 
 The first rule in the above example reads `"dock: top;"`. The rule name is `dock` which tells Textual to place the widget on an edge of the screen. The text after the colon is `top` which tells Textual to dock to the _top_ of the screen. Other valid values for `dock` are "right", "bottom", or "left"; but "top" is most appropriate for a header.
+
 
 ## The DOM
 
@@ -112,11 +113,10 @@ To further explore the DOM, we're going to build a simple dialog with a question
 - `textual.widgets.Static` For simple content.
 - `textual.widgets.Button` For a clickable button.
 
-=== "dom3.py"
 
-    ```python hl_lines="12 13 14 15 16 17 18 19 20"
-    --8<-- "docs/examples/guide/dom3.py"
-    ```
+```python hl_lines="12 13 14 15 16 17 18 19 20" title="dom3.py"
+--8<-- "docs/examples/guide/dom3.py"
+```
 
 We've added a Container to our DOM which (as the name suggests) is a container for other widgets. The container has a number of other widgets passed as positional arguments which will be added as the children of the container. Not all widgets accept child widgets in this way. A Button widget doesn't require any children, for example.
 
@@ -138,7 +138,13 @@ You may recognize some elements in the above screenshot, but it doesn't quite lo
 
 To add a stylesheet set the `CSS_PATH` classvar to a relative path:
 
-```python hl_lines="9"
+
+!!! note
+
+    Textual CSS files are typically given the extension `.tcss` to differentiate them from browser CSS (`.css`).
+
+
+```python hl_lines="9" title="dom4.py"
 --8<-- "docs/examples/guide/dom4.py"
 ```
 
@@ -147,8 +153,8 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 
 Here's the CSS file we are applying:
 
-```sass
---8<-- "docs/examples/guide/dom4.css"
+```sass title="dom4.tcss"
+--8<-- "docs/examples/guide/dom4.tcss"
 ```
 
 The CSS contains a number of rule sets with a selector and a list of rules. You can also add comments with text between `/*` and `*/` which will be ignored by Textual. Add comments to leave yourself reminders or to temporarily disable selectors.
@@ -318,7 +324,10 @@ Here are some other pseudo classes:
 - `:disabled` Matches widgets which are in a disabled state.
 - `:enabled` Matches widgets which are in an enabled state.
 - `:focus` Matches widgets which have input focus.
-- `:focus-within` Matches widgets with a focused a child widget.
+- `:blur` Matches widgets which *do not* have input focus.
+- `:focus-within` Matches widgets with a focused child widget.
+- `:dark` Matches widgets in dark mode (where `App.dark == True`).
+- `:light` Matches widgets in dark mode (where `App.dark == False`).
 
 ## Combinators
 
@@ -434,3 +443,28 @@ Variables can refer to other variables.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
+
+## Initial value
+
+All CSS rules support a special value called `initial`, which will reset a value back to its default.
+
+Let's look at an example.
+The following will set the background of a button to green:
+
+```sass
+Button {
+  background: green;
+}
+```
+
+If we want a specific button (or buttons) to use the default color, we can set the value to `initial`.
+For instance, if we have a widget with a (CSS) class called `dialog`, we could reset the background color of all buttons inside the dialog with the following CSS:
+
+```sass
+.dialog Button {
+  background: initial;
+}
+```
+
+Note that `initial` will set the value back to the value defined in any [default css](./widgets.md#default-css).
+If you use `initial` within default css, it will treat the rule as completely unstyled.

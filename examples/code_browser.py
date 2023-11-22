@@ -11,7 +11,6 @@ import sys
 from rich.syntax import Syntax
 from rich.traceback import Traceback
 
-from textual import events
 from textual.app import App, ComposeResult
 from textual.containers import Container, VerticalScroll
 from textual.reactive import var
@@ -21,7 +20,7 @@ from textual.widgets import DirectoryTree, Footer, Header, Static
 class CodeBrowser(App):
     """Textual code browser app."""
 
-    CSS_PATH = "code_browser.css"
+    CSS_PATH = "code_browser.tcss"
     BINDINGS = [
         ("f", "toggle_files", "Toggle Files"),
         ("q", "quit", "Quit"),
@@ -43,7 +42,7 @@ class CodeBrowser(App):
                 yield Static(id="code", expand=True)
         yield Footer()
 
-    def on_mount(self, event: events.Mount) -> None:
+    def on_mount(self) -> None:
         self.query_one(DirectoryTree).focus()
 
     def on_directory_tree_file_selected(

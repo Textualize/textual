@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import ClassVar, Optional
+from typing import ClassVar, Iterable, Optional
+
+from typing_extensions import TypeGuard
 
 from textual.await_remove import AwaitRemove
 from textual.binding import Binding, BindingType
@@ -38,7 +40,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     index = reactive[Optional[int]](0, always_update=True)
 
-    class Highlighted(Message, bubble=True):
+    class Highlighted(Message):
         """Posted when the highlighted item changes.
 
         Highlighted item is controlled using up/down keys.
@@ -65,7 +67,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             """
             return self.list_view
 
-    class Selected(Message, bubble=True):
+    class Selected(Message):
         """Posted when a list item is selected, e.g. when you press the enter key on it.
 
         Can be handled using `on_list_view_selected` in a subclass of `ListView` or in
@@ -148,13 +150,13 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         last_index = max(len(self._nodes) - 1, 0)
         return clamp(index, 0, last_index)
 
-    def _is_valid_index(self, index: int | None) -> bool:
+    def _is_valid_index(self, index: int | None) -> TypeGuard[int]:
         """Return True if the current index is valid given the current list of children"""
         if index is None:
             return False
         return 0 <= index < len(self._nodes)
 
-    def watch_index(self, old_index: int, new_index: int) -> None:
+    def watch_index(self, old_index: int | None, new_index: int | None) -> None:
         """Updates the highlighting when the index changes."""
         if self._is_valid_index(old_index):
             old_child = self._nodes[old_index]
@@ -172,6 +174,21 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         self._scroll_highlighted_region()
         self.post_message(self.Highlighted(self, new_child))
 
+    def extend(self, items: Iterable[ListItem]) -> AwaitMount:
+        """Append multiple new ListItems to the end of the ListView.
+
+        Args:
+            items: The ListItems to append.
+
+        Returns:
+            An awaitable that yields control to the event loop
+                until the DOM has been updated with the new child items.
+        """
+        await_mount = self.mount(*items)
+        if len(self) == 1:
+            self.index = 0
+        return await_mount
+
     def append(self, item: ListItem) -> AwaitMount:
         """Append a new ListItem to the end of the ListView.
 
@@ -182,10 +199,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             An awaitable that yields control to the event loop
                 until the DOM has been updated with the new child item.
         """
-        await_mount = self.mount(item)
-        if len(self) == 1:
-            self.index = 0
-        return await_mount
+        return self.extend([item])
 
     def clear(self) -> AwaitRemove:
         """Clear all items from the ListView.

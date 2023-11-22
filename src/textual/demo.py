@@ -7,6 +7,7 @@ from rich import box
 from rich.console import RenderableType
 from rich.json import JSON
 from rich.markdown import Markdown
+from rich.markup import escape
 from rich.pretty import Pretty
 from rich.syntax import Syntax
 from rich.table import Table
@@ -22,9 +23,9 @@ from textual.widgets import (
     Footer,
     Header,
     Input,
+    RichLog,
     Static,
     Switch,
-    TextLog,
 )
 
 from_markup = Text.from_markup
@@ -269,36 +270,28 @@ class SubTitle(Static):
     pass
 
 
-class Notification(Static):
-    def on_mount(self) -> None:
-        self.set_timer(3, self.remove)
-
-    def on_click(self) -> None:
-        self.remove()
-
-
 class DemoApp(App[None]):
-    CSS_PATH = "demo.css"
+    CSS_PATH = "demo.tcss"
     TITLE = "Textual Demo"
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "Sidebar"),
         ("ctrl+t", "app.toggle_dark", "Toggle Dark mode"),
         ("ctrl+s", "app.screenshot()", "Screenshot"),
-        ("f1", "app.toggle_class('TextLog', '-hidden')", "Notes"),
-        Binding("ctrl+c,ctrl+q", "app.quit", "Quit", show=True),
+        ("f1", "app.toggle_class('RichLog', '-hidden')", "Notes"),
+        Binding("ctrl+q", "app.quit", "Quit", show=True),
     ]
 
     show_sidebar = reactive(False)
 
     def add_note(self, renderable: RenderableType) -> None:
-        self.query_one(TextLog).write(renderable)
+        self.query_one(RichLog).write(renderable)
 
     def compose(self) -> ComposeResult:
         example_css = Path(self.css_path[0]).read_text()
         yield Container(
             Sidebar(classes="-hidden"),
             Header(show_clock=False),
-            TextLog(classes="-hidden", wrap=False, highlight=True, markup=True),
+            RichLog(classes="-hidden", wrap=False, highlight=True, markup=True),
             Body(
                 QuickAccess(
                     LocationLink("TOP", ".location-top"),
@@ -390,9 +383,9 @@ class DemoApp(App[None]):
         """
         self.bell()
         path = self.save_screenshot(filename, path)
-        message = Text.assemble("Screenshot saved to ", (f"'{path}'", "bold green"))
-        self.add_note(message)
-        self.screen.mount(Notification(message))
+        message = f"Screenshot saved to [bold green]'{escape(str(path))}'[/]"
+        self.add_note(Text.from_markup(message))
+        self.notify(message)
 
 
 app = DemoApp()

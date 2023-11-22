@@ -1,10 +1,9 @@
-from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Button
 
 
 class OnDecoratorApp(App):
-    CSS_PATH = "on_decorator.css"
+    CSS_PATH = "on_decorator.tcss"
 
     def compose(self) -> ComposeResult:
         """Three buttons."""

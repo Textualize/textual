@@ -6,7 +6,7 @@ from textual.widgets import Input, Static
 
 
 class ComputedApp(App):
-    CSS_PATH = "computed01.css"
+    CSS_PATH = "computed01.tcss"
 
     red = reactive(0)
     green = reactive(0)

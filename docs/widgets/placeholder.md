@@ -26,10 +26,10 @@ The example below shows each placeholder variant.
     --8<-- "docs/examples/widgets/placeholder.py"
     ```
 
-=== "placeholder.css"
+=== "placeholder.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/placeholder.css"
+    --8<-- "docs/examples/widgets/placeholder.tcss"
     ```
 
 ## Reactive Attributes
@@ -41,7 +41,15 @@ The example below shows each placeholder variant.
 
 ## Messages
 
-This widget sends no messages.
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
 
 ---
 

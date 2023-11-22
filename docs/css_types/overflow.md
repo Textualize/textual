@@ -4,7 +4,7 @@ The `<overflow>` CSS type represents overflow modes.
 
 ## Syntax
 
-The [`<overflow>`](/css_types/overflow) type can take any of the following values:
+The [`<overflow>`](./overflow.md) type can take any of the following values:
 
 | Value    | Description                            |
 |----------|----------------------------------------|

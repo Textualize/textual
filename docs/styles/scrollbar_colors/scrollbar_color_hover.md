@@ -8,7 +8,7 @@ The `scrollbar-color-hover` style sets the color of the scrollbar when the curso
 <a href="./scrollbar_color_hover">scrollbar-color-hover</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`scrollbar-color-hover` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the color of a scrollbar when the cursor is over it.
+`scrollbar-color-hover` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the color of a scrollbar when the cursor is over it.
 
 ## Example
 
@@ -27,10 +27,10 @@ The `scrollbar-color-hover` style sets the color of the scrollbar when the curso
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
     ```sass hl_lines="7"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS

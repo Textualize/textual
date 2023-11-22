@@ -34,6 +34,16 @@ A classic checkbox control.
 ```{.textual path="docs/examples/widgets/checkbox.py"}
 ```
 
+## Collapsible
+
+Content that may be toggled on and off by clicking a title.
+
+[Collapsible reference](./widgets/collapsible.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/collapsible.py"}
+```
+
 
 ## ContentSwitcher
 
@@ -50,6 +60,15 @@ A powerful data table, with configurable cursors.
 [DataTable reference](./widgets/data_table.md){ .md-button .md-button--primary }
 
 ```{.textual path="docs/examples/widgets/data_table.py"}
+```
+
+## Digits
+
+Display numbers in tall characters.
+
+[Digits reference](./widgets/digits.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/digits.py"}
 ```
 
 ## DirectoryTree
@@ -116,6 +135,15 @@ Display an animation while data is loading.
 [LoadingIndicator reference](./widgets/loading_indicator.md){ .md-button .md-button--primary }
 
 ```{.textual path="docs/examples/widgets/loading_indicator.py"}
+```
+
+## Log
+
+Display and update lines of text (such as from a file).
+
+[Log reference](./widgets/log.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/log.py"}
 ```
 
 ## MarkdownViewer
@@ -198,6 +226,25 @@ A collection of radio buttons, that enforces uniqueness.
 ```{.textual path="docs/examples/widgets/radio_set.py"}
 ```
 
+## RichLog
+
+Display and update text in a scrolling panel.
+
+[RichLog reference](./widgets/rich_log.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/rich_log.py" press="H,i"}
+```
+
+## Rule
+
+A rule widget to separate content, similar to a `<hr>` HTML tag.
+
+[Rule reference](./widgets/rule.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/horizontal_rules.py"}
+```
+
 ## Select
 
 Select from a number of possible options.
@@ -234,7 +281,7 @@ Displays simple static content. Typically used as a base class.
 
 ## Switch
 
-A on / off control, inspired by toggle buttons.
+An on / off control, inspired by toggle buttons.
 
 [Switch reference](./widgets/switch.md){ .md-button .md-button--primary }
 
@@ -260,13 +307,13 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
-## TextLog
+## TextArea
 
-Display and update text in a scrolling panel.
+A multi-line text area which supports syntax highlighting various languages.
 
-[TextLog reference](./widgets/text_log.md){ .md-button .md-button--primary }
+[TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
 
-```{.textual path="docs/examples/widgets/text_log.py" press="H,i"}
+```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
 ```
 
 ## Tree

@@ -1,0 +1,21 @@
+Input {
+    dock: top;
+    margin-top: 1;
+}
+
+#colors {
+    grid-size: 2 1;
+    grid-gutter: 2 4;
+    grid-columns: 1fr;
+    margin: 0 1;
+}
+
+#old {
+    height: 100%;
+    border: wide $secondary;
+}
+
+#new {
+    height: 100%;
+    border: wide $secondary;
+}

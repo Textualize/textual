@@ -3,7 +3,7 @@ from textual.widgets import Static
 
 
 class LayersExample(App):
-    CSS_PATH = "layers.css"
+    CSS_PATH = "layers.tcss"
 
     def compose(self) -> ComposeResult:
         yield Static("box1 (layer = above)", id="box1")

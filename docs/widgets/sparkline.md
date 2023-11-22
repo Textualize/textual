@@ -36,10 +36,10 @@ The example below illustrates the relationship between the data, its length, the
     The largest value of each chunk is 2, 4, and 8, respectively.
     That explains why the first bar is half the height of the second and the second bar is half the height of the third.
 
-=== "sparkline_basic.css"
+=== "sparkline_basic.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/sparkline_basic.css"
+    --8<-- "docs/examples/widgets/sparkline_basic.tcss"
     ```
 
     1. By setting the width to 3 we get three buckets.
@@ -64,10 +64,10 @@ The summary function is what determines the height of each bar.
     2. Each bar will show the mean value of that bucket.
     3. Each bar will show the smaller value of that bucket.
 
-=== "sparkline.css"
+=== "sparkline.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/sparkline.css"
+    --8<-- "docs/examples/widgets/sparkline.tcss"
     ```
 
 ### Changing the colors
@@ -85,10 +85,10 @@ The example below shows how to use component classes to change the colors of the
     --8<-- "docs/examples/widgets/sparkline_colors.py"
     ```
 
-=== "sparkline_colors.css"
+=== "sparkline_colors.tcss"
 
     ```sass
-    --8<-- "docs/examples/widgets/sparkline_colors.css"
+    --8<-- "docs/examples/widgets/sparkline_colors.tcss"
     ```
 
 
@@ -102,7 +102,20 @@ The example below shows how to use component classes to change the colors of the
 
 ## Messages
 
-This widget sends no messages.
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+The sparkline widget provides the following component classes:
+
+::: textual.widgets.Sparkline.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ---
 

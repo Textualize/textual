@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class LinkHoverColorApp(App):
+    CSS_PATH = "link_hover_color.tcss"
+
     def compose(self):
         yield Label(
             "Visit the [link=https://textualize.io]Textualize[/link] website.",
@@ -22,4 +24,6 @@ class LinkHoverColorApp(App):
         )
 
 
-app = LinkHoverColorApp(css_path="link_hover_color.css")
+if __name__ == "__main__":
+    app = LinkHoverColorApp()
+    app.run()

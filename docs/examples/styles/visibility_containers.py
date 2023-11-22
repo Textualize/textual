@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class VisibilityContainersApp(App):
+    CSS_PATH = "visibility_containers.tcss"
+
     def compose(self):
         yield VerticalScroll(
             Horizontal(
@@ -27,4 +29,6 @@ class VisibilityContainersApp(App):
         )
 
 
-app = VisibilityContainersApp(css_path="visibility_containers.css")
+if __name__ == "__main__":
+    app = VisibilityContainersApp()
+    app.run()

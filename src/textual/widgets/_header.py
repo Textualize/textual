@@ -7,7 +7,7 @@ from datetime import datetime
 from rich.text import Text
 
 from ..app import RenderResult
-from ..events import Mount
+from ..events import Click, Mount
 from ..reactive import Reactive
 from ..widget import Widget
 
@@ -22,10 +22,19 @@ class HeaderIcon(Widget):
         width: 8;
         content-align: left middle;
     }
+
+    HeaderIcon:hover {
+        background: $foreground 10%;
+    }
     """
 
     icon = Reactive("⭘")
     """The character to use as the icon within the header."""
+
+    async def on_click(self, event: Click) -> None:
+        """Launch the command palette when icon is clicked."""
+        event.stop()
+        await self.run_action("command_palette")
 
     def render(self) -> RenderResult:
         """Render the header icon.
@@ -160,12 +169,36 @@ class Header(Widget):
     def _on_click(self):
         self.toggle_class("-tall")
 
+    @property
+    def screen_title(self) -> str:
+        """The title that this header will display.
+
+        This depends on [`Screen.title`][textual.screen.Screen.title] and [`App.title`][textual.app.App.title].
+        """
+        screen_title = self.screen.title
+        title = screen_title if screen_title is not None else self.app.title
+        return title
+
+    @property
+    def screen_sub_title(self) -> str:
+        """The sub-title that this header will display.
+
+        This depends on [`Screen.sub_title`][textual.screen.Screen.sub_title] and [`App.sub_title`][textual.app.App.sub_title].
+        """
+        screen_sub_title = self.screen.sub_title
+        sub_title = (
+            screen_sub_title if screen_sub_title is not None else self.app.sub_title
+        )
+        return sub_title
+
     def _on_mount(self, _: Mount) -> None:
-        def set_title(title: str) -> None:
-            self.query_one(HeaderTitle).text = title
+        def set_title() -> None:
+            self.query_one(HeaderTitle).text = self.screen_title
 
         def set_sub_title(sub_title: str) -> None:
-            self.query_one(HeaderTitle).sub_text = sub_title
+            self.query_one(HeaderTitle).sub_text = self.screen_sub_title
 
         self.watch(self.app, "title", set_title)
         self.watch(self.app, "sub_title", set_sub_title)
+        self.watch(self.screen, "title", set_title)
+        self.watch(self.screen, "sub_title", set_sub_title)
