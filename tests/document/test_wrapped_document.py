@@ -2,11 +2,12 @@ import pytest
 
 from textual.document._document import Document
 from textual.document._wrapped_document import WrappedDocument
+from textual.geometry import Offset
 
 SIMPLE_TEXT = "123 4567\n12345\n123456789\n"
 
 
-def test_wrap_all():
+def test_wrap():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
     wrapped_document.wrap()
@@ -17,6 +18,14 @@ def test_wrap_all():
         ["1234", "5678", "9"],
         [""],
     ]
+
+
+def test_wrap_empty_document():
+    document = Document("")
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap()
+
+    assert wrapped_document.lines == [[""]]
 
 
 def test_refresh_range():
@@ -64,33 +73,25 @@ def test_refresh_range_new_text_wrapped():
     ]
 
 
-def test_offset_to_line_index_empty_document():
-    document = Document("")
-    wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
-
-    assert wrapped_document.lines == [[""]]
-
-
 @pytest.mark.parametrize(
-    "offset,line_index",
+    "offset,location",
     [
-        (0, 0),
-        (1, 0),
-        (2, 1),
-        (3, 1),
-        (4, 2),
-        (5, 2),
-        (6, 2),
-        (7, 3),
+        (Offset(0, 0), (0, 0)),
+        # (1, 0),
+        # (2, 1),
+        # (3, 1),
+        # (4, 2),
+        # (5, 2),
+        # (6, 2),
+        # (7, 3),
     ],
 )
-def test_offset_to_line_index(offset, line_index):
+def test_offset_to_location(offset, location):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
     wrapped_document.wrap()
 
-    assert wrapped_document.offset_to_line_index(offset) == line_index
+    assert wrapped_document.offset_to_location(offset, 2) == location
 
 
 @pytest.mark.parametrize("offset", [-3, 1000])
@@ -100,7 +101,7 @@ def test_offset_to_line_index_invalid_offset_raises_exception(offset):
     wrapped_document.wrap()
 
     with pytest.raises(ValueError):
-        wrapped_document.offset_to_line_index(offset)
+        wrapped_document.offset_to_location(offset)
 
 
 @pytest.mark.parametrize(

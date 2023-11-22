@@ -10,7 +10,9 @@ from __future__ import annotations
 from rich._wrap import divide_line
 from rich.text import Text
 
+from textual._cells import cell_width_to_column_index
 from textual.document._document import DocumentBase, Location
+from textual.geometry import Offset
 
 
 class WrappedDocument:
@@ -98,12 +100,13 @@ class WrappedDocument:
         old_end_row, _ = old_end
         self._wrap_offsets[start_row:old_end_row] = new_wrap_offsets
 
-    def offset_to_line_index(self, offset: int) -> int:
+    def offset_to_location(self, offset: Offset, tab_width: int) -> Location:
         """Given an offset within the wrapped/visual display of the document,
         return the corresponding line index.
 
         Args:
             offset: The y-offset within the document.
+            tab_width: The maximum width of tab characters in the document.
 
         Raises:
             ValueError: When the given offset does not correspond to a line
@@ -115,19 +118,47 @@ class WrappedDocument:
 
         def invalid_offset_error():
             raise ValueError(
-                f"No line exists at wrapped document offset {offset!r}. "
-                f"Document wrapped with width {self._width!r}. "
+                f"No location exists at wrapped document offset {offset!r}. "
+                f"Document is wrapped with width {self._width!r}."
             )
 
-        if offset < 0:
+        x, y = offset
+        if y < 0:
             invalid_offset_error()
 
         current_offset = 0
+        target_line_index = None
+        target_line_offsets = None
         for line_index, line_offsets in enumerate(self._wrap_offsets):
             wrapped_line_height = len(line_offsets) + 1
             current_offset += wrapped_line_height
-            if current_offset > offset:
-                return line_index
+            if current_offset > y:
+                # We've found the vertical offset.
+                target_line_index = line_index
+                target_line_offsets = line_offsets
+                break
+
+        if target_line_index is None:
+            invalid_offset_error()
+
+        wrapped_line_index = y - current_offset - 1  # negative indexing
+        if wrapped_line_index < 0:
+            # We've found the relevant line, now find the character by
+            # looking at the character corresponding to the offset width.
+            wrapped_lines = Text(self.document[target_line_index]).divide(
+                target_line_offsets
+            )
+
+            # wrapped_section is the text that appears on a single y_offset within
+            # the TextArea. It's a potentially wrapped portion of a larger line from
+            # the original document.
+            wrapped_section = wrapped_lines[wrapped_line_index].plain
+
+            # Get the column index within this wrapped section of the line
+            target_column_index = cell_width_to_column_index(
+                wrapped_section, x, tab_width
+            )
+            return Location(target_line_index, target_column_index)
 
         invalid_offset_error()  # Offset is greater than wrapped document height.
 
