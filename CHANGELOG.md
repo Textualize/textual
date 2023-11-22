@@ -14,10 +14,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 - Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
 
+### Added
+
+- Added `TreeNode.refresh` https://github.com/Textualize/textual/pull/3639
+
 ### Changed
 
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
+- Breaking change: `Tree.refresh_line` has now become an internal https://github.com/Textualize/textual/pull/3639
 
 ## [0.41.0] - 2023-10-31
 
