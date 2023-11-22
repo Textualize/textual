@@ -27,6 +27,9 @@ class MonthCalendar(Widget):
     month: Reactive[int | None] = Reactive[Optional[int]](None)
     first_weekday: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(True)
+    cursor_date: Reactive[datetime.date | None] = Reactive[Optional[datetime.date]](
+        None
+    )
 
     def __init__(
         self,
@@ -34,6 +37,7 @@ class MonthCalendar(Widget):
         month: int | None = None,
         first_weekday: int = 0,
         show_cursor: bool = True,
+        cursor_date: datetime.date | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -46,6 +50,7 @@ class MonthCalendar(Widget):
         self.first_weekday = first_weekday
         self._calendar = calendar.Calendar(first_weekday)
         self.show_cursor = show_cursor
+        self.cursor_date = cursor_date
 
     def compose(self) -> ComposeResult:
         yield DataTable(
@@ -89,6 +94,9 @@ class MonthCalendar(Widget):
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()
+        if self.show_cursor:
+            assert self.cursor_date is not None
+            self.move_cursor(self.cursor_date)
 
     def _update_week_header(self) -> None:
         table = self.query_one(DataTable)
@@ -153,6 +161,20 @@ class MonthCalendar(Widget):
             )
         return first_weekday
 
+    def validate_cursor_date(
+        self,
+        cursor_date: datetime.date | None,
+    ) -> datetime.date | None:
+        if self.show_cursor is None:
+            return None
+        assert self.year is not None and self.month is not None
+        if cursor_date is None:
+            if self.is_current_month:
+                return datetime.date.today()
+            else:
+                return datetime.date(self.year, self.month, 1)
+        return cursor_date
+
     def watch_year(self) -> None:
         if not self.is_mounted:
             return
@@ -175,3 +197,8 @@ class MonthCalendar(Widget):
             return
         table = self.query_one(DataTable)
         table.show_cursor = show_cursor
+
+    def watch_cursor_date(self, cursor_date: datetime.date | None) -> None:
+        if not self.is_mounted or cursor_date is None:
+            return
+        self.move_cursor(cursor_date)

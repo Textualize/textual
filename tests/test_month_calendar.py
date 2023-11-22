@@ -216,6 +216,27 @@ async def test_next_month_when_month_is_december():
         assert table.get_cell_at(Coordinate(0, 0)).plain == "27"
 
 
+async def test_cursor_defaults_to_first_of_month_if_none_provided():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        assert table.get_cell_at(table.cursor_coordinate).plain == "1"
+
+
+async def test_cursor_defaults_to_today_if_none_provided_and_current_month():
+    class CurrentMonthCalendarApp(App):
+        def compose(self) -> ComposeResult:
+            yield MonthCalendar()
+
+    app = CurrentMonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        today = datetime.date.today()
+        assert table.get_cell_at(table.cursor_coordinate).plain == str(today.day)
+
+
 async def test_move_cursor():
     app = MonthCalendarApp()
     async with app.run_test() as pilot:
