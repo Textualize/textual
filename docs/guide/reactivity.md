@@ -202,6 +202,26 @@ Textual only calls watch methods if the value of a reactive attribute _changes_.
 If the newly assigned value is the same as the previous value, the watch method is not called.
 You can override this behaviour by passing `always_update=True` to `reactive`.
 
+
+### Dynamically watching reactive attributes
+
+You can programmatically add watchers to reactive attributes with the method [`watch`][textual.dom.DOMNode.watch].
+This is useful when you want to react to changes to reactive attributes for which you can't edit the watch methods.
+
+The snippet below shows how the method `watch` is used to update the title shown by the widget `Header`, reacting to changes in the attributes [`App.title`][textual.app.App.title] and [`Screen.title`][textual.screen.Screen.title]:
+
+```python
+class Header(Widget):
+    # ...
+    def _on_mount(self, _: Mount) -> None:
+        def set_title():
+            ...  # Method that sets the title of the header.
+
+        self.watch(self.app, "title", set_title)
+        self.watch(self.screen, "title", set_title)
+```
+
+
 ## Compute methods
 
 Compute methods are the final superpower offered by the `reactive` descriptor. Textual runs compute methods to calculate the value of a reactive attribute. Compute methods begin with `compute_` followed by the name of the reactive value.
