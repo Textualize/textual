@@ -208,7 +208,8 @@ You can override this behaviour by passing `always_update=True` to `reactive`.
 You can programmatically add watchers to reactive attributes with the method [`watch`][textual.dom.DOMNode.watch].
 This is useful when you want to react to changes to reactive attributes for which you can't edit the watch methods.
 
-The snippet below shows how the method `watch` is used to update the title shown by the widget `Header`, reacting to changes in the attributes [`App.title`][textual.app.App.title] and [`Screen.title`][textual.screen.Screen.title]:
+The example below shows a widget `Counter` that defines a reactive attribute `counter`.
+The app that uses `Counter` uses the method `watch` to keep its progress bar synced with the reactive attribute:
 
 === "dynamic_watch.py"
 
