@@ -34,7 +34,7 @@ class WrappedDocument:
         """The maximum cell-width per line."""
 
         self._wrap_offsets: list[list[int]] = []
-        """Maps line indices to the offsets within the line wrapping
+        """Maps line indices to the offsets within the line where wrapping
         breaks should be added."""
 
         self._offset_to_document_line: list[int] = []
