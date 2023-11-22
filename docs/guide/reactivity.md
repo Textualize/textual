@@ -210,16 +210,20 @@ This is useful when you want to react to changes to reactive attributes for whic
 
 The snippet below shows how the method `watch` is used to update the title shown by the widget `Header`, reacting to changes in the attributes [`App.title`][textual.app.App.title] and [`Screen.title`][textual.screen.Screen.title]:
 
-```python
-class Header(Widget):
-    # ...
-    def _on_mount(self, _: Mount) -> None:
-        def set_title():
-            ...  # Method that sets the title of the header.
+=== "dynamic_watch.py"
 
-        self.watch(self.app, "title", set_title)
-        self.watch(self.screen, "title", set_title)
-```
+    ```python hl_lines="9 28-29 31"
+    --8<-- "docs/examples/guide/reactivity/dynamic_watch.py"
+    ```
+
+    1. `counter` is a reactive attribute defined inside `Counter`.
+    2. `update_progress` is a custom callback that will update the progress bar when `counter` changes.
+    3. We use the method `watch` to set `update_progress` as an additional watcher for the reactive attribute `counter`.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/dynamic_watch.py" press="enter,enter,enter"}
+    ```
 
 
 ## Compute methods
