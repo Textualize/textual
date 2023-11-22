@@ -1,6 +1,6 @@
 """
 
-The Remote driver uses the following packet stricture.
+The Remote driver uses the following packet structure.
 
 1 byte for packet type. "D" for data, "M" for meta.
 4 byte little endian integer for the size of the payload.
