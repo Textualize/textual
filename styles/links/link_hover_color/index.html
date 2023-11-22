@@ -7180,29 +7180,33 @@ Try running the example yourself with <code>textual run docs/examples/styles/lin
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="k">class</span> <span class="nc">LinkHoverColorApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="hll">            <span class="s2">&quot;Visit the [link=https://textualize.io]Textualize[/link] website.&quot;</span><span class="p">,</span>
-</span><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl1&quot;</span><span class="p">,</span>  <span class="c1"># (1)!</span>
-</span><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="p">)</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="hll">            <span class="s2">&quot;Click [@click=app.bell]here[/] for the bell sound.&quot;</span><span class="p">,</span>
-</span><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl2&quot;</span><span class="p">,</span>  <span class="c1"># (2)!</span>
-</span><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="p">)</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="hll">            <span class="s2">&quot;You can also click [@click=app.bell]here[/] for the bell sound.&quot;</span><span class="p">,</span>
-</span><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl3&quot;</span><span class="p">,</span>  <span class="c1"># (3)!</span>
-</span><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>        <span class="p">)</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="hll">            <span class="s2">&quot;[@click=app.quit]Exit this application.[/]&quot;</span><span class="p">,</span>
-</span><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl4&quot;</span><span class="p">,</span>  <span class="c1"># (4)!</span>
-</span><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="p">)</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
-<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="n">app</span> <span class="o">=</span> <span class="n">LinkHoverColorApp</span><span class="p">(</span><span class="n">css_path</span><span class="o">=</span><span class="s2">&quot;link_hover_color.tcss&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;link_hover_color.tcss&quot;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="hll">            <span class="s2">&quot;Visit the [link=https://textualize.io]Textualize[/link] website.&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl1&quot;</span><span class="p">,</span>  <span class="c1"># (1)!</span>
+</span><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>        <span class="p">)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="hll">            <span class="s2">&quot;Click [@click=app.bell]here[/] for the bell sound.&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl2&quot;</span><span class="p">,</span>  <span class="c1"># (2)!</span>
+</span><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="p">)</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="hll">            <span class="s2">&quot;You can also click [@click=app.bell]here[/] for the bell sound.&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl3&quot;</span><span class="p">,</span>  <span class="c1"># (3)!</span>
+</span><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="p">)</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="hll">            <span class="s2">&quot;[@click=app.quit]Exit this application.[/]&quot;</span><span class="p">,</span>
+</span><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a><span class="hll">            <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;lbl4&quot;</span><span class="p">,</span>  <span class="c1"># (4)!</span>
+</span><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>        <span class="p">)</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">LinkHoverColorApp</span><span class="p">()</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <ol>
-<li>This label has an hyperlink so it won't be affected by the <code>link-hover-color</code> rule.</li>
+<li>This label has a hyperlink so it won't be affected by the <code>link-hover-color</code> rule.</li>
 <li>This label has an "action link" that can be styled with <code>link-hover-color</code>.</li>
 <li>This label has an "action link" that can be styled with <code>link-hover-color</code>.</li>
 <li>This label has an "action link" that can be styled with <code>link-hover-color</code>.</li>

@@ -6739,6 +6739,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.is_mounted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_mounted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.is_scrollable" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -8747,6 +8758,17 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.is_mounted" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_mounted
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.is_scrollable" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -10541,8 +10563,8 @@ cache-key.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widget.Widget.disabled" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10869,6 +10891,29 @@ cache-key.</p>
   <div class="doc doc-contents ">
   
       <p>Is the user dragging the vertical scrollbar?</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widget.Widget.is_mounted" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">is_mounted</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.is_mounted" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_mounted</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Check if this widget is mounted.</p>
   </div>
 
 </div>
@@ -12599,10 +12644,9 @@ There are other reasons why a widget may not be visible.</p>
   <summary>Example</summary>
   <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">yield</span> <span class="n">Header</span><span class="p">()</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">yield</span> <span class="n">Container</span><span class="p">(</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="n">Tree</span><span class="p">(),</span> <span class="n">Viewer</span><span class="p">()</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">)</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Press the button below:&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">yield</span> <span class="n">Button</span><span class="p">()</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
 </code></pre></div>
 </details>
   </div>
@@ -12814,7 +12858,8 @@ There are other reasons why a widget may not be visible.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get a child of a give type.</p>
+      <p>Get the first immediate child of a given type.</p>
+<p>Only returns exact matches, and so will not match subclasses of the given type.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -12835,7 +12880,7 @@ There are other reasons why a widget may not be visible.</p>
           <td>
             <em>required</em>
           </td>
-          <td><p>The type of the expected child.</p></td>
+          <td><p>The type of the child to search for.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12853,7 +12898,7 @@ There are other reasons why a widget may not be visible.</p>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.css.query.NoMatches" href="../query/#textual.css.query.NoMatches">NoMatches</a></code>
           </td>
-          <td><p>If no valid child is found.</p></td>
+          <td><p>If no matching child is found.</p></td>
         </tr>
     </tbody>
   </table>
@@ -12871,7 +12916,7 @@ There are other reasons why a widget may not be visible.</p>
           <td>
                 <code><span title="textual.widget.Widget.ExpectType">ExpectType</span></code>
           </td>
-          <td><p>A widget.</p></td>
+          <td><p>The first immediate child widget with the expected type.</p></td>
         </tr>
     </tbody>
   </table>

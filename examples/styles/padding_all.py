@@ -1,9 +1,11 @@
 from textual.app import App
-from textual.containers import Container, Grid
+from textual.containers import Grid
 from textual.widgets import Placeholder
 
 
 class PaddingAllApp(App):
+    CSS_PATH = "padding_all.tcss"
+
     def compose(self):
         yield Grid(
             Placeholder("no padding", id="p1"),
@@ -17,4 +19,6 @@ class PaddingAllApp(App):
         )
 
 
-app = PaddingAllApp(css_path="padding_all.tcss")
+if __name__ == "__main__":
+    app = PaddingAllApp()
+    app.run()

@@ -5173,6 +5173,17 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#blank-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blank state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reactive-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5233,6 +5244,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         BINDINGS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.BLANK" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BLANK
       
     </span>
   </a>
@@ -5334,6 +5356,28 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.is_blank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_blank()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._select.Select.set_options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5346,6 +5390,39 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        textual.widgets.select
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.select.EmptySelectError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EmptySelectError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.select.InvalidSelectValueError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidSelectValueError
+      
+    </span>
+  </a>
   
 </li>
       
@@ -7197,6 +7274,17 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#blank-state" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Blank state
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reactive-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7257,6 +7345,17 @@ window.onload = async (event) => {
     <span class="md-ellipsis">
       
         BINDINGS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.BLANK" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        BLANK
       
     </span>
   </a>
@@ -7358,6 +7457,28 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.clear" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        clear()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._select.Select.is_blank" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        is_blank()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._select.Select.set_options" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -7370,6 +7491,39 @@ window.onload = async (event) => {
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.select" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        textual.widgets.select
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.select.EmptySelectError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EmptySelectError
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.widgets.select.InvalidSelectValueError" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        InvalidSelectValueError
+      
+    </span>
+  </a>
   
 </li>
       
@@ -7781,6 +7935,10 @@ For instance, if the data type for your values is an integer, you would type the
 </div>
 </div>
 </div>
+<h2 id="blank-state">Blank state<a class="headerlink" href="#blank-state" title="Permanent link">&para;</a></h2>
+<p>The widget <code>Select</code> has an option <code>allow_blank</code> for its constructor.
+If set to <code>True</code>, the widget may be in a state where there is no selection, in which case its value will be the special constant <a class="autorefs autorefs-internal" href="#textual.widgets._select.Select.BLANK"><code>Select.BLANK</code></a>.
+The auxiliary methods <a class="autorefs autorefs-internal" href="#textual.widgets._select.Select.is_blank"><code>Select.is_blank</code></a> and <a class="autorefs autorefs-internal" href="#textual.widgets._select.Select.clear"><code>Select.clear</code></a> provide a convenient way to check if the widget is in this state and to set this state, respectively.</p>
 <h2 id="reactive-attributes">Reactive Attributes<a class="headerlink" href="#reactive-attributes" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -7800,8 +7958,8 @@ For instance, if the data type for your values is an integer, you would type the
 </tr>
 <tr>
 <td><code>value</code></td>
-<td><code>SelectType</code> | <code>None</code></td>
-<td><code>None</code></td>
+<td><code>SelectType</code> | <code>_NoSelection</code></td>
+<td><a class="autorefs autorefs-internal" href="#textual.widgets._select.Select.BLANK"><code>Select.BLANK</code></a></td>
 <td>Current value of the Select.</td>
 </tr>
 </tbody>
@@ -7862,7 +8020,7 @@ For instance, if the data type for your values is an integer, you would type the
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">prompt</span><span class="o">=</span><span class="s2">&quot;Select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">allow_blank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">value</span><span class="o">=</span><span class="n">BLANK</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -7872,7 +8030,7 @@ For instance, if the data type for your values is an integer, you would type the
 
   <div class="doc doc-contents first">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.widgets._select.SelectType">SelectType</span>]</code>, <code><a class="autorefs autorefs-internal" title="textual.containers.Vertical" href="../../api/containers/#textual.containers.Vertical">Vertical</a></code></p>
+        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<a class="autorefs autorefs-internal" title="textual.widgets._select.SelectType" href="../../api/types/#textual.types.SelectType">SelectType</a>]</code>, <code><a class="autorefs autorefs-internal" title="textual.containers.Vertical" href="../../api/containers/#textual.containers.Vertical">Vertical</a></code></p>
 
   
       <p>Widget to select from a list of possible options.</p>
@@ -7895,12 +8053,13 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
           <td>
             <strong><code>options</code></strong>
             <br>
-                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <span title="textual.widgets._select.SelectType">SelectType</span>]]</code>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" title="rich.console.RenderableType" href="https://rich.readthedocs.io/en/stable/reference/console.html#rich.console.RenderableType">RenderableType</a>, <a class="autorefs autorefs-internal" title="textual.widgets._select.SelectType" href="../../api/types/#textual.types.SelectType">SelectType</a>]]</code>
           </td>
           <td>
             <em>required</em>
           </td>
-          <td><p>Options to select from.</p></td>
+          <td><p>Options to select from. If no options are provided then
+<code>allow_blank</code> must be set to <code>True</code>.</p></td>
         </tr>
         <tr>
           <td>
@@ -7922,18 +8081,22 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
           <td>
             <code>True</code>
           </td>
-          <td><p>Allow the selection of a blank option.</p></td>
+          <td><p>Enables or disables the ability to have the widget in a state
+with no selection made, in which case its value is set to the constant
+<a class="autorefs autorefs-internal" href="#textual.widgets._select.Select.BLANK"><code>Select.BLANK</code></a>.</p></td>
         </tr>
         <tr>
           <td>
             <strong><code>value</code></strong>
             <br>
-                <code><span title="textual.widgets._select.SelectType">SelectType</span> | None</code>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._select.SelectType" href="../../api/types/#textual.types.SelectType">SelectType</a> | <a class="autorefs autorefs-internal" title="textual.widgets._select.NoSelection" href="../../api/types/#textual.types.NoSelection">NoSelection</a></code>
           </td>
           <td>
-            <code>None</code>
+            <code>BLANK</code>
           </td>
-          <td><p>Initial value (should be one of the values in <code>options</code>).</p></td>
+          <td><p>Initial value selected. Should be one of the values in <code>options</code>.
+If no initial value is set and <code>allow_blank</code> is <code>False</code>, the widget
+will auto-select the first available option.</p></td>
         </tr>
         <tr>
           <td>
@@ -7978,6 +8141,24 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
             <code>False</code>
           </td>
           <td><p>Whether the control is disabled or not.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._select.EmptySelectError" href="#textual.widgets.select.EmptySelectError">EmptySelectError</a></code>
+          </td>
+          <td><p>If no options are provided and <code>allow_blank</code> is <code>False</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8034,6 +8215,30 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
 
 
+<h3 id="textual.widgets._select.Select.BLANK" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">BLANK</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._select.Select.BLANK" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BLANK</span> <span class="o">=</span> <span class="n">BLANK</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Constant to flag that the widget has no selection.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widgets._select.Select.expanded" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">expanded</span>
 
@@ -8063,8 +8268,8 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._select.Select.prompt" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8092,14 +8297,17 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
   </span>
 
 <a href="#textual.widgets._select.Select.value" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">value</span><span class="p">:</span> <span class="n">var</span><span class="p">[</span><span class="n">SelectType</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">SelectType</span><span class="p">]](</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="kc">None</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">value</span><span class="p">:</span> <span class="n">var</span><span class="p">[</span><span class="n">SelectType</span> <span class="o">|</span> <span class="n">NoSelection</span><span class="p">]</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Union</span><span class="p">[</span><span class="n">SelectType</span><span class="p">,</span> <span class="n">NoSelection</span><span class="p">]</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">](</span><span class="n">BLANK</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>The value of the select.</p>
+      <p>The value of the selection.</p>
+<p>If the widget has no selection, its value will be <a class="autorefs autorefs-internal" href="#textual.widgets._select.Select.BLANK"><code>Select.BLANK</code></a>.
+Setting this to an illegal value will raise a <a class="autorefs autorefs-internal" href="#textual.widgets.select.InvalidSelectValueError"><code>InvalidSelectValueError</code></a>
+exception.</p>
   </div>
 
 </div>
@@ -8156,7 +8364,7 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
   </span>
 
 <a href="#textual.widgets._select.Select.Changed.control" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">control</span><span class="p">:</span> <span class="n">Select</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">control</span><span class="p">:</span> <span class="n">Select</span><span class="p">[</span><span class="n">SelectType</span><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8250,6 +8458,88 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
 
 
 
+<h3 id="textual.widgets._select.Select.clear" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clear</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._select.Select.clear" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clear the selection if <code>allow_blank</code> is <code>True</code>.</p>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._select.InvalidSelectValueError" href="#textual.widgets.select.InvalidSelectValueError">InvalidSelectValueError</a></code>
+          </td>
+          <td><p>If <code>allow_blank</code> is set to <code>False</code>.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._select.Select.is_blank" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">is_blank</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._select.Select.is_blank" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">is_blank</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Indicates whether this <code>Select</code> is blank or not.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p>True if the selection is blank, False otherwise.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.widgets._select.Select.set_options" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">set_options</span>
   
@@ -8264,6 +8554,8 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
   <div class="doc doc-contents ">
   
       <p>Set the options for the Select.</p>
+<p>This will reset the selection. The selection will be empty, if allowed, otherwise
+the first valid option is picked.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8279,12 +8571,32 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
           <td>
             <strong><code>options</code></strong>
             <br>
-                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" title="rich.console.RenderableType" href="https://rich.readthedocs.io/en/stable/reference/console.html#rich.console.RenderableType">RenderableType</a>, <span title="textual.widgets._select.SelectType">SelectType</span>]]</code>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-external" title="rich.console.RenderableType" href="https://rich.readthedocs.io/en/stable/reference/console.html#rich.console.RenderableType">RenderableType</a>, <a class="autorefs autorefs-internal" title="textual.widgets._select.SelectType" href="../../api/types/#textual.types.SelectType">SelectType</a>]]</code>
           </td>
           <td>
             <em>required</em>
           </td>
-          <td><p>An iterable of tuples containing (STRING, VALUE).</p></td>
+          <td><p>An iterable of tuples containing the renderable to display for each
+option and the corresponding internal value.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._select.EmptySelectError" href="#textual.widgets.select.EmptySelectError">EmptySelectError</a></code>
+          </td>
+          <td><p>If the options iterable is empty and <code>allow_blank</code> is
+<code>False</code>.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8292,6 +8604,92 @@ When activated with <span class="keys"><kbd class="key-enter">Enter</kbd></span>
   </div>
 
 </div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-module">
+
+
+<a id="textual.widgets.select"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.widgets.select.EmptySelectError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">EmptySelectError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.widgets.select.EmptySelectError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Raised when a <a class="autorefs autorefs-internal" href="#textual.widgets.Select"><code>Select</code></a> has no options and <code>allow_blank=False</code>.</p>
+
+
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-class">
+
+
+
+
+
+<h2 id="textual.widgets.select.InvalidSelectValueError" class="doc doc-heading">
+        <span class="doc doc-object-name doc-class-name">InvalidSelectValueError</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-class"><code>class</code></small>
+  </span>
+
+<a href="#textual.widgets.select.InvalidSelectValueError" class="headerlink" title="Permanent link">&para;</a></h2>
+
+
+  <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#Exception">Exception</a></code></p>
+
+  
+      <p>Raised when setting a <a class="autorefs autorefs-internal" href="#textual.widgets.Select"><code>Select</code></a> to an unknown option.</p>
+
+
+
+  </div>
+
+</div>
+
 
 
 

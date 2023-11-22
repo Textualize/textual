@@ -2,1257 +2,1257 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://textual.textualize.io/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/FAQ/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/getting_started/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/help/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/roadmap/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/tutorial/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widget_gallery/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/app/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/await_remove/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/binding/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/command/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/containers/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/content_switcher/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/coordinate/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/dom_node/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/errors/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/events/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/filter/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/fuzzy_matcher/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/geometry/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/logger/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/logging/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/map_geometry/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/message/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/message_pump/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/on/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/pilot/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/query/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/reactive/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/screen/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/scroll_view/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/scrollbar/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/strip/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/suggester/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/system_commands_source/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/timer/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/types/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/validation/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/walk/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/widget/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/work/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/worker/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/api/worker_manager/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/03/15/no-async-async-with-python/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/12/08/be-the-keymaster/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/12/30/a-better-asyncio-sleep-for-windows-to-fix-animation/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/02/11/the-heisenbug-lurking-in-your-async-code/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/03/08/overhead-of-python-asyncio-tasks/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/12/20/a-year-of-building-for-the-terminal/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/11/06/new-blog/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/01/09/so-youre-looking-for-a-wee-bit-of-textual-help/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/11/26/on-dog-food-the-original-metaverse-and-not-being-bored/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/11/22/what-i-learned-from-my-first-non-trivial-pr/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/07/29/pull-requests-are-cake-or-puppies/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/02/15/textual-0110-adds-a-beautiful-markdown-widget/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/02/24/textual-0120-adds-syntactical-sugar-and-batch-updates/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/03/09/textual-0140-shakes-up-posting-messages/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/03/13/textual-0150-adds-a-tabs-widget/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/03/22/textual-0160-adds-tabbedcontent-and-border-titles/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/03/29/textual-0170-adds-translucent-screens-and-option-list/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/04/04/textual-0180-adds-api-for-managing-concurrent-workers/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/05/03/textual-0230-improves-message-handling/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/05/08/textual-0240-adds-a-select-control/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/06/01/textual-adds-sparklines-selection-list-input-validation-and-tool-tips/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/07/03/textual-0290-refactors-dev-tools/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/07/17/textual-0300-adds-desktop-style-notifications/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/09/21/textual-0380-adds-a-syntax-aware-textarea/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/11/08/version-040/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/12/11/version-060/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/09/15/textual-0370-adds-a-command-palette/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/12/07/letting-your-cook-multitask-while-bringing-water-to-a-boil/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/07/27/using-rich-inspect-to-interrogate-python-objects/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/11/24/spinners-and-progress-bars-in-textual/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2022/11/20/stealing-open-source-code-from-textual/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/09/18/things-i-learned-while-building-textuals-textarea/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/10/04/announcing-textual-plotext/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/09/06/what-is-textual-web/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/2023/06/06/to-tui-or-not-to-tui/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/border/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/horizontal/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/integer/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/name/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/number/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/overflow/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/percentage/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/scalar/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/text_align/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/text_style/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/css_types/vertical/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/blur/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/click/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/descendant_blur/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/descendant_focus/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/enter/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/focus/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/hide/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/key/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/leave/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/load/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mount/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_capture/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_down/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_move/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_release/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_scroll_down/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_scroll_up/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/mouse_up/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/paste/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/resize/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/screen_resume/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/screen_suspend/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/events/show/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/examples/styles/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/CSS/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/actions/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/animation/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/app/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/command_palette/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/design/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/devtools/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/events/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/input/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/layout/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/queries/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/reactivity/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/screens/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/styles/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/testing/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/widgets/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/guide/workers/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/how-to/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/how-to/center-things/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/how-to/design-a-layout/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/reference/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/align/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/background/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_subtitle_align/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_subtitle_background/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_subtitle_color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_subtitle_style/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_title_align/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_title_background/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_title_color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/border_title_style/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/box_sizing/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/content_align/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/display/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/dock/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/height/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/layer/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/layers/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/layout/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/margin/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/max_height/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/max_width/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/min_height/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/min_width/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/offset/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/opacity/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/outline/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/overflow/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/padding/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_gutter/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_size/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/text_align/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/text_opacity/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/text_style/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/tint/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/visibility/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/width/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/column_span/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/grid_columns/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/grid_gutter/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/grid_rows/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/grid_size/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/grid/row_span/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/link_background/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/link_color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/link_hover_background/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/link_hover_color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/link_hover_style/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/links/link_style/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_background/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_background_active/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_background_hover/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_color_active/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_color_hover/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/styles/scrollbar_colors/scrollbar_corner_color/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/button/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/checkbox/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/collapsible/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/content_switcher/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/data_table/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/digits/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/directory_tree/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/footer/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/header/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/input/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/label/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/list_item/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/list_view/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/loading_indicator/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/log/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/markdown/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/markdown_viewer/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/option_list/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/placeholder/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/pretty/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/progress_bar/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/radiobutton/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/radioset/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/rich_log/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/rule/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/select/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/selection_list/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/sparkline/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/static/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/switch/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/tabbed_content/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/tabs/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/text_area/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/toast/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/widgets/tree/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/archive/2023/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/archive/2022/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/category/devlog/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/category/release/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/category/news/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/page/2/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/page/3/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/page/4/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/archive/2023/page/2/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/archive/2023/page/3/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/archive/2022/page/2/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/category/devlog/page/2/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://textual.textualize.io/blog/category/release/page/2/</loc>
-         <lastmod>2023-10-31</lastmod>
+         <lastmod>2023-11-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
