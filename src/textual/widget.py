@@ -87,6 +87,9 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
+_NULL_STYLE = Style()
+
+
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
@@ -391,6 +394,11 @@ class Widget(DOMNode):
     """A title to show in the bottom border (if there is one)."""
 
     @property
+    def is_mounted(self) -> bool:
+        """Check if this widget is mounted."""
+        return self._is_mounted
+
+    @property
     def siblings(self) -> list[Widget]:
         """Get the widget's siblings (self is removed from the return list).
 
@@ -603,16 +611,18 @@ class Widget(DOMNode):
         raise NoMatches(f"No descendant found with id={id!r}")
 
     def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
-        """Get a child of a give type.
+        """Get the first immediate child of a given type.
+
+        Only returns exact matches, and so will not match subclasses of the given type.
 
         Args:
-            expect_type: The type of the expected child.
+            expect_type: The type of the child to search for.
 
         Raises:
-            NoMatches: If no valid child is found.
+            NoMatches: If no matching child is found.
 
         Returns:
-            A widget.
+            The first immediate child widget with the expected type.
         """
         for child in self._nodes:
             # We want the child with the exact type (not subclasses)
@@ -925,9 +935,8 @@ class Widget(DOMNode):
             ```python
             def compose(self) -> ComposeResult:
                 yield Header()
-                yield Container(
-                    Tree(), Viewer()
-                )
+                yield Label("Press the button below:")
+                yield Button()
                 yield Footer()
             ```
         """
@@ -1014,7 +1023,9 @@ class Widget(DOMNode):
             min_width = styles.min_width.resolve(
                 content_container, viewport, width_fraction
             )
-            content_width = max(content_width, min_width)
+            if is_border_box:
+                min_width -= gutter.width
+            content_width = max(content_width, min_width, Fraction(0))
 
         if styles.max_width is not None:
             # Restrict to maximum width, if set
@@ -1056,13 +1067,17 @@ class Widget(DOMNode):
             min_height = styles.min_height.resolve(
                 content_container, viewport, height_fraction
             )
-            content_height = max(content_height, min_height)
+            if is_border_box:
+                min_height -= gutter.height
+            content_height = max(content_height, min_height, Fraction(0))
 
         if styles.max_height is not None:
             # Restrict maximum height, if set
             max_height = styles.max_height.resolve(
                 content_container, viewport, height_fraction
             )
+            if is_border_box:
+                max_height -= gutter.height
             content_height = min(content_height, max_height)
 
         content_height = max(Fraction(0), content_height)
@@ -2961,7 +2976,7 @@ class Widget(DOMNode):
         lines = list(
             align_lines(
                 lines,
-                Style(),
+                _NULL_STYLE,
                 self.size,
                 align_horizontal,
                 align_vertical,

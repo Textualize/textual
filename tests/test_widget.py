@@ -383,3 +383,14 @@ async def test_loading():
         label.loading = False  # Setting to same value is a null-op
         await pilot.pause()
         assert len(label.query(LoadingIndicator)) == 0
+
+
+async def test_is_mounted_property():
+    class TestWidgetIsMountedApp(App):
+        pass
+
+    async with TestWidgetIsMountedApp().run_test() as pilot:
+        widget = Widget()
+        assert widget.is_mounted is False
+        await pilot.app.mount(widget)
+        assert widget.is_mounted is True
