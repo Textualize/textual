@@ -6,6 +6,7 @@ from typing import Optional
 
 from rich.text import Text
 
+from textual import on
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
 from textual.events import Mount
@@ -56,6 +57,15 @@ class MonthCalendar(Widget):
         yield DataTable(
             show_cursor=self.show_cursor,
         )
+
+    @on(DataTable.CellHighlighted)
+    def _on_datatable_cell_highlighted(
+        self,
+        event: DataTable.CellHighlighted,
+    ) -> None:
+        event.stop()
+        row, column = event.coordinate
+        self.cursor_date = self.calendar_dates[row][column]
 
     @property
     def is_current_month(self) -> bool:
@@ -201,4 +211,5 @@ class MonthCalendar(Widget):
     def watch_cursor_date(self, cursor_date: datetime.date | None) -> None:
         if not self.is_mounted or cursor_date is None:
             return
-        self.move_cursor(cursor_date)
+        with self.prevent(DataTable.CellHighlighted):
+            self.move_cursor(cursor_date)

@@ -247,3 +247,16 @@ async def test_move_cursor():
         expected_coordinate = month_calendar.get_date_coordinate(destination_date)
         actual_coordinate = table.cursor_coordinate
         assert actual_coordinate == expected_coordinate
+
+
+async def test_cell_highlighted_updates_cursor_date():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        await pilot.press("left")
+        expected_date = datetime.date(2021, 5, 31)
+        assert month_calendar.cursor_date == expected_date
+        await pilot.press("right")
+        expected_date = datetime.date(2021, 6, 1)
+        await pilot.press("right")
+        expected_date = datetime.date(2021, 6, 2)
