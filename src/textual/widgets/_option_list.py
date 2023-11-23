@@ -26,11 +26,11 @@ from ..strip import Strip
 
 
 class DuplicateID(Exception):
-    """Exception raised if a duplicate ID is used."""
+    """Raised if a duplicate ID is used when adding options to an option list."""
 
 
 class OptionDoesNotExist(Exception):
-    """Exception raised when a request has been made for an option that doesn't exist."""
+    """Raised when a request has been made for an option that doesn't exist."""
 
 
 class Option:
@@ -126,7 +126,7 @@ NewOptionListContent: TypeAlias = "OptionListContent | None | RenderableType"
 """The type of a new item of option list content to be added to an option list.
 
 This type represents all of the types that will be accepted when adding new
-content to the option list. This is a superset of `OptionListContent`.
+content to the option list. This is a superset of [`OptionListContent`][textual.types.OptionListContent].
 """
 
 

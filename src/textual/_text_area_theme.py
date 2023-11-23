@@ -110,7 +110,7 @@ class TextAreaTheme:
             )
 
     @classmethod
-    def get_builtin_theme(cls, theme_name: str) -> "TextAreaTheme" | None:
+    def get_builtin_theme(cls, theme_name: str) -> TextAreaTheme | None:
         """Get a `TextAreaTheme` by name.
 
         Given a `theme_name`, return the corresponding `TextAreaTheme` object.
@@ -120,7 +120,7 @@ class TextAreaTheme:
 
         Returns:
             The `TextAreaTheme` corresponding to the name or `None` if the theme isn't
-            found.
+                found.
         """
         return _BUILTIN_THEMES.get(theme_name)
 
