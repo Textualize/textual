@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
+- Added support for various modified edit and navigation keys in urxvt https://github.com/Textualize/textual/pull/3739
 
 ## [0.42.0] - 2023-11-22
 
