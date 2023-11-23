@@ -24,6 +24,20 @@ class InvalidWeekdayNumber(Exception):
 
 
 class MonthCalendar(Widget):
+    # TODO: min-width?
+    DEFAULT_CSS = """
+    MonthCalendar {
+        height: auto;
+        width: auto;
+        min-height: 7;
+    }
+
+    MonthCalendar > DataTable {
+        height: auto;
+        width: auto;
+    }
+    """
+
     year: Reactive[int | None] = Reactive[Optional[int]](None)
     month: Reactive[int | None] = Reactive[Optional[int]](None)
     first_weekday: Reactive[int] = Reactive(0)
