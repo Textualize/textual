@@ -71,7 +71,7 @@ class LoadingIndicator(Widget):
             widget: A widget.
 
         Returns:
-            AwaitMount: An awaitable for mounting the indicator.
+            An awaitable for mounting the indicator.
         """
         self.add_class("-overlay")
         await_mount = widget.mount(self)

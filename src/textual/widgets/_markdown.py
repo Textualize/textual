@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path, PurePath
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Optional
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -22,6 +22,10 @@ from ..widget import AwaitMount, Widget
 from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
+"""Information about the table of contents of a markdown document.
+
+The triples encode the level, the label, and the optional block id of each heading.
+"""
 
 
 class Navigator:
@@ -709,7 +713,7 @@ class Markdown(Widget):
         """Process an unhandled token.
 
         Args:
-            token: The token to handle.
+            token: The MarkdownIt token to handle.
 
         Returns:
             Either a widget to be added to the output, or `None`.
@@ -872,6 +876,8 @@ class Markdown(Widget):
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
+    """Displays a table of contents for a markdown document."""
+
     DEFAULT_CSS = """
     MarkdownTableOfContents {
         width: auto;
@@ -884,7 +890,8 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     }
     """
 
-    table_of_contents = reactive["TableOfContentsType | None"](None, init=False)
+    table_of_contents = reactive[Optional[TableOfContentsType]](None, init=False)
+    """Underlying data to populate the table of contents widget."""
 
     def __init__(
         self,
@@ -903,7 +910,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
-        self.markdown = markdown
+        self.markdown: Markdown = markdown
         """The Markdown document associated with this table of contents."""
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -917,10 +924,10 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
 
     def watch_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
         """Triggered when the table of contents changes."""
-        self.set_table_of_contents(table_of_contents)
+        self.rebuild_table_of_contents(table_of_contents)
 
-    def set_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
-        """Set the table of contents.
+    def rebuild_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
+        """Rebuilds the tree representation of the table of contents data.
 
         Args:
             table_of_contents: Table of contents.
@@ -1005,12 +1012,12 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     @property
     def document(self) -> Markdown:
-        """The Markdown document object."""
+        """The [`Markdown`][textual.widgets.Markdown] document widget."""
         return self.query_one(Markdown)
 
     @property
     def table_of_contents(self) -> MarkdownTableOfContents:
-        """The table of contents widget"""
+        """The [table of contents][textual.widgets.markdown.MarkdownTableOfContents] widget."""
         return self.query_one(MarkdownTableOfContents)
 
     def _on_mount(self, _: Mount) -> None:

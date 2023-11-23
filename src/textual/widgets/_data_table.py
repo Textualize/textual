@@ -40,6 +40,7 @@ RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, Curs
 CursorType = Literal["cell", "row", "column", "none"]
 """The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
+"""Type used for cells in the DataTable."""
 
 _DEFAULT_CELL_X_PADDING = 1
 """Default padding to use on each side of a column in the data table."""
