@@ -28,7 +28,8 @@ class AppWithNoSources(AppWithActiveCommandPalette):
 async def test_no_app_command_sources() -> None:
     """An app with no sources declared should work fine."""
     async with AppWithNoSources().run_test() as pilot:
-        assert pilot.app.query_one(CommandPalette)._provider_classes == App.COMMANDS
+        assert isinstance(pilot.app.screen, CommandPalette)
+        assert pilot.app.screen._provider_classes == App.COMMANDS
 
 
 class AppWithSources(AppWithActiveCommandPalette):
@@ -38,10 +39,8 @@ class AppWithSources(AppWithActiveCommandPalette):
 async def test_app_command_sources() -> None:
     """Command sources declared on an app should be in the command palette."""
     async with AppWithSources().run_test() as pilot:
-        assert (
-            pilot.app.query_one(CommandPalette)._provider_classes
-            == AppWithSources.COMMANDS
-        )
+        assert isinstance(pilot.app.screen, CommandPalette)
+        assert pilot.app.screen._provider_classes == AppWithSources.COMMANDS
 
 
 class AppWithInitialScreen(App[None]):
@@ -61,7 +60,8 @@ class ScreenWithNoSources(Screen[None]):
 async def test_no_screen_command_sources() -> None:
     """An app with a screen with no sources declared should work fine."""
     async with AppWithInitialScreen(ScreenWithNoSources()).run_test() as pilot:
-        assert pilot.app.query_one(CommandPalette)._provider_classes == App.COMMANDS
+        assert isinstance(pilot.app.screen, CommandPalette)
+        assert pilot.app.screen._provider_classes == App.COMMANDS
 
 
 class ScreenWithSources(ScreenWithNoSources):
@@ -71,8 +71,9 @@ class ScreenWithSources(ScreenWithNoSources):
 async def test_screen_command_sources() -> None:
     """Command sources declared on a screen should be in the command palette."""
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
+        assert isinstance(pilot.app.screen, CommandPalette)
         assert (
-            pilot.app.query_one(CommandPalette)._provider_classes
+            pilot.app.screen._provider_classes
             == App.COMMANDS | ScreenWithSources.COMMANDS
         )
 
@@ -91,7 +92,8 @@ class CombinedSourceApp(App[None]):
 async def test_app_and_screen_command_sources_combine() -> None:
     """If an app and the screen have command sources they should combine."""
     async with CombinedSourceApp().run_test() as pilot:
+        assert isinstance(pilot.app.screen, CommandPalette)
         assert (
-            pilot.app.query_one(CommandPalette)._provider_classes
+            pilot.app.screen._provider_classes
             == CombinedSourceApp.COMMANDS | ScreenWithSources.COMMANDS
         )

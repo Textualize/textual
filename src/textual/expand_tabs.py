@@ -10,14 +10,18 @@ _TABS_SPLITTER_RE = re.compile(r"(.*?\t|.+?$)")
 def get_tab_widths(line: str, tab_size: int = 4) -> list[tuple[str, int]]:
     """Splits a string line into tuples (str, int).
 
+    Each tuple represents a section of the line which precedes a tab character.
+    The string is the string text that appears before the tab character (excluding the tab).
+    The integer is the width that the tab character is expanded to.
+
     Args:
         line: The text to expand tabs in.
         tab_size: Number of cells in a tab.
 
     Returns:
-        Each tuple represents a section of the line which precedes a tab character.
-            The string is the string text that appears before the tab character (excluding the tab).
-            The integer is the width that the tab character is expanded to.
+        A list of tuples representing the line split on tab characters,
+            and the widths of the tabs after tab expansion is applied.
+
     """
 
     parts: list[tuple[str, int]] = []
