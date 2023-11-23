@@ -1,8 +1,24 @@
+"""
+Box drawing utilities for Canvas.
+
+The box drawing characters have zero to four lines radiating from the center of the glyph.
+There are three line types: thin, heavy, and double. These are indicated by 1, 2, and 3 respectively (0 for no line).
+
+This code represents the characters as a tuple of 4 integers, (<top>, <right>, <bottom>, <left>). This format
+makes it possible to logically combine characters together, as there is no mathematical relationship in the unicode db.
+
+Note that not all combinations are possible. Characters can have a maximum of 2 border types in a single glyph.
+There are also fewer characters for the "double" line type.
+
+"""
+
 from functools import lru_cache
 
 from typing_extensions import TypeAlias
 
 Quad: TypeAlias = tuple[int, int, int, int]
+"""Four values indicating the type of the line (0 for no line)."""
+
 
 BOX_CHARACTERS: dict[Quad, str] = {
     (0, 0, 0, 0): " ",
@@ -326,33 +342,6 @@ BOX_CHARACTERS: dict[Quad, str] = {
     (3, 3, 3, 3): "╬",
 }
 
-REVERSE_BOX_CHARACTERS: dict[str, Quad] = {
-    character: quad for quad, character in sorted(BOX_CHARACTERS.items(), reverse=True)
-}
-
-
-@lru_cache(1024)
-def box_combine(box1: str, box2: str) -> str:
-    """Combine two box drawing characters.
-
-    Args:
-        box1: Existing box character.
-        box2: New box drawing character.
-
-    Returns:
-        A new box drawing character.
-    """
-    top1, right1, bottom1, left1 = REVERSE_BOX_CHARACTERS.get(box1, (0, 0, 0, 0))
-    top2, right2, bottom2, left2 = REVERSE_BOX_CHARACTERS.get(box2, (0, 0, 0, 0))
-    return BOX_CHARACTERS[
-        (
-            top2 or top1,
-            right2 or right1,
-            bottom2 or bottom1,
-            left2 or left1,
-        )
-    ]
-
 
 @lru_cache(1024)
 def box_combine_quads(box1: Quad, box2: Quad) -> Quad:
@@ -373,11 +362,3 @@ def box_combine_quads(box1: Quad, box2: Quad) -> Quad:
         bottom2 or bottom1,
         left2 or left1,
     )
-
-
-if __name__ == "__main__":
-    print(box_combine("│", "─"))
-    print(box_combine("╹", "╶"))
-
-    print(REVERSE_BOX_CHARACTERS["╹"])
-    print(REVERSE_BOX_CHARACTERS["╶"])
