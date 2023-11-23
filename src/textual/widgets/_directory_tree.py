@@ -22,7 +22,7 @@ from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 @dataclass
 class DirEntry:
-    """Attaches directory information to a [DirectoryTree][textual.widgets.DirectoryTree] node."""
+    """Attaches directory information to a [`DirectoryTree`][textual.widgets.DirectoryTree] node."""
 
     path: Path
     """The path of the directory entry."""
