@@ -54,8 +54,6 @@ from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
-from .canvas import Canvas, Rectangle
-from .color import Color
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -66,6 +64,7 @@ from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
+from .renderables.blank import Blank
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -3099,17 +3098,12 @@ class Widget(DOMNode):
         Returns:
             Any renderable.
         """
+
         if self.is_container:
-            canvas = Canvas(self.outer_size.width, self.outer_size.height)
-
-            def get_rectangle(widget: Widget) -> Rectangle:
-                offset = widget.region.offset - self.region.offset - (1, 1)
-                width, height = widget.region.size + (2, 2)
-                return Rectangle(offset, width, height, Color.parse("green"))
-
-            primitives = [get_rectangle(widget) for widget in self.children]
-            canvas_renderable = canvas.render(primitives, self.rich_style)
-            return canvas_renderable
+            if self.styles.layout and self.styles.keyline[0] != "none":
+                return self._layout.render_keyline(self)
+            else:
+                return Blank(self.background_colors[1])
         return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:

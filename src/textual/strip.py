@@ -39,8 +39,9 @@ def get_line_length(segments: Iterable[Segment]) -> int:
 class StripRenderable:
     """A renderable which renders a list of strips in to lines."""
 
-    def __init__(self, strips: list[Strip]) -> None:
+    def __init__(self, strips: list[Strip], width: int | None = None) -> None:
         self._strips = strips
+        self._width = width
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -53,7 +54,10 @@ class StripRenderable:
     def __rich_measure__(
         self, console: "Console", options: "ConsoleOptions"
     ) -> Measurement:
-        width = max(strip.cell_length for strip in self._strips)
+        if self._width is None:
+            width = max(strip.cell_length for strip in self._strips)
+        else:
+            width = self._width
         return Measurement(width, width)
 
 

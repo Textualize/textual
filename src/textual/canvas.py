@@ -257,7 +257,7 @@ class Canvas:
             else:
                 strips.append(Strip([_Segment(text, base_style)], width))
 
-        return StripRenderable(strips)
+        return StripRenderable(strips, width)
 
 
 if __name__ == "__main__":

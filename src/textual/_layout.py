@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
+from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple, cast
 
 from ._spatial_map import SpatialMap
+from .canvas import Canvas, LineType, Rectangle
 from .geometry import Offset, Region, Size, Spacing
+from .strip import StripRenderable
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -176,3 +178,37 @@ class Layout(ABC):
             height = arrangement.total_region.bottom
 
         return height
+
+    def render_keyline(self, container: Widget) -> StripRenderable:
+        """Render keylines around all widgets.
+
+        Args:
+            container: The container widget.
+
+        Returns:
+            A renderable to draw the keylines.
+        """
+        width, height = container.outer_size
+        canvas = Canvas(width, height)
+
+        keyline_style, keyline_color = container.styles.keyline
+        line_style = cast(LineType, keyline_style)
+
+        container_offset = container.content_region.offset
+
+        def get_rectangle(widget: Widget) -> Rectangle:
+            """Get a canvas Rectangle that wraps a region.
+
+            Args:
+                widget: A widget.
+
+            Returns:
+                A Rectangle that encloses the widget.
+            """
+            offset = widget.region.offset - container_offset - (1, 1)
+            width, height = widget.region.size + (2, 2)
+            return Rectangle(offset, width, height, keyline_color, line_style)
+
+        primitives = [get_rectangle(widget) for widget in container.children]
+        canvas_renderable = canvas.render(primitives, container.rich_style)
+        return canvas_renderable
