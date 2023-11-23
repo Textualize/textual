@@ -143,10 +143,10 @@ class DocumentBase(ABC):
 
     def query_syntax_tree(
         self,
-        query: "Query",
+        query: Query,
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
-    ) -> list[tuple["Node", str]]:
+    ) -> list[tuple[Node, str]]:
         """Query the tree-sitter syntax tree.
 
         The default implementation always returns an empty list.
@@ -163,7 +163,7 @@ class DocumentBase(ABC):
         """
         return []
 
-    def prepare_query(self, query: str) -> "Query" | None:
+    def prepare_query(self, query: str) -> Query | None:
         return None
 
     @property
