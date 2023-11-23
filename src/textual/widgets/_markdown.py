@@ -1012,7 +1012,7 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     @property
     def document(self) -> Markdown:
-        """The [Markdown][textual.widgets.Markdown] document widget."""
+        """The [`Markdown`][textual.widgets.Markdown] document widget."""
         return self.query_one(Markdown)
 
     @property
