@@ -130,37 +130,41 @@ class WrappedDocument:
         target_line_index = None
         target_line_offsets = None
         for line_index, line_offsets in enumerate(self._wrap_offsets):
-            wrapped_line_height = len(line_offsets) + 1
-            current_offset += wrapped_line_height
-            if current_offset > y:
+            next_offset = current_offset + len(line_offsets) + 1
+            if next_offset > y:
                 # We've found the vertical offset.
                 target_line_index = line_index
                 target_line_offsets = line_offsets
                 break
+            current_offset = next_offset
 
         if target_line_index is None:
             invalid_offset_error()
 
-        wrapped_line_index = y - current_offset - 1  # negative indexing
-        if wrapped_line_index < 0:
-            # We've found the relevant line, now find the character by
-            # looking at the character corresponding to the offset width.
-            wrapped_lines = Text(self.document[target_line_index]).divide(
-                target_line_offsets
-            )
+        # We've found the relevant line, now find the character by
+        # looking at the character corresponding to the offset width.
+        wrapped_lines = Text(self.document[target_line_index]).divide(
+            target_line_offsets
+        )
 
-            # wrapped_section is the text that appears on a single y_offset within
-            # the TextArea. It's a potentially wrapped portion of a larger line from
-            # the original document.
-            wrapped_section = wrapped_lines[wrapped_line_index].plain
+        target_wrapped_section_index = y - current_offset
+        # wrapped_section is the text that appears on a single y_offset within
+        # the TextArea. It's a potentially wrapped portion of a larger line from
+        # the original document.
+        target_wrapped_section = wrapped_lines[target_wrapped_section_index].plain
 
-            # Get the column index within this wrapped section of the line
-            target_column_index = cell_width_to_column_index(
-                wrapped_section, x, tab_width
-            )
-            return Location(target_line_index, target_column_index)
+        # Get the column index within this wrapped section of the line
+        target_column_index = cell_width_to_column_index(
+            target_wrapped_section, x, tab_width
+        )
 
-        invalid_offset_error()  # Offset is greater than wrapped document height.
+        # Add the offsets from the wrapped sections above this one (from the same raw document line)
+        target_column_index += sum(
+            len(wrapped_section)
+            for wrapped_section in wrapped_lines[:target_wrapped_section_index]
+        )
+
+        return target_line_index, target_column_index
 
     def get_offsets(self, line_index: int) -> list[int]:
         """Given a line index, get the offsets within that line where wrapping

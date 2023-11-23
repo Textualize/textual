@@ -13,8 +13,8 @@ def test_wrap():
     wrapped_document.wrap()
 
     assert wrapped_document.lines == [
-        ["123 ", "4567"],
-        ["1234", "5"],
+        ["123 ", "4567"],  # 0  # 1
+        ["1234", "5"],  # 2  # 3
         ["1234", "5678", "9"],
         [""],
     ]
@@ -74,11 +74,11 @@ def test_refresh_range_new_text_wrapped():
 
 
 @pytest.mark.parametrize(
-    "offset,location",
+    "offset,location",  # location is (row, column)
     [
-        (Offset(0, 0), (0, 0)),
-        # (1, 0),
-        # (2, 1),
+        (Offset(x=0, y=0), (0, 0)),
+        (Offset(x=1, y=0), (0, 1)),
+        (Offset(x=2, y=1), (0, 6)),
         # (3, 1),
         # (4, 2),
         # (5, 2),
