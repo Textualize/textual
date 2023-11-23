@@ -661,8 +661,8 @@ class StylesBuilder:
 
     process_link_color = process_color
     process_link_background = process_color
-    process_link_hover_color = process_color
-    process_link_hover_background = process_color
+    process_link_color_hover = process_color
+    process_link_background_hover = process_color
 
     process_border_title_color = process_color
     process_border_title_background = process_color
@@ -683,7 +683,7 @@ class StylesBuilder:
         self.styles._rules[name.replace("-", "_")] = style_definition  # type: ignore
 
     process_link_style = process_text_style
-    process_link_hover_style = process_text_style
+    process_link_style_hover = process_text_style
 
     process_border_title_style = process_text_style
     process_border_subtitle_style = process_text_style

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Breaking changes https://github.com/Textualize/textual/issues/1530
+ - `link-hover-background` renamed to `link-background-hover`
+ - `link-hover-color` renamed to `link-color-hover`
+ - `link-hover-style` renamed to `link-style-hover`
+
 
 ## [0.42.0] - 2023-11-22
 

@@ -251,9 +251,9 @@ class Widget(DOMNode):
         link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-hover-background: $accent;
-        link-hover-color: $text;
-        link-hover-style: bold not underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -1731,7 +1731,7 @@ class Widget(DOMNode):
         return style
 
     @property
-    def link_hover_style(self) -> Style:
+    def link_style_hover(self) -> Style:
         """Style of links underneath the mouse cursor.
 
         Returns:
@@ -1739,13 +1739,13 @@ class Widget(DOMNode):
         """
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.link_hover_background
+        hover_background = background + styles.link_background_hover
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.link_hover_color.a)
-            if styles.auto_link_hover_color
-            else styles.link_hover_color
+            hover_background.get_contrast_text(styles.link_color_hover.a)
+            if styles.auto_link_color_hover
+            else styles.link_color_hover
         )
-        style = styles.link_hover_style + Style.from_color(
+        style = styles.link_style_hover + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )

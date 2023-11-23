@@ -221,9 +221,9 @@ class ScrollBar(Widget):
 
     DEFAULT_CSS = """
     ScrollBar {
-        link-hover-color: ;
-        link-hover-background:;
-        link-hover-style: ;
+        link-color-hover: ;
+        link-background-hover:;
+        link-style-hover: ;
         link-color: transparent;
         link-background: transparent;
     }
