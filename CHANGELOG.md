@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
 
+### Added
+- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator https://github.com/Textualize/textual/issues/3691
+
 ## [0.41.0] - 2023-10-31
 
 ### Fixed
@@ -42,7 +45,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
 - Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
 - Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
-
 
 ### Changed
 
