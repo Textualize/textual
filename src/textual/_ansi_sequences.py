@@ -238,8 +238,11 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[5B": (Keys.ControlDown,),
     "\x1b[5C": (Keys.ControlRight,),
     "\x1b[5D": (Keys.ControlLeft,),
-    "\x1bOc": (Keys.ControlRight,),  # rxvt
-    "\x1bOd": (Keys.ControlLeft,),  # rxvt
+    # Control allow keys in rxvt
+    "\x1bOa": (Keys.ControlUp,),
+    "\x1bOb": (Keys.ControlUp,),
+    "\x1bOc": (Keys.ControlRight,),
+    "\x1bOd": (Keys.ControlLeft,),
     # Control + shift + arrows.
     "\x1b[1;6A": (Keys.ControlShiftUp,),
     "\x1b[1;6B": (Keys.ControlShiftDown,),
