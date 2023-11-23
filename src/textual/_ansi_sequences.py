@@ -200,6 +200,13 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;2D": (Keys.ShiftLeft,),
     "\x1b[1;2F": (Keys.ShiftEnd,),
     "\x1b[1;2H": (Keys.ShiftHome,),
+    # Shift+navigation in rxvt
+    "\x1b[a": (Keys.ShiftUp,),
+    "\x1b[b": (Keys.ShiftDown,),
+    "\x1b[c": (Keys.ShiftRight,),
+    "\x1b[d": (Keys.ShiftLeft,),
+    "\x1b[7$": (Keys.ShiftHome,),
+    "\x1b[8$": (Keys.ShiftEnd,),
     # Meta + arrow keys. Several terminals handle this differently.
     # The following sequences are for xterm and gnome-terminal.
     #     (Iterm sends ESC followed by the normal arrow_up/down/left/right
