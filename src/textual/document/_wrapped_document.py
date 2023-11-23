@@ -157,18 +157,13 @@ class WrappedDocument:
             next_offset = current_offset + len(line_offsets) + 1
             if next_offset > y:
                 # We've found the vertical offset.
-                target_line_index = line_index
-                target_line_offsets = line_offsets
-                break
-
+                return line_index, get_target_document_column(
+                    line_index, y - current_offset
+                )
             current_offset = next_offset
-        else:
-            # Offset doesn't match any line => land on bottom wrapped line
-            return len(self._wrap_offsets) - 1, get_target_document_column(-1, -1)
 
-        return target_line_index, get_target_document_column(
-            target_line_index, y - current_offset
-        )
+        # Offset doesn't match any line => land on bottom wrapped line
+        return len(self._wrap_offsets) - 1, get_target_document_column(-1, -1)
 
     def get_offsets(self, line_index: int) -> list[int]:
         """Given a line index, get the offsets within that line where wrapping
