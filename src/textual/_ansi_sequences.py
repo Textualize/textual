@@ -240,6 +240,9 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1bb": (Keys.ControlLeft,),  # iTerm natural editing keys
     "\x1b[1;5F": (Keys.ControlEnd,),
     "\x1b[1;5H": (Keys.ControlHome,),
+    # rxvt
+    "\x1b[7^": (Keys.ControlEnd,),
+    "\x1b[8^": (Keys.ControlHome,),
     # Tmux sends following keystrokes when control+arrow is pressed, but for
     # Emacs ansi-term sends the same sequences for normal arrow keys. Consider
     # it a normal arrow press, because that's more important.
