@@ -209,6 +209,8 @@ class Layout(ABC):
             width, height = widget.region.size + (2, 2)
             return Rectangle(offset, width, height, keyline_color, line_style)
 
-        primitives = [get_rectangle(widget) for widget in container.children]
+        primitives = [
+            get_rectangle(widget) for widget in container.children if widget.visible
+        ]
         canvas_renderable = canvas.render(primitives, container.rich_style)
         return canvas_renderable
