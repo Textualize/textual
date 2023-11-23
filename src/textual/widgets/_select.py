@@ -279,10 +279,42 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self._options = options
 
     @classmethod
-    def from_values(cls, opts: [SelectType]):
+    def from_values(
+        cls,
+        opts: [SelectType],
+        *,
+        prompt: str = "Select",
+        allow_blank: bool = True,
+        value: SelectType | None = None,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """Initialize the Select control with options specified by an iterator
+
+        Args:
+         options: Options to select from.
+         prompt: Text to show in the control when no option is select.
+         allow_blank: Allow the selection of a blank option.
+         value: Initial value (should be one of the values in `options`).
+         name: The name of the select control.
+         id: The ID of the control the DOM.
+         classes: The CSS classes of the control.
+         disabled: Whether the control is disabled or not.
+        """
         opts_iterator = [(str(o), o) for o in opts]
 
-        return cls(opts_iterator)
+        return cls(
+            opts_iterator,
+            prompt=prompt,
+            allow_blank=allow_blank,
+            value=value,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
 
     def set_options(self, options: Iterable[tuple[RenderableType, SelectType]]) -> None:
         """Set the options for the Select.
