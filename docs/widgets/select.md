@@ -58,6 +58,32 @@ The following example presents a `Select` with a number of options.
     --8<-- "docs/examples/widgets/select.tcss"
     ```
 
+## Example
+
+The following example presents a `Select` created using the `from_values` class method.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/select_from_values_widget.py"}
+    ```
+
+=== "Output (expanded)"
+
+    ```{.textual path="docs/examples/widgets/select_from_values_widget.py" press="tab,enter,down,down"}
+    ```
+
+
+=== "select_from_values_widget.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/select_from_values_widget.py"
+    ```
+
+=== "select.tcss"
+
+    ```sass
+    --8<-- "docs/examples/widgets/select.tcss"
+    ```
 
 ## Reactive Attributes
 
