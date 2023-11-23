@@ -13,8 +13,8 @@ def test_wrap():
     wrapped_document.wrap()
 
     assert wrapped_document.lines == [
-        ["123 ", "4567"],  # 0  # 1
-        ["1234", "5"],  # 2  # 3
+        ["123 ", "4567"],
+        ["1234", "5"],
         ["1234", "5678", "9"],
         [""],
     ]
@@ -79,11 +79,12 @@ def test_refresh_range_new_text_wrapped():
         (Offset(x=0, y=0), (0, 0)),
         (Offset(x=1, y=0), (0, 1)),
         (Offset(x=2, y=1), (0, 6)),
-        # (3, 1),
-        # (4, 2),
-        # (5, 2),
-        # (6, 2),
-        # (7, 3),
+        (Offset(x=0, y=3), (1, 4)),
+        (Offset(x=1, y=3), (1, 5)),
+        (Offset(x=200, y=3), (1, 5)),
+        (Offset(x=0, y=6), (2, 8)),
+        (Offset(x=0, y=7), (3, 0)),  # Clicking on the final, empty line
+        (Offset(x=0, y=1000), (3, 0)),
     ],
 )
 def test_offset_to_location(offset, location):
@@ -94,14 +95,14 @@ def test_offset_to_location(offset, location):
     assert wrapped_document.offset_to_location(offset, 2) == location
 
 
-@pytest.mark.parametrize("offset", [-3, 1000])
-def test_offset_to_line_index_invalid_offset_raises_exception(offset):
+@pytest.mark.parametrize("offset", [Offset(-3, 0), Offset(0, -10)])
+def test_offset_to_location_invalid_offset_raises_exception(offset):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
     wrapped_document.wrap()
 
     with pytest.raises(ValueError):
-        wrapped_document.offset_to_location(offset)
+        wrapped_document.offset_to_location(offset, 10)
 
 
 @pytest.mark.parametrize(

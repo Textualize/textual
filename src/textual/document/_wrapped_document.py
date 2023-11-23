@@ -12,7 +12,7 @@ from rich.text import Text
 
 from textual._cells import cell_width_to_column_index
 from textual.document._document import DocumentBase, Location
-from textual.geometry import Offset
+from textual.geometry import Offset, clamp
 
 
 class WrappedDocument:
@@ -115,20 +115,14 @@ class WrappedDocument:
         Returns:
             The line index corresponding to the given y-offset.
         """
-
-        def invalid_offset_error():
+        x, y = offset
+        if x < 0 or y < 0:
             raise ValueError(
                 f"No location exists at wrapped document offset {offset!r}. "
                 f"Document is wrapped with width {self._width!r}."
             )
 
-        x, y = offset
-        if y < 0:
-            invalid_offset_error()
-
         current_offset = 0
-        target_line_index = None
-        target_line_offsets = None
         for line_index, line_offsets in enumerate(self._wrap_offsets):
             next_offset = current_offset + len(line_offsets) + 1
             if next_offset > y:
@@ -136,10 +130,17 @@ class WrappedDocument:
                 target_line_index = line_index
                 target_line_offsets = line_offsets
                 break
-            current_offset = next_offset
 
-        if target_line_index is None:
-            invalid_offset_error()
+            current_offset = next_offset
+        else:
+            # Offset doesn't match any line => land on bottom wrapped line
+            target_line_index = -1
+            target_line_offsets = self._wrap_offsets[target_line_index]
+            wrapped_lines = Text(self.document[target_line_index]).divide(
+                target_line_offsets
+            )
+            target_wrapped_section = wrapped_lines[-1].plain
+            return len(self._wrap_offsets) - 1, clamp(x, 0, len(target_wrapped_section))
 
         # We've found the relevant line, now find the character by
         # looking at the character corresponding to the offset width.
