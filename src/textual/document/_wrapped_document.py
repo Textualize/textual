@@ -121,7 +121,24 @@ class WrappedDocument:
         if x < 0 or y < 0:
             raise ValueError("Offset must be positive.")
 
-        def get_target_document_column(line_index: int, section_index: int) -> int:
+        if not self._width:
+            # No wrapping, so we directly map offset to location and clamp.
+            row_index = min(y, len(self._wrap_offsets) - 1)
+            column_index = min(x, len(self.document.get_line(row_index)))
+            return row_index, column_index
+
+        def get_target_document_column(line_index: int, y_offset: int) -> int:
+            """Given a line index and the vertical offset within that
+            line, return the corresponding column index in the raw document.
+
+            Args:
+                 line_index: The index of the line in the document.
+                 y_offset: The y-offset within the wrapped version of the line.
+
+            Returns:
+                The column index corresponding to the line index and y offset.
+            """
+
             # We've found the relevant line, now find the character by
             # looking at the character corresponding to the offset width.
             line_offsets = self._wrap_offsets[line_index]
@@ -130,7 +147,7 @@ class WrappedDocument:
             # wrapped_section is the text that appears on a single y_offset within
             # the TextArea. It's a potentially wrapped portion of a larger line from
             # the original document.
-            target_wrapped_section = wrapped_lines[section_index].plain
+            target_wrapped_section = wrapped_lines[y_offset].plain
 
             # Get the column index within this wrapped section of the line
             target_column_index = cell_width_to_column_index(
@@ -139,17 +156,10 @@ class WrappedDocument:
 
             # Add the offsets from the wrapped sections above this one (from the same raw document line)
             target_column_index += sum(
-                len(wrapped_section)
-                for wrapped_section in wrapped_lines[:section_index]
+                len(wrapped_section) for wrapped_section in wrapped_lines[:y_offset]
             )
 
             return target_column_index
-
-        if not self._width:
-            # No wrapping, so we directly map offset to location and clamp.
-            row_index = min(y, len(self._wrap_offsets) - 1)
-            column_index = min(x, len(self.document.get_line(row_index)))
-            return row_index, column_index
 
         # Find the line corresponding to the given y offset in the wrapped document.
         current_offset = 0
