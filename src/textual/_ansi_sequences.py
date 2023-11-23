@@ -167,6 +167,8 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[3^": (Keys.ControlDelete,),  # rxvt
     "\x1b[5;5~": (Keys.ControlPageUp,),
     "\x1b[6;5~": (Keys.ControlPageDown,),
+    "\x1b[5^": (Keys.ControlPageUp,),  # rxvt
+    "\x1b[6^": (Keys.ControlPageDown,),  # rxvt
     "\x1b[3;6~": (Keys.ControlShiftDelete,),
     "\x1b[5;6~": (Keys.ControlShiftPageUp,),
     "\x1b[6;6~": (Keys.ControlShiftPageDown,),
