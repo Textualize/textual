@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
 
+### Added
+
+- Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
+- Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
+
 ## [0.42.0] - 2023-11-22
 
 ### Fixed
