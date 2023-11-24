@@ -1238,7 +1238,7 @@ class TestTypeNames:
                 stylesheet.parse()
 
 
-def test_parse_bad_psuedo_selector():
+def test_parse_bad_pseudo_selector():
     """Check unknown selector raises a token error."""
 
     bad_selector = """\
@@ -1248,9 +1248,27 @@ Widget:foo{
     """
 
     stylesheet = Stylesheet()
-    stylesheet.add_source(bad_selector, "foo")
+    stylesheet.add_source(bad_selector, None)
 
     with pytest.raises(TokenError) as error:
         stylesheet.parse()
 
-    assert error.value.start == (0, 6)
+    assert error.value.start == (1, 7)
+
+
+def test_parse_bad_pseudo_selector_with_suggestion():
+    """Check unknown pseudo selector raises token error with correct position."""
+
+    bad_selector = """
+Widget:blu {
+    border: red;
+}
+"""
+
+    stylesheet = Stylesheet()
+    stylesheet.add_source(bad_selector, None)
+
+    with pytest.raises(TokenError) as error:
+        stylesheet.parse()
+
+    assert error.value.start == (2, 7)

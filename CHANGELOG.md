@@ -10,16 +10,52 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
+
+## [0.42.0] - 2023-11-22
+
+### Fixed
+
 - Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
 - Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
 - Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
+- Fixed `ScrollableContainer` to receive focus https://github.com/Textualize/textual/pull/3632
+- Fixed app-level queries causing a crash when the command palette is active https://github.com/Textualize/textual/issues/3633
+- Fixed outline not rendering correctly in some scenarios (e.g. on Button widgets) https://github.com/Textualize/textual/issues/3628
 - Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
+- `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
+- Off-by-one in CSS error reporting https://github.com/Textualize/textual/issues/3625
+- Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
+- Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
+- Method render on a widget could be called before mounting said widget https://github.com/Textualize/textual/issues/2914
+
+### Added
+
+- Exceptions to `textual.widgets.select` https://github.com/Textualize/textual/pull/3614
+  - `InvalidSelectValueError` for when setting a `Select` to an invalid value
+  - `EmptySelectError` when creating/setting a `Select` to have no options when `allow_blank` is `False`
+- `Select` methods https://github.com/Textualize/textual/pull/3614
+  - `clear`
+  - `is_blank`
+- Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
+- Added `restrict`, `type`, `max_length`, and `valid_empty` to Input https://github.com/Textualize/textual/pull/3657
+- Added `Pilot.mouse_down` to simulate `MouseDown` events https://github.com/Textualize/textual/pull/3495
+- Added `Pilot.mouse_up` to simulate `MouseUp` events https://github.com/Textualize/textual/pull/3495
+- Added `Widget.is_mounted` property https://github.com/Textualize/textual/pull/3709
 
 ### Changed
 
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
-- Added `restrict`, `type`, `max_length`, and `valid_empty` to Input https://github.com/Textualize/textual/pull/3657
+- Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
+- Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
+- Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
+- Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
+- Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
+- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
+- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+
 
 ## [0.41.0] - 2023-10-31
 
@@ -46,7 +82,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
 - Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
 - Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
-
 
 ### Changed
 
@@ -1409,6 +1444,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.42.0]: https://github.com/Textualize/textual/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/Textualize/textual/compare/v0.38.1...v0.39.0

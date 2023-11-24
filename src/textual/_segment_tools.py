@@ -197,11 +197,23 @@ def align_lines(
     Returns:
         Aligned lines.
     """
-
+    if not lines:
+        return
     width, height = size
-    shape_width, shape_height = Segment.get_shape(lines)
+    get_line_length = Segment.get_line_length
+    line_lengths = [get_line_length(line) for line in lines]
+    shape_width = max(line_lengths)
+    shape_height = len(line_lengths)
 
     def blank_lines(count: int) -> list[list[Segment]]:
+        """Create blank lines.
+
+        Args:
+            count: Desired number of blank lines.
+
+        Returns:
+            A list of blank lines.
+        """
         return [[Segment(" " * width, style)]] * count
 
     top_blank_lines = bottom_blank_lines = 0
@@ -211,31 +223,38 @@ def align_lines(
         bottom_blank_lines = vertical_excess_space
     elif vertical == "middle":
         top_blank_lines = vertical_excess_space // 2
-        bottom_blank_lines = height - top_blank_lines
+        bottom_blank_lines = vertical_excess_space - top_blank_lines
     elif vertical == "bottom":
         top_blank_lines = vertical_excess_space
 
-    yield from blank_lines(top_blank_lines)
+    if top_blank_lines:
+        yield from blank_lines(top_blank_lines)
 
     horizontal_excess_space = max(0, width - shape_width)
 
-    adjust_line_length = Segment.adjust_line_length
     if horizontal == "left":
-        for line in lines:
-            yield adjust_line_length(line, width, style, pad=True)
+        for cell_length, line in zip(line_lengths, lines):
+            if cell_length == width:
+                yield line
+            else:
+                yield line_pad(line, 0, width - cell_length, style)
 
     elif horizontal == "center":
         left_space = horizontal_excess_space // 2
-        for line in lines:
-            yield [
-                Segment(" " * left_space, style),
-                *adjust_line_length(line, width - left_space, style, pad=True),
-            ]
+        for cell_length, line in zip(line_lengths, lines):
+            if cell_length == width:
+                yield line
+            else:
+                yield line_pad(
+                    line, left_space, width - cell_length - left_space, style
+                )
 
     elif horizontal == "right":
-        get_line_length = Segment.get_line_length
-        for line in lines:
-            left_space = width - get_line_length(line)
-            yield [Segment(" " * left_space, style), *line]
+        for cell_length, line in zip(line_lengths, lines):
+            if width == cell_length:
+                yield line
+            else:
+                yield line_pad(line, width - cell_length, 0, style)
 
-    yield from blank_lines(bottom_blank_lines)
+    if bottom_blank_lines:
+        yield from blank_lines(bottom_blank_lines)

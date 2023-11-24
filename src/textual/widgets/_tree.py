@@ -42,6 +42,14 @@ LineCacheKey: TypeAlias = "tuple[int | tuple, ...]"
 TOGGLE_STYLE = Style.from_meta({"toggle": True})
 
 
+class RemoveRootError(Exception):
+    """Exception raised when trying to remove the root of a [`TreeNode`][textual.widgets.tree.TreeNode]."""
+
+
+class UnknownNodeID(Exception):
+    """Exception raised when referring to an unknown [`TreeNode`][textual.widgets.tree.TreeNode] ID."""
+
+
 @dataclass
 class _TreeLine(Generic[TreeDataType]):
     path: list[TreeNode[TreeDataType]]
@@ -352,9 +360,6 @@ class TreeNode(Generic[TreeDataType]):
         node = self.add(label, data, expand=False, allow_expand=False)
         return node
 
-    class RemoveRootError(Exception):
-        """Exception raised when trying to remove a tree's root node."""
-
     def _remove_children(self) -> None:
         """Remove child nodes of this node.
 
@@ -381,10 +386,10 @@ class TreeNode(Generic[TreeDataType]):
         """Remove this node from the tree.
 
         Raises:
-            TreeNode.RemoveRootError: If there is an attempt to remove the root.
+            RemoveRootError: If there is an attempt to remove the root.
         """
         if self.is_root:
-            raise self.RemoveRootError("Attempt to remove the root node of a Tree.")
+            raise RemoveRootError("Attempt to remove the root node of a Tree.")
         self._remove()
         self._tree._invalidate()
 
@@ -758,9 +763,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return line.node
 
-    class UnknownNodeID(Exception):
-        """Exception raised when referring to an unknown `TreeNode` ID."""
-
     def get_node_by_id(self, node_id: NodeID) -> TreeNode[TreeDataType]:
         """Get a tree node by its ID.
 
@@ -771,12 +773,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             The node associated with that ID.
 
         Raises:
-            Tree.UnknownID: Raised if the `TreeNode` ID is unknown.
+            UnknownNodeID: Raised if the `TreeNode` ID is unknown.
         """
         try:
             return self._tree_nodes[node_id]
         except KeyError:
-            raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
+            raise UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
 
     def validate_cursor_line(self, value: int) -> int:
         """Prevent cursor line from going outside of range.

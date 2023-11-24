@@ -145,8 +145,7 @@ class Input(Widget, can_focus=True):
         padding: 0 2;
         border: tall $background;
         width: 100%;
-        height: 1;
-        min-height: 1;
+        height: 3;               
     }
     Input:focus {
         border: tall $accent;
