@@ -2,7 +2,9 @@
 
 The `keyline` style is applied to a container and will draw lines around child widgets.
 
-A keyline is superficially like the [border](./border.md) rule, but rather than draw inside the widget, a keyline is drawn outside of the widget's border. Additionally, unlike `border`, keylines can overlap and cross to create dividing lines between widgets. Because keylines are drawn in the widget's margin, you will need to apply the [margin](./margin.md) or [grid-gutter](./grid/grid_gutter.md) rule to see the effect.
+A keyline is superficially like the [border](./border.md) rule, but rather than draw inside the widget, a keyline is drawn outside of the widget's border. Additionally, unlike `border`, keylines can overlap and cross to create dividing lines between widgets.
+
+Because keylines are drawn in the widget's margin, you will need to apply the [margin](./margin.md) or [grid-gutter](./grid/grid_gutter.md) rule to see the effect.
 
 
 ## Syntax
