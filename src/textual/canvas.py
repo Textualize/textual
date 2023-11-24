@@ -1,3 +1,11 @@
+"""
+A Canvas class used to render keylines.
+
+!!! note
+    This API is experimental, and may change in the near future.
+
+"""
+
 from __future__ import annotations
 
 from array import array
@@ -258,22 +266,3 @@ class Canvas:
                 strips.append(Strip([_Segment(text, base_style)], width))
 
         return StripRenderable(strips, width)
-
-
-if __name__ == "__main__":
-    canvas = Canvas(30, 20)
-    primitives = [
-        Rectangle(Offset(5, 5), 6, 4, Color.parse("rgb(255,0,0)")),
-        Rectangle(Offset(6, 6), 8, 5, Color.parse("green"), line_type="heavy"),
-        Rectangle(Offset(8, 4), 10, 10, Color.parse("blue"), line_type="thin"),
-        Rectangle(Offset(10, 11), 7, 4, Color.parse("magenta"), line_type="double"),
-        Rectangle(Offset(-5, -6), 20, 10, Color.parse("magenta"), line_type="double"),
-    ]
-    strips = canvas.render(primitives, Style.parse("white on #000000"))
-
-    from rich.console import Console
-
-    console = Console()
-
-    for strip in strips:
-        print(strip.render(console))
