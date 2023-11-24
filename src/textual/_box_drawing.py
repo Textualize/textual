@@ -17,7 +17,7 @@ from functools import lru_cache
 from typing_extensions import TypeAlias
 
 Quad: TypeAlias = tuple[int, int, int, int]
-"""Four values indicating the type of the line (0 for no line)."""
+"""Four values indicating the composition of the box character."""
 
 
 BOX_CHARACTERS: dict[Quad, str] = {

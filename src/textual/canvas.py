@@ -250,7 +250,7 @@ class Canvas:
                         segments.append(
                             _Segment(
                                 text[offset:next_offset],
-                                base_style + Style(color=segment_color.rich_color),
+                                base_style + Style.from_color(segment_color.rich_color),
                             )
                         )
                 strips.append(Strip(segments, width))
