@@ -561,27 +561,6 @@ class Blur(Event, bubble=False):
     """
 
 
-class GlobalFocus(Event, bubble=False):
-    """Sent when the app has focus.
-
-    Used by textual-web.
-
-    - [ ] Bubbles
-    - [ ] Verbose
-    """
-
-
-class GlobalBlur(Event, bubble=False):
-    """Sent when the app loses focus.
-
-    used by textual-web.
-
-    - [ ] Bubbles
-    - [ ] Verbose
-
-    """
-
-
 @dataclass
 class DescendantFocus(Event, bubble=True, verbose=True):
     """Sent when a child widget is focussed.
