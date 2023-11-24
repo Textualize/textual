@@ -105,7 +105,9 @@ def test_input_suggestions(snap_compare):
     async def run_before(pilot):
         pilot.app.query_one(Input).cursor_blink = False
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before)
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before
+    )
 
 
 def test_buttons_render(snap_compare):
@@ -534,7 +536,9 @@ def test_scrollbar_thumb_height(snap_compare):
 def test_css_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/2063."""
 
-    monkeypatch.setenv("TEXTUAL", "debug")  # This will make sure we create a file monitor.
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
@@ -550,7 +554,9 @@ def test_css_hot_reloading(snap_compare, monkeypatch):
 def test_css_hot_reloading_on_screen(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3454."""
 
-    monkeypatch.setenv("TEXTUAL", "debug")  # This will make sure we create a file monitor.
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.screen.CSS_PATH
@@ -559,14 +565,17 @@ def test_css_hot_reloading_on_screen(snap_compare, monkeypatch):
         await pilot.app._on_css_change()
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "hot_reloading_app_with_screen_css.py", run_before=run_before
+        SNAPSHOT_APPS_DIR / "hot_reloading_app_with_screen_css.py",
+        run_before=run_before,
     )
 
 
 def test_datatable_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3312."""
 
-    monkeypatch.setenv("TEXTUAL", "debug")  # This will make sure we create a file monitor.
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
@@ -880,3 +889,7 @@ def test_unscoped_css(snap_compare) -> None:
 
 def test_big_buttons(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")
+
+
+def test_keyline(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "keyline.py")
