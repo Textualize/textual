@@ -174,14 +174,14 @@ class Canvas:
         return self._height
 
     def x_range(self, start: int, end: int) -> range:
-        """Range of x values, with clipping to valid range.
+        """Range of x values, clipped to the canvas dimensions.
 
         Args:
             start: Start index.
             end: End index.
 
         Returns:
-            range.
+            A range object.
         """
         return range(
             clamp(start, 0, self._width),
@@ -189,14 +189,14 @@ class Canvas:
         )
 
     def y_range(self, start: int, end: int) -> range:
-        """Range of y values, with clipping to valid range.
+        """Range of y values, clipped to the canvas dimensions.
 
         Args:
             start: Start index.
             end: End index.
 
         Returns:
-            range.
+            A range object.
         """
         return range(
             clamp(start, 0, self._height),
