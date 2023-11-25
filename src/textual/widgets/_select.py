@@ -369,7 +369,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
 
     def _setup_options_renderables(self) -> None:
         """Sets up the `Option` renderables associated with the `Select` options."""
-
         self._select_options: list[Option] = [
             (
                 Option(Text(self.prompt, style="dim"))
@@ -439,8 +438,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         except NoMatches:
             pass
         else:
-            if value is None:
-                self.query_one(SelectCurrent).update(None)
+            if value == self.BLANK:
+                select_current.update(self.BLANK)
             else:
                 for index, (prompt, _value) in enumerate(self._options):
                     if _value == value:

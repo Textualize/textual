@@ -580,7 +580,7 @@ def test_css_hot_reloading(snap_compare, monkeypatch):
     )
 
 
-def test_datatable_hot_reloading(snap_compare):
+def test_datatable_hot_reloading(snap_compare, mokeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3312."""
 
     monkeypatch.setenv(
@@ -708,8 +708,6 @@ def test_tooltips_in_compound_widgets(snap_compare):
 
 
 def test_command_palette(snap_compare) -> None:
-    from textual.command import CommandPalette
-
     async def run_before(pilot) -> None:
         # await pilot.press("ctrl+backslash")
         pilot.app.screen.query_one(Input).cursor_blink = False
