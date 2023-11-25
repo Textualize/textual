@@ -3,8 +3,12 @@ from textual.widget import Widget
 
 
 class WidthApp(App):
+    CSS_PATH = "width.tcss"
+
     def compose(self):
         yield Widget()
 
 
-app = WidthApp(css_path="width.tcss")
+if __name__ == "__main__":
+    app = WidthApp()
+    app.run()

@@ -30,6 +30,7 @@ async def test_input_changed_message_validation_failure():
     async with app.run_test() as pilot:
         input = app.query_one(Input)
         input.value = "8"
+        assert not input.is_valid
         await pilot.pause()
         assert len(app.messages) == 1
         assert app.messages[0].validation_result == ValidationResult.failure(
@@ -204,3 +205,19 @@ async def test_none_validate_on_means_all_validations_happen():
         app.set_focus(None)
         await pilot.pause()
         assert input.has_class("-valid")
+
+
+async def test_valid_empty():
+    app = InputApp(None)
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+
+        await pilot.press("1", "backspace")
+
+        assert not input.has_class("-valid")
+        assert input.has_class("-invalid")
+
+        input.valid_empty = True
+
+        assert input.has_class("-valid")
+        assert not input.has_class("-invalid")

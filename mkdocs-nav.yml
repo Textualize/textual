@@ -169,6 +169,7 @@ nav:
   - API:
       - "api/index.md"
       - "api/app.md"
+      - "api/await_complete.md"
       - "api/await_remove.md"
       - "api/binding.md"
       - "api/color.md"

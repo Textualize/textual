@@ -12,6 +12,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class AllTextStyleApp(App):
+    CSS_PATH = "text_style_all.tcss"
+
     def compose(self):
         yield Grid(
             Label("none\n" + TEXT, id="lbl1"),
@@ -25,4 +27,6 @@ class AllTextStyleApp(App):
         )
 
 
-app = AllTextStyleApp(css_path="text_style_all.tcss")
+if __name__ == "__main__":
+    app = AllTextStyleApp()
+    app.run()

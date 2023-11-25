@@ -15,7 +15,7 @@ import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
-from .events import Click, MouseDown, MouseMove, MouseUp
+from .events import Click, MouseDown, MouseEvent, MouseMove, MouseUp
 from .geometry import Offset
 from .widget import Widget
 
@@ -81,6 +81,96 @@ class Pilot(Generic[ReturnType]):
             await self._app._press_keys(keys)
             await self._wait_for_screen()
 
+    async def mouse_down(
+        self,
+        selector: type[Widget] | str | None = None,
+        offset: tuple[int, int] = (0, 0),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate a [`MouseDown`][textual.events.MouseDown] event at a specified position.
+
+        The final position for the event is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        Args:
+            selector: A selector to specify a widget that should be used as the reference
+                for the event offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to target a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the event may not land on the widget you specified.
+            offset: The offset for the event. The offset is relative to the selector
+                provided or to the screen, if no selector is provided.
+            shift: Simulate the event with the shift key held down.
+            meta: Simulate the event with the meta key held down.
+            control: Simulate the event with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position for the event is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the event landed on the selected
+                widget, False otherwise.
+        """
+        try:
+            return await self._post_mouse_events(
+                [MouseDown],
+                selector=selector,
+                offset=offset,
+                button=1,
+                shift=shift,
+                meta=meta,
+                control=control,
+            )
+        except OutOfBounds as error:
+            raise error from None
+
+    async def mouse_up(
+        self,
+        selector: type[Widget] | str | None = None,
+        offset: tuple[int, int] = (0, 0),
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate a [`MouseUp`][textual.events.MouseUp] event at a specified position.
+
+        The final position for the event is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        Args:
+            selector: A selector to specify a widget that should be used as the reference
+                for the event offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to target a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the event may not land on the widget you specified.
+            offset: The offset for the event. The offset is relative to the selector
+                provided or to the screen, if no selector is provided.
+            shift: Simulate the event with the shift key held down.
+            meta: Simulate the event with the meta key held down.
+            control: Simulate the event with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position for the event is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the event landed on the selected
+                widget, False otherwise.
+        """
+        try:
+            return await self._post_mouse_events(
+                [MouseUp],
+                selector=selector,
+                offset=offset,
+                button=1,
+                shift=shift,
+                meta=meta,
+                control=control,
+            )
+        except OutOfBounds as error:
+            raise error from None
+
     async def click(
         self,
         selector: type[Widget] | str | None = None,
@@ -93,6 +183,13 @@ class Pilot(Generic[ReturnType]):
 
         The final position to be clicked is computed based on the selector provided and
         the offset specified and it must be within the visible area of the screen.
+
+        Example:
+            The code below runs an app and clicks its only button right in the middle:
+            ```py
+            async with SingleButtonApp().run_test() as pilot:
+                await pilot.click(Button, offset=(8, 1))
+            ```
 
         Args:
             selector: A selector to specify a widget that should be used as the reference
@@ -113,35 +210,18 @@ class Pilot(Generic[ReturnType]):
             True if no selector was specified or if the click landed on the selected
                 widget, False otherwise.
         """
-        app = self.app
-        screen = app.screen
-        if selector is not None:
-            target_widget = app.query_one(selector)
-        else:
-            target_widget = screen
-
-        message_arguments = _get_mouse_message_arguments(
-            target_widget, offset, button=1, shift=shift, meta=meta, control=control
-        )
-
-        click_offset = Offset(message_arguments["x"], message_arguments["y"])
-        if click_offset not in screen.region:
-            raise OutOfBounds(
-                "Target offset is outside of currently-visible screen region."
+        try:
+            return await self._post_mouse_events(
+                [MouseDown, MouseUp, Click],
+                selector=selector,
+                offset=offset,
+                button=1,
+                shift=shift,
+                meta=meta,
+                control=control,
             )
-
-        app.post_message(MouseDown(**message_arguments))
-        await self.pause()
-        app.post_message(MouseUp(**message_arguments))
-        await self.pause()
-
-        # Figure out the widget under the click before we click because the app
-        # might react to the click and move things.
-        widget_at, _ = app.get_widget_at(*click_offset)
-        app.post_message(Click(**message_arguments))
-        await self.pause()
-
-        return selector is None or widget_at is target_widget
+        except OutOfBounds as error:
+            raise error from None
 
     async def hover(
         self,
@@ -169,6 +249,53 @@ class Pilot(Generic[ReturnType]):
             True if no selector was specified or if the hover landed on the selected
                 widget, False otherwise.
         """
+        # This is usually what the user wants because it gives time for the mouse to
+        # "settle" before moving it to the new hover position.
+        await self.pause()
+        try:
+            return await self._post_mouse_events(
+                [MouseMove], selector, offset, button=0
+            )
+        except OutOfBounds as error:
+            raise error from None
+
+    async def _post_mouse_events(
+        self,
+        events: list[type[MouseEvent]],
+        selector: type[Widget] | str | None | None = None,
+        offset: tuple[int, int] = (0, 0),
+        button: int = 0,
+        shift: bool = False,
+        meta: bool = False,
+        control: bool = False,
+    ) -> bool:
+        """Simulate a series of mouse events to be fired at a given position.
+
+        The final position for the events is computed based on the selector provided and
+        the offset specified and it must be within the visible area of the screen.
+
+        This function abstracts away the commonalities of the other mouse event-related
+        functions that the pilot exposes.
+
+        Args:
+            selector: A selector to specify a widget that should be used as the reference
+                for the events offset. If this is not specified, the offset is interpreted
+                relative to the screen. You can use this parameter to try to target a
+                specific widget. However, if the widget is currently hidden or obscured by
+                another widget, the events may not land on the widget you specified.
+            offset: The offset for the events. The offset is relative to the selector
+                provided or to the screen, if no selector is provided.
+            shift: Simulate the events with the shift key held down.
+            meta: Simulate the events with the meta key held down.
+            control: Simulate the events with the control key held down.
+
+        Raises:
+            OutOfBounds: If the position for the events is outside of the (visible) screen.
+
+        Returns:
+            True if no selector was specified or if the *final* event landed on the
+                selected widget, False otherwise.
+        """
         app = self.app
         screen = app.screen
         if selector is not None:
@@ -177,20 +304,33 @@ class Pilot(Generic[ReturnType]):
             target_widget = screen
 
         message_arguments = _get_mouse_message_arguments(
-            target_widget, offset, button=0
+            target_widget,
+            offset,
+            button=button,
+            shift=shift,
+            meta=meta,
+            control=control,
         )
 
-        hover_offset = Offset(message_arguments["x"], message_arguments["y"])
-        if hover_offset not in screen.region:
+        offset = Offset(message_arguments["x"], message_arguments["y"])
+        if offset not in screen.region:
             raise OutOfBounds(
                 "Target offset is outside of currently-visible screen region."
             )
 
-        await self.pause()
-        app.post_message(MouseMove(**message_arguments))
-        await self.pause()
+        widget_at = None
+        for mouse_event_cls in events:
+            # Get the widget under the mouse before the event because the app might
+            # react to the event and move things around. We override on each iteration
+            # because we assume the final event in `events` is the actual event we care
+            # about and that all the preceeding events are just setup.
+            # E.g., the click event is preceeded by MouseDown/MouseUp to emulate how
+            # the driver works and emits a click event.
+            widget_at, _ = app.get_widget_at(*offset)
+            event = mouse_event_cls(**message_arguments)
+            app.post_message(event)
+            await self.pause()
 
-        widget_at, _ = app.get_widget_at(*hover_offset)
         return selector is None or widget_at is target_widget
 
     async def _wait_for_screen(self, timeout: float = 30.0) -> bool:

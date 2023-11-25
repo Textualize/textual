@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from tree_sitter import Language
 
 from textual import events, log
-from textual._cells import cell_len
+from textual._cells import cell_len, cell_width_to_column_index
 from textual.binding import Binding
 from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
@@ -1118,14 +1118,8 @@ TextArea {
         Returns:
             The column corresponding to the cell width on that row.
         """
-        tab_width = self.indent_width
-        total_cell_offset = 0
         line = self.document[row_index]
-        for column_index, character in enumerate(line):
-            total_cell_offset += cell_len(expand_tabs_inline(character, tab_width))
-            if total_cell_offset >= cell_width + 1:
-                return column_index
-        return len(line)
+        return cell_width_to_column_index(line, cell_width, self.indent_width)
 
     def clamp_visitable(self, location: Location) -> Location:
         """Clamp the given location to the nearest visitable location.

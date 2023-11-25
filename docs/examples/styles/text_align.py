@@ -10,6 +10,8 @@ TEXT = (
 
 
 class TextAlign(App):
+    CSS_PATH = "text_align.tcss"
+
     def compose(self):
         yield Grid(
             Label("[b]Left aligned[/]\n" + TEXT, id="one"),
@@ -19,4 +21,6 @@ class TextAlign(App):
         )
 
 
-app = TextAlign(css_path="text_align.tcss")
+if __name__ == "__main__":
+    app = TextAlign()
+    app.run()

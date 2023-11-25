@@ -4,7 +4,7 @@
 
 A widget to display a Markdown document.
 
-- [x] Focusable
+- [ ] Focusable
 - [ ] Container
 
 

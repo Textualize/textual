@@ -3,18 +3,19 @@
 from __future__ import annotations
 
 from itertools import cycle
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 from weakref import WeakKeyDictionary
 
 from rich.console import RenderableType
 from typing_extensions import Literal, Self
 
-from textual.app import App
-
 from .. import events
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
 from ..widget import Widget
+
+if TYPE_CHECKING:
+    from textual.app import App
 
 PlaceholderVariant = Literal["default", "size", "text"]
 """The different variants of placeholder."""
