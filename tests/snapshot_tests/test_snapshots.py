@@ -599,7 +599,7 @@ def test_css_hot_reloading_on_screen(snap_compare, monkeypatch):
     )
 
 
-def test_datatable_hot_reloading(snap_compare, mokeypatch):
+def test_datatable_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3312."""
 
     monkeypatch.setenv(
