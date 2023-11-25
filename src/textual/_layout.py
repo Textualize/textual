@@ -206,8 +206,8 @@ class Layout(ABC):
                 A Rectangle that encloses the widget.
             """
             offset = region.offset - container_offset - (1, 1)
-            width, height = region.size + (2, 2)
-            return Rectangle(offset, width, height, keyline_color, line_style)
+            width, height = region.size
+            return Rectangle(offset, width + 2, height + 2, keyline_color, line_style)
 
         primitives = [
             get_rectangle(widget.region)
