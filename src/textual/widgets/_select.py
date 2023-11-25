@@ -312,7 +312,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         *,
         prompt: str = "Select",
         allow_blank: bool = True,
-        value: SelectType | None = None,
+        value: SelectType | NoSelection = BLANK,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
