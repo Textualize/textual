@@ -148,6 +148,12 @@ class Canvas:
     """A character canvas."""
 
     def __init__(self, width: int, height: int) -> None:
+        """
+
+        Args:
+            width: Width of the canvas (in cells).
+            height Height of the canvas (in cells).
+        """
         self._width = width
         self._height = height
         blank_line = " " * width
@@ -207,7 +213,7 @@ class Canvas:
             base_style: The base style of the canvas.
 
         Returns:
-            A list of strips.
+            A Rich renderable for the canvas.
         """
         for primitive in primitives:
             primitive.render(self)
