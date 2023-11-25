@@ -196,21 +196,23 @@ class Layout(ABC):
 
         container_offset = container.content_region.offset
 
-        def get_rectangle(widget: Widget) -> Rectangle:
+        def get_rectangle(region: Region) -> Rectangle:
             """Get a canvas Rectangle that wraps a region.
 
             Args:
-                widget: A widget.
+                region: Widget region.
 
             Returns:
                 A Rectangle that encloses the widget.
             """
-            offset = widget.region.offset - container_offset - (1, 1)
-            width, height = widget.region.size + (2, 2)
+            offset = region.offset - container_offset - (1, 1)
+            width, height = region.size + (2, 2)
             return Rectangle(offset, width, height, keyline_color, line_style)
 
         primitives = [
-            get_rectangle(widget) for widget in container.children if widget.visible
+            get_rectangle(widget.region)
+            for widget in container.children
+            if widget.visible
         ]
         canvas_renderable = canvas.render(primitives, container.rich_style)
         return canvas_renderable
