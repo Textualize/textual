@@ -226,7 +226,6 @@ class GridLayout(Layout):
         add_widget = widgets.append
         max_column = len(columns) - 1
         max_row = len(rows) - 1
-        # margin = Spacing()
         for widget, (column, row, column_span, row_span) in cell_size_map.items():
             x = columns[column][0]
             if row > max_row:
