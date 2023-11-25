@@ -580,6 +580,25 @@ def test_css_hot_reloading(snap_compare, monkeypatch):
     )
 
 
+def test_css_hot_reloading_on_screen(snap_compare, monkeypatch):
+    """Regression test for https://github.com/Textualize/textual/issues/3454."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.screen.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "hot_reloading_app_with_screen_css.py",
+        run_before=run_before,
+    )
+
+
 def test_datatable_hot_reloading(snap_compare, mokeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3312."""
 
