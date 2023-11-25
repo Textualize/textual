@@ -251,22 +251,24 @@ class Canvas:
                     (width, True, 0),
                 ]
                 spans.sort(key=span_sort_key)
-                stack: list[int] = []
-                stack_pop = stack.remove
-                stack_append = stack.append
+                color_indices: set[int] = set()
+                color_remove = color_indices.discard
+                color_add = color_indices.add
                 for (offset, leaving, style_id), (next_offset, _, _) in zip(
                     spans, spans[1:]
                 ):
                     if leaving:
-                        stack_pop(style_id)
+                        color_remove(style_id)
                     else:
-                        stack_append(style_id)
+                        color_add(style_id)
                     if next_offset > offset:
                         segments.append(
                             _Segment(
                                 text[offset:next_offset],
                                 base_style
-                                + Style.from_color(colors[max(stack)].rich_color),
+                                + Style.from_color(
+                                    colors[max(color_indices)].rich_color
+                                ),
                             )
                         )
                 strips.append(Strip(segments, width))
