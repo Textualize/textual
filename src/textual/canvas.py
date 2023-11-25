@@ -220,18 +220,18 @@ class Canvas:
         width = self._width
         span_sort_key = itemgetter(0, 1)
         strips: list[Strip] = []
-        color = Color.parse("transparent")
-
+        color = (
+            Color.from_rich_color(base_style.bgcolor)
+            if base_style.bgcolor
+            else Color.parse("transparent")
+        )
         _Segment = Segment
         for raw_spans, line in zip(self.spans, self.lines):
             text = line.tounicode()
 
             if raw_spans:
                 segments: list[Segment] = []
-                color_map = {
-                    index: span.color for index, span in enumerate(raw_spans, 1)
-                }
-                color_map[0] = color
+                colors = [color] + [span.color for span in raw_spans]
                 spans = [
                     (0, False, 0),
                     *(
@@ -256,11 +256,11 @@ class Canvas:
                     else:
                         stack_append(style_id)
                     if next_offset > offset:
-                        segment_color = color + color_map[max(stack)]
                         segments.append(
                             _Segment(
                                 text[offset:next_offset],
-                                base_style + Style.from_color(segment_color.rich_color),
+                                base_style
+                                + Style.from_color(colors[max(stack)].rich_color),
                             )
                         )
                 strips.append(Strip(segments, width))
