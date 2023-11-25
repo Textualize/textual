@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple, cast
+from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from ._spatial_map import SpatialMap
-from .canvas import Canvas, LineType, Rectangle
+from .canvas import Canvas, Rectangle
 from .geometry import Offset, Region, Size, Spacing
 from .strip import StripRenderable
 
@@ -191,8 +191,7 @@ class Layout(ABC):
         width, height = container.outer_size
         canvas = Canvas(width, height)
 
-        keyline_style, keyline_color = container.styles.keyline
-        line_style = cast(LineType, keyline_style)
+        line_style, keyline_color = container.styles.keyline
 
         container_offset = container.content_region.offset
 

@@ -23,7 +23,7 @@ from .color import Color
 from .geometry import Offset, clamp
 from .strip import Strip, StripRenderable
 
-LineType: TypeAlias = Literal["thin", "heavy", "double"]
+CanvasLineType: TypeAlias = Literal["thin", "heavy", "double"]
 
 
 _LINE_TYPE_INDEX = {"thin": 1, "heavy": 2, "double": 3}
@@ -56,7 +56,7 @@ class HorizontalLine(Primitive):
     origin: Offset
     length: int
     color: Color
-    line_type: LineType = "thin"
+    line_type: CanvasLineType = "thin"
 
     def render(self, canvas: Canvas) -> None:
         x, y = self.origin
@@ -93,7 +93,7 @@ class VerticalLine(Primitive):
     origin: Offset
     length: int
     color: Color
-    line_type: LineType = "thin"
+    line_type: CanvasLineType = "thin"
 
     def render(self, canvas: Canvas) -> None:
         x, y = self.origin
@@ -130,7 +130,7 @@ class Rectangle(Primitive):
     width: int
     height: int
     color: Color
-    line_type: LineType = "thin"
+    line_type: CanvasLineType = "thin"
 
     def render(self, canvas: Canvas) -> None:
         origin = self.origin

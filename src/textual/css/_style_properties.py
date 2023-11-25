@@ -46,6 +46,7 @@ from .scalar import (
 from .transition import Transition
 
 if TYPE_CHECKING:
+    from ..canvas import CanvasLineType
     from .._layout import Layout
     from .styles import StylesBase
 
@@ -502,9 +503,9 @@ class KeylineProperty:
 
     def __get__(
         self, obj: StylesBase, objtype: type[StylesBase] | None = None
-    ) -> tuple[str, Color]:
+    ) -> tuple[CanvasLineType, Color]:
         return cast(
-            "tuple[str, Color]",
+            "tuple[CanvasLineType, Color]",
             obj.get_rule("keyline", ("none", Color.parse("transparent"))),
         )
 
