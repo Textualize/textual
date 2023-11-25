@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
 
+### Added
+- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator https://github.com/Textualize/textual/pull/3743
+
 ## [0.42.0] - 2023-11-22
 
 ### Fixed
@@ -55,10 +58,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
 - Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
 - Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
-
-
-### Added
-- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator https://github.com/Textualize/textual/issues/3691
 
 ## [0.41.0] - 2023-10-31
 
