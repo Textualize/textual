@@ -1,6 +1,6 @@
 import pytest
 
-from textual._box_drawing import box_combine_quads
+from textual._box_drawing import combine_quads
 
 
 @pytest.mark.parametrize(
@@ -22,4 +22,4 @@ from textual._box_drawing import box_combine_quads
     ],
 )
 def test_box_combine_quads(quad1, quad2, expected):
-    assert box_combine_quads(quad1, quad2) == expected
+    assert combine_quads(quad1, quad2) == expected

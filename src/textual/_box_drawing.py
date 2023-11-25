@@ -344,15 +344,15 @@ BOX_CHARACTERS: dict[Quad, str] = {
 
 
 @lru_cache(1024)
-def box_combine_quads(box1: Quad, box2: Quad) -> Quad:
-    """Combine two box drawing characters.
+def combine_quads(box1: Quad, box2: Quad) -> Quad:
+    """Combine two box drawing quads.
 
     Args:
-        box1: Existing box character.
-        box2: New box drawing character.
+        box1: Existing box quad.
+        box2: New box quad.
 
     Returns:
-        A new box drawing character.
+        A new box quad.
     """
     top1, right1, bottom1, left1 = box1
     top2, right2, bottom2, left2 = box2

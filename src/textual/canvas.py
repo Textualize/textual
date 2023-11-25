@@ -18,7 +18,7 @@ from rich.segment import Segment
 from rich.style import Style
 from typing_extensions import Literal, TypeAlias
 
-from ._box_drawing import BOX_CHARACTERS, Quad, box_combine_quads
+from ._box_drawing import BOX_CHARACTERS, Quad, combine_quads
 from .color import Color
 from .geometry import Offset, clamp
 from .strip import Strip, StripRenderable
@@ -66,20 +66,22 @@ class HorizontalLine(Primitive):
         box_line = box[y]
 
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
-        combine_quads = box_combine_quads
+        _combine_quads = combine_quads
 
         right = x + self.length - 1
 
         x_range = canvas.x_range(x, x + self.length)
 
         if x in x_range:
-            box_line[x] = combine_quads(box_line[x], (0, line_type_index, 0, 0))
+            box_line[x] = _combine_quads(box_line[x], (0, line_type_index, 0, 0))
         if right in x_range:
-            box_line[right] = combine_quads(box_line[right], (0, 0, 0, line_type_index))
+            box_line[right] = _combine_quads(
+                box_line[right], (0, 0, 0, line_type_index)
+            )
 
         line_quad = (0, line_type_index, 0, line_type_index)
         for box_x in canvas.x_range(x + 1, x + self.length - 1):
-            box_line[box_x] = combine_quads(box_line[box_x], line_quad)
+            box_line[box_x] = _combine_quads(box_line[box_x], line_quad)
 
         canvas.spans[y].append(_Span(x, x + self.length, self.color))
 
@@ -99,20 +101,20 @@ class VerticalLine(Primitive):
             return
         line_type_index = _LINE_TYPE_INDEX[self.line_type]
         box = canvas.box
-        combine_quads = box_combine_quads
+        _combine_quads = combine_quads
 
         y_range = canvas.y_range(y, y + self.length)
 
         if y in y_range:
-            box[y][x] = combine_quads(box[y][x], (0, 0, line_type_index, 0))
+            box[y][x] = _combine_quads(box[y][x], (0, 0, line_type_index, 0))
         bottom = y + self.length - 1
 
         if bottom in y_range:
-            box[bottom][x] = combine_quads(box[bottom][x], (line_type_index, 0, 0, 0))
+            box[bottom][x] = _combine_quads(box[bottom][x], (line_type_index, 0, 0, 0))
         line_quad = (line_type_index, 0, line_type_index, 0)
 
         for box_y in canvas.y_range(y + 1, y + self.length - 1):
-            box[box_y][x] = combine_quads(box[box_y][x], line_quad)
+            box[box_y][x] = _combine_quads(box[box_y][x], line_quad)
 
         spans = canvas.spans
         span = _Span(x, x + 1, self.color)
