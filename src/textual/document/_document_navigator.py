@@ -40,10 +40,27 @@ class DocumentNavigator:
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-    @property
-    def is_start_of_document_line(self, cursor: Location) -> bool:
-        """True if and only if the cursor is on the first line."""
-        return cursor[0] == 0
+    def is_start_of_document_line(self, location: Location) -> bool:
+        """True when the location is at the start of the first document line.
+
+        Args:
+            location: The location to check.
+
+        Returns:
+             True if the location is at column index 0.
+        """
+        return location[0] == 0
+
+    def is_start_of_wrapped_line(self, location: Location) -> bool:
+        """True when the location is at the start of the first wrapped line.
+
+        Args:
+            location: The location to check.
+
+        Returns:
+             True if the location is at column index 0.
+        """
+        return self.is_start_of_document_line(location)
 
     @property
     def cursor_at_last_line(self) -> bool:
