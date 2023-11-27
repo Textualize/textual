@@ -7,15 +7,7 @@ See the guide on the [Command Palette](../guide/command_palette.md) for full det
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import (
-    CancelledError,
-    Queue,
-    Task,
-    TimeoutError,
-    create_task,
-    wait,
-    wait_for,
-)
+from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
 from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
@@ -30,6 +22,7 @@ from rich.text import Text
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
+from ._asyncio import create_task
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
