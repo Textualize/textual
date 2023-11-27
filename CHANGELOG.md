@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
 - Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
-- Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget
+- Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
 
 ### Changed
 

@@ -397,6 +397,8 @@ async def test_is_mounted_property():
 
 
 async def test_not_allow_children():
+    """Regression test for https://github.com/Textualize/textual/pull/3758"""
+
     class TestAppExpectFail(App):
         def compose(self) -> ComposeResult:
             # Statics don't have children, so this should error
