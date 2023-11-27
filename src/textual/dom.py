@@ -24,7 +24,6 @@ from typing import (
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
-from rich.pretty import Pretty
 from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
@@ -689,6 +688,7 @@ class DOMNode(MessagePump):
         Returns:
             A Tree renderable.
         """
+        from rich.pretty import Pretty
 
         def render_info(node: DOMNode) -> Pretty:
             """Render a node for the tree."""
@@ -723,6 +723,7 @@ class DOMNode(MessagePump):
         from rich.columns import Columns
         from rich.console import Group
         from rich.panel import Panel
+        from rich.pretty import Pretty
 
         from .widget import Widget
 

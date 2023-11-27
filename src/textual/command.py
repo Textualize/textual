@@ -19,7 +19,6 @@ from rich.console import Group, RenderableType
 from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
@@ -165,6 +164,8 @@ class Provider(ABC):
             try:
                 await self.startup()
             except Exception:
+                from rich.traceback import Traceback
+
                 self.app.log.error(Traceback())
             else:
                 self._init_success = True
@@ -211,6 +212,8 @@ class Provider(ABC):
         try:
             await self.shutdown()
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.log.error(Traceback())
 
     async def shutdown(self) -> None:
@@ -681,6 +684,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             if search.done():
                 exception = search.exception()
                 if exception is not None:
+                    from rich.traceback import Traceback
+
                     self.log.error(
                         Traceback.from_exception(
                             type(exception), exception, exception.__traceback__

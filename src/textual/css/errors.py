@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderResult
-from rich.traceback import Traceback
 
 from ._help_renderables import HelpText
 from .tokenizer import Token, TokenError
@@ -38,6 +37,8 @@ class StyleValueError(ValueError):
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        from rich.traceback import Traceback
+
         yield Traceback.from_exception(type(self), self, self.__traceback__)
         if self.help_text is not None:
             yield ""

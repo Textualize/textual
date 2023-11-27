@@ -7,7 +7,6 @@ from markdown_it import MarkdownIt
 from markdown_it.token import Token
 from rich import box
 from rich.style import Style
-from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
@@ -503,6 +502,8 @@ class MarkdownFence(MarkdownBlock):
         super().__init__(markdown)
 
     def compose(self) -> ComposeResult:
+        from rich.syntax import Syntax
+
         yield Static(
             Syntax(
                 self.code,
