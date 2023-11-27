@@ -12,7 +12,6 @@ from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.markup import render
 from rich.padding import Padding
 from rich.panel import Panel
-from rich.syntax import Syntax
 from rich.text import Text
 
 from .._cache import LRUCache
@@ -45,6 +44,8 @@ class StylesheetErrors:
 
     @classmethod
     def _get_snippet(cls, code: str, line_no: int) -> RenderableType:
+        from rich.syntax import Syntax
+
         syntax = Syntax(
             code,
             lexer="scss",

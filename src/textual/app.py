@@ -15,7 +15,6 @@ import os
 import platform
 import sys
 import threading
-import unicodedata
 import warnings
 from asyncio import Task
 from concurrent.futures import Future
@@ -56,12 +55,10 @@ from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
-from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -84,7 +81,6 @@ from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
-from .filter import ANSIToTruecolor, DimFilter, LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -114,6 +110,7 @@ if TYPE_CHECKING:
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
+    from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
     from .widget import MountError  # type: ignore  # noqa: F401
@@ -385,11 +382,15 @@ class App(Generic[ReturnType], DOMNode):
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
+            from .filter import Monochrome
+
             self._filters.append(Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
             if filter == "dim":
+                from .filter import ANSIToTruecolor, DimFilter
+
                 self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
                 self._filters.append(DimFilter())
 
@@ -1137,6 +1138,8 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
+        import unicodedata
+
         app = self
         driver = app._driver
         assert driver is not None
@@ -1282,7 +1285,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Launch the app in the "background"
         active_message_pump.set(app)
-        app_task = create_task(run_app(app), name=f"run_test {app}")
+        app_task = asyncio.create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -1353,7 +1356,7 @@ class App(Generic[ReturnType], DOMNode):
 
                 pilot = Pilot(app)
                 active_message_pump.set(self)
-                auto_pilot_task = create_task(
+                auto_pilot_task = asyncio.create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
 
@@ -2098,6 +2101,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def _fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
+        from rich.traceback import Traceback
+
         self.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
@@ -2912,7 +2917,7 @@ class App(Generic[ReturnType], DOMNode):
         removed_widgets = self._detach_from_dom(widgets)
 
         finished_event = asyncio.Event()
-        remove_task = create_task(
+        remove_task = asyncio.create_task(
             prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
         )
 

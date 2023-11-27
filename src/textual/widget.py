@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import wait
+from asyncio import create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -37,13 +37,11 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Self
 
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
@@ -3305,6 +3303,8 @@ class Widget(DOMNode):
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)

@@ -7,7 +7,15 @@ See the guide on the [Command Palette](../guide/command_palette.md) for full det
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
+from asyncio import (
+    CancelledError,
+    Queue,
+    Task,
+    TimeoutError,
+    create_task,
+    wait,
+    wait_for,
+)
 from dataclasses import dataclass
 from functools import total_ordering
 from time import monotonic
@@ -19,11 +27,9 @@ from rich.console import Group, RenderableType
 from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
-from ._asyncio import create_task
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
@@ -165,6 +171,8 @@ class Provider(ABC):
             try:
                 await self.startup()
             except Exception:
+                from rich.traceback import Traceback
+
                 self.app.log.error(Traceback())
             else:
                 self._init_success = True
@@ -211,6 +219,8 @@ class Provider(ABC):
         try:
             await self.shutdown()
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.log.error(Traceback())
 
     async def shutdown(self) -> None:
@@ -681,6 +691,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             if search.done():
                 exception = search.exception()
                 if exception is not None:
+                    from rich.traceback import Traceback
+
                     self.log.error(
                         Traceback.from_exception(
                             type(exception), exception, exception.__traceback__
