@@ -51,6 +51,8 @@ class ToggleButton(Static, can_focus=True):
     | `toggle--label` | Targets the text label of the toggle button. |
     """
 
+    ALLOW_CHILDREN = False
+
     DEFAULT_CSS = """
     ToggleButton {
         width: auto;
