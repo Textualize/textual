@@ -71,7 +71,7 @@ keyline: thin green;
 
 ## Python
 
-You can set a keyline in python with a tuple of type and color:
+You can set a keyline in Python with a tuple of type and color:
 
 ```python
 widget.styles.keyline = ("thin", "green")
