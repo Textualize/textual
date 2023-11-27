@@ -16,9 +16,9 @@ class AwaitComplete:
         """Create an AwaitComplete.
 
         Args:
-            coroutine: One or more coroutines to execute.
+            coroutines: One or more coroutines to execute.
         """
-        self.coroutines = coroutines
+        self.coroutines: tuple[Coroutine[Any, Any, Any], ...] = coroutines
         self._future: Future = gather(*self.coroutines)
 
     async def __call__(self) -> Any:

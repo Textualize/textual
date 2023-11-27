@@ -67,7 +67,6 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._system_commands import SystemCommands
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
@@ -107,6 +106,7 @@ if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, TypeAlias
 
+    from ._system_commands import SystemCommands
     from ._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
@@ -156,6 +156,17 @@ AutopilotCallbackType: TypeAlias = (
     "Callable[[Pilot[object]], Coroutine[Any, Any, None]]"
 )
 """Signature for valid callbacks that can be used to control apps."""
+
+
+def get_system_commands() -> type[SystemCommands]:
+    """Callable to lazy load the system commands.
+
+    Returns:
+        System commands class.
+    """
+    from ._system_commands import SystemCommands
+
+    return SystemCommands
 
 
 class AppError(Exception):
@@ -330,7 +341,9 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
-    COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
+        get_system_commands
+    }
     """Command providers used by the [command palette](/guide/command_palette).
 
     Should be a set of [command.Provider][textual.command.Provider] classes.
@@ -563,7 +576,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The [worker](guide/workers/) manager.
+        """The [worker](/guide/workers/) manager.
 
         Returns:
             An object to manage workers.
@@ -974,8 +987,8 @@ class App(Generic[ReturnType], DOMNode):
     def call_from_thread(
         self,
         callback: Callable[..., CallThreadReturnType | Awaitable[CallThreadReturnType]],
-        *args: object,
-        **kwargs: object,
+        *args: Any,
+        **kwargs: Any,
     ) -> CallThreadReturnType:
         """Run a callable from another thread, and return the result.
 

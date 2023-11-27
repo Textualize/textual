@@ -12,6 +12,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
 - Fixed `Select` not updating after changing the `prompt` reactive https://github.com/Textualize/textual/issues/2983
+- Fixed flicker when updating Markdown https://github.com/Textualize/textual/pull/3757
+
+### Added
+
+- Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
+- Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
 
 ### Changed
 
@@ -19,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
 - Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
 - Optimized startup time https://github.com/Textualize/textual/pull/3753
+- App.COMMANDS or Screen.COMMANDS can now accept a callable which returns a command palette provider https://github.com/Textualize/textual/pull/3756
 
 ## [0.42.0] - 2023-11-22
 

@@ -12,6 +12,7 @@ from functools import lru_cache, partial
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     ClassVar,
     Iterable,
@@ -1140,12 +1141,12 @@ class DOMNode(MessagePump):
 
         return query.only_one() if expect_type is None else query.only_one(expect_type)
 
-    def set_styles(self, css: str | None = None, **update_styles) -> Self:
+    def set_styles(self, css: str | None = None, **update_styles: Any) -> Self:
         """Set custom styles on this object.
 
         Args:
             css: Styles in CSS format.
-            **update_styles: Keyword arguments map style names on to style.
+            update_styles: Keyword arguments map style names onto style values.
 
         Returns:
             Self.

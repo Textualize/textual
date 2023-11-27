@@ -63,6 +63,7 @@ from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
+from .renderables.blank import Blank
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -3111,8 +3112,13 @@ class Widget(DOMNode):
         Returns:
             Any renderable.
         """
-        render: Text | str = "" if self.is_container else self.css_identifier_styled
-        return render
+
+        if self.is_container:
+            if self.styles.layout and self.styles.keyline[0] != "none":
+                return self._layout.render_keyline(self)
+            else:
+                return Blank(self.background_colors[1])
+        return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
@@ -3238,18 +3244,18 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [`events.Print`][textual.events.Print] message.
 
-        Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
+        Call [`end_capture_print`][textual.widget.Widget.end_capture_print] to disable print capture.
 
         Args:
-            stdout: Capture stdout.
-            stderr: Capture stderr.
+            stdout: Whether to capture stdout.
+            stderr: Whether to capture stderr.
         """
         self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
-        """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
+        """End print capture (set with [`begin_capture_print`][textual.widget.Widget.begin_capture_print])."""
         self.app.end_capture_print(self)
 
     def check_message_enabled(self, message: Message) -> bool:
