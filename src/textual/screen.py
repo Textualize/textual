@@ -645,7 +645,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         self._update_timer.pause()
-        if self.is_current:
+        if self.is_current and not self.app._batch_count:
             if self._layout_required:
                 self._refresh_layout()
                 self._layout_required = False
