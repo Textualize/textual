@@ -73,10 +73,10 @@ async def test_screen_command_sources() -> None:
     """Command sources declared on a screen should be in the command palette."""
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert (
-            pilot.app.screen._provider_classes
-            == App.COMMANDS | ScreenWithSources.COMMANDS
-        )
+        assert pilot.app.screen._provider_classes == {
+            SystemCommands,
+            ExampleCommandSource,
+        }
 
 
 class AnotherCommandSource(ExampleCommandSource):
