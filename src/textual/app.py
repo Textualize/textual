@@ -59,6 +59,7 @@ from rich.segment import Segment, Segments
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -1285,7 +1286,7 @@ class App(Generic[ReturnType], DOMNode):
 
         # Launch the app in the "background"
         active_message_pump.set(app)
-        app_task = asyncio.create_task(run_app(app), name=f"run_test {app}")
+        app_task = create_task(run_app(app), name=f"run_test {app}")
 
         # Wait until the app has performed all startup routines.
         await app_ready_event.wait()
@@ -1356,7 +1357,7 @@ class App(Generic[ReturnType], DOMNode):
 
                 pilot = Pilot(app)
                 active_message_pump.set(self)
-                auto_pilot_task = asyncio.create_task(
+                auto_pilot_task = create_task(
                     run_auto_pilot(auto_pilot, pilot), name=repr(pilot)
                 )
 
