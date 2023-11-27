@@ -48,7 +48,8 @@ jobs:
       #          make typecheck
       - name: Test with pytest
         run: |
-          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
+          source $VENV
+          pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
       - name: Upload snapshot report
         if: always()
         uses: actions/upload-artifact@v3
