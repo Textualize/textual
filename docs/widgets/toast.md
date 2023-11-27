@@ -7,9 +7,7 @@ A widget which displays a notification message.
 - [ ] Focusable
 - [ ] Container
 
-Note that `Toast` isn't designed to be used directly in your applications,
-but it is instead used by [`notify`][textual.app.App.notify] to
-display a message when using Textual's built-in notification system.
+!!! warning "Note that `Toast` isn't designed to be used directly in your applications, but it is instead used by [`notify`][textual.app.App.notify] to display a message when using Textual's built-in notification system."
 
 ## Styling
 
@@ -94,7 +92,7 @@ The toast widget provides the following component classes:
 
 ---
 
-::: textual.widgets._toast
+::: textual.widgets._toast.Toast
     options:
       show_root_heading: true
       show_root_toc_entry: true

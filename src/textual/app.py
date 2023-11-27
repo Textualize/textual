@@ -561,7 +561,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The [worker](guide/workers/) manager.
+        """The [worker](/guide/workers/) manager.
 
         Returns:
             An object to manage workers.
@@ -972,8 +972,8 @@ class App(Generic[ReturnType], DOMNode):
     def call_from_thread(
         self,
         callback: Callable[..., CallThreadReturnType | Awaitable[CallThreadReturnType]],
-        *args: object,
-        **kwargs: object,
+        *args: Any,
+        **kwargs: Any,
     ) -> CallThreadReturnType:
         """Run a callable from another thread, and return the result.
 
