@@ -1,4 +1,6 @@
 import re
+from bisect import bisect_left
+from typing import Any, Sequence
 
 from textual.document._document import Location
 from textual.document._wrapped_document import WrappedDocument
@@ -49,7 +51,7 @@ class DocumentNavigator:
         Returns:
              True if the location is at column index 0.
         """
-        return location[0] == 0
+        return location[1] == 0
 
     def is_start_of_wrapped_line(self, location: Location) -> bool:
         """True when the location is at the start of the first wrapped line.
@@ -60,35 +62,74 @@ class DocumentNavigator:
         Returns:
              True if the location is at column index 0.
         """
-        return self.is_start_of_document_line(location)
+        if self.is_start_of_document_line(location):
+            return True
 
-    @property
-    def cursor_at_last_line(self) -> bool:
-        """True if and only if the cursor is on the last line."""
-        return self.selection.end[0] == self.document.line_count - 1
+        row, column = location
+        wrap_offsets = self._wrapped_document.get_offsets(row)
+        return index(wrap_offsets, column) != -1
 
-    @property
-    def cursor_at_start_of_line(self) -> bool:
-        """True if and only if the cursor is at column 0."""
-        return self.selection.end[1] == 0
+    def is_end_of_document_line(self, location: Location) -> bool:
+        """True if the location is at the end of a line in the document."""
+        row, column = location
+        row_length = len(self._document[row])
+        return column == row_length
 
-    @property
-    def cursor_at_end_of_line(self) -> bool:
-        """True if and only if the cursor is at the end of a row."""
-        cursor_row, cursor_column = self.selection.end
-        row_length = len(self.document[cursor_row])
-        cursor_at_end = cursor_column == row_length
-        return cursor_at_end
+    def is_end_of_wrapped_line(self, location: Location) -> bool:
+        """True if the location is at the end of a wrapped line."""
+        if self.is_end_of_document_line(location):
+            return True
 
-    @property
-    def cursor_at_start_of_text(self) -> bool:
+        row, column = location
+        wrap_offsets = self._wrapped_document.get_offsets(row)
+        return index(wrap_offsets, column - 1) != -1
+
+    def is_first_document_line(self, location: Location) -> bool:
+        return location[0] == 0
+
+    def is_first_wrapped_line(self, location: Location) -> bool:
+        # TODO: Check the less than/equal to thing.
+        # Ensure that the column index of the location is less (or equal to?!?!) than
+        # the first value in the wrap offsets.
+        if not self.is_first_document_line(location):
+            return False
+
+        row, column = location
+        wrap_offsets = self._wrapped_document.get_offsets(row)
+
+        if not wrap_offsets:
+            return True
+
+        if column <= wrap_offsets[0]:
+            return True
+        return False
+
+    def is_last_document_line(self, location: Location) -> bool:
+        """True when the location is on the last line of the document."""
+        return location[0] == self._document.line_count - 1
+
+    def is_last_wrapped_line(self, location: Location) -> bool:
+        if not self.is_last_document_line(location):
+            return False
+
+        row, column = location
+        wrap_offsets = self._wrapped_document.get_offsets(row)
+
+        if not wrap_offsets:
+            return True
+
+        if column > wrap_offsets[-1]:
+            return True
+        return False
+
+    def is_start_of_document(self, location: Location) -> bool:
         """True if and only if the cursor is at location (0, 0)"""
-        return self.selection.end == (0, 0)
+        return location == (0, 0)
 
-    @property
-    def cursor_at_end_of_text(self) -> bool:
-        """True if and only if the cursor is at the very end of the document."""
-        return self.cursor_at_last_line and self.cursor_at_end_of_line
+    def is_end_of_document(self, location: Location) -> bool:
+        return self.is_last_document_line(location) and self.is_end_of_document_line(
+            location
+        )
 
     def left(self, cursor: Location) -> Location:
         if cursor == (0, 0):
@@ -108,3 +149,19 @@ class DocumentNavigator:
         target_row = cursor_row + 1 if self.cursor_at_end_of_line else cursor_row
         target_column = 0 if self.cursor_at_end_of_line else cursor_column + 1
         return target_row, target_column
+
+
+def index(sequence: Sequence, value: Any) -> int:
+    """Locate the leftmost item in the sequence equal to value via bisection.
+
+    Args:
+        sequence: The sequence to search in.
+        value: The value to find.
+
+    Returns:
+        The index of the value, or -1 if the value is not found in the sequence.
+    """
+    insert_index = bisect_left(sequence, value)
+    if insert_index != len(sequence) and sequence[insert_index] == value:
+        return insert_index
+    return -1
