@@ -131,23 +131,23 @@ class DocumentNavigator:
             location
         )
 
-    def left(self, cursor: Location) -> Location:
-        if cursor == (0, 0):
+    def left(self, location: Location) -> Location:
+        if location == (0, 0):
             return 0, 0
 
-        cursor_row, cursor_column = cursor
-        length_of_row_above = len(self._document[cursor_row - 1])
-        target_row = cursor_row if cursor_column != 0 else cursor_row - 1
-        target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
+        row, column = location
+        length_of_row_above = len(self._document[row - 1])
+        target_row = row if column != 0 else row - 1
+        target_column = column - 1 if column != 0 else length_of_row_above
         return target_row, target_column
 
-    def right(self, cursor: Location) -> Location:
-        # if
-        #     return cursor
-
-        cursor_row, cursor_column = cursor
-        target_row = cursor_row + 1 if self.cursor_at_end_of_line else cursor_row
-        target_column = 0 if self.cursor_at_end_of_line else cursor_column + 1
+    def right(self, location: Location) -> Location:
+        if self.is_end_of_document(location):
+            return location
+        row, cursor_column = location
+        is_end_of_line = self.is_end_of_document_line(location)
+        target_row = row + 1 if is_end_of_line else row
+        target_column = 0 if is_end_of_line else cursor_column + 1
         return target_row, target_column
 
 
