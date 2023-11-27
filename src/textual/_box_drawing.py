@@ -12,6 +12,8 @@ There are also fewer characters for the "double" line type.
 
 """
 
+from __future__ import annotations
+
 from functools import lru_cache
 
 from typing_extensions import TypeAlias
