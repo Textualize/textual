@@ -37,7 +37,6 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Self
 
 from . import constants, errors, events, messages
@@ -3311,6 +3310,8 @@ class Widget(DOMNode):
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)
