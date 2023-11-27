@@ -25,7 +25,6 @@ def compose(node: App | Widget) -> list[Widget]:
     app._composed.append(composed)
     iter_compose = iter(node.compose())
     try:
-        # for child in node.compose():
         while True:
             try:
                 child = next(iter_compose)
