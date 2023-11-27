@@ -2305,6 +2305,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
     async def _on_compose(self) -> None:
+        _rich_traceback_omit = True
         try:
             widgets = [*self.screen._nodes, *compose(self)]
         except TypeError as error:

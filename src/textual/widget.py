@@ -87,6 +87,10 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
+class NotAContainer(Exception):
+    """Exception raised if you attempt to add a child to a widget which doesn't permit child nodes."""
+
+
 _NULL_STYLE = Style()
 
 
@@ -263,6 +267,9 @@ class Widget(DOMNode):
 
     BORDER_SUBTITLE: ClassVar[str] = ""
     """Initial value for border_subtitle attribute."""
+
+    ALLOW_CHILDREN: ClassVar[bool] = True
+    """Set to `False` to prevent adding children to this widget."""
 
     can_focus: bool = False
     """Widget may receive focus."""
@@ -487,6 +494,21 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        _rich_traceback_omit = True
+        if not self.ALLOW_CHILDREN:
+            raise NotAContainer(f"Can't add children to {type(widget)} widgets")
+        self._nodes._append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
