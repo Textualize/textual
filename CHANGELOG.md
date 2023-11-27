@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Optimized startup time https://github.com/Textualize/textual/pull/3753
-
+- App.COMMANDS or Screen.COMMANDS can now accept a callable which returns a command palette privoder
 
 ## [0.42.0] - 2023-11-22
 

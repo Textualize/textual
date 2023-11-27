@@ -10,8 +10,9 @@ from abc import ABC, abstractmethod
 from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
 from dataclasses import dataclass
 from functools import total_ordering
+from inspect import isclass
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
 
 import rich.repr
 from rich.align import Align
@@ -486,10 +487,27 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         application][textual.app.App.COMMANDS] and those [defined in
         the current screen][textual.screen.Screen.COMMANDS].
         """
+
+        def get_providers(root: App | Screen) -> Iterable[type[Provider]]:
+            """Get providers from app or screen.
+
+            Args:
+                root: The app or screen.
+
+            Returns:
+                An iterable of providers.
+            """
+            for provider in root.COMMANDS:
+                if isclass(provider) and issubclass(provider, Provider):
+                    yield provider
+                else:
+                    # Lazy loaded providers
+                    yield provider()  # type: ignore
+
         return (
             set()
             if self._calling_screen is None
-            else self.app.COMMANDS | self._calling_screen.COMMANDS
+            else {*get_providers(self.app), *get_providers(self._calling_screen)}
         )
 
     def compose(self) -> ComposeResult:

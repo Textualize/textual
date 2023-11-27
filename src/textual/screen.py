@@ -164,7 +164,7 @@ class Screen(Generic[ScreenResultType], Widget):
     title: Reactive[str | None] = Reactive(None, compute=False)
     """Screen title to override [the app title][textual.app.App.title]."""
 
-    COMMANDS: ClassVar[set[type[Provider]]] = set()
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = set()
     """Command providers used by the [command palette](/guide/command_palette), associated with the screen.
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
