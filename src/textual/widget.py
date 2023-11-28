@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import wait
+from asyncio import create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -42,7 +42,6 @@ from typing_extensions import Self
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
