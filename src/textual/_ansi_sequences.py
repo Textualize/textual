@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Mapping, Tuple
 
 from .keys import Keys
 
 # Mapping of vt100 escape codes to Keys.
-ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
+ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     # Control keys.
     " ": (Keys.Space,),
     "\r": (Keys.Enter,),
@@ -326,6 +328,21 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;8w": (Keys.Escape, Keys.ControlShift7),
     "\x1b[1;8x": (Keys.Escape, Keys.ControlShift8),
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
+    # Simplify some sequences that appear to be unique to rxvt; see
+    # https://github.com/Textualize/textual/issues/3741 for context.
+    "\x1bOj": "*",
+    "\x1bOk": "+",
+    "\x1bOm": "-",
+    "\x1bOo": "/",
+    "\x1bOq": "1",
+    "\x1bOr": "2",
+    "\x1bOs": "3",
+    "\x1bOt": "4",
+    "\x1bOu": "5",
+    "\x1bOv": "6",
+    "\x1bOw": "7",
+    "\x1bOx": "8",
+    "\x1bOy": "9",
 }
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
