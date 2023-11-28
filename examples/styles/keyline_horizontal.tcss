@@ -1,0 +1,8 @@
+Placeholder {
+    margin: 1;
+    width: 1fr;
+}
+
+Horizontal {
+    keyline: thin $secondary;
+}
