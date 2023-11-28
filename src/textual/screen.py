@@ -819,14 +819,16 @@ class Screen(Generic[ScreenResultType], Widget):
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
-        if not self.app.app_focus:
-            return
-        auto_focus = self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
-        if auto_focus and self.focused is None:
-            for widget in self.query(auto_focus):
-                if widget.focusable:
-                    self.set_focus(widget)
-                    break
+        # Only auto-focus when the app has focus (textual-web only)
+        if self.app.app_focus:
+            auto_focus = (
+                self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
+            )
+            if auto_focus and self.focused is None:
+                for widget in self.query(auto_focus):
+                    if widget.focusable:
+                        self.set_focus(widget)
+                        break
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
