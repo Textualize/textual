@@ -31,7 +31,9 @@ my_select: Select[int] =  Select(options)
 
     If you aren't familiar with typing or don't want to worry about it right now, feel free to ignore it.
 
-## Example
+## Examples
+
+### Basic Example
 
 The following example presents a `Select` with a number of options.
 
@@ -57,7 +59,7 @@ The following example presents a `Select` with a number of options.
     --8<-- "docs/examples/widgets/select.tcss"
     ```
 
-## Example
+### Example using Class Method
 
 The following example presents a `Select` created using the `from_values` class method.
 
