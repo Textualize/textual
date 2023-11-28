@@ -144,11 +144,41 @@ class DocumentNavigator:
     def right(self, location: Location) -> Location:
         if self.is_end_of_document(location):
             return location
-        row, cursor_column = location
+        row, column = location
         is_end_of_line = self.is_end_of_document_line(location)
         target_row = row + 1 if is_end_of_line else row
-        target_column = 0 if is_end_of_line else cursor_column + 1
+        target_column = 0 if is_end_of_line else column + 1
         return target_row, target_column
+
+    def up(self, location: Location) -> Location:
+        """Get the location up from the given location in the wrapped document."""
+
+        # Moving up from a position on the first visual line moves us to the start.
+        if self.is_first_wrapped_line(location):
+            return 0, 0
+
+        # Get the wrap offsets of the current line.
+        row, column = location
+        wrap_offsets = self._wrapped_document.get_offsets(row)
+
+        # We need to find the insertion point to determine which section index we're
+        # on within the current line. When we know the section index, we can use it
+        # to find the section which sits above it.
+        if wrap_offsets:
+            section_index = bisect_left(wrap_offsets, column)
+
+        # Find the cursor offset *within* the section
+
+        # Convert that cursor offset to a cell (visual) offset
+
+        # Get the section that sits above this one - note that if the section index
+        # is 0, then we'll have to get section at index -1 from the line above.
+
+        # If we're on the first section of a wrapped line, then we need to retrieve
+        # the last section of the line before it to calculate where the cursor
+        # should move to.
+
+        current_section = self._wrapped_document.get_target_document_column()
 
 
 def index(sequence: Sequence, value: Any) -> int:
