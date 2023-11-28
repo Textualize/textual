@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
 - Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
 - Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
+- Added app focus/blur for textual-web https://github.com/Textualize/textual/pull/3767
 
 ### Changed
 

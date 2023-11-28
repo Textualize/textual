@@ -367,6 +367,12 @@ class App(Generic[ReturnType], DOMNode):
         self.app.dark = not self.app.dark  # Toggle dark mode
         ```
     """
+    app_focus = Reactive(True, compute=False)
+    """Indicates if the app has focus.
+
+    When run in the terminal, the app always has focus. When run in the web, the app will
+    get focus when the terminal widget has focus.        
+    """
 
     def __init__(
         self,
@@ -2672,6 +2678,8 @@ class App(Generic[ReturnType], DOMNode):
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
+            if not self.app_focus and isinstance(event, (events.Key, events.MouseDown)):
+                self.app_focus = True
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
@@ -2818,6 +2826,16 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.post_message(event)
         for screen in self._background_screens:
             screen.post_message(event)
+
+    async def _on_app_focus(self, event: events.AppFocus) -> None:
+        """App has focus."""
+        # Required by textual-web to manage focus in a web page.
+        self.app_focus = True
+
+    async def _on_app_blur(self, event: events.AppBlur) -> None:
+        """App has lost focus."""
+        # Required by textual-web to manage focus in a web page.
+        self.app_focus = False
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
@@ -2975,6 +2993,15 @@ class App(Generic[ReturnType], DOMNode):
 
         await root._close_messages(wait=True)
         self._unregister(root)
+
+    def _watch_app_focus(self, focus: bool) -> None:
+        """Respond to changes in app focus."""
+        if focus:
+            focused = self.screen.focused
+            self.screen.set_focus(None)
+            self.screen.set_focus(focused)
+        else:
+            self.screen.set_focus(None)
 
     async def action_check_bindings(self, key: str) -> None:
         """An [action](/guide/actions) to handle a key press using the binding system.
