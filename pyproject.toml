@@ -40,7 +40,7 @@ include = [
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 rich = ">=13.3.3"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 #rich = {path="../rich", develop=true}
