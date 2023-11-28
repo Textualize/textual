@@ -10,8 +10,9 @@ from abc import ABC, abstractmethod
 from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
 from dataclasses import dataclass
 from functools import total_ordering
+from inspect import isclass
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
 
 import rich.repr
 from rich.align import Align
@@ -19,7 +20,6 @@ from rich.console import Group, RenderableType
 from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
@@ -165,6 +165,8 @@ class Provider(ABC):
             try:
                 await self.startup()
             except Exception:
+                from rich.traceback import Traceback
+
                 self.app.log.error(Traceback())
             else:
                 self._init_success = True
@@ -211,6 +213,8 @@ class Provider(ABC):
         try:
             await self.shutdown()
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.log.error(Traceback())
 
     async def shutdown(self) -> None:
@@ -483,10 +487,27 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         application][textual.app.App.COMMANDS] and those [defined in
         the current screen][textual.screen.Screen.COMMANDS].
         """
+
+        def get_providers(root: App | Screen) -> Iterable[type[Provider]]:
+            """Get providers from app or screen.
+
+            Args:
+                root: The app or screen.
+
+            Returns:
+                An iterable of providers.
+            """
+            for provider in root.COMMANDS:
+                if isclass(provider) and issubclass(provider, Provider):
+                    yield provider
+                else:
+                    # Lazy loaded providers
+                    yield provider()  # type: ignore
+
         return (
             set()
             if self._calling_screen is None
-            else self.app.COMMANDS | self._calling_screen.COMMANDS
+            else {*get_providers(self.app), *get_providers(self._calling_screen)}
         )
 
     def compose(self) -> ComposeResult:
@@ -681,6 +702,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             if search.done():
                 exception = search.exception()
                 if exception is not None:
+                    from rich.traceback import Traceback
+
                     self.log.error(
                         Traceback.from_exception(
                             type(exception), exception, exception.__traceback__

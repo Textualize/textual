@@ -164,7 +164,7 @@ class Screen(Generic[ScreenResultType], Widget):
     title: Reactive[str | None] = Reactive(None, compute=False)
     """Screen title to override [the app title][textual.app.App.title]."""
 
-    COMMANDS: ClassVar[set[type[Provider]]] = set()
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = set()
     """Command providers used by the [command palette](/guide/command_palette), associated with the screen.
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
@@ -589,6 +589,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self.screen.scroll_to_center(widget, origin_visible=True)
 
                     self.call_after_refresh(scroll_to_center, widget)
+
                 widget.post_message(events.Focus())
                 focused = widget
 
@@ -644,7 +645,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         self._update_timer.pause()
-        if self.is_current:
+        if self.is_current and not self.app._batch_count:
             if self._layout_required:
                 self._refresh_layout()
                 self._layout_required = False

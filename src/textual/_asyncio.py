@@ -16,6 +16,7 @@ else:
     from asyncio import create_task as _create_task
     from typing import Awaitable
 
+    # The name parameter was added in Python 3.8
     def create_task(coroutine: Awaitable, *, name: str | None = None) -> asyncio.Task:
         """Schedule the execution of a coroutine object in a spawn task."""
         return _create_task(coroutine)

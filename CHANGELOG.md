@@ -8,10 +8,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
+- Fixed `Select` not updating after changing the `prompt` reactive https://github.com/Textualize/textual/issues/2983
+- Fixed flicker when updating Markdown https://github.com/Textualize/textual/pull/3757
+
 ### Added
 
+- Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
+- Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
+- Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
+- Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
+- Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
 - Added support for various modified edit and navigation keys in urxvt https://github.com/Textualize/textual/pull/3739
+
+### Changed
+
+- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
+- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Optimized startup time https://github.com/Textualize/textual/pull/3753
+- App.COMMANDS or Screen.COMMANDS can now accept a callable which returns a command palette provider https://github.com/Textualize/textual/pull/3756
 
 ## [0.42.0] - 2023-11-22
 
@@ -53,9 +72,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
 - Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
 - Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
-- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
-- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
-- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
 
 
 ## [0.41.0] - 2023-10-31

@@ -12,6 +12,7 @@ from typing import Iterable, Iterator, Sequence
 import rich.repr
 from rich.cells import cell_len, set_cell_size
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
@@ -38,8 +39,9 @@ def get_line_length(segments: Iterable[Segment]) -> int:
 class StripRenderable:
     """A renderable which renders a list of strips in to lines."""
 
-    def __init__(self, strips: list[Strip]) -> None:
+    def __init__(self, strips: list[Strip], width: int | None = None) -> None:
         self._strips = strips
+        self._width = width
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -48,6 +50,15 @@ class StripRenderable:
         for strip in self._strips:
             yield from strip
             yield new_line
+
+    def __rich_measure__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> Measurement:
+        if self._width is None:
+            width = max(strip.cell_length for strip in self._strips)
+        else:
+            width = self._width
+        return Measurement(width, width)
 
 
 @rich.repr.auto

@@ -32,6 +32,7 @@ nav:
           - "css_types/color.md"
           - "css_types/horizontal.md"
           - "css_types/integer.md"
+          - "css_types/keyline.md"
           - "css_types/name.md"
           - "css_types/number.md"
           - "css_types/overflow.md"
@@ -83,6 +84,7 @@ nav:
           - "styles/display.md"
           - "styles/dock.md"
           - "styles/index.md"
+          - "styles/keyline.md"
           - Grid:
               - "styles/grid/index.md"
               - "styles/grid/column_span.md"
@@ -165,6 +167,7 @@ nav:
           - "widgets/tabbed_content.md"
           - "widgets/tabs.md"
           - "widgets/text_area.md"
+          - "widgets/toast.md"
           - "widgets/tree.md"
   - API:
       - "api/index.md"
