@@ -561,7 +561,7 @@ class Blur(Event, bubble=False):
     """
 
 
-class GlobalFocus(Event, bubble=False):
+class AppFocus(Event, bubble=False):
     """Sent when the app has focus.
 
     Used by textual-web.
@@ -571,7 +571,7 @@ class GlobalFocus(Event, bubble=False):
     """
 
 
-class GlobalBlur(Event, bubble=False):
+class AppBlur(Event, bubble=False):
     """Sent when the app loses focus.
 
     Used by textual-web.

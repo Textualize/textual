@@ -819,6 +819,8 @@ class Screen(Generic[ScreenResultType], Widget):
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
+        if not self.app.app_focus:
+            return
         auto_focus = self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
         if auto_focus and self.focused is None:
             for widget in self.query(auto_focus):
