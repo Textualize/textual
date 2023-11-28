@@ -161,6 +161,11 @@ class ToggleButton(Static, can_focus=True):
         """The label associated with the button."""
         return self._label
 
+    @label.setter
+    def label(self, label: TextType) -> None:
+        self._label = Text.from_markup(label) if isinstance(label, str) else label
+        self.refresh(layout=True)
+
     @property
     def _button(self) -> Text:
         """The button, reflecting the current value."""
