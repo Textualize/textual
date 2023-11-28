@@ -14,7 +14,7 @@ from ..css._error_tools import friendly_list
 from ..message import Message
 from ..pad import HorizontalPad
 from ..reactive import reactive
-from ..widgets import Static
+from ..widget import Widget
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 """The names of the valid button variants.
@@ -29,7 +29,7 @@ class InvalidButtonVariant(Exception):
     """Exception raised if an invalid button variant is used."""
 
 
-class Button(Static, can_focus=True):
+class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
     DEFAULT_CSS = """
@@ -152,6 +152,8 @@ class Button(Static, can_focus=True):
     """
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
+
+    ALLOW_CHILDREN = False
 
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""

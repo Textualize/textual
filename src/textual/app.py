@@ -15,7 +15,6 @@ import os
 import platform
 import sys
 import threading
-import unicodedata
 import warnings
 from asyncio import Task
 from concurrent.futures import Future
@@ -56,7 +55,6 @@ from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
-from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
@@ -69,7 +67,6 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._system_commands import SystemCommands
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
@@ -84,7 +81,6 @@ from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
-from .filter import ANSIToTruecolor, DimFilter, LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -96,7 +92,12 @@ from .messages import CallbackType
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
-from .screen import Screen, ScreenResultCallbackType, ScreenResultType
+from .screen import (
+    Screen,
+    ScreenResultCallbackType,
+    ScreenResultType,
+    _SystemModalScreen,
+)
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -105,10 +106,12 @@ if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, TypeAlias
 
+    from ._system_commands import SystemCommands
     from ._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
+    from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
     from .widget import MountError  # type: ignore  # noqa: F401
@@ -153,6 +156,17 @@ AutopilotCallbackType: TypeAlias = (
     "Callable[[Pilot[object]], Coroutine[Any, Any, None]]"
 )
 """Signature for valid callbacks that can be used to control apps."""
+
+
+def get_system_commands() -> type[SystemCommands]:
+    """Callable to lazy load the system commands.
+
+    Returns:
+        System commands class.
+    """
+    from ._system_commands import SystemCommands
+
+    return SystemCommands
 
 
 class AppError(Exception):
@@ -327,7 +341,9 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
-    COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
+        get_system_commands
+    }
     """Command providers used by the [command palette](/guide/command_palette).
 
     Should be a set of [command.Provider][textual.command.Provider] classes.
@@ -385,11 +401,15 @@ class App(Generic[ReturnType], DOMNode):
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
+            from .filter import Monochrome
+
             self._filters.append(Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
             if filter == "dim":
+                from .filter import ANSIToTruecolor, DimFilter
+
                 self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
                 self._filters.append(DimFilter())
 
@@ -561,7 +581,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The [worker](guide/workers/) manager.
+        """The [worker](/guide/workers/) manager.
 
         Returns:
             An object to manage workers.
@@ -605,8 +625,14 @@ class App(Generic[ReturnType], DOMNode):
             A sequence of widgets.
         """
         try:
-            return (self.screen,)
-        except ScreenError:
+            return (
+                next(
+                    screen
+                    for screen in reversed(self._screen_stack)
+                    if not isinstance(screen, _SystemModalScreen)
+                ),
+            )
+        except StopIteration:
             return ()
 
     @contextmanager
@@ -966,8 +992,8 @@ class App(Generic[ReturnType], DOMNode):
     def call_from_thread(
         self,
         callback: Callable[..., CallThreadReturnType | Awaitable[CallThreadReturnType]],
-        *args: object,
-        **kwargs: object,
+        *args: Any,
+        **kwargs: Any,
     ) -> CallThreadReturnType:
         """Run a callable from another thread, and return the result.
 
@@ -1131,6 +1157,8 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
+        import unicodedata
+
         app = self
         driver = app._driver
         assert driver is not None
@@ -2092,6 +2120,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def _fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
+        from rich.traceback import Traceback
+
         self.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
@@ -2196,6 +2226,7 @@ class App(Generic[ReturnType], DOMNode):
                         self.check_idle()
                     finally:
                         self._mounted_event.set()
+                        self._is_mounted = True
 
                     Reactive._initialize_object(self)
 
@@ -2279,6 +2310,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
     async def _on_compose(self) -> None:
+        _rich_traceback_omit = True
         try:
             widgets = [*self.screen._nodes, *compose(self)]
         except TypeError as error:

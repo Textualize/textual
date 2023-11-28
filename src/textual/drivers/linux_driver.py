@@ -12,7 +12,6 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING, Any
 
 import rich.repr
-import rich.traceback
 
 from .. import events
 from .._xterm_parser import XTermParser
@@ -242,6 +241,8 @@ class LinuxDriver(Driver):
         try:
             self.run_input_thread()
         except BaseException as error:
+            import rich.traceback
+
             self._app.call_later(
                 self._app.panic,
                 rich.traceback.Traceback(),
