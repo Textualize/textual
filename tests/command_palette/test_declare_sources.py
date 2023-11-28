@@ -1,3 +1,4 @@
+from textual._system_commands import SystemCommands
 from textual.app import App
 from textual.command import CommandPalette, Hit, Hits, Provider
 from textual.screen import Screen
@@ -29,7 +30,7 @@ async def test_no_app_command_sources() -> None:
     """An app with no sources declared should work fine."""
     async with AppWithNoSources().run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert pilot.app.screen._provider_classes == App.COMMANDS
+        assert pilot.app.screen._provider_classes == {SystemCommands}
 
 
 class AppWithSources(AppWithActiveCommandPalette):
@@ -40,7 +41,7 @@ async def test_app_command_sources() -> None:
     """Command sources declared on an app should be in the command palette."""
     async with AppWithSources().run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert pilot.app.screen._provider_classes == AppWithSources.COMMANDS
+        assert pilot.app.screen._provider_classes == {ExampleCommandSource}
 
 
 class AppWithInitialScreen(App[None]):
@@ -61,7 +62,7 @@ async def test_no_screen_command_sources() -> None:
     """An app with a screen with no sources declared should work fine."""
     async with AppWithInitialScreen(ScreenWithNoSources()).run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert pilot.app.screen._provider_classes == App.COMMANDS
+        assert pilot.app.screen._provider_classes == {SystemCommands}
 
 
 class ScreenWithSources(ScreenWithNoSources):
@@ -72,10 +73,10 @@ async def test_screen_command_sources() -> None:
     """Command sources declared on a screen should be in the command palette."""
     async with AppWithInitialScreen(ScreenWithSources()).run_test() as pilot:
         assert isinstance(pilot.app.screen, CommandPalette)
-        assert (
-            pilot.app.screen._provider_classes
-            == App.COMMANDS | ScreenWithSources.COMMANDS
-        )
+        assert pilot.app.screen._provider_classes == {
+            SystemCommands,
+            ExampleCommandSource,
+        }
 
 
 class AnotherCommandSource(ExampleCommandSource):

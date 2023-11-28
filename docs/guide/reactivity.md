@@ -202,6 +202,31 @@ Textual only calls watch methods if the value of a reactive attribute _changes_.
 If the newly assigned value is the same as the previous value, the watch method is not called.
 You can override this behaviour by passing `always_update=True` to `reactive`.
 
+
+### Dynamically watching reactive attributes
+
+You can programmatically add watchers to reactive attributes with the method [`watch`][textual.dom.DOMNode.watch].
+This is useful when you want to react to changes to reactive attributes for which you can't edit the watch methods.
+
+The example below shows a widget `Counter` that defines a reactive attribute `counter`.
+The app that uses `Counter` uses the method `watch` to keep its progress bar synced with the reactive attribute:
+
+=== "dynamic_watch.py"
+
+    ```python hl_lines="9 28-29 31"
+    --8<-- "docs/examples/guide/reactivity/dynamic_watch.py"
+    ```
+
+    1. `counter` is a reactive attribute defined inside `Counter`.
+    2. `update_progress` is a custom callback that will update the progress bar when `counter` changes.
+    3. We use the method `watch` to set `update_progress` as an additional watcher for the reactive attribute `counter`.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/dynamic_watch.py" press="enter,enter,enter"}
+    ```
+
+
 ## Compute methods
 
 Compute methods are the final superpower offered by the `reactive` descriptor. Textual runs compute methods to calculate the value of a reactive attribute. Compute methods begin with `compute_` followed by the name of the reactive value.

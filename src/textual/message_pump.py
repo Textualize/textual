@@ -122,6 +122,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._last_idle: float = time()
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
+        self._is_mounted = False
+        """Having this explicit Boolean is an optimization.
+
+        The same information could be retrieved from `self._mounted_event.is_set()`, but
+        we need to access this frequently in the compositor and the attribute with the
+        explicit Boolean value is faster than the two lookups and the function call.
+        """
         self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
 
@@ -508,6 +515,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
+            self._is_mounted = True
         return True
 
     def _post_mount(self):
@@ -547,6 +555,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 raise
             except Exception as error:
                 self._mounted_event.set()
+                self._is_mounted = True
                 self.app._handle_exception(error)
                 break
             finally:

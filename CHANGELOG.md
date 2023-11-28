@@ -6,7 +6,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## [0.43.0] - 2023-11-28
+
+### Fixed
+
+- Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
+- Fixed `Select` not updating after changing the `prompt` reactive https://github.com/Textualize/textual/issues/2983
+- Fixed flicker when updating Markdown https://github.com/Textualize/textual/pull/3757
+
+### Added
+
+- Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
+- Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
+- Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
+- Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
+- Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
+- Added app focus/blur for textual-web https://github.com/Textualize/textual/pull/3767
+
+### Changed
+
+- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
+- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Optimized startup time https://github.com/Textualize/textual/pull/3753
+- App.COMMANDS or Screen.COMMANDS can now accept a callable which returns a command palette provider https://github.com/Textualize/textual/pull/3756
+
+## [0.42.0] - 2023-11-22
 
 ### Fixed
 
@@ -21,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Off-by-one in CSS error reporting https://github.com/Textualize/textual/issues/3625
 - Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
 - Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
+- Method render on a widget could be called before mounting said widget https://github.com/Textualize/textual/issues/2914
 
 ### Added
 
@@ -44,6 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
 - Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
 - Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
+- Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
 
 
 ## [0.41.0] - 2023-10-31
@@ -1433,6 +1460,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.43.0]: https://github.com/Textualize/textual/compare/v0.42.0...v0.43.0
+[0.42.0]: https://github.com/Textualize/textual/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0
 [0.39.0]: https://github.com/Textualize/textual/compare/v0.38.1...v0.39.0

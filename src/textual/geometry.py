@@ -1077,7 +1077,7 @@ class Spacing(NamedTuple):
         and no horizontal spacing.
 
         Args:
-            amount: The magnitude of spacing to apply to vertical edges
+            amount: The magnitude of spacing to apply to vertical edges.
 
         Returns:
             `Spacing(amount, 0, amount, 0)`
@@ -1090,7 +1090,7 @@ class Spacing(NamedTuple):
         and no vertical spacing.
 
         Args:
-            amount: The magnitude of spacing to apply to horizontal edges
+            amount: The magnitude of spacing to apply to horizontal edges.
 
         Returns:
             `Spacing(0, amount, 0, amount)`
@@ -1102,7 +1102,7 @@ class Spacing(NamedTuple):
         """Construct a Spacing with a given amount of spacing on all edges.
 
         Args:
-            amount: The magnitude of spacing to apply to all edges
+            amount: The magnitude of spacing to apply to all edges.
 
         Returns:
             `Spacing(amount, amount, amount, amount)`

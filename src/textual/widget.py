@@ -37,7 +37,6 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Self
 
 from . import constants, errors, events, messages
@@ -64,6 +63,7 @@ from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
+from .renderables.blank import Blank
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -85,6 +85,10 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+
+class NotAContainer(Exception):
+    """Exception raised if you attempt to add a child to a widget which doesn't permit child nodes."""
 
 
 _NULL_STYLE = Style()
@@ -264,6 +268,9 @@ class Widget(DOMNode):
     BORDER_SUBTITLE: ClassVar[str] = ""
     """Initial value for border_subtitle attribute."""
 
+    ALLOW_CHILDREN: ClassVar[bool] = True
+    """Set to `False` to prevent adding children to this widget."""
+
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -396,7 +403,7 @@ class Widget(DOMNode):
     @property
     def is_mounted(self) -> bool:
         """Check if this widget is mounted."""
-        return self._mounted_event.is_set()
+        return self._is_mounted
 
     @property
     def siblings(self) -> list[Widget]:
@@ -487,6 +494,21 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        _rich_traceback_omit = True
+        if not self.ALLOW_CHILDREN:
+            raise NotAContainer(f"Can't add children to {type(widget)} widgets")
+        self._nodes._append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -935,9 +957,8 @@ class Widget(DOMNode):
             ```python
             def compose(self) -> ComposeResult:
                 yield Header()
-                yield Container(
-                    Tree(), Viewer()
-                )
+                yield Label("Press the button below:")
+                yield Button()
                 yield Footer()
             ```
         """
@@ -1024,7 +1045,9 @@ class Widget(DOMNode):
             min_width = styles.min_width.resolve(
                 content_container, viewport, width_fraction
             )
-            content_width = max(content_width, min_width)
+            if is_border_box:
+                min_width -= gutter.width
+            content_width = max(content_width, min_width, Fraction(0))
 
         if styles.max_width is not None:
             # Restrict to maximum width, if set
@@ -1066,13 +1089,17 @@ class Widget(DOMNode):
             min_height = styles.min_height.resolve(
                 content_container, viewport, height_fraction
             )
-            content_height = max(content_height, min_height)
+            if is_border_box:
+                min_height -= gutter.height
+            content_height = max(content_height, min_height, Fraction(0))
 
         if styles.max_height is not None:
             # Restrict maximum height, if set
             max_height = styles.max_height.resolve(
                 content_container, viewport, height_fraction
             )
+            if is_border_box:
+                max_height -= gutter.height
             content_height = min(content_height, max_height)
 
         content_height = max(Fraction(0), content_height)
@@ -3107,8 +3134,13 @@ class Widget(DOMNode):
         Returns:
             Any renderable.
         """
-        render: Text | str = "" if self.is_container else self.css_identifier_styled
-        return render
+
+        if self.is_container:
+            if self.styles.layout and self.styles.keyline[0] != "none":
+                return self._layout.render_keyline(self)
+            else:
+                return Blank(self.background_colors[1])
+        return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
@@ -3234,18 +3266,18 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [`events.Print`][textual.events.Print] message.
 
-        Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
+        Call [`end_capture_print`][textual.widget.Widget.end_capture_print] to disable print capture.
 
         Args:
-            stdout: Capture stdout.
-            stderr: Capture stderr.
+            stdout: Whether to capture stdout.
+            stderr: Whether to capture stderr.
         """
         self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
-        """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
+        """End print capture (set with [`begin_capture_print`][textual.widget.Widget.begin_capture_print])."""
         self.app.end_capture_print(self)
 
     def check_message_enabled(self, message: Message) -> bool:
@@ -3300,6 +3332,8 @@ class Widget(DOMNode):
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)

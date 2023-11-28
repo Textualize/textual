@@ -306,7 +306,7 @@ class TabbedContent(Widget):
 
         Note:
             Only one of `before` or `after` can be provided. If both are
-            provided a `Tabs.TabError` will be raised.
+            provided an exception is raised.
         """
         if isinstance(before, TabPane):
             before = before.id
