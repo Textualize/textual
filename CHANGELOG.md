@@ -5,8 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
+
+## [0.43.1] - 2023-11-29
+
+### Added
+
+- Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
+
+### Fixed
+
+- Fixed clicking on scrollbar moves TextArea cursor https://github.com/Textualize/textual/issues/3763
+
+## [0.43.0] - 2023-11-28
 
 ### Fixed
 
@@ -21,8 +32,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
 - Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
 - Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
-- Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
 - Added support for various modified edit and navigation keys in urxvt https://github.com/Textualize/textual/pull/3739
+- Added app focus/blur for textual-web https://github.com/Textualize/textual/pull/3767
 
 ### Changed
 
@@ -1461,6 +1472,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.43.1]: https://github.com/Textualize/textual/compare/v0.43.0...v0.43.1
+[0.43.0]: https://github.com/Textualize/textual/compare/v0.42.0...v0.43.0
 [0.42.0]: https://github.com/Textualize/textual/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0
