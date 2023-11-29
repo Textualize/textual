@@ -807,9 +807,10 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-
         # Check for duplicate IDs in the incoming widgets
+
         ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
+
         unique_ids = set(ids_to_mount)
         num_unique_ids = len(unique_ids)
         num_widgets_with_ids = len(ids_to_mount)
