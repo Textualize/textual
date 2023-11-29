@@ -578,11 +578,14 @@ class OptionList(ScrollView, can_focus=True):
         ):
             raise DuplicateID("Attempt made to add options with duplicate IDs.")
 
-    def add_options(self, items: Iterable[NewOptionListContent]) -> Self:
+    def add_options(
+        self, items: Iterable[NewOptionListContent], *, before: str | int | None = None
+    ) -> Self:
         """Add new options to the end of the option list.
 
         Args:
             items: The new items to add.
+            before: The index or ID of an option to add before.
 
         Returns:
             The `OptionList` instance.
@@ -600,20 +603,37 @@ class OptionList(ScrollView, can_focus=True):
         if items:
             # Turn any incoming values into valid content for the list.
             content = [self._make_content(item) for item in items]
+            # Ensure no duplicate IDs are creeping in.
             self._duplicate_id_check(content)
-            self._contents.extend(content)
-            # Pull out the content that is genuine options and add them to the
-            # list of options.
-            self._options.extend([item for item in content if isinstance(item, Option)])
+            options = [item for item in content if isinstance(item, Option)]
+            # Figure out if we're supposed to slot them in before something
+            # else.
+            place_before: Option | None = None
+            if isinstance(before, str):
+                place_before = self.get_option(before)
+            elif isinstance(before, int):
+                place_before = self.get_option_at_index(before)
+            # If we're just dropping everything on the end...
+            if place_before is None:
+                self._contents.extend(content)
+                self._options.extend(options)
+            else:
+                content_position = self._contents.index(place_before)
+                self._contents[content_position:content_position] = content
+                option_position = self._options.index(place_before)
+                self._options[option_position:option_position] = options
             self._refresh_content_tracking(force=True)
             self.refresh()
         return self
 
-    def add_option(self, item: NewOptionListContent = None) -> Self:
+    def add_option(
+        self, item: NewOptionListContent = None, *, before: str | int | None = None
+    ) -> Self:
         """Add a new option to the end of the option list.
 
         Args:
             item: The new item to add.
+            before: The index or ID of an option to add before.
 
         Returns:
             The `OptionList` instance.
@@ -621,7 +641,7 @@ class OptionList(ScrollView, can_focus=True):
         Raises:
             DuplicateID: If there is an attempt to use a duplicate ID.
         """
-        return self.add_options([item])
+        return self.add_options([item], before=before)
 
     def _remove_option(self, index: int) -> None:
         """Remove an option from the option list.
