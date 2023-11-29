@@ -6,13 +6,13 @@ from textual.document._wrapped_document import WrappedDocument
 
 TEXT = """\
 01 3456
-0123"""
+01234"""
 
 # wrapped width = 4:
 # line_index | wrapped_lines
 # 0 | 01_
 #   | 3456
-# 1 | 0123
+# 1 | 01234
 
 
 def make_navigator(text, width):
