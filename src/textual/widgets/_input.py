@@ -19,6 +19,7 @@ from ..events import Blur, Focus, Mount
 from ..geometry import Offset, Size
 from ..message import Message
 from ..reactive import reactive, var
+from ..restriction import Restrictor
 from ..suggester import Suggester, SuggestionReady
 from ..timer import Timer
 from ..validation import ValidationResult, Validator
@@ -242,6 +243,7 @@ class Input(Widget, can_focus=True):
         password: bool = False,
         *,
         restrict: str | None = None,
+        restrictors: Restrictor | Iterable[Restrictor] | None = None,
         type: InputType = "text",
         max_length: int = 0,
         suggester: Suggester | None = None,
@@ -261,6 +263,7 @@ class Input(Widget, can_focus=True):
             highlighter: An optional highlighter for the input.
             password: Flag to say if the field should obfuscate its content.
             restrict: A regex to restrict character inputs.
+            restrictors: An iterable of restrictors that the Input value will be checked against.
             type: The type of the input.
             max_length: The maximum length of the input, or 0 for no maximum length.
             suggester: [`Suggester`][textual.suggester.Suggester] associated with this
@@ -284,6 +287,14 @@ class Input(Widget, can_focus=True):
         self.highlighter = highlighter
         self.password = password
         self.suggester = suggester
+
+        # Ensure we always end up with an Iterable of restrictors
+        if isinstance(restrictors, Restrictor):
+            self.restrictors: list[Restrictor] = [restrictors]
+        elif restrictors is None:
+            self.restrictors = []
+        else:
+            self.restrictors = list(restrictors)
 
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
@@ -406,6 +417,23 @@ class Input(Widget, can_focus=True):
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
         self._watch_value(self.value)
+
+    def restrictors_allow(self, value: str) -> bool:
+        """Run all the restrictors associated with this Input on the supplied value.
+
+        Runs all restrictors, combines with `and` into one bool. If any of the restrictors
+        failed, the combined result will be `False`. If no restrictors are present,
+        `True` will be returned.
+
+        Returns:
+            A bool indicating whether or not *all* restrictors allow the value
+            or not. That is, if *any* restrictor disallows the value, the result
+            will be a disallowal of the value.
+        """
+        if not self.restrictors:
+            return True
+
+        return all([restrictor.allowed(value) for restrictor in self.restrictors])
 
     def validate(self, value: str) -> ValidationResult | None:
         """Run all the validators associated with this Input on the supplied value.
@@ -577,8 +605,7 @@ class Input(Widget, can_focus=True):
                     and re.fullmatch(type_restrict, value) is None
                 ):
                     return False
-            # Character is allowed
-            return True
+            return self.restrictors_allow(value)
 
         if self.cursor_position >= len(self.value):
             new_value = self.value + text
