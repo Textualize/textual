@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -41,7 +40,7 @@ include = [
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 rich = ">=13.3.3"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 #rich = {path="../rich", develop=true}
@@ -64,7 +63,6 @@ mkdocstrings-python = "0.10.1"
 mkdocs-material = "^9.0.11"
 mkdocs-exclude = "^1.0.2"
 pre-commit = "^2.13.0"
-pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
 mkdocs-rss-plugin = "^1.5.0"
 httpx = "^0.23.1"

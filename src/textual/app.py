@@ -16,7 +16,7 @@ import platform
 import sys
 import threading
 import warnings
-from asyncio import Task
+from asyncio import Task, create_task
 from concurrent.futures import Future
 from contextlib import (
     asynccontextmanager,
@@ -59,7 +59,6 @@ from rich.segment import Segment, Segments
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
