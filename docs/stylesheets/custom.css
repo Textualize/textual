@@ -99,7 +99,7 @@ td code {
 }
 
 :root {
-  --md-admonition-icon--textualize: url('/images/icons/textualize-logo.svg')
+  --md-admonition-icon--textualize: url('/images/icons/logo light transparent.svg')
 }
 .md-typeset .admonition.textualize,
 .md-typeset details.textualize {

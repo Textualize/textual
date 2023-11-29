@@ -1,5 +1,4 @@
 import asyncio
-import time
 from random import randint
 
 from textual.app import App, ComposeResult

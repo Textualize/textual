@@ -128,7 +128,7 @@ If you combine this with a selector, then the offset will be relative to the wid
 Here's how you would click the line *above* a button.
 
 ```python
-await pilot.click(Button, offset(0, -1))
+await pilot.click(Button, offset=(0, -1))
 ```
 
 ### Modifier keys

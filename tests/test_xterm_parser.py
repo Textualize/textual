@@ -186,10 +186,12 @@ def test_double_escape(parser):
         ("\x1b[<0;50;25M", MouseDown, False, False),
         ("\x1b[<4;50;25M", MouseDown, True, False),
         ("\x1b[<8;50;25M", MouseDown, False, True),
+        ("\x1b[<12;50;25M", MouseDown, True, True),
         # Mouse up, with and without modifiers
         ("\x1b[<0;50;25m", MouseUp, False, False),
         ("\x1b[<4;50;25m", MouseUp, True, False),
         ("\x1b[<8;50;25m", MouseUp, False, True),
+        ("\x1b[<12;50;25m", MouseUp, True, True),
     ],
 )
 def test_mouse_click(parser, sequence, event_type, shift, meta):

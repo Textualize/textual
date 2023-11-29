@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from ._spatial_map import SpatialMap
+from .canvas import Canvas, Rectangle
 from .geometry import Offset, Region, Size, Spacing
+from .strip import StripRenderable
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -176,3 +178,40 @@ class Layout(ABC):
             height = arrangement.total_region.bottom
 
         return height
+
+    def render_keyline(self, container: Widget) -> StripRenderable:
+        """Render keylines around all widgets.
+
+        Args:
+            container: The container widget.
+
+        Returns:
+            A renderable to draw the keylines.
+        """
+        width, height = container.outer_size
+        canvas = Canvas(width, height)
+
+        line_style, keyline_color = container.styles.keyline
+
+        container_offset = container.content_region.offset
+
+        def get_rectangle(region: Region) -> Rectangle:
+            """Get a canvas Rectangle that wraps a region.
+
+            Args:
+                region: Widget region.
+
+            Returns:
+                A Rectangle that encloses the widget.
+            """
+            offset = region.offset - container_offset - (1, 1)
+            width, height = region.size
+            return Rectangle(offset, width + 2, height + 2, keyline_color, line_style)
+
+        primitives = [
+            get_rectangle(widget.region)
+            for widget in container.children
+            if widget.visible
+        ]
+        canvas_renderable = canvas.render(primitives, container.rich_style)
+        return canvas_renderable

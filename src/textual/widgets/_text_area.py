@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
 
 from rich.style import Style
 from rich.text import Text
+from typing_extensions import Literal, Protocol, runtime_checkable
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER
@@ -30,11 +31,9 @@ from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
     from tree_sitter import Language
-    from tree_sitter.binding import Query
 
 from textual import events, log
-from textual._cells import cell_len
-from textual._types import Literal, Protocol, runtime_checkable
+from textual._cells import cell_len, cell_width_to_column_index
 from textual.binding import Binding
 from textual.events import Message, MouseEvent
 from textual.geometry import Offset, Region, Size, Spacing, clamp
@@ -929,6 +928,15 @@ TextArea {
         """The entire text content of the document."""
         return self.document.text
 
+    @text.setter
+    def text(self, value: str) -> None:
+        """Replace the text currently in the TextArea. This is an alias of `load_text`.
+
+        Args:
+            value: The text to load into the TextArea.
+        """
+        self.load_text(value)
+
     @property
     def selected_text(self) -> str:
         """The text between the start and end points of the current selection."""
@@ -1110,14 +1118,8 @@ TextArea {
         Returns:
             The column corresponding to the cell width on that row.
         """
-        tab_width = self.indent_width
-        total_cell_offset = 0
         line = self.document[row_index]
-        for column_index, character in enumerate(line):
-            total_cell_offset += cell_len(expand_tabs_inline(character, tab_width))
-            if total_cell_offset >= cell_width + 1:
-                return column_index
-        return len(line)
+        return cell_width_to_column_index(line, cell_width, self.indent_width)
 
     def clamp_visitable(self, location: Location) -> Location:
         """Clamp the given location to the nearest visitable location.

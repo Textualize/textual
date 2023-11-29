@@ -18,7 +18,7 @@ from typing_extensions import TypeAlias
 
 from .._border import normalize_border_value
 from ..color import Color, ColorParseError
-from ..geometry import Spacing, SpacingDimensions, clamp
+from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
 from ._help_text import (
     border_property_help_text,
@@ -31,7 +31,7 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import NULL_SPACING, VALID_STYLE_FLAGS
+from .constants import VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     NULL_SCALAR,
@@ -46,8 +46,9 @@ from .scalar import (
 from .transition import Transition
 
 if TYPE_CHECKING:
+    from ..canvas import CanvasLineType
     from .._layout import Layout
-    from .styles import Styles, StylesBase
+    from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
@@ -495,6 +496,26 @@ class BorderProperty:
                 help_text=border_property_help_text(self.name, context="inline"),
             )
         check_refresh()
+
+
+class KeylineProperty:
+    """Descriptor for getting and setting keyline information."""
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> tuple[CanvasLineType, Color]:
+        return cast(
+            "tuple[CanvasLineType, Color]",
+            obj.get_rule("keyline", ("none", Color.parse("transparent"))),
+        )
+
+    def __set__(self, obj: StylesBase, keyline: tuple[str, Color] | None):
+        if keyline is None:
+            if obj.clear_rule("keyline"):
+                obj.refresh(layout=True)
+        else:
+            if obj.set_rule("keyline", keyline):
+                obj.refresh(layout=True)
 
 
 class SpacingProperty:

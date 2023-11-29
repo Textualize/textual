@@ -5,7 +5,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea
+from textual.widgets import TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -102,7 +102,12 @@ def test_input_validation(snap_compare):
 
 
 def test_input_suggestions(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[])
+    async def run_before(pilot):
+        pilot.app.query_one(Input).cursor_blink = False
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before
+    )
 
 
 def test_buttons_render(snap_compare):
@@ -353,6 +358,18 @@ def test_select_expanded_changed(snap_compare):
     )
 
 
+def test_select_no_blank_has_default_value(snap_compare):
+    """Make sure that the first value is selected by default if allow_blank=False."""
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget_no_blank.py")
+
+
+def test_select_set_options(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_widget_no_blank.py",
+        press=["s"],
+    )
+
+
 def test_sparkline_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "sparkline.py")
 
@@ -528,8 +545,12 @@ def test_scrollbar_thumb_height(snap_compare):
     )
 
 
-def test_css_hot_reloading(snap_compare):
+def test_css_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/2063."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
@@ -542,8 +563,31 @@ def test_css_hot_reloading(snap_compare):
     )
 
 
-def test_datatable_hot_reloading(snap_compare):
+def test_css_hot_reloading_on_screen(snap_compare, monkeypatch):
+    """Regression test for https://github.com/Textualize/textual/issues/3454."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.screen.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "hot_reloading_app_with_screen_css.py",
+        run_before=run_before,
+    )
+
+
+def test_datatable_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/3312."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
 
     async def run_before(pilot):
         css_file = pilot.app.CSS_PATH
@@ -666,12 +710,11 @@ def test_tooltips_in_compound_widgets(snap_compare):
 
 
 def test_command_palette(snap_compare) -> None:
-    from textual.command import CommandPalette
-
     async def run_before(pilot) -> None:
-        await pilot.press("ctrl+backslash")
+        # await pilot.press("ctrl+backslash")
+        pilot.app.screen.query_one(Input).cursor_blink = False
         await pilot.press("A")
-        await pilot.app.query_one(CommandPalette).workers.wait_for_complete()
+        await pilot.app.screen.workers.wait_for_complete()
 
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
 
@@ -680,7 +723,16 @@ def test_command_palette(snap_compare) -> None:
 
 
 def test_textual_dev_border_preview(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "dev_previews_border.py", press=["enter"])
+    async def run_before(pilot):
+        buttons = pilot.app.query(Button)
+        for button in buttons:
+            button.active_effect_duration = 0
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dev_previews_border.py",
+        press=["enter"],
+        run_before=run_before,
+    )
 
 
 def test_textual_dev_colors_preview(snap_compare):
@@ -707,6 +759,23 @@ def test_notifications_through_modes(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "notification_through_modes.py")
 
 
+def test_notification_with_inline_link(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    assert snap_compare(SNAPSHOT_APPS_DIR / "notification_with_inline_link.py")
+
+
+def test_notification_with_inline_link_hover(snap_compare) -> None:
+    # https://github.com/Textualize/textual/issues/3530
+    async def run_before(pilot) -> None:
+        await pilot.pause()
+        await pilot.hover("Toast", offset=(8, 1))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "notification_with_inline_link.py",
+        run_before=run_before,
+    )
+
+
 def test_print_capture(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "capture_print.py")
 
@@ -720,9 +789,6 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
-)
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -774,9 +840,6 @@ I am the final line."""
     )
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
-)
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
 )
@@ -824,3 +887,44 @@ def test_scoped_css(snap_compare) -> None:
 
 def test_unscoped_css(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "unscoped_css.py")
+
+
+def test_big_buttons(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")
+
+def test_keyline(snap_compare) -> None:
+    assert snap_compare(SNAPSHOT_APPS_DIR / "keyline.py")
+
+def test_button_outline(snap_compare):
+    """Outline style rendered incorrectly when applied to a `Button` widget.
+
+    Regression test for https://github.com/Textualize/textual/issues/3628
+    """
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_outline.py")
+
+
+def test_notifications_loading_overlap_order(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3677.
+
+    This tests that notifications stay on top of loading indicators and it also
+    tests that loading a widget will remove its scrollbars.
+    """
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "notifications_above_loading.py", terminal_size=(80, 20)
+    )
+
+
+def test_missing_vertical_scroll(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3687"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "missing_vertical_scroll.py")
+
+
+def test_vertical_min_height(snap_compare):
+    """Test vertical min height takes border in to account."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_min_height.py")
+
+
+def test_vertical_max_height(snap_compare):
+    """Test vertical max height takes border in to account."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
+

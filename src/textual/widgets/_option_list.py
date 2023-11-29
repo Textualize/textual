@@ -26,11 +26,11 @@ from ..strip import Strip
 
 
 class DuplicateID(Exception):
-    """Exception raised if a duplicate ID is used."""
+    """Raised if a duplicate ID is used when adding options to an option list."""
 
 
 class OptionDoesNotExist(Exception):
-    """Exception raised when a request has been made for an option that doesn't exist."""
+    """Raised when a request has been made for an option that doesn't exist."""
 
 
 class Option:
@@ -126,7 +126,7 @@ NewOptionListContent: TypeAlias = "OptionListContent | None | RenderableType"
 """The type of a new item of option list content to be added to an option list.
 
 This type represents all of the types that will be accepted when adding new
-content to the option list. This is a superset of `OptionListContent`.
+content to the option list. This is a superset of [`OptionListContent`][textual.types.OptionListContent].
 """
 
 
@@ -851,11 +851,14 @@ class OptionList(ScrollView, can_focus=True):
         """
         return self.get_option_at_index(self.get_option_index(option_id))
 
-    def get_option_index(self, option_id):
+    def get_option_index(self, option_id: str) -> int:
         """Get the index of the option with the given ID.
 
         Args:
             option_id: The ID of the option to get the index of.
+
+        Returns:
+            The index of the item with the given ID.
 
         Raises:
             OptionDoesNotExist: If no option has the given ID.

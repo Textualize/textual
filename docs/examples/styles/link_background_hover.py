@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class LinkHoverBackgroundApp(App):
+    CSS_PATH = "link_background_hover.tcss"
+
     def compose(self):
         yield Label(
             "Visit the [link=https://textualize.io]Textualize[/link] website.",
@@ -22,4 +24,6 @@ class LinkHoverBackgroundApp(App):
         )
 
 
-app = LinkHoverBackgroundApp(css_path="link_hover_background.tcss")
+if __name__ == "__main__":
+    app = LinkHoverBackgroundApp()
+    app.run()
