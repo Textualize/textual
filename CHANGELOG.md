@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - `link-hover-background` renamed to `link-background-hover`
  - `link-hover-color` renamed to `link-color-hover`
  - `link-hover-style` renamed to `link-style-hover`
+- Brought rxvt's use of shift-numpad keys in line with most other terminals https://github.com/Textualize/textual/pull/3769
 
 ### Added
 
