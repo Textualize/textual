@@ -191,6 +191,14 @@ def test_get_offsets(line_index, offsets):
     assert wrapped_document.get_offsets(line_index) == offsets
 
 
+def test_get_offsets_no_wrapping():
+    document = Document("abc")
+    wrapped_document = WrappedDocument(document, width=4)
+    wrapped_document.wrap()
+
+    assert wrapped_document.get_offsets(0) == []
+
+
 @pytest.mark.parametrize("line_index", [-4, 10000])
 def test_get_offsets_invalid_line_index(line_index):
     document = Document(SIMPLE_TEXT)

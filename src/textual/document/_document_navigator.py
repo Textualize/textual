@@ -1,7 +1,8 @@
 import re
-from bisect import bisect_left
+from bisect import bisect_left, bisect_right
 from typing import Any, Sequence
 
+from textual._cells import cell_len
 from textual.document._document import Location
 from textual.document._wrapped_document import WrappedDocument
 
@@ -41,6 +42,10 @@ class DocumentNavigator:
 
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
+
+        self.last_x_offset = 0
+        """Remembers the last x offset (cell width) the cursor was moved horizontally to,
+        so that it can be restored on vertical movement where possible."""
 
     def is_start_of_document_line(self, location: Location) -> bool:
         """True when the location is at the start of the first document line.
@@ -150,7 +155,7 @@ class DocumentNavigator:
         target_column = 0 if is_end_of_line else column + 1
         return target_row, target_column
 
-    def up(self, location: Location) -> Location:
+    def up(self, location: Location, tab_width: int) -> Location:
         """Get the location up from the given location in the wrapped document."""
 
         # Moving up from a position on the first visual line moves us to the start.
@@ -158,27 +163,37 @@ class DocumentNavigator:
             return 0, 0
 
         # Get the wrap offsets of the current line.
-        row, column = location
-        wrap_offsets = self._wrapped_document.get_offsets(row)
+        line_index, column_index = location
+        wrap_offsets = self._wrapped_document.get_offsets(line_index)
+        section_start_columns = [0, *wrap_offsets]
 
         # We need to find the insertion point to determine which section index we're
         # on within the current line. When we know the section index, we can use it
         # to find the section which sits above it.
-        if wrap_offsets:
-            section_index = bisect_left(wrap_offsets, column)
-
-        # Find the cursor offset *within* the section
+        section_index = find_leftmost_greater_than(wrap_offsets, column_index)
+        offset_within_section = column_index - section_start_columns[section_index]
+        wrapped_line = self._wrapped_document.get_wrapped_line(line_index)
+        section = wrapped_line[section_index]
 
         # Convert that cursor offset to a cell (visual) offset
+        current_visual_offset = cell_len(section[:offset_within_section])
 
-        # Get the section that sits above this one - note that if the section index
-        # is 0, then we'll have to get section at index -1 from the line above.
+        # TODO - account for last_x_offset in both branches here.
+        if section_index == 0:
+            # Get the last section from the line above, and find where to move in it.
+            target_row = line_index - 1
+            target_column = self._wrapped_document.get_target_document_column(
+                target_row, current_visual_offset, -1, tab_width
+            )
+            target_location = target_row, target_column
+        else:
+            # Stay on the same document line, but move backwards.
+            target_column = self._wrapped_document.get_target_document_column(
+                line_index, current_visual_offset, section_index - 1, tab_width
+            )
+            target_location = line_index, target_column
 
-        # If we're on the first section of a wrapped line, then we need to retrieve
-        # the last section of the line before it to calculate where the cursor
-        # should move to.
-
-        current_section = self._wrapped_document.get_target_document_column()
+        return target_location
 
 
 def index(sequence: Sequence, value: Any) -> int:
@@ -195,3 +210,8 @@ def index(sequence: Sequence, value: Any) -> int:
     if insert_index != len(sequence) and sequence[insert_index] == value:
         return insert_index
     return -1
+
+
+def find_leftmost_greater_than(sequence: Sequence, value: Any) -> int:
+    """Find the index of the leftmost value greater than x."""
+    return bisect_right(sequence, value)
