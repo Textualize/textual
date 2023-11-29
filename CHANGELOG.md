@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
+
 ## [0.43.2] - 2023-11-29
 
 ### Fixed
@@ -32,6 +38,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
 - Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
 - Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
+- Added support for various modified edit and navigation keys in urxvt https://github.com/Textualize/textual/pull/3739
 - Added app focus/blur for textual-web https://github.com/Textualize/textual/pull/3767
 
 ### Changed
