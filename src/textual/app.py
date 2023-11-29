@@ -2692,8 +2692,8 @@ class App(Generic[ReturnType], DOMNode):
                         self._mouse_down_widget, _ = self.get_widget_at(
                             event.x, event.y
                         )
-                        print("MOUSE DOWN", self._mouse_down_widget)
                     except NoWidget:
+                        # Shouldn't occur, since at the very least this will find the Screen
                         self._mouse_down_widget = None
 
                 self.screen._forward_event(event)
