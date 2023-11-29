@@ -9,7 +9,6 @@ from .events import MouseUp
 
 if TYPE_CHECKING:
     from .app import App
-    from .widget import Widget
 
 
 class Driver(ABC):
@@ -33,7 +32,6 @@ class Driver(ABC):
         self._debug = debug
         self._size = size
         self._loop = asyncio.get_running_loop()
-        self._mouse_down_widget: Widget | None = None
         self._down_buttons: list[int] = []
         self._last_move_event: events.MouseMove | None = None
 
@@ -60,15 +58,12 @@ class Driver(ABC):
         """
         event._set_sender(self._app)
         if isinstance(event, events.MouseDown):
-            self._mouse_down_widget = self._app.get_widget_at(event.x, event.y)[0]
             if event.button:
                 self._down_buttons.append(event.button)
         elif isinstance(event, events.MouseUp):
-            if event.button:
-                try:
-                    self._down_buttons.remove(event.button)
-                except ValueError:
-                    pass
+            if event.button and event.button in self._down_buttons:
+                self._down_buttons.remove(event.button)
+
         elif isinstance(event, events.MouseMove):
             if (
                 self._down_buttons
@@ -98,13 +93,6 @@ class Driver(ABC):
             self._last_move_event = event
 
         self.send_event(event)
-
-        if (
-            isinstance(event, events.MouseUp)
-            and self._app.get_widget_at(event.x, event.y)[0] is self._mouse_down_widget
-        ):
-            click_event = events.Click.from_event(event)
-            self.send_event(click_event)
 
     @abstractmethod
     def write(self, data: str) -> None:

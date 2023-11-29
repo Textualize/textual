@@ -79,6 +79,7 @@ from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
+from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
@@ -443,6 +444,8 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
+        self._mouse_down_widget: Widget | None = None
 
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
@@ -2671,7 +2674,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen = Screen(id=f"_default")
+            screen: Screen[Any] = Screen(id=f"_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
@@ -2683,7 +2686,26 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
+
+                if isinstance(event, events.MouseDown):
+                    try:
+                        self._mouse_down_widget, _ = self.get_widget_at(
+                            event.x, event.y
+                        )
+                        print("MOUSE DOWN", self._mouse_down_widget)
+                    except NoWidget:
+                        self._mouse_down_widget = None
+
                 self.screen._forward_event(event)
+
+                if isinstance(event, events.MouseUp):
+                    if self._mouse_down_widget is not None and (
+                        self.get_widget_at(event.x, event.y)[0]
+                        is self._mouse_down_widget
+                    ):
+                        click_event = events.Click.from_event(event)
+                        self.screen._forward_event(click_event)
+
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
