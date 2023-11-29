@@ -32,7 +32,10 @@ def make_navigator(text, width):
         [(0, 3), (0, 0)],
         [(0, 4), (0, 1)],
         [(0, 5), (0, 2)],
-        [(0, 6), (0, 2)],  # it should clamp to the last valid index
+        [(0, 6), (0, 2)],  # clamps to valid index
+        [(0, 7), (0, 2)],  # clamps to the last valid index
+        [(1, 0), (0, 3)],
+        [(1, 1), (0, 4)],
     ],
 )
 def test_up(start, end):
