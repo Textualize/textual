@@ -56,6 +56,8 @@ class Driver(ABC):
         Args:
             event: An event to send.
         """
+        # NOTE: This runs in a thread.
+        # Avoid calling methods on the app.
         event._set_sender(self._app)
         if isinstance(event, events.MouseDown):
             if event.button:
@@ -63,7 +65,6 @@ class Driver(ABC):
         elif isinstance(event, events.MouseUp):
             if event.button and event.button in self._down_buttons:
                 self._down_buttons.remove(event.button)
-
         elif isinstance(event, events.MouseMove):
             if (
                 self._down_buttons
