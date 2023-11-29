@@ -446,6 +446,7 @@ class App(Generic[ReturnType], DOMNode):
         self.mouse_position = Offset(0, 0)
 
         self._mouse_down_widget: Widget | None = None
+        """The widget that was most recently mouse downed (used to create click events)."""
 
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
