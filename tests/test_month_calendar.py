@@ -256,7 +256,48 @@ async def test_cell_highlighted_updates_cursor_date():
         await pilot.press("left")
         expected_date = datetime.date(2021, 5, 31)
         assert month_calendar.cursor_date == expected_date
+
         await pilot.press("right")
         expected_date = datetime.date(2021, 6, 1)
+        assert month_calendar.cursor_date == expected_date
+
         await pilot.press("right")
         expected_date = datetime.date(2021, 6, 2)
+        assert month_calendar.cursor_date == expected_date
+
+
+async def test_cell_highlighted_after_reactive_cursor_date_change():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        month_calendar.cursor_date = datetime.date(2021, 6, 3)
+        assert table.get_cell_at(table.cursor_coordinate).plain == "3"
+
+
+async def test_month_change_updates_cursor_date_with_relative_delta():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        month_calendar.month = 4
+        assert month_calendar.cursor_date == datetime.date(2021, 4, 1)
+        assert table.get_cell_at(table.cursor_coordinate).plain == "1"
+
+        month_calendar.month = 8
+        assert month_calendar.cursor_date == datetime.date(2021, 8, 1)
+        assert table.get_cell_at(table.cursor_coordinate).plain == "1"
+
+
+async def test_year_change_updates_cursor_date_with_relative_delta():
+    app = MonthCalendarApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        month_calendar.year = 2019
+        assert month_calendar.cursor_date == datetime.date(2019, 6, 1)
+        assert table.get_cell_at(table.cursor_coordinate).plain == "1"
+
+        month_calendar.year = 2023
+        assert month_calendar.cursor_date == datetime.date(2023, 6, 1)
+        assert table.get_cell_at(table.cursor_coordinate).plain == "1"

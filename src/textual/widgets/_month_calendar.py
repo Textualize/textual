@@ -4,6 +4,7 @@ import calendar
 import datetime
 from typing import Optional
 
+from dateutil.relativedelta import relativedelta
 from rich.text import Text
 
 from textual import on
@@ -136,8 +137,9 @@ class MonthCalendar(Widget):
     def _update_calendar_days(self) -> None:
         table = self.query_one(DataTable)
         table.clear()
-        for week in self.calendar_dates:
-            table.add_row(*[self._format_day(date) for date in week])
+        with self.prevent(DataTable.CellHighlighted):
+            for week in self.calendar_dates:
+                table.add_row(*[self._format_day(date) for date in week])
 
     @property
     def calendar_dates(self) -> list[list[datetime.date]]:
@@ -199,15 +201,28 @@ class MonthCalendar(Widget):
                 return datetime.date(self.year, self.month, 1)
         return cursor_date
 
-    def watch_year(self) -> None:
+    def watch_year(self, old_year: int, new_year: int) -> None:
         if not self.is_mounted:
             return
         self._update_calendar_days()
 
-    def watch_month(self) -> None:
+        if not self.show_cursor:
+            return
+        assert self.cursor_date is not None
+        year_offset = new_year - old_year
+        self.cursor_date += relativedelta(years=year_offset)
+
+    def watch_month(self, old_month: int, new_month: int) -> None:
         if not self.is_mounted:
             return
         self._update_calendar_days()
+
+        if not self.show_cursor:
+            return
+        assert self.cursor_date is not None
+        if self.cursor_date.month == old_month:
+            month_offset = new_month - old_month
+            self.cursor_date += relativedelta(months=month_offset)
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
