@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Breaking changes https://github.com/Textualize/textual/issues/1530
+ - `link-hover-background` renamed to `link-background-hover`
+ - `link-hover-color` renamed to `link-color-hover`
+ - `link-hover-style` renamed to `link-style-hover`
+
 ### Added
 
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737

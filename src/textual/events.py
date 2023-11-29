@@ -228,7 +228,6 @@ class Key(InputEvent):
     Args:
         key: The key that was pressed.
         character: A printable character or ``None`` if it is not printable.
-
     Attributes:
         aliases: The aliases for the key, including the key itself.
     """
