@@ -316,6 +316,10 @@ class ScrollBar(Widget):
         """Begin capturing the mouse cursor."""
         self.capture_mouse()
 
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
+        # We don't want mouse events on the scrollbar bubbling
+        event.stop()
+
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
             self.release_mouse()

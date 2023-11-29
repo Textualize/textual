@@ -140,6 +140,30 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[21;6~": (Keys.ControlF22,),
     "\x1b[23;6~": (Keys.ControlF23,),
     "\x1b[24;6~": (Keys.ControlF24,),
+    # rxvt-unicode control function keys:
+    "\x1b[11^": (Keys.ControlF1,),
+    "\x1b[12^": (Keys.ControlF2,),
+    "\x1b[13^": (Keys.ControlF3,),
+    "\x1b[14^": (Keys.ControlF4,),
+    "\x1b[15^": (Keys.ControlF5,),
+    "\x1b[17^": (Keys.ControlF6,),
+    "\x1b[18^": (Keys.ControlF7,),
+    "\x1b[19^": (Keys.ControlF8,),
+    "\x1b[20^": (Keys.ControlF9,),
+    "\x1b[21^": (Keys.ControlF10,),
+    "\x1b[23^": (Keys.ControlF11,),
+    "\x1b[24^": (Keys.ControlF12,),
+    # rxvt-unicode control+shift function keys:
+    "\x1b[25^": (Keys.ControlF13,),
+    "\x1b[26^": (Keys.ControlF14,),
+    "\x1b[28^": (Keys.ControlF15,),
+    "\x1b[29^": (Keys.ControlF16,),
+    "\x1b[31^": (Keys.ControlF17,),
+    "\x1b[32^": (Keys.ControlF18,),
+    "\x1b[33^": (Keys.ControlF19,),
+    "\x1b[34^": (Keys.ControlF20,),
+    "\x1b[23@": (Keys.ControlF21,),
+    "\x1b[24@": (Keys.ControlF22,),
     # --
     # Tmux (Win32 subsystem) sends the following scroll events.
     "\x1b[62~": (Keys.ScrollUp,),
@@ -152,6 +176,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     # --
     # Meta/control/escape + pageup/pagedown/insert/delete.
     "\x1b[3;2~": (Keys.ShiftDelete,),  # xterm, gnome-terminal.
+    "\x1b[3$": (Keys.ShiftDelete,),  # rxvt
     "\x1b[5;2~": (Keys.ShiftPageUp,),
     "\x1b[6;2~": (Keys.ShiftPageDown,),
     "\x1b[2;3~": (Keys.Escape, Keys.Insert),
@@ -163,8 +188,11 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[5;4~": (Keys.Escape, Keys.ShiftPageUp),
     "\x1b[6;4~": (Keys.Escape, Keys.ShiftPageDown),
     "\x1b[3;5~": (Keys.ControlDelete,),  # xterm, gnome-terminal.
+    "\x1b[3^": (Keys.ControlDelete,),  # rxvt
     "\x1b[5;5~": (Keys.ControlPageUp,),
     "\x1b[6;5~": (Keys.ControlPageDown,),
+    "\x1b[5^": (Keys.ControlPageUp,),  # rxvt
+    "\x1b[6^": (Keys.ControlPageDown,),  # rxvt
     "\x1b[3;6~": (Keys.ControlShiftDelete,),
     "\x1b[5;6~": (Keys.ControlShiftPageUp,),
     "\x1b[6;6~": (Keys.ControlShiftPageDown,),
@@ -200,6 +228,13 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;2D": (Keys.ShiftLeft,),
     "\x1b[1;2F": (Keys.ShiftEnd,),
     "\x1b[1;2H": (Keys.ShiftHome,),
+    # Shift+navigation in rxvt
+    "\x1b[a": (Keys.ShiftUp,),
+    "\x1b[b": (Keys.ShiftDown,),
+    "\x1b[c": (Keys.ShiftRight,),
+    "\x1b[d": (Keys.ShiftLeft,),
+    "\x1b[7$": (Keys.ShiftHome,),
+    "\x1b[8$": (Keys.ShiftEnd,),
     # Meta + arrow keys. Several terminals handle this differently.
     # The following sequences are for xterm and gnome-terminal.
     #     (Iterm sends ESC followed by the normal arrow_up/down/left/right
@@ -231,6 +266,9 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1bb": (Keys.ControlLeft,),  # iTerm natural editing keys
     "\x1b[1;5F": (Keys.ControlEnd,),
     "\x1b[1;5H": (Keys.ControlHome,),
+    # rxvt
+    "\x1b[7^": (Keys.ControlEnd,),
+    "\x1b[8^": (Keys.ControlHome,),
     # Tmux sends following keystrokes when control+arrow is pressed, but for
     # Emacs ansi-term sends the same sequences for normal arrow keys. Consider
     # it a normal arrow press, because that's more important.
@@ -238,8 +276,11 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[5B": (Keys.ControlDown,),
     "\x1b[5C": (Keys.ControlRight,),
     "\x1b[5D": (Keys.ControlLeft,),
-    "\x1bOc": (Keys.ControlRight,),  # rxvt
-    "\x1bOd": (Keys.ControlLeft,),  # rxvt
+    # Control arrow keys in rxvt
+    "\x1bOa": (Keys.ControlUp,),
+    "\x1bOb": (Keys.ControlUp,),
+    "\x1bOc": (Keys.ControlRight,),
+    "\x1bOd": (Keys.ControlLeft,),
     # Control + shift + arrows.
     "\x1b[1;6A": (Keys.ControlShiftUp,),
     "\x1b[1;6B": (Keys.ControlShiftDown,),

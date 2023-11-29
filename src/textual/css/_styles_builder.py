@@ -20,6 +20,7 @@ from ._help_text import (
     dock_property_help_text,
     fractional_property_help_text,
     integer_help_text,
+    keyline_help_text,
     layout_property_help_text,
     offset_property_help_text,
     offset_single_axis_help_text,
@@ -42,6 +43,7 @@ from .constants import (
     VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_EDGE,
+    VALID_KEYLINE,
     VALID_OVERFLOW,
     VALID_OVERLAY,
     VALID_SCROLLBAR_GUTTER,
@@ -544,6 +546,33 @@ class StylesBuilder:
 
     def process_outline_left(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("left", name, tokens)
+
+    def process_keyline(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) > 2:
+            self.error(name, tokens[0], keyline_help_text())
+        keyline_style = "none"
+        keyline_color = Color.parse("green")
+        for token in tokens:
+            if token.name == "color":
+                try:
+                    keyline_color = Color.parse(token.value)
+                except Exception as error:
+                    self.error(
+                        name,
+                        token,
+                        color_property_help_text(name, context="css", error=error),
+                    )
+            elif token.name == "token":
+                try:
+                    keyline_color = Color.parse(token.value)
+                except Exception as error:
+                    keyline_style = token.value
+                    if keyline_style not in VALID_KEYLINE:
+                        self.error(name, token, keyline_help_text())
+
+        self.styles._rules["keyline"] = (keyline_style, keyline_color)
 
     def process_offset(self, name: str, tokens: list[Token]) -> None:
         def offset_error(name: str, token: Token) -> None:

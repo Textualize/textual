@@ -23,6 +23,7 @@ from ._style_properties import (
     DockProperty,
     FractionalProperty,
     IntegerProperty,
+    KeylineProperty,
     LayoutProperty,
     NameListProperty,
     NameProperty,
@@ -108,6 +109,8 @@ class RulesMap(TypedDict, total=False):
     outline_right: tuple[str, Color]
     outline_bottom: tuple[str, Color]
     outline_left: tuple[str, Color]
+
+    keyline: tuple[str, Color]
 
     box_sizing: BoxSizing
     width: Scalar
@@ -264,6 +267,8 @@ class StylesBase(ABC):
     outline_right = BoxProperty(Color(0, 255, 0))
     outline_bottom = BoxProperty(Color(0, 255, 0))
     outline_left = BoxProperty(Color(0, 255, 0))
+
+    keyline = KeylineProperty()
 
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
     width = ScalarProperty(percent_unit=Unit.WIDTH)
@@ -1045,6 +1050,10 @@ class Styles(StylesBase):
             append_declaration("overlay", str(self.overlay))
         if "constrain" in rules:
             append_declaration("constrain", str(self.constrain))
+        if "keyline" in rules:
+            keyline_type, keyline_color = self.keyline
+            if keyline_type != "none":
+                append_declaration("keyline", f"{keyline_type}, {keyline_color.css}")
         lines.sort()
         return lines
 

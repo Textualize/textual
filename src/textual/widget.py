@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import wait
+from asyncio import create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -37,13 +37,11 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Self
 
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
@@ -64,6 +62,7 @@ from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
+from .renderables.blank import Blank
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -85,6 +84,10 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+
+class NotAContainer(Exception):
+    """Exception raised if you attempt to add a child to a widget which doesn't permit child nodes."""
 
 
 _NULL_STYLE = Style()
@@ -263,6 +266,9 @@ class Widget(DOMNode):
 
     BORDER_SUBTITLE: ClassVar[str] = ""
     """Initial value for border_subtitle attribute."""
+
+    ALLOW_CHILDREN: ClassVar[bool] = True
+    """Set to `False` to prevent adding children to this widget."""
 
     can_focus: bool = False
     """Widget may receive focus."""
@@ -487,6 +493,21 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        _rich_traceback_omit = True
+        if not self.ALLOW_CHILDREN:
+            raise NotAContainer(f"Can't add children to {type(widget)} widgets")
+        self._nodes._append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -3112,8 +3133,13 @@ class Widget(DOMNode):
         Returns:
             Any renderable.
         """
-        render: Text | str = "" if self.is_container else self.css_identifier_styled
-        return render
+
+        if self.is_container:
+            if self.styles.layout and self.styles.keyline[0] != "none":
+                return self._layout.render_keyline(self)
+            else:
+                return Blank(self.background_colors[1])
+        return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
@@ -3239,18 +3265,18 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [`events.Print`][textual.events.Print] message.
 
-        Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
+        Call [`end_capture_print`][textual.widget.Widget.end_capture_print] to disable print capture.
 
         Args:
-            stdout: Capture stdout.
-            stderr: Capture stderr.
+            stdout: Whether to capture stdout.
+            stderr: Whether to capture stderr.
         """
         self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
-        """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
+        """End print capture (set with [`begin_capture_print`][textual.widget.Widget.begin_capture_print])."""
         self.app.end_capture_print(self)
 
     def check_message_enabled(self, message: Message) -> bool:
@@ -3305,6 +3331,8 @@ class Widget(DOMNode):
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)
