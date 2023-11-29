@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed clicking on scrollbar moves TextArea cursor https://github.com/Textualize/textual/issues/3763
 
 ## [0.43.0] - 2023-11-28
 
