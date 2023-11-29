@@ -27,6 +27,11 @@ Here's our sketch:
 It's rough, but it's all we need.
 
 
+??? textualize "Try in Textual-web"
+
+    <div class="textual-web-demo" data-app="layout06"></div>
+
+
 ## Tip 2. Work outside in
 
 Like a sculpture with a block of marble, it is best to work from the outside towards the center.

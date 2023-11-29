@@ -1,6 +1,6 @@
 import pytest
 
-from textual.app import App
+from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.screen import Screen
 from textual.widget import Widget
@@ -309,3 +309,63 @@ async def test_focus_chain_handles_inherited_visibility():
             w11,
             w12,
         ]
+
+
+async def test_mouse_down_gives_focus():
+    class MyApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self):
+            yield Button()
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        # Sanity check.
+        assert app.focused is None
+
+        await pilot.mouse_down(Button)
+        assert isinstance(app.focused, Button)
+
+
+async def test_mouse_up_does_not_give_focus():
+    class MyApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self):
+            yield Button()
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        # Sanity check.
+        assert app.focused is None
+
+        await pilot.mouse_up(Button)
+        assert app.focused is None
+
+
+async def test_focus_pseudo_class():
+    """Test focus and blue pseudo classes"""
+
+    # https://github.com/Textualize/textual/pull/3645
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield Button("Hello")
+
+    app = FocusApp()
+    async with app.run_test() as pilot:
+        button = app.query_one(Button)
+        classes = list(button.get_pseudo_classes())
+        # Blurred, not focused
+        assert "blur" in classes
+        assert "focus" not in classes
+
+        # Focus the button
+        button.focus()
+        await pilot.pause()
+
+        # Focused, not blurred
+        classes = list(button.get_pseudo_classes())
+        assert "blur" not in classes
+        assert "focus" in classes

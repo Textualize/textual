@@ -9,8 +9,8 @@ from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
-from textual.widget import MountError, PseudoClasses, Widget
-from textual.widgets import Label
+from textual.widget import MountError, NotAContainer, PseudoClasses, Widget
+from textual.widgets import Label, LoadingIndicator, Static
 
 
 @pytest.mark.parametrize(
@@ -355,3 +355,58 @@ def test_get_set_tooltip():
     assert widget.tooltip == "This is a tooltip."
 
 
+async def test_loading():
+    """Test setting the loading reactive."""
+
+    class LoadingApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("Hello, World")
+
+    async with LoadingApp().run_test() as pilot:
+        app = pilot.app
+        label = app.query_one(Label)
+        assert label.loading == False
+        assert len(label.query(LoadingIndicator)) == 0
+
+        label.loading = True
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 1
+
+        label.loading = True  # Setting to same value is a null-op
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 1
+
+        label.loading = False
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 0
+
+        label.loading = False  # Setting to same value is a null-op
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 0
+
+
+async def test_is_mounted_property():
+    class TestWidgetIsMountedApp(App):
+        pass
+
+    async with TestWidgetIsMountedApp().run_test() as pilot:
+        widget = Widget()
+        assert widget.is_mounted is False
+        await pilot.app.mount(widget)
+        assert widget.is_mounted is True
+
+
+async def test_not_allow_children():
+    """Regression test for https://github.com/Textualize/textual/pull/3758"""
+
+    class TestAppExpectFail(App):
+        def compose(self) -> ComposeResult:
+            # Statics don't have children, so this should error
+            with Static():
+                yield Label("foo")
+
+    app = TestAppExpectFail()
+
+    with pytest.raises(NotAContainer):
+        async with app.run_test():
+            pass

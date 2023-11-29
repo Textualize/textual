@@ -324,7 +324,8 @@ Here are some other pseudo classes:
 - `:disabled` Matches widgets which are in a disabled state.
 - `:enabled` Matches widgets which are in an enabled state.
 - `:focus` Matches widgets which have input focus.
-- `:focus-within` Matches widgets with a focused a child widget.
+- `:blur` Matches widgets which *do not* have input focus.
+- `:focus-within` Matches widgets with a focused child widget.
 - `:dark` Matches widgets in dark mode (where `App.dark == True`).
 - `:light` Matches widgets in dark mode (where `App.dark == False`).
 
@@ -442,3 +443,28 @@ Variables can refer to other variables.
 Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
+
+## Initial value
+
+All CSS rules support a special value called `initial`, which will reset a value back to its default.
+
+Let's look at an example.
+The following will set the background of a button to green:
+
+```sass
+Button {
+  background: green;
+}
+```
+
+If we want a specific button (or buttons) to use the default color, we can set the value to `initial`.
+For instance, if we have a widget with a (CSS) class called `dialog`, we could reset the background color of all buttons inside the dialog with the following CSS:
+
+```sass
+.dialog Button {
+  background: initial;
+}
+```
+
+Note that `initial` will set the value back to the value defined in any [default css](./widgets.md#default-css).
+If you use `initial` within default css, it will treat the rule as completely unstyled.

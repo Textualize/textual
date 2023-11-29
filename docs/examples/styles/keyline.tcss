@@ -1,0 +1,21 @@
+Grid {
+    grid-size: 3 3;
+    grid-gutter: 1;
+    padding: 2 3;
+    keyline: heavy green;
+}
+Placeholder {
+    height: 1fr;      
+}
+.hidden {
+    visibility: hidden;
+} 
+#foo {
+    column-span: 2;
+}
+#bar {
+    row-span: 2;        
+}
+#baz {
+    column-span:3;
+}

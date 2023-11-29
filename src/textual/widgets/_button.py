@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from functools import partial
+from typing import cast
 
 import rich.repr
+from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
@@ -10,8 +12,9 @@ from .. import events
 from ..binding import Binding
 from ..css._error_tools import friendly_list
 from ..message import Message
+from ..pad import HorizontalPad
 from ..reactive import reactive
-from ..widgets import Static
+from ..widget import Widget
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 """The names of the valid button variants.
@@ -26,19 +29,20 @@ class InvalidButtonVariant(Exception):
     """Exception raised if an invalid button variant is used."""
 
 
-class Button(Static, can_focus=True):
+class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
     DEFAULT_CSS = """
     Button {
         width: auto;
         min-width: 16;
-        height: 3;
+        height: auto;
         background: $panel;
         color: $text;
         border: none;
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
+        text-align: center;
         content-align: center middle;
         text-style: bold;
     }
@@ -149,8 +153,7 @@ class Button(Static, can_focus=True):
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
-    ACTIVE_EFFECT_DURATION = 0.3
-    """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
+    ALLOW_CHILDREN = False
 
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
@@ -207,6 +210,9 @@ class Button(Static, can_focus=True):
 
         self.variant = self.validate_variant(variant)
 
+        self.active_effect_duration = 0.3
+        """Amount of time in seconds the button 'press' animation lasts."""
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
         yield "variant", self.variant, "default"
@@ -222,16 +228,26 @@ class Button(Static, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    def validate_label(self, label: TextType) -> TextType:
+    def validate_label(self, label: TextType) -> Text:
         """Parse markup for self.label"""
         if isinstance(label, str):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> TextType:
-        label = Text.assemble(" ", self.label, " ")
-        label.stylize(self.text_style)
-        return label
+    def render(self) -> RenderableType:
+        assert isinstance(self.label, Text)
+        label = self.label.copy()
+        label.stylize(self.rich_style)
+        return HorizontalPad(
+            label,
+            1,
+            1,
+            self.rich_style,
+            self._get_rich_justify() or "center",
+        )
+
+    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+        return cast(ConsoleRenderable, renderable)
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
@@ -252,10 +268,11 @@ class Button(Static, can_focus=True):
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
-        self.add_class("-active")
-        self.set_timer(
-            self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
-        )
+        if self.active_effect_duration > 0:
+            self.add_class("-active")
+            self.set_timer(
+                self.active_effect_duration, partial(self.remove_class, "-active")
+            )
 
     def action_press(self) -> None:
         """Activate a press of the button."""

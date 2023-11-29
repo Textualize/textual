@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class MarginAllApp(App):
+    CSS_PATH = "margin_all.tcss"
+
     def compose(self):
         yield Grid(
             Container(Placeholder("no margin", id="p1"), classes="bordered"),
@@ -17,4 +19,6 @@ class MarginAllApp(App):
         )
 
 
-app = MarginAllApp(css_path="margin_all.tcss")
+if __name__ == "__main__":
+    app = MarginAllApp()
+    app.run()

@@ -4,6 +4,8 @@ from textual.widgets import Label
 
 
 class AllOutlinesApp(App):
+    CSS_PATH = "outline_all.tcss"
+
     def compose(self):
         yield Grid(
             Label("ascii", id="ascii"),
@@ -24,4 +26,6 @@ class AllOutlinesApp(App):
         )
 
 
-app = AllOutlinesApp(css_path="outline_all.tcss")
+if __name__ == "__main__":
+    app = AllOutlinesApp()
+    app.run()

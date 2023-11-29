@@ -5,12 +5,13 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
 
+from typing_extensions import Literal, get_args
+
 if TYPE_CHECKING:
     from tree_sitter import Node
     from tree_sitter.binding import Query
 
 from textual._cells import cell_len
-from textual._types import Literal, get_args
 from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
@@ -132,10 +133,10 @@ class DocumentBase(ABC):
 
     def query_syntax_tree(
         self,
-        query: "Query",
+        query: Query,
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
-    ) -> list[tuple["Node", str]]:
+    ) -> list[tuple[Node, str]]:
         """Query the tree-sitter syntax tree.
 
         The default implementation always returns an empty list.
@@ -152,7 +153,7 @@ class DocumentBase(ABC):
         """
         return []
 
-    def prepare_query(self, query: str) -> "Query" | None:
+    def prepare_query(self, query: str) -> Query | None:
         return None
 
     @property
@@ -319,6 +320,42 @@ class Document(DocumentBase):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
         return len(self._lines)
+
+    def get_index_from_location(self, location: Location) -> int:
+        """Given a location, returns the index from the document's text.
+
+        Args:
+            location: The location in the document.
+
+        Returns:
+            The index in the document's text.
+        """
+        row, column = location
+        index = row * len(self.newline) + column
+        for line_index in range(row):
+            index += len(self.get_line(line_index))
+        return index
+
+    def get_location_from_index(self, index: int) -> Location:
+        """Given an index in the document's text, returns the corresponding location.
+
+        Args:
+            index: The index in the document's text.
+
+        Returns:
+            The corresponding location.
+        """
+        column_index = 0
+        newline_length = len(self.newline)
+        for line_index in range(self.line_count):
+            next_column_index = (
+                column_index + len(self.get_line(line_index)) + newline_length
+            )
+            if index < next_column_index:
+                return (line_index, index - column_index)
+            elif index == next_column_index:
+                return (line_index + 1, 0)
+            column_index = next_column_index
 
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.

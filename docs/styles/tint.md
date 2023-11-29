@@ -21,7 +21,7 @@ This examples shows a green tint with gradually increasing alpha.
 
 === "tint.py"
 
-    ```python hl_lines="11"
+    ```python hl_lines="13"
     --8<-- "docs/examples/styles/tint.py"
     ```
 

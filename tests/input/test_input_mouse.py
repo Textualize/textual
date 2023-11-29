@@ -34,7 +34,7 @@ class InputApp(App[None]):
         (TEXT_SINGLE, 10, 10),
         (TEXT_SINGLE, len(TEXT_SINGLE) - 1, len(TEXT_SINGLE) - 1),
         (TEXT_SINGLE, len(TEXT_SINGLE), len(TEXT_SINGLE)),
-        (TEXT_SINGLE, len(TEXT_SINGLE) * 2, len(TEXT_SINGLE)),
+        (TEXT_SINGLE, len(TEXT_SINGLE) + 10, len(TEXT_SINGLE)),
         # Double-width characters
         (TEXT_DOUBLE, 0, 0),
         (TEXT_DOUBLE, 1, 0),
@@ -55,7 +55,7 @@ class InputApp(App[None]):
         (TEXT_MIXED, 13, 9),
         (TEXT_MIXED, 14, 9),
         (TEXT_MIXED, 15, 10),
-        (TEXT_MIXED, 1000, 10),
+        (TEXT_MIXED, 60, 10),
     ),
 )
 async def test_mouse_clicks_within(text, click_at, should_land):

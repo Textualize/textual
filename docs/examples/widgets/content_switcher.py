@@ -1,5 +1,3 @@
-from rich.align import VerticalCenter
-
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, VerticalScroll
 from textual.widgets import Button, ContentSwitcher, DataTable, Markdown

@@ -14,6 +14,7 @@ from .constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
+    VALID_KEYLINE,
     VALID_LAYOUT,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
@@ -587,9 +588,7 @@ def scrollbar_size_property_help_text(context: StylingContext) -> HelpText:
                     ),
                 ],
             ).get_by_context(context),
-            Bullet(
-                "<horizontal> and <vertical> must be positive integers, greater than zero"
-            ),
+            Bullet("<horizontal> and <vertical> must be non-negative integers."),
         ],
     )
 
@@ -665,6 +664,26 @@ def align_help_text() -> HelpText:
             Bullet(
                 f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
             ),
+        ],
+    )
+
+
+def keyline_help_text() -> HelpText:
+    """Help text to show when the user supplies an invalid value for a `keyline`.
+
+    Returns:
+        Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary="Invalid value for [i]keyline[/] property",
+        bullets=[
+            Bullet(
+                markup="The [i]keyline[/] property expects exactly 2 values",
+                examples=[
+                    Example("keyline: <type> <color>"),
+                ],
+            ),
+            Bullet(f"Valid values for <type> are {friendly_list(VALID_KEYLINE)}"),
         ],
     )
 

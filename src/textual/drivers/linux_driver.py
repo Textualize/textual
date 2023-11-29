@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any
 
 import rich.repr
 
-from .. import events, log
+from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -164,7 +164,7 @@ class LinuxDriver(Driver):
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h\n")
         self.flush()
-        self._key_thread = Thread(target=self.run_input_thread)
+        self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
@@ -233,6 +233,21 @@ class LinuxDriver(Driver):
         if self._writer_thread is not None:
             self._writer_thread.stop()
 
+    def _run_input_thread(self) -> None:
+        """
+        Key thread target that wraps run_input_thread() to die gracefully if it raises
+        an exception
+        """
+        try:
+            self.run_input_thread()
+        except BaseException as error:
+            import rich.traceback
+
+            self._app.call_later(
+                self._app.panic,
+                rich.traceback.Traceback(),
+            )
+
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
         selector = selectors.DefaultSelector()
@@ -264,7 +279,5 @@ class LinuxDriver(Driver):
                         unicode_data = decode(read(fileno, 1024))
                         for event in feed(unicode_data):
                             self.process_event(event)
-        except Exception as error:
-            log(error)
         finally:
             selector.close()

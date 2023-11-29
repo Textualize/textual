@@ -3,8 +3,6 @@ from __future__ import annotations
 from functools import partial
 from pathlib import Path
 
-from rich.syntax import Syntax
-
 from textual.app import App, ComposeResult
 from textual.command import Hit, Hits, Provider
 from textual.containers import VerticalScroll
@@ -53,6 +51,8 @@ class ViewerApp(App):
 
     def open_file(self, path: Path) -> None:
         """Open and display a file with syntax highlighting."""
+        from rich.syntax import Syntax
+
         syntax = Syntax.from_path(
             str(path),
             line_numbers=True,

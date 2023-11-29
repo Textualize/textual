@@ -165,8 +165,6 @@ if __name__ == "__main__":
 
     test_parser = TestParser()
 
-    import time
-
     for n in range(0, len(data), 5):
         for token in test_parser.feed(data[n : n + 5]):
             print(token)

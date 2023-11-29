@@ -16,19 +16,33 @@ def compose(node: App | Widget) -> list[Widget]:
     Returns:
         A list of widgets.
     """
+    _rich_traceback_omit = True
     app = node.app
     nodes: list[Widget] = []
     compose_stack: list[Widget] = []
     composed: list[Widget] = []
     app._compose_stacks.append(compose_stack)
     app._composed.append(composed)
+    iter_compose = iter(node.compose())
     try:
-        for child in node.compose():
+        while True:
+            try:
+                child = next(iter_compose)
+            except StopIteration:
+                break
             if composed:
                 nodes.extend(composed)
                 composed.clear()
             if compose_stack:
-                compose_stack[-1].compose_add_child(child)
+                try:
+                    compose_stack[-1].compose_add_child(child)
+                except Exception as error:
+                    if hasattr(iter_compose, "throw"):
+                        # So the error is raised inside the generator
+                        # This will generate a more sensible traceback for the dev
+                        iter_compose.throw(error)  # type: ignore
+                    else:
+                        raise
             else:
                 nodes.append(child)
         if composed:

@@ -4,7 +4,7 @@ import pytest
 
 from textual.app import App, ComposeResult
 from textual.widgets import Tree
-from textual.widgets.tree import TreeNode
+from textual.widgets.tree import RemoveRootError
 
 
 class VerseBody:
@@ -106,5 +106,5 @@ async def test_tree_remove_children_of_root():
 async def test_attempt_to_remove_root():
     """Attempting to remove the root should be an error."""
     async with TreeClearApp().run_test() as pilot:
-        with pytest.raises(TreeNode.RemoveRootError):
+        with pytest.raises(RemoveRootError):
             pilot.app.query_one(VerseTree).root.remove()
