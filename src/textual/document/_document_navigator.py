@@ -5,6 +5,7 @@ from typing import Any, Sequence
 from textual._cells import cell_len
 from textual.document._document import Location
 from textual.document._wrapped_document import WrappedDocument
+from textual.geometry import clamp
 
 
 class DocumentNavigator:
@@ -193,7 +194,25 @@ class DocumentNavigator:
             )
             target_location = line_index, target_column
 
-        return target_location
+        return self.clamp_reachable(target_location)
+
+    def clamp_reachable(self, location: Location) -> Location:
+        """Given a location, return the nearest location that corresponds to a
+        reachable location in the document.
+
+        Args:
+            location: A location.
+
+        Returns:
+            The nearest reachable location in the document.
+        """
+        document = self._document
+        row, column = location
+        clamped_row = clamp(row, 0, document.line_count - 1)
+
+        row_text = self._document[clamped_row]
+        clamped_column = clamp(column, 0, len(row_text))
+        return clamped_row, clamped_column
 
 
 def index(sequence: Sequence, value: Any) -> int:

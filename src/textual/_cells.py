@@ -41,4 +41,4 @@ def cell_width_to_column_index(line: str, cell_width: int, tab_width: int) -> in
 
         column_index += 1
 
-    return len(line)
+    return len(line) - 1
