@@ -328,6 +328,7 @@ class Pilot(Generic[ReturnType]):
             # the driver works and emits a click event.
             widget_at, _ = app.get_widget_at(*offset)
             event = mouse_event_cls(**message_arguments)
+            # Bypass event processing in App.on_event
             app.screen._forward_event(event)
             await self.pause()
 
