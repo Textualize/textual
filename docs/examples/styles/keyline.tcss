@@ -7,7 +7,7 @@ Grid {
 Placeholder {
     height: 1fr;      
 }
-hidden {
+.hidden {
     visibility: hidden;
 } 
 #foo {

@@ -149,17 +149,34 @@ class ToggleButton(Static, can_focus=True):
         # NOTE: Don't send a Changed message in response to the initial set.
         with self.prevent(self.Changed):
             self.value = value
-        self._label = Text.from_markup(label) if isinstance(label, str) else label
+        self._label = self._make_label(label)
+
+    def _make_label(self, label: TextType) -> Text:
+        """Make a `Text` label from a `TextType` value.
+
+        Args:
+            label: The source value for the label.
+
+        Returns:
+            A `Text` rendering of the label for use in the button.
+        """
+        label = Text.from_markup(label) if isinstance(label, str) else label
         try:
             # Only use the first line if it's a multi-line label.
-            self._label = self._label.split()[0]
+            label = label.split()[0]
         except IndexError:
             pass
+        return label
 
     @property
     def label(self) -> Text:
         """The label associated with the button."""
         return self._label
+
+    @label.setter
+    def label(self, label: TextType) -> None:
+        self._label = self._make_label(label)
+        self.refresh(layout=True)
 
     @property
     def _button(self) -> Text:
