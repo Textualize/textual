@@ -8,7 +8,6 @@ from rich.console import Group, RenderableType
 from rich.highlighter import ReprHighlighter
 from rich.padding import Padding
 from rich.panel import Panel
-from rich.syntax import Syntax
 from rich.text import Text
 
 from ..suggestions import get_suggestion
@@ -51,6 +50,8 @@ class TokenError(Exception):
         Returns:
             A renderable.
         """
+        from rich.syntax import Syntax
+
         line_no = self.start[0]
         # TODO: Highlight column number
         syntax = Syntax(

@@ -2363,7 +2363,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Args:
             columns: One or more columns to sort by the values in.
             key: A function (or other callable) that returns a key to
-            use for sorting purposes.
+                use for sorting purposes.
             reverse: If True, the sort order will be reversed.
 
         Returns:

@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from typing import Mapping, Tuple
 
 from .keys import Keys
 
 # Mapping of vt100 escape codes to Keys.
-ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
+ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     # Control keys.
     " ": (Keys.Space,),
     "\r": (Keys.Enter,),
@@ -140,6 +142,30 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[21;6~": (Keys.ControlF22,),
     "\x1b[23;6~": (Keys.ControlF23,),
     "\x1b[24;6~": (Keys.ControlF24,),
+    # rxvt-unicode control function keys:
+    "\x1b[11^": (Keys.ControlF1,),
+    "\x1b[12^": (Keys.ControlF2,),
+    "\x1b[13^": (Keys.ControlF3,),
+    "\x1b[14^": (Keys.ControlF4,),
+    "\x1b[15^": (Keys.ControlF5,),
+    "\x1b[17^": (Keys.ControlF6,),
+    "\x1b[18^": (Keys.ControlF7,),
+    "\x1b[19^": (Keys.ControlF8,),
+    "\x1b[20^": (Keys.ControlF9,),
+    "\x1b[21^": (Keys.ControlF10,),
+    "\x1b[23^": (Keys.ControlF11,),
+    "\x1b[24^": (Keys.ControlF12,),
+    # rxvt-unicode control+shift function keys:
+    "\x1b[25^": (Keys.ControlF13,),
+    "\x1b[26^": (Keys.ControlF14,),
+    "\x1b[28^": (Keys.ControlF15,),
+    "\x1b[29^": (Keys.ControlF16,),
+    "\x1b[31^": (Keys.ControlF17,),
+    "\x1b[32^": (Keys.ControlF18,),
+    "\x1b[33^": (Keys.ControlF19,),
+    "\x1b[34^": (Keys.ControlF20,),
+    "\x1b[23@": (Keys.ControlF21,),
+    "\x1b[24@": (Keys.ControlF22,),
     # --
     # Tmux (Win32 subsystem) sends the following scroll events.
     "\x1b[62~": (Keys.ScrollUp,),
@@ -326,6 +352,24 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...]] = {
     "\x1b[1;8w": (Keys.Escape, Keys.ControlShift7),
     "\x1b[1;8x": (Keys.Escape, Keys.ControlShift8),
     "\x1b[1;8y": (Keys.Escape, Keys.ControlShift9),
+    # Simplify some sequences that appear to be unique to rxvt; see
+    # https://github.com/Textualize/textual/issues/3741 for context.
+    "\x1bOj": "*",
+    "\x1bOk": "+",
+    "\x1bOm": "-",
+    "\x1bOn": ".",
+    "\x1bOo": "/",
+    "\x1bOp": "0",
+    "\x1bOq": "1",
+    "\x1bOr": "2",
+    "\x1bOs": "3",
+    "\x1bOt": "4",
+    "\x1bOu": "5",
+    "\x1bOv": "6",
+    "\x1bOw": "7",
+    "\x1bOx": "8",
+    "\x1bOy": "9",
+    "\x1bOM": (Keys.Enter,),
 }
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036

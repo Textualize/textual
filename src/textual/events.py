@@ -228,7 +228,6 @@ class Key(InputEvent):
     Args:
         key: The key that was pressed.
         character: A printable character or ``None`` if it is not printable.
-
     Attributes:
         aliases: The aliases for the key, including the key itself.
     """
@@ -555,6 +554,26 @@ class Focus(Event, bubble=False):
 
 class Blur(Event, bubble=False):
     """Sent when a widget is blurred (un-focussed).
+
+    - [ ] Bubbles
+    - [ ] Verbose
+    """
+
+
+class AppFocus(Event, bubble=False):
+    """Sent when the app has focus.
+
+    Used by textual-web.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+    """
+
+
+class AppBlur(Event, bubble=False):
+    """Sent when the app loses focus.
+
+    Used by textual-web.
 
     - [ ] Bubbles
     - [ ] Verbose

@@ -5,15 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## Unreleased
+
+### Changed
+
+- Breaking changes https://github.com/Textualize/textual/issues/1530
+ - `link-hover-background` renamed to `link-background-hover`
+ - `link-hover-color` renamed to `link-color-hover`
+ - `link-hover-style` renamed to `link-style-hover`
+- Brought rxvt's use of shift-numpad keys in line with most other terminals https://github.com/Textualize/textual/pull/3769
+
+### Added
+
+- Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
+- Friendly error messages when trying to mount non-widgets https://github.com/Textualize/textual/pull/3780
+- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator of values https://github.com/Textualize/textual/pull/3743
+
+## [0.43.2] - 2023-11-29
+
+### Fixed
+
+- Fixed NoWidget error https://github.com/Textualize/textual/pull/3779
+
+## [0.43.1] - 2023-11-29
+
+### Fixed
+
+- Fixed clicking on scrollbar moves TextArea cursor https://github.com/Textualize/textual/issues/3763
+
+## [0.43.0] - 2023-11-28
 
 ### Fixed
 
 - Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
+- Fixed `Select` not updating after changing the `prompt` reactive https://github.com/Textualize/textual/issues/2983
+- Fixed flicker when updating Markdown https://github.com/Textualize/textual/pull/3757
 
 ### Added
-- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator https://github.com/Textualize/textual/pull/3743
+
+- Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
+- Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
+- Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
+- Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
+- Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
+- Added support for various modified edit and navigation keys in urxvt https://github.com/Textualize/textual/pull/3739
+- Added app focus/blur for textual-web https://github.com/Textualize/textual/pull/3767
+
+### Changed
+
+- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
+- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Optimized startup time https://github.com/Textualize/textual/pull/3753
+- App.COMMANDS or Screen.COMMANDS can now accept a callable which returns a command palette provider https://github.com/Textualize/textual/pull/3756
 
 ## [0.42.0] - 2023-11-22
 
@@ -45,19 +89,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Pilot.mouse_down` to simulate `MouseDown` events https://github.com/Textualize/textual/pull/3495
 - Added `Pilot.mouse_up` to simulate `MouseUp` events https://github.com/Textualize/textual/pull/3495
 - Added `Widget.is_mounted` property https://github.com/Textualize/textual/pull/3709
+- Added `TreeNode.refresh` https://github.com/Textualize/textual/pull/3639
 
 ### Changed
 
 - CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
 - inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
+- Breaking change: `Tree.refresh_line` has now become an internal https://github.com/Textualize/textual/pull/3639
 - Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
 - Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
 - Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
 - Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
 - Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
-- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
-- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
-- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
 
 ## [0.41.0] - 2023-10-31
 
@@ -1446,6 +1489,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.43.2]: https://github.com/Textualize/textual/compare/v0.43.1...v0.43.2
+[0.43.1]: https://github.com/Textualize/textual/compare/v0.43.0...v0.43.1
+[0.43.0]: https://github.com/Textualize/textual/compare/v0.42.0...v0.43.0
 [0.42.0]: https://github.com/Textualize/textual/compare/v0.41.0...v0.42.0
 [0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
 [0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0

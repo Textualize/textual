@@ -7,18 +7,18 @@ from markdown_it import MarkdownIt
 from markdown_it.token import Token
 from rich import box
 from rich.style import Style
-from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
 from .._slug import TrackedSlugs
 from ..app import ComposeResult
+from ..await_complete import AwaitComplete
 from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
 from ..message import Message
 from ..reactive import reactive, var
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
@@ -503,6 +503,8 @@ class MarkdownFence(MarkdownBlock):
         super().__init__(markdown)
 
     def compose(self) -> ComposeResult:
+        from rich.syntax import Syntax
+
         yield Static(
             Syntax(
                 self.code,
@@ -720,7 +722,7 @@ class Markdown(Widget):
         """
         return None
 
-    def update(self, markdown: str) -> AwaitMount:
+    def update(self, markdown: str) -> AwaitComplete:
         """Update the document with new Markdown.
 
         Args:
@@ -870,9 +872,16 @@ class Markdown(Widget):
         self.post_message(
             Markdown.TableOfContentsUpdated(self, self._table_of_contents)
         )
-        with self.app.batch_update():
-            self.query("MarkdownBlock").remove()
-            return self.mount_all(output)
+        markdown_block = self.query("MarkdownBlock")
+
+        async def await_update() -> None:
+            """Update in a single batch."""
+
+            with self.app.batch_update():
+                await markdown_block.remove()
+                await self.mount_all(output)
+
+        return AwaitComplete(await_update())
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):

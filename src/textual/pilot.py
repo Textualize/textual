@@ -323,12 +323,13 @@ class Pilot(Generic[ReturnType]):
             # Get the widget under the mouse before the event because the app might
             # react to the event and move things around. We override on each iteration
             # because we assume the final event in `events` is the actual event we care
-            # about and that all the preceeding events are just setup.
-            # E.g., the click event is preceeded by MouseDown/MouseUp to emulate how
+            # about and that all the preceding events are just setup.
+            # E.g., the click event is preceded by MouseDown/MouseUp to emulate how
             # the driver works and emits a click event.
             widget_at, _ = app.get_widget_at(*offset)
             event = mouse_event_cls(**message_arguments)
-            app.post_message(event)
+            # Bypass event processing in App.on_event
+            app.screen._forward_event(event)
             await self.pause()
 
         return selector is None or widget_at is target_widget

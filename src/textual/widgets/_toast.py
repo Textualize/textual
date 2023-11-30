@@ -48,9 +48,9 @@ class Toast(Static, inherit_css=False):
         link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-hover-background: $accent;
-        link-hover-color: $text;
-        link-hover-style: bold not underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
 
     .toast--title {

@@ -142,6 +142,7 @@ class WebDriver(Driver):
         self._enable_bracketed_paste()
         self.flush()
         self._key_thread.start()
+        self._app.post_message(events.AppBlur())
 
     def disable_input(self) -> None:
         """Disable further input."""
@@ -188,7 +189,7 @@ class WebDriver(Driver):
             payload: Meta payload (JSON encoded as bytes).
         """
         payload_map = json.loads(payload)
-        _type = payload_map.get("type")
+        _type = payload_map.get("type", {})
         if isinstance(payload_map, dict):
             self.on_meta(_type, payload_map)
 
@@ -203,6 +204,10 @@ class WebDriver(Driver):
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
             self._app.post_message(events.Resize(size, size))
+        elif packet_type == "focus":
+            self._app.post_message(events.AppFocus())
+        elif packet_type == "blur":
+            self._app.post_message(events.AppBlur())
         elif packet_type == "quit":
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":

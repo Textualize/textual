@@ -80,7 +80,7 @@ class SyntaxAwareDocument(Document):
         To execute a query, call `query_syntax_tree`.
 
         Args:
-            The string query to prepare.
+            query: The string query to prepare.
 
         Returns:
             The prepared query.

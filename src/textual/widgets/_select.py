@@ -532,3 +532,15 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             raise InvalidSelectValueError(
                 "Can't clear selection if allow_blank is set to False."
             ) from None
+
+    def _watch_prompt(self, prompt: str) -> None:
+        if not self.is_mounted:
+            return
+        select_current = self.query_one(SelectCurrent)
+        select_current.placeholder = prompt
+        if not self._allow_blank:
+            return
+        if self.value == self.BLANK:
+            select_current.update(self.BLANK)
+        option_list = self.query_one(SelectOverlay)
+        option_list.replace_option_prompt_at_index(0, Text(prompt, style="dim"))
