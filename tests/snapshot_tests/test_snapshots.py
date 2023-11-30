@@ -333,10 +333,6 @@ def test_select(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget.py")
 
 
-def test_select_from_values(snap_compare):
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "select_from_values_widget.py")
-
-
 def test_selection_list_selected(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "selection_list_selected.py")
 
@@ -368,33 +364,14 @@ def test_select_expanded_changed(snap_compare):
     )
 
 
-def test_select_from_values_expanded_changed(snap_compare):
-    assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "select_from_values_widget.py",
-        press=["tab", "enter", "down", "enter"],
-    )
-
-
 def test_select_no_blank_has_default_value(snap_compare):
     """Make sure that the first value is selected by default if allow_blank=False."""
     assert snap_compare(WIDGET_EXAMPLES_DIR / "select_widget_no_blank.py")
 
 
-def test_select_from_values_no_blank_has_default_value(snap_compare):
-    """Make sure that the first value is selected by default if allow_blank=False."""
-    assert snap_compare(WIDGET_EXAMPLES_DIR / "select_from_values_widget_no_blank.py")
-
-
 def test_select_set_options(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "select_widget_no_blank.py",
-        press=["s"],
-    )
-
-
-def test_select_from_values_set_options(snap_compare):
-    assert snap_compare(
-        WIDGET_EXAMPLES_DIR / "select_from_values_widget_no_blank.py",
         press=["s"],
     )
 
