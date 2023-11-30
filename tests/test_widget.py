@@ -410,3 +410,30 @@ async def test_not_allow_children():
     with pytest.raises(NotAContainer):
         async with app.run_test():
             pass
+
+
+async def test_mount_error_not_widget():
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield {}
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass
+
+
+async def test_mount_error_bad_widget():
+    class DaftWidget(Widget):
+        def __init__(self):
+            # intentionally missing super()
+            pass
+
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield DaftWidget()
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass

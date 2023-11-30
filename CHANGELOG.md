@@ -14,10 +14,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - `link-hover-color` renamed to `link-color-hover`
  - `link-hover-style` renamed to `link-style-hover`
 - `Tree` now forces a scroll when `scroll_to_node` is called https://github.com/Textualize/textual/pull/3786
+- Brought rxvt's use of shift-numpad keys in line with most other terminals https://github.com/Textualize/textual/pull/3769
 
 ### Added
 
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
+- Friendly error messages when trying to mount non-widgets https://github.com/Textualize/textual/pull/3780
 
 ## [0.43.2] - 2023-11-29
 
