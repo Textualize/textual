@@ -229,6 +229,10 @@ class DocumentNavigator:
             target_column = self._wrapped_document.get_target_document_column(
                 target_row, current_visual_offset, 0, tab_width
             )
+            # TODO - need to decide what to do with the return at the
+            #  bottom of cell_width_to_column_index - we need to be able
+            #  to move to len(final_section) when on final_section.
+            #  However, while on any other section, we must not move beyond.
             target_location = target_row, target_column
         else:
             # Stay on the same document line, but move forwards to
