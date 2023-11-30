@@ -17,11 +17,9 @@ class Restrictor(ABC):
 
     Example:
         ```python
-        class Palindrome(Restrictor):
+        class UppercaseRestrictor(Restrictor):
             def allowed(self, value: str) -> bool:
-                def is_palindrome(value: str) -> bool:
-                    return value == value[::-1]
-                return True if is_palindrome(value) else False
+                return value.isupper()
         ```
     """
 
