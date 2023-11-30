@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
+
 class Restrictor(ABC):
     """Base class for the restriction of values.
 
