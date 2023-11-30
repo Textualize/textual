@@ -196,6 +196,19 @@ class DocumentNavigator:
 
         return self.clamp_reachable(target_location)
 
+    def down(self, location: Location, tab_width: int) -> Location:
+        """Given a location in the raw document, return the raw document
+        location corresponding to moving down in the wrapped representation
+        of the document.
+
+        Args:
+            location: The location in the raw document.
+            tab_width: The width of the tab stops.
+
+        Returns:
+            The location which is *visually* below the given location.
+        """
+
     def clamp_reachable(self, location: Location) -> Location:
         """Given a location, return the nearest location that corresponds to a
         reachable location in the document.
