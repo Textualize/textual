@@ -1,9 +1,9 @@
 #lbl1, #lbl2 {
-    link-hover-background: red;  /* (1)! */
+    link-background-hover: red;  /* (1)! */
 }
 
 #lbl3 {
-    link-hover-background: hsl(60,100%,50%) 50%;
+    link-background-hover: hsl(60,100%,50%) 50%;
 }
 
 #lbl4 {

@@ -3,7 +3,7 @@ from textual.widgets import Label
 
 
 class LinkHoverColorApp(App):
-    CSS_PATH = "link_hover_color.tcss"
+    CSS_PATH = "link_color_hover.tcss"
 
     def compose(self):
         yield Label(

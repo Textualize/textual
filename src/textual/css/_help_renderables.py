@@ -7,7 +7,6 @@ from rich.console import Console, ConsoleOptions, RenderResult
 from rich.highlighter import ReprHighlighter
 from rich.markup import render
 from rich.text import Text
-from rich.tree import Tree
 
 _highlighter = ReprHighlighter()
 
@@ -89,6 +88,8 @@ class HelpText:
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
     ) -> RenderResult:
+        from rich.tree import Tree
+
         tree = Tree(_markup_and_highlight(f"[b blue]{self.summary}"), guide_style="dim")
         if self.bullets is not None:
             for bullet in self.bullets:

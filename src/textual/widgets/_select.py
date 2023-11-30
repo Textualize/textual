@@ -290,7 +290,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         Args:
             options: Options to select from. If no options are provided then
                 `allow_blank` must be set to `True`.
-            prompt: Text to show in the control when no option is select.
+            prompt: Text to show in the control when no option is selected.
             allow_blank: Enables or disables the ability to have the widget in a state
                 with no selection made, in which case its value is set to the constant
                 [`Select.BLANK`][textual.widgets.Select.BLANK].
@@ -298,7 +298,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                 If no initial value is set and `allow_blank` is `False`, the widget
                 will auto-select the first available option.
             name: The name of the select control.
-            id: The ID of the control the DOM.
+            id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
 
@@ -326,15 +326,20 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     ) -> Self:
         """Initialize the Select control with values specified by an arbitrary iterable
 
-        The options in the controls are computed by calling the build-in str() on each value.
+        The options shown in the control are computed by calling the built-in `str`
+        on each value.
 
         Args:
             values: Values used to generate options to select from.
-            rompt: Text to show in the control when no option is select.
-            allow_blank: Allow the selection of a blank option.
-            value: Initial value (should be one of the values in `options`).
+            prompt: Text to show in the control when no option is selected.
+            allow_blank: Enables or disables the ability to have the widget in a state
+                with no selection made, in which case its value is set to the constant
+                [`Select.BLANK`][textual.widgets.Select.BLANK].
+            value: Initial value selected. Should be one of the values in `values`.
+                If no initial value is set and `allow_blank` is `False`, the widget
+                will auto-select the first available value.
             name: The name of the select control.
-            id: The ID of the control the DOM.
+            id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
         """
@@ -538,3 +543,15 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             raise InvalidSelectValueError(
                 "Can't clear selection if allow_blank is set to False."
             ) from None
+
+    def _watch_prompt(self, prompt: str) -> None:
+        if not self.is_mounted:
+            return
+        select_current = self.query_one(SelectCurrent)
+        select_current.placeholder = prompt
+        if not self._allow_blank:
+            return
+        if self.value == self.BLANK:
+            select_current.update(self.BLANK)
+        option_list = self.query_one(SelectOverlay)
+        option_list.replace_option_prompt_at_index(0, Text(prompt, style="dim"))
