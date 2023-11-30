@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import wait
+from asyncio import create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -42,7 +42,6 @@ from typing_extensions import Self
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
@@ -255,9 +254,9 @@ class Widget(DOMNode):
         link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-hover-background: $accent;
-        link-hover-color: $text;
-        link-hover-style: bold not underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -808,7 +807,6 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-
         # Check for duplicate IDs in the incoming widgets
         ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
         unique_ids = set(ids_to_mount)
@@ -1753,7 +1751,7 @@ class Widget(DOMNode):
         return style
 
     @property
-    def link_hover_style(self) -> Style:
+    def link_style_hover(self) -> Style:
         """Style of links underneath the mouse cursor.
 
         Returns:
@@ -1761,13 +1759,13 @@ class Widget(DOMNode):
         """
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.link_hover_background
+        hover_background = background + styles.link_background_hover
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.link_hover_color.a)
-            if styles.auto_link_hover_color
-            else styles.link_hover_color
+            hover_background.get_contrast_text(styles.link_color_hover.a)
+            if styles.auto_link_color_hover
+            else styles.link_color_hover
         )
-        style = styles.link_hover_style + Style.from_color(
+        style = styles.link_style_hover + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )

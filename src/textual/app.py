@@ -16,7 +16,7 @@ import platform
 import sys
 import threading
 import warnings
-from asyncio import Task
+from asyncio import Task, create_task
 from concurrent.futures import Future
 from contextlib import (
     asynccontextmanager,
@@ -59,7 +59,6 @@ from rich.segment import Segment, Segments
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -79,6 +78,7 @@ from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
+from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .geometry import Offset, Region, Size
@@ -443,6 +443,9 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
+        self._mouse_down_widget: Widget | None = None
+        """The widget that was most recently mouse downed (used to create click events)."""
 
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
@@ -2298,7 +2301,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         ready_time = (perf_counter() - self._start_time) * 1000
-        self.log.info(f"ready in {ready_time:0.0f} milliseconds")
+        self.log.system(f"ready in {ready_time:0.0f} milliseconds")
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
@@ -2671,7 +2674,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen = Screen(id=f"_default")
+            screen: Screen[Any] = Screen(id=f"_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
@@ -2683,7 +2686,26 @@ class App(Generic[ReturnType], DOMNode):
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
+
+                if isinstance(event, events.MouseDown):
+                    try:
+                        self._mouse_down_widget, _ = self.get_widget_at(
+                            event.x, event.y
+                        )
+                    except NoWidget:
+                        # Shouldn't occur, since at the very least this will find the Screen
+                        self._mouse_down_widget = None
+
                 self.screen._forward_event(event)
+
+                if isinstance(event, events.MouseUp):
+                    if self._mouse_down_widget is not None and (
+                        self.get_widget_at(event.x, event.y)[0]
+                        is self._mouse_down_widget
+                    ):
+                        click_event = events.Click.from_event(event)
+                        self.screen._forward_event(click_event)
+
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
@@ -2751,7 +2773,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         _rich_traceback_guard = True
 
-        log(
+        log.system(
             "<action>",
             namespace=namespace,
             action_name=action_name,
@@ -2767,13 +2789,13 @@ class App(Generic[ReturnType], DOMNode):
             if callable(public_method):
                 await invoke(public_method, *params)
                 return True
-            log(
+            log.system(
                 f"<action> {action_name!r} has no target."
                 f" Could not find methods '_action_{action_name}' or 'action_{action_name}'"
             )
         except SkipAction:
             # The action method raised this to explicitly not handle the action
-            log(f"<action> {action_name!r} skipped.")
+            log.system(f"<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
@@ -2818,7 +2840,7 @@ class App(Generic[ReturnType], DOMNode):
             await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log("shutdown request")
+        log.system("shutdown request")
         await self._close_messages()
 
     async def _on_resize(self, event: events.Resize) -> None:
