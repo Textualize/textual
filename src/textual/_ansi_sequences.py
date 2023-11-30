@@ -369,6 +369,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1bOw": "7",
     "\x1bOx": "8",
     "\x1bOy": "9",
+    "\x1bOM": (Keys.Enter,),
 }
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
