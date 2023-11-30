@@ -357,6 +357,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1bOj": "*",
     "\x1bOk": "+",
     "\x1bOm": "-",
+    "\x1bOn": ".",
     "\x1bOo": "/",
     "\x1bOp": "0",
     "\x1bOq": "1",
