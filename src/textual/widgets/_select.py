@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Iterable, TypeVar, Union
 
@@ -18,6 +19,11 @@ if TYPE_CHECKING:
     from typing_extensions import TypeAlias
 
     from ..app import ComposeResult
+
+if sys.version_info.minor >= 11:
+    from typing import Self
+else:
+    from typing_extensions import Self
 
 
 class NoSelection:
@@ -317,7 +323,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-    ):
+    ) -> Self:
         """Initialize the Select control with values specified by an arbitrary iterable
 
         The options in the controls are computed by calling the build-in str() on each value.
