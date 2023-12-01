@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.44.0] - 2023-12-1
 
 ### Changed
 
+- Breaking change: Dropped 3.7 support https://github.com/Textualize/textual/pull/3766
 - Breaking changes https://github.com/Textualize/textual/issues/1530
  - `link-hover-background` renamed to `link-background-hover`
  - `link-hover-color` renamed to `link-color-hover`
@@ -19,6 +20,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
 - Friendly error messages when trying to mount non-widgets https://github.com/Textualize/textual/pull/3780
+
+### Fixed
+
+- Fixed NoWidget when mouse goes outside window https://github.com/Textualize/textual/pull/3790
+- Removed suprious print statements from press_keys https://github.com/Textualize/textual/issues/3785
 
 ## [0.43.2] - 2023-11-29
 
@@ -1488,6 +1494,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.44.0]: https://github.com/Textualize/textual/compare/v0.43.2...v0.44.0
 [0.43.2]: https://github.com/Textualize/textual/compare/v0.43.1...v0.43.2
 [0.43.1]: https://github.com/Textualize/textual/compare/v0.43.0...v0.43.1
 [0.43.0]: https://github.com/Textualize/textual/compare/v0.42.0...v0.43.0
