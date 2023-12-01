@@ -1169,7 +1169,6 @@ class App(Generic[ReturnType], DOMNode):
         for key in keys:
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
-                print(f"(pause {wait_ms}ms)")
                 await asyncio.sleep(float(wait_ms) / 1000)
             else:
                 if len(key) == 1 and not key.isalnum():
@@ -1180,7 +1179,6 @@ class App(Generic[ReturnType], DOMNode):
                     char = unicodedata.lookup(_get_unicode_name_from_key(original_key))
                 except KeyError:
                     char = key if len(key) == 1 else None
-                print(f"press {key!r} (char={char!r})")
                 key_event = events.Key(key, char)
                 key_event._set_sender(app)
                 driver.send_event(key_event)

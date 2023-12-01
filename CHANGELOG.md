@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed NoWidget when mouse goes outside window https://github.com/Textualize/textual/pull/3790
+- Removed suprious print statements from press_keys https://github.com/Textualize/textual/issues/3785
 
 ## [0.43.2] - 2023-11-29
 
