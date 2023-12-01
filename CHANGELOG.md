@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
 - Friendly error messages when trying to mount non-widgets https://github.com/Textualize/textual/pull/3780
 
+### Fixed
+
+- Fixed NoWidget when mouse goes outside window https://github.com/Textualize/textual/pull/3790
+
 ## [0.43.2] - 2023-11-29
 
 ### Fixed
