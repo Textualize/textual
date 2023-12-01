@@ -2698,13 +2698,19 @@ class App(Generic[ReturnType], DOMNode):
 
                 self.screen._forward_event(event)
 
-                if isinstance(event, events.MouseUp):
-                    if self._mouse_down_widget is not None and (
-                        self.get_widget_at(event.x, event.y)[0]
-                        is self._mouse_down_widget
-                    ):
-                        click_event = events.Click.from_event(event)
-                        self.screen._forward_event(click_event)
+                if (
+                    isinstance(event, events.MouseUp)
+                    and self._mouse_down_widget is not None
+                ):
+                    try:
+                        if (
+                            self.get_widget_at(event.x, event.y)[0]
+                            is self._mouse_down_widget
+                        ):
+                            click_event = events.Click.from_event(event)
+                            self.screen._forward_event(click_event)
+                    except NoWidget:
+                        pass
 
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, priority=True):
