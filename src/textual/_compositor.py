@@ -884,7 +884,7 @@ class Compositor:
 
         for region, clip in self.visible_widgets.values():
             x, y, region_width, region_height = intersection(region, clip)
-            if region_width * region_height:
+            if region_width and region_height:
                 region_cuts = (x, x + region_width)
                 for cut in cuts[y : y + region_height]:
                     extend(cut, region_cuts)
