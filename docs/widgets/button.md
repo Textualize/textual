@@ -51,7 +51,7 @@ This widget has no component classes.
 
 ## Additional Notes
 
-- The spacing between the text and the edges of a button are _not_ due to padding. The default styling for a `Button` has a `min-width` of 16 columns. To create a button with zero visible padding, you will need to change this value and also remove the border with `border: none;`.
+- The spacing between the text and the edges of a button are _not_ due to padding. The default styling for a `Button` has a `min-width` of 16 columns. To create a button without this spacing, you will need to change this value and also remove the border with `border: none;`.
 
 ---
 
