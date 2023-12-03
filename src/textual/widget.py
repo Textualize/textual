@@ -700,8 +700,6 @@ class Widget(DOMNode):
         Returns:
             Widget locations.
         """
-        assert self.is_container
-
         cache_key = (size, self._nodes._updates)
         cached_result = self._arrangement_cache.get(cache_key)
         if cached_result is not None:
