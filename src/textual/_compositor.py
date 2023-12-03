@@ -423,9 +423,7 @@ class Compositor:
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = (
-            self._visible_map if self._visible_map is not None else self._full_map or {}
-        )
+        old_map = self._visible_map or {}
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
         # Replace map and widgets
