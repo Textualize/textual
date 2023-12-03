@@ -935,15 +935,13 @@ class Compositor:
                     _Region(0, 0, region.width, region.height)
                 )
             else:
-                clipped_region = intersection(region, clip)
-                if not clipped_region:
-                    continue
-                new_x, new_y, new_width, new_height = clipped_region
-                delta_x = new_x - region.x
-                delta_y = new_y - region.y
-                yield region, clip, widget.render_lines(
-                    _Region(delta_x, delta_y, new_width, new_height)
-                )
+                new_x, new_y, new_width, new_height = intersection(region, clip)
+                if new_width and new_height:
+                    yield region, clip, widget.render_lines(
+                        _Region(
+                            new_x - region.x, new_y - region.y, new_width, new_height
+                        )
+                    )
 
     def render_update(
         self, full: bool = False, screen_stack: list[Screen] | None = None
