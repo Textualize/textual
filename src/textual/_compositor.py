@@ -606,11 +606,12 @@ class Compositor:
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
+                    # Adjust the clip region accordingly
+                    sub_clip = clip.intersection(child_region)
+
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
-                            child_region.intersection(clip)
-                            - child_region.offset
-                            + widget.scroll_offset
+                            sub_clip - child_region.offset + widget.scroll_offset
                         )
                     else:
                         placements = arrange_result.placements
@@ -626,9 +627,6 @@ class Compositor:
                     }
 
                     get_layer_index = layers_to_index.get
-
-                    # Adjust the clip region accordingly
-                    sub_clip = clip.intersection(child_region)
 
                     # Add all the widgets
                     for sub_region, _, sub_widget, z, fixed, overlay in reversed(
