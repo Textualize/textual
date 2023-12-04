@@ -423,9 +423,7 @@ class Compositor:
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = (
-            self._visible_map if self._visible_map is not None else self._full_map or {}
-        )
+        old_map = self._visible_map or {}
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
         # Replace map and widgets
@@ -877,16 +875,14 @@ class Compositor:
             return self._cuts
 
         width, height = self.size
-        screen_region = self.size.region
         cuts = [[0, width] for _ in range(height)]
 
         intersection = Region.intersection
         extend = list.extend
 
         for region, clip in self.visible_widgets.values():
-            region = intersection(region, clip)
-            if region and (region in screen_region):
-                x, y, region_width, region_height = region
+            x, y, region_width, region_height = intersection(region, clip)
+            if region_width and region_height:
                 region_cuts = (x, x + region_width)
                 for cut in cuts[y : y + region_height]:
                     extend(cut, region_cuts)
@@ -937,15 +933,13 @@ class Compositor:
                     _Region(0, 0, region.width, region.height)
                 )
             else:
-                clipped_region = intersection(region, clip)
-                if not clipped_region:
-                    continue
-                new_x, new_y, new_width, new_height = clipped_region
-                delta_x = new_x - region.x
-                delta_y = new_y - region.y
-                yield region, clip, widget.render_lines(
-                    _Region(delta_x, delta_y, new_width, new_height)
-                )
+                new_x, new_y, new_width, new_height = intersection(region, clip)
+                if new_width and new_height:
+                    yield region, clip, widget.render_lines(
+                        _Region(
+                            new_x - region.x, new_y - region.y, new_width, new_height
+                        )
+                    )
 
     def render_update(
         self, full: bool = False, screen_stack: list[Screen] | None = None
