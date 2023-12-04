@@ -49,6 +49,8 @@ class ScrollRight(ScrollMessage, verbose=True):
 class ScrollTo(ScrollMessage, verbose=True):
     """Message sent when click and dragging handle."""
 
+    __slots__ = ["x", "y", "animate"]
+
     def __init__(
         self,
         x: float | None = None,
