@@ -65,6 +65,9 @@ class DockArrangeResult:
         Returns:
             Set of placements.
         """
+        if self.total_region in region:
+            # Short circuit for when we want all the placements
+            return self.placements
         visible_placements = self.spatial_map.get_values_in_region(region)
         return visible_placements
 
