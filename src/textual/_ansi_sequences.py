@@ -364,6 +364,7 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1bOx": "8",
     "\x1bOy": "9",
     "\x1bOM": (Keys.Enter,),
+    "\x1b§": "§",  # Opt+secton sign (WezTerm (20230712-072601-f4abf8fd)-Darwin)
     ############################################################################
     # The ignore section. Only add sequences here if they are going to be
     # ignored. Also, when adding a sequence here, please include a note as
