@@ -381,6 +381,8 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1b0": "º",
     "\x1b-": "–",
     "\x1b=": "≠",
+    # Ctrl+§ on kitty is different from most other terminals on macOS.
+    "\x1b[167;5u": "0",
     ############################################################################
     # The ignore section. Only add sequences here if they are going to be
     # ignored. Also, when adding a sequence here, please include a note as
