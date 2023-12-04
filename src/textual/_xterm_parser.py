@@ -7,7 +7,7 @@ from typing import Any, Callable, Generator, Iterable
 from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
-from .keys import KEY_NAME_REPLACEMENTS, _character_to_key
+from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
@@ -99,6 +99,20 @@ class XTermParser(Parser[events.Event]):
         paste_buffer: list[str] = []
         bracketed_paste = False
         use_prior_escape = False
+
+        def on_key_token(event: events.Key) -> None:
+            """Token callback wrapper for handling keys.
+
+            Args:
+                event: The key event to send to the callback.
+
+            This wrapper looks for keys that should be ignored, and filters
+            them out, logging the ignored sequence when it does.
+            """
+            if event.key == Keys.Ignore:
+                self.debug_log(f"ignored={event.character!r}")
+            else:
+                on_token(event)
 
         def reissue_sequence_as_keys(reissue_sequence: str) -> None:
             if self._reissued_sequence_debug_book is not None:
@@ -204,7 +218,7 @@ class XTermParser(Parser[events.Event]):
                         # Was it a pressed key event that we received?
                         key_events = list(sequence_to_key_events(sequence))
                         for key_event in key_events:
-                            on_token(key_event)
+                            on_key_token(key_event)
                         if key_events:
                             break
                         # Or a mouse event?
@@ -229,7 +243,7 @@ class XTermParser(Parser[events.Event]):
             else:
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):
-                        on_token(event)
+                        on_key_token(event)
 
     def _sequence_to_key_events(
         self, sequence: str, _unicode_name=unicodedata.name
@@ -244,10 +258,20 @@ class XTermParser(Parser[events.Event]):
         """
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         if isinstance(keys, tuple):
-            # If the sequence mapped to a tuple, then it's values from the
-            # `Keys` enum. Raise key events from what we find in the tuple.
-            for key in keys:
-                yield events.Key(key.value, sequence if len(sequence) == 1 else None)
+            # If we're being asked to ignore the key...
+            if keys == (Keys.Ignore,):
+                # ...build a special ignore key event, which has the ignore
+                # name as the key (that is, the key this sequence is bound
+                # to is the ignore key) and the sequence that was ignored as
+                # the character.
+                yield events.Key(Keys.Ignore.value, sequence)
+            else:
+                # If the sequence mapped to a tuple, then it's values from the
+                # `Keys` enum. Raise key events from what we find in the tuple.
+                for key in keys:
+                    yield events.Key(
+                        key.value, sequence if len(sequence) == 1 else None
+                    )
             return
         # If keys is a string, the intention is that it's a mapping to a
         # character, which should really be treated as the sequence for the
