@@ -364,19 +364,23 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1bOx": "8",
     "\x1bOy": "9",
     "\x1bOM": (Keys.Enter,),
-    "\x1b§": "§",  # Opt+secton sign (WezTerm Darwin)
-    "\x1b1": "¡",  # Opt+1 (WezTerm Darwin)
-    "\x1b2": "™",  # Opt+2 (WezTerm Darwin)
-    "\x1b3": "£",  # Opt+3 (WezTerm Darwin)
-    "\x1b4": "¢",  # Opt+4 (WezTerm Darwin)
-    "\x1b5": "∞",  # Opt+5 (WezTerm Darwin)
-    "\x1b6": "§",  # Opt+6 (WezTerm Darwin)
-    "\x1b7": "¶",  # Opt+7 (WezTerm Darwin)
-    "\x1b8": "•",  # Opt+8 (WezTerm Darwin)
-    "\x1b9": "ª",  # Opt+9 (WezTerm Darwin)
-    "\x1b0": "º",  # Opt+0 (WezTerm Darwin)
-    "\x1b-": "–",  # Opt+minus (WezTerm Darwin)
-    "\x1b=": "≠",  # Opt+= (WezTerm Darwin)
+    # WezTerm on macOS emits sequences for Opt and keys on the top numeric
+    # row; whereas other terminals provide various characters. The follow
+    # swallows up those sequences and turns them into characters the same as
+    # the other terminals.
+    "\x1b§": "§",
+    "\x1b1": "¡",
+    "\x1b2": "™",
+    "\x1b3": "£",
+    "\x1b4": "¢",
+    "\x1b5": "∞",
+    "\x1b6": "§",
+    "\x1b7": "¶",
+    "\x1b8": "•",
+    "\x1b9": "ª",
+    "\x1b0": "º",
+    "\x1b-": "–",
+    "\x1b=": "≠",
     ############################################################################
     # The ignore section. Only add sequences here if they are going to be
     # ignored. Also, when adding a sequence here, please include a note as
