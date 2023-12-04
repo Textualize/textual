@@ -365,8 +365,8 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1bOy": "9",
     "\x1bOM": (Keys.Enter,),
     # WezTerm on macOS emits sequences for Opt and keys on the top numeric
-    # row; whereas other terminals provide various characters. The follow
-    # swallows up those sequences and turns them into characters the same as
+    # row; whereas other terminals provide various characters. The following
+    # swallow up those sequences and turns them into characters the same as
     # the other terminals.
     "\x1b§": "§",
     "\x1b1": "¡",
