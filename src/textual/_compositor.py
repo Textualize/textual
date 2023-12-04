@@ -597,9 +597,6 @@ class Compositor:
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._get_scrollable_region(container_region)
 
-                # Adjust the clip region accordingly
-                sub_clip = clip.intersection(child_region)
-
                 # The region covered by children relative to parent widget
                 total_region = child_region.reset_offset
 
@@ -609,9 +606,12 @@ class Compositor:
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
+                    # Get the region that will be updated
+                    sub_clip = clip.intersection(child_region)
+
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
-                            container_size.region + widget.scroll_offset
+                            sub_clip - child_region.offset + widget.scroll_offset
                         )
                     else:
                         placements = arrange_result.placements
@@ -621,9 +621,9 @@ class Compositor:
                     placement_offset = container_region.offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
 
-                    _layers = widget.layers
                     layers_to_index = {
-                        layer_name: index for index, layer_name in enumerate(_layers)
+                        layer_name: index
+                        for index, layer_name in enumerate(widget.layers)
                     }
 
                     get_layer_index = layers_to_index.get
@@ -661,7 +661,10 @@ class Compositor:
 
                 if visible:
                     # Add any scrollbars
-                    if any(widget.scrollbars_enabled):
+                    if (
+                        widget.show_vertical_scrollbar
+                        or widget.show_horizontal_scrollbar
+                    ):
                         for chrome_widget, chrome_region in widget._arrange_scrollbars(
                             container_region
                         ):
