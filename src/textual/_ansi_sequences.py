@@ -391,11 +391,11 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1b[E": (Keys.Ignore,),  # Xterm.
     "\x1b[G": (Keys.Ignore,),  # Linux console.
     # Various ctrl+cmd+ keys under Kitty on macOS.
-    "\x1b[3;13": (Keys.Ignore,),  # ctrl-cmd-del
+    "\x1b[3;13~": (Keys.Ignore,),  # ctrl-cmd-del
     "\x1b[1;13H": (Keys.Ignore,),  # ctrl-cmd-home
     "\x1b[1;13F": (Keys.Ignore,),  # ctrl-cmd-end
-    "\x1b[5;13": (Keys.Ignore,),  # ctrl-cmd-pgup
-    "\x1b[6;13": (Keys.Ignore,),  # ctrl-cmd-pgdn
+    "\x1b[5;13~": (Keys.Ignore,),  # ctrl-cmd-pgup
+    "\x1b[6;13~": (Keys.Ignore,),  # ctrl-cmd-pgdn
     "\x1b[49;13u": (Keys.Ignore,),  # ctrl-cmd-1
     "\x1b[50;13u": (Keys.Ignore,),  # ctrl-cmd-2
     "\x1b[51;13u": (Keys.Ignore,),  # ctrl-cmd-3
