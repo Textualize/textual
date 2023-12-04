@@ -606,7 +606,7 @@ class Compositor:
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
-                    # Adjust the clip region accordingly
+                    # Get the region that will be updated
                     sub_clip = clip.intersection(child_region)
 
                     if visible_only:
