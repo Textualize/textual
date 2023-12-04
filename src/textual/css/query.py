@@ -218,7 +218,13 @@ class DOMQuery(Generic[QueryType]):
         if self.nodes:
             first = self.nodes[0]
             if expect_type is not None:
-                if not isinstance(first, expect_type):
+                try:
+                    type_match = isinstance(first, expect_type)
+                except TypeError:
+                    # to handle subscripted generics like DataTable[float]
+                    type_match = isinstance(first, expect_type.__origin__)
+
+                if not type_match:
                     raise WrongType(
                         f"Query value is wrong type; expected {expect_type}, got {type(first)}"
                     )
