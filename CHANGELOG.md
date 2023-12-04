@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
+
 ### Removed
 
 - Removed renderables/align.py which was no longer used
