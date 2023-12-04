@@ -390,6 +390,31 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     # press of 5 on the numeric keypad, when *not* in number mode.
     "\x1b[E": (Keys.Ignore,),  # Xterm.
     "\x1b[G": (Keys.Ignore,),  # Linux console.
+    # Various ctrl+cmd+ keys under Kitty on macOS.
+    "\x1b[3;13": (Keys.Ignore,),  # ctrl-cmd-del
+    "\x1b[1;13H": (Keys.Ignore,),  # ctrl-cmd-home
+    "\x1b[1;13F": (Keys.Ignore,),  # ctrl-cmd-end
+    "\x1b[5;13": (Keys.Ignore,),  # ctrl-cmd-pgup
+    "\x1b[6;13": (Keys.Ignore,),  # ctrl-cmd-pgdn
+    "\x1b[49;13u": (Keys.Ignore,),  # ctrl-cmd-1
+    "\x1b[50;13u": (Keys.Ignore,),  # ctrl-cmd-2
+    "\x1b[51;13u": (Keys.Ignore,),  # ctrl-cmd-3
+    "\x1b[52;13u": (Keys.Ignore,),  # ctrl-cmd-4
+    "\x1b[53;13u": (Keys.Ignore,),  # ctrl-cmd-5
+    "\x1b[54;13u": (Keys.Ignore,),  # ctrl-cmd-6
+    "\x1b[55;13u": (Keys.Ignore,),  # ctrl-cmd-7
+    "\x1b[56;13u": (Keys.Ignore,),  # ctrl-cmd-8
+    "\x1b[57;13u": (Keys.Ignore,),  # ctrl-cmd-9
+    "\x1b[48;13u": (Keys.Ignore,),  # ctrl-cmd-0
+    "\x1b[45;13u": (Keys.Ignore,),  # ctrl-cmd--
+    "\x1b[61;13u": (Keys.Ignore,),  # ctrl-cmd-+
+    "\x1b[91;13u": (Keys.Ignore,),  # ctrl-cmd-[
+    "\x1b[93;13u": (Keys.Ignore,),  # ctrl-cmd-]
+    "\x1b[92;13u": (Keys.Ignore,),  # ctrl-cmd-\
+    "\x1b[39;13u": (Keys.Ignore,),  # ctrl-cmd-'
+    "\x1b[59;13u": (Keys.Ignore,),  # ctrl-cmd-;
+    "\x1b[47;13u": (Keys.Ignore,),  # ctrl-cmd-/
+    "\x1b[46;13u": (Keys.Ignore,),  # ctrl-cmd-.
 }
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
