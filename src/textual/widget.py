@@ -86,10 +86,6 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 }
 
 
-class NotAContainer(Exception):
-    """Exception raised if you attempt to add a child to a widget which doesn't permit child nodes."""
-
-
 _NULL_STYLE = Style()
 
 
