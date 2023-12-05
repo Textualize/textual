@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
 - Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
 
 ### Removed

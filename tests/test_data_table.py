@@ -671,6 +671,17 @@ async def test_update_cell_cell_doesnt_exist():
             table.update_cell("INVALID", "CELL", "Value")
 
 
+async def test_update_cell_invalid_column_key():
+    """Regression test for https://github.com/Textualize/textual/issues/3335"""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.update_cell("R1", "INVALID_COLUMN", "New Value")
+
+
 async def test_update_cell_at_coordinate_exists():
     app = DataTableApp()
     async with app.run_test():
