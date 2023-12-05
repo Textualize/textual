@@ -26,6 +26,7 @@ class LoadingIndicator(Widget):
         color: $accent;
     }
     LoadingIndicator.-overlay {
+        dock: top;
         layer: _loading;
         background: $boost;
     }
@@ -35,7 +36,7 @@ class LoadingIndicator(Widget):
         WeakKeyDictionary[Widget, tuple[bool, str, str]]
     ] = WeakKeyDictionary()
     """Widget state that must be restore after loading.
-    
+
     The tuples indicate the original values of the:
      - widget disabled state;
      - widget style overflow_x rule; and
