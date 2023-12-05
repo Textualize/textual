@@ -939,4 +939,4 @@ def test_vertical_max_height(snap_compare):
 
 def test_max_height_100(snap_compare):
     """Test vertical max height takes border in to account."""
-    assert snap_compare(SNAPSHOT_APPS_DIR / "test_max_height_100.py")
+    assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
