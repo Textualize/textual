@@ -287,7 +287,7 @@ class Widget(DOMNode):
     """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
-    loading: Reactive[bool] = Reactive(False, layout=True)
+    loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
     def __init__(
