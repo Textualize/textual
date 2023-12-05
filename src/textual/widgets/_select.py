@@ -338,7 +338,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             disabled: Whether the control is disabled or not.
 
         Returns:
-            A new Select widget with the provided values as options
+            A new Select widget with the provided values as options.
         """
         options_iterator = [(str(value), value) for value in values]
 
