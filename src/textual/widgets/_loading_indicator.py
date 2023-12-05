@@ -35,7 +35,7 @@ class LoadingIndicator(Widget):
     _widget_state: ClassVar[
         WeakKeyDictionary[Widget, tuple[bool, str, str, str]]
     ] = WeakKeyDictionary()
-    """Widget state that must be restore after loading.
+    """Widget state that must be restored after loading.
 
     The tuples indicate the original values of the:
      - widget disabled state;
