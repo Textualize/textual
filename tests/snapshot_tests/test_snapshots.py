@@ -351,6 +351,12 @@ def test_select_expanded(snap_compare):
     )
 
 
+def test_select_from_values_expanded(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_from_values_widget.py", press=["tab", "enter"]
+    )
+
+
 def test_select_expanded_changed(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "select_widget.py",

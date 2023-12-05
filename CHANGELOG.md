@@ -37,6 +37,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
 - Friendly error messages when trying to mount non-widgets https://github.com/Textualize/textual/pull/3780
+- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator of values https://github.com/Textualize/textual/pull/3743
 
 ### Fixed
 
