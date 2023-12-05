@@ -8516,8 +8516,8 @@ We can use this to write a handler per control rather than manage them all in a 
 </div>
 </div>
 <p>While there are a few more lines of code, it is clearer what will happen when you click any given button.</p>
-<p>Note that the decorator requires that the message class has a <code>control</code> attribute which should be the widget associated with the message.
-Messages from builtin controls will have this attribute, but you may need to add <code>control</code> to any <a href="#custom-messages">custom messages</a> you write.</p>
+<p>Note that the decorator requires that the message class has a <code>control</code> property which should return the widget associated with the message.
+Messages from builtin controls will have this attribute, but you may need to add a <code>control</code> property to any <a href="#custom-messages">custom messages</a> you write.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If multiple decorated handlers match the message, then they will <em>all</em> be called in the order they are defined.</p>
