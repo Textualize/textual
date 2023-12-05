@@ -33,14 +33,15 @@ class LoadingIndicator(Widget):
     """
 
     _widget_state: ClassVar[
-        WeakKeyDictionary[Widget, tuple[bool, str, str]]
+        WeakKeyDictionary[Widget, tuple[bool, str, str, str]]
     ] = WeakKeyDictionary()
     """Widget state that must be restore after loading.
 
     The tuples indicate the original values of the:
      - widget disabled state;
-     - widget style overflow_x rule; and
-     - widget style overflow_y rule.
+     - widget style overflow_x rule;
+     - widget style overflow_y rule; and
+     - widget style scrollbar_gutter rule.
     """
 
     def __init__(
@@ -80,7 +81,9 @@ class LoadingIndicator(Widget):
             widget.disabled,
             widget.styles.overflow_x,
             widget.styles.overflow_y,
+            widget.styles.scrollbar_gutter,
         )
+        widget.styles.scrollbar_gutter = "auto"
         widget.styles.overflow_x = "hidden"
         widget.styles.overflow_y = "hidden"
         widget.disabled = True
@@ -107,10 +110,13 @@ class LoadingIndicator(Widget):
             await_remove = null()
 
         if widget in cls._widget_state:
-            disabled, overflow_x, overflow_y = cls._widget_state[widget]
-            widget.disabled = disabled
+            disabled, overflow_x, overflow_y, scrollbar_gutter = cls._widget_state[
+                widget
+            ]
+            widget.styles.scrollbar_gutter = scrollbar_gutter
             widget.styles.overflow_x = overflow_x
             widget.styles.overflow_y = overflow_y
+            widget.disabled = disabled
 
         return await_remove
 
