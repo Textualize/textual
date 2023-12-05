@@ -573,7 +573,6 @@ class Compositor:
             """
             if not widget._is_mounted:
                 return
-
             styles = widget.styles
             visibility = styles.get_rule("visibility")
             if visibility is not None:

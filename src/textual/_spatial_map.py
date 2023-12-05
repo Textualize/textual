@@ -65,7 +65,7 @@ class SpatialMap(Generic[ValueType]):
         indicates fixed regions. Fixed regions don't scroll and are always visible.
 
         Args:
-            regions_and_values: An iterable of (REGION, FIXED, VALUE).
+            regions_and_values: An iterable of (REGION, FIXED, OVERLAY, VALUE).
         """
         append_fixed = self._fixed.append
         get_grid_list = self._map.__getitem__

@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
+- Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
+
+### Removed
+
+- Removed renderables/align.py which was no longer used
+
 ## [0.44.1] - 2023-12-4
 
 ### Fixed
