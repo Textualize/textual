@@ -1008,7 +1008,7 @@ class Widget(DOMNode):
         content_width = Fraction(_content_width)
         content_height = Fraction(_content_height)
         is_border_box = styles.box_sizing == "border-box"
-        gutter = NULL_SPACING if self.loading else styles.gutter
+        gutter = styles.gutter
         margin = styles.margin
 
         is_auto_width = styles.width and styles.width.is_auto
