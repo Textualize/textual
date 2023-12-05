@@ -240,8 +240,8 @@ The following example uses the decorator approach to write individual message ha
 
 While there are a few more lines of code, it is clearer what will happen when you click any given button.
 
-Note that the decorator requires that the message class has a `control` attribute which should be the widget associated with the message.
-Messages from builtin controls will have this attribute, but you may need to add `control` to any [custom messages](#custom-messages) you write.
+Note that the decorator requires that the message class has a `control` property which should return the widget associated with the message.
+Messages from builtin controls will have this attribute, but you may need to add a `control` property to any [custom messages](#custom-messages) you write.
 
 !!! note
 
