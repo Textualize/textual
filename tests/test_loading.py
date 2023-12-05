@@ -25,12 +25,9 @@ async def test_loading_disables_and_remove_scrollbars():
     async with app.run_test() as pilot:
         vs = app.query_one(VerticalScroll)
         # Sanity checks:
-        assert not vs.disabled
-        assert vs.styles.overflow_y != "hidden"
+        assert not vs._check_disabled()
 
         await pilot.press("l")
         await pilot.pause()
 
-        assert vs.disabled
-        assert vs.styles.overflow_x == "hidden"
-        assert vs.styles.overflow_y == "hidden"
+        assert vs._check_disabled()

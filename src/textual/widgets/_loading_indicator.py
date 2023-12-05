@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from time import time
-from typing import Awaitable, ClassVar
-from weakref import WeakKeyDictionary
+from typing import Awaitable
 
 from rich.console import RenderableType
 from rich.style import Style
@@ -23,23 +22,13 @@ class LoadingIndicator(Widget):
         height: 100%;
         min-height: 1;
         content-align: center middle;
-        color: $accent;
+        color: $accent;        
     }
     LoadingIndicator.-overlay {
         layer: _loading;
-        background: $boost;
+        background: $boost;     
+        dock: top;
     }
-    """
-
-    _widget_state: ClassVar[
-        WeakKeyDictionary[Widget, tuple[bool, str, str]]
-    ] = WeakKeyDictionary()
-    """Widget state that must be restore after loading.
-    
-    The tuples indicate the original values of the:
-     - widget disabled state;
-     - widget style overflow_x rule; and
-     - widget style overflow_y rule.
     """
 
     def __init__(
@@ -74,15 +63,8 @@ class LoadingIndicator(Widget):
             An awaitable for mounting the indicator.
         """
         self.add_class("-overlay")
+        widget.add_class("-loading")
         await_mount = widget.mount(self)
-        self._widget_state[widget] = (
-            widget.disabled,
-            widget.styles.overflow_x,
-            widget.styles.overflow_y,
-        )
-        widget.styles.overflow_x = "hidden"
-        widget.styles.overflow_y = "hidden"
-        widget.disabled = True
         return await_mount
 
     @classmethod
@@ -95,6 +77,7 @@ class LoadingIndicator(Widget):
         Returns:
             Optional awaitable.
         """
+        widget.remove_class("-loading")
         try:
             await_remove = widget.get_child_by_type(cls).remove()
         except NoMatches:
@@ -104,12 +87,6 @@ class LoadingIndicator(Widget):
                 return None
 
             await_remove = null()
-
-        if widget in cls._widget_state:
-            disabled, overflow_x, overflow_y = cls._widget_state[widget]
-            widget.disabled = disabled
-            widget.styles.overflow_x = overflow_x
-            widget.styles.overflow_y = overflow_y
 
         return await_remove
 

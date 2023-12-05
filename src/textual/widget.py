@@ -257,7 +257,7 @@ class Widget(DOMNode):
         link-background-hover: $accent;
         link-color-hover: $text;
         link-style-hover: bold not underline;
-    }
+    }    
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
 
@@ -287,7 +287,7 @@ class Widget(DOMNode):
     """The current hover style (style under the mouse cursor). Read only."""
     highlight_link_id: Reactive[str] = Reactive("")
     """The currently highlighted link id. Read only."""
-    loading: Reactive[bool] = Reactive(False)
+    loading: Reactive[bool] = Reactive(False, layout=True)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
     def __init__(
@@ -437,6 +437,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_vertical_scrollbar
 
     @property
@@ -445,6 +447,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_horizontal_scrollbar
 
     @property
@@ -480,6 +484,15 @@ class Widget(DOMNode):
             if not opacity:
                 break
         return opacity
+
+    def _check_disabled(self) -> bool:
+        """Check if the widget is disabled either explicitly by setting `disabled`,
+        or implicitly by setting `loading`.
+
+        Returns:
+            True if the widget should be disabled.
+        """
+        return self.disabled or self.loading
 
     @property
     def tooltip(self) -> RenderableType | None:
@@ -999,7 +1012,7 @@ class Widget(DOMNode):
         content_width = Fraction(_content_width)
         content_height = Fraction(_content_height)
         is_border_box = styles.box_sizing == "border-box"
-        gutter = styles.gutter
+        gutter = NULL_SPACING if self.loading else styles.gutter
         margin = styles.margin
 
         is_auto_width = styles.width and styles.width.is_auto
@@ -1007,6 +1020,7 @@ class Widget(DOMNode):
 
         # Container minus padding and border
         content_container = container - gutter.totals
+
         # The container including the content
         sizing_container = content_container if is_border_box else container
 
@@ -1569,7 +1583,12 @@ class Widget(DOMNode):
     @property
     def focusable(self) -> bool:
         """Can this widget currently be focused?"""
-        return self.can_focus and self.visible and not self._self_or_ancestors_disabled
+        return (
+            not self.loading
+            and self.can_focus
+            and self.visible
+            and not self._self_or_ancestors_disabled
+        )
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:
@@ -2716,6 +2735,9 @@ class Widget(DOMNode):
         Returns:
             The widget region minus scrollbars.
         """
+        if self.loading:
+            return region
+
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
         styles = self.styles

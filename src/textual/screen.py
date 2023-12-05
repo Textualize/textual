@@ -354,7 +354,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if node is None:
                 pop()
             else:
-                if node.disabled:
+                if node._check_disabled():
                     continue
                 node_styles_visibility = node.styles.get_rule("visibility")
                 node_is_visible = (
