@@ -437,8 +437,6 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
-        if self._check_disabled():
-            return False
         return self.is_scrollable and self.show_vertical_scrollbar
 
     @property
@@ -447,8 +445,6 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
-        if self._check_disabled():
-            return False
         return self.is_scrollable and self.show_horizontal_scrollbar
 
     @property
