@@ -185,6 +185,7 @@ class Layout(ABC):
             # Use a height of zero to ignore relative heights
             styles_height = widget.styles.height
             if widget._parent and len(widget._nodes) == 1:
+                # If it is an only child with height auto we want it to expand
                 height = (
                     container.height
                     if styles_height is not None and styles_height.is_auto

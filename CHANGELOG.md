@@ -18,7 +18,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Dropped ALLOW_CHILDREN flag introduced in 0.43.0
+- Dropped ALLOW_CHILDREN flag introduced in 0.43.0 https://github.com/Textualize/textual/pull/3814
+- Widgets with an auto height in an auto height container, and a max height, will now expand https://github.com/Textualize/textual/pull/3814
 
 ## [0.44.1] - 2023-12-4
 
