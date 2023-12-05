@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Removed renderables/align.py which was no longer used
 
+### Changed
+
+- Dropped ALLOW_CHILDREN flag introduced in 0.43.0
+
 ## [0.44.1] - 2023-12-4
 
 ### Fixed

@@ -18,8 +18,6 @@ class ScrollView(ScrollableContainer):
     on the compositor to render children).
     """
 
-    ALLOW_CHILDREN = False
-
     DEFAULT_CSS = """
     ScrollView {
         overflow-y: auto;

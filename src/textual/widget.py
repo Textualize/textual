@@ -267,9 +267,6 @@ class Widget(DOMNode):
     BORDER_SUBTITLE: ClassVar[str] = ""
     """Initial value for border_subtitle attribute."""
 
-    ALLOW_CHILDREN: ClassVar[bool] = True
-    """Set to `False` to prevent adding children to this widget."""
-
     can_focus: bool = False
     """Widget may receive focus."""
     can_focus_children: bool = True
@@ -505,8 +502,6 @@ class Widget(DOMNode):
             widget: A Widget to add.
         """
         _rich_traceback_omit = True
-        if not self.ALLOW_CHILDREN:
-            raise NotAContainer(f"Can't add children to {type(widget)} widgets")
         self._nodes._append(widget)
 
     def __enter__(self) -> Self:

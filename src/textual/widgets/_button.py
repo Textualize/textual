@@ -153,8 +153,6 @@ class Button(Widget, can_focus=True):
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
-    ALLOW_CHILDREN = False
-
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
