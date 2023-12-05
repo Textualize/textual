@@ -317,7 +317,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-    ) -> Select:
+    ) -> Select[SelectType]:
         """Initialize the Select control with values specified by an arbitrary iterable
 
         The options shown in the control are computed by calling the built-in `str`
@@ -336,6 +336,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
+
+        Returns:
+            A new Select widget with the provided values as options
         """
         options_iterator = [(str(value), value) for value in values]
 
