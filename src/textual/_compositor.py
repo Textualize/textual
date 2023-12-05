@@ -423,9 +423,7 @@ class Compositor:
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = (
-            self._visible_map if self._visible_map is not None else self._full_map or {}
-        )
+        old_map = self._visible_map or {}
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
         # Replace map and widgets
@@ -575,7 +573,6 @@ class Compositor:
             """
             if not widget._is_mounted:
                 return
-
             styles = widget.styles
             visibility = styles.get_rule("visibility")
             if visibility is not None:
@@ -599,9 +596,6 @@ class Compositor:
                 # The region that contains the content (container region minus scrollbars)
                 child_region = widget._get_scrollable_region(container_region)
 
-                # Adjust the clip region accordingly
-                sub_clip = clip.intersection(child_region)
-
                 # The region covered by children relative to parent widget
                 total_region = child_region.reset_offset
 
@@ -611,9 +605,12 @@ class Compositor:
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
+                    # Get the region that will be updated
+                    sub_clip = clip.intersection(child_region)
+
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
-                            container_size.region + widget.scroll_offset
+                            sub_clip - child_region.offset + widget.scroll_offset
                         )
                     else:
                         placements = arrange_result.placements
@@ -623,9 +620,9 @@ class Compositor:
                     placement_offset = container_region.offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
 
-                    _layers = widget.layers
                     layers_to_index = {
-                        layer_name: index for index, layer_name in enumerate(_layers)
+                        layer_name: index
+                        for index, layer_name in enumerate(widget.layers)
                     }
 
                     get_layer_index = layers_to_index.get
@@ -663,7 +660,10 @@ class Compositor:
 
                 if visible:
                     # Add any scrollbars
-                    if any(widget.scrollbars_enabled):
+                    if (
+                        widget.show_vertical_scrollbar
+                        or widget.show_horizontal_scrollbar
+                    ):
                         for chrome_widget, chrome_region in widget._arrange_scrollbars(
                             container_region
                         ):
@@ -877,16 +877,14 @@ class Compositor:
             return self._cuts
 
         width, height = self.size
-        screen_region = self.size.region
         cuts = [[0, width] for _ in range(height)]
 
         intersection = Region.intersection
         extend = list.extend
 
         for region, clip in self.visible_widgets.values():
-            region = intersection(region, clip)
-            if region and (region in screen_region):
-                x, y, region_width, region_height = region
+            x, y, region_width, region_height = intersection(region, clip)
+            if region_width and region_height:
                 region_cuts = (x, x + region_width)
                 for cut in cuts[y : y + region_height]:
                     extend(cut, region_cuts)
@@ -937,15 +935,13 @@ class Compositor:
                     _Region(0, 0, region.width, region.height)
                 )
             else:
-                clipped_region = intersection(region, clip)
-                if not clipped_region:
-                    continue
-                new_x, new_y, new_width, new_height = clipped_region
-                delta_x = new_x - region.x
-                delta_y = new_y - region.y
-                yield region, clip, widget.render_lines(
-                    _Region(delta_x, delta_y, new_width, new_height)
-                )
+                new_x, new_y, new_width, new_height = intersection(region, clip)
+                if new_width and new_height:
+                    yield region, clip, widget.render_lines(
+                        _Region(
+                            new_x - region.x, new_y - region.y, new_width, new_height
+                        )
+                    )
 
     def render_update(
         self, full: bool = False, screen_stack: list[Screen] | None = None

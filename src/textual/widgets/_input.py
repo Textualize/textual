@@ -56,7 +56,7 @@ class _InputRenderable:
         value = input.value
         value_length = len(value)
         suggestion = input._suggestion
-        show_suggestion = len(suggestion) > value_length
+        show_suggestion = len(suggestion) > value_length and input.has_focus
         if show_suggestion:
             result += Text(
                 suggestion[value_length:],
@@ -145,7 +145,7 @@ class Input(Widget, can_focus=True):
         padding: 0 2;
         border: tall $background;
         width: 100%;
-        height: 3;               
+        height: 3;
     }
     Input:focus {
         border: tall $accent;
