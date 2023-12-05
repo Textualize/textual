@@ -267,7 +267,7 @@ class TabbedContent(Widget):
         tabs = [
             ContentTab(
                 content._title,
-                content.id or "",
+                f"--content-tab-{content.id}" or "",
                 disabled=content.disabled,
             )
             for content in pane_content
@@ -390,7 +390,7 @@ class TabbedContent(Widget):
             # The message is relevant, so consume it and update state accordingly.
             event.stop()
             switcher = self.get_child_by_type(ContentSwitcher)
-            switcher.current = event.tab.id
+            switcher.current = event.tab.id[len("--content-tab-") :]
             self.active = event.tab.id
             self.post_message(
                 TabbedContent.TabActivated(
@@ -426,7 +426,9 @@ class TabbedContent(Widget):
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(ContentTabs).active = active
-            self.get_child_by_type(ContentSwitcher).current = active
+            self.get_child_by_type(ContentSwitcher).current = active[
+                len("--content-tab-") :
+            ]
 
     @property
     def tab_count(self) -> int:
