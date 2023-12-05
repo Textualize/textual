@@ -71,7 +71,9 @@ class DockArrangeResult:
         visible_placements = self.spatial_map.get_values_in_region(region)
         overlaps = region.overlaps
         culled_placements = [
-            placement for placement in visible_placements if overlaps(placement.region)
+            placement
+            for placement in visible_placements
+            if placement.fixed or overlaps(placement.region)
         ]
         return culled_placements
 
