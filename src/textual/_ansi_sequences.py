@@ -112,6 +112,8 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1b[21;2~": (Keys.F22,),
     "\x1b[23;2~": (Keys.F23,),
     "\x1b[24;2~": (Keys.F24,),
+    "\x1b[23$": (Keys.F23,),  # rxvt
+    "\x1b[24$": (Keys.F24,),  # rxvt
     # --
     # Control + function keys.
     "\x1b[1;5P": (Keys.ControlF1,),
