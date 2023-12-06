@@ -3,6 +3,7 @@ import pytest
 from textual.app import App, ComposeResult
 from textual.reactive import var
 from textual.widgets import Label, Tab, TabbedContent, TabPane, Tabs
+from textual.widgets._tabbed_content import ContentTab
 
 
 async def test_tabbed_content_switch_via_ui():
@@ -29,7 +30,7 @@ async def test_tabbed_content_switch_via_ui():
         assert not app.query_one("#baz-label").region
 
         # Click second tab
-        await pilot.click("Tab#bar")
+        await pilot.click(f"Tab#{ContentTab.add_prefix('bar')}")
         assert tabbed_content.active == "bar"
         await pilot.pause()
         assert not app.query_one("#foo-label").region
@@ -37,7 +38,7 @@ async def test_tabbed_content_switch_via_ui():
         assert not app.query_one("#baz-label").region
 
         # Click third tab
-        await pilot.click("Tab#baz")
+        await pilot.click(f"Tab#{ContentTab.add_prefix('baz')}")
         assert tabbed_content.active == "baz"
         await pilot.pause()
         assert not app.query_one("#foo-label").region
@@ -209,7 +210,7 @@ async def test_tabbed_content_add_before_id():
         await tabbed_content.add_pane(TabPane("Added", id="new-1"), before="initial-1")
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
             "new-1",
             "initial-1",
         ]
@@ -231,7 +232,7 @@ async def test_tabbed_content_add_before_pane():
         )
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
             "new-1",
             "initial-1",
         ]
@@ -266,7 +267,7 @@ async def test_tabbed_content_add_after():
         await tabbed_content.add_pane(TabPane("Added", id="new-1"), after="initial-1")
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
             "initial-1",
             "new-1",
         ]
@@ -289,7 +290,7 @@ async def test_tabbed_content_add_after_pane():
         await pilot.pause()
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [tab.id for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
             "initial-1",
             "new-1",
         ]
@@ -429,11 +430,11 @@ async def test_disabling_does_not_deactivate_tab():
                 yield Label("tab-1")
 
         def on_mount(self) -> None:
-            self.query_one("Tab#tab-1").disabled = True
+            self.query_one(TabbedContent).get_tab("tab-1").disabled = True
 
     app = TabbedApp()
     async with app.run_test():
-        assert app.query_one(Tabs).active == "tab-1"
+        assert app.query_one(TabbedContent).active == "tab-1"
 
 
 async def test_disabled_tab_cannot_be_clicked():
@@ -444,12 +445,12 @@ async def test_disabled_tab_cannot_be_clicked():
                 yield Label("tab-2")
 
         def on_mount(self) -> None:
-            self.query_one("Tab#tab-2").disabled = True
+            self.query_one(TabbedContent).get_tab("tab-2").disabled = True
 
     app = TabbedApp()
     async with app.run_test() as pilot:
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
 
 
 async def test_disabling_via_tabbed_content():
@@ -464,8 +465,8 @@ async def test_disabling_via_tabbed_content():
 
     app = TabbedApp()
     async with app.run_test() as pilot:
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
 
 
 async def test_disabling_via_tab_pane():
@@ -481,8 +482,8 @@ async def test_disabling_via_tab_pane():
     app = TabbedApp()
     async with app.run_test() as pilot:
         await pilot.pause()
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
 
 
 async def test_creating_disabled_tab():
@@ -496,8 +497,8 @@ async def test_creating_disabled_tab():
 
     app = TabbedApp()
     async with app.run_test() as pilot:
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
 
 
 async def test_navigation_around_disabled_tabs():
@@ -510,21 +511,26 @@ async def test_navigation_around_disabled_tabs():
                 yield Label("tab-4")
 
         def on_mount(self) -> None:
-            self.query_one("Tab#tab-1").disabled = True
-            self.query_one("Tab#tab-3").disabled = True
+            self.query_one(TabbedContent).get_tab("tab-1").disabled = True
+            self.query_one(TabbedContent).get_tab("tab-3").disabled = True
 
     app = TabbedApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
+        tabbed_conent = app.query_one(TabbedContent)
         tabs = app.query_one(Tabs)
-        assert tabs.active == "tab-1"
+        assert tabbed_conent.active == "tab-1"
         tabs.action_next_tab()
-        assert tabs.active == "tab-2"
+        await pilot.pause()
+        assert tabbed_conent.active == "tab-2"
         tabs.action_next_tab()
-        assert tabs.active == "tab-4"
+        await pilot.pause()
+        assert tabbed_conent.active == "tab-4"
         tabs.action_next_tab()
-        assert tabs.active == "tab-2"
+        await pilot.pause()
+        assert tabbed_conent.active == "tab-2"
         tabs.action_previous_tab()
-        assert tabs.active == "tab-4"
+        await pilot.pause()
+        assert tabbed_conent.active == "tab-4"
 
 
 async def test_reenabling_tab():
@@ -535,18 +541,18 @@ async def test_reenabling_tab():
                 yield Label("tab-2")
 
         def on_mount(self) -> None:
-            self.query_one("Tab#tab-2").disabled = True
+            self.query_one(TabbedContent).get_tab("tab-2").disabled = True
 
         def reenable(self) -> None:
-            app.query_one("Tab#tab-2").disabled = False
+            self.query_one(TabbedContent).get_tab("tab-2").disabled = False
 
     app = TabbedApp()
     async with app.run_test() as pilot:
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
         app.reenable()
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-2"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-2"
 
 
 async def test_reenabling_via_tabbed_content():
@@ -564,11 +570,11 @@ async def test_reenabling_via_tabbed_content():
 
     app = TabbedApp()
     async with app.run_test() as pilot:
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
         app.reenable()
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-2"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-2"
 
 
 async def test_reenabling_via_tab_pane():
@@ -587,11 +593,11 @@ async def test_reenabling_via_tab_pane():
     app = TabbedApp()
     async with app.run_test() as pilot:
         await pilot.pause()
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-1"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-1"
         app.reenable()
-        await pilot.click("Tab#tab-2")
-        assert app.query_one(Tabs).active == "tab-2"
+        await pilot.click(f"Tab#{ContentTab.add_prefix('tab-2')}")
+        assert app.query_one(TabbedContent).active == "tab-2"
 
 
 async def test_disabling_unknown_tab():
