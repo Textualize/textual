@@ -11,10 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
 - Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
+- Fixed loading indicator not covering scrollbars https://github.com/Textualize/textual/pull/3816
 
 ### Removed
 
 - Removed renderables/align.py which was no longer used
+
+### Added
+
+- Added `get_loading_widget` to Widget and App customize the loading widget. https://github.com/Textualize/textual/pull/3816
 
 ## [0.44.1] - 2023-12-4
 

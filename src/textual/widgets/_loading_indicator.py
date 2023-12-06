@@ -1,16 +1,14 @@
 from __future__ import annotations
 
 from time import time
-from typing import Awaitable
 
 from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
 from ..color import Gradient
-from ..css.query import NoMatches
 from ..events import Mount
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 
 
 class LoadingIndicator(Widget):
@@ -24,7 +22,7 @@ class LoadingIndicator(Widget):
         content-align: center middle;
         color: $accent;        
     }
-    LoadingIndicator.-overlay {
+    LoadingIndicator.-textual-loading-indicator {
         layer: _loading;
         background: $boost;     
         dock: top;
@@ -50,45 +48,6 @@ class LoadingIndicator(Widget):
 
         self._start_time: float = 0.0
         """The time the loading indicator was mounted (a Unix timestamp)."""
-
-    def apply(self, widget: Widget) -> AwaitMount:
-        """Apply the loading indicator to a `widget`.
-
-        This will overlay the given widget with a loading indicator.
-
-        Args:
-            widget: A widget.
-
-        Returns:
-            An awaitable for mounting the indicator.
-        """
-        self.add_class("-overlay")
-        widget.add_class("-loading")
-        await_mount = widget.mount(self)
-        return await_mount
-
-    @classmethod
-    def clear(cls, widget: Widget) -> Awaitable[None]:
-        """Clear any loading indicator from the given widget.
-
-        Args:
-            widget: Widget to clear the loading indicator from.
-
-        Returns:
-            Optional awaitable.
-        """
-        widget.remove_class("-loading")
-        try:
-            await_remove = widget.get_child_by_type(cls).remove()
-        except NoMatches:
-
-            async def null() -> None:
-                """Nothing to remove"""
-                return None
-
-            await_remove = null()
-
-        return await_remove
 
     def _on_mount(self, _: Mount) -> None:
         self._start_time = time()

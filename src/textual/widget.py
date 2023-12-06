@@ -437,6 +437,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_vertical_scrollbar
 
     @property
@@ -445,6 +447,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_horizontal_scrollbar
 
     @property
@@ -537,6 +541,17 @@ class Widget(DOMNode):
         else:
             self.app._composed[-1].append(composed)
 
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to display a loading indicator.
+
+        The default implementation will defer to App.get_loading_widget.
+
+        Returns:
+            A widget in place of this widget to indicate a loading.
+        """
+        loading_widget = self.app.get_loading_widget()
+        return loading_widget
+
     def set_loading(self, loading: bool) -> Awaitable:
         """Set or reset the loading state of this widget.
 
@@ -548,13 +563,15 @@ class Widget(DOMNode):
         Returns:
             An optional awaitable.
         """
-        from textual.widgets import LoadingIndicator
 
         if loading:
-            loading_indicator = LoadingIndicator()
-            return loading_indicator.apply(self)
+            loading_indicator = self.get_loading_widget()
+            loading_indicator.add_class("-textual-loading-indicator")
+            await_mount = self.mount(loading_indicator)
+            return await_mount
         else:
-            return LoadingIndicator.clear(self)
+            await_remove = self.query(".-textual-loading-indicator").remove()
+            return await_remove
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
