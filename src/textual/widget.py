@@ -1033,7 +1033,6 @@ class Widget(DOMNode):
 
         # Container minus padding and border
         content_container = container - gutter.totals
-
         # The container including the content
         sizing_container = content_container if is_border_box else container
 
