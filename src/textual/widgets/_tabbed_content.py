@@ -51,7 +51,11 @@ class ContentTab(Tab):
         Returns:
             The ID with the prefix removed.
         """
-        return content_id[len(cls._PREFIX):] if content_id.startswith(cls._PREFIX) else content_id
+        return (
+            content_id[len(cls._PREFIX) :]
+            if content_id.startswith(cls._PREFIX)
+            else content_id
+        )
 
     def __init__(self, label: Text, content_id: str, disabled: bool = False) -> None:
         """Initialize a ContentTab.
@@ -80,7 +84,9 @@ class ContentTabs(Tabs):
             active: ID of the tab which should be active on start.
             tabbed_content: The associated TabbedContent instance.
         """
-        super().__init__(*tabs, active=active if active is None else ContentTab.add_prefix(active))
+        super().__init__(
+            *tabs, active=active if active is None else ContentTab.add_prefix(active)
+        )
         self.tabbed_content = tabbed_content
 
     def get_content_tab(self, tab_id: str) -> ContentTab:
@@ -149,6 +155,7 @@ class ContentTabs(Tabs):
             TabError: If there are any issues with the request.
         """
         return super().show(ContentTab.add_prefix(tab_id))
+
 
 class TabPane(Widget):
     """A container for switchable content, with additional title.
@@ -413,7 +420,7 @@ class TabbedContent(Widget):
             tabs.add_tab(
                 ContentTab(pane._title, pane.id),
                 before=before if before is None else ContentTab.add_prefix(before),
-                after=after if after is None else ContentTab.add_prefix(after)
+                after=after if after is None else ContentTab.add_prefix(after),
             ),
             self.get_child_by_type(ContentSwitcher).mount(pane),
         )
@@ -428,7 +435,11 @@ class TabbedContent(Widget):
             An optionally awaitable object that waits for the pane to be removed
                 and the Cleared message to be posted.
         """
-        removal_awaitables = [self.get_child_by_type(ContentTabs).remove_tab(ContentTab.add_prefix(pane_id))]
+        removal_awaitables = [
+            self.get_child_by_type(ContentTabs).remove_tab(
+                ContentTab.add_prefix(pane_id)
+            )
+        ]
         try:
             removal_awaitables.append(
                 self.get_child_by_type(ContentSwitcher)
@@ -544,7 +555,9 @@ class TabbedContent(Widget):
         """
         if target_id := pane_id if isinstance(pane_id, str) else pane_id.id:
             return self.get_child_by_type(ContentTabs).get_content_tab(target_id)
-        raise ValueError("'pane_id' must be a non-empty string or a TabPane with an id.")
+        raise ValueError(
+            "'pane_id' must be a non-empty string or a TabPane with an id."
+        )
 
     def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
         """Disable the corresponding tab pane."""
