@@ -20,11 +20,11 @@ class LoadingIndicator(Widget):
         height: 100%;
         min-height: 1;
         content-align: center middle;
-        color: $accent;        
+        color: $accent;
     }
     LoadingIndicator.-textual-loading-indicator {
         layer: _loading;
-        background: $boost;     
+        background: $boost;
         dock: top;
     }
     """
