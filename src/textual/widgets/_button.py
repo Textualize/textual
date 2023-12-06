@@ -258,7 +258,7 @@ class Button(Widget, can_focus=True):
 
         Returns:
             The button instance."""
-        if self._check_disabled() or not self.display:
+        if self.disabled or not self.display:
             return self
         # Manage the "active" effect:
         self._start_active_affect()
