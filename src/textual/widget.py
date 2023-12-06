@@ -2747,9 +2747,6 @@ class Widget(DOMNode):
         Returns:
             The widget region minus scrollbars.
         """
-        if self.loading:
-            return region
-
         show_vertical_scrollbar, show_horizontal_scrollbar = self.scrollbars_enabled
 
         styles = self.styles
