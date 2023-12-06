@@ -210,7 +210,10 @@ async def test_tabbed_content_add_before_id():
         await tabbed_content.add_pane(TabPane("Added", id="new-1"), before="initial-1")
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [
+            ContentTab.sans_prefix(tab.id)
+            for tab in tabbed_content.query(Tab).results(Tab)
+        ] == [
             "new-1",
             "initial-1",
         ]
@@ -232,7 +235,10 @@ async def test_tabbed_content_add_before_pane():
         )
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [
+            ContentTab.sans_prefix(tab.id)
+            for tab in tabbed_content.query(Tab).results(Tab)
+        ] == [
             "new-1",
             "initial-1",
         ]
@@ -267,7 +273,10 @@ async def test_tabbed_content_add_after():
         await tabbed_content.add_pane(TabPane("Added", id="new-1"), after="initial-1")
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [
+            ContentTab.sans_prefix(tab.id)
+            for tab in tabbed_content.query(Tab).results(Tab)
+        ] == [
             "initial-1",
             "new-1",
         ]
@@ -290,7 +299,10 @@ async def test_tabbed_content_add_after_pane():
         await pilot.pause()
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
-        assert [ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab).results(Tab)] == [
+        assert [
+            ContentTab.sans_prefix(tab.id)
+            for tab in tabbed_content.query(Tab).results(Tab)
+        ] == [
             "initial-1",
             "new-1",
         ]
