@@ -563,7 +563,7 @@ class TabbedContent(Widget):
         try:
             with self.prevent(TabPane.Disabled):
                 self.get_child_by_type(ContentSwitcher).get_child_by_id(
-                    tab_id, expect_type=TabPane
+                    ContentTab.sans_prefix(tab_id), expect_type=TabPane
                 ).disabled = True
         except NoMatches:
             return
@@ -584,7 +584,7 @@ class TabbedContent(Widget):
         try:
             with self.prevent(TabPane.Enabled):
                 self.get_child_by_type(ContentSwitcher).get_child_by_id(
-                    tab_id, expect_type=TabPane
+                    ContentTab.sans_prefix(tab_id), expect_type=TabPane
                 ).disabled = False
         except NoMatches:
             return
