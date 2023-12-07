@@ -904,7 +904,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         region = self._get_label_region(line)
         if region is not None:
-            self.scroll_to_region(region, animate=animate)
+            self.scroll_to_region(region, animate=animate, force=True)
 
     def scroll_to_node(
         self, node: TreeNode[TreeDataType], animate: bool = True
