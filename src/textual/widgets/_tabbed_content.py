@@ -6,6 +6,7 @@ from itertools import zip_longest
 
 from rich.repr import Result
 from rich.text import Text, TextType
+from typing_extensions import Final
 
 from ..app import ComposeResult
 from ..await_complete import AwaitComplete
@@ -26,7 +27,7 @@ __all__ = [
 class ContentTab(Tab):
     """A Tab with an associated content id."""
 
-    _PREFIX = "--content-tab-"
+    _PREFIX: Final[str] = "--content-tab-"
     """The prefix given to the tab IDs."""
 
     @classmethod
