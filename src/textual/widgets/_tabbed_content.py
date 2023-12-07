@@ -3,6 +3,7 @@ from __future__ import annotations
 from asyncio import gather
 from dataclasses import dataclass
 from itertools import zip_longest
+from typing import cast
 
 from rich.repr import Result
 from rich.text import Text, TextType
@@ -242,7 +243,7 @@ class TabbedContent(Widget):
     class TabActivated(Message):
         """Posted when the active tab changes."""
 
-        ALLOW_SELECTOR_MATCH = {"tab"}
+        ALLOW_SELECTOR_MATCH = {"pane"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
 
         def __init__(self, tabbed_content: TabbedContent, tab: ContentTab) -> None:
@@ -256,6 +257,11 @@ class TabbedContent(Widget):
             """The `TabbedContent` widget that contains the tab activated."""
             self.tab = tab
             """The `Tab` widget that was selected (contains the tab label)."""
+            self.pane: TabPane = cast(
+                TabPane,
+                tabbed_content.get_child_by_type(ContentSwitcher).visible_content,
+            )
+            """The `TabPane` widget that was activated by selecting the tab."""
             super().__init__()
 
         @property
@@ -270,6 +276,7 @@ class TabbedContent(Widget):
         def __rich_repr__(self) -> Result:
             yield self.tabbed_content
             yield self.tab
+            yield self.pane
 
     class Cleared(Message):
         """Posted when there are no more tab panes."""
