@@ -115,3 +115,31 @@ async def test_toggle_title():
 
         await pilot.click(CollapsibleTitle)
         assert not collapsible.collapsed
+
+
+async def test_toggle_message():
+    """Toggling should post a message."""
+
+    hits = []
+
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(collapsed=True)
+
+        def on_collapsible_toggled(self) -> None:
+            hits.append("toggled")
+
+    async with CollapsibleApp().run_test() as pilot:
+        assert pilot.app.query_one(Collapsible).collapsed
+
+        await pilot.click(CollapsibleTitle)
+        await pilot.pause()
+
+        assert not pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 1
+
+        await pilot.click(CollapsibleTitle)
+        await pilot.pause()
+
+        assert pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 2

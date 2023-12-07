@@ -99,6 +99,26 @@ class Collapsible(Widget):
     }
     """
 
+    class Toggled(Message):
+        """Event sent when the `Collapsible` is toggled.
+
+        Can be handled using `on_collapsible_toggled` in a subclass of
+        [`Collapsible`][textual.widgets.Collapsible] or in a parent widget in the DOM.
+        """
+
+        def __init__(self, collapsible: Collapsible) -> None:
+            self.collapsible: Collapsible = collapsible
+            """The collapsible that was pressed."""
+            super().__init__()
+
+        @property
+        def control(self) -> Collapsible:
+            """An alias for [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible].
+
+            This will be the same value as [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible].
+            """
+            return self.collapsible
+
     class Contents(Container):
         DEFAULT_CSS = """
         Contents {
@@ -146,6 +166,7 @@ class Collapsible(Widget):
     def on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
+        self.post_message(self.Toggled(self))
 
     def _watch_collapsed(self, collapsed: bool) -> None:
         """Update collapsed state when reactive is changed."""
