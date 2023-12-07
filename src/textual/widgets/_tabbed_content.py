@@ -3,7 +3,6 @@ from __future__ import annotations
 from asyncio import gather
 from dataclasses import dataclass
 from itertools import zip_longest
-from typing import cast
 
 from rich.repr import Result
 from rich.text import Text, TextType
@@ -257,10 +256,7 @@ class TabbedContent(Widget):
             """The `TabbedContent` widget that contains the tab activated."""
             self.tab = tab
             """The `Tab` widget that was selected (contains the tab label)."""
-            self.pane: TabPane = cast(
-                TabPane,
-                tabbed_content.get_child_by_type(ContentSwitcher).visible_content,
-            )
+            self.pane = tabbed_content.get_pane(tab)
             """The `TabPane` widget that was activated by selecting the tab."""
             super().__init__()
 
@@ -561,6 +557,33 @@ class TabbedContent(Widget):
             return self.get_child_by_type(ContentTabs).get_content_tab(target_id)
         raise ValueError(
             "'pane_id' must be a non-empty string or a TabPane with an id."
+        )
+
+    def get_pane(self, pane_id: str | ContentTab) -> TabPane:
+        """Get the `TabPane` associated with the given ID or tab.
+
+        Args:
+            pane_id: The ID of the pane to get, or the Tab it is associated with.
+
+        Returns:
+            The `TabPane` associated with the ID or the given tab.
+
+        Raises:
+            ValueError: Raised if no ID was available.
+        """
+        target_id: str | None = None
+        if isinstance(pane_id, ContentTab):
+            target_id = (
+                pane_id.id if pane_id.id is None else ContentTab.sans_prefix(pane_id.id)
+            )
+        else:
+            target_id = pane_id
+        if target_id:
+            pane = self.get_child_by_type(ContentSwitcher).get_child_by_id(target_id)
+            assert isinstance(pane, TabPane)
+            return pane
+        raise ValueError(
+            "'pane_id' must be a non-empty string or a ContentTab with an id."
         )
 
     def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
