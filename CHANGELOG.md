@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- The tabs within a `TabbedContent` now prefix their IDs to stop any clash with their associated `TabPane` https://github.com/Textualize/textual/pull/3815
+- Breaking change: `tab` is no longer a `@on` decorator selector for `TabbedContent.TabActivated` -- use `pane` instead https://github.com/Textualize/textual/pull/3815
+
+### Added
+
+- Added a `pane` attribute to `TabbedContent.TabActivated` https://github.com/Textualize/textual/pull/3815
+
 ### Fixed
 
 - Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
