@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import Collapsible, Label
 from textual.widgets._collapsible import CollapsibleTitle
@@ -126,7 +127,8 @@ async def test_toggle_message():
         def compose(self) -> ComposeResult:
             yield Collapsible(collapsed=True)
 
-        def on_collapsible_toggled(self) -> None:
+        @on(Collapsible.Toggled)
+        def catch_collapsible_events(self) -> None:
             hits.append("toggled")
 
     async with CollapsibleApp().run_test() as pilot:
@@ -143,3 +145,47 @@ async def test_toggle_message():
 
         assert pilot.app.query_one(Collapsible).collapsed
         assert len(hits) == 2
+
+
+async def test_expand_message():
+    """Toggling should post a message."""
+
+    hits = []
+
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(collapsed=True)
+
+        def on_collapsible_expanded(self) -> None:
+            hits.append("expanded")
+
+    async with CollapsibleApp().run_test() as pilot:
+        assert pilot.app.query_one(Collapsible).collapsed
+
+        await pilot.click(CollapsibleTitle)
+        await pilot.pause()
+
+        assert not pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 1
+
+
+async def test_collapse_message():
+    """Toggling should post a message."""
+
+    hits = []
+
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(collapsed=False)
+
+        def on_collapsible_collapsed(self) -> None:
+            hits.append("collapsed")
+
+    async with CollapsibleApp().run_test() as pilot:
+        assert not pilot.app.query_one(Collapsible).collapsed
+
+        await pilot.click(CollapsibleTitle)
+        await pilot.pause()
+
+        assert pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 1
