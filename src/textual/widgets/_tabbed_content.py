@@ -499,9 +499,7 @@ class TabbedContent(Widget):
             event.stop()
             switcher = self.get_child_by_type(ContentSwitcher)
             switcher.current = ContentTab.sans_prefix(event.tab.id)
-            self.notify(event.tab.id)
             self.active = ContentTab.sans_prefix(event.tab.id)
-            self.notify(self.active)
             self.post_message(
                 TabbedContent.TabActivated(
                     tabbed_content=self,
@@ -535,7 +533,6 @@ class TabbedContent(Widget):
     def _watch_active(self, old_active: str, active: str) -> None:
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated):
-            self.notify(f"{old_active} -> {active}")
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
             self.get_child_by_type(ContentSwitcher).current = active
 
