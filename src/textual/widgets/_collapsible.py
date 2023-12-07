@@ -113,10 +113,7 @@ class Collapsible(Widget):
 
         @property
         def control(self) -> Collapsible:
-            """An alias for [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible].
-
-            This will be the same value as [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible].
-            """
+            """An alias for [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible]."""
             return self.collapsible
 
     class Contents(Container):
@@ -163,7 +160,7 @@ class Collapsible(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
-    def on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
+    def _on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
         self.post_message(self.Toggled(self))
