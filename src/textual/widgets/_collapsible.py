@@ -44,6 +44,7 @@ class CollapsibleTitle(Widget, can_focus=True):
     """
 
     collapsed = reactive(True)
+    label = reactive("Toggle")
 
     def __init__(
         self,
@@ -83,6 +84,7 @@ class Collapsible(Widget):
     """A collapsible container."""
 
     collapsed = reactive(True)
+    title = reactive("Toggle")
 
     DEFAULT_CSS = """
     Collapsible {
@@ -169,6 +171,8 @@ class Collapsible(Widget):
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        self.title = title
         self._title = CollapsibleTitle(
             label=title,
             collapsed_symbol=collapsed_symbol,
@@ -176,7 +180,6 @@ class Collapsible(Widget):
             collapsed=collapsed,
         )
         self._contents_list: list[Widget] = list(children)
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
     def _on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
@@ -214,3 +217,8 @@ class Collapsible(Widget):
             widget: A Widget to add.
         """
         self._contents_list.append(widget)
+
+    def _watch_title(self, title: str) -> None:
+        if not self.is_mounted:
+            return
+        self._title.label = title
