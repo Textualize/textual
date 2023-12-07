@@ -594,7 +594,11 @@ class Compositor:
             # Widgets with scrollbars (containers or scroll view) require additional processing
             if widget.is_scrollable:
                 # The region that contains the content (container region minus scrollbars)
-                child_region = widget._get_scrollable_region(container_region)
+                child_region = (
+                    container_region
+                    if widget.loading
+                    else widget._get_scrollable_region(container_region)
+                )
 
                 # The region covered by children relative to parent widget
                 total_region = child_region.reset_offset

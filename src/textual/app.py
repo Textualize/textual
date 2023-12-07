@@ -776,7 +776,10 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The currently focused widget, or `None` if nothing is focused.
         """
-        return self.screen.focused
+        focused = self.screen.focused
+        if focused is not None and focused.loading:
+            return None
+        return focused
 
     @property
     def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
@@ -992,6 +995,18 @@ class App(Generic[ReturnType], DOMNode):
                 )
         except Exception as error:
             self._handle_exception(error)
+
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to be used as a loading indicator.
+
+        Extend this method if you want to display the loading state a little differently.
+
+        Returns:
+            A widget to display a loading state.
+        """
+        from .widgets import LoadingIndicator
+
+        return LoadingIndicator()
 
     def call_from_thread(
         self,

@@ -940,3 +940,17 @@ def test_vertical_max_height(snap_compare):
 def test_max_height_100(snap_compare):
     """Test vertical max height takes border in to account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
+
+def test_loading_indicator(snap_compare):
+    """Test loading indicator."""
+    # https://github.com/Textualize/textual/pull/3816
+    assert snap_compare(SNAPSHOT_APPS_DIR / "loading.py", press=["space"])
+
+
+def test_loading_indicator_disables_widget(snap_compare):
+    """Test loading indicator disabled widget."""
+    # https://github.com/Textualize/textual/pull/3816
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "loading.py", press=["space", "down", "down", "space"]
+    )
+

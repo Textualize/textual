@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
 - Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
+- Fixed loading indicator not covering scrollbars https://github.com/Textualize/textual/pull/3816
 
 ### Removed
 
@@ -20,6 +21,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Dropped ALLOW_CHILDREN flag introduced in 0.43.0 https://github.com/Textualize/textual/pull/3814
 - Widgets with an auto height in an auto height container will now expand if they have no siblings https://github.com/Textualize/textual/pull/3814
+
+### Added
+
+- Added `get_loading_widget` to Widget and App customize the loading widget. https://github.com/Textualize/textual/pull/3816
+- Added messages `Collapsible.Expanded` and `Collapsible.Collapsed` that inherit from `Collapsible.Toggled`. https://github.com/Textualize/textual/issues/3824
 
 ## [0.44.1] - 2023-12-4
 
@@ -36,6 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - `link-hover-background` renamed to `link-background-hover`
  - `link-hover-color` renamed to `link-color-hover`
  - `link-hover-style` renamed to `link-style-hover`
+- `Tree` now forces a scroll when `scroll_to_node` is called https://github.com/Textualize/textual/pull/3786
 - Brought rxvt's use of shift-numpad keys in line with most other terminals https://github.com/Textualize/textual/pull/3769
 
 ### Added
