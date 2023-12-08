@@ -16,7 +16,10 @@ INVOKE_TIMEOUT_WARNING = 3
 
 def count_parameters(func: Callable) -> int:
     """Count the number of parameters in a callable"""
+    if isinstance(func, partial):
+        return _count_parameters(func.func) + len(func.args)
     if hasattr(func, "__self__"):
+        # Bound method
         func = func.__func__  # type: ignore
         return _count_parameters(func) - 1
     return _count_parameters(func)
@@ -38,10 +41,7 @@ async def _invoke(callback: Callable, *params: object) -> Any:
         The return value of the invoked callable.
     """
     _rich_traceback_guard = True
-    if isinstance(callback, partial):
-        parameter_count = _count_parameters(callback.func) + len(callback.args)
-    else:
-        parameter_count = count_parameters(callback)
+    parameter_count = count_parameters(callback)
     result = callback(*params[:parameter_count])
     if isawaitable(result):
         result = await result
