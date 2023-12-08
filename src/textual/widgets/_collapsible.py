@@ -199,7 +199,7 @@ class Collapsible(Widget):
         except NoMatches:
             pass
 
-    def _on_mount(self) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         """Initialise collapsed state."""
         self._update_collapsed(self.collapsed)
 
