@@ -761,7 +761,7 @@ class StringEnumProperty:
         Returns:
             The string property value.
         """
-        return cast(str, obj.get_rule(self.name, self._default))
+        return obj.get_rule(self.name, self._default)  # type: ignore
 
     def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
         """Do any housekeeping before asking for a layout refresh after a value change."""
