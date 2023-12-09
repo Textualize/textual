@@ -2392,7 +2392,6 @@ class App(Generic[ReturnType], DOMNode):
         *widgets: Widget,
         before: int | None = None,
         after: int | None = None,
-        update: bool = True,
     ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
@@ -2401,7 +2400,6 @@ class App(Generic[ReturnType], DOMNode):
             *widgets: The widget(s) to register.
             before: A location to mount before.
             after: A location to mount after.
-            update: Also update node styles.
 
         Returns:
             List of modified widgets.
@@ -2419,19 +2417,14 @@ class App(Generic[ReturnType], DOMNode):
         else:
             widget_list = widgets
 
-        updated_widgets: list[Widget] = list(widget_list)
-
         for widget in widget_list:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
-                    updated_widgets.extend(
-                        self._register(widget, *widget._nodes, update=False)
-                    )
-        if update:
-            self.stylesheet.update_nodes(updated_widgets, animate=False)
+                    self._register(widget, *widget._nodes)
+        self.stylesheet.update_nodes(widget_list, animate=False)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks
