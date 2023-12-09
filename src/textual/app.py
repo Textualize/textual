@@ -829,8 +829,8 @@ class App(Generic[ReturnType], DOMNode):
         This method handles the transition between light and dark mode when you
         change the [dark][textual.app.App.dark] attribute.
         """
-        self.set_class(dark, "-dark-mode")
-        self.set_class(not dark, "-light-mode")
+        self.set_class(dark, "-dark-mode", update=False)
+        self.set_class(not dark, "-light-mode", update=False)
         self.call_later(self.refresh_css)
 
     def get_driver_class(self) -> Type[Driver]:
@@ -1586,7 +1586,6 @@ class App(Generic[ReturnType], DOMNode):
         will be added, and this method is called to apply the corresponding
         :hover styles.
         """
-
         descendants = node.walk_children(with_self=True)
         self.stylesheet.update_nodes(descendants, animate=True)
 
