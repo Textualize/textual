@@ -122,9 +122,10 @@ The following example shows `Collapsible` widgets with custom expand/collapse sy
 
 ## Reactive Attributes
 
-| Name        | Type   | Default | Description                                          |
-| ----------- | ------ | ------- | ---------------------------------------------------- |
-| `collapsed` | `bool` | `True`  | Controls the collapsed/expanded state of the widget. |
+| Name        | Type   | Default     | Description                                          |
+| ----------- | ------ | ------------| ---------------------------------------------------- |
+| `collapsed` | `bool` | `True`      | Controls the collapsed/expanded state of the widget. |
+| `title`     | `str`  | `"Toggle"`  | Title of the collapsed/expanded contents.            |
 
 ## Messages
 
