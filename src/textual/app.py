@@ -2413,7 +2413,7 @@ class App(Generic[ReturnType], DOMNode):
             # There's a before or after, which means there's going to be an
             # insertion, so make it easier to get the new things in the
             # correct order.
-            widget_list = reversed(widgets)
+            widget_list = list(reversed(widgets))
         else:
             widget_list = widgets
 
