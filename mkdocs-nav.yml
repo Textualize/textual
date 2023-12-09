@@ -178,6 +178,7 @@ nav:
       - "api/color.md"
       - "api/command.md"
       - "api/containers.md"
+      - "api/content_switcher.md"
       - "api/coordinate.md"
       - "api/dom_node.md"
       - "api/events.md"
