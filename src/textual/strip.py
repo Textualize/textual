@@ -199,7 +199,7 @@ class Strip:
         return strip
 
     def __bool__(self) -> bool:
-        return bool(self._segments)
+        return not not self._segments
 
     def __iter__(self) -> Iterator[Segment]:
         return iter(self._segments)
