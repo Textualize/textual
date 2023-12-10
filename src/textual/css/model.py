@@ -222,8 +222,12 @@ class RuleSet:
         universal_type = SelectorType.UNIVERSAL
 
         add_selector = self.selector_names.add
+        add_pseudo_classes = self.pseudo_classes.update
 
         for selector_set in self.selector_set:
+            for selector in selector_set.selectors:
+                add_pseudo_classes(selector.pseudo_classes)
+
             selector = selector_set.selectors[-1]
             selector_type = selector.type
             if selector_type == universal_type:
@@ -234,32 +238,3 @@ class RuleSet:
                 add_selector(f".{selector.name}")
             elif selector_type == id_type:
                 add_selector(f"#{selector.name}")
-
-        add_pseudo_classes = self.pseudo_classes.update
-        for selector_set in self.selector_set:
-            for selector in selector_set.selectors:
-                add_pseudo_classes(selector.pseudo_classes)
-
-        # for selector_set in self.selector_set:
-        #     selectors = selector_set.selectors
-        #     if "*" not in self.selector_names:
-        #         if any(selector.type == universal_type for selector in selectors):
-        #             update_selectors("*")
-        #     update_selectors(
-        #         selector.name for selector in selectors if selector.type == type_type
-        #     )
-        #     update_selectors(
-        #         f".{selector.name}"
-        #         for selector in selectors
-        #         if selector.type == class_type
-        #     )
-        #     update_selectors(
-        #         f"#{selector.name}"
-        #         for selector in selectors
-        #         if selector.type == id_type
-        #     )
-        #     # update_selectors(
-        #     #     f":{pseudo_class}"
-        #     #     for selector in selectors
-        #     #     for pseudo_class in selector.pseudo_classes
-        #     # )
