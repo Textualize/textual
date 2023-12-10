@@ -179,7 +179,6 @@ class Stylesheet:
                 for name in rule.selector_names:
                     rules_map[name].append(rule)
             self._rules_map = dict(rules_map)
-
         return self._rules_map
 
     @property
@@ -465,7 +464,6 @@ class Stylesheet:
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
-
             for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
