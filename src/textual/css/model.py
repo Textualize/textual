@@ -166,21 +166,6 @@ class RuleSet:
     def __hash__(self):
         return id(self)
 
-    def has_pseudo_class(self, class_name: str) -> bool:
-        """Check if the rule set contains a give pseudo class.
-
-        Args:
-            class_name: Name of a pseudo class.
-
-        Returns:
-            `True` if the pseudo class is supported.
-        """
-        for selector_set in self.selector_set:
-            for selector in selector_set.selectors:
-                if class_name in selector.pseudo_classes:
-                    return True
-        return False
-
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:
         tokens: list[str] = []
