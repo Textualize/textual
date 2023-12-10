@@ -2246,9 +2246,9 @@ class App(Generic[ReturnType], DOMNode):
 
                     Reactive._initialize_object(self)
 
-                    self.stylesheet.update(self)
+                    self.stylesheet.apply(self)
                     if self.screen is not default_screen:
-                        self.stylesheet.update(default_screen)
+                        self.stylesheet.apply(default_screen)
 
                     await self.animator.start()
 
