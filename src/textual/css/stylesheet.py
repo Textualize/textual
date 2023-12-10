@@ -179,6 +179,7 @@ class Stylesheet:
                 for name in rule.selector_names:
                     rules_map[name].append(rule)
             self._rules_map = dict(rules_map)
+
         return self._rules_map
 
     @property
@@ -335,6 +336,7 @@ class Stylesheet:
             return
         self.source[read_from] = CssSource(css, is_default_css, tie_breaker, scope)
         self._require_parse = True
+        self._rules_map = None
 
     def parse(self) -> None:
         """Parse the source in the stylesheet.
@@ -416,7 +418,6 @@ class Stylesheet:
         self,
         node: DOMNode,
         *,
-        limit_rules: set[RuleSet] | None = None,
         animate: bool = False,
     ) -> None:
         """Apply the stylesheet to a DOM node.
@@ -440,15 +441,21 @@ class Stylesheet:
         _check_rule = self._check_rule
         css_path_nodes = node.css_path_nodes
 
-        rules: Iterable[RuleSet]
-        if limit_rules is not None:
-            rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
-        else:
-            rules = reversed(self.rules)
+        rules_map = self.rules_map
+
+        # Discard rules which are not applicable early
+        limit_rules = {
+            rule
+            for name in rules_map.keys() & node._selector_names
+            for rule in rules_map[name]
+        }
+        rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
 
         # Collect the rules defined in the stylesheet
-        node._has_hover_style = False
-        node._has_focus_within = False
+        node._has_hover_style = any("hover" in rule.pseudo_classes for rule in rules)
+        node._has_focus_within = any(
+            "focus-within" in rule.pseudo_classes for rule in rules
+        )
 
         # Rules that may be set to the special value `initial`
         initial: set[str] = set()
@@ -458,10 +465,7 @@ class Stylesheet:
         for rule in rules:
             is_default_rules = rule.is_default_rules
             tie_breaker = rule.tie_breaker
-            if ":hover" in rule.selector_names:
-                node._has_hover_style = True
-            if ":focus-within" in rule.selector_names:
-                node._has_focus_within = True
+
             for base_specificity in _check_rule(rule, css_path_nodes):
                 for key, rule_specificity, value in rule.styles.extract_rules(
                     base_specificity, is_default_rules, tie_breaker
@@ -473,52 +477,52 @@ class Stylesheet:
                             initial.add(key)
                     rule_attributes[key].append((rule_specificity, value))
 
-        if not rule_attributes:
-            return
+        if rule_attributes:
+            # For each rule declared for this node, keep only the most specific one
+            get_first_item = itemgetter(0)
+            node_rules: RulesMap = cast(
+                RulesMap,
+                {
+                    name: max(specificity_rules, key=get_first_item)[1]
+                    for name, specificity_rules in rule_attributes.items()
+                },
+            )
 
-        # For each rule declared for this node, keep only the most specific one
-        get_first_item = itemgetter(0)
-        node_rules: RulesMap = cast(
-            RulesMap,
-            {
-                name: max(specificity_rules, key=get_first_item)[1]
-                for name, specificity_rules in rule_attributes.items()
-            },
-        )
+            # Set initial values
+            for initial_rule_name in initial:
+                # Rules with a value of None should be set to the default value
+                if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                    # Exclude non default values
+                    # rule[0] is the specificity, rule[0][0] is 0 for default rules
+                    default_rules = [
+                        rule
+                        for rule in rule_attributes[initial_rule_name]
+                        if not rule[0][0]
+                    ]
+                    if default_rules:
+                        # There is a default value
+                        new_value = max(default_rules, key=get_first_item)[1]
+                        node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
+                    else:
+                        # No default value
+                        initial_defaults.add(initial_rule_name)
 
-        # Set initial values
-        for initial_rule_name in initial:
-            # Rules with a value of None should be set to the default value
-            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
-                # Exclude non default values
-                # rule[0] is the specificity, rule[0][0] is 0 for default rules
-                default_rules = [
-                    rule
-                    for rule in rule_attributes[initial_rule_name]
-                    if not rule[0][0]
-                ]
-                if default_rules:
-                    # There is a default value
-                    new_value = max(default_rules, key=get_first_item)[1]
-                    node_rules[initial_rule_name] = new_value  # type: ignore[literal-required]
-                else:
-                    # No default value
-                    initial_defaults.add(initial_rule_name)
+            # Rules in DEFAULT_CSS set to initial
+            for initial_rule_name in initial_defaults:
+                if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
+                    default_rules = [
+                        rule
+                        for rule in rule_attributes[initial_rule_name]
+                        if rule[0][0]
+                    ]
+                    if default_rules:
+                        # There is a default value
+                        rule_value = max(default_rules, key=get_first_item)[1]
+                    else:
+                        rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
+                    node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
 
-        # Rules in DEFAULT_CSS set to initial
-        for initial_rule_name in initial_defaults:
-            if node_rules[initial_rule_name] is None:  # type: ignore[literal-required]
-                default_rules = [
-                    rule for rule in rule_attributes[initial_rule_name] if rule[0][0]
-                ]
-                if default_rules:
-                    # There is a default value
-                    rule_value = max(default_rules, key=get_first_item)[1]
-                else:
-                    rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
-                node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
-
-        self.replace_rules(node, node_rules, animate=animate)
+            self.replace_rules(node, node_rules, animate=animate)
 
         component_classes = node._get_component_classes()
         if component_classes:
@@ -634,31 +638,14 @@ class Stylesheet:
             nodes: Nodes to update.
             animate: Enable CSS animation.
         """
-        rules_map = self.rules_map
         apply = self.apply
 
-        def get_rules(node: DOMNode) -> set[RuleSet]:
-            """Get set of rules for the given node."""
-            return {
-                rule
-                for name in rules_map.keys() & node._selector_names
-                for rule in rules_map[name]
-            }
-
         for node in nodes:
-            rules = get_rules(node)
-            if rules:
-                apply(node, limit_rules=rules, animate=animate)
+            apply(node, animate=animate)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
-                    rules = get_rules(node.vertical_scrollbar)
-                    if rules:
-                        apply(node.vertical_scrollbar, limit_rules=rules)
+                    apply(node.vertical_scrollbar)
                 if node.show_horizontal_scrollbar:
-                    rules = get_rules(node.horizontal_scrollbar)
-                    if rules:
-                        apply(node.horizontal_scrollbar, limit_rules=rules)
+                    apply(node.horizontal_scrollbar)
                 if node.show_horizontal_scrollbar and node.show_vertical_scrollbar:
-                    rules = get_rules(node.scrollbar_corner)
-                    if rules:
-                        apply(node.scrollbar_corner, limit_rules=rules)
+                    apply(node.scrollbar_corner)

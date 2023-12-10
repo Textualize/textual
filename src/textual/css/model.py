@@ -161,9 +161,25 @@ class RuleSet:
     is_default_rules: bool = False
     tie_breaker: int = 0
     selector_names: set[str] = field(default_factory=set)
+    pseudo_classes: set[str] = field(default_factory=set)
 
     def __hash__(self):
         return id(self)
+
+    def has_pseudo_class(self, class_name: str) -> bool:
+        """Check if the rule set contains a give pseudo class.
+
+        Args:
+            class_name: Name of a pseudo class.
+
+        Returns:
+            `True` if the pseudo class is supported.
+        """
+        for selector_set in self.selector_set:
+            for selector in selector_set.selectors:
+                if class_name in selector.pseudo_classes:
+                    return True
+        return False
 
     @classmethod
     def _selector_to_css(cls, selectors: list[Selector]) -> str:
@@ -205,31 +221,45 @@ class RuleSet:
         type_type = SelectorType.TYPE
         universal_type = SelectorType.UNIVERSAL
 
-        update_selectors = self.selector_names.update
+        add_selector = self.selector_names.add
 
         for selector_set in self.selector_set:
-            update_selectors(
-                "*"
-                for selector in selector_set.selectors
-                if selector.type == universal_type
-            )
-            update_selectors(
-                selector.name
-                for selector in selector_set.selectors
-                if selector.type == type_type
-            )
-            update_selectors(
-                f".{selector.name}"
-                for selector in selector_set.selectors
-                if selector.type == class_type
-            )
-            update_selectors(
-                f"#{selector.name}"
-                for selector in selector_set.selectors
-                if selector.type == id_type
-            )
-            update_selectors(
-                f":{pseudo_class}"
-                for selector in selector_set.selectors
-                for pseudo_class in selector.pseudo_classes
-            )
+            selector = selector_set.selectors[-1]
+            selector_type = selector.type
+            if selector_type == universal_type:
+                add_selector("*")
+            elif selector_type == type_type:
+                add_selector(selector.name)
+            elif selector_type == class_type:
+                add_selector(f".{selector.name}")
+            elif selector_type == id_type:
+                add_selector(f"#{selector.name}")
+
+        add_pseudo_classes = self.pseudo_classes.update
+        for selector_set in self.selector_set:
+            for selector in selector_set.selectors:
+                add_pseudo_classes(selector.pseudo_classes)
+
+        # for selector_set in self.selector_set:
+        #     selectors = selector_set.selectors
+        #     if "*" not in self.selector_names:
+        #         if any(selector.type == universal_type for selector in selectors):
+        #             update_selectors("*")
+        #     update_selectors(
+        #         selector.name for selector in selectors if selector.type == type_type
+        #     )
+        #     update_selectors(
+        #         f".{selector.name}"
+        #         for selector in selectors
+        #         if selector.type == class_type
+        #     )
+        #     update_selectors(
+        #         f"#{selector.name}"
+        #         for selector in selectors
+        #         if selector.type == id_type
+        #     )
+        #     # update_selectors(
+        #     #     f":{pseudo_class}"
+        #     #     for selector in selectors
+        #     #     for pseudo_class in selector.pseudo_classes
+        #     # )
