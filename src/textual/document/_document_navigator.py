@@ -171,7 +171,7 @@ class DocumentNavigator:
         # We need to find the insertion point to determine which section index we're
         # on within the current line. When we know the section index, we can use it
         # to find the section which sits above it.
-        section_index = find_leftmost_greater_than(wrap_offsets, column_index)
+        section_index = bisect_right(wrap_offsets, column_index)
         offset_within_section = column_index - section_start_columns[section_index]
         wrapped_line = self._wrapped_document.get_wrapped_line(line_index)
         section = wrapped_line[section_index]
@@ -229,8 +229,3 @@ def index(sequence: Sequence, value: Any) -> int:
     if insert_index != len(sequence) and sequence[insert_index] == value:
         return insert_index
     return -1
-
-
-def find_leftmost_greater_than(sequence: Sequence, value: Any) -> int:
-    """Find the index of the leftmost value greater than x."""
-    return bisect_right(sequence, value)
