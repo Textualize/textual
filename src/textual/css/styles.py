@@ -713,13 +713,15 @@ class Styles(StylesBase):
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
     ) -> None:
-        if parent and self.node and self.node.parent:
-            self.node.parent.refresh()
-        if self.node is not None:
-            self.node.refresh(layout=layout)
-            if children:
-                for child in self.node.walk_children(with_self=False, reverse=True):
-                    child.refresh(layout=layout)
+        node = self.node
+        if node is None or not node._is_mounted:
+            return
+        if parent and node.parent:
+            node.parent.refresh()
+        node.refresh(layout=layout)
+        if children:
+            for child in node.walk_children(with_self=False, reverse=True):
+                child.refresh(layout=layout)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
