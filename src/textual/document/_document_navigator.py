@@ -1,3 +1,35 @@
+"""Cursor navigation in the TextArea is "wrapping-aware".
+
+Although the cursor location (the selection) is represented as a location
+in the raw document, when you actually *move* the cursor, it must take wrapping
+into account (otherwise things start to look really confusing to the user where
+wrapping is involved).
+
+Your cursor visually moves through the wrapped version of the document, rather
+than the raw document. So, for example, pressing down on the keyboard
+may move your cursor to a position further along the current line,
+rather than on to the next line in the raw document.
+
+The class manages this behaviour.
+
+Given a cursor location in the unwrapped document, and a cursor movement action,
+this class can inform us of the destination the cursor will move to considering
+the current wrapping width and document content.
+
+For this to work correctly, the wrapped_document and document must be synchronised.
+This means that if you make an edit to the document, you *must* then update the
+wrapped document, and *then* you may query the document navigator.
+
+Naming conventions:
+
+A line "wrapped section" refers to a portion of the line accounting for wrapping.
+For example the line "ABCDEF" when wrapped at width 3 will result in 2 sections:
+"ABC" and "DEF".
+
+A "wrap offset" is an integer representing the index at which wrapping occurs in a line.
+In "ABCDEF" with wrapping at width 3, there is a single wrap offset of 3.
+"""
+
 import re
 from bisect import bisect_left, bisect_right
 from typing import Any, Sequence
@@ -9,29 +41,6 @@ from textual.geometry import clamp
 
 
 class DocumentNavigator:
-    """Cursor navigation in the TextArea is "wrapping-aware".
-
-    Although the cursor location (the selection) is represented as a location
-    in the raw document, when you actually *move* the cursor, it must take wrapping
-    into account (otherwise things start to look really confusing to the user where
-    wrapping is involved).
-
-    Your cursor visually moves through the wrapped version of the document, rather
-    than the raw document. So, for example, pressing down on the keyboard
-    may move your cursor to a position further along the current line,
-    rather than on to the next line in the raw document.
-
-    The class manages this behaviour.
-
-    Given a cursor location in the unwrapped document, and a cursor movement action,
-    this class can inform us of the destination the cursor will move to considering
-    the current wrapping width and document content.
-
-    For this to work correctly, the wrapped_document and document must be synchronised.
-    This means that if you make an edit to the document, you *must* then update the
-    wrapped document, and *then* you may query the document navigator.
-    """
-
     def __init__(self, wrapped_document: WrappedDocument) -> None:
         """Create a CursorNavigator.
 
@@ -173,7 +182,7 @@ class DocumentNavigator:
         # to find the section which sits above it.
         section_index = bisect_right(wrap_offsets, column_index)
         offset_within_section = column_index - section_start_columns[section_index]
-        wrapped_line = self._wrapped_document.get_wrapped_line(line_index)
+        wrapped_line = self._wrapped_document.get_sections(line_index)
         section = wrapped_line[section_index]
 
         # Convert that cursor offset to a cell (visual) offset
@@ -189,6 +198,9 @@ class DocumentNavigator:
             target_location = target_row, target_column
         else:
             # Stay on the same document line, but move backwards.
+            # Since the section above could be shorter, we need to clamp the column
+            # to a valid value.
+
             target_column = self._wrapped_document.get_target_document_column(
                 line_index, current_visual_offset, section_index - 1, tab_width
             )
@@ -216,9 +228,9 @@ class DocumentNavigator:
 
         wrap_offsets = self._wrapped_document.get_offsets(line_index)
         section_start_columns = [0, *wrap_offsets]
-        section_index = find_leftmost_greater_than(wrap_offsets, column_index)
+        section_index = bisect_right(wrap_offsets, column_index)
         offset_within_section = column_index - section_start_columns[section_index]
-        wrapped_line = self._wrapped_document.get_wrapped_line(line_index)
+        wrapped_line = self._wrapped_document.get_sections(line_index)
         section = wrapped_line[section_index]
         current_visual_offset = cell_len(section[:offset_within_section])
 
@@ -242,7 +254,7 @@ class DocumentNavigator:
             )
             target_location = line_index, target_column
 
-        return self.clamp_reachable(target_location)
+        return target_location
 
     def clamp_reachable(self, location: Location) -> Location:
         """Given a location, return the nearest location that corresponds to a

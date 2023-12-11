@@ -165,26 +165,33 @@ class WrappedDocument:
 
         # We've found the relevant line, now find the character by
         # looking at the character corresponding to the offset width.
-        wrapped_lines = self.get_wrapped_line(line_index)
+        sections = self.get_sections(line_index)
 
         # wrapped_section is the text that appears on a single y_offset within
         # the TextArea. It's a potentially wrapped portion of a larger line from
         # the original document.
-        target_wrapped_section = wrapped_lines[y_offset]
-
-        # Get the column index within this wrapped section of the line
-        target_column_index = cell_width_to_column_index(
-            target_wrapped_section, x_offset, tab_width
-        )
+        target_section = sections[y_offset]
 
         # Add the offsets from the wrapped sections above this one (from the same raw document line)
-        target_column_index += sum(
-            len(wrapped_section) for wrapped_section in wrapped_lines[:y_offset]
+        target_section_start = sum(
+            len(wrapped_section) for wrapped_section in sections[:y_offset]
         )
+
+        # Get the column index within this wrapped section of the line
+        target_column_index = target_section_start + cell_width_to_column_index(
+            target_section, x_offset, tab_width
+        )
+
+        # If we're on the final section of a line, the cursor can legally rest beyond the end by a single cell.
+        # Otherwise, we'll need to ensure that we're keeping the cursor within the bounds of the target section.
+        if y_offset != len(sections) - 1 and y_offset != -1:
+            target_column_index = min(
+                target_column_index, target_section_start + len(target_section) - 1
+            )
 
         return target_column_index
 
-    def get_wrapped_line(self, line_index: int) -> list[str]:
+    def get_sections(self, line_index: int) -> list[str]:
         line_offsets = self._wrap_offsets[line_index]
         wrapped_lines = Text(self.document[line_index]).divide(line_offsets)
         return [line.plain for line in wrapped_lines]
