@@ -103,7 +103,6 @@ class DocumentNavigator:
         return location[0] == 0
 
     def is_first_wrapped_line(self, location: Location) -> bool:
-        # TODO: Check the less than/equal to thing.
         # Ensure that the column index of the location is less (or equal to?!?!) than
         # the first value in the wrap offsets.
         if not self.is_first_document_line(location):
@@ -115,7 +114,7 @@ class DocumentNavigator:
         if not wrap_offsets:
             return True
 
-        if column <= wrap_offsets[0]:
+        if column < wrap_offsets[0]:
             return True
         return False
 
@@ -133,7 +132,7 @@ class DocumentNavigator:
         if not wrap_offsets:
             return True
 
-        if column > wrap_offsets[-1]:
+        if column >= wrap_offsets[-1]:
             return True
         return False
 
@@ -277,6 +276,16 @@ class DocumentNavigator:
 
     def get_location_home(self, location: Location) -> Location:
         """Get the location corresponding to the start of the current section."""
+        line_index, column_offset = location
+        wrap_offsets = self._wrapped_document.get_offsets(line_index)
+        if wrap_offsets:
+            next_offset_left = bisect(wrap_offsets, column_offset)
+            if next_offset_left == 0:
+                return line_index, 0
+            return line_index, wrap_offsets[next_offset_left - 1]
+        else:
+            # No wrapping to consider, go to the start of the document line
+            return line_index, 0
 
     def clamp_reachable(self, location: Location) -> Location:
         """Given a location, return the nearest location that corresponds to a

@@ -66,13 +66,29 @@ def test_get_location_below(start, end):
 @pytest.mark.parametrize(
     "start,end",
     [
+        [(0, 0), (0, 0)],
+        [(0, 2), (0, 0)],
+        [(0, 3), (0, 3)],
+        [(0, 6), (0, 3)],
+        [(0, 7), (0, 3)],
+        [(1, 0), (1, 0)],
+        [(1, 3), (1, 0)],
+        [(1, 4), (1, 4)],
+        [(1, 5), (1, 4)],
+    ],
+)
+def test_get_location_home(start, end):
+    assert make_navigator(TEXT, 4).get_location_home(start) == end
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
         [(0, 0), (0, 2)],
         [(0, 2), (0, 2)],
         [(0, 3), (0, 7)],
         [(0, 5), (0, 7)],
         [(1, 2), (1, 3)],
-        [(1, 4), (1, 5)],
-        [(1, 5), (1, 5)],
     ],
 )
 def test_get_location_end(start, end):
