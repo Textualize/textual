@@ -196,6 +196,54 @@ class DocumentNavigator:
 
         return self.clamp_reachable(target_location)
 
+    def down(self, location: Location, tab_width: int) -> Location:
+        """Given a location in the raw document, return the raw document
+        location corresponding to moving down in the wrapped representation
+        of the document.
+
+        Args:
+            location: The location in the raw document.
+            tab_width: The width of the tab stops.
+
+        Returns:
+            The location which is *visually* below the given location.
+        """
+        line_index, column_index = location
+        document = self._document
+
+        if self.is_last_document_line(location):
+            return line_index, len(document[line_index])
+
+        wrap_offsets = self._wrapped_document.get_offsets(line_index)
+        section_start_columns = [0, *wrap_offsets]
+        section_index = find_leftmost_greater_than(wrap_offsets, column_index)
+        offset_within_section = column_index - section_start_columns[section_index]
+        wrapped_line = self._wrapped_document.get_wrapped_line(line_index)
+        section = wrapped_line[section_index]
+        current_visual_offset = cell_len(section[:offset_within_section])
+
+        # If we're at the last section/row of a wrapped line
+        if section_index == len(wrapped_line) - 1:
+            # Go to the first section of the line below.
+            target_row = line_index + 1
+            target_column = self._wrapped_document.get_target_document_column(
+                target_row, current_visual_offset, 0, tab_width
+            )
+            # TODO - need to decide what to do with the return at the
+            #  bottom of cell_width_to_column_index - we need to be able
+            #  to move to len(final_section) when on final_section.
+            #  However, while on any other section, we must not move beyond.
+            target_location = target_row, target_column
+        else:
+            # Stay on the same document line, but move forwards to
+            # the location on the section below with the same visual offset.
+            target_column = self._wrapped_document.get_target_document_column(
+                line_index, current_visual_offset, section_index + 1, tab_width
+            )
+            target_location = line_index, target_column
+
+        return self.clamp_reachable(target_location)
+
     def clamp_reachable(self, location: Location) -> Location:
         """Given a location, return the nearest location that corresponds to a
         reachable location in the document.

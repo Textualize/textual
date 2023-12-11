@@ -8,6 +8,7 @@ TEXT = """\
 01 3456
 01234"""
 
+
 # wrapped width = 4:
 # line_index | wrapped_lines
 # 0 | 01_
@@ -40,3 +41,20 @@ def make_navigator(text, width):
 )
 def test_up(start, end):
     assert make_navigator(TEXT, 4).up(start, 4) == end
+
+
+@pytest.mark.parametrize(
+    "start,end",
+    [
+        # [(0, 0), (0, 3)],
+        # [(0, 1), (0, 4)],
+        # [(0, 2), (0, 5)],
+        # [(0, 3), (1, 0)],
+        # [(0, 4), (1, 1)],
+        # [(0, 5), (1, 2)],
+        # [(0, 6), (1, 3)],
+        [(0, 7), (1, 4)],
+    ],
+)
+def test_down(start, end):
+    assert make_navigator(TEXT, 4).down(start, 4) == end
