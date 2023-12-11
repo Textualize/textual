@@ -206,7 +206,7 @@ class DocumentNavigator:
             )
             target_location = line_index, target_column
 
-        return self.clamp_reachable(target_location)
+        return target_location
 
     def down(self, location: Location, tab_width: int) -> Location:
         """Given a location in the raw document, return the raw document
