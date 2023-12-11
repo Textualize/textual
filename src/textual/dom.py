@@ -595,20 +595,19 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
-    def _selector_names(self) -> list[str]:
+    def _selector_names(self) -> set[str]:
         """Get a set of selectors applicable to this widget.
 
         Returns:
             Set of selector names.
         """
-        selectors: list[str] = [
+        selectors: set[str] = {
             "*",
             *(f".{class_name}" for class_name in self._classes),
-            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
             *self._css_types,
-        ]
+        }
         if self._id is not None:
-            selectors.append(f"#{self._id}")
+            selectors.add(f"#{self._id}")
         return selectors
 
     @property

@@ -757,7 +757,7 @@ class Styles(StylesBase):
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-        rules = [
+        rules: list[tuple[str, Specificity6, Any]] = [
             (
                 rule_name,
                 (
