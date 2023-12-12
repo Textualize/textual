@@ -230,6 +230,9 @@ TextArea {
     cursor_blink: Reactive[bool] = reactive(True)
     """True if the cursor should blink."""
 
+    wrap: Reactive[bool] = reactive(False)
+    """True if text should soft wrap."""
+
     _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
@@ -271,6 +274,7 @@ TextArea {
         *,
         language: str | None = None,
         theme: str | None = None,
+        wrap: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -336,6 +340,8 @@ TextArea {
         self.language = language
 
         self.theme = theme
+
+        self._reactive_wrap = wrap
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
