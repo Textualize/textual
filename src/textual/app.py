@@ -15,9 +15,8 @@ import os
 import platform
 import sys
 import threading
-import unicodedata
 import warnings
-from asyncio import Task
+from asyncio import Task, create_task
 from concurrent.futures import Future
 from contextlib import (
     asynccontextmanager,
@@ -56,12 +55,10 @@ from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
-from rich.traceback import Traceback
 
 from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._asyncio import create_task
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -69,7 +66,6 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
-from ._system_commands import SystemCommands
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
@@ -82,9 +78,9 @@ from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
+from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
-from .filter import ANSIToTruecolor, DimFilter, LineFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -110,10 +106,12 @@ if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, TypeAlias
 
+    from ._system_commands import SystemCommands
     from ._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import WrongType  # type: ignore  # noqa: F401
+    from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
     from .widget import MountError  # type: ignore  # noqa: F401
@@ -158,6 +156,17 @@ AutopilotCallbackType: TypeAlias = (
     "Callable[[Pilot[object]], Coroutine[Any, Any, None]]"
 )
 """Signature for valid callbacks that can be used to control apps."""
+
+
+def get_system_commands() -> type[SystemCommands]:
+    """Callable to lazy load the system commands.
+
+    Returns:
+        System commands class.
+    """
+    from ._system_commands import SystemCommands
+
+    return SystemCommands
 
 
 class AppError(Exception):
@@ -332,7 +341,9 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
-    COMMANDS: ClassVar[set[type[Provider]]] = {SystemCommands}
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
+        get_system_commands
+    }
     """Command providers used by the [command palette](/guide/command_palette).
 
     Should be a set of [command.Provider][textual.command.Provider] classes.
@@ -355,6 +366,12 @@ class App(Generic[ReturnType], DOMNode):
         ```python
         self.app.dark = not self.app.dark  # Toggle dark mode
         ```
+    """
+    app_focus = Reactive(True, compute=False)
+    """Indicates if the app has focus.
+
+    When run in the terminal, the app always has focus. When run in the web, the app will
+    get focus when the terminal widget has focus.        
     """
 
     def __init__(
@@ -385,11 +402,15 @@ class App(Generic[ReturnType], DOMNode):
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
+            from .filter import Monochrome
+
             self._filters.append(Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
             if filter == "dim":
+                from .filter import ANSIToTruecolor, DimFilter
+
                 self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
                 self._filters.append(DimFilter())
 
@@ -422,6 +443,9 @@ class App(Generic[ReturnType], DOMNode):
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
+
+        self._mouse_down_widget: Widget | None = None
+        """The widget that was most recently mouse downed (used to create click events)."""
 
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
@@ -561,7 +585,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def workers(self) -> WorkerManager:
-        """The [worker](guide/workers/) manager.
+        """The [worker](/guide/workers/) manager.
 
         Returns:
             An object to manage workers.
@@ -752,7 +776,10 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The currently focused widget, or `None` if nothing is focused.
         """
-        return self.screen.focused
+        focused = self.screen.focused
+        if focused is not None and focused.loading:
+            return None
+        return focused
 
     @property
     def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
@@ -802,8 +829,8 @@ class App(Generic[ReturnType], DOMNode):
         This method handles the transition between light and dark mode when you
         change the [dark][textual.app.App.dark] attribute.
         """
-        self.set_class(dark, "-dark-mode")
-        self.set_class(not dark, "-light-mode")
+        self.set_class(dark, "-dark-mode", update=False)
+        self.set_class(not dark, "-light-mode", update=False)
         self.call_later(self.refresh_css)
 
     def get_driver_class(self) -> Type[Driver]:
@@ -969,11 +996,23 @@ class App(Generic[ReturnType], DOMNode):
         except Exception as error:
             self._handle_exception(error)
 
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to be used as a loading indicator.
+
+        Extend this method if you want to display the loading state a little differently.
+
+        Returns:
+            A widget to display a loading state.
+        """
+        from .widgets import LoadingIndicator
+
+        return LoadingIndicator()
+
     def call_from_thread(
         self,
         callback: Callable[..., CallThreadReturnType | Awaitable[CallThreadReturnType]],
-        *args: object,
-        **kwargs: object,
+        *args: Any,
+        **kwargs: Any,
     ) -> CallThreadReturnType:
         """Run a callable from another thread, and return the result.
 
@@ -1137,13 +1176,14 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _press_keys(self, keys: Iterable[str]) -> None:
         """A task to send key events."""
+        import unicodedata
+
         app = self
         driver = app._driver
         assert driver is not None
         for key in keys:
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
-                print(f"(pause {wait_ms}ms)")
                 await asyncio.sleep(float(wait_ms) / 1000)
             else:
                 if len(key) == 1 and not key.isalnum():
@@ -1154,7 +1194,6 @@ class App(Generic[ReturnType], DOMNode):
                     char = unicodedata.lookup(_get_unicode_name_from_key(original_key))
                 except KeyError:
                     char = key if len(key) == 1 else None
-                print(f"press {key!r} (char={char!r})")
                 key_event = events.Key(key, char)
                 key_event._set_sender(app)
                 driver.send_event(key_event)
@@ -1547,7 +1586,6 @@ class App(Generic[ReturnType], DOMNode):
         will be added, and this method is called to apply the corresponding
         :hover styles.
         """
-
         descendants = node.walk_children(with_self=True)
         self.stylesheet.update_nodes(descendants, animate=True)
 
@@ -2098,6 +2136,8 @@ class App(Generic[ReturnType], DOMNode):
 
     def _fatal_error(self) -> None:
         """Exits the app after an unhandled exception."""
+        from rich.traceback import Traceback
+
         self.bell()
         traceback = Traceback(
             show_locals=True, width=None, locals_max_length=5, suppress=[rich]
@@ -2206,9 +2246,9 @@ class App(Generic[ReturnType], DOMNode):
 
                     Reactive._initialize_object(self)
 
-                    self.stylesheet.update(self)
+                    self.stylesheet.apply(self)
                     if self.screen is not default_screen:
-                        self.stylesheet.update(default_screen)
+                        self.stylesheet.apply(default_screen)
 
                     await self.animator.start()
 
@@ -2273,7 +2313,7 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         ready_time = (perf_counter() - self._start_time) * 1000
-        self.log.info(f"ready in {ready_time:0.0f} milliseconds")
+        self.log.system(f"ready in {ready_time:0.0f} milliseconds")
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
@@ -2286,6 +2326,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
     async def _on_compose(self) -> None:
+        _rich_traceback_omit = True
         try:
             widgets = [*self.screen._nodes, *compose(self)]
         except TypeError as error:
@@ -2645,17 +2686,44 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen = Screen(id=f"_default")
+            screen: Screen[Any] = Screen(id=f"_default")
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
             await super().on_event(event)
 
         elif isinstance(event, events.InputEvent) and not event.is_forwarded:
+            if not self.app_focus and isinstance(event, (events.Key, events.MouseDown)):
+                self.app_focus = True
             if isinstance(event, events.MouseEvent):
                 # Record current mouse position on App
                 self.mouse_position = Offset(event.x, event.y)
+
+                if isinstance(event, events.MouseDown):
+                    try:
+                        self._mouse_down_widget, _ = self.get_widget_at(
+                            event.x, event.y
+                        )
+                    except NoWidget:
+                        # Shouldn't occur, since at the very least this will find the Screen
+                        self._mouse_down_widget = None
+
                 self.screen._forward_event(event)
+
+                if (
+                    isinstance(event, events.MouseUp)
+                    and self._mouse_down_widget is not None
+                ):
+                    try:
+                        if (
+                            self.get_widget_at(event.x, event.y)[0]
+                            is self._mouse_down_widget
+                        ):
+                            click_event = events.Click.from_event(event)
+                            self.screen._forward_event(click_event)
+                    except NoWidget:
+                        pass
+
             elif isinstance(event, events.Key):
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
@@ -2723,7 +2791,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         _rich_traceback_guard = True
 
-        log(
+        log.system(
             "<action>",
             namespace=namespace,
             action_name=action_name,
@@ -2739,13 +2807,13 @@ class App(Generic[ReturnType], DOMNode):
             if callable(public_method):
                 await invoke(public_method, *params)
                 return True
-            log(
+            log.system(
                 f"<action> {action_name!r} has no target."
                 f" Could not find methods '_action_{action_name}' or 'action_{action_name}'"
             )
         except SkipAction:
             # The action method raised this to explicitly not handle the action
-            log(f"<action> {action_name!r} skipped.")
+            log.system(f"<action> {action_name!r} skipped.")
         return False
 
     async def _broker_event(
@@ -2790,7 +2858,7 @@ class App(Generic[ReturnType], DOMNode):
             await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log("shutdown request")
+        log.system("shutdown request")
         await self._close_messages()
 
     async def _on_resize(self, event: events.Resize) -> None:
@@ -2798,6 +2866,16 @@ class App(Generic[ReturnType], DOMNode):
         self.screen.post_message(event)
         for screen in self._background_screens:
             screen.post_message(event)
+
+    async def _on_app_focus(self, event: events.AppFocus) -> None:
+        """App has focus."""
+        # Required by textual-web to manage focus in a web page.
+        self.app_focus = True
+
+    async def _on_app_blur(self, event: events.AppBlur) -> None:
+        """App has lost focus."""
+        # Required by textual-web to manage focus in a web page.
+        self.app_focus = False
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
@@ -2955,6 +3033,15 @@ class App(Generic[ReturnType], DOMNode):
 
         await root._close_messages(wait=True)
         self._unregister(root)
+
+    def _watch_app_focus(self, focus: bool) -> None:
+        """Respond to changes in app focus."""
+        if focus:
+            focused = self.screen.focused
+            self.screen.set_focus(None)
+            self.screen.set_focus(focused)
+        else:
+            self.screen.set_focus(None)
 
     async def action_check_bindings(self, key: str) -> None:
         """An [action](/guide/actions) to handle a key press using the binding system.

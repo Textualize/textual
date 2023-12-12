@@ -150,10 +150,10 @@ class StylesCache:
                 and hover_style._meta
                 and "@click" in hover_style.meta
             ):
-                link_hover_style = widget.link_hover_style
-                if link_hover_style:
+                link_style_hover = widget.link_style_hover
+                if link_style_hover:
                     strips = [
-                        strip.style_links(hover_style.link_id, link_hover_style)
+                        strip.style_links(hover_style.link_id, link_style_hover)
                         for strip in strips
                     ]
 

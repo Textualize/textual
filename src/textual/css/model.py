@@ -106,7 +106,7 @@ class Selector:
         return True
 
     def _check_id(self, node: DOMNode) -> bool:
-        if not node.id == self.name:
+        if node.id != self.name:
             return False
         if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
@@ -161,6 +161,7 @@ class RuleSet:
     is_default_rules: bool = False
     tie_breaker: int = 0
     selector_names: set[str] = field(default_factory=set)
+    pseudo_classes: set[str] = field(default_factory=set)
 
     def __hash__(self):
         return id(self)
@@ -205,31 +206,20 @@ class RuleSet:
         type_type = SelectorType.TYPE
         universal_type = SelectorType.UNIVERSAL
 
-        update_selectors = self.selector_names.update
+        add_selector = self.selector_names.add
+        add_pseudo_classes = self.pseudo_classes.update
 
         for selector_set in self.selector_set:
-            update_selectors(
-                "*"
-                for selector in selector_set.selectors
-                if selector.type == universal_type
-            )
-            update_selectors(
-                selector.name
-                for selector in selector_set.selectors
-                if selector.type == type_type
-            )
-            update_selectors(
-                f".{selector.name}"
-                for selector in selector_set.selectors
-                if selector.type == class_type
-            )
-            update_selectors(
-                f"#{selector.name}"
-                for selector in selector_set.selectors
-                if selector.type == id_type
-            )
-            update_selectors(
-                f":{pseudo_class}"
-                for selector in selector_set.selectors
-                for pseudo_class in selector.pseudo_classes
-            )
+            for selector in selector_set.selectors:
+                add_pseudo_classes(selector.pseudo_classes)
+
+            selector = selector_set.selectors[-1]
+            selector_type = selector.type
+            if selector_type == universal_type:
+                add_selector("*")
+            elif selector_type == type_type:
+                add_selector(selector.name)
+            elif selector_type == class_type:
+                add_selector(f".{selector.name}")
+            elif selector_type == id_type:
+                add_selector(f"#{selector.name}")

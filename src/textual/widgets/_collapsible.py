@@ -99,6 +99,42 @@ class Collapsible(Widget):
     }
     """
 
+    class Toggled(Message):
+        """Parent class subclassed by `Collapsible` messages.
+
+        Can be handled with `on(Collapsible.Toggled)` if you want to handle expansions
+        and collapsed in the same way, or you can handle the specific events individually.
+        """
+
+        def __init__(self, collapsible: Collapsible) -> None:
+            """Create an instance of the message.
+
+            Args:
+                collapsible: The `Collapsible` widget that was toggled.
+            """
+            self.collapsible: Collapsible = collapsible
+            """The collapsible that was toggled."""
+            super().__init__()
+
+        @property
+        def control(self) -> Collapsible:
+            """An alias for [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible]."""
+            return self.collapsible
+
+    class Expanded(Toggled):
+        """Event sent when the `Collapsible` widget is expanded.
+
+        Can be handled using `on_collapsible_expanded` in a subclass of
+        [`Collapsible`][textual.widgets.Collapsible] or in a parent widget in the DOM.
+        """
+
+    class Collapsed(Toggled):
+        """Event sent when the `Collapsible` widget is collapsed.
+
+        Can be handled using `on_collapsible_collapsed` in a subclass of
+        [`Collapsible`][textual.widgets.Collapsible] or in a parent widget in the DOM.
+        """
+
     class Contents(Container):
         DEFAULT_CSS = """
         Contents {
@@ -143,9 +179,13 @@ class Collapsible(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
-    def on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
+    def _on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
+        if self.collapsed:
+            self.post_message(self.Collapsed(self))
+        else:
+            self.post_message(self.Expanded(self))
 
     def _watch_collapsed(self, collapsed: bool) -> None:
         """Update collapsed state when reactive is changed."""
@@ -159,7 +199,7 @@ class Collapsible(Widget):
         except NoMatches:
             pass
 
-    def _on_mount(self) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         """Initialise collapsed state."""
         self._update_collapsed(self.collapsed)
 

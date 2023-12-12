@@ -90,7 +90,7 @@ tables](https://rich.readthedocs.io/en/latest/tables.html):
 - [OptionList.OptionHighlighted][textual.widgets.OptionList.OptionHighlighted]
 - [OptionList.OptionSelected][textual.widgets.OptionList.OptionSelected]
 
-Both of the messages above inherit from the common base [`OptionList`][textual.widgets.OptionList.OptionMessage], so refer to its documentation to see what attributes are available.
+Both of the messages above inherit from the common base [`OptionList.OptionMessage`][textual.widgets.OptionList.OptionMessage], so refer to its documentation to see what attributes are available.
 
 ## Bindings
 

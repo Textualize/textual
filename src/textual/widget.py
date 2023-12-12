@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import wait
+from asyncio import create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -37,13 +37,11 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Self
 
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._asyncio import create_task
 from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
@@ -64,6 +62,7 @@ from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
+from .renderables.blank import Blank
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -251,9 +250,9 @@ class Widget(DOMNode):
         link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-hover-background: $accent;
-        link-hover-color: $text;
-        link-hover-style: bold not underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -431,6 +430,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_vertical_scrollbar
 
     @property
@@ -439,6 +440,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_horizontal_scrollbar
 
     @property
@@ -475,6 +478,15 @@ class Widget(DOMNode):
                 break
         return opacity
 
+    def _check_disabled(self) -> bool:
+        """Check if the widget is disabled either explicitly by setting `disabled`,
+        or implicitly by setting `loading`.
+
+        Returns:
+            True if the widget should be disabled.
+        """
+        return self.disabled or self.loading
+
     @property
     def tooltip(self) -> RenderableType | None:
         """Tooltip for the widget, or `None` for no tooltip."""
@@ -487,6 +499,19 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        _rich_traceback_omit = True
+        self._nodes._append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -507,6 +532,17 @@ class Widget(DOMNode):
         else:
             self.app._composed[-1].append(composed)
 
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to display a loading indicator.
+
+        The default implementation will defer to App.get_loading_widget.
+
+        Returns:
+            A widget in place of this widget to indicate a loading.
+        """
+        loading_widget = self.app.get_loading_widget()
+        return loading_widget
+
     def set_loading(self, loading: bool) -> Awaitable:
         """Set or reset the loading state of this widget.
 
@@ -518,13 +554,15 @@ class Widget(DOMNode):
         Returns:
             An optional awaitable.
         """
-        from textual.widgets import LoadingIndicator
 
         if loading:
-            loading_indicator = LoadingIndicator()
-            return loading_indicator.apply(self)
+            loading_indicator = self.get_loading_widget()
+            loading_indicator.add_class("-textual-loading-indicator")
+            await_mount = self.mount(loading_indicator)
+            return await_mount
         else:
-            return LoadingIndicator.clear(self)
+            await_remove = self.query(".-textual-loading-indicator").remove()
+            return await_remove
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
@@ -679,8 +717,6 @@ class Widget(DOMNode):
         Returns:
             Widget locations.
         """
-        assert self.is_container
-
         cache_key = (size, self._nodes._updates)
         cached_result = self._arrangement_cache.get(cache_key)
         if cached_result is not None:
@@ -786,7 +822,6 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-
         # Check for duplicate IDs in the incoming widgets
         ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
         unique_ids = set(ids_to_mount)
@@ -1145,10 +1180,22 @@ class Widget(DOMNode):
                 return self._content_height_cache[1]
 
             renderable = self.render()
-            options = self._console.options.update_width(width).update(highlight=False)
-            segments = self._console.render(renderable, options)
-            # Cheaper than counting the lines returned from render_lines!
-            height = sum([text.count("\n") for text, _, _ in segments])
+            if isinstance(renderable, Text):
+                height = len(
+                    renderable.wrap(
+                        self._console,
+                        width,
+                        no_wrap=renderable.no_wrap,
+                        tab_size=renderable.tab_size or 8,
+                    )
+                )
+            else:
+                options = self._console.options.update_width(width).update(
+                    highlight=False
+                )
+                segments = self._console.render(renderable, options)
+                # Cheaper than counting the lines returned from render_lines!
+                height = sum([text.count("\n") for text, _, _ in segments])
             self._content_height_cache = (cache_key, height)
 
         return height
@@ -1551,7 +1598,12 @@ class Widget(DOMNode):
     @property
     def focusable(self) -> bool:
         """Can this widget currently be focused?"""
-        return self.can_focus and self.visible and not self._self_or_ancestors_disabled
+        return (
+            not self.loading
+            and self.can_focus
+            and self.visible
+            and not self._self_or_ancestors_disabled
+        )
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:
@@ -1731,7 +1783,7 @@ class Widget(DOMNode):
         return style
 
     @property
-    def link_hover_style(self) -> Style:
+    def link_style_hover(self) -> Style:
         """Style of links underneath the mouse cursor.
 
         Returns:
@@ -1739,13 +1791,13 @@ class Widget(DOMNode):
         """
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.link_hover_background
+        hover_background = background + styles.link_background_hover
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.link_hover_color.a)
-            if styles.auto_link_hover_color
-            else styles.link_hover_color
+            hover_background.get_contrast_text(styles.link_color_hover.a)
+            if styles.auto_link_color_hover
+            else styles.link_color_hover
         )
-        style = styles.link_hover_style + Style.from_color(
+        style = styles.link_style_hover + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )
@@ -3069,6 +3121,8 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+        if not self._is_mounted:
+            return self
         if layout:
             self._layout_required = True
             self._stabilize_scrollbar = None
@@ -3112,8 +3166,13 @@ class Widget(DOMNode):
         Returns:
             Any renderable.
         """
-        render: Text | str = "" if self.is_container else self.css_identifier_styled
-        return render
+
+        if self.is_container:
+            if self.styles.layout and self.styles.keyline[0] != "none":
+                return self._layout.render_keyline(self)
+            else:
+                return Blank(self.background_colors[1])
+        return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
@@ -3239,18 +3298,18 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [`events.Print`][textual.events.Print] message.
 
-        Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
+        Call [`end_capture_print`][textual.widget.Widget.end_capture_print] to disable print capture.
 
         Args:
-            stdout: Capture stdout.
-            stderr: Capture stderr.
+            stdout: Whether to capture stdout.
+            stderr: Whether to capture stderr.
         """
         self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
-        """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
+        """End print capture (set with [`begin_capture_print`][textual.widget.Widget.begin_capture_print])."""
         self.app.end_capture_print(self)
 
     def check_message_enabled(self, message: Message) -> bool:
@@ -3305,6 +3364,8 @@ class Widget(DOMNode):
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)

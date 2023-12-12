@@ -17,7 +17,7 @@ class SystemCommands(Provider):
         """Handle a request to search for system commands that match the query.
 
         Args:
-            user_input: The user input to be matched.
+            query: The user input to be matched.
 
         Yields:
             Command hits for use in the command palette.

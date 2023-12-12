@@ -49,6 +49,8 @@ class ScrollRight(ScrollMessage, verbose=True):
 class ScrollTo(ScrollMessage, verbose=True):
     """Message sent when click and dragging handle."""
 
+    __slots__ = ["x", "y", "animate"]
+
     def __init__(
         self,
         x: float | None = None,
@@ -221,9 +223,9 @@ class ScrollBar(Widget):
 
     DEFAULT_CSS = """
     ScrollBar {
-        link-hover-color: ;
-        link-hover-background:;
-        link-hover-style: ;
+        link-color-hover: ;
+        link-background-hover:;
+        link-style-hover: ;
         link-color: transparent;
         link-background: transparent;
     }
@@ -315,6 +317,10 @@ class ScrollBar(Widget):
     def action_grab(self) -> None:
         """Begin capturing the mouse cursor."""
         self.capture_mouse()
+
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
+        # We don't want mouse events on the scrollbar bubbling
+        event.stop()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:
