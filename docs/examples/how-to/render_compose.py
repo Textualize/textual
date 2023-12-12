@@ -23,6 +23,8 @@ STOPS = [(i / (len(COLORS) - 1), color) for i, color in enumerate(COLORS)]
 
 
 class Splash(Container):
+    """Custom widget that extends Container."""
+
     DEFAULT_CSS = """
     Splash {
         align: center middle;
@@ -44,6 +46,8 @@ class Splash(Container):
 
 
 class SplashApp(App):
+    """Simple app to show our custom widget."""
+
     def compose(self) -> ComposeResult:
         yield Splash()
 
