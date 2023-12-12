@@ -3121,6 +3121,8 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+        if not self._is_mounted:
+            return self
         if layout:
             self._layout_required = True
             self._stabilize_scrollbar = None
