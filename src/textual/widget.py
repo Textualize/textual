@@ -3161,7 +3161,17 @@ class Widget(DOMNode):
         return await_remove
 
     def render(self) -> RenderableType:
-        """Get renderable for widget.
+        """Get text or Rich renderable for this widget.
+
+        Implement this for custom widgets.
+
+        Example:
+            ```python
+            from textual.app import RenderableType
+
+            def render(self) -> RenderableType:
+                return "Welcome to [bold red]Textual[/]!"
+            ```
 
         Returns:
             Any renderable.
