@@ -1209,11 +1209,10 @@ class DOMNode(MessagePump):
 
         Should be called whenever CSS classes / pseudo classes change.
         """
-        if self._is_mounted:
-            try:
-                self.app.update_styles(self)
-            except NoActiveAppError:
-                pass
+        try:
+            self.app.update_styles(self)
+        except NoActiveAppError:
+            pass
 
     def add_class(self, *class_names: str, update: bool = True) -> Self:
         """Add class names to this Node.
