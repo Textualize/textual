@@ -22,7 +22,7 @@ class BrokenClassesApp(App[None]):
     """
 
     def compose(self) -> ComposeResult:
-        yield Static(f"This should have a red background\n\nTextual {__version__}")
+        yield Static("This should have a red background")
 
     def on_mount(self) -> None:
         self.screen.set_class(True, "go-red")
