@@ -103,7 +103,7 @@ def test_input_validation(snap_compare):
 
 def test_input_suggestions(snap_compare):
     async def run_before(pilot):
-        pilot.app.query_one(Input).cursor_blink = False
+        pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before
@@ -348,6 +348,12 @@ def test_selection_list_tuples(snap_compare):
 def test_select_expanded(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "select_widget.py", press=["tab", "enter"]
+    )
+
+
+def test_select_from_values_expanded(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_from_values_widget.py", press=["tab", "enter"]
     )
 
 
@@ -789,9 +795,6 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
-)
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -843,9 +846,6 @@ I am the final line."""
     )
 
 
-@pytest.mark.skipif(
-    sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher"
-)
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
 )
@@ -898,8 +898,10 @@ def test_unscoped_css(snap_compare) -> None:
 def test_big_buttons(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")
 
+
 def test_keyline(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "keyline.py")
+
 
 def test_button_outline(snap_compare):
     """Outline style rendered incorrectly when applied to a `Button` widget.
@@ -933,4 +935,22 @@ def test_vertical_min_height(snap_compare):
 def test_vertical_max_height(snap_compare):
     """Test vertical max height takes border in to account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
+
+
+def test_max_height_100(snap_compare):
+    """Test vertical max height takes border in to account."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
+
+def test_loading_indicator(snap_compare):
+    """Test loading indicator."""
+    # https://github.com/Textualize/textual/pull/3816
+    assert snap_compare(SNAPSHOT_APPS_DIR / "loading.py", press=["space"])
+
+
+def test_loading_indicator_disables_widget(snap_compare):
+    """Test loading indicator disabled widget."""
+    # https://github.com/Textualize/textual/pull/3816
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "loading.py", press=["space", "down", "down", "space"]
+    )
 

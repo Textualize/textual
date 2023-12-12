@@ -128,7 +128,7 @@ The following example shows `Collapsible` widgets with custom expand/collapse sy
 
 ## Messages
 
-This widget posts no messages.
+- [Collapsible.Toggled][textual.widgets.Collapsible.Toggled]
 
 ## Bindings
 

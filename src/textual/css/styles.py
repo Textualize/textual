@@ -170,10 +170,10 @@ class RulesMap(TypedDict, total=False):
     link_background: Color
     link_style: Style
 
-    link_hover_color: Color
-    auto_link_hover_color: bool
-    link_hover_background: Color
-    link_hover_style: Style
+    link_color_hover: Color
+    auto_link_color_hover: bool
+    link_background_hover: Color
+    link_style_hover: Style
 
     auto_border_title_color: bool
     border_title_color: Color
@@ -227,8 +227,8 @@ class StylesBase(ABC):
         "scrollbar_background_active",
         "link_color",
         "link_background",
-        "link_hover_color",
-        "link_hover_background",
+        "link_color_hover",
+        "link_background_hover",
     }
 
     node: DOMNode | None = None
@@ -339,10 +339,10 @@ class StylesBase(ABC):
     link_background = ColorProperty("transparent")
     link_style = StyleFlagsProperty()
 
-    link_hover_color = ColorProperty("transparent")
-    auto_link_hover_color = BooleanProperty(False)
-    link_hover_background = ColorProperty("transparent")
-    link_hover_style = StyleFlagsProperty()
+    link_color_hover = ColorProperty("transparent")
+    auto_link_color_hover = BooleanProperty(False)
+    link_background_hover = ColorProperty("transparent")
+    link_style_hover = StyleFlagsProperty()
 
     auto_border_title_color = BooleanProperty(default=False)
     border_title_color = ColorProperty(Color(255, 255, 255, 0))
@@ -757,7 +757,7 @@ class Styles(StylesBase):
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-        rules = [
+        rules: list[tuple[str, Specificity6, Any]] = [
             (
                 rule_name,
                 (
@@ -1024,12 +1024,12 @@ class Styles(StylesBase):
         if "link_style" in rules:
             append_declaration("link-style", str(self.link_style))
 
-        if "link_hover_color" in rules:
-            append_declaration("link-hover-color", self.link_hover_color.css)
-        if "link_hover_background" in rules:
-            append_declaration("link-hover-background", self.link_hover_background.css)
-        if "link_hover_style" in rules:
-            append_declaration("link-hover-style", str(self.link_hover_style))
+        if "link_color_hover" in rules:
+            append_declaration("link-color-hover", self.link_color_hover.css)
+        if "link_background_hover" in rules:
+            append_declaration("link-background-hover", self.link_background_hover.css)
+        if "link_style_hover" in rules:
+            append_declaration("link-style-hover", str(self.link_style_hover))
 
         if "border_title_color" in rules:
             append_declaration("title-color", self.border_title_color.css)

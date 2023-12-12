@@ -9,8 +9,8 @@ from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
-from textual.widget import MountError, NotAContainer, PseudoClasses, Widget
-from textual.widgets import Label, LoadingIndicator, Static
+from textual.widget import MountError, PseudoClasses, Widget
+from textual.widgets import Label, LoadingIndicator
 
 
 @pytest.mark.parametrize(
@@ -396,17 +396,28 @@ async def test_is_mounted_property():
         assert widget.is_mounted is True
 
 
-async def test_not_allow_children():
-    """Regression test for https://github.com/Textualize/textual/pull/3758"""
-
-    class TestAppExpectFail(App):
+async def test_mount_error_not_widget():
+    class NotWidgetApp(App):
         def compose(self) -> ComposeResult:
-            # Statics don't have children, so this should error
-            with Static():
-                yield Label("foo")
+            yield {}
 
-    app = TestAppExpectFail()
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass
 
-    with pytest.raises(NotAContainer):
+
+async def test_mount_error_bad_widget():
+    class DaftWidget(Widget):
+        def __init__(self):
+            # intentionally missing super()
+            pass
+
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield DaftWidget()
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
         async with app.run_test():
             pass

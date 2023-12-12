@@ -10,11 +10,11 @@ There are a number of styles which influence the appearance of these links withi
 | Property                                              | Description                                                       |
 |-------------------------------------------------------|-------------------------------------------------------------------|
 | [`link-background`](./link_background.md)             | The background color of the link text.                            |
+| [`link-background-hover`](./link_background_hover.md) | The background color of the link text when the cursor is over it. |
 | [`link-color`](./link_color.md)                       | The color of the link text.                                       |
-| [`link-hover-background`](./link_hover_background.md) | The background color of the link text when the cursor is over it. |
-| [`link-hover-color`](./link_hover_color.md)           | The color of the link text when the cursor is over it.            |
-| [`link-hover-style`](./link_hover_style.md)           | The style of the link text when the cursor is over it.            |
+| [`link-color-hover`](./link_color_hover.md)           | The color of the link text when the cursor is over it.            |
 | [`link-style`](./link_style.md)                       | The style of the link text (e.g. underline).                      |
+| [`link-style-hover`](./link_style_hover.md)           | The style of the link text when the cursor is over it.            |
 
 ## Syntax
 
@@ -25,11 +25,11 @@ There are a number of styles which influence the appearance of these links withi
 
 <a href="./link_style">link-style</a>: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
-<a href="./link_hover_background">link-hover-background</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./link_background_hover">link-background-hover</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./link_hover_color">link-hover-color</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./link_color_hover">link-color-hover</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./link_hover_style">link-hover-style</a>: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
+<a href="./link_style_hover">link-style-hover</a>: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 Visit each style's reference page to learn more about how the values are used.

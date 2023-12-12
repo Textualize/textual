@@ -595,20 +595,19 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
-    def _selector_names(self) -> list[str]:
+    def _selector_names(self) -> set[str]:
         """Get a set of selectors applicable to this widget.
 
         Returns:
             Set of selector names.
         """
-        selectors: list[str] = [
+        selectors: set[str] = {
             "*",
             *(f".{class_name}" for class_name in self._classes),
-            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
             *self._css_types,
-        ]
+        }
         if self._id is not None:
-            selectors.append(f"#{self._id}")
+            selectors.add(f"#{self._id}")
         return selectors
 
     @property
@@ -1176,19 +1175,20 @@ class DOMNode(MessagePump):
         """
         return self._classes.issuperset(class_names)
 
-    def set_class(self, add: bool, *class_names: str) -> Self:
+    def set_class(self, add: bool, *class_names: str, update: bool = True) -> Self:
         """Add or remove class(es) based on a condition.
 
         Args:
             add: Add the classes if True, otherwise remove them.
+            update: Also update styles.
 
         Returns:
             Self.
         """
         if add:
-            self.add_class(*class_names)
+            self.add_class(*class_names, update=update)
         else:
-            self.remove_class(*class_names)
+            self.remove_class(*class_names, update=update)
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> Self:
@@ -1209,16 +1209,18 @@ class DOMNode(MessagePump):
 
         Should be called whenever CSS classes / pseudo classes change.
         """
-        try:
-            self.app.update_styles(self)
-        except NoActiveAppError:
-            pass
+        if self._is_mounted:
+            try:
+                self.app.update_styles(self)
+            except NoActiveAppError:
+                pass
 
-    def add_class(self, *class_names: str) -> Self:
+    def add_class(self, *class_names: str, update: bool = True) -> Self:
         """Add class names to this Node.
 
         Args:
             *class_names: CSS class names to add.
+            update: Also update styles.
 
         Returns:
             Self.
@@ -1228,14 +1230,16 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if update:
+            self._update_styles()
         return self
 
-    def remove_class(self, *class_names: str) -> Self:
+    def remove_class(self, *class_names: str, update: bool = True) -> Self:
         """Remove class names from this Node.
 
         Args:
             *class_names: CSS class names to remove.
+            update: Also update styles.
 
         Returns:
             Self.
@@ -1245,7 +1249,8 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if update:
+            self._update_styles()
         return self
 
     def toggle_class(self, *class_names: str) -> Self:
