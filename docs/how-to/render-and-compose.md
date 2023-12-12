@@ -12,7 +12,8 @@ In this article we will clarify the differences, and use both these methods to b
 Render and compose are easy to confuse because they both ultimately define what a widget will look like, but they have quite different uses. 
 
 The `render` method on a widget returns a [Rich](https://rich.readthedocs.io/en/latest/) renderable, which is anything you could print with Rich.
-The simplest renderable is just text; so `render()` methods often return a string to display inside the widget, but could equally return a [`Text`](https://rich.readthedocs.io/en/latest/text.html) instance, a [`Table`](https://rich.readthedocs.io/en/latest/tables.html), or anything else from Rich (or third party library).
+The simplest renderable is just text; so `render()` methods often return a string, but could equally return a [`Text`](https://rich.readthedocs.io/en/latest/text.html) instance, a [`Table`](https://rich.readthedocs.io/en/latest/tables.html), or anything else from Rich (or third party library).
+Whatever is returned from `render()` will be combined with any styles from CSS and displayed within the widget's borders.
 
 The `compose` method is used to build [*compound* widgets](../guide/widgets.md#compound-widgets) (widgets composed of other widgets).
 
