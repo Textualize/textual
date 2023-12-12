@@ -716,8 +716,8 @@ class Styles(StylesBase):
         node = self.node
         if node is None or not node._is_mounted:
             return
-        if parent and node.parent:
-            node.parent.refresh()
+        if parent and node._parent is not None:
+            node._parent.refresh()
         node.refresh(layout=layout)
         if children:
             for child in node.walk_children(with_self=False, reverse=True):
@@ -758,12 +758,14 @@ class Styles(StylesBase):
         Returns:
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
+
         is_important = self.important.__contains__
+        default_rules = 0 if is_default_rules else 1
         rules: list[tuple[str, Specificity6, Any]] = [
             (
                 rule_name,
                 (
-                    0 if is_default_rules else 1,
+                    default_rules,
                     1 if is_important(rule_name) else 0,
                     *specificity,
                     tie_breaker,

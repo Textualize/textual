@@ -448,7 +448,7 @@ class Stylesheet:
             for name in rules_map.keys() & node._selector_names
             for rule in rules_map[name]
         }
-        rules = [rule for rule in reversed(self.rules) if rule in limit_rules]
+        rules = list(filter(limit_rules.__contains__, reversed(self.rules)))
 
         # Collect the rules defined in the stylesheet
         node._has_hover_style = any("hover" in rule.pseudo_classes for rule in rules)
