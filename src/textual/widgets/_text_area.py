@@ -27,6 +27,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
 )
+from textual.document._wrapped_document import WrappedDocument
 from textual.expand_tabs import expand_tabs_inline
 
 if TYPE_CHECKING:
@@ -331,6 +332,9 @@ TextArea {
 
         self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
+
+        self.wrapped_document = WrappedDocument(self.document)
+        """The wrapped view of the document."""
 
         self._theme: TextAreaTheme | None = None
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
@@ -656,6 +660,7 @@ TextArea {
             document = Document(text)
 
         self.document = document
+        self.wrapped_document = WrappedDocument(document)
         self._build_highlight_map()
 
     @property
@@ -686,6 +691,17 @@ TextArea {
         self.move_cursor((0, 0))
         self._refresh_size()
 
+    def _on_resize(self) -> None:
+        self._rewrap()
+
+    def _watch_wrap(self) -> None:
+        self._rewrap()
+
+    def _rewrap(self) -> None:
+        width, _ = self.size
+        self.wrapped_document.wrap(width)
+        log.debug(f"re-wrapping at width {width!r}")
+
     def load_document(self, document: DocumentBase) -> None:
         """Load a document into the TextArea.
 
@@ -695,6 +711,7 @@ TextArea {
         self.document = document
         self.move_cursor((0, 0))
         self._refresh_size()
+        self._rewrap()
 
     @property
     def is_syntax_aware(self) -> bool:

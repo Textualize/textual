@@ -20,7 +20,6 @@ TEXT = """\
 def make_navigator(text, width):
     document = Document(text)
     wrapped_document = WrappedDocument(document, width)
-    wrapped_document.wrap()
     navigator = DocumentNavigator(wrapped_document)
     return navigator
 

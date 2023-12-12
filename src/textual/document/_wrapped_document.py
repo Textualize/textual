@@ -37,15 +37,16 @@ class WrappedDocument:
         """Maps line indices to the offsets within the line where wrapping
         breaks should be added."""
 
-        self._offset_to_document_line: list[int] = []
-        """Allows us to quickly go from a y-offset within the wrapped document
-        to the index of the line in the raw document."""
+        self.wrap(width)
 
-    def wrap(self) -> None:
-        """Wrap and cache all lines in the document."""
+    def wrap(self, width: int) -> None:
+        """Wrap and cache all lines in the document.
+
+        Args:
+            width: The width to wrap at.
+        """
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
-        width = self._width
 
         for line in self.document.lines:
             wrap_offsets = divide_line(line, width) if width else []

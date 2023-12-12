@@ -10,7 +10,6 @@ SIMPLE_TEXT = "123 4567\n12345\n123456789\n"
 def test_wrap():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     assert wrapped_document.lines == [
         ["123 ", "4567"],
@@ -23,7 +22,6 @@ def test_wrap():
 def test_wrap_empty_document():
     document = Document("")
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     assert wrapped_document.lines == [[""]]
 
@@ -31,7 +29,6 @@ def test_wrap_empty_document():
 def test_wrap_width_zero_no_wrapping():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=0)
-    wrapped_document.wrap()
 
     assert wrapped_document.lines == [
         ["123 4567"],
@@ -45,7 +42,6 @@ def test_refresh_range():
     """The post-edit content is not wrapped."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     start_location = (1, 0)
     old_end_location = (3, 0)
@@ -65,7 +61,6 @@ def test_refresh_range_new_text_wrapped():
     """The post-edit content itself must be wrapped."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     start_location = (1, 0)
     old_end_location = (3, 0)
@@ -90,7 +85,6 @@ def test_refresh_range_wrapping_at_previously_unavailable_range():
     """When we insert new content at the end of the document, ensure it wraps correctly."""
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     edit_result = document.replace_range((3, 0), (3, 0), "012 3456\n78 90123\n45")
     wrapped_document.refresh_range((3, 0), (3, 0), edit_result.end_location)
@@ -108,7 +102,6 @@ def test_refresh_range_wrapping_at_previously_unavailable_range():
 def test_refresh_range_wrapping_disabled_previously_unavailable_range():
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=0)  # wrapping disabled
-    wrapped_document.wrap()
 
     edit_result = document.replace_range((3, 0), (3, 0), "012 3456\n78 90123\n45")
     wrapped_document.refresh_range((3, 0), (3, 0), edit_result.end_location)
@@ -140,7 +133,6 @@ def test_refresh_range_wrapping_disabled_previously_unavailable_range():
 def test_offset_to_location_wrapping_enabled(offset, location):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     assert wrapped_document.offset_to_location(offset, 2) == location
 
@@ -160,7 +152,6 @@ def test_offset_to_location_wrapping_enabled(offset, location):
 def test_offset_to_location_wrapping_disabled(offset, location):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=0)
-    wrapped_document.wrap()
 
     assert wrapped_document.offset_to_location(offset, 4) == location
 
@@ -169,7 +160,6 @@ def test_offset_to_location_wrapping_disabled(offset, location):
 def test_offset_to_location_invalid_offset_raises_exception(offset):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     with pytest.raises(ValueError):
         wrapped_document.offset_to_location(offset, 10)
@@ -186,7 +176,6 @@ def test_offset_to_location_invalid_offset_raises_exception(offset):
 def test_get_offsets(line_index, offsets):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     assert wrapped_document.get_offsets(line_index) == offsets
 
@@ -194,7 +183,6 @@ def test_get_offsets(line_index, offsets):
 def test_get_offsets_no_wrapping():
     document = Document("abc")
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     assert wrapped_document.get_offsets(0) == []
 
@@ -203,7 +191,6 @@ def test_get_offsets_no_wrapping():
 def test_get_offsets_invalid_line_index(line_index):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
-    wrapped_document.wrap()
 
     with pytest.raises(ValueError):
         wrapped_document.get_offsets(line_index)
