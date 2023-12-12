@@ -774,16 +774,28 @@ TextArea {
         Returns:
             A rendered line.
         """
+
         document = self.document
+        wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
 
         # Account for how much the TextArea is scrolled.
-        line_index = widget_y + scroll_y
+        y_offset = widget_y + scroll_y
+        offset = Offset(0, y_offset)
 
-        # Render the lines beyond the valid line numbers
-        out_of_bounds = line_index >= document.line_count
+        # If we're beyond the height of the document, render blank lines
+        out_of_bounds = y_offset >= wrapped_document.height
         if out_of_bounds:
             return Strip.blank(self.size.width)
+
+        # Get the line corresponding to this offset
+        line_index, _ = wrapped_document.offset_to_location(
+            offset, tab_width=self.indent_width
+        )
+
+        # TODO: We'll need to do an offset -> wrapped_line cache to avoid doing a lot of work here.
+        #  Use document.edit_count in the cache key.
+        wrap_offsets = wrapped_document.get_offsets(line_index)
 
         theme = self._theme
 

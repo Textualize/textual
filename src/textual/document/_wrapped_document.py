@@ -19,39 +19,49 @@ class WrappedDocument:
     def __init__(
         self,
         document: DocumentBase,
-        width: int = 0,
     ) -> None:
         """Construct a WrappedDocument.
 
+        By default, a WrappedDocument is wrapped with width=0 (no wrapping).
+        To wrap the document, use the wrap() method.
+
         Args:
             document: The document to wrap.
-            width: The cell-width to wrap at. 0 for no wrapping.
         """
         self.document = document
         """The document wrapping is performed on."""
-
-        self._width = width
-        """The maximum cell-width per line."""
 
         self._wrap_offsets: list[list[int]] = []
         """Maps line indices to the offsets within the line where wrapping
         breaks should be added."""
 
-        self.wrap(width)
+        self._offset_map: dict[int, tuple[int, int]] = {}
+        """Maps y_offsets (from the top of the document) to (line_index, vertical offset within
+        that wrapped line) tuples."""
+
+        self.wrap(0)
 
     def wrap(self, width: int) -> None:
         """Wrap and cache all lines in the document.
 
         Args:
-            width: The width to wrap at.
+            width: The width to wrap at. 0 for no wrapping.
         """
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
+        offset_map = {}
+        current_offset = 0
 
-        for line in self.document.lines:
+        for line_index, line in enumerate(self.document.lines):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
+            # TODO - build up the mapping of current_offset -> line_index
 
+            for _ in range(len(wrap_offsets) + 1):
+                offset_map[current_offset] = line_index
+                current_offset += 1
+
+        self._offset_map = offset_map
         self._wrap_offsets = new_wrap_offsets
 
     @property
@@ -61,13 +71,22 @@ class WrappedDocument:
         Each index in the returned list represents a line index in the raw
         document. The list[str] at each index is the content of the raw document line
         split into multiple lines via wrapping.
+
+        Returns:
+            A list of lines from the wrapped version of the document.
         """
         wrapped_lines = []
         append = wrapped_lines.append
         for line_index, line in enumerate(self.document.lines):
             divided = Text(line).divide(self._wrap_offsets[line_index])
             append([section.plain for section in divided])
+
         return wrapped_lines
+
+    @property
+    def height(self) -> int:
+        """The height of the wrapped document."""
+        return sum(len(offsets) + 1 for offsets in self._wrap_offsets)
 
     def refresh_range(
         self,
@@ -95,6 +114,9 @@ class WrappedDocument:
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
         width = self._width
+
+        # TODO- update the offset map here too
+
         for line_index, line in enumerate(new_lines, start_row):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
@@ -105,7 +127,7 @@ class WrappedDocument:
 
     def offset_to_location(self, offset: Offset, tab_width: int) -> Location:
         """Given an offset within the wrapped/visual display of the document,
-        return the corresponding line index.
+        return the corresponding location in the document.
 
         Args:
             offset: The y-offset within the document.
@@ -120,7 +142,7 @@ class WrappedDocument:
         """
         x, y = offset
         if x < 0 or y < 0:
-            raise ValueError("Offset must be positive.")
+            raise ValueError("Offset must be non-negative.")
 
         if not self._width:
             # No wrapping, so we directly map offset to location and clamp.
@@ -130,19 +152,23 @@ class WrappedDocument:
 
         # Find the line corresponding to the given y offset in the wrapped document.
         current_offset = 0
+        get_target_document_column = self.get_target_document_column
         for line_index, line_offsets in enumerate(self._wrap_offsets):
             next_offset = current_offset + len(line_offsets) + 1
             if next_offset > y:
                 # We've found the vertical offset.
-                return line_index, self.get_target_document_column(
+                location = line_index, get_target_document_column(
                     line_index, x, y - current_offset, tab_width
                 )
+                break
             current_offset = next_offset
+        else:
+            location = len(self._wrap_offsets) - 1, get_target_document_column(
+                -1, x, -1, tab_width
+            )
 
         # Offset doesn't match any line => land on bottom wrapped line
-        return len(self._wrap_offsets) - 1, self.get_target_document_column(
-            -1, x, -1, tab_width
-        )
+        return location
 
     def get_target_document_column(
         self,
