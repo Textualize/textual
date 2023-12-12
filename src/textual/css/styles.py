@@ -758,7 +758,6 @@ class Styles(StylesBase):
         Returns:
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
-
         is_important = self.important.__contains__
         default_rules = 0 if is_default_rules else 1
         rules: list[tuple[str, Specificity6, Any]] = [
