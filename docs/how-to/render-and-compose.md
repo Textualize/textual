@@ -7,10 +7,9 @@ In this article we will clarify the differences, and use both these methods to b
 <iframe width="1280" height="922" src="https://www.youtube.com/embed/dYU7jHyabX8" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 
+## Which method to use?
 
 Render and compose are easy to confuse because they both ultimately define what a widget will look like, but they have quite different uses. 
-
-## Which method to use?
 
 The `render` method on a widget returns a [Rich](https://rich.readthedocs.io/en/latest/) renderable, which is anything you could print with Rich.
 The simplest renderable is just text; so `render()` methods often return a string to display inside the widget, but could equally return a [`Text`](https://rich.readthedocs.io/en/latest/text.html) instance, a [`Table`](https://rich.readthedocs.io/en/latest/tables.html), or anything else from Rich (or third party library).
