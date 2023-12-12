@@ -287,6 +287,11 @@ class DocumentNavigator:
             # No wrapping to consider, go to the start of the document line
             return line_index, 0
 
+    # TODO - we need to implement methods for going page up and page down
+    #  perhaps we just need a method:  given a location and a y-offset return
+    #  the location corresponding to the y-offset applied to the location in the
+    #  *wrapped* document.
+
     def clamp_reachable(self, location: Location) -> Location:
         """Given a location, return the nearest location that corresponds to a
         reachable location in the document.
