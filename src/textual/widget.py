@@ -3168,9 +3168,11 @@ class Widget(DOMNode):
         Example:
             ```python
             from textual.app import RenderableType
+            from textual.widget import Widget
 
-            def render(self) -> RenderableType:
-                return "Welcome to [bold red]Textual[/]!"
+            class CustomWidget(Widget):
+                def render(self) -> RenderableType:
+                    return "Welcome to [bold red]Textual[/]!"
             ```
 
         Returns:
