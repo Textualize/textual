@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issues were styles wouldn't update if changed in mount.
+- Fixed issues were styles wouldn't update if changed in mount. https://github.com/Textualize/textual/pull/3860
 
 ## [0.45.0] - 2023-12-12
 
