@@ -221,16 +221,6 @@ class ScrollBar(Widget):
     ```
     """
 
-    DEFAULT_CSS = """
-    ScrollBar {
-        link-color-hover: initial;
-        link-background-hover: initial;
-        link-style-hover: initial;
-        link-color: transparent;
-        link-background: transparent;
-    }
-    """
-
     def __init__(
         self, vertical: bool = True, name: str | None = None, *, thickness: int = 1
     ) -> None:
