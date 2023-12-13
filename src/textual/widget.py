@@ -3121,6 +3121,8 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+        if not self._is_mounted:
+            return self
         if layout:
             self._layout_required = True
             self._stabilize_scrollbar = None
@@ -3159,7 +3161,19 @@ class Widget(DOMNode):
         return await_remove
 
     def render(self) -> RenderableType:
-        """Get renderable for widget.
+        """Get text or Rich renderable for this widget.
+
+        Implement this for custom widgets.
+
+        Example:
+            ```python
+            from textual.app import RenderableType
+            from textual.widget import Widget
+
+            class CustomWidget(Widget):
+                def render(self) -> RenderableType:
+                    return "Welcome to [bold red]Textual[/]!"
+            ```
 
         Returns:
             Any renderable.

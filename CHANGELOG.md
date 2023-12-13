@@ -5,7 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+
+## [0.45.1] - 2023-12-12
+
+### Fixed
+
+- Fixed issues were styles wouldn't update if changed in mount. https://github.com/Textualize/textual/pull/3860
+
+## [0.45.0] - 2023-12-12
 
 ### Fixed
 
@@ -15,12 +22,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 
-- Removed renderables/align.py which was no longer used
+- Removed renderables/align.py which was no longer used.
 
 ### Changed
 
 - Dropped ALLOW_CHILDREN flag introduced in 0.43.0 https://github.com/Textualize/textual/pull/3814
 - Widgets with an auto height in an auto height container will now expand if they have no siblings https://github.com/Textualize/textual/pull/3814
+- Breaking change: Removed `limit_rules` from Stylesheet.apply https://github.com/Textualize/textual/pull/3844
 
 ### Added
 
@@ -1525,6 +1533,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.45.1]: https://github.com/Textualize/textual/compare/v0.45.0...v0.45.1
+[0.45.0]: https://github.com/Textualize/textual/compare/v0.44.1...v0.45.0
 [0.44.1]: https://github.com/Textualize/textual/compare/v0.44.0...v0.44.1
 [0.44.0]: https://github.com/Textualize/textual/compare/v0.43.2...v0.44.0
 [0.43.2]: https://github.com/Textualize/textual/compare/v0.43.1...v0.43.2

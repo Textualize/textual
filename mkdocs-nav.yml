@@ -195,6 +195,7 @@ nav:
       - "api/pilot.md"
       - "api/query.md"
       - "api/reactive.md"
+      - "api/renderables.md"
       - "api/screen.md"
       - "api/scrollbar.md"
       - "api/scroll_view.md"
@@ -213,6 +214,7 @@ nav:
       - "how-to/index.md"
       - "how-to/center-things.md"
       - "how-to/design-a-layout.md"
+      - "how-to/render-and-compose.md"
   - "FAQ.md"
   - "roadmap.md"
   - "Blog":
