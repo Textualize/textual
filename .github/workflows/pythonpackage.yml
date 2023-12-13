@@ -17,8 +17,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        # python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-        python-version: ["3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     defaults:
       run:
         shell: bash
@@ -32,7 +31,11 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
       - name: Install dependencies
-        run: poetry install --no-interaction # --extras syntax
+        run: poetry install --no-interaction --extras syntax
+        if: ${{ matrix.python-version != '3.12' }}
+      - name: Install dependencies for 3.12
+        run: poetry install --no-interaction
+        if: ${{ matrix.python-version == '3.12' }}
       - name: Test with pytest
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
