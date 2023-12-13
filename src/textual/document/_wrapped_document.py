@@ -39,7 +39,11 @@ class WrappedDocument:
         """Maps y_offsets (from the top of the document) to (line_index, vertical offset within
         that wrapped line) tuples."""
 
-        self.wrap(0)
+        self._width: int = 0
+        """The width the document is currently wrapped at. This will correspond with
+        the value last passed into the `wrap` method."""
+
+        self.wrap(self._width)
 
     def wrap(self, width: int) -> None:
         """Wrap and cache all lines in the document.
@@ -47,6 +51,7 @@ class WrappedDocument:
         Args:
             width: The width to wrap at. 0 for no wrapping.
         """
+        self._width = width
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
         offset_map = {}
@@ -55,8 +60,6 @@ class WrappedDocument:
         for line_index, line in enumerate(self.document.lines):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
-            # TODO - build up the mapping of current_offset -> line_index
-
             for _ in range(len(wrap_offsets) + 1):
                 offset_map[current_offset] = line_index
                 current_offset += 1
@@ -114,15 +117,19 @@ class WrappedDocument:
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
         width = self._width
-
-        # TODO- update the offset map here too
+        offset_map = {}
+        current_offset = 0
 
         for line_index, line in enumerate(new_lines, start_row):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
+            for _ in range(len(wrap_offsets) + 1):
+                offset_map[current_offset] = line_index
+                current_offset += 1
 
         # Replace the range start -> old with the new wrapped lines
         old_end_row, _ = old_end
+        self._offset_map = offset_map
         self._wrap_offsets[start_row:old_end_row] = new_wrap_offsets
 
     def offset_to_location(self, offset: Offset, tab_width: int) -> Location:

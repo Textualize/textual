@@ -793,8 +793,8 @@ TextArea {
             offset, tab_width=self.indent_width
         )
 
-        # TODO: We'll need to do an offset -> wrapped_line cache to avoid doing a lot of work here.
-        #  Use document.edit_count in the cache key.
+        # TODO: We'll need to do an offset -> wrapped_line cache to avoid doing a lot
+        #  of work here. Use document.edit_count in the cache key.
         wrap_offsets = wrapped_document.get_offsets(line_index)
 
         theme = self._theme
