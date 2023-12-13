@@ -7,7 +7,16 @@ from __future__ import annotations
 
 from functools import partial, wraps
 from inspect import iscoroutinefunction
-from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Callable,
+    Coroutine,
+    TypeVar,
+    Union,
+    cast,
+    overload,
+)
 
 from typing_extensions import ParamSpec, TypeAlias
 
@@ -15,7 +24,6 @@ if TYPE_CHECKING:
     from .worker import Worker
 
 
-FactoryParamSpec = ParamSpec("FactoryParamSpec")
 DecoratorParamSpec = ParamSpec("DecoratorParamSpec")
 ReturnType = TypeVar("ReturnType")
 
@@ -23,7 +31,7 @@ Decorator: TypeAlias = Callable[
     [
         Union[
             Callable[DecoratorParamSpec, ReturnType],
-            Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]],
+            Callable[DecoratorParamSpec, Coroutine[Any, Any, ReturnType]],
         ]
     ],
     Callable[DecoratorParamSpec, "Worker[ReturnType]"],
@@ -36,7 +44,7 @@ class WorkerDeclarationError(Exception):
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
+    method: Callable[DecoratorParamSpec, Coroutine[Any, Any, ReturnType]],
     *,
     name: str = "",
     group: str = "default",
@@ -44,13 +52,13 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
+) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
     ...
 
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, ReturnType],
+    method: Callable[DecoratorParamSpec, ReturnType],
     *,
     name: str = "",
     group: str = "default",
@@ -58,7 +66,7 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
+) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
     ...
 
 
@@ -71,13 +79,13 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Decorator[..., ReturnType]:
+) -> Decorator[DecoratorParamSpec, ReturnType]:
     ...
 
 
 def work(
-    method: Callable[FactoryParamSpec, ReturnType]
-    | Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+    method: Callable[DecoratorParamSpec, ReturnType]
+    | Callable[DecoratorParamSpec, Coroutine[Any, Any, ReturnType]]
     | None = None,
     *,
     name: str = "",
@@ -86,7 +94,10 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
+) -> (
+    Callable[DecoratorParamSpec, Worker[ReturnType]]
+    | Decorator[DecoratorParamSpec, ReturnType]
+):
     """A decorator used to create [workers](/guide/workers).
 
     Args:
@@ -104,7 +115,7 @@ def work(
     def decorator(
         method: (
             Callable[DecoratorParamSpec, ReturnType]
-            | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
+            | Callable[DecoratorParamSpec, Coroutine[Any, Any, ReturnType]]
         )
     ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
