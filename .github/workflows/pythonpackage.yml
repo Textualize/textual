@@ -33,14 +33,14 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction --extras syntax
         if: ${{ matrix.python-version != '3.12' }}
-      - name: Install dependencies for 3.12
+      - name: Install dependencies for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: poetry install --no-interaction
         if: ${{ matrix.python-version == '3.12' }}
       - name: Test with pytest
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
         if: ${{ matrix.python-version != '3.12' }}
-      - name: Test with pytest for 3.12
+      - name: Test with pytest for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax'
         if: ${{ matrix.python-version == '3.12' }}
