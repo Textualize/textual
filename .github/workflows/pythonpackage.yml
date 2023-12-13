@@ -36,11 +36,11 @@ jobs:
       - name: Test with pytest
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
-        if: ${{ matrix.python-version != "3.12" }}
+        if: ${{ matrix.python-version != '3.12' }}
       - name: Test with pytest for 3.12
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax'
-        if: ${{ matrix.python-version == "3.12" }}
+        if: ${{ matrix.python-version == '3.12' }}
       - name: Upload snapshot report
         if: always()
         uses: actions/upload-artifact@v3
