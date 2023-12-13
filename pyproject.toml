@@ -83,6 +83,7 @@ testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "integration_test: marks tests as slow integration tests (deselect with '-m \"not integration_test\"')",
+    "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
 
 [build-system]
