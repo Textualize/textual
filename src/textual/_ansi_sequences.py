@@ -370,6 +370,10 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str] = {
     "\x1bOx": "8",
     "\x1bOy": "9",
     "\x1bOM": (Keys.Enter,),
+    # Foot terminal specific
+    # https://codeberg.org/dnkl/foot/issues/628
+    "\x1b[27;2;13~": (Keys.Enter,),  # Shift+Enter
+    "\x1b[27;5;13~": (Keys.Enter,),  # Ctrl+Enter
 }
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036
