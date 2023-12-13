@@ -32,7 +32,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'poetry'
       - name: Install dependencies
-        run: poetry install --no-interaction --extras syntax
+        run: poetry install --no-interaction # --extras syntax
       - name: Test with pytest
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
