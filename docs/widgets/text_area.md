@@ -57,9 +57,6 @@ text_area.language = "markdown"
 ```
 
 !!! note
-    Syntax highlighting is unavailable on Python 3.7.
-
-!!! note
     More built-in languages will be added in the future. For now, you can [add your own](#adding-support-for-custom-languages).
 
 
