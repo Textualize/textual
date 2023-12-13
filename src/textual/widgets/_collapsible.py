@@ -58,7 +58,7 @@ class CollapsibleTitle(Widget, can_focus=True):
         self.collapsed_symbol = collapsed_symbol
         self.expanded_symbol = expanded_symbol
         self.label = label
-        self.collapse = collapsed
+        self.collapsed = collapsed
 
     class Toggle(Message):
         """Request toggle."""
