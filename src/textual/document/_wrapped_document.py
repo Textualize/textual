@@ -60,8 +60,8 @@ class WrappedDocument:
         for line_index, line in enumerate(self.document.lines):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
-            for _ in range(len(wrap_offsets) + 1):
-                offset_map[current_offset] = line_index
+            for section_y_offset in range(len(wrap_offsets) + 1):
+                offset_map[current_offset] = (line_index, section_y_offset)
                 current_offset += 1
 
         self._offset_map = offset_map
@@ -123,8 +123,8 @@ class WrappedDocument:
         for line_index, line in enumerate(new_lines, start_row):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
-            for _ in range(len(wrap_offsets) + 1):
-                offset_map[current_offset] = line_index
+            for section_y_offset in range(len(wrap_offsets) + 1):
+                offset_map[current_offset] = (line_index, section_y_offset)
                 current_offset += 1
 
         # Replace the range start -> old with the new wrapped lines
@@ -153,22 +153,21 @@ class WrappedDocument:
 
         if not self._width:
             # No wrapping, so we directly map offset to location and clamp.
-            row_index = min(y, len(self._wrap_offsets) - 1)
-            column_index = min(x, len(self.document.get_line(row_index)))
-            return row_index, column_index
+            line_index = min(y, len(self._wrap_offsets) - 1)
+            column_index = min(x, len(self.document.get_line(line_index)))
+            return line_index, column_index
 
         # Find the line corresponding to the given y offset in the wrapped document.
-        current_offset = 0
         get_target_document_column = self.get_target_document_column
-        for line_index, line_offsets in enumerate(self._wrap_offsets):
-            next_offset = current_offset + len(line_offsets) + 1
-            if next_offset > y:
-                # We've found the vertical offset.
-                location = line_index, get_target_document_column(
-                    line_index, x, y - current_offset, tab_width
-                )
-                break
-            current_offset = next_offset
+        offset_data = self._offset_map.get(y)
+        if offset_data is not None:
+            line_index, section_y = offset_data
+            location = line_index, get_target_document_column(
+                line_index,
+                x,
+                section_y,
+                tab_width,
+            )
         else:
             location = len(self._wrap_offsets) - 1, get_target_document_column(
                 -1, x, -1, tab_width

@@ -698,9 +698,10 @@ TextArea {
         self._rewrap()
 
     def _rewrap(self) -> None:
-        width, _ = self.size
-        self.wrapped_document.wrap(width)
-        log.debug(f"re-wrapping at width {width!r}")
+        if self.wrap:
+            width, _ = self.size
+            self.wrapped_document.wrap(width)
+            log.debug(f"re-wrapping at width {width!r}")
 
     def load_document(self, document: DocumentBase) -> None:
         """Load a document into the TextArea.
@@ -761,6 +762,9 @@ TextArea {
 
     def _refresh_size(self) -> None:
         """Update the virtual size of the TextArea."""
+        if self.wrap:
+            return
+
         width, height = self.document.get_size(self.indent_width)
         # +1 width to make space for the cursor resting at the end of the line
         self.virtual_size = Size(width + self.gutter_width + 1, height)
@@ -789,13 +793,7 @@ TextArea {
             return Strip.blank(self.size.width)
 
         # Get the line corresponding to this offset
-        line_index, _ = wrapped_document.offset_to_location(
-            offset, tab_width=self.indent_width
-        )
-
-        # TODO: We'll need to do an offset -> wrapped_line cache to avoid doing a lot
-        #  of work here. Use document.edit_count in the cache key.
-        wrap_offsets = wrapped_document.get_offsets(line_index)
+        line_index, section_offset = wrapped_document._offset_map.get(y_offset)
 
         theme = self._theme
 
@@ -922,6 +920,15 @@ TextArea {
         else:
             gutter = Text("", end="")
 
+        # TODO: Lets not apply the division each time through render_line.
+        #  We should cache sections with the edit counts.
+        wrap_offsets = wrapped_document.get_offsets(line_index)
+
+        # Join and return the gutter and the visible portion of this line
+        if wrap_offsets:
+            sections = line.divide(wrap_offsets)  # TODO cache result with edit count
+            line = sections[section_offset]
+
         # Render the gutter and the text of this line
         console = self.app.console
         gutter_segments = console.render(gutter)
@@ -946,7 +953,6 @@ TextArea {
                 expanded_length, theme.base_style if theme else None
             )
 
-        # Join and return the gutter and the visible portion of this line
         strip = Strip.join([gutter_strip, text_strip]).simplify()
 
         return strip.apply_style(
