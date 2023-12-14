@@ -211,8 +211,7 @@ async def test_tabbed_content_add_before_id():
         assert tabbed_content.tab_count == 2
         assert tabbed_content.active == "initial-1"
         assert [
-            ContentTab.sans_prefix(tab.id)
-            for tab in tabbed_content.query(Tab).results(Tab)
+            ContentTab.sans_prefix(tab.id) for tab in tabbed_content.query(Tab)
         ] == [
             "new-1",
             "initial-1",
