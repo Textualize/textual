@@ -1,4 +1,5 @@
 from urllib.request import Request, urlopen
+from urllib.parse import quote
 
 from rich.text import Text
 
@@ -21,7 +22,7 @@ class WeatherApp(App):
 
     async def on_input_changed(self, message: Input.Changed) -> None:
         """Called when the input changes"""
-        self.update_weather(message.value)
+        self.update_weather(quote(message.value))
 
     @work(exclusive=True, thread=True)
     def update_weather(self, city: str) -> None:
