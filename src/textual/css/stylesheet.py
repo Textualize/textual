@@ -562,23 +562,18 @@ class Stylesheet:
         modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
 
-        current_render_rules = styles.get_render_rules()
-
         # Calculate replacement rules (defaults + new rules)
         new_styles = Styles(node, rules)
         if new_styles == base_styles:
             # Nothing to change, return early
             return
 
-        # New render rules
-        new_render_rules = new_styles.get_render_rules()
-
-        # Some aliases
-        is_animatable = styles.is_animatable
-        get_current_render_rule = current_render_rules.get
-        get_new_render_rule = new_render_rules.get
-
         if animate:
+            current_render_rules = styles.get_render_rules()
+            is_animatable = styles.is_animatable
+            get_current_render_rule = current_render_rules.get
+            new_render_rules = new_styles.get_render_rules()
+            get_new_render_rule = new_render_rules.get
             animator = node.app.animator
             base = node.styles.base
             for key in modified_rule_keys:
