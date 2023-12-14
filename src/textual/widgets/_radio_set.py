@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Optional
+from contextlib import suppress
+from typing import ClassVar, Literal, Optional
 
 import rich.repr
 
@@ -151,9 +152,8 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
     def _on_mount(self, _: Mount) -> None:
         """Perform some processing once mounted in the DOM."""
 
-        # If there are radio buttons, select the first one.
-        if self._nodes:
-            self._selected = 0
+        # If there are radio buttons, select the first available one.
+        self.action_next_button()
 
         # Get all the buttons within us; we'll be doing a couple of things
         # with that list.
@@ -248,24 +248,59 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
         Note that this will wrap around to the end if at the start.
         """
-        if self._nodes:
-            if self._selected == 0:
-                self._selected = len(self.children) - 1
-            elif self._selected is None:
-                self._selected = 0
-            else:
-                self._selected -= 1
+        self._move_selected_button(-1)
 
     def action_next_button(self) -> None:
         """Navigate to the next button in the set.
 
         Note that this will wrap around to the start if at the end.
         """
-        if self._nodes:
-            if self._selected is None or self._selected == len(self._nodes) - 1:
-                self._selected = 0
-            else:
-                self._selected += 1
+        self._move_selected_button(1)
+
+    def _move_selected_button(self, direction: Literal[-1, 1]) -> None:
+        """Move the selected button to the next or previous one.
+
+        Note that this will wrap around the start/end of the button list.
+
+        We compute the available buttons by ignoring the disabled ones and then
+        we induce an ordering by computing the distance to the currently selected one if
+        we start at the selected button and then start moving in the direction indicated.
+
+        For example, if the direction is `1` and self._selected is 2, we have this:
+        selected:     v
+        buttons:  X X X X X X X
+        indices:  0 1 2 3 4 5 6
+        distance: 5 6 0 1 2 3 4
+
+        Args:
+            direction: `1` to move to the next button and `-1` for the previous.
+        """
+
+        candidate_indices = (
+            index
+            for index, button in enumerate(self.children)
+            if not button.disabled and index != self._selected
+        )
+
+        if self._selected is None:
+            with suppress(StopIteration):
+                self._selected = next(candidate_indices)
+        else:
+            selected = self._selected
+
+            def distance(index: int) -> int:
+                """Induce a distance between the given index and the selected button.
+
+                Args:
+                    index: The index of the button to consider.
+
+                Returns:
+                    The distance between the two buttons.
+                """
+                return direction * (index - selected) % len(self.children)
+
+            with suppress(IndexError):
+                self._selected = sorted(candidate_indices, key=distance)[0]
 
     def action_toggle(self) -> None:
         """Toggle the state of the currently-selected button."""
