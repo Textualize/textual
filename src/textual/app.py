@@ -1449,8 +1449,14 @@ class App(Generic[ReturnType], DOMNode):
         except RuntimeError:
             event_loop = None
 
+        def runapp_task_complete(t):
+            self.log(f"runapp task complete")
+
         if event_loop and event_loop.is_running():
-            event_loop.create_task(run_app())
+            task = event_loop.create_task(run_app())
+            # the callback adds a strong reference to the task,
+            # so it won't be garbage collected
+            task.add_done_callback(runapp_task_complete)
         else:
             asyncio.run(run_app())
 
