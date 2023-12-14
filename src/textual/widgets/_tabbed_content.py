@@ -534,7 +534,7 @@ class TabbedContent(Widget):
         """
         return isinstance(tabs, ContentTabs) and tabs.tabbed_content is self
 
-    def _watch_active(self, old_active: str, active: str) -> None:
+    def _watch_active(self, active: str) -> None:
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
