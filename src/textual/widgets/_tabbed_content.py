@@ -553,6 +553,9 @@ class TabbedContent(Widget):
 
         Returns:
             The Tab associated with the ID.
+
+        Raises:
+            ValueError: Raised if no ID was available.
         """
         if target_id := pane_id if isinstance(pane_id, str) else pane_id.id:
             return self.get_child_by_type(ContentTabs).get_content_tab(target_id)
