@@ -560,9 +560,6 @@ class Stylesheet:
 
         # Styles currently used on new rules
         modified_rule_keys = base_styles._rules.keys() | rules.keys()
-        # Current render rules (missing rules are filled with default)
-
-        # Calculate replacement rules (defaults + new rules)
 
         if animate:
             new_styles = Styles(node, rules)
