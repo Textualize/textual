@@ -557,7 +557,7 @@ class TabbedContent(Widget):
         Raises:
             ValueError: Raised if no ID was available.
         """
-        if target_id := pane_id if isinstance(pane_id, str) else pane_id.id:
+        if target_id := (pane_id if isinstance(pane_id, str) else pane_id.id):
             return self.get_child_by_type(ContentTabs).get_content_tab(target_id)
         raise ValueError(
             "'pane_id' must be a non-empty string or a TabPane with an id."
