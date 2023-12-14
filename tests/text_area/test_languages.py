@@ -1,5 +1,3 @@
-import sys
-
 import pytest
 
 from textual.app import App, ComposeResult
@@ -61,7 +59,7 @@ async def test_setting_unknown_language():
             text_area.language = "this-language-doesnt-exist"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
+@pytest.mark.syntax
 async def test_register_language():
     app = TextAreaApp()
 
@@ -84,7 +82,7 @@ async def test_register_language():
         assert text_area.language == "elm"
 
 
-@pytest.mark.skipif(sys.version_info < (3, 8), reason="tree-sitter requires python3.8 or higher")
+@pytest.mark.syntax
 async def test_register_language_existing_language():
     app = TextAreaApp()
     async with app.run_test():
