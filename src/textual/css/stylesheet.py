@@ -563,12 +563,12 @@ class Stylesheet:
         # Current render rules (missing rules are filled with default)
 
         # Calculate replacement rules (defaults + new rules)
-        new_styles = Styles(node, rules)
-        if new_styles == base_styles:
-            # Nothing to change, return early
-            return
 
         if animate:
+            new_styles = Styles(node, rules)
+            if new_styles == base_styles:
+                # Nothing to animate, return early
+                return
             current_render_rules = styles.get_render_rules()
             is_animatable = styles.is_animatable
             get_current_render_rule = current_render_rules.get
