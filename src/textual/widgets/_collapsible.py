@@ -179,13 +179,13 @@ class Collapsible(Widget):
             disabled: Whether the collapsible is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.title = title
         self._title = CollapsibleTitle(
             label=title,
             collapsed_symbol=collapsed_symbol,
             expanded_symbol=expanded_symbol,
             collapsed=collapsed,
         )
+        self.title = title
         self._contents_list: list[Widget] = list(children)
         self.collapsed = collapsed
 
@@ -226,6 +226,4 @@ class Collapsible(Widget):
         self._contents_list.append(widget)
 
     def _watch_title(self, title: str) -> None:
-        if not self.is_mounted:
-            return
         self._title.label = title
