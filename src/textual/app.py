@@ -1450,6 +1450,7 @@ class App(Generic[ReturnType], DOMNode):
             event_loop = None
 
         def runapp_task_complete(t):
+            """Log a message when complete."""
             self.log(f"runapp task complete")
 
         if event_loop and event_loop.is_running():
