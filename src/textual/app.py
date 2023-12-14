@@ -123,9 +123,6 @@ WINDOWS = PLATFORM == "Windows"
 if constants.DEBUG:
     warnings.simplefilter("always", ResourceWarning)
 
-# `asyncio.get_event_loop()` is deprecated since Python 3.10:
-_ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED = sys.version_info >= (3, 10, 0)
-
 LayoutDefinition = "dict[str, Any]"
 
 DEFAULT_COLORS = {
@@ -1447,13 +1444,16 @@ class App(Generic[ReturnType], DOMNode):
                 self._loop = None
                 self._thread_id = 0
 
-        if _ASYNCIO_GET_EVENT_LOOP_IS_DEPRECATED:
-            # N.B. This doesn't work with Python<3.10, as we end up with 2 event loops:
-            asyncio.run(run_app())
+        try:
+            event_loop = asyncio.get_running_loop()
+        except RuntimeError:
+            event_loop = None
+
+        if event_loop and event_loop.is_running():
+            event_loop.create_task(run_app())
         else:
-            # However, this works with Python<3.10:
-            event_loop = asyncio.get_event_loop()
-            event_loop.run_until_complete(run_app())
+            asyncio.run(run_app())
+
         return self.return_value
 
     async def _on_css_change(self) -> None:
