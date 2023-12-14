@@ -559,7 +559,7 @@ class Stylesheet:
         base_styles = styles.base
 
         # Styles currently used on new rules
-        modified_rule_keys = base_styles._rules.keys() | rules.keys()
+        modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
         # Current render rules (missing rules are filled with default)
 
         # Calculate replacement rules (defaults + new rules)
