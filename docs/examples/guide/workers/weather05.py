@@ -1,5 +1,5 @@
-from urllib.request import Request, urlopen
 from urllib.parse import quote
+from urllib.request import Request, urlopen
 
 from rich.text import Text
 
@@ -22,7 +22,7 @@ class WeatherApp(App):
 
     async def on_input_changed(self, message: Input.Changed) -> None:
         """Called when the input changes"""
-        self.update_weather(quote(message.value))
+        self.update_weather(message.value)
 
     @work(exclusive=True, thread=True)
     def update_weather(self, city: str) -> None:
@@ -31,7 +31,7 @@ class WeatherApp(App):
         worker = get_current_worker()
         if city:
             # Query the network API
-            url = f"https://wttr.in/{city}"
+            url = f"https://wttr.in/{quote(city)}"
             request = Request(url)
             request.add_header("User-agent", "CURL")
             response_text = urlopen(request).read().decode("utf-8")
