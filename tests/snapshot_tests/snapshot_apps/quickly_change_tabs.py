@@ -1,4 +1,5 @@
 """Regression test for https://github.com/Textualize/textual/issues/2229."""
+import asyncio
 from textual.app import App, ComposeResult
 from textual.widgets import TabbedContent, TabPane, Tabs, Label
 
