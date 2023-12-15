@@ -439,15 +439,15 @@ class Stylesheet:
         rule_attributes: defaultdict[str, list[tuple[Specificity6, object]]]
         rule_attributes = defaultdict(list)
 
+        cache_key: tuple | None
         if cache is not None:
-            cache_key: tuple | None = (
+            cache_key = (
                 node._parent,
                 node._id,
                 node.classes,
                 node.pseudo_classes,
                 node._css_type_name,
             )
-            assert cache_key is not None
             cached_result: RulesMap | None = cache.get(cache_key)
             if cached_result is not None:
                 self.replace_rules(node, cached_result, animate=animate)
