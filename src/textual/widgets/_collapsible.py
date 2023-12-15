@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from rich.console import RenderableType
-from rich.text import Text
-
 from .. import events
 from ..app import ComposeResult
 from ..binding import Binding
@@ -11,11 +8,12 @@ from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
+from ..widgets import Static
 
 __all__ = ["Collapsible", "CollapsibleTitle"]
 
 
-class CollapsibleTitle(Widget, can_focus=True):
+class CollapsibleTitle(Static, can_focus=True):
     """Title and symbol for the Collapsible."""
 
     DEFAULT_CSS = """
@@ -44,6 +42,7 @@ class CollapsibleTitle(Widget, can_focus=True):
     """
 
     collapsed = reactive(True)
+    label = reactive("Toggle")
 
     def __init__(
         self,
@@ -57,7 +56,9 @@ class CollapsibleTitle(Widget, can_focus=True):
         self.collapsed_symbol = collapsed_symbol
         self.expanded_symbol = expanded_symbol
         self.label = label
-        self.collapse = collapsed
+        self.collapsed = collapsed
+        self._collapsed_label = f"{collapsed_symbol} {label}"
+        self._expanded_label = f"{expanded_symbol} {label}"
 
     class Toggle(Message):
         """Request toggle."""
@@ -71,18 +72,26 @@ class CollapsibleTitle(Widget, can_focus=True):
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
-    def render(self) -> RenderableType:
-        """Compose right/down arrow and label."""
+    def _watch_label(self, label: str) -> None:
+        self._collapsed_label = f"{self.collapsed_symbol} {label}"
+        self._expanded_label = f"{self.expanded_symbol} {label}"
         if self.collapsed:
-            return Text(f"{self.collapsed_symbol} {self.label}")
+            self.update(self._collapsed_label)
         else:
-            return Text(f"{self.expanded_symbol} {self.label}")
+            self.update(self._expanded_label)
+
+    def _watch_collapsed(self, collapsed: bool) -> None:
+        if collapsed:
+            self.update(self._collapsed_label)
+        else:
+            self.update(self._expanded_label)
 
 
 class Collapsible(Widget):
     """A collapsible container."""
 
     collapsed = reactive(True)
+    title = reactive("Toggle")
 
     DEFAULT_CSS = """
     Collapsible {
@@ -169,14 +178,15 @@ class Collapsible(Widget):
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._title = CollapsibleTitle(
             label=title,
             collapsed_symbol=collapsed_symbol,
             expanded_symbol=expanded_symbol,
             collapsed=collapsed,
         )
+        self.title = title
         self._contents_list: list[Widget] = list(children)
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
     def _on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
@@ -214,3 +224,6 @@ class Collapsible(Widget):
             widget: A Widget to add.
         """
         self._contents_list.append(widget)
+
+    def _watch_title(self, title: str) -> None:
+        self._title.label = title
