@@ -51,6 +51,18 @@ async def test_move_child_before_itself() -> None:
         pilot.app.screen.move_child(child, before=child)
 
 
+@pytest.mark.xfail(
+    strict=True, reason="https://github.com/Textualize/textual/issues/1743"
+)
+async def test_move_child_before_itself_numerically() -> None:
+    """Test moving a widget before itself by numeric index."""
+
+    async with App().run_test() as pilot:
+        child = Widget(Widget())
+        await pilot.app.mount(child)
+        pilot.app.screen.move_child(child, before=0)
+
+
 async def test_move_child_after_itself() -> None:
     """Test moving a widget after itself."""
     # Regression test for https://github.com/Textualize/textual/issues/1743
@@ -58,6 +70,18 @@ async def test_move_child_after_itself() -> None:
         child = Widget(Widget())
         await pilot.app.mount(child)
         pilot.app.screen.move_child(child, after=child)
+
+
+@pytest.mark.xfail(
+    strict=True, reason="https://github.com/Textualize/textual/issues/1743"
+)
+async def test_move_child_after_itself_numerically() -> None:
+    """Test moving a widget after itself by numeric index."""
+    # Regression test for https://github.com/Textualize/textual/issues/1743
+    async with App().run_test() as pilot:
+        child = Widget(Widget())
+        await pilot.app.mount(child)
+        pilot.app.screen.move_child(child, after=0)
 
 
 async def test_move_past_end_of_child_list() -> None:
