@@ -299,8 +299,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
                 """
                 return direction * (index - selected) % len(self.children)
 
-            with suppress(IndexError):
-                self._selected = sorted(candidate_indices, key=distance)[0]
+            self._selected = min(candidate_indices, key=distance, default=None)            
 
     def action_toggle(self) -> None:
         """Toggle the state of the currently-selected button."""
