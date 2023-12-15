@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Added
 
-- Added caching of rules attributes and `cache` parameter to Stylesheet.apply
+- Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
 
 ## [0.45.1] - 2023-12-12
 
