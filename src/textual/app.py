@@ -2410,6 +2410,8 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
+        if cache is None:
+            cache = {}
         widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
