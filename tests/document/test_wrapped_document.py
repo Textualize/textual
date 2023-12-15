@@ -49,7 +49,7 @@ def test_refresh_range():
     edit_result = document.replace_range(start_location, old_end_location, "123")
 
     # Inform the wrapped document about the range impacted by the edit
-    wrapped_document.refresh_range(
+    wrapped_document.wrap_range(
         start_location, old_end_location, edit_result.end_location
     )
 
@@ -70,7 +70,7 @@ def test_refresh_range_new_text_wrapped():
     )
 
     # Inform the wrapped document about the range impacted by the edit
-    wrapped_document.refresh_range(
+    wrapped_document.wrap_range(
         start_location, old_end_location, edit_result.end_location
     )
 
@@ -87,7 +87,7 @@ def test_refresh_range_wrapping_at_previously_unavailable_range():
     wrapped_document = WrappedDocument(document, width=4)
 
     edit_result = document.replace_range((3, 0), (3, 0), "012 3456\n78 90123\n45")
-    wrapped_document.refresh_range((3, 0), (3, 0), edit_result.end_location)
+    wrapped_document.wrap_range((3, 0), (3, 0), edit_result.end_location)
 
     assert wrapped_document.lines == [
         ["123 ", "4567"],
@@ -104,7 +104,7 @@ def test_refresh_range_wrapping_disabled_previously_unavailable_range():
     wrapped_document = WrappedDocument(document, width=0)  # wrapping disabled
 
     edit_result = document.replace_range((3, 0), (3, 0), "012 3456\n78 90123\n45")
-    wrapped_document.refresh_range((3, 0), (3, 0), edit_result.end_location)
+    wrapped_document.wrap_range((3, 0), (3, 0), edit_result.end_location)
 
     assert wrapped_document.lines == [
         ["123 4567"],

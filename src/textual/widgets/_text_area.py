@@ -700,8 +700,9 @@ TextArea {
     def _rewrap(self) -> None:
         if self.wrap:
             width, _ = self.size
-            self.wrapped_document.wrap(width)
-            log.debug(f"re-wrapping at width {width!r}")
+            available_text_width = width - self.gutter_width - 1
+            self.wrapped_document.wrap(available_text_width)
+            log.debug(f"re-wrapping at width {available_text_width!r}")
 
     def load_document(self, document: DocumentBase) -> None:
         """Load a document into the TextArea.
@@ -779,13 +780,15 @@ TextArea {
             A rendered line.
         """
 
+        print("render_line")
+
         document = self.document
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
 
         # Account for how much the TextArea is scrolled.
         y_offset = widget_y + scroll_y
-        offset = Offset(0, y_offset)
+        print(f"yoffset = {y_offset}")
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
@@ -793,7 +796,11 @@ TextArea {
             return Strip.blank(self.size.width)
 
         # Get the line corresponding to this offset
-        line_index, section_offset = wrapped_document._offset_map.get(y_offset)
+        # print(wrapped_document.height)
+        # print(wrapped_document._offset_to_line_index._forward)
+
+        line_index = wrapped_document._offset_to_line_index.get(y_offset)
+        section_offset = wrapped_document._offset_to_section_offset.get(y_offset)
 
         theme = self._theme
 
@@ -804,8 +811,8 @@ TextArea {
         line_character_count = len(line)
         line.tab_size = self.indent_width
         virtual_width, virtual_height = self.virtual_size
-        expanded_length = max(virtual_width, self.size.width)
-        line.set_length(expanded_length)
+        expanded_width = max(virtual_width, self.size.width)
+        # line.set_length(expanded_length)
 
         selection = self.selection
         start, end = selection
@@ -912,8 +919,9 @@ TextArea {
                 gutter_style = theme.gutter_style if theme else None
 
             gutter_width_no_margin = gutter_width - 2
+            gutter_content = str(line_index + 1) if section_offset == 0 else ""
             gutter = Text(
-                f"{line_index + 1:>{gutter_width_no_margin}}  ",
+                f"{gutter_content:>{gutter_width_no_margin}}  ",
                 style=gutter_style or "",
                 end="",
             )
@@ -932,25 +940,28 @@ TextArea {
         # Render the gutter and the text of this line
         console = self.app.console
         gutter_segments = console.render(gutter)
+        width, _ = self.size
+        section_width = width - self.gutter_width
+        line.set_length(section_width)
         text_segments = console.render(
             line,
-            console.options.update_width(expanded_length),
+            console.options.update_width(section_width),
         )
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
         gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
-        text_strip = Strip(text_segments).crop(
-            scroll_x, scroll_x + virtual_width - gutter_width
-        )
+        text_strip = Strip(text_segments)
+        if not self.wrap:
+            text_strip = text_strip.crop(
+                scroll_x, scroll_x + virtual_width - gutter_width
+            )
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:
-            text_strip = text_strip.extend_cell_length(
-                expanded_length, cursor_line_style
-            )
+            text_strip = text_strip.extend_cell_length(section_width, cursor_line_style)
         else:
             text_strip = text_strip.extend_cell_length(
-                expanded_length, theme.base_style if theme else None
+                section_width, theme.base_style if theme else None
             )
 
         strip = Strip.join([gutter_strip, text_strip]).simplify()
@@ -994,7 +1005,7 @@ TextArea {
         start, end = sorted((start, end))
         return self.document.get_text_range(start, end)
 
-    def edit(self, edit: Edit) -> Any:
+    def edit(self, edit: Edit) -> EditResult:
         """Perform an Edit.
 
         Args:
@@ -1004,10 +1015,17 @@ TextArea {
             Data relating to the edit that may be useful. The data returned
             may be different depending on the edit performed.
         """
+        print("doing edit")
         result = edit.do(self)
         self._refresh_size()
         edit.after(self)
         self._build_highlight_map()
+        print(f"edit.from_location = {edit.from_location!r}")
+        print(f"edit.to_location = {edit.to_location!r}")
+        print(f"result.end_location = {result.end_location!r}")
+        self.wrapped_document.wrap_range(
+            edit.from_location, edit.to_location, result.end_location
+        )
         self.post_message(self.Changed(self))
         return result
 

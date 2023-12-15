@@ -7,12 +7,19 @@ that were influenced by edits.
 """
 from __future__ import annotations
 
+from collections import defaultdict
+from typing import NewType
+
 from rich._wrap import divide_line
 from rich.text import Text
 
 from textual._cells import cell_width_to_column_index
 from textual.document._document import DocumentBase, Location
 from textual.geometry import Offset
+
+VerticalOffset = NewType("VerticalOffset", int)
+LineIndex = NewType("LineIndex", int)
+SectionOffset = NewType("SectionOffset", int)
 
 
 class WrappedDocument:
@@ -35,9 +42,17 @@ class WrappedDocument:
         """Maps line indices to the offsets within the line where wrapping
         breaks should be added."""
 
-        self._offset_map: dict[int, tuple[int, int]] = {}
-        """Maps y_offsets (from the top of the document) to (line_index, vertical offset within
-        that wrapped line) tuples."""
+        self._offset_to_line_info: dict[
+            VerticalOffset, tuple[LineIndex, SectionOffset]
+        ] = {}
+        """Maps y_offsets (from the top of the document) to line_index and the offset
+        of the section within the line."""
+
+        self._line_index_to_offsets: dict[list[VerticalOffset]] = defaultdict(list)
+        """Maps line indices to all the vertical offsets which correspond to that line."""
+
+        # self._offset_to_section_offset: dict[int, int] = {}
+        # """Maps y_offsets to the offsets of the section within the line."""
 
         self._width: int = 0
         """The width the document is currently wrapped at. This will correspond with
@@ -52,19 +67,27 @@ class WrappedDocument:
             width: The width to wrap at. 0 for no wrapping.
         """
         self._width = width
+
+        # We're starting wrapping from scratch, so use fresh
         new_wrap_offsets = []
+        offset_to_line_info = {}
+        line_index_to_offsets: dict[LineIndex, list[VerticalOffset]] = defaultdict(list)
+
         append_wrap_offset = new_wrap_offsets.append
-        offset_map = {}
         current_offset = 0
 
         for line_index, line in enumerate(self.document.lines):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
             for section_y_offset in range(len(wrap_offsets) + 1):
-                offset_map[current_offset] = (line_index, section_y_offset)
+                offset_to_line_info[current_offset] = (line_index, section_y_offset)
+                line_index_to_offsets[LineIndex(line_index)].append(
+                    VerticalOffset(current_offset)
+                )
                 current_offset += 1
 
-        self._offset_map = offset_map
+        self._offset_to_line_info = offset_to_line_info
+        self._line_index_to_offsets = line_index_to_offsets
         self._wrap_offsets = new_wrap_offsets
 
     @property
@@ -91,7 +114,7 @@ class WrappedDocument:
         """The height of the wrapped document."""
         return sum(len(offsets) + 1 for offsets in self._wrap_offsets)
 
-    def refresh_range(
+    def wrap_range(
         self,
         start: Location,
         old_end: Location,
@@ -108,29 +131,34 @@ class WrappedDocument:
         """
 
         # Get all the text on the lines between start and end in document space
-        start_row, _ = start
-        end_row, _ = new_end
+        start_line_index, _ = start
+        old_end_line_index, _ = old_end
+        new_end_line_index, _ = new_end
+
+        # TODO on Monday:
+        #  - we need to clear the affected ranges in the 3 data structures we're maintaining
+        #  - first get all the offsets corresponding to the line range.
+        #  - now clear all those offsets and line indices in the data structures.
 
         # +1 since we go to the start of the next row, and +1 for inclusive.
-        new_lines = self.document.lines[start_row : end_row + 2]
+        new_lines = self.document.lines[start_line_index : new_end_line_index + 2]
 
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
         width = self._width
-        offset_map = {}
-        current_offset = 0
 
-        for line_index, line in enumerate(new_lines, start_row):
+        # Add the new offsets between start and new end (the new post-edit offsets)
+        for line_index, line in enumerate(new_lines, start_line_index):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
-            for section_y_offset in range(len(wrap_offsets) + 1):
-                offset_map[current_offset] = (line_index, section_y_offset)
+            for section_offset in range(len(wrap_offsets) + 1):
+                self._offset_to_line_index[current_offset] = line_index
+                self._offset_to_section_offset[current_offset] = section_offset
                 current_offset += 1
 
         # Replace the range start -> old with the new wrapped lines
         old_end_row, _ = old_end
-        self._offset_map = offset_map
-        self._wrap_offsets[start_row:old_end_row] = new_wrap_offsets
+        self._wrap_offsets[start_line_index:old_end_row] = new_wrap_offsets
 
     def offset_to_location(self, offset: Offset, tab_width: int) -> Location:
         """Given an offset within the wrapped/visual display of the document,
@@ -159,7 +187,7 @@ class WrappedDocument:
 
         # Find the line corresponding to the given y offset in the wrapped document.
         get_target_document_column = self.get_target_document_column
-        offset_data = self._offset_map.get(y)
+        offset_data = self._offset_to_line_index.get(y)
         if offset_data is not None:
             line_index, section_y = offset_data
             location = line_index, get_target_document_column(
