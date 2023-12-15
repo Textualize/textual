@@ -546,6 +546,11 @@ class Stylesheet:
         self._process_component_classes(node)
 
     def _process_component_classes(self, node: DOMNode) -> None:
+        """Process component classes for the given node.
+
+        Args:
+            node: A DOM Node.
+        """
         component_classes = node._get_component_classes()
         if component_classes:
             # Create virtual nodes that exist to extract styles
