@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Disabled radio buttons could be selected with the keyboard https://github.com/Textualize/textual/issues/3839
 
+## Added
+
+- Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
 
 ## [0.45.1] - 2023-12-12
 
