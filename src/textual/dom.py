@@ -1209,8 +1209,6 @@ class DOMNode(MessagePump):
 
         Should be called whenever CSS classes / pseudo classes change.
         """
-        if self._parent is None:
-            return
         try:
             self.app.update_styles(self)
         except NoActiveAppError:
@@ -1231,7 +1229,7 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        if update and self._parent is not None:
+        if update:
             self._update_styles()
         return self
 
@@ -1250,7 +1248,7 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        if update and self._parent is not None:
+        if update:
             self._update_styles()
         return self
 
@@ -1268,8 +1266,7 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
             return self
-        if self._parent is not None:
-            self._update_styles()
+        self._update_styles()
         return self
 
     def has_pseudo_class(self, *class_names: str) -> bool:
