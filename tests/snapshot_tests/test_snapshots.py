@@ -964,7 +964,7 @@ def test_mount_style_fix(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "mount_style_fix.py")
 
 
-def test_mount_style_fix(snap_compare):
+def test_zero_scrollbar_size(snap_compare):
     """Regression test for missing content with 0 sized scrollbars"""
     # https://github.com/Textualize/textual/issues/3886
     assert snap_compare(SNAPSHOT_APPS_DIR / "zero_scrollbar_size.py")
