@@ -541,7 +541,7 @@ def test_richlog_scroll(snap_compare):
 def test_tabs_invalidate(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "tabs_invalidate.py",
-        press=["tab", "right"],
+        press=["tab", "right", "wait:350"],
     )
 
 
@@ -680,7 +680,9 @@ def test_scroll_to_center(snap_compare):
 
 def test_quickly_change_tabs(snap_compare):
     # https://github.com/Textualize/textual/issues/2229
-    assert snap_compare(SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p"])
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p", "wait:350"]
+    )
 
 
 def test_fr_unit_with_min(snap_compare):
