@@ -11,18 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Disabled radio buttons could be selected with the keyboard https://github.com/Textualize/textual/issues/3839
 
-## Added
-
-- Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
-
-## [0.45.1] - 2023-12-12
-
-### Fixed
-
-- Fixed issues were styles wouldn't update if changed in mount. https://github.com/Textualize/textual/pull/3860
-
-## [0.45.0] - 2023-12-12
-
 ### Changed
 
 - The tabs within a `TabbedContent` now prefix their IDs to stop any clash with their associated `TabPane` https://github.com/Textualize/textual/pull/3815
@@ -30,7 +18,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added `Collapsible.title` reactive attribute https://github.com/Textualize/textual/pull/3830
 - Added a `pane` attribute to `TabbedContent.TabActivated` https://github.com/Textualize/textual/pull/3815
+- Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
+
+## [0.45.1] - 2023-12-12
+
+### Fixed
+
+- Fixed issues where styles wouldn't update if changed in mount. https://github.com/Textualize/textual/pull/3860
+
+## [0.45.0] - 2023-12-12
 
 ### Fixed
 
@@ -52,7 +50,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `get_loading_widget` to Widget and App customize the loading widget. https://github.com/Textualize/textual/pull/3816
 - Added messages `Collapsible.Expanded` and `Collapsible.Collapsed` that inherit from `Collapsible.Toggled`. https://github.com/Textualize/textual/issues/3824
-- Added `Collapsible.title` reactive attribute https://github.com/Textualize/textual/pull/3830
 
 ## [0.44.1] - 2023-12-4
 
