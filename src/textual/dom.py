@@ -1201,6 +1201,8 @@ class DOMNode(MessagePump):
         Returns:
             Self.
         """
+        if not self._parent:
+            return self
         self.classes = classes
         return self
 
@@ -1229,7 +1231,7 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        if update:
+        if update and self._parent:
             self._update_styles()
         return self
 
@@ -1248,7 +1250,7 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        if update:
+        if update and self._parent:
             self._update_styles()
         return self
 
@@ -1266,7 +1268,8 @@ class DOMNode(MessagePump):
         self._classes.symmetric_difference_update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if self._parent:
+            self._update_styles()
         return self
 
     def has_pseudo_class(self, *class_names: str) -> bool:
