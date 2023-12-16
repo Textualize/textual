@@ -199,17 +199,13 @@ class Button(Widget, can_focus=True):
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
         """
-        if classes is not None:
-            classes += f" -{variant}"
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = self.validate_label(label)
-
-        self.validate_variant(variant)
-
+        self.label = label
+        self.variant = variant
         self.active_effect_duration = 0.3
         """Amount of time in seconds the button 'press' animation lasts."""
 
