@@ -439,11 +439,30 @@ class Stylesheet:
         rule_attributes: defaultdict[str, list[tuple[Specificity6, object]]]
         rule_attributes = defaultdict(list)
 
+        rules_map = self.rules_map
+
+        # Discard rules which are not applicable early
+        limit_rules = {
+            rule
+            for name in rules_map.keys() & node._selector_names
+            for rule in rules_map[name]
+        }
+        rules = list(filter(limit_rules.__contains__, reversed(self.rules)))
+
+        node._has_hover_style = any("hover" in rule.pseudo_classes for rule in rules)
+        node._has_focus_within = any(
+            "focus-within" in rule.pseudo_classes for rule in rules
+        )
+
         cache_key: tuple | None
         if cache is not None:
             cache_key = (
                 node._parent,
-                node._id,
+                (
+                    None
+                    if node._id is None
+                    else (node._id if f"#{node._id}" in rules_map else None)
+                ),
                 node.classes,
                 node.pseudo_classes,
                 node._css_type_name,
@@ -458,22 +477,6 @@ class Stylesheet:
 
         _check_rule = self._check_rule
         css_path_nodes = node.css_path_nodes
-
-        rules_map = self.rules_map
-
-        # Discard rules which are not applicable early
-        limit_rules = {
-            rule
-            for name in rules_map.keys() & node._selector_names
-            for rule in rules_map[name]
-        }
-        rules = list(filter(limit_rules.__contains__, reversed(self.rules)))
-
-        # Collect the rules defined in the stylesheet
-        node._has_hover_style = any("hover" in rule.pseudo_classes for rule in rules)
-        node._has_focus_within = any(
-            "focus-within" in rule.pseudo_classes for rule in rules
-        )
 
         # Rules that may be set to the special value `initial`
         initial: set[str] = set()
