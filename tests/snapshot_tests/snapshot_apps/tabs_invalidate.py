@@ -19,9 +19,6 @@ class TabApp(App):
             with TabPane("Tab 2", id="tab-2"):
                 yield Label("world")
 
-    async def on_mount(self):
-        await asyncio.sleep(0.2)
-
 
 if __name__ == "__main__":
     app = TabApp()

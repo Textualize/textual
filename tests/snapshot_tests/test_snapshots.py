@@ -541,7 +541,7 @@ def test_richlog_scroll(snap_compare):
 def test_tabs_invalidate(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "tabs_invalidate.py",
-        press=["tab", "right"],
+        press=["tab", "right", "wait:200"],
     )
 
 

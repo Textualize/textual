@@ -127,6 +127,7 @@ def take_svg_screenshot(
         if wait_for_animation:
             await pilot.wait_for_scheduled_animations()
             await pilot.pause()
+        await pilot.pause()
         svg = app.export_screenshot(title=title)
 
         app.exit(svg)
