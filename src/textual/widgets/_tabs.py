@@ -596,7 +596,7 @@ class Tabs(Widget, can_focus=True):
                     underline.animate("highlight_start", start, duration=0.3)
                     underline.animate("highlight_end", end, duration=0.3)
 
-                self.call_after_refresh(animate_underline)
+                self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:
                 underline.highlight_start = start
                 underline.highlight_end = end
