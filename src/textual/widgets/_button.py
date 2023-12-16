@@ -156,7 +156,7 @@ class Button(Widget, can_focus=True):
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
-    variant = reactive("default")
+    variant = reactive("default", init=False)
     """The variant name for the button."""
 
     class Pressed(Message):
@@ -204,10 +204,8 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = self.validate_label(label)
-
-        self.variant = self.validate_variant(variant)
-
+        self.label = label
+        self.variant = variant
         self.active_effect_duration = 0.3
         """Amount of time in seconds the button 'press' animation lasts."""
 
