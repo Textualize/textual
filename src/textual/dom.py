@@ -1201,8 +1201,6 @@ class DOMNode(MessagePump):
         Returns:
             Self.
         """
-        if not self._parent:
-            return self
         self.classes = classes
         return self
 
@@ -1211,6 +1209,8 @@ class DOMNode(MessagePump):
 
         Should be called whenever CSS classes / pseudo classes change.
         """
+        if self._parent is None:
+            return
         try:
             self.app.update_styles(self)
         except NoActiveAppError:
