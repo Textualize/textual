@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Disabled radio buttons could be selected with the keyboard https://github.com/Textualize/textual/issues/3839
+- Fixed zero width scrollbars causing content to disappear https://github.com/Textualize/textual/issues/3886
 
 ### Changed
 
