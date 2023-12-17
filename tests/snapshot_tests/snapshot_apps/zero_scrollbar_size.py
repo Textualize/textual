@@ -1,6 +1,7 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Static
 
+
 class TestApp(App):
     DEFAULT_CSS = """
     Screen {
@@ -11,4 +12,6 @@ class TestApp(App):
     def compose(self) -> ComposeResult:
         yield Static("Hello, world!\n" * 100)
 
-TestApp().run()
+
+if __name__ == "__main__":
+    TestApp().run()
