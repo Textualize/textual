@@ -587,17 +587,23 @@ class Tabs(Widget, can_focus=True):
             underline.highlight_end = 0
         else:
             underline.show_highlight = True
-
+            tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
+            start, end = tab_region.column_span
             if animate:
 
                 def animate_underline() -> None:
                     """Animate the underline."""
-                    tab_region = active_tab.virtual_region.shrink(
-                        active_tab.styles.gutter
-                    )
-                    start, end = tab_region.column_span
-                    underline.animate("highlight_start", start, duration=0.3)
-                    underline.animate("highlight_end", end, duration=0.3)
+                    try:
+                        active_tab = self.query_one(f"#tabs-list > Tab.-active")
+                    except NoMatches:
+                        pass
+                    else:
+                        tab_region = active_tab.virtual_region.shrink(
+                            active_tab.styles.gutter
+                        )
+                        start, end = tab_region.column_span
+                        underline.animate("highlight_start", start, duration=0.3)
+                        underline.animate("highlight_end", end, duration=0.3)
 
                 self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:
