@@ -126,6 +126,7 @@ def take_svg_screenshot(
             await pilot.hover(hover)
             await pilot.pause(0.5)
         if wait_for_animation:
+            await app.flush_events()
             await pilot.wait_for_scheduled_animations()
             await pilot.pause()
         await app.flush_events()

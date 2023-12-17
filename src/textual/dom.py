@@ -1075,8 +1075,9 @@ class DOMNode(MessagePump):
     async def flush_events(self, timeout: float = 30.0) -> bool:
         """Wait for all pending events to be processed.
 
-        Note that this is used by the testing framework. It's highly unlikely you will
-        need to call this directly.
+        Note:
+            This method is used by the testing framework. It's highly unlikely you will
+            need to call this directly.
 
         Args:
             timeout: Maximum time to wait.
