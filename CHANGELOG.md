@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Collapsible.title` reactive attribute https://github.com/Textualize/textual/pull/3830
 - Added a `pane` attribute to `TabbedContent.TabActivated` https://github.com/Textualize/textual/pull/3815
 - Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
-- Added DomNode.flush_events method https://github.com/Textualize/textual/pull/3887
 
 ## [0.45.1] - 2023-12-12
 

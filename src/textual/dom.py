@@ -6,7 +6,6 @@ which includes all Widgets, Screens, and Apps.
 
 from __future__ import annotations
 
-import asyncio
 import re
 import threading
 from functools import lru_cache, partial
@@ -1071,60 +1070,6 @@ class DOMNode(MessagePump):
         if reverse:
             nodes.reverse()
         return cast("list[DOMNode]", nodes)
-
-    async def flush_events(self, timeout: float = 30.0) -> bool:
-        """Wait for all pending events to be processed.
-
-        Note:
-            This method is used by the testing framework. It's highly unlikely you will
-            need to call this directly.
-
-        Args:
-            timeout: Maximum time to wait.
-
-        Returns:
-            `True` if all events were processed, or `False` if a timeout occurred.
-        """
-        children = self.walk_children(with_self=True)
-        count = 0
-        count_zero_event = asyncio.Event()
-
-        def decrement_counter() -> None:
-            """Decrement internal counter, and set an event if it reaches zero."""
-            nonlocal count
-            count -= 1
-            if count == 0:
-                # When count is zero, all messages queued at the start of the method have been processed
-                count_zero_event.set()
-
-        # Increase the count for every successful call_later
-        for child in children:
-            if child.call_later(decrement_counter):
-                count += 1
-
-        if count:
-            # Wait for the count to return to zero, or a timeout, or an exception
-            wait_for = [
-                asyncio.create_task(count_zero_event.wait()),
-                asyncio.create_task(self.app._exception_event.wait()),
-            ]
-            _, pending = await asyncio.wait(
-                wait_for,
-                timeout=timeout,
-                return_when=asyncio.FIRST_COMPLETED,
-            )
-
-            for task in pending:
-                task.cancel()
-
-            timed_out = len(wait_for) == len(pending)
-            if timed_out:
-                return False
-
-            if count > 0:
-                return False
-
-        return True
 
     @overload
     def query(self, selector: str | None) -> DOMQuery[Widget]:
