@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import pytest
@@ -541,7 +540,7 @@ def test_richlog_scroll(snap_compare):
 def test_tabs_invalidate(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "tabs_invalidate.py",
-        press=["tab", "right", "wait:350"],
+        press=["tab", "right"],
     )
 
 
@@ -680,9 +679,7 @@ def test_scroll_to_center(snap_compare):
 
 def test_quickly_change_tabs(snap_compare):
     # https://github.com/Textualize/textual/issues/2229
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p", "wait:350"]
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p"])
 
 
 def test_fr_unit_with_min(snap_compare):
@@ -964,3 +961,9 @@ def test_mount_style_fix(snap_compare):
     """Regression test for broken style update on mount."""
     # https://github.com/Textualize/textual/issues/3858
     assert snap_compare(SNAPSHOT_APPS_DIR / "mount_style_fix.py")
+
+
+def test_zero_scrollbar_size(snap_compare):
+    """Regression test for missing content with 0 sized scrollbars"""
+    # https://github.com/Textualize/textual/issues/3886
+    assert snap_compare(SNAPSHOT_APPS_DIR / "zero_scrollbar_size.py")

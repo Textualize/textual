@@ -1392,8 +1392,7 @@ class Widget(DOMNode):
         if not self.is_scrollable:
             return False, False
 
-        enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
-        return enabled
+        return (self.show_vertical_scrollbar, self.show_horizontal_scrollbar)
 
     @property
     def scrollbars_space(self) -> tuple[int, int]:
@@ -2756,6 +2755,13 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
 
+        show_vertical_scrollbar: bool = (
+            show_vertical_scrollbar and scrollbar_size_vertical
+        )
+        show_horizontal_scrollbar: bool = (
+            show_horizontal_scrollbar and scrollbar_size_horizontal
+        )
+
         if styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
@@ -2785,6 +2791,13 @@ class Widget(DOMNode):
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
+
+        show_vertical_scrollbar: bool = (
+            show_vertical_scrollbar and scrollbar_size_vertical
+        )
+        show_horizontal_scrollbar: bool = (
+            show_horizontal_scrollbar and scrollbar_size_horizontal
+        )
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
