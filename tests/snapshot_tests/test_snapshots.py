@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import pytest
@@ -678,13 +677,11 @@ def test_scroll_to_center(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_to_center.py", press=["s"])
 
 
-# TODO: I don't know why this fails on Windows
-# FIXME: Can't skip these tests?
-# def test_quickly_change_tabs(snap_compare):
-#     # https://github.com/Textualize/textual/issues/2229
-#     assert snap_compare(
-#         SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p", "wait:700"]
-#     )
+def test_quickly_change_tabs(snap_compare):
+    # https://github.com/Textualize/textual/issues/2229
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "quickly_change_tabs.py", press=["p", "wait:700"]
+    )
 
 
 def test_fr_unit_with_min(snap_compare):
