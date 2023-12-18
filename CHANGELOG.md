@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
+
+### Changed
+
+- Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only
+
 ## [0.46.0] - 2023-12-17
 
 ### Fixed

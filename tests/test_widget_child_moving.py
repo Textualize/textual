@@ -9,7 +9,7 @@ from textual.widget import Widget, WidgetError
 async def test_move_child_no_direction() -> None:
     """Test moving a widget in a child list."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(child)
@@ -18,7 +18,7 @@ async def test_move_child_no_direction() -> None:
 async def test_move_child_both_directions() -> None:
     """Test calling move_child with more than one direction."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(child, before=1, after=2)
@@ -27,7 +27,7 @@ async def test_move_child_both_directions() -> None:
 async def test_move_child_not_our_child() -> None:
     """Test attempting to move a child that isn't ours."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(Widget(), before=child)
@@ -36,28 +36,66 @@ async def test_move_child_not_our_child() -> None:
 async def test_move_child_to_outside() -> None:
     """Test attempting to move relative to a widget that isn't a child."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(child, before=Widget())
 
 
-async def test_move_child_before_itself() -> None:
-    """Test moving a widget before itself."""
+@pytest.mark.parametrize(
+    ["type_of_child", "before"],
+    [
+        ("widget", "widget"),
+        ("widget", "index"),
+        ("index", "widget"),
+        ("index", "index"),
+    ],
+)
+async def test_move_child_before_itself(type_of_child: str, before: str) -> None:
+    """Test moving a widget before itself.
+
+    Regression test for https://github.com/Textualize/textual/issues/1743
+    """
+
+    widget = Widget()
+    keys = {
+        "widget": widget,
+        "index": 0,
+    }
+    child = keys[type_of_child]
+    before = keys[before]
 
     async with App().run_test() as pilot:
-        child = Widget(Widget())
-        await pilot.app.mount(child)
-        pilot.app.screen.move_child(child, before=child)
+        await pilot.app.mount(widget)
+        pilot.app.screen.move_child(child, before=before)
 
 
-async def test_move_child_after_itself() -> None:
-    """Test moving a widget after itself."""
-    # Regression test for https://github.com/Textualize/textual/issues/1743
+@pytest.mark.parametrize(
+    ["type_of_child", "after"],
+    [
+        ("widget", "widget"),
+        ("widget", "index"),
+        ("index", "widget"),
+        ("index", "index"),
+    ],
+)
+async def test_move_child_after_itself(type_of_child: str, after: str) -> None:
+    """Test moving a widget after itself.
+
+    Regression test for https://github.com/Textualize/textual/issues/1743
+    """
+
+    widget = Widget()
+    keys = {
+        "widget": widget,
+        "index": 0,
+    }
+    child = keys[type_of_child]
+    after = keys[after]
+
     async with App().run_test() as pilot:
-        child = Widget(Widget())
-        await pilot.app.mount(child)
-        pilot.app.screen.move_child(child, after=child)
+        await pilot.app.mount(widget)
+        pilot.app.screen.move_child(child, after=after)
 
 
 async def test_move_past_end_of_child_list() -> None:
