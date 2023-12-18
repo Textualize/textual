@@ -1113,7 +1113,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def move_cursor(
         self,
         *,
-        row: int | None = None,
+        row: int | range[int] | None = None,
         column: int | None = None,
         animate: bool = False,
     ) -> None:
@@ -1136,7 +1136,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         cursor_row, cursor_column = self.cursor_coordinate
         if row is not None:
-            cursor_row = row
+            if isinstance(row, range):
+                cursor_row = row.stop
+                self.row_range_coordinates = row
+            else:
+                cursor_row = row
         if column is not None:
             cursor_column = column
         destination = Coordinate(cursor_row, cursor_column)
@@ -2402,8 +2406,22 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         top, _, _, left = fixed_offset
 
         if self.cursor_type == "row":
-            x, y, width, height = self._get_row_region(self.cursor_row)
-            region = Region(int(self.scroll_x) + left, y, width - left, height)
+            if self.row_range_coordinates is None:
+                x, y, width, height = self._get_row_region(self.cursor_row)
+                region = Region(int(self.scroll_x) + left, y, width - left, height)
+            else:
+                x, y, width, height = self._get_row_region(self.cursor_row)
+                start_row = self.row_range_coordinates.start
+                stop_row = self.row_range_coordinates.stop
+                x_start, y_start, width_start, width_end = self._get_row_region(
+                    start_row
+                )
+                x_stop, y_stop, width_stop, height_stop = self._get_row_region(stop_row)
+                height = y_stop + height_stop - y_start
+                region = Region(
+                    int(self.scroll_x) + left, y_start, width - left, height
+                )
+
         elif self.cursor_type == "column":
             x, y, width, height = self._get_column_region(self.cursor_column)
             region = Region(x, int(self.scroll_y) + top, width, height - top)
