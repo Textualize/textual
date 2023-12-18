@@ -892,9 +892,30 @@ class Widget(DOMNode):
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
+    @overload
     def move_child(
         self,
         child: int | Widget,
+        *,
+        before: int | Widget,
+        after: None = None,
+    ) -> None:
+        ...
+
+    @overload
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
+        after: int | Widget,
+        before: None = None,
+    ) -> None:
+        ...
+
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
         before: int | Widget | None = None,
         after: int | Widget | None = None,
     ) -> None:
