@@ -803,8 +803,9 @@ async def test_click_row_cursor():
         assert row_highlighted.cursor_row == 1
 
         row_selected: DataTable.RowSelected = app.messages[2]
+
         assert row_selected.row_key == row_key
-        assert row_highlighted.cursor_row == 1
+        assert row_selected.cursor_row == 1
 
 
 async def test_click_column_cursor():
