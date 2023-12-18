@@ -335,6 +335,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     )
     """The coordinate of the `DataTable` that is being hovered."""
 
+    row_range_coordinates: Reactive[range[int] | None] = Reactive(
+        None, repaint=False, always_update=True
+    )
+    """If a row range is selected, this is start and ending rows."""
+
     class CellHighlighted(Message):
         """Posted when the cursor moves to highlight a new cell.
 
@@ -1095,6 +1100,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             # If the coordinate was changed via `move_cursor`, give priority to its
             # scrolling because it may be animated.
             self.call_after_refresh(self._scroll_cursor_into_view)
+
+    def watch_row_range_coordinates(
+        self, old_coordinates: range[int] | None, new_coordinates: range[int] | None
+    ) -> None:
+        if old_coordinates != new_coordinates:
+            for row_index in old_coordinates or []:
+                self.refresh_row(row_index)
+            for row_index in new_coordinates or []:
+                self.refresh_row(row_index)
 
     def move_cursor(
         self,
@@ -2267,9 +2281,13 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self.cursor_type == "cell":
             return cursor == target_cell
         elif self.cursor_type == "row":
-            cursor_row, _ = cursor
+            row_range_coordinates = self.row_range_coordinates
             cell_row, _ = target_cell
-            return cursor_row == cell_row
+            if row_range_coordinates is None:
+                cursor_row, _ = cursor
+                return cursor_row == cell_row
+            else:
+                return cell_row in row_range_coordinates
         elif self.cursor_type == "column":
             _, cursor_column = cursor
             _, cell_column = target_cell
@@ -2436,6 +2454,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             )
             self.post_message(message)
         elif self.show_cursor and self.cursor_type != "none":
+            self._update_row_range_coordinates(event, row_index)
             # Only post selection events if there is a visible row/col/cell cursor.
             self.cursor_coordinate = Coordinate(row_index, column_index)
             self._post_selected_message()
@@ -2571,3 +2590,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             _, column_index = cursor_coordinate
             _, column_key = cell_key
             self.post_message(DataTable.ColumnSelected(self, column_index, column_key))
+
+    def _update_row_range_coordinates(
+        self, event: events.Click, new_row_index: int
+    ) -> None:
+        if self.cursor_type != "row" or not event.has_modifier:
+            self.row_range_coordinates = None
+            return
+
+        first = self.cursor_coordinate.row
+        second = new_row_index
+        self.row_range_coordinates = range(min(first, second), max(first, second) + 1)
