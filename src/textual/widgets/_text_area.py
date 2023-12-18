@@ -788,7 +788,6 @@ TextArea {
 
         # Account for how much the TextArea is scrolled.
         y_offset = widget_y + scroll_y
-        print(f"yoffset = {y_offset}")
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
@@ -796,11 +795,7 @@ TextArea {
             return Strip.blank(self.size.width)
 
         # Get the line corresponding to this offset
-        # print(wrapped_document.height)
-        # print(wrapped_document._offset_to_line_index._forward)
-
-        line_index = wrapped_document._offset_to_line_index.get(y_offset)
-        section_offset = wrapped_document._offset_to_section_offset.get(y_offset)
+        line_index, section_offset = wrapped_document._offset_to_line_info.get(y_offset)
 
         theme = self._theme
 
