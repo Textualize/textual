@@ -182,6 +182,11 @@ def test_datatable_change_cell_padding(snap_compare):
         SNAPSHOT_APPS_DIR / "data_table_cell_padding.py", press=["a", "b"]
     )
 
+def test_datatable_multirow_select(snap_compare):
+    # Check multirow selection
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_multirow_select.py")
+
+
 
 def test_footer_render(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "footer.py")

@@ -1180,10 +1180,20 @@ async def test_move_cursor():
 
         table.move_cursor(row=4, column=6)
         assert table.cursor_coordinate == Coordinate(4, 6)
+        assert table.row_range_coordinates == None
+
         table.move_cursor(row=3)
         assert table.cursor_coordinate == Coordinate(3, 6)
+        assert table.row_range_coordinates == None
+
         table.move_cursor(column=3)
         assert table.cursor_coordinate == Coordinate(3, 3)
+        assert table.row_range_coordinates == None
+
+        table.cursor_type = "row"
+        table.move_cursor(row=range(2, 4))
+        assert table.cursor_coordinate == Coordinate(4, 3)
+        assert table.row_range_coordinates == range(2, 4)
 
 
 async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
