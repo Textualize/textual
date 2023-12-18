@@ -470,6 +470,35 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
+    class RowsSelected(Message):
+        """Posted when a range of rows are selected.
+
+        This message is only posted when the
+        `cursor_type` is set to `"row"`. Can be handled using
+        `on_data_table_rows_selected` in a subclass of `DataTable` or in a parent
+        widget in the DOM.
+        """
+
+        def __init__(
+            self, data_table: DataTable, rows: range[int], row_keys: list[RowKey]
+        ) -> None:
+            self.data_table = data_table
+            """The data table."""
+            self.rows: range[int] = rows
+            """The y-coordinate of the cursor that made the selection."""
+            self.row_keys: list[RowKey] = row_keys
+            """The key of the row that was selected."""
+            super().__init__()
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield "cursor_rows", self.cursor_rows
+            yield "row_keys", self.row_keys
+
+        @property
+        def control(self) -> DataTable:
+            """Alias for the data table."""
+            return self.data_table
+
     class ColumnHighlighted(Message):
         """Posted when a column is highlighted.
 
@@ -2601,9 +2630,21 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 )
             )
         elif cursor_type == "row":
-            row_index, _ = cursor_coordinate
-            row_key, _ = cell_key
-            self.post_message(DataTable.RowSelected(self, row_index, row_key))
+            if self.row_range_coordinates is None:
+                row_index, _ = cursor_coordinate
+                row_key, _ = cell_key
+                self.post_message(DataTable.RowSelected(self, row_index, row_key))
+            else:
+                row_keys: list[RowKey] = []
+                for row_index in self.row_range_coordinates:
+                    row_key = self._row_locations.get_key(row_index)
+                    row_keys.append(row_key)
+                    self.post_message(DataTable.RowSelected(self, row_index, row_key))
+
+                self.post_message(
+                    DataTable.RowsSelected(self, self.row_range_coordinates, row_keys)
+                )
+
         elif cursor_type == "column":
             _, column_index = cursor_coordinate
             _, column_key = cell_key
