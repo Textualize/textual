@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only
+- Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only https://github.com/Textualize/textual/pull/3896
 
 ## [0.46.0] - 2023-12-17
 
