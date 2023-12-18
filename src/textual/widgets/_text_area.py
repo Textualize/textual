@@ -779,9 +779,6 @@ TextArea {
         Returns:
             A rendered line.
         """
-
-        print("render_line")
-
         document = self.document
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
@@ -791,11 +788,18 @@ TextArea {
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
-        if out_of_bounds:
-            return Strip.blank(self.size.width)
+        blank_line = Strip.blank(self.size.width)
 
+        if out_of_bounds:
+            return blank_line
+
+        print(f"current y_offset = {y_offset!r}")
         # Get the line corresponding to this offset
-        line_index, section_offset = wrapped_document._offset_to_line_info.get(y_offset)
+        line_info = wrapped_document._offset_to_line_info.get(y_offset)
+        if line_info is None:
+            return blank_line
+
+        line_index, section_offset = line_info
 
         theme = self._theme
 

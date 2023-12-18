@@ -88,6 +88,8 @@ class WrappedDocument:
         self._offset_to_line_info = offset_to_line_info
         self._line_index_to_offsets = line_index_to_offsets
         self._wrap_offsets = new_wrap_offsets
+        print(f"BUILT offset_to_line_info = \n{offset_to_line_info!r}")
+        print(f"BUILT line_index_to_offsets = \n{line_index_to_offsets!r}")
 
     @property
     def lines(self) -> list[list[str]]:
@@ -140,13 +142,22 @@ class WrappedDocument:
 
         # Clearing old cached data
         current_offset = self._line_index_to_offsets.get(start_line_index)[0]
+
+        print("Wrap--")
+        print(
+            f"ranges = start = {start_line_index!r}, old_end = {old_end!r}, new_end = {new_end!r}"
+        )
         for line_index in range(start_line_index, old_end_line_index + 1):
             offsets = self._line_index_to_offsets.get(line_index)
-            del self._line_index_to_offsets[line_index]
+            print(f"offsets for this range (will be deleted) = {offsets!r}")
+            print(f"offset to line info contains = {self._offset_to_line_info!r}")
             for offset in offsets:
                 del self._offset_to_line_info[offset]
+            del self._line_index_to_offsets[line_index]
 
         new_lines = self.document.lines[start_line_index : new_end_line_index + 1]
+        print(f"new lines for range = {new_lines!r}")
+
         new_wrap_offsets = []
         append_wrap_offset = new_wrap_offsets.append
         width = self._width
@@ -156,13 +167,15 @@ class WrappedDocument:
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
             for section_offset in range(len(wrap_offsets) + 1):
-                self._line_index_to_offsets[line_index] = wrap_offsets
+                self._line_index_to_offsets[line_index].append(current_offset)
                 self._offset_to_line_info[current_offset] = (line_index, section_offset)
                 current_offset += 1
 
         # Replace the range start -> old with the new wrapped lines
-        old_end_row, _ = old_end
-        self._wrap_offsets[start_line_index:old_end_row] = new_wrap_offsets
+        print(f"after update, new wrap offsets = \n{new_wrap_offsets!r}")
+        print(f"length of offsets before = {len(self._wrap_offsets)}")
+        self._wrap_offsets[start_line_index : old_end_line_index + 1] = new_wrap_offsets
+        print(f"length of offsets after = {len(self._wrap_offsets)}")
 
     def offset_to_location(self, offset: Offset, tab_width: int) -> Location:
         """Given an offset within the wrapped/visual display of the document,
@@ -191,7 +204,7 @@ class WrappedDocument:
 
         # Find the line corresponding to the given y offset in the wrapped document.
         get_target_document_column = self.get_target_document_column
-        offset_data = self._offset_to_line_index.get(y)
+        offset_data = self._offset_to_line_info.get(y)
         if offset_data is not None:
             line_index, section_y = offset_data
             location = line_index, get_target_document_column(
