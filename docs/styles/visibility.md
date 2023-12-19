@@ -74,7 +74,7 @@ The containers all have a white background, and then:
 
 === "visibility_containers.tcss"
 
-    ```sass hl_lines="2-3 6 8-10 12-14 16-18"
+    ```sass hl_lines="2-3 7 9-11 13-15 17-19"
     --8<-- "docs/examples/styles/visibility_containers.tcss"
     ```
 
