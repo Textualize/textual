@@ -39,6 +39,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     """
 
     index = reactive[Optional[int]](0, always_update=True)
+    """The index of the currently highlighted item."""
 
     class Highlighted(Message):
         """Posted when the highlighted item changes.
