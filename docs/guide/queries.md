@@ -116,7 +116,7 @@ If the last widget is *not* a button, Textual will raise a [WrongType][textual.c
 
 ## Filter
 
-Query objects have a [filter][textual.css.query.DOMQuery.filter] method which further refines a query. This method will return a new query object with widgets that match both the original query _and_ the new selector
+Query objects have a [filter][textual.css.query.DOMQuery.filter] method which further refines a query. This method will return a new query object with widgets that match both the original query _and_ the new selector.
 
 Let's say we have a query which gets all the buttons in an app, and we want a new query object with just the disabled buttons. We could write something like this:
 
