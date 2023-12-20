@@ -793,9 +793,12 @@ TextArea {
         if out_of_bounds:
             return blank_line
 
-        print(f"current y_offset = {y_offset!r}")
         # Get the line corresponding to this offset
-        line_info = wrapped_document._offset_to_line_info.get(y_offset)
+        try:
+            line_info = wrapped_document._offset_to_line_info[y_offset]
+        except IndexError:
+            line_info = None
+
         if line_info is None:
             return blank_line
 
@@ -940,7 +943,7 @@ TextArea {
         console = self.app.console
         gutter_segments = console.render(gutter)
         width, _ = self.size
-        section_width = width - self.gutter_width
+        section_width = width - self.gutter_width + 1
         line.set_length(section_width)
         text_segments = console.render(
             line,
