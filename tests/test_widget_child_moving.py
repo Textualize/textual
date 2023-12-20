@@ -43,59 +43,75 @@ async def test_move_child_to_outside() -> None:
 
 
 @pytest.mark.parametrize(
-    ["type_of_child", "before"],
+    "reference",
     [
-        ("widget", "widget"),
-        ("widget", "index"),
-        ("index", "widget"),
-        ("index", "index"),
+        "before",
+        "after",
     ],
 )
-async def test_move_child_before_itself(type_of_child: str, before: str) -> None:
-    """Test moving a widget before itself.
-
-    Regression test for https://github.com/Textualize/textual/issues/1743
-    """
+async def test_move_child_index_in_relation_to_itself_index(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
 
     widget = Widget()
-    keys = {
-        "widget": widget,
-        "index": 0,
-    }
-    child = keys[type_of_child]
-    before = keys[before]
-
+    child = 0
+    kwargs = {reference: 0}
     async with App().run_test() as pilot:
-        await pilot.app.mount(widget)
-        pilot.app.screen.move_child(child, before=before)
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
 
 
 @pytest.mark.parametrize(
-    ["type_of_child", "after"],
+    "reference",
     [
-        ("widget", "widget"),
-        ("widget", "index"),
-        ("index", "widget"),
-        ("index", "index"),
+        "before",
+        "after",
     ],
 )
-async def test_move_child_after_itself(type_of_child: str, after: str) -> None:
-    """Test moving a widget after itself.
-
-    Regression test for https://github.com/Textualize/textual/issues/1743
-    """
+async def test_move_child_index_in_relation_to_itself_widget(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
 
     widget = Widget()
-    keys = {
-        "widget": widget,
-        "index": 0,
-    }
-    child = keys[type_of_child]
-    after = keys[after]
-
+    child = 0
+    kwargs = {reference: widget}
     async with App().run_test() as pilot:
-        await pilot.app.mount(widget)
-        pilot.app.screen.move_child(child, after=after)
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "before",
+        "after",
+    ],
+)
+async def test_move_child_widget_in_relation_to_itself_index(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
+
+    widget = Widget()
+    child = widget
+    kwargs = {reference: 0}
+    async with App().run_test() as pilot:
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "before",
+        "after",
+    ],
+)
+async def test_move_child_widget_in_relation_to_itself_widget(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
+
+    widget = Widget()
+    child = widget
+    kwargs = {reference: widget}
+    async with App().run_test() as pilot:
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
 
 
 async def test_move_past_end_of_child_list() -> None:
