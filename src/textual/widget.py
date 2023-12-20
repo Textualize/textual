@@ -892,9 +892,30 @@ class Widget(DOMNode):
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
+    @overload
     def move_child(
         self,
         child: int | Widget,
+        *,
+        before: int | Widget,
+        after: None = None,
+    ) -> None:
+        ...
+
+    @overload
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
+        after: int | Widget,
+        before: None = None,
+    ) -> None:
+        ...
+
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
         before: int | Widget | None = None,
         after: int | Widget | None = None,
     ) -> None:
@@ -920,10 +941,6 @@ class Widget(DOMNode):
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before` or `after` can be handled.")
 
-        # We short-circuit the no-op, otherwise it will error later down the road.
-        if child is before or child is after:
-            return
-
         def _to_widget(child: int | Widget, called: str) -> Widget:
             """Ensure a given child reference is a Widget."""
             if isinstance(child, int):
@@ -947,6 +964,9 @@ class Widget(DOMNode):
         target = _to_widget(
             cast("int | Widget", before if after is None else after), "move towards"
         )
+
+        if child is target:
+            return  # Nothing to be done.
 
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
