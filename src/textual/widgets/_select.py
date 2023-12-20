@@ -519,6 +519,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         select_current = self.query_one(SelectCurrent)
         select_current.has_value = True
         self.expanded = True
+        # If we haven't opened the overlay yet, highlight the first option.
+        select_overlay = self.query_one(SelectOverlay)
+        if select_overlay.highlighted is None:
+            select_overlay.action_first()
 
     def is_blank(self) -> bool:
         """Indicates whether this `Select` is blank or not.

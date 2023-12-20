@@ -157,7 +157,9 @@ class SelectionList(Generic[SelectionType], OptionList):
     class SelectionMessage(Generic[MessageSelectionType], Message):
         """Base class for all selection messages."""
 
-        def __init__(self, selection_list: SelectionList, index: int) -> None:
+        def __init__(
+            self, selection_list: SelectionList[MessageSelectionType], index: int
+        ) -> None:
             """Initialise the selection message.
 
             Args:
@@ -189,14 +191,14 @@ class SelectionList(Generic[SelectionType], OptionList):
             yield "selection", self.selection
             yield "selection_index", self.selection_index
 
-    class SelectionHighlighted(SelectionMessage):
+    class SelectionHighlighted(SelectionMessage[MessageSelectionType]):
         """Message sent when a selection is highlighted.
 
         Can be handled using `on_selection_list_selection_highlighted` in a subclass of
         [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
         """
 
-    class SelectionToggled(SelectionMessage):
+    class SelectionToggled(SelectionMessage[MessageSelectionType]):
         """Message sent when a selection is toggled.
 
         Can be handled using `on_selection_list_selection_toggled` in a subclass of
@@ -229,7 +231,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def __init__(
         self,
-        *selections: Selection
+        *selections: Selection[SelectionType]
         | tuple[TextType, SelectionType]
         | tuple[TextType, SelectionType, bool],
         name: str | None = None,
@@ -308,7 +310,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         # expecting a message storm from this.
         with self.prevent(self.SelectedChanged):
             for selection in self._options:
-                changed = state_change(cast(Selection, selection).value) or changed
+                changed = (
+                    state_change(cast(Selection[SelectionType], selection).value)
+                    or changed
+                )
 
         # If the above did make a change, *then* send a message.
         if changed:
@@ -440,7 +445,7 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def _make_selection(
         self,
-        selection: Selection
+        selection: Selection[SelectionType]
         | tuple[TextType, SelectionType]
         | tuple[TextType, SelectionType, bool],
     ) -> Selection[SelectionType]:
@@ -632,7 +637,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         self,
         items: Iterable[
             NewOptionListContent
-            | Selection
+            | Selection[SelectionType]
             | tuple[TextType, SelectionType]
             | tuple[TextType, SelectionType, bool]
         ],
@@ -655,7 +660,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         # extend the types of accepted items to keep mypy and friends happy,
         # but then we runtime check that we've been given sensible types (in
         # this case the supported tuple values).
-        cleaned_options: list[Selection] = []
+        cleaned_options: list[Selection[SelectionType]] = []
         for item in items:
             if isinstance(item, tuple):
                 cleaned_options.append(
@@ -677,7 +682,7 @@ class SelectionList(Generic[SelectionType], OptionList):
     def add_option(
         self,
         item: NewOptionListContent
-        | Selection
+        | Selection[SelectionType]
         | tuple[TextType, SelectionType]
         | tuple[TextType, SelectionType, bool] = None,
     ) -> Self:
