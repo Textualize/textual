@@ -52,7 +52,7 @@ The second label uses CSS to customize the link color, background, and style.
 
 === "links.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/links.tcss"
     ```
 

@@ -29,7 +29,7 @@ Then, we set `min-height` individually on each placeholder.
 
 === "min_height.tcss"
 
-    ```sass hl_lines="13 17 21 25"
+    ```css hl_lines="13 17 21 25"
     --8<-- "docs/examples/styles/min_height.tcss"
     ```
 
@@ -37,7 +37,7 @@ Then, we set `min-height` individually on each placeholder.
 
 ## CSS
 
-```sass
+```css
 /* Set the minimum height to 10 rows */
 min-height: 10;
 

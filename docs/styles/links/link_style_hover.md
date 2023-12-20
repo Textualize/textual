@@ -50,7 +50,7 @@ It also shows that `link-style-hover` does not affect hyperlinks.
 
 === "link_style_hover.tcss"
 
-    ```sass hl_lines="2 6 10"
+    ```css hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_style_hover.tcss"
     ```
 
@@ -59,7 +59,7 @@ It also shows that `link-style-hover` does not affect hyperlinks.
 
 ## CSS
 
-```sass
+```css
 link-style-hover: bold;
 link-style-hover: bold italic reverse;
 ```

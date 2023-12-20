@@ -16,7 +16,7 @@ Textual pre-defines a number of colors as [CSS variables](../guide/CSS.md#css-va
 
 Here's an example of CSS that uses color variables:
 
-```sass
+```css
 MyWidget {
     background: $primary;
     color: $text;

@@ -29,13 +29,13 @@ The `scrollbar-background-active` style sets the background color of the scrollb
 
 === "scrollbars2.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-backround-active: red;
 ```
 

@@ -16,7 +16,7 @@ Some rules may clamp the values between `0%` and `100%`.
 
 ### CSS
 
-```sass
+```css
 #footer {
     /* Integer followed by % */
     color: red 70%;

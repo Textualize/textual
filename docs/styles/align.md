@@ -34,7 +34,7 @@ This example contains a simple app with two labels centered on the screen with `
 
 === "align.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/styles/align.tcss"
     ```
 
@@ -56,13 +56,13 @@ Each label has been aligned differently inside its container, and its text shows
 
 === "align_all.tcss"
 
-    ```sass hl_lines="2 6 10 14 18 22 26 30 34"
+    ```css hl_lines="2 6 10 14 18 22 26 30 34"
     --8<-- "docs/examples/styles/align_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Align child widgets to the center. */
 align: center middle;
 /* Align child widget to the top right */

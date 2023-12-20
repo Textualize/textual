@@ -29,7 +29,7 @@ This example creates three widgets and applies a different background to each.
 
 === "background.tcss"
 
-    ```sass hl_lines="9 13 17"
+    ```css hl_lines="9 13 17"
     --8<-- "docs/examples/styles/background.tcss"
     ```
 
@@ -50,13 +50,13 @@ The next example creates ten widgets laid out side by side to show the effect of
 
 === "background_transparency.tcss"
 
-    ```sass hl_lines="2 6 10 14 18 22 26 30 34 38"
+    ```css hl_lines="2 6 10 14 18 22 26 30 34 38"
     --8<-- "docs/examples/styles/background_transparency.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Blue background */
 background: blue;
 

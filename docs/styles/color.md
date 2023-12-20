@@ -31,7 +31,7 @@ This example sets a different text color for each of three different widgets.
 
 === "color.tcss"
 
-    ```sass hl_lines="8 12 16"
+    ```css hl_lines="8 12 16"
     --8<-- "docs/examples/styles/color.tcss"
     ```
 
@@ -52,13 +52,13 @@ The next example shows how `auto` chooses between a lighter or a darker text col
 
 === "color_auto.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/styles/color_auto.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Blue text */
 color: blue;
 

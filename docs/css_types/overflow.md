@@ -16,7 +16,7 @@ The [`<overflow>`](./overflow.md) type can take any of the following values:
 
 ### CSS
 
-```sass
+```css
 #container {
     overflow-y: hidden;  /* Don't overflow */
 }
