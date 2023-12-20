@@ -16,7 +16,7 @@ The [`<vertical>`](./vertical.md) type can take any of the following values:
 
 ### CSS
 
-```sass
+```css
 .container {
     align-vertical: top;
 }

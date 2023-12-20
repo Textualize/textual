@@ -46,7 +46,7 @@ It also shows that `link-background-hover` does not affect hyperlinks.
 
 === "link_background_hover.tcss"
 
-    ```sass hl_lines="2 6 10"
+    ```css hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_background_hover.tcss"
     ```
 
@@ -55,7 +55,7 @@ It also shows that `link-background-hover` does not affect hyperlinks.
 
 ## CSS
 
-```sass
+```css
 link-background-hover: red 70%;
 link-background-hover: $accent;
 ```

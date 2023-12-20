@@ -26,7 +26,7 @@ The example below shows horizontal rules with all the available line styles.
 
 === "horizontal_rules.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/horizontal_rules.tcss"
     ```
 
@@ -47,7 +47,7 @@ The example below shows vertical rules with all the available line styles.
 
 === "vertical_rules.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/vertical_rules.tcss"
     ```
 

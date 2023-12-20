@@ -31,7 +31,7 @@ This example shows, from top to bottom: `left`, `center`, `right`, and `justify`
 
 === "text_align.tcss"
 
-    ```sass hl_lines="2 7 12 17"
+    ```css hl_lines="2 7 12 17"
     --8<-- "docs/examples/styles/text_align.tcss"
     ```
 
@@ -39,7 +39,7 @@ This example shows, from top to bottom: `left`, `center`, `right`, and `justify`
 
 ## CSS
 
-```sass
+```css
 /* Set text in the widget to be right aligned */
 text-align: right;
 ```

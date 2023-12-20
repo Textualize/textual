@@ -37,7 +37,7 @@ textual borders
 
 ### CSS
 
-```sass
+```css
 #container {
     border: heavy red;
 }

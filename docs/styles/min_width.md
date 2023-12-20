@@ -29,7 +29,7 @@ Then, we set `min-width` individually on each placeholder.
 
 === "min_width.tcss"
 
-    ```sass hl_lines="13 17 21 25"
+    ```css hl_lines="13 17 21 25"
     --8<-- "docs/examples/styles/min_width.tcss"
     ```
 
@@ -37,7 +37,7 @@ Then, we set `min-width` individually on each placeholder.
 
 ## CSS
 
-```sass
+```css
 /* Set the minimum width to 10 rows */
 min-width: 10;
 
