@@ -138,6 +138,16 @@ class WrappedDocument:
         start_y_offset = self._line_index_to_offsets[start_line_index][0]
         old_end_y_offset = self._line_index_to_offsets[old_end_line_index][-1]
 
+        # TODO when you return
+        #  I think the issue is that the "end" of an edit can be BEFORE the "start"
+        #  of an edit. However, we haven't really taken that into account, and this
+        #  will likely mess with the slicing ranges etc. It could also result in negative
+        #  values appearing while trying to calculate heights which we assume to be positive.
+        #  The two variables defined below are part of the puzzle, although they're probably
+        #  incorrect - I haven't spent enough time looking into this.
+        edit_top_line_index = min((start_line_index, new_end_line_index))
+        edit_bottom_line_index = max((start_line_index, new_end_line_index))
+
         new_lines = self.document.lines[start_line_index : new_end_line_index + 1]
 
         new_wrap_offsets: list[int] = []
@@ -174,10 +184,10 @@ class WrappedDocument:
         # How much did the edit/rewrap alter the offsets?
         old_height = old_end_y_offset - start_y_offset + 1
         new_height = len(new_lines)
-        offset_delta = new_height - old_height
+        offset_delta = abs(new_height - old_height)
 
-        # Iterate over all the lines below the edit region, updating offset data.
-        edit_top_line_index = min((start_line_index, new_end_line_index))
+        # Iterate over all the lines below the edit region, updating offset data
+
         remaining_lines_start = edit_top_line_index + len(new_lines)
 
         for line_index in range(
@@ -191,11 +201,13 @@ class WrappedDocument:
                 new_offset = old_offset + offset_delta
                 y_offsets_for_line[section_offset] = new_offset
                 # Apply the change in line indices
-
                 new_line_info = (
                     line_index,
                     section_offset,
                 )
+
+                # TODO - can we be 100% sure that these indices still exist?
+                #  should we make a new list and rebuild
                 self._offset_to_line_info[new_offset] = new_line_info
 
         self._wrap_offsets[start_line_index : old_end_line_index + 1] = new_wrap_offsets
