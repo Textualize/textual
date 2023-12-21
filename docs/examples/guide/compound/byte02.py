@@ -31,7 +31,7 @@ class BitSwitch(Widget):
             self.bit = bit
             self.value = value
 
-    value = reactive(0)  # (1)!
+    value = reactive(False)  # (1)!
 
     def __init__(self, bit: int) -> None:
         self.bit = bit
@@ -90,9 +90,12 @@ class ByteEditor(Widget):
 
     def on_bit_switch_bit_changed(self, event: BitSwitch.BitChanged) -> None:
         """When a switch changes, update the value."""
-        value = 0
-        for switch in self.query(BitSwitch):
-            value |= switch.value << switch.bit
+        current_value = int(self.query_one(Input).value or "0")
+        value_change = 1 << event.bit
+        if event.value:  # Bit changed from 0 to 1.
+            value = current_value + value_change
+        else:  # Bit changed from 1 to 0.
+            value = current_value - value_change
         self.query_one(Input).value = str(value)
 
 

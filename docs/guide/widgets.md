@@ -655,7 +655,7 @@ Let's extend the `ByteEditor` so that clicking any of the 8 `BitSwitch` widgets 
 
 === "byte02.py"
 
-    ```python title="byte02.py" hl_lines="5-6 26-32 34 44-48 91-96"
+    ```python title="byte02.py" hl_lines="5-6 26-32 34 44-48 91-99"
     --8<-- "docs/examples/guide/compound/byte02.py"
     ```
 
@@ -688,7 +688,7 @@ This is an example of "attributes down".
 
 === "byte03.py"
 
-    ```python title="byte03.py" hl_lines="5 45-47 90 92-94 109-114 116-120"
+    ```python title="byte03.py" hl_lines="5 45-47 90 92-94 112-117 119-123"
     --8<-- "docs/examples/guide/compound/byte03.py"
     ```
 
