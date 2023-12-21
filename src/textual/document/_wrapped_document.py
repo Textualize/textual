@@ -83,8 +83,6 @@ class WrappedDocument:
         self._offset_to_line_info = offset_to_line_info
         self._line_index_to_offsets = line_index_to_offsets
         self._wrap_offsets = new_wrap_offsets
-        print(f"BUILT offset_to_line_info = \n{offset_to_line_info!r}")
-        print(f"BUILT line_index_to_offsets = \n{line_index_to_offsets!r}")
 
     @property
     def lines(self) -> list[list[str]]:
@@ -128,9 +126,6 @@ class WrappedDocument:
 
         # Get all the text on the lines between start and end in document space
 
-        start, old_end = sorted((start, old_end))
-        start, new_end = sorted((start, new_end))
-
         start_line_index, _ = start
         old_end_line_index, _ = old_end
         new_end_line_index, _ = new_end
@@ -142,20 +137,7 @@ class WrappedDocument:
         # Clearing old cached data
         start_y_offset = self._line_index_to_offsets[start_line_index][0]
         old_end_y_offset = self._line_index_to_offsets[old_end_line_index][-1]
-        old_height = old_end_y_offset - start_y_offset
 
-        print("Wrap--")
-        print(
-            f"ranges = start = {start_line_index!r}, old_end = {old_end!r}, new_end = {new_end!r}"
-        )
-
-        # TODO - we're deleting two lines here and sometimes only replacing them
-        #  with one thing. This seems to happen when we delete.
-
-        # Replace the old offsets with the new offsets
-        # The old offsets are those between start -> old_end inclusive
-        # The new offsets are those between start -> new_end inclusive
-        # We'll need to retrieve the offsets from the locations
         new_lines = self.document.lines[start_line_index : new_end_line_index + 1]
 
         new_wrap_offsets: list[int] = []
@@ -166,10 +148,6 @@ class WrappedDocument:
 
         # Add the new offsets between start and new end (the new post-edit offsets)
         current_y_offset = start_y_offset
-
-        # TODO - I think we cannot just iterate over new_lines here
-        #  If we replace some text, the newlines could be a single line
-        #  But the offsets we need to update
         for line_index, line in enumerate(new_lines, start_line_index):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
@@ -185,35 +163,40 @@ class WrappedDocument:
             new_line_index_to_offsets.append(y_offsets_for_line)
 
         # Replace the range start -> old with the new wrapped lines
-        print(
-            f"replacing offset_to_line_info[{start_y_offset}:{old_end_y_offset + 1}] with\n{new_offset_to_line_info}"
-        )
         self._offset_to_line_info[
             start_y_offset : old_end_y_offset + 1
         ] = new_offset_to_line_info
 
-        print(f"AFTER -> offset_to_line={self._offset_to_line_info!r}")
-
         self._line_index_to_offsets[
             start_line_index : old_end_line_index + 1
         ] = new_line_index_to_offsets
+
         # How much did the edit/rewrap alter the offsets?
-        new_height = current_y_offset - start_y_offset
+        old_height = old_end_y_offset - start_y_offset + 1
+        new_height = len(new_lines)
         offset_delta = new_height - old_height
 
         # Iterate over all the lines below the edit region, updating offset data.
+        edit_top_line_index = min((start_line_index, new_end_line_index))
+        remaining_lines_start = edit_top_line_index + len(new_lines)
+
         for line_index in range(
-            start_line_index + len(new_line_index_to_offsets),
-            len(self._line_index_to_offsets),
+            remaining_lines_start,  # from the first line below the edit
+            len(self._line_index_to_offsets),  # to the end of the document
         ):
             y_offsets_for_line = self._line_index_to_offsets[line_index]
-            for section_offset, y_offset in enumerate(y_offsets_for_line):
-                y_offsets_for_line[section_offset] += offset_delta
-                self._offset_to_line_info[current_y_offset] = (
+            for section_offset in range(len(y_offsets_for_line)):
+                # Apply the change in offsets
+                old_offset = y_offsets_for_line[section_offset]
+                new_offset = old_offset + offset_delta
+                y_offsets_for_line[section_offset] = new_offset
+                # Apply the change in line indices
+
+                new_line_info = (
                     line_index,
                     section_offset,
                 )
-                current_y_offset += 1
+                self._offset_to_line_info[new_offset] = new_line_info
 
         self._wrap_offsets[start_line_index : old_end_line_index + 1] = new_wrap_offsets
 
