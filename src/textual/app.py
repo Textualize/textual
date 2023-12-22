@@ -1991,7 +1991,7 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
             raise ScreenError(
-                "Can't install screen; {screen!r} has already been installed"
+                f"Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
         self.log.system(f"{screen} INSTALLED name={name!r}")
