@@ -421,3 +421,17 @@ async def test_mount_error_bad_widget():
     with pytest.raises(MountError):
         async with app.run_test():
             pass
+
+
+async def test_render_returns_text():
+    """Test that render processes console markup when returning a string."""
+
+    # Regression test for https://github.com/Textualize/textual/issues/3918
+    class SimpleWidget(Widget):
+        def render(self) -> str:
+            return "Hello [b]World[/b]!"
+
+    widget = SimpleWidget()
+    render_result = widget._render()
+    assert isinstance(render_result, Text)
+    assert render_result.plain == "Hello World!"
