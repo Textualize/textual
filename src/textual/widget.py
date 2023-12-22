@@ -3227,7 +3227,7 @@ class Widget(DOMNode):
         """
         renderable = self.render()
         if isinstance(renderable, str):
-            return Text(renderable)
+            return Text.from_markup(renderable)
         return renderable
 
     async def run_action(self, action: str) -> None:
