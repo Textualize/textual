@@ -943,6 +943,11 @@ def test_max_height_100(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
 
 
+def test_auto_align_middle(snap_compare):
+    """Test sizing of auto-sized children in auto-sized containers with middle alignment."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_align_middle.py")
+
+
 def test_loading_indicator(snap_compare):
     """Test loading indicator."""
     # https://github.com/Textualize/textual/pull/3816
