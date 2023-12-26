@@ -172,7 +172,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         else:
             new_child = None
 
-        self._scroll_highlighted_region()
+        self.call_after_refresh(self._scroll_highlighted_region)
         self.post_message(self.Highlighted(self, new_child))
 
     def extend(self, items: Iterable[ListItem]) -> AwaitMount:
