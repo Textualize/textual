@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
 - Fixed auto width text not processing markup https://github.com/Textualize/textual/issues/3918
+- Fixed sizing of non-top-aligned widgets with an auto height in an auto height container https://github.com/Textualize/textual/pull/3928
 
 ### Changed
 
