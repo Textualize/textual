@@ -967,3 +967,8 @@ def test_zero_scrollbar_size(snap_compare):
     """Regression test for missing content with 0 sized scrollbars"""
     # https://github.com/Textualize/textual/issues/3886
     assert snap_compare(SNAPSHOT_APPS_DIR / "zero_scrollbar_size.py")
+
+
+def test_listview_index(snap_compare):
+    """Tests that ListView scrolls correctly after updating its index."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "listview_index.py")
