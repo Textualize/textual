@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
 - Fixed auto width text not processing markup https://github.com/Textualize/textual/issues/3918
+- Fixed `ListView` not scrolling correctly after adding new children and then immediately setting its index to one of the new children https://github.com/Textualize/textual/pull/3929
 
 ### Changed
 
