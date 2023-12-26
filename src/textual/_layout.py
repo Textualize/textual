@@ -183,17 +183,7 @@ class Layout(ABC):
             height = 0
         else:
             # Use a height of zero to ignore relative heights
-            styles_height = widget.styles.height
-            if widget._parent and len(widget._nodes) == 1:
-                # If it is an only child with height auto we want it to expand
-                height = (
-                    container.height
-                    if styles_height is not None and styles_height.is_auto
-                    else 0
-                )
-            else:
-                height = 0
-            arrangement = widget._arrange(Size(width, height))
+            arrangement = widget._arrange(Size(width, 0))
             height = arrangement.total_region.bottom
 
         return height

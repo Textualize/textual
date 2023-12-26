@@ -425,6 +425,15 @@ class Widget(DOMNode):
         return siblings
 
     @property
+    def _layer_siblings(self) -> list[Widget]:
+        """A list of siblings on the same layer as this widget.
+
+        Returns:
+            List of siblings.
+        """
+        return [widget for widget in self.siblings if widget.layer == self.layer]
+
+    @property
     def allow_vertical_scroll(self) -> bool:
         """Check if vertical scroll is permitted.
 
@@ -1107,6 +1116,17 @@ class Widget(DOMNode):
                 content_height < content_container.height
                 and self._has_relative_children_height
             ):
+                content_height = Fraction(content_container.height)
+            if (
+                content_height == 0
+                and self._parent
+                and len(self._layer_siblings) == 0
+                and len(self._nodes) == 1
+                and self._nodes[0].styles.height
+                and self._nodes[0].styles.height.is_auto
+            ):
+                # If this is an auto-sized widget with no siblings and a single auto-sized child
+                # that has no inherent size, expand to parent height
                 content_height = Fraction(content_container.height)
         else:
             styles_height = styles.height
