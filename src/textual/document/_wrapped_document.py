@@ -12,7 +12,7 @@ from rich.text import Text
 
 from textual._cells import cell_width_to_column_index
 from textual.document._document import DocumentBase, Location
-from textual.geometry import Offset
+from textual.geometry import Offset, clamp
 
 VerticalOffset = int
 LineIndex = int
@@ -132,28 +132,26 @@ class WrappedDocument:
         old_end_line_index, _ = old_end
         new_end_line_index, _ = new_end
 
+        # Although end users should not be able to edit invalid ranges via a TextArea,
+        #  programmers can pass whatever they wish to the edit API, so we need to clamp
+        #  the edit ranges here to ensure we only attempt to update within the bounds
+        #  of the wrapped document.
+        old_max_index = len(self._line_index_to_offsets) - 1
+        new_max_index = self.document.line_count - 1
+
+        start_line_index = clamp(
+            start_line_index, 0, min((old_max_index, new_max_index))
+        )
+        old_end_line_index = clamp(old_end_line_index, 0, old_max_index)
+        new_end_line_index = clamp(new_end_line_index, 0, new_max_index)
+
         top_line_index, old_bottom_line_index = sorted(
             (start_line_index, old_end_line_index)
         )
         new_bottom_line_index = max((start_line_index, new_end_line_index))
 
-        # Clearing old cached data
-        # start_y_offset = self._line_index_to_offsets[start_line_index][0]
-        # old_end_y_offset = self._line_index_to_offsets[old_end_line_index][-1]
-
-        # Get the top and bottom of the old edit in terms of y_offsets
-        # Line index can correspond to many offsets, we should take the minimum.
-        # TODO - assuming index 0 is the minimum here.
         top_y_offset = self._line_index_to_offsets[top_line_index][0]
         old_bottom_y_offset = self._line_index_to_offsets[old_bottom_line_index][-1]
-
-        # TODO when you return
-        #  I think the issue is that the "end" of an edit can be BEFORE the "start"
-        #  of an edit. However, we haven't really taken that into account, and this
-        #  will likely mess with the slicing ranges etc. It could also result in negative
-        #  values appearing while trying to calculate heights which we assume to be positive.
-        #  The two variables defined below are part of the puzzle, although they're probably
-        #  incorrect - I haven't spent enough time looking into this.
 
         # Get the new range of the edit from top to bottom.
         new_lines = self.document.lines[top_line_index : new_bottom_line_index + 1]
