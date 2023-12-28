@@ -145,7 +145,7 @@ class DocumentNavigator:
             location
         )
 
-    def left(self, location: Location) -> Location:
+    def get_location_left(self, location: Location) -> Location:
         if location == (0, 0):
             return 0, 0
 
@@ -155,7 +155,7 @@ class DocumentNavigator:
         target_column = column - 1 if column != 0 else length_of_row_above
         return target_row, target_column
 
-    def right(self, location: Location) -> Location:
+    def get_location_right(self, location: Location) -> Location:
         if self.is_end_of_document(location):
             return location
         row, column = location

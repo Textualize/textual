@@ -666,6 +666,7 @@ TextArea {
 
         self.document = document
         self.wrapped_document = WrappedDocument(document)
+        self._navigator = DocumentNavigator(self.wrapped_document)
         self._build_highlight_map()
 
     @property
@@ -708,17 +709,6 @@ TextArea {
             available_text_width = width - self.gutter_width - 1
             self.wrapped_document.wrap(available_text_width)
             log.debug(f"re-wrapping at width {available_text_width!r}")
-
-    def load_document(self, document: DocumentBase) -> None:
-        """Load a document into the TextArea.
-
-        Args:
-            document: The document to load into the TextArea.
-        """
-        self.document = document
-        self.move_cursor((0, 0))
-        self._refresh_size()
-        self._rewrap()
 
     @property
     def is_syntax_aware(self) -> bool:
@@ -1022,14 +1012,10 @@ TextArea {
             Data relating to the edit that may be useful. The data returned
             may be different depending on the edit performed.
         """
-        print("doing edit")
         result = edit.do(self)
         self._refresh_size()
         edit.after(self)
         self._build_highlight_map()
-        print(f"edit.from_location = {edit.from_location!r}")
-        print(f"edit.to_location = {edit.to_location!r}")
-        print(f"result.end_location = {result.end_location!r}")
         self.wrapped_document.wrap_range(
             edit.from_location, edit.to_location, result.end_location
         )
@@ -1393,8 +1379,8 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
-        new_cursor_location = self.get_cursor_left_location()
-        self.move_cursor(new_cursor_location, select=select)
+        target = self.get_cursor_left_location()
+        self.move_cursor(target, select=select)
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left.
@@ -1402,13 +1388,7 @@ TextArea {
         Returns:
             The location of the cursor if it moves left.
         """
-        if self.cursor_at_start_of_text:
-            return 0, 0
-        cursor_row, cursor_column = self.selection.end
-        length_of_row_above = len(self.document[cursor_row - 1])
-        target_row = cursor_row if cursor_column != 0 else cursor_row - 1
-        target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
-        return target_row, target_column
+        return self._navigator.get_location_left(self.cursor_location)
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one location to the right.
@@ -1427,7 +1407,7 @@ TextArea {
         Returns:
             the location the cursor will move to if it moves right.
         """
-        return self._navigator.right(self.cursor_location)
+        return self._navigator.get_location_right(self.cursor_location)
 
     def action_cursor_down(self, select: bool = False) -> None:
         """Move the cursor down one cell.
@@ -1444,17 +1424,9 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves down.
         """
-        cursor_row, cursor_column = self.selection.end
-        if self.cursor_at_last_line:
-            return cursor_row, len(self.document[cursor_row])
-
-        target_row = min(self.document.line_count - 1, cursor_row + 1)
-        # Attempt to snap last intentional cell length
-        target_column = self.cell_width_to_column_index(
-            self._last_intentional_cell_width, target_row
+        return self._navigator.get_location_below(
+            self.cursor_location, self.indent_width
         )
-        target_column = clamp(target_column, 0, len(self.document[target_row]))
-        return target_row, target_column
 
     def action_cursor_up(self, select: bool = False) -> None:
         """Move the cursor up one cell.
@@ -1471,16 +1443,9 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves up.
         """
-        if self.cursor_at_first_line:
-            return 0, 0
-        cursor_row, cursor_column = self.selection.end
-        target_row = max(0, cursor_row - 1)
-        # Attempt to snap last intentional cell length
-        target_column = self.cell_width_to_column_index(
-            self._last_intentional_cell_width, target_row
+        return self._navigator.get_location_above(
+            self.cursor_location, self.indent_width
         )
-        target_column = clamp(target_column, 0, len(self.document[target_row]))
-        return target_row, target_column
 
     def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
