@@ -23,6 +23,7 @@ class WrappedDocument:
     def __init__(
         self,
         document: DocumentBase,
+        width: int = 0,
     ) -> None:
         """Construct a WrappedDocument.
 
@@ -31,6 +32,7 @@ class WrappedDocument:
 
         Args:
             document: The document to wrap.
+            width: The width to wrap at.
         """
         self.document = document
         """The document wrapping is performed on."""
@@ -49,11 +51,11 @@ class WrappedDocument:
         # self._offset_to_section_offset: dict[int, int] = {}
         # """Maps y_offsets to the offsets of the section within the line."""
 
-        self._width: int = 0
+        self._width: int = width
         """The width the document is currently wrapped at. This will correspond with
         the value last passed into the `wrap` method."""
 
-        self.wrap(self._width)
+        self.wrap(width)
 
     def wrap(self, width: int) -> None:
         """Wrap and cache all lines in the document.
@@ -242,7 +244,13 @@ class WrappedDocument:
 
         # Find the line corresponding to the given y offset in the wrapped document.
         get_target_document_column = self.get_target_document_column
-        offset_data = self._offset_to_line_info[y]
+
+        try:
+            offset_data = self._offset_to_line_info[y]
+        except IndexError:
+            # y-offset is too large
+            offset_data = self._offset_to_line_info[-1]
+
         if offset_data is not None:
             line_index, section_y = offset_data
             location = line_index, get_target_document_column(
