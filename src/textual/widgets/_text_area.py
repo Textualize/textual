@@ -338,6 +338,8 @@ TextArea {
         """The wrapped view of the document."""
 
         self._navigator = DocumentNavigator(self.wrapped_document)
+        """Queried to determine where the cursor should move given a navigation
+        action, accounting for wrapping etc."""
 
         self._theme: TextAreaTheme | None = None
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
@@ -1425,12 +1427,7 @@ TextArea {
         Returns:
             the location the cursor will move to if it moves right.
         """
-        if self.cursor_at_end_of_text:
-            return self.selection.end
-        cursor_row, cursor_column = self.selection.end
-        target_row = cursor_row + 1 if self.cursor_at_end_of_line else cursor_row
-        target_column = 0 if self.cursor_at_end_of_line else cursor_column + 1
-        return target_row, target_column
+        return self._navigator.right(self.cursor_location)
 
     def action_cursor_down(self, select: bool = False) -> None:
         """Move the cursor down one cell.
