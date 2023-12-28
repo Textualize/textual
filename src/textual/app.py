@@ -73,7 +73,7 @@ from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
 from .css.query import NoMatches
-from .css.stylesheet import Stylesheet
+from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
@@ -1185,6 +1185,9 @@ class App(Generic[ReturnType], DOMNode):
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 await asyncio.sleep(float(wait_ms) / 1000)
+                await wait_for_idle(0)
+                await app._animator.wait_until_complete()
+                await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
@@ -1988,7 +1991,7 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
             raise ScreenError(
-                "Can't install screen; {screen!r} has already been installed"
+                f"Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
         self.log.system(f"{screen} INSTALLED name={name!r}")
@@ -2392,6 +2395,7 @@ class App(Generic[ReturnType], DOMNode):
         *widgets: Widget,
         before: int | None = None,
         after: int | None = None,
+        cache: dict[tuple, RulesMap] | None = None,
     ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
@@ -2400,6 +2404,7 @@ class App(Generic[ReturnType], DOMNode):
             *widgets: The widget(s) to register.
             before: A location to mount before.
             after: A location to mount after.
+            cache: Optional rules map cache.
 
         Returns:
             List of modified widgets.
@@ -2408,6 +2413,8 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
+        if cache is None:
+            cache = {}
         widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
@@ -2424,8 +2431,8 @@ class App(Generic[ReturnType], DOMNode):
             if widget not in self._registry:
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
-                    self._register(widget, *widget._nodes)
-                apply_stylesheet(widget)
+                    self._register(widget, *widget._nodes, cache=cache)
+                apply_stylesheet(widget, cache=cache)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks

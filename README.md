@@ -36,7 +36,7 @@ On modern terminal software (installed by default on most systems), Textual apps
 
 ## Compatibility
 
-Textual runs on Linux, macOS, and Windows. Textual requires Python 3.7 or above.
+Textual runs on Linux, macOS, and Windows. Textual requires Python 3.8 or above.
 
 ## Installing
 

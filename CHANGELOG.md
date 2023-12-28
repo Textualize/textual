@@ -9,6 +9,41 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
+- Fixed auto width text not processing markup https://github.com/Textualize/textual/issues/3918
+
+### Changed
+
+- Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only https://github.com/Textualize/textual/pull/3896
+
+## [0.46.0] - 2023-12-17
+
+### Fixed
+
+- Disabled radio buttons could be selected with the keyboard https://github.com/Textualize/textual/issues/3839
+- Fixed zero width scrollbars causing content to disappear https://github.com/Textualize/textual/issues/3886
+
+### Changed
+
+- The tabs within a `TabbedContent` now prefix their IDs to stop any clash with their associated `TabPane` https://github.com/Textualize/textual/pull/3815
+- Breaking change: `tab` is no longer a `@on` decorator selector for `TabbedContent.TabActivated` -- use `pane` instead https://github.com/Textualize/textual/pull/3815
+
+### Added
+
+- Added `Collapsible.title` reactive attribute https://github.com/Textualize/textual/pull/3830
+- Added a `pane` attribute to `TabbedContent.TabActivated` https://github.com/Textualize/textual/pull/3815
+- Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
+
+## [0.45.1] - 2023-12-12
+
+### Fixed
+
+- Fixed issues where styles wouldn't update if changed in mount. https://github.com/Textualize/textual/pull/3860
+
+## [0.45.0] - 2023-12-12
+
+### Fixed
+
 - Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
 - Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
 - Fixed loading indicator not covering scrollbars https://github.com/Textualize/textual/pull/3816
@@ -1525,6 +1560,9 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.46.0]: https://github.com/Textualize/textual/compare/v0.45.1...v0.46.0
+[0.45.1]: https://github.com/Textualize/textual/compare/v0.45.0...v0.45.1
+[0.45.0]: https://github.com/Textualize/textual/compare/v0.44.1...v0.45.0
 [0.44.1]: https://github.com/Textualize/textual/compare/v0.44.0...v0.44.1
 [0.44.0]: https://github.com/Textualize/textual/compare/v0.43.2...v0.44.0
 [0.43.2]: https://github.com/Textualize/textual/compare/v0.43.1...v0.43.2

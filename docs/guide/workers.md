@@ -158,7 +158,7 @@ The second difference is that you can't cancel threads in the same way as corout
 Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in the standard library).
 The `urllib` module is not async aware, so we will need to use threads:
 
-```python title="weather05.py" hl_lines="1 26-43"
+```python title="weather05.py" hl_lines="1-2 27-44"
 --8<-- "docs/examples/guide/workers/weather05.py"
 ```
 

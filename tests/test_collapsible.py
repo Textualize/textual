@@ -189,3 +189,15 @@ async def test_collapse_message():
 
         assert pilot.app.query_one(Collapsible).collapsed
         assert len(hits) == 1
+
+
+async def test_collapsible_title_reactive_change():
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(title="Old title")
+
+    async with CollapsibleApp().run_test() as pilot:
+        collapsible = pilot.app.query_one(Collapsible)
+        assert get_title(collapsible).label == "Old title"
+        collapsible.title = "New title"
+        assert get_title(collapsible).label == "New title"

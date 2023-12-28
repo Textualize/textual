@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import pytest
@@ -795,6 +794,7 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -846,6 +846,7 @@ I am the final line."""
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
 )
@@ -941,6 +942,7 @@ def test_max_height_100(snap_compare):
     """Test vertical max height takes border in to account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
 
+
 def test_loading_indicator(snap_compare):
     """Test loading indicator."""
     # https://github.com/Textualize/textual/pull/3816
@@ -954,3 +956,14 @@ def test_loading_indicator_disables_widget(snap_compare):
         SNAPSHOT_APPS_DIR / "loading.py", press=["space", "down", "down", "space"]
     )
 
+
+def test_mount_style_fix(snap_compare):
+    """Regression test for broken style update on mount."""
+    # https://github.com/Textualize/textual/issues/3858
+    assert snap_compare(SNAPSHOT_APPS_DIR / "mount_style_fix.py")
+
+
+def test_zero_scrollbar_size(snap_compare):
+    """Regression test for missing content with 0 sized scrollbars"""
+    # https://github.com/Textualize/textual/issues/3886
+    assert snap_compare(SNAPSHOT_APPS_DIR / "zero_scrollbar_size.py")

@@ -2342,4 +2342,4 @@ syntax = ["tree-sitter", "tree_sitter_languages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "af9626b447a24031c00d3dfe01226b1896b4356e753f0a84f4c1748e7a166f8a"
+content-hash = "c4c26f6d0bd1266a7a38b9236c99cf51bf658447a18ffc2c96fb5da442762d6a"
