@@ -19,7 +19,7 @@ class ListViewIndexApp(App):
     def compose(self) -> ComposeResult:
         yield self._menu
 
-    async def watch_data(self, data: list[int]) -> None:
+    async def watch_data(self, data: "list[int]") -> None:
         await self._menu.remove_children()
         await self._menu.extend((ListItem(Label(str(value))) for value in data))
         self._menu.index = len(self._menu) - 1
