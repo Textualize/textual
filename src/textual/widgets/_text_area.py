@@ -22,6 +22,7 @@ from textual.document._document import (
     Selection,
     _utf8_encode,
 )
+from textual.document._document_navigator import DocumentNavigator
 from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
@@ -335,6 +336,8 @@ TextArea {
 
         self.wrapped_document = WrappedDocument(self.document)
         """The wrapped view of the document."""
+
+        self._navigator = DocumentNavigator(self.wrapped_document)
 
         self._theme: TextAreaTheme | None = None
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
