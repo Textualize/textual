@@ -130,13 +130,20 @@ class WrappedDocument:
         old_end_line_index, _ = old_end
         new_end_line_index, _ = new_end
 
-        # Can we only rewrap a section of the line starting at the wrap point
-        # to the left of the edit? There may be something we can do here. However,
-        # an edit can alter wrap points before it.
+        top_line_index, old_bottom_line_index = sorted(
+            (start_line_index, old_end_line_index)
+        )
+        new_bottom_line_index = max((start_line_index, new_end_line_index))
 
         # Clearing old cached data
-        start_y_offset = self._line_index_to_offsets[start_line_index][0]
-        old_end_y_offset = self._line_index_to_offsets[old_end_line_index][-1]
+        # start_y_offset = self._line_index_to_offsets[start_line_index][0]
+        # old_end_y_offset = self._line_index_to_offsets[old_end_line_index][-1]
+
+        # Get the top and bottom of the old edit in terms of y_offsets
+        # Line index can correspond to many offsets, we should take the minimum.
+        # TODO - assuming index 0 is the minimum here.
+        top_y_offset = self._line_index_to_offsets[top_line_index][0]
+        old_bottom_y_offset = self._line_index_to_offsets[old_bottom_line_index][-1]
 
         # TODO when you return
         #  I think the issue is that the "end" of an edit can be BEFORE the "start"
@@ -145,10 +152,9 @@ class WrappedDocument:
         #  values appearing while trying to calculate heights which we assume to be positive.
         #  The two variables defined below are part of the puzzle, although they're probably
         #  incorrect - I haven't spent enough time looking into this.
-        edit_top_line_index = min((start_line_index, new_end_line_index))
-        edit_bottom_line_index = max((start_line_index, new_end_line_index))
 
-        new_lines = self.document.lines[start_line_index : new_end_line_index + 1]
+        # Get the new range of the edit from top to bottom.
+        new_lines = self.document.lines[top_line_index : new_bottom_line_index + 1]
 
         new_wrap_offsets: list[int] = []
         new_line_index_to_offsets: list[list[VerticalOffset]] = []
@@ -156,9 +162,9 @@ class WrappedDocument:
         append_wrap_offset = new_wrap_offsets.append
         width = self._width
 
-        # Add the new offsets between start and new end (the new post-edit offsets)
-        current_y_offset = start_y_offset
-        for line_index, line in enumerate(new_lines, start_line_index):
+        # Add the new offsets between the top and new bottom (the new post-edit offsets)
+        current_y_offset = top_y_offset
+        for line_index, line in enumerate(new_lines, top_line_index):
             wrap_offsets = divide_line(line, width) if width else []
             append_wrap_offset(wrap_offsets)
 
@@ -174,22 +180,20 @@ class WrappedDocument:
 
         # Replace the range start -> old with the new wrapped lines
         self._offset_to_line_info[
-            start_y_offset : old_end_y_offset + 1
+            top_y_offset : old_bottom_y_offset + 1
         ] = new_offset_to_line_info
 
         self._line_index_to_offsets[
-            start_line_index : old_end_line_index + 1
+            top_line_index : old_bottom_line_index + 1
         ] = new_line_index_to_offsets
 
         # How much did the edit/rewrap alter the offsets?
-        old_height = old_end_y_offset - start_y_offset + 1
+        old_height = old_bottom_y_offset - top_y_offset + 1
         new_height = len(new_lines)
         offset_delta = abs(new_height - old_height)
 
-        # Iterate over all the lines below the edit region, updating offset data
-
-        remaining_lines_start = edit_top_line_index + len(new_lines)
-
+        # Iterate over all the lines *below* the edit region, updating offset data
+        remaining_lines_start = top_line_index + len(new_lines)
         for line_index in range(
             remaining_lines_start,  # from the first line below the edit
             len(self._line_index_to_offsets),  # to the end of the document
@@ -207,10 +211,12 @@ class WrappedDocument:
                 )
 
                 # TODO - can we be 100% sure that these indices still exist?
-                #  should we make a new list and rebuild
+                #  should we make a new list and rebuild?
                 self._offset_to_line_info[new_offset] = new_line_info
 
-        self._wrap_offsets[start_line_index : old_end_line_index + 1] = new_wrap_offsets
+        self._wrap_offsets[
+            top_line_index : old_bottom_line_index + 1
+        ] = new_wrap_offsets
 
     def offset_to_location(self, offset: Offset, tab_width: int) -> Location:
         """Given an offset within the wrapped/visual display of the document,
