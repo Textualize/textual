@@ -197,21 +197,23 @@ class WrappedDocument:
         line_shift = new_bottom_line_index - old_bottom_line_index
 
         # Update the line info at all offsets below the edit region.
-        for y_offset in range(
-            top_y_offset + new_height, len(self._offset_to_line_info)
-        ):
-            old_line_index, section_offset = self._offset_to_line_info[y_offset]
-            new_line_index = old_line_index + line_shift
-            new_line_info = (new_line_index, section_offset)
-            self._offset_to_line_info[y_offset] = new_line_info
+        if line_shift:
+            for y_offset in range(
+                top_y_offset + new_height, len(self._offset_to_line_info)
+            ):
+                old_line_index, section_offset = self._offset_to_line_info[y_offset]
+                new_line_index = old_line_index + line_shift
+                new_line_info = (new_line_index, section_offset)
+                self._offset_to_line_info[y_offset] = new_line_info
 
         # Update the offsets at all lines below the edit region
-        for line_index in range(
-            top_line_index + len(new_lines), len(self._line_index_to_offsets)
-        ):
-            old_offsets = self._line_index_to_offsets[line_index]
-            new_offsets = [offset + offset_shift for offset in old_offsets]
-            self._line_index_to_offsets[line_index] = new_offsets
+        if offset_shift:
+            for line_index in range(
+                top_line_index + len(new_lines), len(self._line_index_to_offsets)
+            ):
+                old_offsets = self._line_index_to_offsets[line_index]
+                new_offsets = [offset + offset_shift for offset in old_offsets]
+                self._line_index_to_offsets[line_index] = new_offsets
 
         self._wrap_offsets[
             top_line_index : old_bottom_line_index + 1
