@@ -28,16 +28,11 @@ LogCallable: TypeAlias = "Callable"
 
 
 def __getattr__(name: str) -> str:
-    """Lazily get the version from whatever API is available."""
+    """Lazily get the version."""
     if name == "__version__":
-        try:
-            from importlib.metadata import version
-        except ImportError:
-            import pkg_resources
+        from importlib.metadata import version
 
-            return pkg_resources.get_distribution("textual").version
-        else:
-            return version("textual")
+        return version("textual")
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 

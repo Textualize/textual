@@ -892,9 +892,30 @@ class Widget(DOMNode):
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
+    @overload
     def move_child(
         self,
         child: int | Widget,
+        *,
+        before: int | Widget,
+        after: None = None,
+    ) -> None:
+        ...
+
+    @overload
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
+        after: int | Widget,
+        before: None = None,
+    ) -> None:
+        ...
+
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
         before: int | Widget | None = None,
         after: int | Widget | None = None,
     ) -> None:
@@ -920,10 +941,6 @@ class Widget(DOMNode):
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before` or `after` can be handled.")
 
-        # We short-circuit the no-op, otherwise it will error later down the road.
-        if child is before or child is after:
-            return
-
         def _to_widget(child: int | Widget, called: str) -> Widget:
             """Ensure a given child reference is a Widget."""
             if isinstance(child, int):
@@ -947,6 +964,9 @@ class Widget(DOMNode):
         target = _to_widget(
             cast("int | Widget", before if after is None else after), "move towards"
         )
+
+        if child is target:
+            return  # Nothing to be done.
 
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
@@ -1392,8 +1412,7 @@ class Widget(DOMNode):
         if not self.is_scrollable:
             return False, False
 
-        enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
-        return enabled
+        return (self.show_vertical_scrollbar, self.show_horizontal_scrollbar)
 
     @property
     def scrollbars_space(self) -> tuple[int, int]:
@@ -2756,6 +2775,13 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
 
+        show_vertical_scrollbar: bool = (
+            show_vertical_scrollbar and scrollbar_size_vertical
+        )
+        show_horizontal_scrollbar: bool = (
+            show_horizontal_scrollbar and scrollbar_size_horizontal
+        )
+
         if styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
             show_vertical_scrollbar = True
@@ -2785,6 +2811,13 @@ class Widget(DOMNode):
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
+
+        show_vertical_scrollbar: bool = (
+            show_vertical_scrollbar and scrollbar_size_vertical
+        )
+        show_horizontal_scrollbar: bool = (
+            show_horizontal_scrollbar and scrollbar_size_horizontal
+        )
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
@@ -3121,6 +3154,8 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
+        if not self._is_mounted:
+            return self
         if layout:
             self._layout_required = True
             self._stabilize_scrollbar = None
@@ -3159,7 +3194,19 @@ class Widget(DOMNode):
         return await_remove
 
     def render(self) -> RenderableType:
-        """Get renderable for widget.
+        """Get text or Rich renderable for this widget.
+
+        Implement this for custom widgets.
+
+        Example:
+            ```python
+            from textual.app import RenderableType
+            from textual.widget import Widget
+
+            class CustomWidget(Widget):
+                def render(self) -> RenderableType:
+                    return "Welcome to [bold red]Textual[/]!"
+            ```
 
         Returns:
             Any renderable.
@@ -3180,7 +3227,7 @@ class Widget(DOMNode):
         """
         renderable = self.render()
         if isinstance(renderable, str):
-            return Text(renderable)
+            return Text.from_markup(renderable)
         return renderable
 
     async def run_action(self, action: str) -> None:

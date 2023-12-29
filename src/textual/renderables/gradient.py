@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from functools import lru_cache
 from math import cos, pi, sin
+from typing import Sequence
 
 from rich.color import Color as RichColor
 from rich.console import Console, ConsoleOptions, RenderResult
@@ -42,17 +43,22 @@ class VerticalGradient:
 
 
 class LinearGradient:
-    """Render a linear gradient with a rotation."""
+    """Render a linear gradient with a rotation.
 
-    def __init__(self, angle: float, stops: list[tuple[float, Color]]) -> None:
-        """
+    Args:
+        angle: Angle of rotation in degrees.
+        stops: List of stop consisting of pairs of offset (between 0 and 1) and color.
 
-        Args:
-            angle: Angle of rotation in degrees.
-            stops: List of stop consisting of pairs of offset (between 0 and 1) and colors.
-        """
+    """
+
+    def __init__(
+        self, angle: float, stops: Sequence[tuple[float, Color | str]]
+    ) -> None:
         self.angle = angle
-        self._stops = stops[:]
+        self._stops = [
+            (stop, Color.parse(color) if isinstance(color, str) else color)
+            for stop, color in stops
+        ]
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -75,7 +81,7 @@ class LinearGradient:
         get_color = color_gradient.get_color
         from_color = Style.from_color
 
-        @lru_cache(maxsize=None)
+        @lru_cache(maxsize=1024)
         def get_rich_color(color_offset: int) -> RichColor:
             """Get a Rich color in the gradient.
 
