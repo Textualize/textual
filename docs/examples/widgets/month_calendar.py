@@ -6,6 +6,12 @@ from textual.widgets import MonthCalendar
 
 
 class MonthCalendarApp(App):
+    CSS = """
+    Screen {
+        align: center middle;
+    }
+    """
+
     BINDINGS = [
         Binding("pageup", "next_month", priority=True),
         Binding("pagedown", "previous_month", priority=True),
