@@ -1,6 +1,5 @@
-from ._month_calendar import InvalidMonthNumber, InvalidWeekdayNumber
+from ._month_calendar import InvalidWeekdayNumber
 
 __all__ = [
-    "InvalidMonthNumber",
     "InvalidWeekdayNumber",
 ]

@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import calendar
 import datetime
-from typing import Optional
 
-from dateutil.relativedelta import relativedelta
+from dateutil.relativedelta import relativedelta  # type: ignore[import-untyped]
 from rich.text import Text
 
 from textual import on
@@ -14,10 +13,6 @@ from textual.events import Mount
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import DataTable
-
-
-class InvalidMonthNumber(Exception):
-    pass
 
 
 class InvalidWeekdayNumber(Exception):
@@ -39,21 +34,15 @@ class MonthCalendar(Widget):
     }
     """
 
-    year: Reactive[int | None] = Reactive[Optional[int]](None)
-    month: Reactive[int | None] = Reactive[Optional[int]](None)
+    date: Reactive[datetime.date] = Reactive(datetime.date.today())
     first_weekday: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(True)
-    cursor_date: Reactive[datetime.date | None] = Reactive[Optional[datetime.date]](
-        None
-    )
 
     def __init__(
         self,
-        year: int | None = None,
-        month: int | None = None,
+        date: datetime.date = datetime.date.today(),
         first_weekday: int = 0,
         show_cursor: bool = True,
-        cursor_date: datetime.date | None = None,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -61,17 +50,13 @@ class MonthCalendar(Widget):
         disabled: bool = False,
     ) -> None:
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.year = year
-        self.month = month
+        self.date = date
         self.first_weekday = first_weekday
         self._calendar = calendar.Calendar(first_weekday)
         self.show_cursor = show_cursor
-        self.cursor_date = cursor_date
 
     def compose(self) -> ComposeResult:
-        yield DataTable(
-            show_cursor=self.show_cursor,
-        )
+        yield DataTable(show_cursor=self.show_cursor)
 
     @on(DataTable.CellHighlighted)
     def _on_datatable_cell_highlighted(
@@ -80,48 +65,23 @@ class MonthCalendar(Widget):
     ) -> None:
         event.stop()
         row, column = event.coordinate
-        self.cursor_date = self.calendar_dates[row][column]
-
-    @property
-    def is_current_month(self) -> bool:
-        today = datetime.date.today()
-        return self.year == today.year and self.month == today.month
+        self.date = self.calendar_dates[row][column]
 
     def previous_year(self) -> None:
-        assert self.year is not None
-        self.year -= 1
+        self.date -= relativedelta(years=1)
 
     def next_year(self) -> None:
-        assert self.year is not None
-        self.year += 1
+        self.date += relativedelta(years=1)
 
     def previous_month(self) -> None:
-        assert self.year is not None and self.month is not None
-        if self.month == 1:
-            self.year -= 1
-            self.month = 12
-        else:
-            self.month -= 1
+        self.date -= relativedelta(months=1)
 
     def next_month(self) -> None:
-        assert self.year is not None and self.month is not None
-        if self.month == 12:
-            self.year += 1
-            self.month = 1
-        else:
-            self.month += 1
-
-    def move_cursor(self, date: datetime.date) -> None:
-        date_coordinate = self.get_date_coordinate(date)
-        table = self.query_one(DataTable)
-        table.cursor_coordinate = date_coordinate
+        self.date += relativedelta(months=1)
 
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()
-        if self.show_cursor:
-            assert self.cursor_date is not None
-            self.move_cursor(self.cursor_date)
 
     def _update_week_header(self) -> None:
         table = self.query_one(DataTable)
@@ -141,6 +101,9 @@ class MonthCalendar(Widget):
             for week in self.calendar_dates:
                 table.add_row(*[self._format_day(date) for date in week])
 
+            date_coordinate = self._get_date_coordinate(self.date)
+            table.cursor_coordinate = date_coordinate
+
     @property
     def calendar_dates(self) -> list[list[datetime.date]]:
         """
@@ -148,11 +111,10 @@ class MonthCalendar(Widget):
         represents a week, including dates before the start of the month
         or after the end of the month that are required to get a complete week.
         """
-        assert self.year is not None and self.month is not None
-        dates = list(self._calendar.itermonthdates(self.year, self.month))
+        dates = list(self._calendar.itermonthdates(self.date.year, self.date.month))
         return [dates[i : i + 7] for i in range(0, len(dates), 7)]
 
-    def get_date_coordinate(self, date: datetime.date) -> Coordinate:
+    def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
         for week_index, week in enumerate(self.calendar_dates):
             try:
                 return Coordinate(week_index, week.index(date))
@@ -162,23 +124,9 @@ class MonthCalendar(Widget):
 
     def _format_day(self, date: datetime.date) -> Text:
         formatted_day = Text(str(date.day), justify="center")
-        if date.month != self.month:
+        if date.month != self.date.month:
             formatted_day.style = "grey37"
         return formatted_day
-
-    def validate_year(self, year: int | None) -> int:
-        if year is None:
-            current_year = datetime.date.today().year
-            return current_year
-        return year
-
-    def validate_month(self, month: int | None) -> int:
-        if month is None:
-            current_month = datetime.date.today().month
-            return current_month
-        if not 1 <= month <= 12:
-            raise InvalidMonthNumber("Month number must be 1-12.")
-        return month
 
     def validate_first_weekday(self, first_weekday: int) -> int:
         if not 0 <= first_weekday <= 6:
@@ -187,42 +135,10 @@ class MonthCalendar(Widget):
             )
         return first_weekday
 
-    def validate_cursor_date(
-        self,
-        cursor_date: datetime.date | None,
-    ) -> datetime.date | None:
-        if self.show_cursor is None:
-            return None
-        assert self.year is not None and self.month is not None
-        if cursor_date is None:
-            if self.is_current_month:
-                return datetime.date.today()
-            else:
-                return datetime.date(self.year, self.month, 1)
-        return cursor_date
-
-    def watch_year(self, old_year: int, new_year: int) -> None:
+    def watch_date(self) -> None:
         if not self.is_mounted:
             return
         self._update_calendar_days()
-
-        if not self.show_cursor:
-            return
-        assert self.cursor_date is not None
-        year_offset = new_year - old_year
-        self.cursor_date += relativedelta(years=year_offset)
-
-    def watch_month(self, old_month: int, new_month: int) -> None:
-        if not self.is_mounted:
-            return
-        self._update_calendar_days()
-
-        if not self.show_cursor:
-            return
-        assert self.cursor_date is not None
-        if self.cursor_date.month == old_month:
-            month_offset = new_month - old_month
-            self.cursor_date += relativedelta(months=month_offset)
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
@@ -236,9 +152,3 @@ class MonthCalendar(Widget):
             return
         table = self.query_one(DataTable)
         table.show_cursor = show_cursor
-
-    def watch_cursor_date(self, cursor_date: datetime.date | None) -> None:
-        if not self.is_mounted or cursor_date is None:
-            return
-        with self.prevent(DataTable.CellHighlighted):
-            self.move_cursor(cursor_date)
