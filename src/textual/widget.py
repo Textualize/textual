@@ -355,8 +355,7 @@ class Widget(DOMNode):
                 raise TypeError(
                     f"Widget positional arguments must be Widget subclasses; not {child!r}"
                 )
-
-        self._add_children(*children)
+        self._pending_children = list(children)
         self.disabled = disabled
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
@@ -511,7 +510,7 @@ class Widget(DOMNode):
             widget: A Widget to add.
         """
         _rich_traceback_omit = True
-        self._nodes._append(widget)
+        self._pending_children.append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -3401,9 +3400,11 @@ class Widget(DOMNode):
     async def handle_key(self, event: events.Key) -> bool:
         return await self.dispatch_key(event)
 
-    async def _on_compose(self) -> None:
+    async def _on_compose(self, event: events.Compose) -> None:
+        event.prevent_default()
         try:
-            widgets = [*self._nodes, *compose(self)]
+            widgets = [*self._pending_children, *compose(self)]
+            self._pending_children.clear()
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"
@@ -3414,7 +3415,18 @@ class Widget(DOMNode):
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)
-            await self.mount(*widgets)
+            await self.mount_composed_widgets(widgets)
+
+    async def mount_composed_widgets(self, widgets: list[Widget]) -> None:
+        """Called by textual to mount widgets after compose.
+
+        It is rare to need to define this in a typical app. One use for this,
+        is to defer the mounting until later.
+
+        Args:
+            widgets: A list of child widgets.
+        """
+        await self.mount_all(widgets)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Hook to extend composed widgets.
