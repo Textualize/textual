@@ -269,3 +269,27 @@ async def test_cell_highlighted_updates_date():
         await pilot.press("left")
         expected_date = datetime.date(2021, 6, 10)
         assert month_calendar.date == expected_date
+
+
+async def test_hover_coordinate_persists_after_month_changes():
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        await pilot.hover(MonthCalendar, offset=(3, 3))
+        assert table.hover_coordinate == Coordinate(2, 0)
+
+        month_calendar.date = datetime.date(year=2022, month=10, day=2)
+        assert table.hover_coordinate == Coordinate(2, 0)
+
+
+async def test_hover_coordinate_persists_after_first_weekday_changes():
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        await pilot.hover(MonthCalendar, offset=(3, 3))
+        assert table.hover_coordinate == Coordinate(2, 0)
+
+        month_calendar.first_weekday = 6  # Sunday
+        assert table.hover_coordinate == Coordinate(2, 0)

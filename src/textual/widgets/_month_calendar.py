@@ -80,33 +80,30 @@ class MonthCalendar(Widget):
         self.date += relativedelta(months=1)
 
     def _on_mount(self, _: Mount) -> None:
-        self._update_week_header()
-        self._update_calendar_days()
-        self._update_cursor_coordinate()
+        self._update_calendar_table(update_week_header=True)
 
-    def _update_week_header(self) -> None:
+    def _update_calendar_table(self, update_week_header: bool) -> None:
         table = self.query_one(DataTable)
+        old_hover_coordinate = table.hover_coordinate
         table.clear()
-        old_columns = table.columns.copy()
-        for old_column in old_columns:
-            table.remove_column(old_column)
 
-        day_names = calendar.day_abbr
-        for day in self._calendar.iterweekdays():
-            table.add_column(day_names[day])
+        if update_week_header:
+            old_columns = table.columns.copy()
+            for old_column in old_columns:
+                table.remove_column(old_column)
 
-    def _update_calendar_days(self) -> None:
-        table = self.query_one(DataTable)
-        table.clear()
+            day_names = calendar.day_abbr
+            for day in self._calendar.iterweekdays():
+                table.add_column(day_names[day])
+
         with self.prevent(DataTable.CellHighlighted):
             for week in self.calendar_dates:
                 table.add_row(*[self._format_day(date) for date in week])
 
-    def _update_cursor_coordinate(self) -> None:
-        with self.prevent(DataTable.CellHighlighted):
-            table = self.query_one(DataTable)
             date_coordinate = self._get_date_coordinate(self.date)
             table.cursor_coordinate = date_coordinate
+
+        table.hover_coordinate = old_hover_coordinate
 
     @property
     def calendar_dates(self) -> list[list[datetime.date]]:
@@ -143,16 +140,17 @@ class MonthCalendar(Widget):
         if not self.is_mounted:
             return
         if (new_date.month != old_date.month) or (new_date.year != old_date.year):
-            self._update_calendar_days()
-        self._update_cursor_coordinate()
+            self._update_calendar_table(update_week_header=False)
+        else:
+            table = self.query_one(DataTable)
+            date_coordinate = self._get_date_coordinate(self.date)
+            table.cursor_coordinate = date_coordinate
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
         if not self.is_mounted:
             return
-        self._update_week_header()
-        self._update_calendar_days()
-        self._update_cursor_coordinate()
+        self._update_calendar_table(update_week_header=True)
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
         if not self.is_mounted:
