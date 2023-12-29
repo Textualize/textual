@@ -37,12 +37,14 @@ class MonthCalendar(Widget):
     date: Reactive[datetime.date] = Reactive(datetime.date.today())
     first_weekday: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(True)
+    show_other_months: Reactive[bool] = Reactive(True)
 
     def __init__(
         self,
         date: datetime.date = datetime.date.today(),
         first_weekday: int = 0,
         show_cursor: bool = True,
+        show_other_months: bool = True,
         *,
         name: str | None = None,
         id: str | None = None,
@@ -54,6 +56,7 @@ class MonthCalendar(Widget):
         self.first_weekday = first_weekday
         self._calendar = calendar.Calendar(first_weekday)
         self.show_cursor = show_cursor
+        self.show_other_months = show_other_months
 
     def compose(self) -> ComposeResult:
         yield DataTable(show_cursor=self.show_cursor)
@@ -64,8 +67,15 @@ class MonthCalendar(Widget):
         event: DataTable.CellHighlighted,
     ) -> None:
         event.stop()
-        row, column = event.coordinate
-        self.date = self.calendar_dates[row][column]
+        if not self.show_other_months and event.value is None:
+            table = self.query_one(DataTable)
+            date_coordinate = self._get_date_coordinate(self.date)
+            table.cursor_coordinate = date_coordinate
+        else:
+            row, column = event.coordinate
+            highlighted_date = self.calendar_dates[row][column]
+            assert isinstance(highlighted_date, datetime.date)
+            self.date = highlighted_date
 
     def previous_year(self) -> None:
         self.date -= relativedelta(years=1)
@@ -98,7 +108,12 @@ class MonthCalendar(Widget):
 
         with self.prevent(DataTable.CellHighlighted):
             for week in self.calendar_dates:
-                table.add_row(*[self._format_day(date) for date in week])
+                table.add_row(
+                    *[
+                        self._format_day(date) if date is not None else None
+                        for date in week
+                    ]
+                )
 
             date_coordinate = self._get_date_coordinate(self.date)
             table.cursor_coordinate = date_coordinate
@@ -106,14 +121,23 @@ class MonthCalendar(Widget):
         table.hover_coordinate = old_hover_coordinate
 
     @property
-    def calendar_dates(self) -> list[list[datetime.date]]:
+    def calendar_dates(self) -> list[list[datetime.date | None]]:
+        """A matrix of `datetime.date` objects for this month calendar, where
+        each row represents a week. If `show_other_months` is True this includes
+        dates from the previous and next month that are required to get a
+        complete week, otherwise these days are 'None'
         """
-        A matrix of `datetime.date` objects for this month calendar. Each row
-        represents a week, including dates before the start of the month
-        or after the end of the month that are required to get a complete week.
-        """
-        dates = list(self._calendar.itermonthdates(self.date.year, self.date.month))
-        return [dates[i : i + 7] for i in range(0, len(dates), 7)]
+        complete_dates = self._calendar.itermonthdates(self.date.year, self.date.month)
+        calendar_dates: list[datetime.date | None]
+        if not self.show_other_months:
+            calendar_dates = [
+                date if date.month == self.date.month else None
+                for date in complete_dates
+            ]
+        else:
+            calendar_dates = list(complete_dates)
+
+        return [calendar_dates[i : i + 7] for i in range(0, len(calendar_dates), 7)]
 
     def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
         for week_index, week in enumerate(self.calendar_dates):
@@ -157,3 +181,8 @@ class MonthCalendar(Widget):
             return
         table = self.query_one(DataTable)
         table.show_cursor = show_cursor
+
+    def watch_show_other_months(self) -> None:
+        if not self.is_mounted:
+            return
+        self._update_calendar_table(update_week_header=False)

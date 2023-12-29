@@ -293,3 +293,90 @@ async def test_hover_coordinate_persists_after_first_weekday_changes():
 
         month_calendar.first_weekday = 6  # Sunday
         assert table.hover_coordinate == Coordinate(2, 0)
+
+
+async def test_calendar_updates_if_date_outside_month_highlighted():
+    """If `show_other_months` is True, highlighting a date from the previous
+    or next month should update the calendar to bring that entire month into
+    view"""
+
+    class ShowOtherMonthsApp(App):
+        def compose(self) -> ComposeResult:
+            yield MonthCalendar(
+                datetime.date(year=2021, month=6, day=1),
+                show_other_months=True,
+            )
+
+    app = ShowOtherMonthsApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        # Sanity check
+        assert table.cursor_coordinate == Coordinate(0, 1)
+        expected_first_monday = datetime.date(2021, 5, 31)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
+
+        await pilot.press("left")
+        assert month_calendar.date == datetime.date(2021, 5, 31)
+        assert table.cursor_coordinate == Coordinate(5, 0)
+        expected_first_monday = datetime.date(2021, 4, 26)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "26"
+
+
+async def test_calendar_if_show_other_months_is_false():
+    """If `show_other_months` is False, only dates from the current month
+    should be displayed and other blank cells should not be selectable"""
+
+    class HideOtherMonthsApp(App):
+        def compose(self) -> ComposeResult:
+            yield MonthCalendar(
+                datetime.date(year=2021, month=6, day=1),
+                show_other_months=False,
+            )
+
+    app = HideOtherMonthsApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        # Sanity check
+        assert table.cursor_coordinate == Coordinate(0, 1)
+        expected_first_monday = None
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)) is None
+
+        await pilot.press("left")
+        assert table.cursor_coordinate == Coordinate(0, 1)
+        assert month_calendar.date == datetime.date(2021, 6, 1)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)) is None
+
+
+async def test_calendar_after_reactive_show_other_months_change():
+    class ShowOtherMonthsApp(App):
+        def compose(self) -> ComposeResult:
+            yield MonthCalendar(
+                datetime.date(year=2021, month=6, day=1),
+                show_other_months=True,
+            )
+
+    app = ShowOtherMonthsApp()
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(DataTable)
+        # Sanity check
+        expected_first_monday = datetime.date(2021, 5, 31)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
+
+        month_calendar.show_other_months = False
+        expected_first_monday = None
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)) is None
