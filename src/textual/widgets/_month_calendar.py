@@ -82,6 +82,7 @@ class MonthCalendar(Widget):
     def _on_mount(self, _: Mount) -> None:
         self._update_week_header()
         self._update_calendar_days()
+        self._update_cursor_coordinate()
 
     def _update_week_header(self) -> None:
         table = self.query_one(DataTable)
@@ -101,6 +102,9 @@ class MonthCalendar(Widget):
             for week in self.calendar_dates:
                 table.add_row(*[self._format_day(date) for date in week])
 
+    def _update_cursor_coordinate(self) -> None:
+        with self.prevent(DataTable.CellHighlighted):
+            table = self.query_one(DataTable)
             date_coordinate = self._get_date_coordinate(self.date)
             table.cursor_coordinate = date_coordinate
 
@@ -135,10 +139,12 @@ class MonthCalendar(Widget):
             )
         return first_weekday
 
-    def watch_date(self) -> None:
+    def watch_date(self, old_date: datetime.date, new_date: datetime.date) -> None:
         if not self.is_mounted:
             return
-        self._update_calendar_days()
+        if (new_date.month != old_date.month) or (new_date.year != old_date.year):
+            self._update_calendar_days()
+        self._update_cursor_coordinate()
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
@@ -146,6 +152,7 @@ class MonthCalendar(Widget):
             return
         self._update_week_header()
         self._update_calendar_days()
+        self._update_cursor_coordinate()
 
     def watch_show_cursor(self, show_cursor: bool) -> None:
         if not self.is_mounted:

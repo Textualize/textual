@@ -70,7 +70,7 @@ class MonthCalendarApp(App):
 
 
 async def test_calendar_table_week_header():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
@@ -80,7 +80,7 @@ async def test_calendar_table_week_header():
 
 
 async def test_calendar_table_days():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
@@ -91,8 +91,8 @@ async def test_calendar_table_days():
                 assert actual_day == expected_day
 
 
-async def test_calendar_table_after_reactive_date_change():
-    app = MonthCalendarApp()
+async def test_calendar_table_after_reactive_date_change_to_different_month():
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.date = datetime.date(year=2022, month=10, day=2)
@@ -106,8 +106,23 @@ async def test_calendar_table_after_reactive_date_change():
         assert table.get_cell_at(table.cursor_coordinate).plain == "2"
 
 
+async def test_calendar_table_after_reactive_date_change_within_same_month():
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.date = datetime.date(year=2021, month=6, day=19)
+
+        table = month_calendar.query_one(DataTable)
+        expected_first_monday = datetime.date(2021, 5, 31)
+        actual_first_monday = month_calendar.calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
+
+        assert table.get_cell_at(table.cursor_coordinate).plain == "19"
+
+
 async def test_calendar_table_after_reactive_first_weekday_change():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.first_weekday = 6  # Sunday
@@ -126,7 +141,7 @@ async def test_calendar_table_after_reactive_first_weekday_change():
 
 
 async def test_show_cursor():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
@@ -136,7 +151,7 @@ async def test_show_cursor():
 
 
 async def test_previous_year():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.previous_year()
@@ -152,7 +167,7 @@ async def test_previous_year():
 
 
 async def test_next_year():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.next_year()
@@ -168,7 +183,7 @@ async def test_next_year():
 
 
 async def test_previous_month():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.previous_month()
@@ -204,7 +219,7 @@ async def test_previous_month_when_month_is_january():
 
 
 async def test_next_month():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.next_month()
@@ -240,7 +255,7 @@ async def test_next_month_when_month_is_december():
 
 
 async def test_cell_highlighted_updates_date():
-    app = MonthCalendarApp()
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         await pilot.press("right")
