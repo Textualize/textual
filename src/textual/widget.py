@@ -2973,7 +2973,7 @@ class Widget(DOMNode):
                 and self in self.app.focused.ancestors_with_self
             ):
                 self.app.focused.blur()
-        except ScreenStackError:
+        except (ScreenStackError, NoActiveAppError):
             pass
         self._update_styles()
 
