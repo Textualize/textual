@@ -20,6 +20,7 @@ async def test_lazy():
         assert len(app.query("#foo")) == 0
         assert len(app.query("#bar")) == 1
         await pilot.pause()
+        await pilot.pause()
         # #bar mounted after refresh
         assert len(app.query("#foo")) == 1
         assert len(app.query("#bar")) == 1
