@@ -273,10 +273,10 @@ class StylesBase(ABC):
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
     width = ScalarProperty(percent_unit=Unit.WIDTH)
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
-    min_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
-    min_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
-    max_width = ScalarProperty(percent_unit=Unit.WIDTH, allow_auto=False)
-    max_height = ScalarProperty(percent_unit=Unit.HEIGHT, allow_auto=False)
+    min_width = ScalarProperty(percent_unit=Unit.WIDTH)
+    min_height = ScalarProperty(percent_unit=Unit.HEIGHT)
+    max_width = ScalarProperty(percent_unit=Unit.WIDTH)
+    max_height = ScalarProperty(percent_unit=Unit.HEIGHT)
 
     dock = DockProperty()
 
@@ -430,7 +430,7 @@ class StylesBase(ABC):
 
     @property
     def is_relative_height(self) -> bool:
-        """Does the node have a relative width?"""
+        """Does the node have a relative height?"""
         height = self.height
         return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
 

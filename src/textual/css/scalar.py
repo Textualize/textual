@@ -270,7 +270,10 @@ class Scalar(NamedTuple):
 
     @lru_cache(maxsize=4096)
     def resolve(
-        self, size: Size, viewport: Size, fraction_unit: Fraction | None = None
+        self,
+        size: Size,
+        viewport: Size,
+        fraction_unit: Fraction | None = None,
     ) -> Fraction:
         """Resolve scalar with units in to a dimensions.
 

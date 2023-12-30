@@ -115,6 +115,8 @@ def resolve_fraction_unit(
         Returns:
             Fraction if resolved, otherwise None.
         """
+        if scalar is not None and scalar.is_auto:
+            return Fraction(10)
         return (
             None
             if scalar is None

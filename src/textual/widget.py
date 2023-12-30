@@ -1093,11 +1093,12 @@ class Widget(DOMNode):
 
         content_width = max(Fraction(0), content_width)
 
-        if styles.height is None:
-            # No height specified, fill the available space
-            content_height = Fraction(content_container.height - margin.height)
-        elif is_auto_height:
-            # Calculate dimensions based on content
+        _auto_height: Fraction | None = None
+
+        def get_auto_height() -> Fraction:
+            nonlocal _auto_height
+            if _auto_height is not None:
+                return _auto_height
             content_height = Fraction(
                 self.get_content_height(content_container, viewport, int(content_width))
             )
@@ -1108,6 +1109,15 @@ class Widget(DOMNode):
                 and self._has_relative_children_height
             ):
                 content_height = Fraction(content_container.height)
+            _auto_height = content_height
+            return content_height
+
+        if styles.height is None:
+            # No height specified, fill the available space
+            content_height = Fraction(content_container.height - margin.height)
+        elif is_auto_height:
+            # Calculate dimensions based on content
+            content_height = get_auto_height()
         else:
             styles_height = styles.height
             # Explicit height set
@@ -1119,20 +1129,26 @@ class Widget(DOMNode):
 
         if styles.min_height is not None:
             # Restrict to minimum height, if set
-            min_height = styles.min_height.resolve(
-                content_container, viewport, height_fraction
-            )
+            if styles.min_height.is_auto:
+                min_height = get_auto_height()
+            else:
+                min_height = styles.min_height.resolve(
+                    content_container, viewport, height_fraction
+                )
             if is_border_box:
                 min_height -= gutter.height
             content_height = max(content_height, min_height, Fraction(0))
 
         if styles.max_height is not None:
             # Restrict maximum height, if set
-            max_height = styles.max_height.resolve(
-                content_container, viewport, height_fraction
-            )
-            if is_border_box:
-                max_height -= gutter.height
+            if styles.max_height.is_auto:
+                max_height = get_auto_height()
+            else:
+                max_height = styles.max_height.resolve(
+                    content_container, viewport, height_fraction
+                )
+                if is_border_box:
+                    max_height -= gutter.height
             content_height = min(content_height, max_height)
 
         content_height = max(Fraction(0), content_height)
@@ -1670,7 +1686,6 @@ class Widget(DOMNode):
     @property
     def _has_relative_children_height(self) -> bool:
         """Do any children (or progeny) have a relative height?"""
-
         if not self.is_container:
             return False
         for child in self.children:
