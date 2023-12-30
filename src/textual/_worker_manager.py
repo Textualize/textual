@@ -37,7 +37,7 @@ class WorkerManager:
         """
         self._app = app
         """A reference to the app."""
-        self._workers: set[Worker] = set()
+        self._workers: set[Worker[Any]] = set()
         """The workers being managed."""
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -64,7 +64,7 @@ class WorkerManager:
         return worker in self._workers
 
     def add_worker(
-        self, worker: Worker, start: bool = True, exclusive: bool = True
+        self, worker: Worker[Any], start: bool = True, exclusive: bool = True
     ) -> None:
         """Add a new worker.
 
@@ -91,7 +91,7 @@ class WorkerManager:
         start: bool = True,
         exclusive: bool = False,
         thread: bool = False,
-    ) -> Worker:
+    ) -> Worker[Any]:
         """Create a worker from a function, coroutine, or awaitable.
 
         Args:
@@ -119,7 +119,7 @@ class WorkerManager:
         self.add_worker(worker, start=start, exclusive=exclusive)
         return worker
 
-    def _remove_worker(self, worker: Worker) -> None:
+    def _remove_worker(self, worker: Worker[Any]) -> None:
         """Remove a worker from the manager.
 
         Args:
@@ -137,7 +137,7 @@ class WorkerManager:
         for worker in self._workers:
             worker.cancel()
 
-    def cancel_group(self, node: DOMNode, group: str) -> list[Worker]:
+    def cancel_group(self, node: DOMNode, group: str) -> list[Worker[Any]]:
         """Cancel a single group.
 
         Args:
@@ -156,7 +156,7 @@ class WorkerManager:
             worker.cancel()
         return workers
 
-    def cancel_node(self, node: DOMNode) -> list[Worker]:
+    def cancel_node(self, node: DOMNode) -> list[Worker[Any]]:
         """Cancel all workers associated with a given node
 
         Args:
@@ -170,7 +170,9 @@ class WorkerManager:
             worker.cancel()
         return workers
 
-    async def wait_for_complete(self, workers: Iterable[Worker] | None = None) -> None:
+    async def wait_for_complete(
+        self, workers: Iterable[Worker[Any]] | None = None
+    ) -> None:
         """Wait for workers to complete.
 
         Args:

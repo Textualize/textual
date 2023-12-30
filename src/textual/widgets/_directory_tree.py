@@ -3,7 +3,7 @@ from __future__ import annotations
 from asyncio import Queue
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
+from typing import TYPE_CHECKING, Any, Callable, ClassVar, Iterable, Iterator
 
 from ..await_complete import AwaitComplete
 
@@ -375,7 +375,7 @@ class DirectoryTree(Tree[DirEntry]):
             )
         node.expand()
 
-    def _directory_content(self, location: Path, worker: Worker) -> Iterator[Path]:
+    def _directory_content(self, location: Path, worker: Worker[Any]) -> Iterator[Path]:
         """Load the content of a given directory.
 
         Args:

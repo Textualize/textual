@@ -11,6 +11,7 @@ from contextvars import ContextVar
 from time import monotonic
 from typing import (
     TYPE_CHECKING,
+    Any,
     Awaitable,
     Callable,
     Coroutine,
@@ -30,7 +31,7 @@ if TYPE_CHECKING:
     from .dom import DOMNode
 
 
-active_worker: ContextVar[Worker] = ContextVar("active_worker")
+active_worker: ContextVar[Worker[Any]] = ContextVar("active_worker")
 """Currently active worker context var."""
 
 
@@ -58,7 +59,7 @@ class WorkerCancelled(WorkerError):
     """The worker was cancelled and did not complete."""
 
 
-def get_current_worker() -> Worker:
+def get_current_worker() -> Worker[Any]:
     """Get the currently active worker.
 
     Raises:
@@ -119,7 +120,7 @@ class Worker(Generic[ResultType]):
     class StateChanged(Message, bubble=False, namespace="worker"):
         """The worker state changed."""
 
-        def __init__(self, worker: Worker, state: WorkerState) -> None:
+        def __init__(self, worker: Worker[Any], state: WorkerState) -> None:
             """Initialize the StateChanged message.
 
             Args:
@@ -378,7 +379,9 @@ class Worker(Generic[ResultType]):
             app.log.worker(self)
 
     def _start(
-        self, app: App, done_callback: Callable[[Worker], None] | None = None
+        self,
+        app: App,
+        done_callback: Callable[[Worker[ResultType]], None] | None = None,
     ) -> None:
         """Start the worker.
 
