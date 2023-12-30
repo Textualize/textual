@@ -186,6 +186,7 @@ nav:
       - "api/filter.md"
       - "api/fuzzy_matcher.md"
       - "api/geometry.md"
+      - "api/lazy.md"
       - "api/logger.md"
       - "api/logging.md"
       - "api/map_geometry.md"
