@@ -10,6 +10,7 @@ from textual import on
 from textual.app import ComposeResult
 from textual.coordinate import Coordinate
 from textual.events import Mount
+from textual.message import Message
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import DataTable
@@ -38,6 +39,20 @@ class MonthCalendar(Widget):
     first_weekday: Reactive[int] = Reactive(0)
     show_cursor: Reactive[bool] = Reactive(True)
     show_other_months: Reactive[bool] = Reactive(True)
+
+    class DateSelected(Message):
+        def __init__(
+            self,
+            month_calendar: MonthCalendar,
+            value: datetime.date,
+        ) -> None:
+            super().__init__()
+            self.month_calendar: MonthCalendar = month_calendar
+            self.value: datetime.date = value
+
+        @property
+        def control(self) -> MonthCalendar:
+            return self.month_calendar
 
     def __init__(
         self,
@@ -76,6 +91,20 @@ class MonthCalendar(Widget):
             highlighted_date = self.calendar_dates[row][column]
             assert isinstance(highlighted_date, datetime.date)
             self.date = highlighted_date
+
+    @on(DataTable.CellSelected)
+    def _on_datatable_cell_selected(
+        self,
+        event: DataTable.CellSelected,
+    ) -> None:
+        event.stop()
+        # We cannot rely on the `event.coordinate` for the selected date,
+        # as selecting a date from the previous or next month will update the
+        # calendar to bring that entire month into view and the date at this
+        # co-ordinate will have changed! Thankfully it is safe to instead
+        # simply use the calendar `date`, as clicking a table cell will emit a
+        # `CellHighlighted` message *before* the `CellSelected` message.
+        self.post_message(MonthCalendar.DateSelected(self, self.date))
 
     def previous_year(self) -> None:
         self.date -= relativedelta(years=1)

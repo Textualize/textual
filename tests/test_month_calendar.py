@@ -1,7 +1,10 @@
+from __future__ import annotations
+
 import datetime
 
 import pytest
 
+from textual import on
 from textual.app import App, ComposeResult
 from textual.coordinate import Coordinate
 from textual.widgets import DataTable, MonthCalendar
@@ -65,8 +68,16 @@ async def test_calendar_defaults_to_today_if_no_date_provided():
 
 
 class MonthCalendarApp(App):
+    def __init__(self) -> None:
+        super().__init__()
+        self.messages: list[tuple[str, datetime.date]] = []
+
     def compose(self) -> ComposeResult:
         yield MonthCalendar(datetime.date(year=2021, month=6, day=3))
+
+    @on(MonthCalendar.DateSelected)
+    def record(self, event: MonthCalendar.DateSelected) -> None:
+        self.messages.append((event.__class__.__name__, event.value))
 
 
 async def test_calendar_table_week_header():
@@ -380,3 +391,63 @@ async def test_calendar_after_reactive_show_other_months_change():
         actual_first_monday = month_calendar.calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)) is None
+
+
+async def test_clicking_data_table_cell_emits_highlighted_before_selected_message():
+    """It is important for the `MonthCalendar` that the table will emit a
+    `CellHighlighted` message *before* `CellSelected` when a cell is clicked.
+    This means it is safe to simply use the `date` for the `DateSelected`
+    message. We cannot rely on the `event.coordinate` for the selected date,
+    as selecting a date from the previous or next month will update the calendar
+    to bring that entire month into view and the date at this co-ordinate will
+    have changed!
+    """
+
+    class DataTableApp(App):
+        def __init__(self) -> None:
+            super().__init__()
+            self.messages: list[tuple[str, str]] = []
+
+        def compose(self) -> ComposeResult:
+            yield DataTable()
+
+        def on_mount(self) -> None:
+            table = self.query_one(DataTable)
+            with self.prevent(DataTable.CellHighlighted):
+                table.add_columns("Col0", "Col1")
+                table.add_row(*["0/0", "0/1"])
+
+        @on(DataTable.CellHighlighted)
+        @on(DataTable.CellSelected)
+        def record(
+            self, event: DataTable.CellHighlighted | DataTable.CellSelected
+        ) -> None:
+            self.messages.append((event.__class__.__name__, str(event.value)))
+
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        await pilot.click(DataTable, offset=(8, 1))
+        assert pilot.app.messages == [
+            ("CellHighlighted", "0/1"),
+            ("CellSelected", "0/1"),
+        ]
+
+
+async def test_month_calendar_date_selected_message():
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        await pilot.press("enter")
+        assert pilot.app.messages == [("DateSelected", datetime.date(2021, 6, 3))]
+
+
+async def test_month_calendar_date_selected_message_if_clicked_date_is_outside_month():
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        await pilot.click(MonthCalendar, offset=(2, 1))
+        assert pilot.app.messages == [("DateSelected", datetime.date(2021, 5, 31))]
+
+        await pilot.click(MonthCalendar, offset=(7, 6))
+        assert pilot.app.messages == [
+            ("DateSelected", datetime.date(2021, 5, 31)),
+            ("DateSelected", datetime.date(2021, 6, 1)),
+        ]
