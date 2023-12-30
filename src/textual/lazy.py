@@ -1,3 +1,10 @@
+"""
+Tools for lazy loading widgets.
+"""
+
+
+from __future__ import __annotations__
+
 from .widget import Widget
 
 
