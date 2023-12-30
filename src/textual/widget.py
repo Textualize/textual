@@ -55,7 +55,16 @@ from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
-from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, clamp
+from .geometry import (
+    NULL_REGION,
+    NULL_SIZE,
+    NULL_SPACING,
+    Offset,
+    Region,
+    Size,
+    Spacing,
+    clamp,
+)
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
@@ -300,8 +309,9 @@ class Widget(DOMNode):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
-        self._size = Size(0, 0)
-        self._container_size = Size(0, 0)
+        _null_size = NULL_SIZE
+        self._size = _null_size
+        self._container_size = _null_size
         self._layout_required = False
         self._repaint_required = False
         self._scroll_required = False
@@ -316,7 +326,7 @@ class Widget(DOMNode):
         self._border_title: Text | None = None
         self._border_subtitle: Text | None = None
 
-        self._render_cache = _RenderCache(Size(0, 0), [])
+        self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
         # Regions which need to be transferred from cache to screen
@@ -3418,10 +3428,11 @@ class Widget(DOMNode):
             await self.mount_composed_widgets(widgets)
 
     async def mount_composed_widgets(self, widgets: list[Widget]) -> None:
-        """Called by textual to mount widgets after compose.
+        """Called by Textual to mount widgets after compose.
 
-        It is rare to need to define this in a typical app. One use for this,
-        is to defer the mounting until later.
+        There is generally no need to implement this method in your application.
+        See [Lazy][textual.lazy.Lazy] for a class which uses this method to implement
+        *lazy* mounting.
 
         Args:
             widgets: A list of child widgets.
