@@ -194,7 +194,8 @@ def test_get_pseudo_class_state_disabled():
 
 def test_get_pseudo_class_state_parent_disabled():
     child = Widget()
-    _parent = Widget(child, disabled=True)
+    _parent = Widget(disabled=True)
+    child._attach(_parent)
     pseudo_classes = child.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
 

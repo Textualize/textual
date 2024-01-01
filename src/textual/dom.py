@@ -997,6 +997,9 @@ class DOMNode(MessagePump):
     def _add_child(self, node: Widget) -> None:
         """Add a new child node.
 
+        !!! note
+            For tests only.
+
         Args:
             node: A DOM node.
         """
@@ -1006,6 +1009,9 @@ class DOMNode(MessagePump):
     def _add_children(self, *nodes: Widget) -> None:
         """Add multiple children to this node.
 
+        !!! note
+            For tests only.
+
         Args:
             *nodes: Positional args should be new DOM nodes.
         """
@@ -1013,6 +1019,7 @@ class DOMNode(MessagePump):
         for node in nodes:
             node._attach(self)
             _append(node)
+            node._add_children(*node._pending_children)
 
     WalkType = TypeVar("WalkType", bound="DOMNode")
 
