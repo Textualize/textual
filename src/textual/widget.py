@@ -55,7 +55,16 @@ from .box_model import BoxModel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
-from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, clamp
+from .geometry import (
+    NULL_REGION,
+    NULL_SIZE,
+    NULL_SPACING,
+    Offset,
+    Region,
+    Size,
+    Spacing,
+    clamp,
+)
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
@@ -300,8 +309,9 @@ class Widget(DOMNode):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
-        self._size = Size(0, 0)
-        self._container_size = Size(0, 0)
+        _null_size = NULL_SIZE
+        self._size = _null_size
+        self._container_size = _null_size
         self._layout_required = False
         self._repaint_required = False
         self._scroll_required = False
@@ -316,7 +326,7 @@ class Widget(DOMNode):
         self._border_title: Text | None = None
         self._border_subtitle: Text | None = None
 
-        self._render_cache = _RenderCache(Size(0, 0), [])
+        self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
         # Regions which need to be transferred from cache to screen
@@ -355,8 +365,7 @@ class Widget(DOMNode):
                 raise TypeError(
                     f"Widget positional arguments must be Widget subclasses; not {child!r}"
                 )
-
-        self._add_children(*children)
+        self._pending_children = list(children)
         self.disabled = disabled
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
@@ -511,7 +520,7 @@ class Widget(DOMNode):
             widget: A Widget to add.
         """
         _rich_traceback_omit = True
-        self._nodes._append(widget)
+        self._pending_children.append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -2989,7 +2998,7 @@ class Widget(DOMNode):
                 and self in self.app.focused.ancestors_with_self
             ):
                 self.app.focused.blur()
-        except ScreenStackError:
+        except (ScreenStackError, NoActiveAppError):
             pass
         self._update_styles()
 
@@ -3416,9 +3425,11 @@ class Widget(DOMNode):
     async def handle_key(self, event: events.Key) -> bool:
         return await self.dispatch_key(event)
 
-    async def _on_compose(self) -> None:
+    async def _on_compose(self, event: events.Compose) -> None:
+        event.prevent_default()
         try:
-            widgets = [*self._nodes, *compose(self)]
+            widgets = [*self._pending_children, *compose(self)]
+            self._pending_children.clear()
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"
@@ -3429,7 +3440,19 @@ class Widget(DOMNode):
             self.app.panic(Traceback())
         else:
             self._extend_compose(widgets)
-            await self.mount(*widgets)
+            await self.mount_composed_widgets(widgets)
+
+    async def mount_composed_widgets(self, widgets: list[Widget]) -> None:
+        """Called by Textual to mount widgets after compose.
+
+        There is generally no need to implement this method in your application.
+        See [Lazy][textual.lazy.Lazy] for a class which uses this method to implement
+        *lazy* mounting.
+
+        Args:
+            widgets: A list of child widgets.
+        """
+        await self.mount_all(widgets)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Hook to extend composed widgets.
