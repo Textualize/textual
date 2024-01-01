@@ -310,7 +310,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
+    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
