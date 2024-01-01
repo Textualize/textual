@@ -10,7 +10,6 @@ A `MessagePump` is a base class for any object which processes messages, which i
 from __future__ import annotations
 
 import asyncio
-import inspect
 import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
@@ -25,7 +24,6 @@ from ._context import message_hook as message_hook_context_var
 from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
-from .case import camel_to_snake
 from .css.match import match
 from .errors import DuplicateKeyHandlers
 from .events import Event
@@ -63,8 +61,6 @@ class _MessagePumpMeta(type):
         class_dict: dict[str, Any],
         **kwargs,
     ):
-        namespace = camel_to_snake(name)
-        isclass = inspect.isclass
         handlers: dict[
             type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]
         ] = class_dict.get("_decorated_handlers", {})
@@ -78,13 +74,6 @@ class _MessagePumpMeta(type):
                 ] = getattr(value, "_textual_on")
                 for message_type, selectors in textual_on:
                     handlers.setdefault(message_type, []).append((value, selectors))
-            if isclass(value) and issubclass(value, Message):
-                if "namespace" in value.__dict__:
-                    value.handler_name = f"on_{value.__dict__['namespace']}_{camel_to_snake(value.__name__)}"
-                else:
-                    value.handler_name = (
-                        f"on_{namespace}_{camel_to_snake(value.__name__)}"
-                    )
 
         # Look for reactives with public AND private compute methods.
         prefix = "compute_"
