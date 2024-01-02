@@ -20,6 +20,7 @@ class SelectorType(Enum):
     TYPE = 2
     CLASS = 3
     ID = 4
+    NESTED = 5
 
 
 class CombinatorType(Enum):
@@ -138,6 +139,7 @@ class SelectorSet:
     def __rich_repr__(self) -> rich.repr.Result:
         selectors = RuleSet._selector_to_css(self.selectors)
         yield selectors
+        yield self.selectors
         yield None, self.specificity
 
     @classmethod
@@ -175,8 +177,7 @@ class RuleSet:
             elif selector.combinator == CombinatorType.CHILD:
                 tokens.append(" > ")
             tokens.append(selector.css)
-            for pseudo_class in selector.pseudo_classes:
-                tokens.append(f":{pseudo_class}")
+
         return "".join(tokens).strip()
 
     @property

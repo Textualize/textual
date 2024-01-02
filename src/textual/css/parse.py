@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 from functools import lru_cache
 from typing import Iterable, Iterator, NoReturn
 
@@ -29,6 +30,7 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
     "selector_start_id": (SelectorType.ID, (1, 0, 0)),
     "selector_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
     "selector_start_universal": (SelectorType.UNIVERSAL, (0, 0, 0)),
+    "nested": (SelectorType.NESTED, (0, 0, 0)),
 }
 
 
@@ -36,7 +38,7 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
     if not css_selectors.strip():
         return ()
-
+    print(css_selectors)
     tokens = iter(tokenize(css_selectors, ("", "")))
 
     get_selector = SELECTOR_MAP.get
@@ -46,10 +48,13 @@ def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
 
     while True:
         try:
-            token = next(tokens)
+            token = next(tokens, None)
         except EOFError:
             break
+        if token is None:
+            break
         token_name = token.name
+
         if token_name == "pseudo_class":
             selectors[-1]._add_pseudo_class(token.value.lstrip(":"))
         elif token_name == "whitespace":
@@ -103,7 +108,7 @@ def parse_rule_set(
             if combinator is None or combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT
         elif token.name == "new_selector":
-            rule_selectors.append(selectors[:])
+            rule_selectors.append(selectors)
             selectors.clear()
             combinator = None
         elif token.name == "declaration_set_start":
@@ -126,30 +131,90 @@ def parse_rule_set(
 
         token = next(tokens)
 
-    if selectors:
-        if scope and selectors[0].name != scope:
-            scope_selector, scope_specificity = get_selector(
-                scope, (SelectorType.TYPE, (0, 0, 0))
-            )
-            selectors.insert(
-                0,
-                Selector(
-                    name=scope,
-                    combinator=CombinatorType.DESCENDENT,
-                    type=scope_selector,
-                    specificity=scope_specificity,
-                ),
-            )
-        rule_selectors.append(selectors[:])
+    if selectors and scope and selectors[0].name != scope:
+        scope_selector, scope_specificity = get_selector(
+            scope, (SelectorType.TYPE, (0, 0, 0))
+        )
+        selectors.insert(
+            0,
+            Selector(
+                name=scope,
+                combinator=CombinatorType.DESCENDENT,
+                type=scope_selector,
+                specificity=scope_specificity,
+            ),
+        )
+    rule_selectors.append(selectors)
 
     declaration = Declaration(token, "")
-
     errors: list[tuple[Token, str | HelpText]] = []
 
     while True:
         token = next(tokens)
+
         token_name = token.name
         if token_name in ("whitespace", "declaration_end"):
+            continue
+        if token_name in {
+            "selector_start_id",
+            "selector_start_class",
+            "selector_start_universal",
+            "selector_start",
+            "nested",
+        }:
+            recursive_parse: list[RuleSet] = list(
+                parse_rule_set(
+                    "",
+                    tokens,
+                    token,
+                    is_default_rules=is_default_rules,
+                    tie_breaker=tie_breaker,
+                )
+            )
+
+            def combine_selectors(
+                selectors1: list[Selector], selectors2: list[Selector]
+            ) -> list[Selector]:
+                if selectors2 and selectors2[0].type == SelectorType.NESTED:
+                    final_selector = selectors1[-1]
+                    nested_selector = selectors2[0]
+
+                    merged_selector = dataclasses.replace(
+                        final_selector,
+                        pseudo_classes=list(
+                            set(
+                                final_selector.pseudo_classes
+                                + nested_selector.pseudo_classes
+                            )
+                        ),
+                    )
+
+                    return [*selectors1[:-1], merged_selector, *selectors2[1:]]
+
+                else:
+                    return selectors1 + selectors2
+
+            for rule_selector in rule_selectors:
+                for rule_set in recursive_parse:
+                    nested_rule_set = RuleSet(
+                        [
+                            SelectorSet(
+                                combine_selectors(
+                                    rule_selector, recursive_selectors.selectors
+                                ),
+                                recursive_selectors.specificity,
+                            )
+                            for recursive_selectors in rule_set.selector_set
+                        ],
+                        rule_set.styles,
+                        rule_set.errors,
+                        rule_set.is_default_rules,
+                        rule_set.tie_breaker,
+                        rule_set.selector_names,
+                        rule_set.pseudo_classes,
+                    )
+                    nested_rule_set._post_parse()
+                    yield nested_rule_set
             continue
         if token_name == "declaration_name":
             try:
@@ -271,7 +336,14 @@ def substitute_references(
     """
     variables: dict[str, list[Token]] = css_variables.copy() if css_variables else {}
 
-    iter_tokens = iter(tokens)
+    # iter_tokens = iter(tokens)
+
+    def make_iter_tokens():
+        for token in tokens:
+            print(" ", repr(token))
+            yield token
+
+    iter_tokens = iter(make_iter_tokens())
 
     while True:
         token = next(iter_tokens, None)
@@ -357,7 +429,6 @@ def parse(
         is_default_rules: True if the rules we're extracting are
             default (i.e. in Widget.DEFAULT_CSS) rules. False if they're from user defined CSS.
     """
-
     reference_tokens = tokenize_values(variables) if variables is not None else {}
     if variable_tokens:
         reference_tokens.update(variable_tokens)
