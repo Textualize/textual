@@ -173,7 +173,7 @@ class TokenizerState:
         "declaration_set_start": expect_declaration,
         "declaration_name": expect_declaration_content,
         "declaration_end": expect_declaration,
-        "declaration_set_end": expect_selector_continue,
+        "declaration_set_end": expect_root_scope,
         "nested": expect_selector_continue,
     }
 
