@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from typing import Mapping, Tuple, Type
+from typing import Mapping, Tuple
+
+from typing_extensions import Final
 
 from .keys import Keys
 
@@ -9,8 +11,12 @@ class IgnoredSequence:
     """Class used to mark that a sequence should be ignored."""
 
 
+IGNORE_SEQUENCE: Final[IgnoredSequence] = IgnoredSequence()
+"""Constant to indicate that a sequence should be ignored."""
+
+
 # Mapping of vt100 escape codes to Keys.
-ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str | Type[IgnoredSequence]] = {
+ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str | IgnoredSequence] = {
     # Control keys.
     " ": (Keys.Space,),
     "\r": (Keys.Enter,),
@@ -397,33 +403,33 @@ ANSI_SEQUENCES_KEYS: Mapping[str, Tuple[Keys, ...] | str | Type[IgnoredSequence]
     ############################################################################
     # The following 2 are inherited from prompt toolkit. They relate to a
     # press of 5 on the numeric keypad, when *not* in number mode.
-    "\x1b[E": IgnoredSequence,  # Xterm.
-    "\x1b[G": IgnoredSequence,  # Linux console.
+    "\x1b[E": IGNORE_SEQUENCE,  # Xterm.
+    "\x1b[G": IGNORE_SEQUENCE,  # Linux console.
     # Various ctrl+cmd+ keys under Kitty on macOS.
-    "\x1b[3;13~": IgnoredSequence,  # ctrl-cmd-del
-    "\x1b[1;13H": IgnoredSequence,  # ctrl-cmd-home
-    "\x1b[1;13F": IgnoredSequence,  # ctrl-cmd-end
-    "\x1b[5;13~": IgnoredSequence,  # ctrl-cmd-pgup
-    "\x1b[6;13~": IgnoredSequence,  # ctrl-cmd-pgdn
-    "\x1b[49;13u": IgnoredSequence,  # ctrl-cmd-1
-    "\x1b[50;13u": IgnoredSequence,  # ctrl-cmd-2
-    "\x1b[51;13u": IgnoredSequence,  # ctrl-cmd-3
-    "\x1b[52;13u": IgnoredSequence,  # ctrl-cmd-4
-    "\x1b[53;13u": IgnoredSequence,  # ctrl-cmd-5
-    "\x1b[54;13u": IgnoredSequence,  # ctrl-cmd-6
-    "\x1b[55;13u": IgnoredSequence,  # ctrl-cmd-7
-    "\x1b[56;13u": IgnoredSequence,  # ctrl-cmd-8
-    "\x1b[57;13u": IgnoredSequence,  # ctrl-cmd-9
-    "\x1b[48;13u": IgnoredSequence,  # ctrl-cmd-0
-    "\x1b[45;13u": IgnoredSequence,  # ctrl-cmd--
-    "\x1b[61;13u": IgnoredSequence,  # ctrl-cmd-+
-    "\x1b[91;13u": IgnoredSequence,  # ctrl-cmd-[
-    "\x1b[93;13u": IgnoredSequence,  # ctrl-cmd-]
-    "\x1b[92;13u": IgnoredSequence,  # ctrl-cmd-\
-    "\x1b[39;13u": IgnoredSequence,  # ctrl-cmd-'
-    "\x1b[59;13u": IgnoredSequence,  # ctrl-cmd-;
-    "\x1b[47;13u": IgnoredSequence,  # ctrl-cmd-/
-    "\x1b[46;13u": IgnoredSequence,  # ctrl-cmd-.
+    "\x1b[3;13~": IGNORE_SEQUENCE,  # ctrl-cmd-del
+    "\x1b[1;13H": IGNORE_SEQUENCE,  # ctrl-cmd-home
+    "\x1b[1;13F": IGNORE_SEQUENCE,  # ctrl-cmd-end
+    "\x1b[5;13~": IGNORE_SEQUENCE,  # ctrl-cmd-pgup
+    "\x1b[6;13~": IGNORE_SEQUENCE,  # ctrl-cmd-pgdn
+    "\x1b[49;13u": IGNORE_SEQUENCE,  # ctrl-cmd-1
+    "\x1b[50;13u": IGNORE_SEQUENCE,  # ctrl-cmd-2
+    "\x1b[51;13u": IGNORE_SEQUENCE,  # ctrl-cmd-3
+    "\x1b[52;13u": IGNORE_SEQUENCE,  # ctrl-cmd-4
+    "\x1b[53;13u": IGNORE_SEQUENCE,  # ctrl-cmd-5
+    "\x1b[54;13u": IGNORE_SEQUENCE,  # ctrl-cmd-6
+    "\x1b[55;13u": IGNORE_SEQUENCE,  # ctrl-cmd-7
+    "\x1b[56;13u": IGNORE_SEQUENCE,  # ctrl-cmd-8
+    "\x1b[57;13u": IGNORE_SEQUENCE,  # ctrl-cmd-9
+    "\x1b[48;13u": IGNORE_SEQUENCE,  # ctrl-cmd-0
+    "\x1b[45;13u": IGNORE_SEQUENCE,  # ctrl-cmd--
+    "\x1b[61;13u": IGNORE_SEQUENCE,  # ctrl-cmd-+
+    "\x1b[91;13u": IGNORE_SEQUENCE,  # ctrl-cmd-[
+    "\x1b[93;13u": IGNORE_SEQUENCE,  # ctrl-cmd-]
+    "\x1b[92;13u": IGNORE_SEQUENCE,  # ctrl-cmd-\
+    "\x1b[39;13u": IGNORE_SEQUENCE,  # ctrl-cmd-'
+    "\x1b[59;13u": IGNORE_SEQUENCE,  # ctrl-cmd-;
+    "\x1b[47;13u": IGNORE_SEQUENCE,  # ctrl-cmd-/
+    "\x1b[46;13u": IGNORE_SEQUENCE,  # ctrl-cmd-.
 }
 
 # https://gist.github.com/christianparpart/d8a62cc1ab659194337d73e399004036

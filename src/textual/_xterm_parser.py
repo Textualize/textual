@@ -5,7 +5,7 @@ import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
 from . import events, messages
-from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IgnoredSequence
+from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from ._parser import Awaitable, Parser, TokenCallback
 from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 
@@ -258,7 +258,7 @@ class XTermParser(Parser[events.Event]):
         """
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         # If we're being asked to ignore the key...
-        if keys is IgnoredSequence:
+        if keys is IGNORE_SEQUENCE:
             # ...build a special ignore key event, which has the ignore
             # name as the key (that is, the key this sequence is bound
             # to is the ignore key) and the sequence that was ignored as
