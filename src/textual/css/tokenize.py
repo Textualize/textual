@@ -57,6 +57,7 @@ expect_root_scope = Expect(
     selector_start=IDENTIFIER,
     variable_name=rf"{VARIABLE_REF}:",
     declaration_set_end=r"\}",
+    nested=r"\&",
 ).expect_eof(True)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
@@ -91,7 +92,6 @@ expect_selector_continue = Expect(
     new_selector=r",",
     declaration_set_start=r"\{",
     declaration_set_end=r"\}",
-    nested=r"\&",
 ).expect_eof(True)
 
 # A rule declaration e.g. "text: red;"

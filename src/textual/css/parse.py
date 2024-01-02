@@ -107,7 +107,7 @@ def parse_rule_set(
             if combinator is None or combinator == CombinatorType.SAME:
                 combinator = CombinatorType.DESCENDENT
         elif token.name == "new_selector":
-            rule_selectors.append(selectors)
+            rule_selectors.append(selectors[:])
             selectors.clear()
             combinator = None
         elif token.name == "declaration_set_start":
@@ -143,7 +143,7 @@ def parse_rule_set(
                 specificity=scope_specificity,
             ),
         )
-    rule_selectors.append(selectors)
+    rule_selectors.append(selectors[:])
 
     declaration = Declaration(token, "")
     errors: list[tuple[Token, str | HelpText]] = []
