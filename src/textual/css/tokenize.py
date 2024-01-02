@@ -97,7 +97,7 @@ expect_selector_continue = Expect(
 # A rule declaration e.g. "text: red;"
 #                          ^---^
 expect_declaration = Expect(
-    "rule declaration",
+    "rule or selector",
     nested=r"\&",
     whitespace=r"\s+",
     comment_start=COMMENT_START,

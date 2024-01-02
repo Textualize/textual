@@ -38,7 +38,6 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
     if not css_selectors.strip():
         return ()
-    print(css_selectors)
     tokens = iter(tokenize(css_selectors, ("", "")))
 
     get_selector = SELECTOR_MAP.get
@@ -336,14 +335,14 @@ def substitute_references(
     """
     variables: dict[str, list[Token]] = css_variables.copy() if css_variables else {}
 
-    # iter_tokens = iter(tokens)
+    iter_tokens = iter(tokens)
 
-    def make_iter_tokens():
-        for token in tokens:
-            print(" ", repr(token))
-            yield token
+    # def make_iter_tokens():
+    #     for token in tokens:
+    #         print(" ", repr(token))
+    #         yield token
 
-    iter_tokens = iter(make_iter_tokens())
+    # iter_tokens = iter(make_iter_tokens())
 
     while True:
         token = next(iter_tokens, None)

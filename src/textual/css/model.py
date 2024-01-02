@@ -139,7 +139,6 @@ class SelectorSet:
     def __rich_repr__(self) -> rich.repr.Result:
         selectors = RuleSet._selector_to_css(self.selectors)
         yield selectors
-        yield self.selectors
         yield None, self.specificity
 
     @classmethod
