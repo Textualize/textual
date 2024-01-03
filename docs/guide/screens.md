@@ -26,7 +26,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
 
 === "screen01.tcss"
 
-    ```sass title="screen01.tcss"
+    ```css title="screen01.tcss"
     --8<-- "docs/examples/guide/screens/screen01.tcss"
     ```
 
@@ -55,7 +55,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
 
 === "screen02.tcss"
 
-    ```sass title="screen02.tcss"
+    ```css title="screen02.tcss"
     --8<-- "docs/examples/guide/screens/screen02.tcss"
     ```
 
@@ -171,7 +171,7 @@ From the quit screen you can click either Quit to exit the app immediately, or C
 
 === "modal01.tcss"
 
-    ```sass title="modal01.tcss"
+    ```css title="modal01.tcss"
     --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
@@ -213,7 +213,7 @@ Let's see what happens when we use `ModalScreen`.
 
 === "modal01.tcss"
 
-    ```sass title="modal01.tcss"
+    ```css title="modal01.tcss"
     --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
@@ -240,7 +240,7 @@ Let's modify the previous example to use `dismiss` rather than an explicit `pop_
 
 === "modal01.tcss"
 
-    ```sass title="modal01.tcss"
+    ```css title="modal01.tcss"
     --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 

@@ -37,7 +37,7 @@ It also shows that `link-background` does not affect hyperlinks.
 
 === "link_background.tcss"
 
-    ```sass hl_lines="2 6 10"
+    ```css hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_background.tcss"
     ```
 
@@ -45,7 +45,7 @@ It also shows that `link-background` does not affect hyperlinks.
 
 ## CSS
 
-```sass
+```css
 link-background: red 70%;
 link-background: $accent;
 ```

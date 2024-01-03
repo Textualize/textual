@@ -38,13 +38,13 @@ To learn more about the grid layout, you can see the [layout guide](../guide/lay
 
 === "layout.tcss"
 
-    ```sass hl_lines="2 8"
+    ```css hl_lines="2 8"
     --8<-- "docs/examples/styles/layout.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 layout: horizontal;
 ```
 

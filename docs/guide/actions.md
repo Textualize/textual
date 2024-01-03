@@ -106,7 +106,7 @@ The following example defines a custom widget with its own `set_background` acti
 
 === "actions05.tcss"
 
-    ```sass title="actions05.tcss"
+    ```css title="actions05.tcss"
     --8<-- "docs/examples/guide/actions/actions05.tcss"
     ```
 

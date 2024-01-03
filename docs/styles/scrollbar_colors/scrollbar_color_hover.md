@@ -29,13 +29,13 @@ The `scrollbar-color-hover` style sets the color of the scrollbar when the curso
 
 === "scrollbars2.tcss"
 
-    ```sass hl_lines="7"
+    ```css hl_lines="7"
     --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-color-hover: pink;
 ```
 

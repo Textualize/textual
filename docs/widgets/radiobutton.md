@@ -26,7 +26,7 @@ The example below shows radio buttons, used within a [`RadioSet`](./radioset.md)
 
 === "radio_button.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/radio_button.tcss"
     ```
 
