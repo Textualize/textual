@@ -26,8 +26,8 @@ class ButtonsApp(App[str]):
             ),
         )
 
-    # def on_button_pressed(self, event: Button.Pressed) -> None:
-    #     self.exit(str(event.button))
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        self.exit(str(event.button))
 
 
 if __name__ == "__main__":

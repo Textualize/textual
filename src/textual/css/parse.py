@@ -46,9 +46,9 @@ def _add_specificity(
     Returns:
         Combined specificity
     """
-    a1, b1, b1 = specificity1
-    a2, b2, b2 = specificity2
-    return (a1 + a2, b1 + b2, b1 + b2)
+    a1, b1, c1 = specificity1
+    a2, b2, c2 = specificity2
+    return (a1 + a2, b1 + b2, c1 + c2)
 
 
 @lru_cache(maxsize=1024)
@@ -193,6 +193,15 @@ def parse_rule_set(
             def combine_selectors(
                 selectors1: list[Selector], selectors2: list[Selector]
             ) -> list[Selector]:
+                """Combine lists of selectors together, processing any nesting.
+
+                Args:
+                    selectors1: List of selectors.
+                    selectors2: Second list of selectors.
+
+                Returns:
+                    Combined selectors.
+                """
                 if selectors2 and selectors2[0].type == SelectorType.NESTED:
                     final_selector = selectors1[-1]
                     nested_selector = selectors2[0]
