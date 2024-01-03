@@ -710,7 +710,7 @@ TextArea {
         if self.wrap:
             width, _ = self.size
             available_text_width = (
-                width - self.gutter_width - self.styles.scrollbar_size_vertical
+                width - self.gutter_width - self.styles.scrollbar_size_vertical - 1
             )
             self.wrapped_document.wrap(available_text_width)
             self._refresh_size()
