@@ -4,7 +4,7 @@ from textual.widgets import Static
 
 
 class NestingDemo(App):
-    """Demonstrates nesting."""
+    """App with no nesting."""
 
     CSS_PATH = "nesting01.tcss"
 

@@ -4,9 +4,9 @@ from textual.widgets import Static
 
 
 class NestingDemo(App):
-    """Demonstrates nesting."""
+    """App with nested CSS."""
 
-    CSS_PATH = "nesting01.tcss"
+    CSS_PATH = "nesting02.tcss"
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="questions"):
