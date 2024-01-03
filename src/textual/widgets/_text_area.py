@@ -809,7 +809,7 @@ TextArea {
         line.tab_size = self.indent_width
         virtual_width, virtual_height = self.virtual_size
         expanded_width = max(virtual_width, self.size.width)
-        # line.set_length(expanded_length)
+        line.set_length(line.cell_len + 1)  # Make space for cursor at end.
 
         selection = self.selection
         start, end = selection
@@ -938,7 +938,7 @@ TextArea {
         console = self.app.console
         gutter_segments = console.render(gutter)
         width, _ = self.size
-        section_width = width - self.gutter_width + 1
+        section_width = width - self.gutter_width
         line.set_length(section_width)
         text_segments = console.render(
             line,
