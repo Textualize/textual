@@ -146,10 +146,6 @@ class Token(NamedTuple):
     """Token starting location, 0-indexed."""
     referenced_by: ReferencedBy | None = None
 
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield self.name
-        yield self.value
-
     @property
     def start(self) -> tuple[int, int]:
         """Start line and column (1-indexed)."""
@@ -181,16 +177,16 @@ class Token(NamedTuple):
     def __str__(self) -> str:
         return self.value
 
-    # def __rich_repr__(self) -> rich.repr.Result:
-    #     yield "name", self.name
-    #     yield "value", self.value
-    #     yield (
-    #         "read_from",
-    #         self.read_from[0] if not self.read_from[1] else self.read_from,
-    #     )
-    #     yield "code", self.code if len(self.code) < 40 else self.code[:40] + "..."
-    #     yield "location", self.location
-    #     yield "referenced_by", self.referenced_by, None
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "name", self.name
+        yield "value", self.value
+        yield (
+            "read_from",
+            self.read_from[0] if not self.read_from[1] else self.read_from,
+        )
+        yield "code", self.code if len(self.code) < 40 else self.code[:40] + "..."
+        yield "location", self.location
+        yield "referenced_by", self.referenced_by, None
 
 
 class Tokenizer:
