@@ -79,7 +79,7 @@ expect_comment_end = Expect(
 # After we come across a selector in CSS e.g. ".my-class", we may
 # find other selectors, pseudo-classes... e.g. ".my-class :hover"
 expect_selector_continue = Expect(
-    "selectors or {",
+    "selector or {",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,

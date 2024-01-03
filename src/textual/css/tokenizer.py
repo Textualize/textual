@@ -230,7 +230,7 @@ class Tokenizer:
                 self.read_from,
                 self.code,
                 (line_no + 1, col_no + 1),
-                f"{expect.description}; found {line[col_no:].rstrip()!r}." or message,
+                f"{expect.description} (found {line[col_no:].rstrip()!r}).; Did you forget a semicolon at the end of a line?",
             )
         iter_groups = iter(match.groups())
 

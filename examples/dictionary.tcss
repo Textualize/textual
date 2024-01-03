@@ -10,7 +10,7 @@ Input {
 #results {
     width: 100%;
     height: auto;
-
+    :hover
 }
 
 #results-container {

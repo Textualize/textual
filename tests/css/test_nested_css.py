@@ -19,8 +19,7 @@ class NestedApp(App):
                 color: magenta;
             }
         }
-    }
-    :hover
+    }    
     """
 
     def compose(self) -> ComposeResult:
