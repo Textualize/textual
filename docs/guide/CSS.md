@@ -479,9 +479,9 @@ When a rule set occurs within an existing rule set, it inherits the selector fro
 
 Let's put this in to practical terms.
 The following example will display two boxes containing the text "Yes" and "No" respectively.
-These could eventually form the basis for buttons, but for this demonstration we are only interested in the CSS. 
+These could eventually form the basis for buttons, but for this demonstration we are only interested in the CSS.
 
-=== "nesting01.tcss"
+=== "nesting01.tcss (no nesting)"
 
     ```sass
     --8<-- "docs/examples/guide/css/nesting01.tcss"
@@ -506,7 +506,7 @@ In the example above, the rules all start with `#questions`, which is a good ind
 
 The following produces identical results to the previous example, but adds nesting of the rules.
 
-=== "nesting02.tcss"
+=== "nesting02.tcss (with nesting)"
 
     ```sass
     --8<-- "docs/examples/guide/css/nesting02.tcss"
