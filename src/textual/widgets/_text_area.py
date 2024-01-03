@@ -1464,29 +1464,12 @@ TextArea {
         Returns:
             The (row, column) location of the end of the cursors current line.
         """
-        start, end = self.selection
-        cursor_row, cursor_column = end
-        target_column = len(self.document[cursor_row])
-        return cursor_row, target_column
+        return self._navigator.get_location_end(self.cursor_location)
 
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
-
-        cursor_row, cursor_column = self.cursor_location
-        line = self.document[cursor_row]
-
-        first_non_whitespace = 0
-        for index, code_point in enumerate(line):
-            if not code_point.isspace():
-                first_non_whitespace = index
-                break
-
-        if cursor_column <= first_non_whitespace and cursor_column != 0:
-            target = self.get_cursor_line_start_location()
-            self.move_cursor(target, select=select)
-        else:
-            target = cursor_row, first_non_whitespace
-            self.move_cursor(target, select=select)
+        target = self.get_cursor_line_start_location()
+        self.move_cursor(target, select=select)
 
     def get_cursor_line_start_location(self) -> Location:
         """Get the location of the start of the current line.
@@ -1494,9 +1477,7 @@ TextArea {
         Returns:
             The (row, column) location of the start of the cursors current line.
         """
-        _start, end = self.selection
-        cursor_row, _cursor_column = end
-        return cursor_row, 0
+        return self._navigator.get_location_home(self.cursor_location)
 
     def action_cursor_word_left(self, select: bool = False) -> None:
         """Move the cursor left by a single word, skipping trailing whitespace.

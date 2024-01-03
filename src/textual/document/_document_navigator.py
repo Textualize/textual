@@ -285,6 +285,15 @@ class DocumentNavigator:
             return line_index, wrap_offsets[next_offset_left - 1]
         else:
             # No wrapping to consider, go to the start of the document line
+            line = self._wrapped_document.document[line_index]
+            first_non_whitespace = 0
+            for index, code_point in enumerate(line):
+                if not code_point.isspace():
+                    first_non_whitespace = index
+                    break
+
+            if column_offset <= first_non_whitespace and column_offset != 0:
+                return line_index, first_non_whitespace
             return line_index, 0
 
     # TODO - we need to implement methods for going page up and page down

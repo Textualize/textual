@@ -65,7 +65,7 @@ class WrappedDocument:
         """
         self._width = width
 
-        # We're starting wrapping from scratch, so use fresh
+        # We're starting wrapping from scratch
         new_wrap_offsets: list[list[int]] = []
         offset_to_line_info: list[tuple[LineIndex, SectionOffset]] = []
         line_index_to_offsets: list[list[VerticalOffset]] = []
