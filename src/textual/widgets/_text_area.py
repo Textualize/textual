@@ -950,7 +950,7 @@ TextArea {
 
         console = self.app.console
         gutter_segments = console.render(gutter)
-        text_segments = console.render(line)
+        text_segments = console.render(line, console.options.update_width(target_width))
 
         gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
         text_strip = Strip(text_segments)
