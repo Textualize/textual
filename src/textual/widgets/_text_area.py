@@ -87,6 +87,7 @@ class TextArea(ScrollView, can_focus=True):
 TextArea {
     width: 1fr;
     height: 1fr;
+    overflow-y: scroll;
 }
 """
 
@@ -331,15 +332,17 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self.document: DocumentBase = Document(text)
+        self.document: DocumentBase
         """The document this widget is currently editing."""
 
-        self.wrapped_document = WrappedDocument(self.document)
+        self.wrapped_document: WrappedDocument
         """The wrapped view of the document."""
 
-        self._navigator = DocumentNavigator(self.wrapped_document)
+        self._navigator: DocumentNavigator
         """Queried to determine where the cursor should move given a navigation
         action, accounting for wrapping etc."""
+
+        self._set_document(text, language)
 
         self._theme: TextAreaTheme | None = None
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
@@ -668,6 +671,8 @@ TextArea {
         self.wrapped_document = WrappedDocument(document)
         self._navigator = DocumentNavigator(self.wrapped_document)
         self._build_highlight_map()
+        self.move_cursor((0, 0))
+        self._rewrap_and_refresh_virtual_size()
 
     @property
     def _visible_line_indices(self) -> tuple[int, int]:
@@ -694,20 +699,21 @@ TextArea {
             text: The text to load into the TextArea.
         """
         self._set_document(text, self.language)
-        self.move_cursor((0, 0))
-        self._refresh_size()
 
     def _on_resize(self) -> None:
-        self._rewrap()
+        self._rewrap_and_refresh_virtual_size()
 
     def _watch_wrap(self) -> None:
-        self._rewrap()
+        self._rewrap_and_refresh_virtual_size()
 
-    def _rewrap(self) -> None:
+    def _rewrap_and_refresh_virtual_size(self) -> None:
         if self.wrap:
             width, _ = self.size
-            available_text_width = width - self.gutter_width - 1
+            available_text_width = (
+                width - self.gutter_width - self.styles.scrollbar_size_vertical
+            )
             self.wrapped_document.wrap(available_text_width)
+            self._refresh_size()
             log.debug(f"re-wrapping at width {available_text_width!r}")
 
     @property
@@ -759,11 +765,11 @@ TextArea {
     def _refresh_size(self) -> None:
         """Update the virtual size of the TextArea."""
         if self.wrap:
-            return
-
-        width, height = self.document.get_size(self.indent_width)
-        # +1 width to make space for the cursor resting at the end of the line
-        self.virtual_size = Size(width + self.gutter_width + 1, height)
+            self.virtual_size = Size(0, self.wrapped_document.height)
+        else:
+            # +1 width to make space for the cursor resting at the end of the line
+            width, height = self.document.get_size(self.indent_width)
+            self.virtual_size = Size(width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
@@ -808,7 +814,6 @@ TextArea {
         line_character_count = len(line)
         line.tab_size = self.indent_width
         virtual_width, virtual_height = self.virtual_size
-        expanded_width = max(virtual_width, self.size.width)
         line.set_length(line.cell_len + 1)  # Make space for cursor at end.
 
         selection = self.selection
@@ -846,7 +851,6 @@ TextArea {
                 if line_character_count == 0 and line_index != cursor_row:
                     # A simple highlight to show empty lines are included in the selection
                     line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
-                    line.set_length(self.virtual_size.width)
                 else:
                     if line_index == selection_top_row == selection_bottom_row:
                         # Selection within a single line
@@ -929,25 +933,34 @@ TextArea {
         #  We should cache sections with the edit counts.
         wrap_offsets = wrapped_document.get_offsets(line_index)
 
-        # Join and return the gutter and the visible portion of this line
         if wrap_offsets:
             sections = line.divide(wrap_offsets)  # TODO cache result with edit count
             line = sections[section_offset]
 
-        # Render the gutter and the text of this line
+        if self.wrap:
+            # If we're wrapping, the line should be wrapped to the width available for the text.
+            # That is the width of the widget minus the gutter width and scrollbar width.
+            target_width = self.size.width - self.gutter_width
+        else:
+            # If we're not wrapping, then we want to expand the line such that it's equal to the virtual width.
+            target_width = virtual_width - self.gutter_width
+
+        # Set the width of this section to the target width.
+        line.set_length(target_width)
+
         console = self.app.console
         gutter_segments = console.render(gutter)
-        width, _ = self.size
-        section_width = width - self.gutter_width
-        line.set_length(section_width)
         text_segments = console.render(
             line,
-            console.options.update_width(section_width),
+            console.options.update_width(
+                target_width
+            ),  # TODO - why do we need to update the width here? DO WE?
         )
 
-        # Crop the line to show only the visible part (some may be scrolled out of view)
         gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
         text_strip = Strip(text_segments)
+
+        # Crop the line to show only the visible part (some may be scrolled out of view)
         if not self.wrap:
             text_strip = text_strip.crop(
                 scroll_x, scroll_x + virtual_width - gutter_width
@@ -955,11 +968,9 @@ TextArea {
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:
-            text_strip = text_strip.extend_cell_length(section_width, cursor_line_style)
+            text_strip = text_strip.apply_style(cursor_line_style)
         else:
-            text_strip = text_strip.extend_cell_length(
-                section_width, theme.base_style if theme else None
-            )
+            text_strip = text_strip.apply_style(theme.base_style if theme else None)
 
         strip = Strip.join([gutter_strip, text_strip]).simplify()
 
@@ -1013,12 +1024,12 @@ TextArea {
             may be different depending on the edit performed.
         """
         result = edit.do(self)
-        self._refresh_size()
-        edit.after(self)
-        self._build_highlight_map()
         self.wrapped_document.wrap_range(
             edit.from_location, edit.to_location, result.end_location
         )
+        self._refresh_size()
+        edit.after(self)
+        self._build_highlight_map()
         self.post_message(self.Changed(self))
         return result
 
