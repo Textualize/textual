@@ -214,11 +214,11 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         }
 
         .up-arrow {
-            display:none;
+            display: none;
         }
 
         &.-expanded .down-arrow {
-            display:none;
+            display: none;
         }
 
         &.-expanded .up-arrow {

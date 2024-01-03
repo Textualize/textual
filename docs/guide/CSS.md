@@ -523,7 +523,7 @@ The following produces identical results to the previous example, but adds nesti
     ```{.textual path="docs/examples/guide/css/nesting02.py"}
     ```
 
-In the first example we had a rule set that began with the selector `#questions .button`, which would match any widget with a class called "button" that are inside a container with id `questions`.
+In the first example we had a rule set that began with the selector `#questions .button`, which would match any widget with a class called "button" that is inside a container with id `questions`.
 
 In the second example, the button rule selector is simply `.button`, but it is *within* the rule set with selector `#questions`.
 The nesting means that the button rule set will inherit the selector from the outer rule set, so it is equivalent to `#questions .button`.
