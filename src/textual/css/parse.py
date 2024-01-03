@@ -34,6 +34,23 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
 }
 
 
+def _add_specificity(
+    specificity1: Specificity3, specificity2: Specificity3
+) -> Specificity3:
+    """Add specificity together.
+
+    Args:
+        specificity1: Specificity triple.
+        specificity2: Specificity triple.
+
+    Returns:
+        Combined specificity
+    """
+    a1, b1, b1 = specificity1
+    a2, b2, b2 = specificity2
+    return (a1 + a2, b1 + b2, b1 + b2)
+
+
 @lru_cache(maxsize=1024)
 def parse_selectors(css_selectors: str) -> tuple[SelectorSet, ...]:
     if not css_selectors.strip():
@@ -130,23 +147,25 @@ def parse_rule_set(
 
         token = next(tokens)
 
-    if selectors and scope and selectors[0].name != scope:
-        scope_selector, scope_specificity = get_selector(
-            scope, (SelectorType.TYPE, (0, 0, 0))
-        )
-        selectors.insert(
-            0,
-            Selector(
-                name=scope,
-                combinator=CombinatorType.DESCENDENT,
-                type=scope_selector,
-                specificity=scope_specificity,
-            ),
-        )
-    rule_selectors.append(selectors[:])
+    if selectors:
+        if scope and selectors[0].name != scope:
+            scope_selector, scope_specificity = get_selector(
+                scope, (SelectorType.TYPE, (0, 0, 0))
+            )
+            selectors.insert(
+                0,
+                Selector(
+                    name=scope,
+                    combinator=CombinatorType.DESCENDENT,
+                    type=scope_selector,
+                    specificity=scope_specificity,
+                ),
+            )
+        rule_selectors.append(selectors[:])
 
     declaration = Declaration(token, "")
     errors: list[tuple[Token, str | HelpText]] = []
+    nested_rules: list[RuleSet] = []
 
     while True:
         token = next(tokens)
@@ -177,7 +196,6 @@ def parse_rule_set(
                 if selectors2 and selectors2[0].type == SelectorType.NESTED:
                     final_selector = selectors1[-1]
                     nested_selector = selectors2[0]
-
                     merged_selector = dataclasses.replace(
                         final_selector,
                         pseudo_classes=list(
@@ -186,10 +204,11 @@ def parse_rule_set(
                                 + nested_selector.pseudo_classes
                             )
                         ),
+                        specificity=_add_specificity(
+                            final_selector.specificity, nested_selector.specificity
+                        ),
                     )
-
                     return [*selectors1[:-1], merged_selector, *selectors2[1:]]
-
                 else:
                     return selectors1 + selectors2
 
@@ -201,19 +220,16 @@ def parse_rule_set(
                                 combine_selectors(
                                     rule_selector, recursive_selectors.selectors
                                 ),
-                                recursive_selectors.specificity,
+                                (recursive_selectors.specificity),
                             )
                             for recursive_selectors in rule_set.selector_set
                         ],
                         rule_set.styles,
                         rule_set.errors,
                         rule_set.is_default_rules,
-                        rule_set.tie_breaker,
-                        rule_set.selector_names,
-                        rule_set.pseudo_classes,
+                        rule_set.tie_breaker + tie_breaker,
                     )
-                    nested_rule_set._post_parse()
-                    yield nested_rule_set
+                    nested_rules.append(nested_rule_set)
             continue
         if token_name == "declaration_name":
             try:
@@ -239,8 +255,13 @@ def parse_rule_set(
         is_default_rules=is_default_rules,
         tie_breaker=tie_breaker,
     )
+
     rule_set._post_parse()
     yield rule_set
+
+    for nested_rule_set in nested_rules:
+        nested_rule_set._post_parse()
+        yield nested_rule_set
 
 
 def parse_declarations(css: str, read_from: CSSLocation) -> Styles:
@@ -334,15 +355,7 @@ def substitute_references(
             attribute populated with information about where the tokens are being substituted to.
     """
     variables: dict[str, list[Token]] = css_variables.copy() if css_variables else {}
-
     iter_tokens = iter(tokens)
-
-    # def make_iter_tokens():
-    #     for token in tokens:
-    #         print(" ", repr(token))
-    #         yield token
-
-    # iter_tokens = iter(make_iter_tokens())
 
     while True:
         token = next(iter_tokens, None)

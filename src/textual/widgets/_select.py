@@ -107,23 +107,26 @@ class SelectCurrent(Horizontal):
         width: 100%;
         height: auto;
         padding: 0 2;
-    }
-    SelectCurrent Static#label {
-        width: 1fr;
-        height: auto;
-        color: $text-disabled;
-        background: transparent;
-    }
-    SelectCurrent.-has-value Static#label {
-        color: $text;
-    }
-    SelectCurrent .arrow {
-        box-sizing: content-box;
-        width: 1;
-        height: 1;
-        padding: 0 0 0 1;
-        color: $text-muted;
-        background: transparent;
+
+        Static#label {
+            width: 1fr;
+            height: auto;
+            color: $text-disabled;
+            background: transparent;
+        }
+
+        &.-has-value Static#label {
+            color: $text;
+        }
+
+        .arrow {
+            box-sizing: content-box;
+            width: 1;
+            height: 1;
+            padding: 0 0 0 1;
+            color: $text-muted;
+            background: transparent;
+        }
     }
     """
 
@@ -196,40 +199,41 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     DEFAULT_CSS = """
     Select {
         height: auto;
+
+        & > SelectOverlay {
+            width: 1fr;
+            display: none;
+            height: auto;
+            max-height: 12;
+            overlay: screen;
+            constrain: y;
+        }
+
+        &:focus > SelectCurrent {
+            border: tall $accent;
+        }
+
+        .up-arrow {
+            display:none;
+        }
+
+        &.-expanded .down-arrow {
+            display:none;
+        }
+
+        &.-expanded .up-arrow {
+            display: block;
+        }
+
+        &.-expanded > SelectOverlay {
+            display: block;
+        }
+
+        &.-expanded > SelectCurrent {
+            border: tall $accent;
+        }
     }
 
-    Select:focus > SelectCurrent {
-        border: tall $accent;
-    }
-
-    Select > SelectOverlay {
-        width: 1fr;
-        display: none;
-        height: auto;
-        max-height: 12;
-        overlay: screen;
-        constrain: y;
-    }
-
-    Select .up-arrow {
-        display:none;
-    }
-
-    Select.-expanded .down-arrow {
-        display:none;
-    }
-
-    Select.-expanded .up-arrow {
-        display: block;
-    }
-
-    Select.-expanded > SelectOverlay {
-        display: block;
-    }
-
-    Select.-expanded > SelectCurrent {
-        border: tall $accent;
-    }
     """
 
     expanded: var[bool] = var(False, init=False)
