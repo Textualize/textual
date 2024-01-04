@@ -502,7 +502,8 @@ The CSS is quite straightforward; there is one rule for the container, one for a
 However it is easy to imagine this stylesheet growing more rules as we add features.
 
 Nesting allows us to group rule sets which have common selectors.
-In the example above, the rules all start with `#questions`, which is a good indication that we can nest the rules.
+In the example above, the rules all start with `#questions`.
+When we see a common prefix on the selectors, this is a good indication that we can use nesting.
 
 The following produces identical results to the previous example, but adds nesting of the rules.
 
