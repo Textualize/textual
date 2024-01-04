@@ -88,7 +88,7 @@ class MonthCalendar(Widget):
             table.cursor_coordinate = date_coordinate
         else:
             row, column = event.coordinate
-            highlighted_date = self.calendar_dates[row][column]
+            highlighted_date = self._calendar_dates[row][column]
             assert isinstance(highlighted_date, datetime.date)
             self.date = highlighted_date
 
@@ -136,7 +136,7 @@ class MonthCalendar(Widget):
                 table.add_column(day_names[day])
 
         with self.prevent(DataTable.CellHighlighted):
-            for week in self.calendar_dates:
+            for week in self._calendar_dates:
                 table.add_row(
                     *[
                         self._format_day(date) if date is not None else None
@@ -150,7 +150,7 @@ class MonthCalendar(Widget):
         table.hover_coordinate = old_hover_coordinate
 
     @property
-    def calendar_dates(self) -> list[list[datetime.date | None]]:
+    def _calendar_dates(self) -> list[list[datetime.date | None]]:
         """A matrix of `datetime.date` objects for this month calendar, where
         each row represents a week. If `show_other_months` is True this includes
         dates from the previous and next month that are required to get a
@@ -169,7 +169,7 @@ class MonthCalendar(Widget):
         return [calendar_dates[i : i + 7] for i in range(0, len(calendar_dates), 7)]
 
     def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
-        for week_index, week in enumerate(self.calendar_dates):
+        for week_index, week in enumerate(self._calendar_dates):
             try:
                 return Coordinate(week_index, week.index(date))
             except ValueError:
