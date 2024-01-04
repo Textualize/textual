@@ -477,13 +477,13 @@ If you use `initial` within default css, it will treat the rule as completely un
 CSS rule sets may be *nested*, i.e. they can contain other rule sets.
 When a rule set occurs within an existing rule set, it inherits the selector from the enclosing rule set.
 
-Let's put this in to practical terms.
+Let's put this into practical terms.
 The following example will display two boxes containing the text "Yes" and "No" respectively.
 These could eventually form the basis for buttons, but for this demonstration we are only interested in the CSS.
 
 === "nesting01.tcss (no nesting)"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/css/nesting01.tcss"
     ```
 
@@ -498,7 +498,7 @@ These could eventually form the basis for buttons, but for this demonstration we
     ```{.textual path="docs/examples/guide/css/nesting01.py"}
     ```
 
-The CSS is quite straight forward; there is a rule for the container, all buttons, and a rule each for the yes and no buttons.
+The CSS is quite straightforward; there is one rule for the container, one for all buttons, and one rule for each of the buttons.
 However it is easy to imagine this stylesheet growing more rules as we add features.
 
 Nesting allows us to group rule sets which have common selectors.
@@ -534,7 +534,7 @@ The two remaining rules are nested within the button rule, which means they will
 
 You may have noticed that the rules for the button styles contain a syntax we haven't seen before.
 The rule for the Yes button is `&.affirmative`.
-The ampersand (`&`) is known as the *nesting selector* and it tells Textual that the selector should be combined with the selector from the outer rule-set.
+The ampersand (`&`) is known as the *nesting selector* and it tells Textual that the selector should be combined with the selector from the outer rule set.
 
 So `&.affirmative` in the example above, produces the equivalent of `#questions .button.affirmative` which selects a widget with both the `button` and `affirmative` classes.
 Without `&` it would be equivalent to `#questions .button .affirmative` (note the additional space) which would only match a widget with class `affirmative` inside a container with class `button`.
@@ -544,7 +544,7 @@ For reference, lets see those two CSS files side-by-side:
 
 === "nesting01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/css/nesting01.tcss"
     ```
 
@@ -554,6 +554,6 @@ For reference, lets see those two CSS files side-by-side:
     --8<-- "docs/examples/guide/css/nesting02.tcss"
     ```
 
-### Why used nesting?
+### Why use nesting?
 
-There is no requirement to use nested CSS, but it can help to group related rule-sets together (which makes it easier to edit). Nested CSS can also help you avoid some repetition in your selectors, i.e. in the nested CSS we only need to type `#questions` once, rather than four times in the non-nested CSS.
+There is no requirement to use nested CSS, but it can help to group related rule sets together (which makes it easier to edit). Nested CSS can also help you avoid some repetition in your selectors, i.e. in the nested CSS we only need to type `#questions` once, rather than four times in the non-nested CSS.
