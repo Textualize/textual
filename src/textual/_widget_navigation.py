@@ -41,7 +41,7 @@ def distance(index: int, start: int, direction: Direction, wrap_at: int) -> int:
     This is also the smallest non-negative integer solution `d` to
     `(start + d * direction) % wrap_at == index`.
 
-    The diagram below schematises the computation of `d1 = distance(2, 8, 1, 10)` and
+    The diagram below illustrates the computation of `d1 = distance(2, 8, 1, 10)` and
     `d2 = distance(2, 8, -1, 10)`:
 
     start ────────────────────┐
