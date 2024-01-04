@@ -1078,16 +1078,12 @@ TextArea {
         """
         scroll_x, scroll_y = self.scroll_offset
         target_x = event.x - self.gutter_width + scroll_x - self.gutter.left
-        target_x = max(target_x, 0)
-        target_row = clamp(
-            event.y + scroll_y - self.gutter.top,
-            0,
-            self.document.line_count - 1,
+        target_y = event.y + scroll_y - self.gutter.top
+        location = self.wrapped_document.offset_to_location(
+            Offset(target_x, target_y), self.indent_width
         )
-        target_column = self.cell_width_to_column_index(target_x, target_row)
-        return target_row, target_column
+        return location
 
-    # --- Lower level event/key handling
     @property
     def gutter_width(self) -> int:
         """The width of the gutter (the left column containing line numbers).
