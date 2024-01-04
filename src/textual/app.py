@@ -1957,7 +1957,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def push_screen_wait(
         self, screen: Screen[ScreenResultType] | str
-    ) -> ScreenResultType:
+    ) -> ScreenResultType | Any:
         """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
 
         Args:
