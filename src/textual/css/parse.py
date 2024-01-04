@@ -37,7 +37,7 @@ SELECTOR_MAP: dict[str, tuple[SelectorType, Specificity3]] = {
 def _add_specificity(
     specificity1: Specificity3, specificity2: Specificity3
 ) -> Specificity3:
-    """Add specificity together.
+    """Add specificity tuples together.
 
     Args:
         specificity1: Specificity triple.
