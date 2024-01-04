@@ -138,7 +138,7 @@ class Worker(Generic[ResultType]):
     def __init__(
         self,
         node: DOMNode,
-        work: WorkType | None = None,
+        work: WorkType[ResultType] | None = None,
         *,
         name: str = "",
         group: str = "default",

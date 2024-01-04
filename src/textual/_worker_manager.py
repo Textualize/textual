@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING, Any, Iterable, Iterator
 
 import rich.repr
 
-from .worker import Worker, WorkerState, WorkType
+from .worker import ResultType, Worker, WorkerState, WorkType
 
 if TYPE_CHECKING:
     from .app import App
@@ -81,7 +81,7 @@ class WorkerManager:
 
     def _new_worker(
         self,
-        work: WorkType,
+        work: WorkType[ResultType],
         node: DOMNode,
         *,
         name: str | None = "",
@@ -91,7 +91,7 @@ class WorkerManager:
         start: bool = True,
         exclusive: bool = False,
         thread: bool = False,
-    ) -> Worker[Any]:
+    ) -> Worker[ResultType]:
         """Create a worker from a function, coroutine, or awaitable.
 
         Args:
@@ -107,7 +107,7 @@ class WorkerManager:
         Returns:
             A Worker instance.
         """
-        worker: Worker[Any] = Worker(
+        worker: Worker[ResultType] = Worker(
             node,
             work,
             name=name or getattr(work, "__name__", "") or "",
