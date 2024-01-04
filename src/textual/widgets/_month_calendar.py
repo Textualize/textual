@@ -163,8 +163,38 @@ class MonthCalendar(Widget):
                 [date if date.month == self.date.month else None for date in week]
                 for week in month_weeks
             ]
-        else:
-            calendar_dates = [[date for date in week] for week in month_weeks]
+            return calendar_dates
+
+        calendar_dates = [[date for date in week] for week in month_weeks]
+        if len(calendar_dates) < 6:
+            prev_month = self.date - relativedelta(months=1)
+            prev_month_weeks = self._calendar.monthdatescalendar(
+                prev_month.year, prev_month.month
+            )
+
+            next_month = self.date + relativedelta(months=1)
+            next_month_weeks = self._calendar.monthdatescalendar(
+                next_month.year, next_month.month
+            )
+
+            curr_first_date = calendar_dates[0][0]
+            assert isinstance(curr_first_date, datetime.date)
+
+            if len(calendar_dates) == 4:  # special case for February
+                calendar_dates = (
+                    [prev_month_weeks[-1]] + calendar_dates + [next_month_weeks[0]]  # type: ignore[assignment]
+                )
+            elif curr_first_date.day == 1:
+                calendar_dates = [prev_month_weeks[-1]] + calendar_dates  # type: ignore[assignment]
+            else:
+                curr_last_date = calendar_dates[-1][6]
+                assert isinstance(curr_last_date, datetime.date)
+                if curr_last_date.month == self.date.month:
+                    calendar_dates = calendar_dates + [next_month_weeks[0]]  # type: ignore[list-item]
+                else:
+                    calendar_dates = calendar_dates + [next_month_weeks[1]]  # type: ignore[list-item]
+
+        assert len(calendar_dates) == 6
 
         return calendar_dates
 

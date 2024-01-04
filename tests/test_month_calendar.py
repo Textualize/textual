@@ -171,10 +171,10 @@ async def test_previous_year():
         assert month_calendar.date.month == 6
 
         table = month_calendar.query_one(DataTable)
-        expected_first_monday = datetime.date(2020, 6, 1)
+        expected_first_monday = datetime.date(2020, 5, 25)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
-        assert table.get_cell_at(Coordinate(0, 0)).plain == "1"
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "25"
 
 
 async def test_next_year():
