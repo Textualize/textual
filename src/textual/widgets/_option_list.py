@@ -159,11 +159,9 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option",
         "option-list--option-disabled",
         "option-list--option-highlighted",
-        "option-list--option-highlighted-disabled",
         "option-list--option-hover",
         "option-list--option-hover-disabled",
         "option-list--option-hover-highlighted",
-        "option-list--option-hover-highlighted-disabled",
         "option-list--separator",
     }
     """
@@ -171,11 +169,9 @@ class OptionList(ScrollView, can_focus=True):
     | :- | :- |
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
-    | `option-list--option-highlighted-disabled` | Target a disabled option that is also highlighted. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
     | `option-list--option-hover-disabled` | Target a disabled option that has the mouse over it. |
     | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
-    | `option-list--option-hover-highlighted-disabled` | Target a disabled highlighted option that has the mouse over it. |
     | `option-list--separator` | Target the separators. |
     """
 
@@ -211,15 +207,6 @@ class OptionList(ScrollView, can_focus=True):
         color: $text-disabled;
     }
 
-    OptionList > .option-list--option-highlighted-disabled {
-        color: $text-disabled;
-        background: $accent 20%;
-    }
-
-    OptionList:focus > .option-list--option-highlighted-disabled {
-        background: $accent 30%;
-    }
-
     OptionList > .option-list--option-hover {
         background: $boost;
     }
@@ -239,11 +226,6 @@ class OptionList(ScrollView, can_focus=True):
         background: $accent;
         color: $text;
         text-style: bold;
-    }
-
-    OptionList > .option-list--option-hover-highlighted-disabled {
-        color: $text-disabled;
-        background: $accent 60%;
     }
     """
 
@@ -922,15 +904,6 @@ class OptionList(ScrollView, can_focus=True):
 
         # Handle drawing a disabled option.
         if self._options[option_index].disabled:
-            # Disabled but the highlight?
-            if option_index == highlighted:
-                return strip.apply_style(
-                    self.get_component_rich_style(
-                        "option-list--option-hover-highlighted-disabled"
-                        if option_index == mouse_over
-                        else "option-list--option-highlighted-disabled"
-                    )
-                )
             # Disabled but mouse hover?
             if option_index == mouse_over:
                 return strip.apply_style(
