@@ -31,13 +31,13 @@ The example below shows a 4 by 4 grid where many placeholders span over several 
 
 === "column_span.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 20"
+    ```css hl_lines="2 5 8 11 14 20"
     --8<-- "docs/examples/styles/column_span.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 column-span: 3;
 ```
 

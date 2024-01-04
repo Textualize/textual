@@ -17,7 +17,7 @@ border-title-background: (<a href="../../css_types/color">&lt;color&gt;</a> | au
 
 ## CSS
 
-```sass
+```css
 border-title-background: blue;
 ```
 

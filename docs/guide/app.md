@@ -262,7 +262,7 @@ The following example enables loading of CSS by adding a `CSS_PATH` class variab
 
 If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.tcss"` in the same directory as the Python code. Here is that CSS file:
 
-```sass title="question02.tcss"
+```css title="question02.tcss"
 --8<-- "docs/examples/app/question02.tcss"
 ```
 

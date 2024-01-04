@@ -106,8 +106,10 @@ class EOFError(TokenError):
     pass
 
 
+@rich.repr.auto
 class Expect:
-    def __init__(self, **tokens: str) -> None:
+    def __init__(self, description: str, **tokens: str) -> None:
+        self.description = f"Expected {description}"
         self.names = list(tokens.keys())
         self.regexes = list(tokens.values())
         self._regex = re.compile(
@@ -134,7 +136,7 @@ class ReferencedBy(NamedTuple):
     code: str
 
 
-@rich.repr.auto
+@rich.repr.auto(angular=True)
 class Token(NamedTuple):
     name: str
     value: str
@@ -213,18 +215,17 @@ class Tokenizer:
                     self.read_from,
                     self.code,
                     (line_no + 1, col_no + 1),
-                    "Unexpected end of file",
+                    "Unexpected end of file; did you forget a '}' ?",
                 )
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
             expected = friendly_list(" ".join(name.split("_")) for name in expect.names)
-            message = f"Expected one of {expected}.; Did you forget a semicolon at the end of a line?"
             raise TokenError(
                 self.read_from,
                 self.code,
                 (line_no + 1, col_no + 1),
-                message,
+                f"{expect.description} (found {line[col_no:].rstrip()!r}).; Did you forget a semicolon at the end of a line?",
             )
         iter_groups = iter(match.groups())
 
@@ -286,7 +287,7 @@ class Tokenizer:
                     self.read_from,
                     self.code,
                     (line_no, col_no),
-                    "Unexpected end of file",
+                    "Unexpected end of file; did you forget a '}' ?",
                 )
             line = self.lines[line_no]
             match = expect.search(line, col_no)

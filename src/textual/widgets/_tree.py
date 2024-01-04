@@ -717,13 +717,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._current_id = 0
         root_label = self.root._label
         root_data = self.root.data
+        root_expanded = self.root.is_expanded
         self.root = TreeNode(
             self,
             None,
             self._new_id(),
             root_label,
             root_data,
-            expanded=True,
+            expanded=root_expanded,
         )
         self._updates += 1
         self.refresh()

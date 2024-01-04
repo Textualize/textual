@@ -16,7 +16,7 @@ The [`<horizontal>`](./horizontal.md) type can take any of the following values:
 
 ### CSS
 
-```sass
+```css
 .container {
     align-horizontal: right;
 }

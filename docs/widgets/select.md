@@ -55,7 +55,7 @@ The following example presents a `Select` with a number of options.
 
 === "select.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/select.tcss"
     ```
 
@@ -82,7 +82,7 @@ The following example presents a `Select` created using the `from_values` class 
 
 === "select.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/select.tcss"
     ```
 

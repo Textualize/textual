@@ -13,6 +13,6 @@ The following examples demonstrates customization of the border color and text s
 
 === "border_title_colors.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/border_title_colors.tcss"
     ```

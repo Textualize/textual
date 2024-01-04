@@ -35,7 +35,7 @@ This example shows three labels, each with a different border title alignment:
 
 === "border_title_align.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/border_title_align.tcss"
     ```
 
@@ -47,7 +47,7 @@ This example shows three labels, each with a different border title alignment:
 
 ## CSS
 
-```sass
+```css
 border-title-align: left;
 border-title-align: center;
 border-title-align: right;
