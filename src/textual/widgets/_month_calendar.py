@@ -156,17 +156,17 @@ class MonthCalendar(Widget):
         dates from the previous and next month that are required to get a
         complete week, otherwise these days are 'None'
         """
-        complete_dates = self._calendar.itermonthdates(self.date.year, self.date.month)
-        calendar_dates: list[datetime.date | None]
+        month_weeks = self._calendar.monthdatescalendar(self.date.year, self.date.month)
+        calendar_dates: list[list[datetime.date | None]]
         if not self.show_other_months:
             calendar_dates = [
-                date if date.month == self.date.month else None
-                for date in complete_dates
+                [date if date.month == self.date.month else None for date in week]
+                for week in month_weeks
             ]
         else:
-            calendar_dates = list(complete_dates)
+            calendar_dates = [[date for date in week] for week in month_weeks]
 
-        return [calendar_dates[i : i + 7] for i in range(0, len(calendar_dates), 7)]
+        return calendar_dates
 
     def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
         for week_index, week in enumerate(self._calendar_dates):
