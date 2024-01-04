@@ -8108,6 +8108,10 @@ When we see a common prefix on the selectors, this is a good indication that we 
 </div>
 </div>
 </div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Indenting the rule sets is not strictly required, but it does make it easier to understand how the rule sets are related to each other.</p>
+</div>
 <p>In the first example we had a rule set that began with the selector <code>#questions .button</code>, which would match any widget with a class called "button" that is inside a container with id <code>questions</code>.</p>
 <p>In the second example, the button rule selector is simply <code>.button</code>, but it is <em>within</em> the rule set with selector <code>#questions</code>.
 The nesting means that the button rule set will inherit the selector from the outer rule set, so it is equivalent to <code>#questions .button</code>.</p>
@@ -8177,6 +8181,8 @@ Without <code>&amp;</code> it would be equivalent to <code>#questions .button .a
 </div>
 </div>
 </div>
+<p>Note how nesting bundles related rules together.
+If we were to add other selectors for additional screens or widgets, it would be easier to find the rules which will be applied.</p>
 <h3 id="why-use-nesting">Why use nesting?<a class="headerlink" href="#why-use-nesting" title="Permanent link">&para;</a></h3>
 <p>There is no requirement to use nested CSS, but it can help to group related rule sets together (which makes it easier to edit). Nested CSS can also help you avoid some repetition in your selectors, i.e. in the nested CSS we only need to type <code>#questions</code> once, rather than four times in the non-nested CSS.</p>
 
