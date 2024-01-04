@@ -37,7 +37,7 @@ from typing import Any, Sequence
 from textual._cells import cell_len
 from textual.document._document import Location
 from textual.document._wrapped_document import WrappedDocument
-from textual.geometry import clamp
+from textual.geometry import Offset, clamp
 
 
 class DocumentNavigator:
@@ -296,10 +296,18 @@ class DocumentNavigator:
                 return line_index, first_non_whitespace
             return line_index, 0
 
-    # TODO - we need to implement methods for going page up and page down
-    #  perhaps we just need a method:  given a location and a y-offset return
-    #  the location corresponding to the y-offset applied to the location in the
-    #  *wrapped* document.
+    def get_location_offset_relative(
+        self, location: Location, offset_delta: int, tab_width: int
+    ) -> Location:
+        # Convert into offset-space to apply the offset.
+        x_offset, y_offset = self._wrapped_document.location_to_offset(
+            location, tab_width
+        )
+        # Convert the offset with the delta applied back to location-space.
+        return self._wrapped_document.offset_to_location(
+            Offset(x_offset, y_offset + offset_delta),
+            tab_width,
+        )
 
     def clamp_reachable(self, location: Location) -> Location:
         """Given a location, return the nearest location that corresponds to a
