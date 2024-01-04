@@ -1102,7 +1102,7 @@ TextArea {
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
         gutter_width = (
-            len(str(self.document.line_count + 1)) + gutter_margin
+            len(str(self.document.line_count)) + gutter_margin
             if self.show_line_numbers
             else 0
         )
