@@ -33,7 +33,7 @@ The following examples shows a simple horizontal layout with a thin keyline.
 
 === "keyline.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/keyline_horizontal.tcss"
     ```
 
@@ -56,14 +56,14 @@ The following examples shows a grid layout with a *heavy* keyline.
 
 === "keyline.tcss"
 
-    ```sass 
+    ```css 
     --8<-- "docs/examples/styles/keyline.tcss"
     ```
 
 
 ## CSS
 
-```sass
+```css
 /* Set a thin green keyline */
 /* Note: Must be set on a container or a widget with a layout. */
 keyline: thin green;

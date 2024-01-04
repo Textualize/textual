@@ -10,11 +10,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
-- Keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+- Fixed auto width text not processing markup https://github.com/Textualize/textual/issues/3918
+- Fixed `Tree.clear` not retaining the root's expanded state https://github.com/Textualize/textual/issues/3557
 
 ### Changed
 
 - Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only https://github.com/Textualize/textual/pull/3896
+- Style tweak to toasts https://github.com/Textualize/textual/pull/3955
+- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+
+### Added
+
+- Added textual.lazy https://github.com/Textualize/textual/pull/3936
+- Added App.push_screen_wait https://github.com/Textualize/textual/pull/3955
 
 ## [0.46.0] - 2023-12-17
 

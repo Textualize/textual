@@ -27,7 +27,7 @@ The example below demonstrates how children are arranged inside a container with
 
 === "vertical_layout.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/guide/layout/vertical_layout.tcss"
     ```
 
@@ -92,7 +92,7 @@ The example below shows how we can arrange widgets horizontally, with minimal ch
 
 === "horizontal_layout.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/guide/layout/horizontal_layout.tcss"
     ```
 
@@ -125,7 +125,7 @@ To enable horizontal scrolling, we can use the `overflow-x: auto;` declaration:
 
 === "horizontal_layout_overflow.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/guide/layout/horizontal_layout_overflow.tcss"
     ```
 
@@ -154,7 +154,7 @@ In other words, we have a single row containing two columns.
 
 === "utility_containers.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/guide/layout/utility_containers.tcss"
     ```
 
@@ -193,7 +193,7 @@ Let's update the [utility containers](#utility-containers) example to use the co
 
 === "utility_containers.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/layout/utility_containers.tcss"
     ```
 
@@ -235,7 +235,7 @@ The following example creates a 3 x 2 grid and adds six widgets to it
 
 === "grid_layout1.tcss"
 
-    ```sass hl_lines="2 3"
+    ```css hl_lines="2 3"
     --8<-- "docs/examples/guide/layout/grid_layout1.tcss"
     ```
 
@@ -256,7 +256,7 @@ If we were to yield a seventh widget from our `compose` method, it would not be 
 
 === "grid_layout2.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/guide/layout/grid_layout2.tcss"
     ```
 
@@ -288,7 +288,7 @@ We'll make the first column take up half of the screen width, with the other two
 
 === "grid_layout3_row_col_adjust.tcss"
 
-    ```sass hl_lines="4"
+    ```css hl_lines="4"
     --8<-- "docs/examples/guide/layout/grid_layout3_row_col_adjust.tcss"
     ```
 
@@ -317,7 +317,7 @@ and the second row to `75%` height (while retaining the `grid-columns` change fr
 
 === "grid_layout4_row_col_adjust.tcss"
 
-    ```sass hl_lines="5"
+    ```css hl_lines="5"
     --8<-- "docs/examples/guide/layout/grid_layout4_row_col_adjust.tcss"
     ```
 
@@ -345,7 +345,7 @@ Let's modify the previous example to make the first column an `auto` column.
 
 === "grid_layout_auto.tcss"
 
-    ```sass hl_lines="4"
+    ```css hl_lines="4"
     --8<-- "docs/examples/guide/layout/grid_layout_auto.tcss"
     ```
 
@@ -377,7 +377,7 @@ We'll also add a slight tint using `tint: magenta 40%;` to draw attention to it.
 
 === "grid_layout5_col_span.tcss"
 
-    ```sass hl_lines="6-9"
+    ```css hl_lines="6-9"
     --8<-- "docs/examples/guide/layout/grid_layout5_col_span.tcss"
     ```
 
@@ -410,7 +410,7 @@ We again target widget `#two` in our CSS, and add a `row-span: 2;` declaration t
 
 === "grid_layout6_row_span.tcss"
 
-    ```sass hl_lines="8"
+    ```css hl_lines="8"
     --8<-- "docs/examples/guide/layout/grid_layout6_row_span.tcss"
     ```
 
@@ -442,7 +442,7 @@ Now if we add `grid-gutter: 1;` to our grid, one cell of spacing appears between
 
 === "grid_layout7_gutter.tcss"
 
-    ```sass hl_lines="4"
+    ```css hl_lines="4"
     --8<-- "docs/examples/guide/layout/grid_layout7_gutter.tcss"
     ```
 
@@ -482,7 +482,7 @@ The code below shows a simple sidebar implementation.
 
 === "dock_layout1_sidebar.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/guide/layout/dock_layout1_sidebar.tcss"
     ```
 
@@ -506,7 +506,7 @@ This new sidebar is double the width of the one previous one, and has a `deeppin
 
 === "dock_layout2_sidebar.tcss"
 
-    ```sass hl_lines="1-6"
+    ```css hl_lines="1-6"
     --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.tcss"
     ```
 
@@ -530,7 +530,7 @@ We can yield it inside `compose`, and without any additional CSS, we get a heade
 
 === "dock_layout3_sidebar_header.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/layout/dock_layout3_sidebar_header.tcss"
     ```
 
@@ -573,7 +573,7 @@ However, in this case, both `#box1` and `#box2` are assigned to layers which def
 
 === "layers.tcss"
 
-    ```sass hl_lines="3 14 19"
+    ```css hl_lines="3 14 19"
     --8<-- "docs/examples/guide/layout/layers.tcss"
     ```
 
@@ -614,7 +614,7 @@ The example below shows how an advanced layout can be built by combining the var
 
 === "combining_layouts.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/layout/combining_layouts.tcss"
     ```
 

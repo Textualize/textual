@@ -14,7 +14,7 @@ An [`<integer>`](./integer.md) is any valid integer number like `-10` or `42`.
 
 ### CSS
 
-```sass
+```css
 .classname {
     offset: 10 -20
 }

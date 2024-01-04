@@ -29,7 +29,7 @@ Then, we set `max-height` individually on each placeholder.
 
 === "max_height.tcss"
 
-    ```sass hl_lines="12 16 20 24"
+    ```css hl_lines="12 16 20 24"
     --8<-- "docs/examples/styles/max_height.tcss"
     ```
 
@@ -37,7 +37,7 @@ Then, we set `max-height` individually on each placeholder.
 
 ## CSS
 
-```sass
+```css
 /* Set the maximum height to 10 rows */
 max-height: 10;
 

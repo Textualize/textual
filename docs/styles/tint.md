@@ -29,13 +29,13 @@ This examples shows a green tint with gradually increasing alpha.
 
 === "tint.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/tint.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* A red tint (could indicate an error) */
 tint: red 20%;
 

@@ -310,7 +310,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
+    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -1945,6 +1945,29 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return await_mount
 
+    @overload
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType]
+    ) -> ScreenResultType:
+        ...
+
+    @overload
+    async def push_screen_wait(self, screen: str) -> Any:
+        ...
+
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType] | str
+    ) -> ScreenResultType | Any:
+        """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
+
+        Args:
+            screen: A screen or the name of an installed screen.
+
+        Returns:
+            The screen's result.
+        """
+        return await self.push_screen(screen, wait_for_dismiss=True)
+
     def switch_screen(self, screen: Screen | str) -> AwaitMount:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
 
@@ -1991,7 +2014,7 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
             raise ScreenError(
-                "Can't install screen; {screen!r} has already been installed"
+                f"Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
         self.log.system(f"{screen} INSTALLED name={name!r}")

@@ -24,7 +24,7 @@ The example below shows check boxes in various states.
 
 === "checkbox.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/checkbox.tcss"
     ```
 

@@ -28,7 +28,7 @@ The following app uses [httpx](https://www.python-httpx.org/) to get the current
 
 === "weather.tcss"
 
-    ```sass title="weather.tcss"
+    ```css title="weather.tcss"
     --8<-- "docs/examples/guide/workers/weather.tcss"
     ```
 
