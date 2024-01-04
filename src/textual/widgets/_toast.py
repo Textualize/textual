@@ -58,11 +58,11 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast {
-        border-right: wide $background;
+        border-right: outer $background;
     }
 
     Toast.-information {
-        border-left: wide $success;
+        border-left: outer $success;
     }
 
     Toast.-information .toast--title {
@@ -70,7 +70,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-warning {
-        border-left: wide $warning;
+        border-left: outer $warning;
     }
 
     Toast.-warning .toast--title {
@@ -78,7 +78,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-error {
-        border-left: wide $error;
+        border-left: outer $error;
     }
 
     Toast.-error .toast--title {
