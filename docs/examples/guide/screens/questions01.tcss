@@ -11,7 +11,6 @@ QuestionScreen > Label {
     width: 1fr;
 }
 
-
 QuestionScreen Button {
     margin: 2; 
     width: 1fr;     
