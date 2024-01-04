@@ -117,7 +117,7 @@ def find_next_enabled(
             the next available candidate.
 
     Returns:
-        The next enabled candidate. If none are available, return `None`.
+        The next enabled candidate. If none are available, return the anchor.
     """
 
     if anchor is None:
