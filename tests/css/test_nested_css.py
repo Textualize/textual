@@ -52,6 +52,7 @@ async def test_nest_app():
         ("Selector{ Foo {}", EOFError),
         ("> {}", TokenError),
         ("&", TokenError),
+        ("&&", TokenError),
         ("&.foo", TokenError),
         ("& .foo", TokenError),
         ("{", TokenError),
