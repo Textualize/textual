@@ -4,7 +4,7 @@ from typing import ClassVar, Iterable, Optional
 
 from typing_extensions import TypeGuard
 
-from .. import _widget_navigation
+from .. import widget_navigation
 from ..await_remove import AwaitRemove
 from ..binding import Binding, BindingType
 from ..containers import VerticalScroll
@@ -118,7 +118,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             *children, name=name, id=id, classes=classes, disabled=disabled
         )
         # Set the index to the given initial index, or the first available index after.
-        self._index = _widget_navigation.find_next_enabled(
+        self._index = widget_navigation.find_next_enabled(
             self._nodes,
             anchor=initial_index - 1 if initial_index is not None else None,
             direction=1,
@@ -150,9 +150,9 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         if index is None:
             return None
         elif index < 0:
-            return _widget_navigation.find_first_enabled(self._nodes)
+            return widget_navigation.find_first_enabled(self._nodes)
         elif index >= len(self._nodes):
-            return _widget_navigation.find_last_enabled(self._nodes)
+            return widget_navigation.find_last_enabled(self._nodes)
         elif self._nodes[index].disabled:
             return self.index
 
@@ -229,7 +229,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     def action_cursor_down(self) -> None:
         """Highlight the next item in the list."""
-        candidate = _widget_navigation.find_next_enabled(
+        candidate = widget_navigation.find_next_enabled(
             self._nodes,
             anchor=self.index,
             direction=1,
@@ -241,7 +241,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
     def action_cursor_up(self) -> None:
         """Highlight the previous item in the list."""
-        candidate = _widget_navigation.find_next_enabled(
+        candidate = widget_navigation.find_next_enabled(
             self._nodes,
             anchor=self.index,
             direction=-1,

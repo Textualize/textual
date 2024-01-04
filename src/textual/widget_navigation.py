@@ -34,7 +34,7 @@ _W = TypeVar("_W", bound="Widget")
 
 
 def distance(index: int, start: int, direction: Direction, wrap_at: int) -> int:
-    """Computes the distance going from `start` to `index` in the given direction
+    """Computes the distance going from `start` to `index` in the given direction.
 
     Starting at `start`, this is the number of steps you need to take in the given
     `direction` to reach `index`, assuming there is wrapping at 0 and `wrap_at`.
@@ -44,6 +44,7 @@ def distance(index: int, start: int, direction: Direction, wrap_at: int) -> int:
     The diagram below illustrates the computation of `d1 = distance(2, 8, 1, 10)` and
     `d2 = distance(2, 8, -1, 10)`:
 
+    ```
     start ────────────────────┐
     index ────────┐           │
     indices   0 1 2 3 4 5 6 7 8 9
@@ -51,6 +52,7 @@ def distance(index: int, start: int, direction: Direction, wrap_at: int) -> int:
               > > >           > > (direction == 1)
     d2            6 5 4 3 2 1 0
                   < < < < < < <   (direction == -1)
+    ```
 
     Args:
         index: The index that we want to reach.

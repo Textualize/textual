@@ -208,6 +208,7 @@ nav:
       - "api/validation.md"
       - "api/walk.md"
       - "api/widget.md"
+      - "api/widget_navigation.md"
       - "api/work.md"
       - "api/worker.md"
       - "api/worker_manager.md"

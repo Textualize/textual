@@ -16,7 +16,7 @@ from rich.rule import Rule
 from rich.style import Style
 from typing_extensions import Literal, Self, TypeAlias
 
-from .. import _widget_navigation
+from .. import widget_navigation
 from ..binding import Binding, BindingType
 from ..events import Click, Idle, Leave, MouseMove
 from ..geometry import Region, Size
@@ -732,7 +732,7 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._options[index].disabled = disabled
         if index == self.highlighted:
-            self.highlighted = _widget_navigation.find_next_enabled(
+            self.highlighted = widget_navigation.find_next_enabled(
                 self._options, anchor=index, direction=1
             )
         # TODO: Refresh only if the affected option is visible.
@@ -969,9 +969,9 @@ class OptionList(ScrollView, can_focus=True):
         if highlighted is None:
             return None
         elif highlighted < 0:
-            return _widget_navigation.find_first_enabled(self._options)
+            return widget_navigation.find_first_enabled(self._options)
         elif highlighted >= len(self._options):
-            return _widget_navigation.find_last_enabled(self._options)
+            return widget_navigation.find_last_enabled(self._options)
         elif self._options[highlighted].disabled:
             return self.highlighted
 
@@ -986,7 +986,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def action_cursor_up(self) -> None:
         """Move the highlight up by one option."""
-        self.highlighted = _widget_navigation.find_next_enabled(
+        self.highlighted = widget_navigation.find_next_enabled(
             self._options,
             anchor=self.highlighted,
             direction=-1,
@@ -994,7 +994,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def action_cursor_down(self) -> None:
         """Move the highlight down by one option."""
-        self.highlighted = _widget_navigation.find_next_enabled(
+        self.highlighted = widget_navigation.find_next_enabled(
             self._options,
             anchor=self.highlighted,
             direction=1,
@@ -1002,11 +1002,11 @@ class OptionList(ScrollView, can_focus=True):
 
     def action_first(self) -> None:
         """Move the highlight to the first option."""
-        self.highlighted = _widget_navigation.find_first_enabled(self._options)
+        self.highlighted = widget_navigation.find_first_enabled(self._options)
 
     def action_last(self) -> None:
         """Move the highlight to the last option."""
-        self.highlighted = _widget_navigation.find_last_enabled(self._options)
+        self.highlighted = widget_navigation.find_last_enabled(self._options)
 
     def _page(self, direction: Literal[-1, 1]) -> None:
         """Move the highlight by one page.

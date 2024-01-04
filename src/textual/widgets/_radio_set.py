@@ -6,7 +6,7 @@ from typing import ClassVar, Optional
 
 import rich.repr
 
-from .. import _widget_navigation
+from .. import widget_navigation
 from ..binding import Binding, BindingType
 from ..containers import Container
 from ..events import Click, Mount
@@ -248,7 +248,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
         Note that this will wrap around to the end if at the start.
         """
-        self._selected = _widget_navigation.find_next_enabled(
+        self._selected = widget_navigation.find_next_enabled(
             self.children,
             anchor=self._selected,
             direction=-1,
@@ -259,7 +259,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
         Note that this will wrap around to the start if at the end.
         """
-        self._selected = _widget_navigation.find_next_enabled(
+        self._selected = widget_navigation.find_next_enabled(
             self.children,
             anchor=self._selected,
             direction=1,
