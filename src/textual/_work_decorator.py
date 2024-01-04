@@ -9,24 +9,29 @@ from functools import partial, wraps
 from inspect import iscoroutinefunction
 from typing import TYPE_CHECKING, Callable, Coroutine, TypeVar, Union, cast, overload
 
-from typing_extensions import ParamSpec, TypeAlias
+from typing_extensions import Concatenate, Literal, ParamSpec, TypeAlias
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .worker import Worker
 
 
 FactoryParamSpec = ParamSpec("FactoryParamSpec")
-DecoratorParamSpec = ParamSpec("DecoratorParamSpec")
 ReturnType = TypeVar("ReturnType")
-
-Decorator: TypeAlias = Callable[
-    [
-        Union[
-            Callable[DecoratorParamSpec, ReturnType],
-            Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]],
-        ]
-    ],
-    Callable[DecoratorParamSpec, "Worker[ReturnType]"],
+NodeType = TypeVar("NodeType", bound="DOMNode")
+WorkerFunc: TypeAlias = Callable[
+    Concatenate[NodeType, FactoryParamSpec],
+    ReturnType,
+]
+AsyncWorkerFunc: TypeAlias = WorkerFunc[
+    NodeType, FactoryParamSpec, Coroutine[None, None, ReturnType]
+]
+AnyWorkerFunc: TypeAlias = Union[
+    WorkerFunc[NodeType, FactoryParamSpec, ReturnType],
+    AsyncWorkerFunc[NodeType, FactoryParamSpec, ReturnType],
+]
+WorkerFactory: TypeAlias = Callable[
+    Concatenate[NodeType, FactoryParamSpec], "Worker[ReturnType]"
 ]
 
 
@@ -36,57 +41,113 @@ class WorkerDeclarationError(Exception):
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
+    method: AsyncWorkerFunc[NodeType, FactoryParamSpec, ReturnType],
     *,
     name: str = "",
     group: str = "default",
     exit_on_error: bool = True,
     exclusive: bool = False,
     description: str | None = None,
-    thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
+    is_async: Literal[None] = None,
+    thread: Literal[False] = False,
+) -> WorkerFactory[NodeType, FactoryParamSpec, ReturnType]:
     ...
 
 
 @overload
 def work(
-    method: Callable[FactoryParamSpec, ReturnType],
+    method: WorkerFunc[NodeType, FactoryParamSpec, ReturnType],
     *,
     name: str = "",
     group: str = "default",
     exit_on_error: bool = True,
     exclusive: bool = False,
     description: str | None = None,
-    thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
+    is_async: Literal[None] = None,
+    thread: Literal[True],
+) -> WorkerFactory[NodeType, FactoryParamSpec, ReturnType]:
     ...
 
 
 @overload
 def work(
+    method: None = None,
     *,
     name: str = "",
     group: str = "default",
     exit_on_error: bool = True,
     exclusive: bool = False,
     description: str | None = None,
-    thread: bool = False,
-) -> Decorator[..., ReturnType]:
+    is_async: Literal[None] = None,
+    thread: Literal[False] = False,
+) -> Callable[
+    [AsyncWorkerFunc[NodeType, FactoryParamSpec, ReturnType]],
+    WorkerFactory[NodeType, FactoryParamSpec, ReturnType],
+]:
+    ...
+
+
+@overload
+def work(
+    method: None = None,
+    *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
+    is_async: Literal[True],
+    thread: Literal[True],
+) -> Callable[
+    [AsyncWorkerFunc[NodeType, FactoryParamSpec, ReturnType]],
+    WorkerFactory[NodeType, FactoryParamSpec, ReturnType],
+]:
+    ...
+
+
+@overload
+def work(
+    method: None = None,
+    *,
+    name: str = "",
+    group: str = "default",
+    exit_on_error: bool = True,
+    exclusive: bool = False,
+    description: str | None = None,
+    is_async: Literal[None] = None,
+    thread: Literal[True],
+) -> Callable[
+    [
+        WorkerFunc[
+            NodeType, FactoryParamSpec, ReturnType | Coroutine[None, None, ReturnType]
+        ]
+    ],
+    WorkerFactory[NodeType, FactoryParamSpec, ReturnType],
+]:
     ...
 
 
 def work(
-    method: Callable[FactoryParamSpec, ReturnType]
-    | Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
-    | None = None,
+    method: AnyWorkerFunc[NodeType, FactoryParamSpec, ReturnType] | None = None,
     *,
     name: str = "",
     group: str = "default",
     exit_on_error: bool = True,
     exclusive: bool = False,
     description: str | None = None,
+    is_async: Literal[True, None] = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, Worker[ReturnType]] | Decorator:
+) -> (
+    WorkerFactory[NodeType, FactoryParamSpec, ReturnType]
+    | Callable[
+        [WorkerFunc[NodeType, FactoryParamSpec, ReturnType]],
+        WorkerFactory[NodeType, FactoryParamSpec, ReturnType],
+    ]
+    | Callable[
+        [AsyncWorkerFunc[NodeType, FactoryParamSpec, ReturnType]],
+        WorkerFactory[NodeType, FactoryParamSpec, ReturnType],
+    ]
+):
     """A decorator used to create [workers](/guide/workers).
 
     Args:
@@ -98,15 +159,14 @@ def work(
         description: Readable description of the worker for debugging purposes.
             By default, it uses a string representation of the decorated method
             and its arguments.
+        is_async: Typechecking hint to specify that the method is asynchronous.
+            Use to resolve ambiguous type inference for threaded workers.
         thread: Mark the method as a thread worker.
     """
 
     def decorator(
-        method: (
-            Callable[DecoratorParamSpec, ReturnType]
-            | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
-        )
-    ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
+        method: AnyWorkerFunc[NodeType, FactoryParamSpec, ReturnType]
+    ) -> WorkerFactory[NodeType, FactoryParamSpec, ReturnType]:
         """The decorator."""
 
         # Methods that aren't async *must* be marked as being a thread
@@ -118,21 +178,19 @@ def work(
 
         @wraps(method)
         def decorated(
-            *args: DecoratorParamSpec.args, **kwargs: DecoratorParamSpec.kwargs
-        ) -> Worker[ReturnType]:
+            self: NodeType,
+            /,
+            *args: FactoryParamSpec.args,
+            **kwargs: FactoryParamSpec.kwargs,
+        ) -> "Worker[ReturnType]":
             """The replaced callable."""
-            from .dom import DOMNode
-
-            self = args[0]
-            assert isinstance(self, DOMNode)
-
             if description is not None:
                 debug_description = description
             else:
                 try:
-                    positional_arguments = ", ".join(repr(arg) for arg in args[1:])
+                    positional_arguments = ", ".join(repr(arg) for arg in args)
                     keyword_arguments = ", ".join(
-                        f"{name}={value!r}" for name, value in kwargs.items()
+                        f"{kwarg}={value!r}" for kwarg, value in kwargs.items()
                     )
                     tokens = [positional_arguments, keyword_arguments]
                     debug_description = f"{method.__name__}({', '.join(token for token in tokens if token)})"
@@ -141,7 +199,7 @@ def work(
             worker = cast(
                 "Worker[ReturnType]",
                 self.run_worker(
-                    partial(method, *args, **kwargs),
+                    partial(method, self, *args, **kwargs),
                     name=name or method.__name__,
                     group=group,
                     description=debug_description,
