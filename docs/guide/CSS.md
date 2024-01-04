@@ -508,7 +508,7 @@ The following produces identical results to the previous example, but adds nesti
 
 === "nesting02.tcss (with nesting)"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/css/nesting02.tcss"
     ```
 
