@@ -391,7 +391,7 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
 
     show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """Show a horizontal scrollbar?"""
+    """Show a vertical scrollbar?"""
 
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a horizontal scrollbar?"""
