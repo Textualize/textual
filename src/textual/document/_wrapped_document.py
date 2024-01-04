@@ -7,7 +7,7 @@ that were influenced by edits.
 """
 from __future__ import annotations
 
-from bisect import bisect
+from bisect import bisect_right
 
 from rich._wrap import divide_line
 from rich.text import Text
@@ -289,14 +289,15 @@ class WrappedDocument:
         line_index = clamp(line_index, 0, len(self._line_index_to_offsets))
 
         # Find the section index of this location, so that we know which y_offset to use
-        section_start_columns = [0, *self.get_offsets(line_index)]
-        section_index = bisect(section_start_columns, column_index)
+        wrap_offsets = self.get_offsets(line_index)
+        section_start_columns = [0, *wrap_offsets]
+        section_index = bisect_right(wrap_offsets, column_index)
 
         # Get the y-offsets corresponding to this line index
         y_offsets = self._line_index_to_offsets[line_index]
         section_column_index = column_index - section_start_columns[section_index]
 
-        section = self.get_sections(section_index)[section_index]
+        section = self.get_sections(line_index)[section_index]
         x_offset = cell_len(
             expand_tabs_inline(section[:section_column_index], tab_width)
         )

@@ -342,6 +342,8 @@ TextArea {
         """Queried to determine where the cursor should move given a navigation
         action, accounting for wrapping etc."""
 
+        self._cursor_offset = (0, 0)
+
         self._set_document(text, language)
 
         self._theme: TextAreaTheme | None = None
@@ -407,16 +409,20 @@ TextArea {
 
     def _watch_selection(self, selection: Selection) -> None:
         """When the cursor moves, scroll it into view."""
-        self.scroll_cursor_visible()
+        # Find the visual offset of the cursor in the document
         cursor_location = selection.end
+
+        self._cursor_offset = self.wrapped_document.location_to_offset(
+            cursor_location, self.indent_width
+        )
+        self.scroll_cursor_visible()
+
         cursor_row, cursor_column = cursor_location
 
         try:
             character = self.document[cursor_row][cursor_column]
         except IndexError:
             character = ""
-
-        #
 
         # Record the location of a matching closing/opening bracket.
         match_location = self.find_matching_bracket(character, cursor_location)
@@ -426,7 +432,7 @@ TextArea {
             if match_row in range(*self._visible_line_indices):
                 self.refresh_lines(match_row)
 
-        self.app.cursor_position = self.cursor_screen_offset
+        self.app.cursor_position = self._cursor_offset
         self.post_message(self.SelectionChanged(selection, self))
 
     def find_matching_bracket(
@@ -1209,11 +1215,9 @@ TextArea {
         Returns:
             The offset that was scrolled to bring the cursor into view.
         """
-        row, column = self.selection.end
-        text = self.document[row][:column]
-        column_offset = cell_len(expand_tabs_inline(text, self.indent_width))
+        x, y = self._cursor_offset
         scroll_offset = self.scroll_to_region(
-            Region(x=column_offset, y=row, width=3, height=1),
+            Region(x, y, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=animate,
             force=True,
