@@ -4844,6 +4844,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5193,6 +5195,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
   </span>
   
 
@@ -7124,17 +7147,17 @@ This description follows the format <code>hsl(hue, saturation, lightness)</code>
 <p>For example, <code>hsla(128, 100%, 50%, 0.5)</code> is the color <code>hsl(128, 100%, 50%)</code> with 50% opacity.</p>
 <h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
 <h3 id="css">CSS<a class="headerlink" href="#css" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Header</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">red</span><span class="err">;</span><span class="w">           </span><span class="cm">/* Color name </span><span class="c">*/</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Header</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">red</span><span class="p">;</span><span class="w">           </span><span class="c">/* Color name */</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">}</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="nc">.accent</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="nv">$accent</span><span class="err">;</span><span class="w">            </span><span class="cm">/* Textual variable </span><span class="c">*/</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="err">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">.</span><span class="nc">accent</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="n">accent</span><span class="p">;</span><span class="w">            </span><span class="c">/* Textual variable */</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="nn">#footer</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="na">tint</span><span class="o">:</span><span class="w"> </span><span class="nf">hsl</span><span class="p">(</span><span class="mi">300</span><span class="o">,</span><span class="w"> </span><span class="mi">20</span><span class="kt">%</span><span class="o">,</span><span class="w"> </span><span class="mi">70</span><span class="kt">%</span><span class="p">)</span><span class="err">;</span><span class="w">  </span><span class="cm">/* HSL description </span><span class="c">*/</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="err">}</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">#</span><span class="nn">footer</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="n">tint</span><span class="p">:</span><span class="w"> </span><span class="nb">hsl</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="kt">%</span><span class="p">,</span><span class="w"> </span><span class="mi">70</span><span class="kt">%</span><span class="p">);</span><span class="w">  </span><span class="c">/* HSL description */</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="python">Python<a class="headerlink" href="#python" title="Permanent link">&para;</a></h3>
 <p>In Python, rules that expect a <code>&lt;color&gt;</code> can also accept an instance of the type <a class="autorefs autorefs-internal" href="../../api/color/#textual.color.Color"><code>Color</code></a>.</p>

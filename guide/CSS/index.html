@@ -1046,6 +1046,39 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#nesting-css" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nesting CSS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Nesting CSS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nesting-selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nesting selector
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-use-nesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why use nesting?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -4917,6 +4950,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5266,6 +5301,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
   </span>
   
 
@@ -6456,6 +6512,39 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#nesting-css" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nesting CSS
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Nesting CSS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nesting-selector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nesting selector
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-use-nesting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Why use nesting?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -6483,32 +6572,32 @@ window.onload = async (event) => {
 <h2 id="stylesheets">Stylesheets<a class="headerlink" href="#stylesheets" title="Permanent link">&para;</a></h2>
 <p>CSS stands for <em>Cascading Stylesheet</em>. A stylesheet is a list of styles and rules about how those styles should be applied to a web page. In the case of Textual, the stylesheet applies <a href="../styles/">styles</a> to widgets, but otherwise it is the same idea.</p>
 <p>Let's look at some Textual CSS.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Header</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="na">dock</span><span class="o">:</span><span class="w"> </span><span class="no">top</span><span class="err">;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="err">;</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">Header</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">dock</span><span class="p">:</span><span class="w"> </span><span class="kc">top</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="n">content-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </code></pre></div>
 <p>This is an example of a CSS <em>rule set</em>. There may be many such sections in any given CSS file.</p>
 <p>Let's break this CSS code down a bit.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="hll"><span class="nt">Header</span><span class="w"> </span><span class="err">{</span>
-</span><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="na">dock</span><span class="o">:</span><span class="w"> </span><span class="no">top</span><span class="err">;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="err">;</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="hll"><span class="nt">Header</span><span class="w"> </span><span class="p">{</span>
+</span><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="n">dock</span><span class="p">:</span><span class="w"> </span><span class="kc">top</span><span class="p">;</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">  </span><span class="n">content-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p">}</span>
 </code></pre></div>
 <p>The first line is a <em>selector</em> which tells Textual which widget(s) to modify. In the above example, the styles will be applied to a widget defined by the Python class <code>Header</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">Header</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="hll"><span class="w">  </span><span class="na">dock</span><span class="o">:</span><span class="w"> </span><span class="no">top</span><span class="err">;</span>
-</span><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="hll"><span class="w">  </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="err">;</span>
-</span><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="hll"><span class="w">  </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
-</span><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="hll"><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
-</span><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="hll"><span class="w">  </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
-</span><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">Header</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="hll"><span class="w">  </span><span class="n">dock</span><span class="p">:</span><span class="w"> </span><span class="kc">top</span><span class="p">;</span>
+</span><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="hll"><span class="w">  </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+</span><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="hll"><span class="w">  </span><span class="n">content-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+</span><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="hll"><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
+</span><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="hll"><span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+</span><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p">}</span>
 </code></pre></div>
 <p>The lines inside the curly braces contains CSS <em>rules</em>, which consist of a rule name and rule value separated by a colon and ending in a semicolon. Such rules are typically written one per line, but you could add additional rules as long as they are separated by semicolons.</p>
 <p>The first rule in the above example reads <code>"dock: top;"</code>. The rule name is <code>dock</code> which tells Textual to place the widget on an edge of the screen. The text after the colon is <code>top</code> which tells Textual to dock to the <em>top</em> of the screen. Other valid values for <code>dock</code> are "right", "bottom", or "left"; but "top" is most appropriate for a header.</p>
@@ -7160,34 +7249,34 @@ window.onload = async (event) => {
 <p>You may have noticed that some constructors have additional keyword arguments: <code>id</code> and <code>classes</code>.
 These are used by the CSS to identify parts of the DOM. We will cover these in the next section.</p>
 <p>Here's the CSS file we are applying:</p>
-<div class="highlight"><span class="filename">dom4.tcss</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="cm">/* The top level dialog (a Container) */</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="nn">#dialog</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="na">margin</span><span class="o">:</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="mi">8</span><span class="err">;</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="nv">$panel</span><span class="err">;</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="nv">$text</span><span class="err">;</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">tall</span><span class="w"> </span><span class="nv">$background</span><span class="err">;</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
-<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="err">}</span>
+<div class="highlight"><span class="filename">dom4.tcss</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c">/* The top level dialog (a Container) */</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="p">#</span><span class="nn">dialog</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="n">panel</span><span class="p">;</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="kc">text</span><span class="p">;</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">tall</span><span class="w"> </span><span class="err">$</span><span class="k">background</span><span class="p">;</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">}</span>
 <a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="cm">/* The button class */</span>
-<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">fr</span><span class="err">;</span>
-<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="err">}</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="c">/* The button class */</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">    </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="p">;</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="p">}</span>
 <a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>
-<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="cm">/* Matches the question text */</span>
-<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="nc">.question</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">    </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">bold</span><span class="err">;</span>
-<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
-<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">    </span><span class="na">content-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
-<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="err">}</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="c">/* Matches the question text */</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="p">.</span><span class="nc">question</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">    </span><span class="n">text-style</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">    </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">    </span><span class="n">content-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="p">}</span>
 <a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>
-<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="cm">/* Matches the button container */</span>
-<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="nc">.buttons</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="err">;</span>
-<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">    </span><span class="na">height</span><span class="o">:</span><span class="w"> </span><span class="no">auto</span><span class="err">;</span>
-<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">    </span><span class="na">dock</span><span class="o">:</span><span class="w"> </span><span class="no">bottom</span><span class="err">;</span>
-<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="err">}</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="c">/* Matches the button container */</span>
+<a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="p">.</span><span class="nc">buttons</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a><span class="w">    </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">100</span><span class="kt">%</span><span class="p">;</span>
+<a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a><span class="w">    </span><span class="k">height</span><span class="p">:</span><span class="w"> </span><span class="kc">auto</span><span class="p">;</span>
+<a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a><span class="w">    </span><span class="n">dock</span><span class="p">:</span><span class="w"> </span><span class="kc">bottom</span><span class="p">;</span>
+<a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="p">}</span>
 </code></pre></div>
 <p>The CSS contains a number of rule sets with a selector and a list of rules. You can also add comments with text between <code>/*</code> and <code>*/</code> which will be ignored by Textual. Add comments to leave yourself reminders or to temporarily disable selectors.</p>
 <p>With the CSS in place, the output looks very different:</p>
@@ -7375,15 +7464,15 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>    <span class="k">pass</span>
 </code></pre></div>
 <p>The following rule applies a border to this widget:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="no">solid</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
-<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>The type selector will also match a widget's base classes. Consequently, a <code>Static</code> selector will also style the button because the <code>Button</code> Python class extends <code>Static</code>.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">Static</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="err">;</span>
-<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">rounded</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
-<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nt">Static</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">blue</span><span class="p">;</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">rounded</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a><span class="p">}</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -7396,9 +7485,9 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;next&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>You can match an ID with a selector starting with a hash (<code>#</code>). Here is how you might draw a red outline around the above button:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nn">#next</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="na">outline</span><span class="o">:</span><span class="w"> </span><span class="ni">red</span><span class="err">;</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">#</span><span class="nn">next</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="w">  </span><span class="k">outline</span><span class="p">:</span><span class="w"> </span><span class="kc">red</span><span class="p">;</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>A Widget's <code>id</code> attribute can not be changed after the Widget has been constructed.</p>
 <h3 id="class-name-selector">Class-name selector<a class="headerlink" href="#class-name-selector" title="Permanent link">&para;</a></h3>
@@ -7411,19 +7500,19 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">yield</span> <span class="n">Button</span><span class="p">(</span><span class="n">classes</span><span class="o">=</span><span class="s2">&quot;error disabled&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>To match a Widget with a given class in CSS you can precede the class name with a dot (<code>.</code>). Here's a rule with a class selector to match the <code>"success"</code> class name:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nc">.success</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">green</span><span class="err">;</span>
-<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="ni">white</span><span class="err">;</span>
-<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="p">.</span><span class="nc">success</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">green</span><span class="p">;</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">  </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="p">}</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can apply a class name to any widget, which means that widgets of different types could share classes.</p>
 </div>
 <p>Class name selectors may be <em>chained</em> together by appending another full stop and class name. The selector will match a widget that has <em>all</em> of the class names set. For instance, the following sets a red background on widgets that have both <code>error</code> <em>and</em> <code>disabled</code> class names.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nc">.error.disabled</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">darkred</span><span class="err">;</span>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="p">.</span><span class="nc">error</span><span class="p">.</span><span class="nc">disabled</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">darkred</span><span class="p">;</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>Unlike the <code>id</code> attribute, a widget's classes can be changed after the widget was created. Adding and removing CSS classes is the recommended way of changing the display while your app is running. There are a few methods you can use to manage CSS classes.</p>
 <ul>
@@ -7436,15 +7525,15 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <h3 id="universal-selector">Universal selector<a class="headerlink" href="#universal-selector" title="Permanent link">&para;</a></h3>
 <p>The <em>universal</em> selector is denoted by an asterisk and will match <em>all</em> widgets.</p>
 <p>For example, the following will draw a red outline around all widgets:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="o">*</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="na">outline</span><span class="o">:</span><span class="w"> </span><span class="no">solid</span><span class="w"> </span><span class="ni">red</span><span class="err">;</span>
-<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="o">*</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="k">outline</span><span class="p">:</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="kc">red</span><span class="p">;</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="pseudo-classes">Pseudo classes<a class="headerlink" href="#pseudo-classes" title="Permanent link">&para;</a></h3>
 <p>Pseudo classes can be used to match widgets in a particular state. Pseudo classes are set automatically by Textual. For instance, you might want a button to have a green background when the mouse cursor moves over it. We can do this with the <code>:hover</code> pseudo selector.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nt">Button</span><span class="nd">:hover</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">green</span><span class="err">;</span>
-<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nt">Button</span><span class="p">:</span><span class="nd">hover</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">green</span><span class="p">;</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>The <code>background: green</code> is only applied to the Button underneath the mouse cursor. When you move the cursor away from the button it will return to its previous background color.</p>
 <p>Here are some other pseudo classes:</p>
@@ -7482,15 +7571,15 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 </div>
 
 <p>Let's say we want to make the text of the buttons in the dialog bold, but we <em>don't</em> want to change the Button in the sidebar. We can do this with the following rule:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="hll"><span class="nn">#dialog</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-</span><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">bold</span><span class="err">;</span>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="hll"><span class="p">#</span><span class="nn">dialog</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+</span><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w">  </span><span class="n">text-style</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>The <code>#dialog Button</code> selector matches all buttons that are below the widget with an ID of "dialog". No other buttons will be matched.</p>
 <p>As with all selectors, you can combine as many as you wish. The following will match a <code>Button</code> that is under a <code>Horizontal</code> widget <em>and</em> under a widget with an id of <code>"dialog"</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nn">#dialog</span><span class="w"> </span><span class="nt">Horizontal</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">bold</span><span class="err">;</span>
-<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="p">#</span><span class="nn">dialog</span><span class="w"> </span><span class="nt">Horizontal</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="w">  </span><span class="n">text-style</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="p">;</span>
+<a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a><span class="p">}</span>
 </code></pre></div>
 <h3 id="child-combinator">Child combinator<a class="headerlink" href="#child-combinator" title="Permanent link">&para;</a></h3>
 <p>The child combinator is similar to the descendant combinator but will only match an immediate child. To create a child combinator, separate two selectors with a greater than symbol (<code>&gt;</code>). Any whitespace around the <code>&gt;</code> will be ignored.</p>
@@ -7515,9 +7604,9 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 </div>
 
 <p>We can use the following CSS to style all buttons which have a parent with an ID of <code>sidebar</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="nn">#sidebar</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">  </span><span class="na">text-style</span><span class="o">:</span><span class="w"> </span><span class="no">underline</span><span class="err">;</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="p">#</span><span class="nn">sidebar</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a><span class="w">  </span><span class="n">text-style</span><span class="p">:</span><span class="w"> </span><span class="kc">underline</span><span class="p">;</span>
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="specificity">Specificity<a class="headerlink" href="#specificity" title="Permanent link">&para;</a></h2>
 <p>It is possible that several selectors match a given widget. If the same style is applied by more than one selector then Textual needs a way to decide which rule <em>wins</em>. It does this by following these rules:</p>
@@ -7539,26 +7628,26 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <p>Use <code>!important</code> sparingly (if at all) as it can make it difficult to modify your CSS in the future.</p>
 </div>
 <p>Here's an example that makes buttons blue when hovered over with the mouse, regardless of any other selectors that match Buttons:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nt">Button</span><span class="nd">:hover</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="hll"><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">blue</span><span class="w"> </span><span class="nv">!important</span><span class="err">;</span>
-</span><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nt">Button</span><span class="p">:</span><span class="nd">hover</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="hll"><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">blue</span><span class="w"> </span><span class="cp">!important</span><span class="p">;</span>
+</span><a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="p">}</span>
 </code></pre></div>
 <h2 id="css-variables">CSS Variables<a class="headerlink" href="#css-variables" title="Permanent link">&para;</a></h2>
 <p>You can define variables to reduce repetition and encourage consistency in your CSS.
 Variables in Textual CSS are prefixed with <code>$</code>.
 Here's an example of how you might define a variable called <code>$border</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nv">$border</span><span class="o">:</span><span class="w"> </span><span class="n">wide</span><span class="w"> </span><span class="ni">green</span><span class="err">;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="o">$</span><span class="nt">border</span><span class="o">:</span><span class="w"> </span><span class="nt">wide</span><span class="w"> </span><span class="nt">green</span><span class="o">;</span>
 </code></pre></div>
 <p>With our variable assigned, we can write <code>$border</code> and it will be substituted with <code>wide green</code>.
 Consider the following snippet:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nn">#foo</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="nv">$border</span><span class="err">;</span>
-<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="p">#</span><span class="nn">foo</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="k">border</span><span class="p">;</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>This will be translated into:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nn">#foo</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">wide</span><span class="w"> </span><span class="ni">green</span><span class="err">;</span>
-<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="p">#</span><span class="nn">foo</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">wide</span><span class="w"> </span><span class="kc">green</span><span class="p">;</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>Variables allow us to define reusable styling in a single place.
 If we decide we want to change some aspect of our design in the future, we only have to update a single variable.</p>
@@ -7574,18 +7663,522 @@ be translated to <code>$border: wide lime;</code>.</p>
 <p>All CSS rules support a special value called <code>initial</code>, which will reset a value back to its default.</p>
 <p>Let's look at an example.
 The following will set the background of a button to green:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="ni">green</span><span class="err">;</span>
-<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">green</span><span class="p">;</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>If we want a specific button (or buttons) to use the default color, we can set the value to <code>initial</code>.
 For instance, if we have a widget with a (CSS) class called <code>dialog</code>, we could reset the background color of all buttons inside the dialog with the following CSS:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="nc">.dialog</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">  </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="n">initial</span><span class="err">;</span>
-<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="p">.</span><span class="nc">dialog</span><span class="w"> </span><span class="nt">Button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">  </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">initial</span><span class="p">;</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="p">}</span>
 </code></pre></div>
 <p>Note that <code>initial</code> will set the value back to the value defined in any <a href="../widgets/#default-css">default css</a>.
 If you use <code>initial</code> within default css, it will treat the rule as completely unstyled.</p>
+<h2 id="nesting-css">Nesting CSS<a class="headerlink" href="#nesting-css" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Added in version 0.47.0</p>
+</div>
+<p>CSS rule sets may be <em>nested</em>, i.e. they can contain other rule sets.
+When a rule set occurs within an existing rule set, it inherits the selector from the enclosing rule set.</p>
+<p>Let's put this into practical terms.
+The following example will display two boxes containing the text "Yes" and "No" respectively.
+These could eventually form the basis for buttons, but for this demonstration we are only interested in the CSS.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">nesting01.tcss (no nesting)</label><label for="__tabbed_3_2">nesting01.py</label><label for="__tabbed_3_3">Output</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c">/* Style the container */</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">primary</span><span class="p">;</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">    </span><span class="n">align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="p">}</span>
+<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a>
+<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="c">/* Style all buttons */</span>
+<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">.</span><span class="nc">button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a><span class="w">    </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="p">;</span>
+<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a><span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a><span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-29-12" name="__codelineno-29-12" href="#__codelineno-29-12"></a><span class="w">    </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<a id="__codelineno-29-13" name="__codelineno-29-13" href="#__codelineno-29-13"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">panel</span><span class="p">;</span>
+<a id="__codelineno-29-14" name="__codelineno-29-14" href="#__codelineno-29-14"></a><span class="p">}</span>
+<a id="__codelineno-29-15" name="__codelineno-29-15" href="#__codelineno-29-15"></a>
+<a id="__codelineno-29-16" name="__codelineno-29-16" href="#__codelineno-29-16"></a><span class="c">/* Style the Yes button */</span>
+<a id="__codelineno-29-17" name="__codelineno-29-17" href="#__codelineno-29-17"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">.</span><span class="nc">button</span><span class="p">.</span><span class="nc">affirmative</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-18" name="__codelineno-29-18" href="#__codelineno-29-18"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">success</span><span class="p">;</span>
+<a id="__codelineno-29-19" name="__codelineno-29-19" href="#__codelineno-29-19"></a><span class="p">}</span>
+<a id="__codelineno-29-20" name="__codelineno-29-20" href="#__codelineno-29-20"></a>
+<a id="__codelineno-29-21" name="__codelineno-29-21" href="#__codelineno-29-21"></a><span class="c">/* Style the No button */</span>
+<a id="__codelineno-29-22" name="__codelineno-29-22" href="#__codelineno-29-22"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">.</span><span class="nc">button</span><span class="p">.</span><span class="nc">negative</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-29-23" name="__codelineno-29-23" href="#__codelineno-29-23"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">error</span><span class="p">;</span>
+<a id="__codelineno-29-24" name="__codelineno-29-24" href="#__codelineno-29-24"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Horizontal</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a>
+<a id="__codelineno-30-6" name="__codelineno-30-6" href="#__codelineno-30-6"></a><span class="k">class</span> <span class="nc">NestingDemo</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-30-7" name="__codelineno-30-7" href="#__codelineno-30-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;App that doesn&#39;t have nested CSS.&quot;&quot;&quot;</span>
+<a id="__codelineno-30-8" name="__codelineno-30-8" href="#__codelineno-30-8"></a>
+<a id="__codelineno-30-9" name="__codelineno-30-9" href="#__codelineno-30-9"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;nesting01.tcss&quot;</span>
+<a id="__codelineno-30-10" name="__codelineno-30-10" href="#__codelineno-30-10"></a>
+<a id="__codelineno-30-11" name="__codelineno-30-11" href="#__codelineno-30-11"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-30-12" name="__codelineno-30-12" href="#__codelineno-30-12"></a>        <span class="k">with</span> <span class="n">Horizontal</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;questions&quot;</span><span class="p">):</span>
+<a id="__codelineno-30-13" name="__codelineno-30-13" href="#__codelineno-30-13"></a>            <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;button affirmative&quot;</span><span class="p">)</span>
+<a id="__codelineno-30-14" name="__codelineno-30-14" href="#__codelineno-30-14"></a>            <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;button negative&quot;</span><span class="p">)</span>
+<a id="__codelineno-30-15" name="__codelineno-30-15" href="#__codelineno-30-15"></a>
+<a id="__codelineno-30-16" name="__codelineno-30-16" href="#__codelineno-30-16"></a>
+<a id="__codelineno-30-17" name="__codelineno-30-17" href="#__codelineno-30-17"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-30-18" name="__codelineno-30-18" href="#__codelineno-30-18"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">NestingDemo</span><span class="p">()</span>
+<a id="__codelineno-30-19" name="__codelineno-30-19" href="#__codelineno-30-19"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-2321375565-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-2321375565-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-2321375565-r1 { fill: #004578 }
+.terminal-2321375565-r2 { fill: #c5c8c6 }
+.terminal-2321375565-r3 { fill: #e1e1e1 }
+.terminal-2321375565-r4 { fill: #4ebf71 }
+.terminal-2321375565-r5 { fill: #b93c5b }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-2321375565-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-2321375565-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2321375565-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">NestingDemo</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2321375565-clip-terminal)">
+    <rect fill="#1e1e1e" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="147.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="172.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="196.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="221.1" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="221.1" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="245.5" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="245.5" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="73.2" y="269.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="439.2" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="536.8" y="269.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="902.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="294.3" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="294.3" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="318.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="318.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="343.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="367.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="391.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="416.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="440.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="465.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="489.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="489.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="513.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="513.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="538.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="562.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2321375565-matrix">
+    <text class="terminal-2321375565-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2321375565-line-0)">┏</text><text class="terminal-2321375565-r1" x="12.2" y="20" textLength="951.6" clip-path="url(#terminal-2321375565-line-0)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r1" x="963.8" y="20" textLength="12.2" clip-path="url(#terminal-2321375565-line-0)">┓</text><text class="terminal-2321375565-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2321375565-line-0)">
+</text><text class="terminal-2321375565-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-1)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="44.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-1)">┃</text><text class="terminal-2321375565-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-1)">
+</text><text class="terminal-2321375565-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-2)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="68.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-2)">┃</text><text class="terminal-2321375565-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-2)">
+</text><text class="terminal-2321375565-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-3)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="93.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-3)">┃</text><text class="terminal-2321375565-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-3)">
+</text><text class="terminal-2321375565-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-4)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="117.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-4)">┃</text><text class="terminal-2321375565-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-4)">
+</text><text class="terminal-2321375565-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-2321375565-line-5)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="142" textLength="12.2" clip-path="url(#terminal-2321375565-line-5)">┃</text><text class="terminal-2321375565-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2321375565-line-5)">
+</text><text class="terminal-2321375565-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-6)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="166.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-6)">┃</text><text class="terminal-2321375565-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-6)">
+</text><text class="terminal-2321375565-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-7)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="190.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-7)">┃</text><text class="terminal-2321375565-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-7)">
+</text><text class="terminal-2321375565-r1" x="0" y="215.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-8)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-8)">┃</text><text class="terminal-2321375565-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-8)">
+</text><text class="terminal-2321375565-r1" x="0" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┏</text><text class="terminal-2321375565-r4" x="48.8" y="239.6" textLength="414.8" clip-path="url(#terminal-2321375565-line-9)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r4" x="463.6" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┓</text><text class="terminal-2321375565-r5" x="500.2" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┏</text><text class="terminal-2321375565-r5" x="512.4" y="239.6" textLength="414.8" clip-path="url(#terminal-2321375565-line-9)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r5" x="927.2" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┓</text><text class="terminal-2321375565-r1" x="963.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┃</text><text class="terminal-2321375565-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">
+</text><text class="terminal-2321375565-r1" x="0" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r4" x="463.6" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r5" x="500.2" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r5" x="927.2" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">
+</text><text class="terminal-2321375565-r1" x="0" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r3" x="73.2" y="288.4" textLength="366" clip-path="url(#terminal-2321375565-line-11)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Yes&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2321375565-r4" x="463.6" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r5" x="500.2" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r3" x="536.8" y="288.4" textLength="366" clip-path="url(#terminal-2321375565-line-11)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;No&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2321375565-r5" x="927.2" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">
+</text><text class="terminal-2321375565-r1" x="0" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r4" x="463.6" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r5" x="500.2" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r5" x="927.2" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">
+</text><text class="terminal-2321375565-r1" x="0" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┗</text><text class="terminal-2321375565-r4" x="48.8" y="337.2" textLength="414.8" clip-path="url(#terminal-2321375565-line-13)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r4" x="463.6" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┛</text><text class="terminal-2321375565-r5" x="500.2" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┗</text><text class="terminal-2321375565-r5" x="512.4" y="337.2" textLength="414.8" clip-path="url(#terminal-2321375565-line-13)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r5" x="927.2" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┛</text><text class="terminal-2321375565-r1" x="963.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┃</text><text class="terminal-2321375565-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">
+</text><text class="terminal-2321375565-r1" x="0" y="361.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-14)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-14)">┃</text><text class="terminal-2321375565-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-14)">
+</text><text class="terminal-2321375565-r1" x="0" y="386" textLength="12.2" clip-path="url(#terminal-2321375565-line-15)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="386" textLength="12.2" clip-path="url(#terminal-2321375565-line-15)">┃</text><text class="terminal-2321375565-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2321375565-line-15)">
+</text><text class="terminal-2321375565-r1" x="0" y="410.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-16)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="410.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-16)">┃</text><text class="terminal-2321375565-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-16)">
+</text><text class="terminal-2321375565-r1" x="0" y="434.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-17)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="434.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-17)">┃</text><text class="terminal-2321375565-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-17)">
+</text><text class="terminal-2321375565-r1" x="0" y="459.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-18)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="459.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-18)">┃</text><text class="terminal-2321375565-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-18)">
+</text><text class="terminal-2321375565-r1" x="0" y="483.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-19)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="483.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-19)">┃</text><text class="terminal-2321375565-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-19)">
+</text><text class="terminal-2321375565-r1" x="0" y="508" textLength="12.2" clip-path="url(#terminal-2321375565-line-20)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="508" textLength="12.2" clip-path="url(#terminal-2321375565-line-20)">┃</text><text class="terminal-2321375565-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2321375565-line-20)">
+</text><text class="terminal-2321375565-r1" x="0" y="532.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-21)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="532.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-21)">┃</text><text class="terminal-2321375565-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-21)">
+</text><text class="terminal-2321375565-r1" x="0" y="556.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-22)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="556.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-22)">┃</text><text class="terminal-2321375565-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-22)">
+</text><text class="terminal-2321375565-r1" x="0" y="581.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-23)">┗</text><text class="terminal-2321375565-r1" x="12.2" y="581.2" textLength="951.6" clip-path="url(#terminal-2321375565-line-23)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r1" x="963.8" y="581.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-23)">┛</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+</div>
+</div>
+<p>The CSS is quite straightforward; there is one rule for the container, one for all buttons, and one rule for each of the buttons.
+However it is easy to imagine this stylesheet growing more rules as we add features.</p>
+<p>Nesting allows us to group rule sets which have common selectors.
+In the example above, the rules all start with <code>#questions</code>.
+When we see a common prefix on the selectors, this is a good indication that we can use nesting.</p>
+<p>The following produces identical results to the previous example, but adds nesting of the rules.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">nesting02.tcss (with nesting)</label><label for="__tabbed_4_2">nesting02.py</label><label for="__tabbed_4_3">Output</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="c">/* Style the container */</span>
+<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">primary</span><span class="p">;</span>
+<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="w">    </span><span class="n">align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a>
+<a id="__codelineno-31-6" name="__codelineno-31-6" href="#__codelineno-31-6"></a><span class="w">    </span><span class="c">/* Style all buttons */</span>
+<a id="__codelineno-31-7" name="__codelineno-31-7" href="#__codelineno-31-7"></a><span class="w">    </span><span class="err">.button</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-31-8" name="__codelineno-31-8" href="#__codelineno-31-8"></a><span class="w">        </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="p">;</span>
+<a id="__codelineno-31-9" name="__codelineno-31-9" href="#__codelineno-31-9"></a><span class="w">        </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-31-10" name="__codelineno-31-10" href="#__codelineno-31-10"></a><span class="w">        </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-31-11" name="__codelineno-31-11" href="#__codelineno-31-11"></a><span class="w">        </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<a id="__codelineno-31-12" name="__codelineno-31-12" href="#__codelineno-31-12"></a><span class="w">        </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">panel</span><span class="p">;</span><span class="w">    </span>
+<a id="__codelineno-31-13" name="__codelineno-31-13" href="#__codelineno-31-13"></a>
+<a id="__codelineno-31-14" name="__codelineno-31-14" href="#__codelineno-31-14"></a><span class="w">        </span><span class="c">/* Style the Yes button */</span>
+<a id="__codelineno-31-15" name="__codelineno-31-15" href="#__codelineno-31-15"></a><span class="w">        </span><span class="err">&amp;.affirmative</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-31-16" name="__codelineno-31-16" href="#__codelineno-31-16"></a><span class="w">            </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">success</span><span class="p">;</span><span class="w">        </span>
+<a id="__codelineno-31-17" name="__codelineno-31-17" href="#__codelineno-31-17"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-31-18" name="__codelineno-31-18" href="#__codelineno-31-18"></a>
+<a id="__codelineno-31-19" name="__codelineno-31-19" href="#__codelineno-31-19"></a><span class="w">        </span><span class="c">/* Style the No button */</span>
+<a id="__codelineno-31-20" name="__codelineno-31-20" href="#__codelineno-31-20"></a><span class="w">        </span><span class="o">&amp;</span><span class="p">.</span><span class="nc">negative</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-31-21" name="__codelineno-31-21" href="#__codelineno-31-21"></a><span class="w">            </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">error</span><span class="p">;</span>
+<a id="__codelineno-31-22" name="__codelineno-31-22" href="#__codelineno-31-22"></a><span class="w">        </span><span class="p">}</span>
+<a id="__codelineno-31-23" name="__codelineno-31-23" href="#__codelineno-31-23"></a><span class="w">    </span><span class="err">}</span>
+<a id="__codelineno-31-24" name="__codelineno-31-24" href="#__codelineno-31-24"></a><span class="err">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">Horizontal</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>
+<a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>
+<a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a><span class="k">class</span> <span class="nc">NestingDemo</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-32-7" name="__codelineno-32-7" href="#__codelineno-32-7"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;App with nested CSS.&quot;&quot;&quot;</span>
+<a id="__codelineno-32-8" name="__codelineno-32-8" href="#__codelineno-32-8"></a>
+<a id="__codelineno-32-9" name="__codelineno-32-9" href="#__codelineno-32-9"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;nesting02.tcss&quot;</span>
+<a id="__codelineno-32-10" name="__codelineno-32-10" href="#__codelineno-32-10"></a>
+<a id="__codelineno-32-11" name="__codelineno-32-11" href="#__codelineno-32-11"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-32-12" name="__codelineno-32-12" href="#__codelineno-32-12"></a>        <span class="k">with</span> <span class="n">Horizontal</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;questions&quot;</span><span class="p">):</span>
+<a id="__codelineno-32-13" name="__codelineno-32-13" href="#__codelineno-32-13"></a>            <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;Yes&quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;button affirmative&quot;</span><span class="p">)</span>
+<a id="__codelineno-32-14" name="__codelineno-32-14" href="#__codelineno-32-14"></a>            <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="s2">&quot;No&quot;</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;button negative&quot;</span><span class="p">)</span>
+<a id="__codelineno-32-15" name="__codelineno-32-15" href="#__codelineno-32-15"></a>
+<a id="__codelineno-32-16" name="__codelineno-32-16" href="#__codelineno-32-16"></a>
+<a id="__codelineno-32-17" name="__codelineno-32-17" href="#__codelineno-32-17"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-32-18" name="__codelineno-32-18" href="#__codelineno-32-18"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">NestingDemo</span><span class="p">()</span>
+<a id="__codelineno-32-19" name="__codelineno-32-19" href="#__codelineno-32-19"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-2321375565-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-2321375565-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-2321375565-r1 { fill: #004578 }
+.terminal-2321375565-r2 { fill: #c5c8c6 }
+.terminal-2321375565-r3 { fill: #e1e1e1 }
+.terminal-2321375565-r4 { fill: #4ebf71 }
+.terminal-2321375565-r5 { fill: #b93c5b }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-2321375565-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-2321375565-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2321375565-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2321375565-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">NestingDemo</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2321375565-clip-terminal)">
+    <rect fill="#1e1e1e" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="147.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="172.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="196.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="221.1" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="221.1" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="245.5" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="245.5" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="245.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="73.2" y="269.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="439.2" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="536.8" y="269.9" width="366" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="902.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="269.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="294.3" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="294.3" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="294.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="318.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="463.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="475.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="512.4" y="318.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="927.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="939.4" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="343.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="343.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="367.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="367.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="391.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="391.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="416.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="416.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="440.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="440.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="465.1" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="489.5" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="489.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="513.9" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="513.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="538.3" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="538.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="562.7" width="951.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="963.8" y="562.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2321375565-matrix">
+    <text class="terminal-2321375565-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2321375565-line-0)">┏</text><text class="terminal-2321375565-r1" x="12.2" y="20" textLength="951.6" clip-path="url(#terminal-2321375565-line-0)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r1" x="963.8" y="20" textLength="12.2" clip-path="url(#terminal-2321375565-line-0)">┓</text><text class="terminal-2321375565-r2" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2321375565-line-0)">
+</text><text class="terminal-2321375565-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-1)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="44.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-1)">┃</text><text class="terminal-2321375565-r2" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-1)">
+</text><text class="terminal-2321375565-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-2)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="68.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-2)">┃</text><text class="terminal-2321375565-r2" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-2)">
+</text><text class="terminal-2321375565-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-3)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="93.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-3)">┃</text><text class="terminal-2321375565-r2" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-3)">
+</text><text class="terminal-2321375565-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-4)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="117.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-4)">┃</text><text class="terminal-2321375565-r2" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-4)">
+</text><text class="terminal-2321375565-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-2321375565-line-5)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="142" textLength="12.2" clip-path="url(#terminal-2321375565-line-5)">┃</text><text class="terminal-2321375565-r2" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2321375565-line-5)">
+</text><text class="terminal-2321375565-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-6)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="166.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-6)">┃</text><text class="terminal-2321375565-r2" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-6)">
+</text><text class="terminal-2321375565-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-7)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="190.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-7)">┃</text><text class="terminal-2321375565-r2" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-7)">
+</text><text class="terminal-2321375565-r1" x="0" y="215.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-8)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="215.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-8)">┃</text><text class="terminal-2321375565-r2" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-8)">
+</text><text class="terminal-2321375565-r1" x="0" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┏</text><text class="terminal-2321375565-r4" x="48.8" y="239.6" textLength="414.8" clip-path="url(#terminal-2321375565-line-9)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r4" x="463.6" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┓</text><text class="terminal-2321375565-r5" x="500.2" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┏</text><text class="terminal-2321375565-r5" x="512.4" y="239.6" textLength="414.8" clip-path="url(#terminal-2321375565-line-9)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r5" x="927.2" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┓</text><text class="terminal-2321375565-r1" x="963.8" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">┃</text><text class="terminal-2321375565-r2" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-9)">
+</text><text class="terminal-2321375565-r1" x="0" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r4" x="463.6" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r5" x="500.2" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r5" x="927.2" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">┃</text><text class="terminal-2321375565-r2" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2321375565-line-10)">
+</text><text class="terminal-2321375565-r1" x="0" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r3" x="73.2" y="288.4" textLength="366" clip-path="url(#terminal-2321375565-line-11)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Yes&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2321375565-r4" x="463.6" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r5" x="500.2" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r3" x="536.8" y="288.4" textLength="366" clip-path="url(#terminal-2321375565-line-11)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;No&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2321375565-r5" x="927.2" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">┃</text><text class="terminal-2321375565-r2" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-11)">
+</text><text class="terminal-2321375565-r1" x="0" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r4" x="463.6" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r5" x="500.2" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r5" x="927.2" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">┃</text><text class="terminal-2321375565-r2" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-12)">
+</text><text class="terminal-2321375565-r1" x="0" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┃</text><text class="terminal-2321375565-r4" x="36.6" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┗</text><text class="terminal-2321375565-r4" x="48.8" y="337.2" textLength="414.8" clip-path="url(#terminal-2321375565-line-13)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r4" x="463.6" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┛</text><text class="terminal-2321375565-r5" x="500.2" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┗</text><text class="terminal-2321375565-r5" x="512.4" y="337.2" textLength="414.8" clip-path="url(#terminal-2321375565-line-13)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r5" x="927.2" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┛</text><text class="terminal-2321375565-r1" x="963.8" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">┃</text><text class="terminal-2321375565-r2" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-13)">
+</text><text class="terminal-2321375565-r1" x="0" y="361.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-14)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="361.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-14)">┃</text><text class="terminal-2321375565-r2" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-14)">
+</text><text class="terminal-2321375565-r1" x="0" y="386" textLength="12.2" clip-path="url(#terminal-2321375565-line-15)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="386" textLength="12.2" clip-path="url(#terminal-2321375565-line-15)">┃</text><text class="terminal-2321375565-r2" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2321375565-line-15)">
+</text><text class="terminal-2321375565-r1" x="0" y="410.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-16)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="410.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-16)">┃</text><text class="terminal-2321375565-r2" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-16)">
+</text><text class="terminal-2321375565-r1" x="0" y="434.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-17)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="434.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-17)">┃</text><text class="terminal-2321375565-r2" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-17)">
+</text><text class="terminal-2321375565-r1" x="0" y="459.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-18)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="459.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-18)">┃</text><text class="terminal-2321375565-r2" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-18)">
+</text><text class="terminal-2321375565-r1" x="0" y="483.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-19)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="483.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-19)">┃</text><text class="terminal-2321375565-r2" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2321375565-line-19)">
+</text><text class="terminal-2321375565-r1" x="0" y="508" textLength="12.2" clip-path="url(#terminal-2321375565-line-20)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="508" textLength="12.2" clip-path="url(#terminal-2321375565-line-20)">┃</text><text class="terminal-2321375565-r2" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2321375565-line-20)">
+</text><text class="terminal-2321375565-r1" x="0" y="532.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-21)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="532.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-21)">┃</text><text class="terminal-2321375565-r2" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2321375565-line-21)">
+</text><text class="terminal-2321375565-r1" x="0" y="556.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-22)">┃</text><text class="terminal-2321375565-r1" x="963.8" y="556.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-22)">┃</text><text class="terminal-2321375565-r2" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2321375565-line-22)">
+</text><text class="terminal-2321375565-r1" x="0" y="581.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-23)">┗</text><text class="terminal-2321375565-r1" x="12.2" y="581.2" textLength="951.6" clip-path="url(#terminal-2321375565-line-23)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-2321375565-r1" x="963.8" y="581.2" textLength="12.2" clip-path="url(#terminal-2321375565-line-23)">┛</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+</div>
+</div>
+<p>In the first example we had a rule set that began with the selector <code>#questions .button</code>, which would match any widget with a class called "button" that is inside a container with id <code>questions</code>.</p>
+<p>In the second example, the button rule selector is simply <code>.button</code>, but it is <em>within</em> the rule set with selector <code>#questions</code>.
+The nesting means that the button rule set will inherit the selector from the outer rule set, so it is equivalent to <code>#questions .button</code>.</p>
+<h3 id="nesting-selector">Nesting selector<a class="headerlink" href="#nesting-selector" title="Permanent link">&para;</a></h3>
+<p>The two remaining rules are nested within the button rule, which means they will inherit their selectors from the button rule set <em>and</em> the outer <code>#questions</code> rule set.</p>
+<p>You may have noticed that the rules for the button styles contain a syntax we haven't seen before.
+The rule for the Yes button is <code>&amp;.affirmative</code>.
+The ampersand (<code>&amp;</code>) is known as the <em>nesting selector</em> and it tells Textual that the selector should be combined with the selector from the outer rule set.</p>
+<p>So <code>&amp;.affirmative</code> in the example above, produces the equivalent of <code>#questions .button.affirmative</code> which selects a widget with both the <code>button</code> and <code>affirmative</code> classes.
+Without <code>&amp;</code> it would be equivalent to <code>#questions .button .affirmative</code> (note the additional space) which would only match a widget with class <code>affirmative</code> inside a container with class <code>button</code>.</p>
+<p>For reference, lets see those two CSS files side-by-side:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">nesting01.tcss</label><label for="__tabbed_5_2">nesting02.tcss</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="c">/* Style the container */</span>
+<a id="__codelineno-33-2" name="__codelineno-33-2" href="#__codelineno-33-2"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-3" name="__codelineno-33-3" href="#__codelineno-33-3"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">primary</span><span class="p">;</span>
+<a id="__codelineno-33-4" name="__codelineno-33-4" href="#__codelineno-33-4"></a><span class="w">    </span><span class="n">align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="w"> </span><span class="kc">middle</span><span class="p">;</span>
+<a id="__codelineno-33-5" name="__codelineno-33-5" href="#__codelineno-33-5"></a><span class="p">}</span>
+<a id="__codelineno-33-6" name="__codelineno-33-6" href="#__codelineno-33-6"></a>
+<a id="__codelineno-33-7" name="__codelineno-33-7" href="#__codelineno-33-7"></a><span class="c">/* Style all buttons */</span>
+<a id="__codelineno-33-8" name="__codelineno-33-8" href="#__codelineno-33-8"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">.</span><span class="nc">button</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="w">    </span><span class="k">width</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="n">fr</span><span class="p">;</span>
+<a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a><span class="w">    </span><span class="k">padding</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a><span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
+<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="w">    </span><span class="k">text-align</span><span class="p">:</span><span class="w"> </span><span class="kc">center</span><span class="p">;</span>
+<a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">panel</span><span class="p">;</span>
+<a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a><span class="p">}</span>
+<a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a>
+<a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a><span class="c">/* Style the Yes button */</span>
+<a id="__codelineno-33-17" name="__codelineno-33-17" href="#__codelineno-33-17"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">.</span><span class="nc">button</span><span class="p">.</span><span class="nc">affirmative</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-18" name="__codelineno-33-18" href="#__codelineno-33-18"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">success</span><span class="p">;</span>
+<a id="__codelineno-33-19" name="__codelineno-33-19" href="#__codelineno-33-19"></a><span class="p">}</span>
+<a id="__codelineno-33-20" name="__codelineno-33-20" href="#__codelineno-33-20"></a>
+<a id="__codelineno-33-21" name="__codelineno-33-21" href="#__codelineno-33-21"></a><span class="c">/* Style the No button */</span>
+<a id="__codelineno-33-22" name="__codelineno-33-22" href="#__codelineno-33-22"></a><span class="p">#</span><span class="nn">questions</span><span class="w"> </span><span class="p">.</span><span class="nc">button</span><span class="p">.</span><span class="nc">negative</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-33-23" name="__codelineno-33-23" href="#__codelineno-33-23"></a><span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="err">$</span><span class="n">error</span><span class="p">;</span>
+<a id="__codelineno-33-24" name="__codelineno-33-24" href="#__codelineno-33-24"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="cm">/* Style the container */</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="nn">#questions</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="w">    </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="nv">$primary</span><span class="err">;</span>
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="w">    </span><span class="na">align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="w"> </span><span class="no">middle</span><span class="err">;</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="w">    </span><span class="cm">/* Style all buttons */</span>
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="w">    </span><span class="nc">.button</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a><span class="w">        </span><span class="na">width</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">fr</span><span class="err">;</span>
+<a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a><span class="w">        </span><span class="na">padding</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
+<a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a><span class="w">        </span><span class="na">margin</span><span class="o">:</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="mi">2</span><span class="err">;</span>
+<a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="w">        </span><span class="na">text-align</span><span class="o">:</span><span class="w"> </span><span class="no">center</span><span class="err">;</span>
+<a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a><span class="w">        </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="nv">$panel</span><span class="err">;</span><span class="w">    </span>
+<a id="__codelineno-34-13" name="__codelineno-34-13" href="#__codelineno-34-13"></a>
+<a id="__codelineno-34-14" name="__codelineno-34-14" href="#__codelineno-34-14"></a><span class="w">        </span><span class="cm">/* Style the Yes button */</span>
+<a id="__codelineno-34-15" name="__codelineno-34-15" href="#__codelineno-34-15"></a><span class="w">        </span><span class="k">&amp;</span><span class="nc">.affirmative</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-34-16" name="__codelineno-34-16" href="#__codelineno-34-16"></a><span class="w">            </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="nv">$success</span><span class="err">;</span><span class="w">        </span>
+<a id="__codelineno-34-17" name="__codelineno-34-17" href="#__codelineno-34-17"></a><span class="w">        </span><span class="err">}</span>
+<a id="__codelineno-34-18" name="__codelineno-34-18" href="#__codelineno-34-18"></a>
+<a id="__codelineno-34-19" name="__codelineno-34-19" href="#__codelineno-34-19"></a><span class="w">        </span><span class="cm">/* Style the No button */</span>
+<a id="__codelineno-34-20" name="__codelineno-34-20" href="#__codelineno-34-20"></a><span class="w">        </span><span class="k">&amp;</span><span class="nc">.negative</span><span class="w"> </span><span class="err">{</span>
+<a id="__codelineno-34-21" name="__codelineno-34-21" href="#__codelineno-34-21"></a><span class="w">            </span><span class="na">border</span><span class="o">:</span><span class="w"> </span><span class="n">heavy</span><span class="w"> </span><span class="nv">$error</span><span class="err">;</span>
+<a id="__codelineno-34-22" name="__codelineno-34-22" href="#__codelineno-34-22"></a><span class="w">        </span><span class="err">}</span>
+<a id="__codelineno-34-23" name="__codelineno-34-23" href="#__codelineno-34-23"></a><span class="w">    </span><span class="err">}</span>
+<a id="__codelineno-34-24" name="__codelineno-34-24" href="#__codelineno-34-24"></a><span class="err">}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h3 id="why-use-nesting">Why use nesting?<a class="headerlink" href="#why-use-nesting" title="Permanent link">&para;</a></h3>
+<p>There is no requirement to use nested CSS, but it can help to group related rule sets together (which makes it easier to edit). Nested CSS can also help you avoid some repetition in your selectors, i.e. in the nested CSS we only need to type <code>#questions</code> once, rather than four times in the non-nested CSS.</p>
 
 
 

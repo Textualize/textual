@@ -4571,6 +4571,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Styling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reactive-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       Reactive Attributes
@@ -4705,6 +4714,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.pane" class="md-nav__link">
+    <span class="md-ellipsis">
+      pane
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tab" class="md-nav__link">
     <span class="md-ellipsis">
       tab
@@ -4758,6 +4776,24 @@ window.onload = async (event) => {
   <a href="#textual.widgets._tabbed_content.TabbedContent.enable_tab" class="md-nav__link">
     <span class="md-ellipsis">
       enable_tab()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.get_pane" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_pane()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.get_tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_tab()
     </span>
   </a>
   
@@ -4989,6 +5025,8 @@ window.onload = async (event) => {
       
         
           
+        
+      
         
       
         
@@ -5418,6 +5456,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
   </span>
   
 
@@ -6459,6 +6518,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#styling" class="md-nav__link">
+    <span class="md-ellipsis">
+      Styling
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#reactive-attributes" class="md-nav__link">
     <span class="md-ellipsis">
       Reactive Attributes
@@ -6593,6 +6661,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.pane" class="md-nav__link">
+    <span class="md-ellipsis">
+      pane
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tab" class="md-nav__link">
     <span class="md-ellipsis">
       tab
@@ -6646,6 +6723,24 @@ window.onload = async (event) => {
   <a href="#textual.widgets._tabbed_content.TabbedContent.enable_tab" class="md-nav__link">
     <span class="md-ellipsis">
       enable_tab()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.get_pane" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_pane()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._tabbed_content.TabbedContent.get_tab" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_tab()
     </span>
   </a>
   
@@ -7065,6 +7160,204 @@ You can pass them as positional arguments to the <a class="autorefs autorefs-int
 </div>
 </div>
 </div>
+<h2 id="styling">Styling<a class="headerlink" href="#styling" title="Permanent link">&para;</a></h2>
+<p>The <code>TabbedContent</code> widget is composed of two main sub-widgets: a
+<a href="../tabs/"><code>Tabs</code></a> and a <a href="(content_switcher.md)"><code>ContentSwitcher</code></a>; you can
+style them accordingly.</p>
+<p>The tabs within the <code>Tabs</code> widget will have prefixed IDs; each ID being the
+ID of the <code>TabPane</code> the <code>Tab</code> is for, prefixed with <code>--content-tab-</code>. If you
+wish to style individual tabs within the <code>TabbedContent</code> widget you will
+need to use that prefix for the <code>Tab</code> IDs.</p>
+<p>For example, to create a <code>TabbedContent</code> that has red and green labels:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Output</label><label for="__tabbed_2_2">tabbed_content.py</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-165348074-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-165348074-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-165348074-r1 { fill: #c5c8c6 }
+.terminal-165348074-r2 { fill: #e1e1e1 }
+.terminal-165348074-r3 { fill: #ff0000;font-weight: bold }
+.terminal-165348074-r4 { fill: #008000 }
+.terminal-165348074-r5 { fill: #474747 }
+.terminal-165348074-r6 { fill: #0178d4 }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-165348074-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-165348074-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-165348074-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-165348074-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">ColorTabsApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-165348074-clip-terminal)">
+    <rect fill="#1e1e1e" x="0" y="1.5" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="73.2" y="1.5" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="170.8" y="1.5" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="61" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="73.2" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="97.6" y="25.9" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="158.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="170.8" y="25.9" width="805.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="50.3" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="61" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="73.2" y="50.3" width="902.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="99.1" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="73.2" y="99.1" width="878.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="951.6" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="976" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-165348074-matrix">
+    <text class="terminal-165348074-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-165348074-line-0)">
+</text><text class="terminal-165348074-r3" x="24.4" y="44.4" textLength="36.6" clip-path="url(#terminal-165348074-line-1)">Red</text><text class="terminal-165348074-r4" x="97.6" y="44.4" textLength="61" clip-path="url(#terminal-165348074-line-1)">Green</text><text class="terminal-165348074-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-165348074-line-1)">
+</text><text class="terminal-165348074-r5" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-165348074-line-2)">━</text><text class="terminal-165348074-r5" x="12.2" y="68.8" textLength="12.2" clip-path="url(#terminal-165348074-line-2)">╸</text><text class="terminal-165348074-r6" x="24.4" y="68.8" textLength="36.6" clip-path="url(#terminal-165348074-line-2)">━━━</text><text class="terminal-165348074-r5" x="61" y="68.8" textLength="12.2" clip-path="url(#terminal-165348074-line-2)">╺</text><text class="terminal-165348074-r5" x="73.2" y="68.8" textLength="902.8" clip-path="url(#terminal-165348074-line-2)">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</text><text class="terminal-165348074-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-165348074-line-2)">
+</text><text class="terminal-165348074-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-165348074-line-3)">
+</text><text class="terminal-165348074-r2" x="24.4" y="117.6" textLength="48.8" clip-path="url(#terminal-165348074-line-4)">Red!</text><text class="terminal-165348074-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-165348074-line-4)">
+</text><text class="terminal-165348074-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-165348074-line-5)">
+</text><text class="terminal-165348074-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-165348074-line-6)">
+</text><text class="terminal-165348074-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-165348074-line-7)">
+</text><text class="terminal-165348074-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-165348074-line-8)">
+</text><text class="terminal-165348074-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-165348074-line-9)">
+</text><text class="terminal-165348074-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-165348074-line-10)">
+</text><text class="terminal-165348074-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-165348074-line-11)">
+</text><text class="terminal-165348074-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-165348074-line-12)">
+</text><text class="terminal-165348074-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-165348074-line-13)">
+</text><text class="terminal-165348074-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-165348074-line-14)">
+</text><text class="terminal-165348074-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-165348074-line-15)">
+</text><text class="terminal-165348074-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-165348074-line-16)">
+</text><text class="terminal-165348074-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-165348074-line-17)">
+</text><text class="terminal-165348074-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-165348074-line-18)">
+</text><text class="terminal-165348074-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-165348074-line-19)">
+</text><text class="terminal-165348074-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-165348074-line-20)">
+</text><text class="terminal-165348074-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-165348074-line-21)">
+</text><text class="terminal-165348074-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-165348074-line-22)">
+</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Label</span><span class="p">,</span> <span class="n">TabbedContent</span><span class="p">,</span> <span class="n">TabPane</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="k">class</span> <span class="nc">ColorTabsApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>    <span class="n">CSS</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="s2">    TabbedContent #--content-tab-green {</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="s2">        color: green;</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="s2">    }</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="s2">    TabbedContent #--content-tab-red {</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a><span class="s2">        color: red;</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="s2">    }</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a><span class="s2">    &quot;&quot;&quot;</span>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>        <span class="k">with</span> <span class="n">TabbedContent</span><span class="p">():</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>            <span class="k">with</span> <span class="n">TabPane</span><span class="p">(</span><span class="s2">&quot;Red&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">):</span>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>                <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Red!&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>            <span class="k">with</span> <span class="n">TabPane</span><span class="p">(</span><span class="s2">&quot;Green&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">):</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>                <span class="k">yield</span> <span class="n">Label</span><span class="p">(</span><span class="s2">&quot;Green!&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>    <span class="n">ColorTabsApp</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+</div>
+</div>
+</div>
 <h2 id="reactive-attributes">Reactive Attributes<a class="headerlink" href="#reactive-attributes" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -7234,8 +7527,8 @@ You can pass them as positional arguments to the <a class="autorefs autorefs-int
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._tabbed_content.TabbedContent.active" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7445,7 +7738,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
           <td>
             <strong><code>tab</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="../tabs/#textual.widgets.Tab">Tab</a></code>
+                <code><span title="textual.widgets._tabbed_content.ContentTab">ContentTab</span></code>
           </td>
           <td>
             <em>required</em>
@@ -7475,12 +7768,12 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.ALLOW_SELECTOR_MATCH" class="headerlink" title="Permanent link">&para;</a></h4>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ALLOW_SELECTOR_MATCH</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tab&#39;</span><span class="p">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">ALLOW_SELECTOR_MATCH</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pane&#39;</span><span class="p">}</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7511,6 +7804,29 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
       <p>The <code>TabbedContent</code> widget that contains the tab activated.</p>
 <p>This is an alias for <a class="autorefs autorefs-internal" href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.tabbed_content"><code>TabActivated.tabbed_content</code></a>
 and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#textual.on"><code>on</code></a> decorator.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="textual.widgets._tabbed_content.TabbedContent.TabActivated.pane" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">pane</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.TabActivated.pane" class="headerlink" title="Permanent link">&para;</a></h4>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">pane</span> <span class="o">=</span> <span class="n">tabbed_content</span><span class="o">.</span><span class="n">get_pane</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The <code>TabPane</code> widget that was activated by selecting the tab.</p>
   </div>
 
 </div>
@@ -7846,6 +8162,172 @@ and the Cleared message to be posted.</p></td>
                 <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tabs" href="../tabs/#textual.widgets.Tabs">Tabs</a>.<a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tabs.TabError" href="../tabs/#textual.widgets._tabs.Tabs.TabError">TabError</a></code>
           </td>
           <td><p>If there are any issues with the request.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._tabbed_content.TabbedContent.get_pane" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_pane</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.get_pane" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_pane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pane_id</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get the <code>TabPane</code> associated with the given ID or tab.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>pane_id</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <span title="textual.widgets._tabbed_content.ContentTab">ContentTab</span></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The ID of the pane to get, or the Tab it is associated with.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._tabbed_content.TabPane" href="#textual.widgets.TabPane">TabPane</a></code>
+          </td>
+          <td><p>The <code>TabPane</code> associated with the ID or the given tab.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></code>
+          </td>
+          <td><p>Raised if no ID was available.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._tabbed_content.TabbedContent.get_tab" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_tab</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._tabbed_content.TabbedContent.get_tab" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pane_id</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get the <code>Tab</code> associated with the given ID or <code>TabPane</code>.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>pane_id</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-internal" title="textual.widgets._tabbed_content.TabPane" href="#textual.widgets.TabPane">TabPane</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The ID of the pane, or the pane itself.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._tabs.Tab" href="../tabs/#textual.widgets.Tab">Tab</a></code>
+          </td>
+          <td><p>The Tab associated with the ID.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#ValueError">ValueError</a></code>
+          </td>
+          <td><p>Raised if no ID was available.</p></td>
         </tr>
     </tbody>
   </table>

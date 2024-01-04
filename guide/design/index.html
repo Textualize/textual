@@ -4809,6 +4809,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5158,6 +5160,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
   </span>
   
 
@@ -6268,10 +6291,10 @@ window.onload = async (event) => {
 <h2 id="designing-with-colors">Designing with Colors<a class="headerlink" href="#designing-with-colors" title="Permanent link">&para;</a></h2>
 <p>Textual pre-defines a number of colors as <a href="../CSS/#css-variables">CSS variables</a>. For instance, the CSS variable <code>$primary</code> is set to <code>#004578</code> (the blue used in headers). You can use <code>$primary</code> in place of the color in the <a href="../../styles/background/">background</a> and <a href="../../styles/color/">color</a> rules, or other any other rule that accepts a color.</p>
 <p>Here's an example of CSS that uses color variables:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">MyWidget</span><span class="w"> </span><span class="err">{</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="na">background</span><span class="o">:</span><span class="w"> </span><span class="nv">$primary</span><span class="err">;</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="na">color</span><span class="o">:</span><span class="w"> </span><span class="nv">$text</span><span class="err">;</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="err">}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">MyWidget</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="n">primary</span><span class="p">;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="err">$</span><span class="kc">text</span><span class="p">;</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">}</span>
 </code></pre></div>
 <p>Using variables rather than explicit colors allows Textual to apply color themes. Textual supplies a default light and dark theme, but in the future many more themes will be available.</p>
 <h3 id="base-colors">Base Colors<a class="headerlink" href="#base-colors" title="Permanent link">&para;</a></h3>
@@ -6364,6 +6387,10 @@ window.onload = async (event) => {
 </code></pre></div>
 <h2 id="theme-reference">Theme Reference<a class="headerlink" href="#theme-reference" title="Permanent link">&para;</a></h2>
 <p>Here's a list of the colors defined in the default light and dark themes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>$boost</code> will look different on different backgrounds because of its alpha channel.</p>
+</div>
 <p><svg class="rich-terminal" viewBox="0 0 994 6223.2" xmlns="http://www.w3.org/2000/svg">
     <!-- Generated with Rich https://www.textualize.io -->
     <style>

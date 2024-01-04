@@ -4818,6 +4818,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5167,6 +5169,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
   </span>
   
 
@@ -6347,7 +6370,7 @@ window.onload = async (event) => {
 <p>Specifying the expected type allows type-checkers like MyPy to know the exact return type.</p>
 </div>
 <h2 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h2>
-<p>Query objects have a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.filter">filter</a> method which further refines a query. This method will return a new query object with widgets that match both the original query <em>and</em> the new selector</p>
+<p>Query objects have a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.filter">filter</a> method which further refines a query. This method will return a new query object with widgets that match both the original query <em>and</em> the new selector.</p>
 <p>Let's say we have a query which gets all the buttons in an app, and we want a new query object with just the disabled buttons. We could write something like this:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Get all the Buttons</span>
 <a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span>

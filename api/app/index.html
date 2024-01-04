@@ -4691,6 +4691,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5558,6 +5560,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.push_screen_wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      push_screen_wait()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.refresh_css" class="md-nav__link">
     <span class="md-ellipsis">
       refresh_css()
@@ -6063,6 +6074,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
   </span>
   
 
@@ -7841,6 +7873,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.push_screen_wait" class="md-nav__link">
+    <span class="md-ellipsis">
+      push_screen_wait()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.refresh_css" class="md-nav__link">
     <span class="md-ellipsis">
       refresh_css()
@@ -8492,7 +8533,9 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
   </span>
 
 <a href="#textual.app.App.SCREENS" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SCREENS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Screen</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Screen</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SCREENS</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="nb">str</span><span class="p">,</span> <span class="n">Screen</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">|</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Screen</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8511,8 +8554,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8537,8 +8580,8 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8563,8 +8606,8 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.app_focus" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8681,8 +8724,8 @@ positioning of OS IME and emoji popup menus.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9135,8 +9178,8 @@ If the app wasn't exited yet, this will be <code>None</code>.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9167,8 +9210,8 @@ The new value is always converted to string.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12206,6 +12249,71 @@ this method will wait for the screen to be mounted. Note that <code>wait_for_dis
           </td>
           <td><p>An optional awaitable that awaits the mounting of the screen and its children, or an asyncio Future
 to await the result of the screen.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.push_screen_wait" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">push_screen_wait</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.app.App.push_screen_wait" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">push_screen_wait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Push a screen and wait for the result (received from <a class="autorefs autorefs-internal" href="../screen/#textual.screen.Screen.dismiss"><code>Screen.dismiss</code></a>).</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>screen</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual.screen.Screen" href="../screen/#textual.screen.Screen">Screen</a>[<a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="../screen/#textual.screen.ScreenResultType">ScreenResultType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>A screen or the name of an installed screen.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.screen.ScreenResultType" href="../screen/#textual.screen.ScreenResultType">ScreenResultType</a> | <a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></code>
+          </td>
+          <td><p>The screen's result.</p></td>
         </tr>
     </tbody>
   </table>
