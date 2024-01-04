@@ -260,7 +260,7 @@ The addition of `[bool]` adds typing information that tells the type checker to 
 
 ### Waiting for screens
 
-It is also possible to wait on a screen to be dismissed, which can feel like a more natural way of expressing logic that a callback.
+It is also possible to wait on a screen to be dismissed, which can feel like a more natural way of expressing logic than a callback.
 The [`push_screen_wait()`][textual.app.App.push_screen_wait] method will push a screen and wait for the its result (value from [`Screen.dismiss()`][textual.screen.Screen.dismiss]).
 
 This can only be done from a [worker](./workers.md), so that waiting for the screen doesn't prevent your app from updating.
