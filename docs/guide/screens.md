@@ -276,7 +276,7 @@ Let's look at an example that uses `push_screen_wait` to ask a question and wait
 
     1. Dismiss with `True` when pressing the Yes button.
     2. Dismiss with `False` when pressing the No button.
-    3. The `work` decorator will make this method run asynchronously.
+    3. The `work` decorator will make this method run in a worker (background task).
     4. Will return a result when the user clicks one of the buttons.
 
 
