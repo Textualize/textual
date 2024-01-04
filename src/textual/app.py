@@ -1945,6 +1945,16 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return await_mount
 
+    @overload
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType]
+    ) -> ScreenResultType:
+        ...
+
+    @overload
+    async def push_screen_wait(self, screen: str) -> Any:
+        ...
+
     async def push_screen_wait(
         self, screen: Screen[ScreenResultType] | str
     ) -> ScreenResultType:
