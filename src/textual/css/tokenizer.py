@@ -215,13 +215,12 @@ class Tokenizer:
                     self.read_from,
                     self.code,
                     (line_no + 1, col_no + 1),
-                    "Unexpected end of file",
+                    "Unexpected end of file; did you forget a '}' ?",
                 )
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
             expected = friendly_list(" ".join(name.split("_")) for name in expect.names)
-            message = f"Expected one of {expected}.; Did you forget a semicolon at the end of a line?"
             raise TokenError(
                 self.read_from,
                 self.code,
@@ -288,7 +287,7 @@ class Tokenizer:
                     self.read_from,
                     self.code,
                     (line_no, col_no),
-                    "Unexpected end of file",
+                    "Unexpected end of file; did you forget a '}' ?",
                 )
             line = self.lines[line_no]
             match = expect.search(line, col_no)

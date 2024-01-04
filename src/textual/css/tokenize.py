@@ -57,8 +57,21 @@ expect_root_scope = Expect(
     selector_start=IDENTIFIER,
     variable_name=rf"{VARIABLE_REF}:",
     declaration_set_end=r"\}",
-    nested=r"\&",
 ).expect_eof(True)
+
+expect_root_nested = Expect(
+    "selector or end of file",
+    whitespace=r"\s+",
+    comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
+    selector_start_id=r"\#" + IDENTIFIER,
+    selector_start_class=r"\." + IDENTIFIER,
+    selector_start_universal=r"\*",
+    selector_start=IDENTIFIER,
+    variable_name=rf"{VARIABLE_REF}:",
+    declaration_set_end=r"\}",
+    nested=r"\&",
+)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
 #              for tokenizing variable value ------^~~~~~~^
@@ -173,7 +186,7 @@ class TokenizerState:
         "declaration_set_start": expect_declaration,
         "declaration_name": expect_declaration_content,
         "declaration_end": expect_declaration,
-        "declaration_set_end": expect_root_scope,
+        "declaration_set_end": expect_root_nested,
         "nested": expect_selector_continue,
     }
 
@@ -182,6 +195,7 @@ class TokenizerState:
         expect = self.EXPECT
         get_token = tokenizer.get_token
         get_state = self.STATE_MAP.get
+        nest_level = 0
         while True:
             token = get_token(expect)
             name = token.name
@@ -192,6 +206,13 @@ class TokenizerState:
                 continue
             elif name == "eof":
                 break
+            elif name == "declaration_set_start":
+                nest_level += 1
+            elif name == "declaration_set_end":
+                nest_level -= 1
+                expect = expect_root_nested if nest_level else expect_root_scope
+                yield token
+                continue
             expect = get_state(name, expect)
             yield token
 

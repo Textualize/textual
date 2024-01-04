@@ -44,7 +44,7 @@ def _add_specificity(
         specificity2: Specificity triple.
 
     Returns:
-        Combined specificity
+        Combined specificity.
     """
     a1, b1, c1 = specificity1
     a2, b2, c2 = specificity2
