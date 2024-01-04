@@ -524,6 +524,10 @@ The following produces identical results to the previous example, but adds nesti
     ```{.textual path="docs/examples/guide/css/nesting02.py"}
     ```
 
+!!! tip
+
+    Indenting the rule sets is not strictly required, but it does make it easier to understand how the rule sets are related to each other.
+
 In the first example we had a rule set that began with the selector `#questions .button`, which would match any widget with a class called "button" that is inside a container with id `questions`.
 
 In the second example, the button rule selector is simply `.button`, but it is *within* the rule set with selector `#questions`.
@@ -554,6 +558,10 @@ For reference, lets see those two CSS files side-by-side:
     ```sass
     --8<-- "docs/examples/guide/css/nesting02.tcss"
     ```
+
+
+Note how nesting bundles related rules together.
+If we were to add other selectors for additional screens or widgets, it would be easier to find the rules which will be applied.
 
 ### Why use nesting?
 
