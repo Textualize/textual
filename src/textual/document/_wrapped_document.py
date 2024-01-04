@@ -238,8 +238,8 @@ class WrappedDocument:
             The Location in the document corresponding to the given offset.
         """
         x, y = offset
-        if x < 0 or y < 0:
-            raise ValueError("Offset must be non-negative.")
+        x = max(0, x)
+        y = max(0, y)
 
         if not self._width:
             # No wrapping, so we directly map offset to location and clamp.
