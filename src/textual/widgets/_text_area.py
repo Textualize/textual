@@ -714,15 +714,15 @@ TextArea {
     def _watch_wrap(self) -> None:
         self._rewrap_and_refresh_virtual_size()
 
+    @property
+    def available_content_width(self) -> int:
+        width, _ = self.content_size
+        return width - self.gutter_width
+
     def _rewrap_and_refresh_virtual_size(self) -> None:
         if self.wrap:
-            width, _ = self.size
-            available_text_width = (
-                width - self.gutter_width - self.scrollbar_size_vertical
-            )
-            self.wrapped_document.wrap(available_text_width)
+            self.wrapped_document.wrap(self.available_content_width)
             self._refresh_size()
-            log.debug(f"re-wrapping at width {available_text_width!r}")
 
     @property
     def is_syntax_aware(self) -> bool:
@@ -1026,10 +1026,18 @@ TextArea {
             Data relating to the edit that may be useful. The data returned
             may be different depending on the edit performed.
         """
+        old_gutter_width = self.gutter_width
         result = edit.do(self)
-        self.wrapped_document.wrap_range(
-            edit.from_location, edit.to_location, result.end_location
-        )
+        print(f"wrap offsets = {self.wrapped_document._wrap_offsets}")
+        new_gutter_width = self.gutter_width
+
+        if old_gutter_width != new_gutter_width:
+            self.wrapped_document.wrap(self.available_content_width)
+        else:
+            self.wrapped_document.wrap_range(
+                edit.from_location, edit.to_location, result.end_location
+            )
+
         self._refresh_size()
         edit.after(self)
         self._build_highlight_map()

@@ -87,8 +87,6 @@ class WrappedDocument:
 
         self._offset_to_line_info = offset_to_line_info
         self._line_index_to_offsets = line_index_to_offsets
-
-        print(f"wrap offsets are now {new_wrap_offsets}")
         self._wrap_offsets = new_wrap_offsets
 
     @property
