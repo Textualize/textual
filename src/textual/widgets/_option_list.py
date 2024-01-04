@@ -160,7 +160,6 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option-disabled",
         "option-list--option-highlighted",
         "option-list--option-hover",
-        "option-list--option-hover-disabled",
         "option-list--option-hover-highlighted",
         "option-list--separator",
     }
@@ -170,7 +169,6 @@ class OptionList(ScrollView, can_focus=True):
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
-    | `option-list--option-hover-disabled` | Target a disabled option that has the mouse over it. |
     | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
     | `option-list--separator` | Target the separators. |
     """
@@ -208,11 +206,6 @@ class OptionList(ScrollView, can_focus=True):
     }
 
     OptionList > .option-list--option-hover {
-        background: $boost;
-    }
-
-    OptionList > .option-list--option-hover-disabled {
-        color: $text-disabled;
         background: $boost;
     }
 
@@ -904,12 +897,6 @@ class OptionList(ScrollView, can_focus=True):
 
         # Handle drawing a disabled option.
         if self._options[option_index].disabled:
-            # Disabled but mouse hover?
-            if option_index == mouse_over:
-                return strip.apply_style(
-                    self.get_component_rich_style("option-list--option-hover-disabled")
-                )
-            # Just a normal disabled option.
             return strip.apply_style(
                 self.get_component_rich_style("option-list--option-disabled")
             )
