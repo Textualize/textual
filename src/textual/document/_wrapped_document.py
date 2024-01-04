@@ -7,11 +7,14 @@ that were influenced by edits.
 """
 from __future__ import annotations
 
+from bisect import bisect
+
 from rich._wrap import divide_line
 from rich.text import Text
 
-from textual._cells import cell_width_to_column_index
+from textual._cells import cell_len, cell_width_to_column_index
 from textual.document._document import DocumentBase, Location
+from textual.expand_tabs import expand_tabs_inline
 from textual.geometry import Offset, clamp
 
 VerticalOffset = int
@@ -268,6 +271,37 @@ class WrappedDocument:
 
         # Offset doesn't match any line => land on bottom wrapped line
         return location
+
+    def location_to_offset(self, location: Location, tab_width: int) -> Offset:
+        """
+        Convert a location in the document to an offset within the wrapped/visual display of the document.
+
+        Args:
+            location: The location in the document.
+            tab_width: The maximum width of tab characters in the document.
+
+        Returns:
+            The Offset in the document's visual display corresponding to the given location.
+        """
+        line_index, column_index = location
+
+        # Clamp the line index to the bounds of the document
+        line_index = clamp(line_index, 0, len(self._line_index_to_offsets))
+
+        # Find the section index of this location, so that we know which y_offset to use
+        section_start_columns = [0, *self.get_offsets(line_index)]
+        section_index = bisect(section_start_columns, column_index)
+
+        # Get the y-offsets corresponding to this line index
+        y_offsets = self._line_index_to_offsets[line_index]
+        section_column_index = column_index - section_start_columns[section_index]
+
+        section = self.get_sections(section_index)[section_index]
+        x_offset = cell_len(
+            expand_tabs_inline(section[:section_column_index], tab_width)
+        )
+
+        return Offset(x_offset, y_offsets[section_index])
 
     def get_target_document_column(
         self,

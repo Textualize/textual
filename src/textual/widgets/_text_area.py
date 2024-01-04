@@ -416,6 +416,8 @@ TextArea {
         except IndexError:
             character = ""
 
+        #
+
         # Record the location of a matching closing/opening bracket.
         match_location = self.find_matching_bracket(character, cursor_location)
         self._matching_bracket_location = match_location
