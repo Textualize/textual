@@ -291,7 +291,7 @@ Let's look at an example that uses `push_screen_wait` to ask a question and wait
     ```{.textual path="docs/examples/guide/screens/questions01.py"}
     ```
 
-The mount handler on the app is decorated with `@work`, which makes the code run asynchronously.
+The mount handler on the app is decorated with `@work`, which makes the code run in a worker (background task).
 In the mount handler we push the screen with the `push_screen_wait`.
 When the user presses one of the buttons, the screen calls [`dismiss()`][textual.screen.Screen.dismiss] with either `True` or `False`.
 This value is then returned from the `push_screen_wait` method in the mount handler.
