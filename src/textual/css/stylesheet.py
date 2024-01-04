@@ -248,7 +248,7 @@ class Stylesheet:
         except TokenError:
             raise
         except Exception as error:
-            raise StylesheetError(f"failed to parse css; {error}")
+            raise StylesheetError(f"failed to parse css; {error}") from None
 
         self._parse_cache[cache_key] = rules
         return rules

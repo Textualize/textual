@@ -1,0 +1,24 @@
+/* Style the container */
+#questions {
+    border: heavy $primary;
+    align: center middle;
+
+    /* Style all buttons */
+    .button {
+        width: 1fr;
+        padding: 1 2;
+        margin: 1 2;
+        text-align: center;
+        border: heavy $panel;    
+
+        /* Style the Yes button */
+        &.affirmative {
+            border: heavy $success;        
+        }
+
+        /* Style the No button */
+        &.negative {
+            border: heavy $error;
+        }
+    }
+}
