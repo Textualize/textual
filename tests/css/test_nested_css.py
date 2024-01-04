@@ -53,7 +53,9 @@ async def test_nest_app():
         ("> {}", TokenError),
         ("&", TokenError),
         ("&.foo", TokenError),
+        ("& .foo", TokenError),
         ("{", TokenError),
+        ("*{", EOFError),
     ],
 )
 def test_parse_errors(css: str, exception: type[Exception]) -> None:
