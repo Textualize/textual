@@ -77,8 +77,11 @@ class Message:
         else:
             # a class defined inside of a function will have a qualified name like func.<locals>.Class,
             # so make sure we only use the actual class name(s)
-            qualname = cls.__qualname__.split("<locals>.")[-1]
-            name = camel_to_snake(qualname).replace(".", "_")
+            qualname = cls.__qualname__.rsplit("<locals>.", 1)[-1]
+            # only keep the last two parts of the qualified name of deeply nested classes
+            # for backwards compatibility, e.g. A.B.C.D becomes C.D
+            namespace = qualname.rsplit(".", 2)[-2:]
+            name = "_".join(camel_to_snake(part) for part in namespace)
         cls.handler_name = f"on_{name}"
 
     @property
