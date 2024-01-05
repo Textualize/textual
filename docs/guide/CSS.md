@@ -444,6 +444,15 @@ Let's say we define a variable `$success: lime;`.
 Our `$border` variable could then be updated to `$border: wide $success;`, which will
 be translated to `$border: wide lime;`.
 
+### Variable Scope:
+
+It's essential to note that CSS variables have a global scope within the file where they are defined. This means that variables can be accessed and utilized throughout the entire stylesheet. However, variables defined in one file cannot be directly accessed in another file in the same project.
+
+If you define a series of variables in one file, these variables will be accessible within that file and can be used later in that same file. However, if you wish to share variables across multiple files, you may need to consider alternative methods such as importing those variables into each file where they are required.
+
+This scoping behavior ensures encapsulation and prevents unintended conflicts between variables in different parts of your project.
+
+
 ## Initial value
 
 All CSS rules support a special value called `initial`, which will reset a value back to its default.
