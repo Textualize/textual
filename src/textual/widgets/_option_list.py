@@ -14,7 +14,7 @@ from rich.padding import Padding
 from rich.repr import Result
 from rich.rule import Rule
 from rich.style import Style
-from typing_extensions import Literal, Self, TypeAlias
+from typing_extensions import Self, TypeAlias
 
 from .. import widget_navigation
 from ..binding import Binding, BindingType
@@ -24,6 +24,7 @@ from ..message import Message
 from ..reactive import reactive
 from ..scroll_view import ScrollView
 from ..strip import Strip
+from ..widget_navigation import Direction
 
 
 class DuplicateID(Exception):
@@ -930,7 +931,6 @@ class OptionList(ScrollView, can_focus=True):
 
         Args:
             top: Scroll highlight to top of the list.
-
         """
         highlighted = self.highlighted
         if highlighted is None:
@@ -972,7 +972,7 @@ class OptionList(ScrollView, can_focus=True):
                 self.post_message(self.OptionHighlighted(self, highlighted))
 
     def action_cursor_up(self) -> None:
-        """Move the highlight up by one option."""
+        """Move the highlight up to the previous enabled option."""
         self.highlighted = widget_navigation.find_next_enabled(
             self._options,
             anchor=self.highlighted,
@@ -980,7 +980,7 @@ class OptionList(ScrollView, can_focus=True):
         )
 
     def action_cursor_down(self) -> None:
-        """Move the highlight down by one option."""
+        """Move the highlight down to the next enabled option."""
         self.highlighted = widget_navigation.find_next_enabled(
             self._options,
             anchor=self.highlighted,
@@ -988,15 +988,21 @@ class OptionList(ScrollView, can_focus=True):
         )
 
     def action_first(self) -> None:
-        """Move the highlight to the first option."""
+        """Move the highlight to the first enabled option."""
         self.highlighted = widget_navigation.find_first_enabled(self._options)
 
     def action_last(self) -> None:
-        """Move the highlight to the last option."""
+        """Move the highlight to the last enabled option."""
         self.highlighted = widget_navigation.find_last_enabled(self._options)
 
-    def _page(self, direction: Literal[-1, 1]) -> None:
-        """Move the highlight by one page.
+    def _page(self, direction: Direction) -> None:
+        """Move the highlight roughly by one page in the given direction.
+
+        The highlight will tentatively move by exactly one page.
+        If this would result in highlighting a disabled option, instead we look for
+        an enabled option "further down" the list of options.
+        If there are no such enabled options, we fallback to the "last" enabled option.
+        (The meaning of "further down" and "last" depend on the direction specified.)
 
         Args:
             direction: The direction to head, -1 for up and 1 for down.
@@ -1030,15 +1036,29 @@ class OptionList(ScrollView, can_focus=True):
                 # to.
                 fallback()
             else:
-                # Looks like we've figured out the next option to jump to.
-                self.highlighted = target_option
+                # Looks like we've figured where we'd like to jump to, we
+                # just need to make sure we jump to an option that's enabled.
+                if target_option is not None:
+                    target_option = widget_navigation.find_next_enabled_no_wrap(
+                        candidates=self._options,
+                        anchor=target_option,
+                        direction=direction,
+                        with_anchor=True,
+                    )
+                    # If we couldn't find an enabled option that's at least one page
+                    # away from the current one, we instead move less than one page
+                    # to the last enabled option in the correct direction.
+                    if target_option is None:
+                        fallback()
+                    else:
+                        self.highlighted = target_option
 
     def action_page_up(self) -> None:
-        """Move the highlight up one page."""
+        """Move the highlight up roughly by one page."""
         self._page(-1)
 
     def action_page_down(self) -> None:
-        """Move the highlight down one page."""
+        """Move the highlight down roughly by one page."""
         self._page(1)
 
     def action_select(self) -> None:
