@@ -715,13 +715,15 @@ TextArea {
         self._rewrap_and_refresh_virtual_size()
 
     @property
-    def available_content_width(self) -> int:
-        width, _ = self.content_size
-        return width - self.gutter_width
+    def wrap_width(self) -> int:
+        width, _ = self.scrollable_content_region.size
+        cursor_width = 1
+        return width - self.gutter_width - cursor_width
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
         if self.wrap:
-            self.wrapped_document.wrap(self.available_content_width)
+            print(f"wrapping at {self.wrap_width!r}")
+            self.wrapped_document.wrap(self.wrap_width)
             self._refresh_size()
 
     @property
@@ -1032,7 +1034,7 @@ TextArea {
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
-            self.wrapped_document.wrap(self.available_content_width)
+            self.wrapped_document.wrap(self.wrap_width)
         else:
             self.wrapped_document.wrap_range(
                 edit.from_location, edit.to_location, result.end_location
