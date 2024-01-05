@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed nested specificity
+- Fixed nested specificity https://github.com/Textualize/textual/pull/3963
 
 ## [0.47.0] - 2024-01-04
 
@@ -1574,6 +1574,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.47.1]: https://github.com/Textualize/textual/compare/v0.47.0...v0.47.1
 [0.47.0]: https://github.com/Textualize/textual/compare/v0.46.0...v0.47.0
 [0.46.0]: https://github.com/Textualize/textual/compare/v0.45.1...v0.46.0
 [0.45.1]: https://github.com/Textualize/textual/compare/v0.45.0...v0.45.1
