@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added textual.lazy https://github.com/Textualize/textual/pull/3936
 - Added App.push_screen_wait https://github.com/Textualize/textual/pull/3955
+- Added auxiliary module `textual.widget_navigation` https://github.com/Textualize/textual/pull/3912
 
 ## [0.46.0] - 2023-12-17
 
