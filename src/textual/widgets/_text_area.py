@@ -412,9 +412,6 @@ TextArea {
         # Find the visual offset of the cursor in the document
         cursor_location = selection.end
 
-        self._cursor_offset = self.wrapped_document.location_to_offset(
-            cursor_location, self.indent_width
-        )
         self.scroll_cursor_visible()
 
         cursor_row, cursor_column = cursor_location
@@ -434,6 +431,11 @@ TextArea {
 
         self.app.cursor_position = self._cursor_offset
         self.post_message(self.SelectionChanged(selection, self))
+
+    def _recompute_cursor_offset(self):
+        self._cursor_offset = self.wrapped_document.location_to_offset(
+            self.cursor_location, self.indent_width
+        )
 
     def find_matching_bracket(
         self, bracket: str, search_from: Location
@@ -507,11 +509,16 @@ TextArea {
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
-        self._refresh_size()
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
 
     def _watch_indent_width(self) -> None:
         """Changing width of tabs will change document display width."""
-        self._refresh_size()
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
+
+    def _watch_wrap(self) -> None:
+        self._rewrap_and_refresh_virtual_size()
 
     def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
@@ -713,18 +720,20 @@ TextArea {
 
     def _watch_wrap(self) -> None:
         self._rewrap_and_refresh_virtual_size()
+        self.call_after_refresh(self.scroll_cursor_visible, center=True)
 
     @property
     def wrap_width(self) -> int:
         width, _ = self.scrollable_content_region.size
         cursor_width = 1
-        return width - self.gutter_width - cursor_width
+        if self.wrap:
+            return width - self.gutter_width - cursor_width
+        return 0
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
-        if self.wrap:
-            print(f"wrapping at {self.wrap_width!r}")
-            self.wrapped_document.wrap(self.wrap_width)
-            self._refresh_size()
+        print(f"wrapping at {self.wrap_width!r}")
+        self.wrapped_document.wrap(self.wrap_width)
+        self._refresh_size()
 
     @property
     def is_syntax_aware(self) -> bool:
@@ -1225,6 +1234,8 @@ TextArea {
         Returns:
             The offset that was scrolled to bring the cursor into view.
         """
+        self._recompute_cursor_offset()
+
         x, y = self._cursor_offset
         scroll_offset = self.scroll_to_region(
             Region(x, y, width=3, height=1),
