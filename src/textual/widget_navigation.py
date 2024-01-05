@@ -9,6 +9,7 @@ to implement wrapping.
 from __future__ import annotations
 
 from functools import partial
+from itertools import count
 from typing import TYPE_CHECKING, Literal, Protocol, Sequence
 
 from typing_extensions import TypeAlias, TypeVar
@@ -102,22 +103,27 @@ def find_last_enabled(candidates: Sequence[_D] | Sequence[_W]) -> int | None:
 
 
 def find_next_enabled(
-    candidates: Sequence[_D] | Sequence[_W], anchor: int | None, direction: Direction
+    candidates: Sequence[_D] | Sequence[_W],
+    anchor: int | None,
+    direction: Direction,
+    with_anchor: bool = False,
 ) -> int | None:
-    """Find the next enabled candidate if we're currently at the given anchor.
+    """Find the next enabled object if we're currently at the given anchor.
 
     The definition of "next" depends on the given direction and this function will wrap
-    around the ends of the sequence of candidates.
+    around the ends of the sequence of object candidates.
 
     Args:
-        candidates: The sequence of candidates to consider.
+        candidates: The sequence of object candidates to consider.
         anchor: The point of the sequence from which we'll start looking for the next
-            candidate.
+            enabled object.
         direction: The direction in which to traverse the candidates when looking for
-            the next available candidate.
+            the next enabled candidate.
+        with_anchor: Consider the anchor position as the first valid position instead of
+            the last one.
 
     Returns:
-        The next enabled candidate. If none are available, return the anchor.
+        The next enabled object. If none are available, return the anchor.
     """
 
     if anchor is None:
@@ -129,9 +135,10 @@ def find_next_enabled(
             )
         return None
 
+    start = anchor + direction if not with_anchor else anchor
     key_function = partial(
         distance,
-        start=anchor + direction,
+        start=start,
         direction=direction,
         wrap_at=len(candidates),
     )
@@ -139,3 +146,47 @@ def find_next_enabled(
         index for index, candidate in enumerate(candidates) if not candidate.disabled
     ]
     return min(enabled_candidates, key=key_function, default=anchor)
+
+
+def find_next_enabled_no_wrap(
+    candidates: Sequence[_D] | Sequence[_W],
+    anchor: int | None,
+    direction: Direction,
+    with_anchor: bool = False,
+) -> int | None:
+    """Find the next enabled object starting from the given anchor (without wrapping).
+
+    The meaning of "next" and "past" depend on the direction specified.
+
+    Args:
+        candidates: The sequence of object candidates to consider.
+        anchor: The point of the sequence from which we'll start looking for the next
+            enabled object.
+        direction: The direction in which to traverse the candidates when looking for
+            the next enabled candidate.
+        with_anchor: Whether to consider the anchor or not.
+
+    Returns:
+        The next enabled object. If none are available, return None.
+    """
+
+    if anchor is None:
+        if candidates:
+            return (
+                find_first_enabled(candidates)
+                if direction == 1
+                else find_last_enabled(candidates)
+            )
+        return None
+
+    start = anchor if with_anchor else anchor + direction
+    counter = count(start, direction)
+    valid_candidates = (
+        candidates[start:] if direction == 1 else reversed(candidates[: start + 1])
+    )
+
+    for idx, candidate in zip(counter, valid_candidates):
+        if candidate.disabled:
+            continue
+        return idx
+    return None
