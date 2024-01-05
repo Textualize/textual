@@ -1382,3 +1382,41 @@ async def test_cell_padding_cannot_be_negative():
         assert table.cell_padding == 0
         table.cell_padding = -1234
         assert table.cell_padding == 0
+
+
+async def test_move_cursor_respects_animate_parameter():
+    """Regression test for https://github.com/Textualize/textual/issues/3840
+
+    Make sure that the call to `_scroll_cursor_into_view` from `move_cursor` happens
+    before the call from the watcher method from `cursor_coordinate`.
+    The former should animate because we call it with `animate=True` whereas the later
+    should not.
+    """
+
+    scrolls = []
+
+    class _DataTable(DataTable):
+        def _scroll_cursor_into_view(self, animate=False):
+            nonlocal scrolls
+            scrolls.append(animate)
+            super()._scroll_cursor_into_view(animate)
+
+    class LongDataTableApp(App):
+        def compose(self):
+            yield _DataTable()
+
+        def on_mount(self):
+            dt = self.query_one(_DataTable)
+            dt.add_columns("one", "two")
+            for _ in range(100):
+                dt.add_row("one", "two")
+
+        def key_s(self):
+            table = self.query_one(_DataTable)
+            table.move_cursor(row=99, animate=True)
+
+    app = LongDataTableApp()
+    async with app.run_test() as pilot:
+        await pilot.press("s")
+
+    assert scrolls == [True, False]
