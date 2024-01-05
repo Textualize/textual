@@ -152,9 +152,10 @@ class MonthCalendar(Widget):
     @property
     def _calendar_dates(self) -> list[list[datetime.date | None]]:
         """A matrix of `datetime.date` objects for this month calendar, where
-        each row represents a week. If `show_other_months` is True this includes
-        dates from the previous and next month that are required to get a
-        complete week, otherwise these days are 'None'
+        each row represents a week. If `show_other_months` is True, this returns
+        a six-week calendar including dates from the previous and next month.
+        If `show_other_months` is False, only weeks required for the month are
+        included and any dates outside the month are 'None'.
         """
         month_weeks = self._calendar.monthdatescalendar(self.date.year, self.date.month)
         calendar_dates: list[list[datetime.date | None]]
