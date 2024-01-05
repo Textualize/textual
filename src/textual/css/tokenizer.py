@@ -103,12 +103,19 @@ class TokenError(Exception):
 
 
 class EOFError(TokenError):
-    pass
+    """Indicates that the CSS ended prematurely."""
 
 
 @rich.repr.auto
 class Expect:
+    """Object that describes the format of tokens."""
+
     def __init__(self, description: str, **tokens: str) -> None:
+        """Create Expect object.
+
+        Args:
+            description: Description of this class of tokens, used in errors.
+        """
         self.description = f"Expected {description}"
         self.names = list(tokens.keys())
         self.regexes = list(tokens.values())
@@ -190,7 +197,15 @@ class Token(NamedTuple):
 
 
 class Tokenizer:
+    """Tokenizes Textual CSS."""
+
     def __init__(self, text: str, read_from: CSSLocation = ("", "")) -> None:
+        """Initialize the tokenizer.
+
+        Args:
+            text: String containing CSS.
+            read_from: Information regarding where the CSS was read from.
+        """
         self.read_from = read_from
         self.code = text
         self.lines = text.splitlines(keepends=True)
@@ -198,6 +213,19 @@ class Tokenizer:
         self.col_no = 0
 
     def get_token(self, expect: Expect) -> Token:
+        """Get the next token.
+
+        Args:
+            expect: Expect object which describes which tokens may be read.
+
+        Raises:
+            EOFError: If there is an unexpected end of file.
+            TokenError: If there is an error with the token.
+
+        Returns:
+            A new Token.
+        """
+
         line_no = self.line_no
         col_no = self.col_no
         if line_no >= len(self.lines):
@@ -220,7 +248,6 @@ class Tokenizer:
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
-            expected = friendly_list(" ".join(name.split("_")) for name in expect.names)
             raise TokenError(
                 self.read_from,
                 self.code,
@@ -278,6 +305,17 @@ class Tokenizer:
         return token
 
     def skip_to(self, expect: Expect) -> Token:
+        """Skip tokens.
+
+        Args:
+            expect: Expect object describing the expected token.
+
+        Raises:
+            EOFError: If end of file is reached.
+
+        Returns:
+            A new token.
+        """
         line_no = self.line_no
         col_no = self.col_no
 

@@ -46,6 +46,7 @@ def _add_specificity(
     Returns:
         Combined specificity.
     """
+
     a1, b1, c1 = specificity1
     a2, b2, c2 = specificity2
     return (a1 + a2, b1 + b2, c1 + c2)
@@ -228,9 +229,8 @@ def parse_rule_set(
                             SelectorSet(
                                 combine_selectors(
                                     rule_selector, recursive_selectors.selectors
-                                ),
-                                (recursive_selectors.specificity),
-                            )
+                                )
+                            )._total_specificity()
                             for recursive_selectors in rule_set.selector_set
                         ],
                         rule_set.styles,
