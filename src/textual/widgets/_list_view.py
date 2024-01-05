@@ -159,7 +159,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         return index
 
     def _is_valid_index(self, index: int | None) -> TypeGuard[int]:
-        """Return True if the current index is valid given the current list of children"""
+        """Determine whether the current index is valid into the list of children."""
         if index is None:
             return False
         return 0 <= index < len(self._nodes)
