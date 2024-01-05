@@ -974,3 +974,8 @@ def test_tree_clearing_and_expansion(snap_compare):
     # https://github.com/Textualize/textual/issues/3557
     assert snap_compare(SNAPSHOT_APPS_DIR / "tree_clearing.py")
 
+
+def test_nested_specificity(snap_compare):
+    """Test specificity of nested rules is working."""
+    # https://github.com/Textualize/textual/issues/3961
+    assert snap_compare(SNAPSHOT_APPS_DIR / "nested_specificity.py")

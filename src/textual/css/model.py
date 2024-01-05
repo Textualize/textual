@@ -12,21 +12,27 @@ from .tokenize import Token
 from .types import Specificity3
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from ..dom import DOMNode
 
 
 class SelectorType(Enum):
-    UNIVERSAL = 1
-    TYPE = 2
-    CLASS = 3
-    ID = 4
-    NESTED = 5
+    """Type of selector."""
+
+    UNIVERSAL = 1  # i.e. *
+    TYPE = 2  # Type, e.g Widget Label
+    CLASS = 3  # CSS class, e.g. .loaded
+    ID = 4  # CSS ID, e.g. #main
+    NESTED = 5  # Placeholder for nesting operator, i.e &
 
 
 class CombinatorType(Enum):
-    SAME = 1
-    DESCENDENT = 2
-    CHILD = 3
+    """Type of combinator."""
+
+    SAME = 1  # Selector is combined with previous selector
+    DESCENDENT = 2  # Selector is a descendant of the previous selector
+    CHILD = 3  # Selector is an immediate child of the previous selector
 
 
 @dataclass
@@ -116,6 +122,8 @@ class Selector:
 
 @dataclass
 class Declaration:
+    """A single CSS declaration (not yet processed)."""
+
     token: Token
     name: str
     tokens: list[Token] = field(default_factory=list)
@@ -124,6 +132,8 @@ class Declaration:
 @rich.repr.auto(angular=True)
 @dataclass
 class SelectorSet:
+    """A set of selectors associated with a rule set."""
+
     selectors: list[Selector] = field(default_factory=list)
     specificity: Specificity3 = (0, 0, 0)
 
@@ -140,6 +150,21 @@ class SelectorSet:
         selectors = RuleSet._selector_to_css(self.selectors)
         yield selectors
         yield None, self.specificity
+
+    def _total_specificity(self) -> Self:
+        """Calculate total specificity of selectors.
+
+        Returns:
+            Self.
+        """
+        id_total = class_total = type_total = 0
+        for selector in self.selectors:
+            _id, _class, _type = selector.specificity
+            id_total += _id
+            class_total += _class
+            type_total += _type
+        self.specificity = (id_total, class_total, type_total)
+        return self
 
     @classmethod
     def from_selectors(cls, selectors: list[list[Selector]]) -> Iterable[SelectorSet]:
