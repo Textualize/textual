@@ -429,10 +429,12 @@ TextArea {
             if match_row in range(*self._visible_line_indices):
                 self.refresh_lines(match_row)
 
-        self.app.cursor_position = self._cursor_offset
+        cursor_x, cursor_y = self._cursor_offset
+        self.app.cursor_position = (cursor_x + self.gutter_width, cursor_y)
         self.post_message(self.SelectionChanged(selection, self))
 
     def _recompute_cursor_offset(self):
+        """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
         self._cursor_offset = self.wrapped_document.location_to_offset(
             self.cursor_location, self.indent_width
         )
