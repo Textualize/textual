@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+
+### Added
+
+- Added auxiliary module `textual.widget_navigation` https://github.com/Textualize/textual/pull/3912
+
+## [0.47.1] - 2023-01-05
+
+### Fixed
+
+- Fixed nested specificity https://github.com/Textualize/textual/pull/3963
+
+## [0.47.0] - 2024-01-04
+
 ### Fixed
 
 - `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
@@ -17,13 +33,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only https://github.com/Textualize/textual/pull/3896
 - Style tweak to toasts https://github.com/Textualize/textual/pull/3955
-- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
 
 ### Added
 
 - Added textual.lazy https://github.com/Textualize/textual/pull/3936
 - Added App.push_screen_wait https://github.com/Textualize/textual/pull/3955
-- Added auxiliary module `textual.widget_navigation` https://github.com/Textualize/textual/pull/3912
+- Added nesting of CSS https://github.com/Textualize/textual/pull/3946
 
 ## [0.46.0] - 2023-12-17
 
@@ -1569,6 +1584,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.47.1]: https://github.com/Textualize/textual/compare/v0.47.0...v0.47.1
+[0.47.0]: https://github.com/Textualize/textual/compare/v0.46.0...v0.47.0
 [0.46.0]: https://github.com/Textualize/textual/compare/v0.45.1...v0.46.0
 [0.45.1]: https://github.com/Textualize/textual/compare/v0.45.0...v0.45.1
 [0.45.0]: https://github.com/Textualize/textual/compare/v0.44.1...v0.45.0

@@ -1960,6 +1960,8 @@ class App(Generic[ReturnType], DOMNode):
     ) -> ScreenResultType | Any:
         """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
 
+        Note that this method may only be called when running in a worker.
+
         Args:
             screen: A screen or the name of an installed screen.
 
