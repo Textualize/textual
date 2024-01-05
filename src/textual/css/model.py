@@ -20,19 +20,27 @@ if TYPE_CHECKING:
 class SelectorType(Enum):
     """Type of selector."""
 
-    UNIVERSAL = 1  # i.e. *
-    TYPE = 2  # Type, e.g Widget Label
-    CLASS = 3  # CSS class, e.g. .loaded
-    ID = 4  # CSS ID, e.g. #main
-    NESTED = 5  # Placeholder for nesting operator, i.e &
+    UNIVERSAL = 1
+    """i.e. * operator"""
+    TYPE = 2
+    """A CSS type, e.g  Label"""
+    CLASS = 3
+    """CSS class, e.g. .loaded"""
+    ID = 4
+    """CSS ID, e.g. #main"""
+    NESTED = 5
+    """Placeholder for nesting operator, i.e &"""
 
 
 class CombinatorType(Enum):
     """Type of combinator."""
 
-    SAME = 1  # Selector is combined with previous selector
-    DESCENDENT = 2  # Selector is a descendant of the previous selector
-    CHILD = 3  # Selector is an immediate child of the previous selector
+    SAME = 1
+    """Selector is combined with previous selector"""
+    DESCENDENT = 2
+    """Selector is a descendant of the previous selector"""
+    CHILD = 3
+    """Selector is an immediate child of the previous selector"""
 
 
 @dataclass
