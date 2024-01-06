@@ -208,9 +208,11 @@ def parse_rule_set(
                     nested_selector = selectors2[0]
                     merged_selector = dataclasses.replace(
                         final_selector,
-                        pseudo_classes=(
-                            final_selector.pseudo_classes
-                            & nested_selector.pseudo_classes
+                        pseudo_classes=list(
+                            set(
+                                final_selector.pseudo_classes
+                                + nested_selector.pseudo_classes
+                            )
                         ),
                         specificity=_add_specificity(
                             final_selector.specificity, nested_selector.specificity

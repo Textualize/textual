@@ -1276,27 +1276,17 @@ class DOMNode(MessagePump):
         self._update_styles()
         return self
 
-    def has_pseudo_class(self, class_name: str) -> bool:
-        """Check the node has the given pseudo class.
+    def has_pseudo_class(self, *class_names: str) -> bool:
+        """Check for pseudo classes (such as hover, focus etc)
 
         Args:
-            class_name: The pseudo classes to check for.
+            *class_names: The pseudo classes to check for.
 
         Returns:
             `True` if the DOM node has those pseudo classes, `False` if not.
         """
-        return class_name in self.get_pseudo_classes()
-
-    def has_pseudo_classes(self, class_names: set[str]) -> bool:
-        """Check the node has all the given pseudo classes.
-
-        Args:
-            class_names: Set of class names to check for.
-
-        Returns:
-            `True` if all pseudo class names are present.
-        """
-        return class_names.issubset(self.get_pseudo_classes())
+        has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
+        return has_pseudo_classes
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self
