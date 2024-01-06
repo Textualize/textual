@@ -64,7 +64,7 @@ class Selector:
     @property
     def css(self) -> str:
         """Rebuilds the selector as it would appear in CSS."""
-        pseudo_suffix = "".join(f":{name}" for name in self.pseudo_classes)
+        pseudo_suffix = "".join(f":{name}" for name in sorted(self.pseudo_classes))
         if self.type == SelectorType.UNIVERSAL:
             return "*"
         elif self.type == SelectorType.TYPE:
