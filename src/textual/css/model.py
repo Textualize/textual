@@ -57,7 +57,7 @@ class Selector:
     name: str
     combinator: CombinatorType = CombinatorType.DESCENDENT
     type: SelectorType = SelectorType.TYPE
-    pseudo_classes: list[str] = field(default_factory=list)
+    pseudo_classes: set[str] = field(default_factory=set)
     specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
     advance: int = 1
 
@@ -88,7 +88,7 @@ class Selector:
         Args:
             pseudo_class: Name of pseudo class.
         """
-        self.pseudo_classes.append(pseudo_class)
+        self.pseudo_classes.add(pseudo_class)
         specificity1, specificity2, specificity3 = self.specificity
         self.specificity = (specificity1, specificity2 + 1, specificity3)
 
@@ -104,26 +104,26 @@ class Selector:
         return self._checks[self.type](node)
 
     def _check_universal(self, node: DOMNode) -> bool:
-        return node.has_pseudo_class(*self.pseudo_classes)
+        return node.has_pseudo_classes(self.pseudo_classes)
 
     def _check_type(self, node: DOMNode) -> bool:
         if self.name not in node._css_type_names:
             return False
-        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
+        if self.pseudo_classes and not node.has_pseudo_classes(self.pseudo_classes):
             return False
         return True
 
     def _check_class(self, node: DOMNode) -> bool:
         if not node.has_class(self.name):
             return False
-        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
+        if self.pseudo_classes and not node.has_pseudo_classes(self.pseudo_classes):
             return False
         return True
 
     def _check_id(self, node: DOMNode) -> bool:
         if node.id != self.name:
             return False
-        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
+        if self.pseudo_classes and not node.has_pseudo_classes(self.pseudo_classes):
             return False
         return True
 
