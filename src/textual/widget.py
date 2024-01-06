@@ -2876,14 +2876,6 @@ class Widget(DOMNode):
         Returns:
             Names of the pseudo classes.
         """
-        node: MessagePump | None = self
-        while isinstance(node, Widget):
-            if node.disabled:
-                yield "disabled"
-                break
-            node = node._parent
-        else:
-            yield "enabled"
         if self.mouse_over:
             yield "hover"
         if self.has_focus:
@@ -2892,6 +2884,14 @@ class Widget(DOMNode):
             yield "blur"
         if self.can_focus:
             yield "can-focus"
+        node: MessagePump | None = self
+        while isinstance(node, Widget):
+            if node.disabled:
+                yield "disabled"
+                break
+            node = node._parent
+        else:
+            yield "enabled"
         try:
             focused = self.screen.focused
         except NoScreen:

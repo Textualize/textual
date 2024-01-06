@@ -575,8 +575,7 @@ class DOMNode(MessagePump):
     @property
     def pseudo_classes(self) -> frozenset[str]:
         """A (frozen) set of all pseudo classes."""
-        pseudo_classes = frozenset(self.get_pseudo_classes())
-        return pseudo_classes
+        return frozenset(self.get_pseudo_classes())
 
     @property
     def css_path_nodes(self) -> list[DOMNode]:

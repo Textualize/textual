@@ -210,7 +210,7 @@ def parse_rule_set(
                         final_selector,
                         pseudo_classes=(
                             final_selector.pseudo_classes
-                            & nested_selector.pseudo_classes
+                            | nested_selector.pseudo_classes
                         ),
                         specificity=_add_specificity(
                             final_selector.specificity, nested_selector.specificity
