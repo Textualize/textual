@@ -87,7 +87,6 @@ class TextArea(ScrollView, can_focus=True):
 TextArea {
     width: 1fr;
     height: 1fr;
-    overflow-y: scroll;
 }
 """
 
@@ -306,14 +305,8 @@ TextArea {
         self.indent_type: Literal["tabs", "spaces"] = "spaces"
         """Whether to indent using tabs or spaces."""
 
-        # TODO - this can be removed after integrating the new DocumentNavigator.
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
-
-        self._last_intentional_cell_width: int = 0
-        """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
-        visually moves rather than logical characters) the user explicitly navigated to so that we can reset to it
-        whenever possible."""
 
         self._undo_stack: list[Undoable] = []
         """A stack (the end of the list is the top of the stack) for tracking edits."""
@@ -839,6 +832,8 @@ TextArea {
 
         selection = self.selection
         start, end = selection
+        cursor_row, cursor_column = end
+
         selection_top, selection_bottom = sorted(selection)
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
@@ -858,7 +853,6 @@ TextArea {
                         byte_to_codepoint.get(highlight_end) if highlight_end else None,
                     )
 
-        cursor_row, cursor_column = end
         cursor_line_style = theme.cursor_line_style if theme else None
         if cursor_line_style and cursor_row == line_index:
             line.stylize(cursor_line_style)
@@ -1609,9 +1603,11 @@ TextArea {
         content, then we go down to another row, we want our cursor to
         jump back to the same offset that we were originally at.
         """
-        row, column = self.selection.end
-        column_cell_length = self.get_column_width(row, column)
-        self._last_intentional_cell_width = column_cell_length
+        cursor_x_offset, _ = self.wrapped_document.location_to_offset(
+            self.cursor_location, self.indent_width
+        )
+        print(f"recording x offset = {cursor_x_offset}")
+        self.wrapped_document.last_x_offset = cursor_x_offset
 
     # --- Editor operations
     def insert(

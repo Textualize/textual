@@ -205,7 +205,9 @@ class DocumentNavigator:
 
         return target_location
 
-    def get_location_below(self, location: Location, tab_width: int) -> Location:
+    def get_location_below(
+        self, location: Location, tab_width: int, maintain_offset: bool = True
+    ) -> Location:
         """Given a location in the raw document, return the raw document
         location corresponding to moving down in the wrapped representation
         of the document.
@@ -213,6 +215,7 @@ class DocumentNavigator:
         Args:
             location: The location in the raw document.
             tab_width: The width of the tab stops.
+            maintain_offset: Maintain the visual x-offset of the cursor.
 
         Returns:
             The location which is *visually* below the given location.
@@ -248,6 +251,7 @@ class DocumentNavigator:
             )
             target_location = line_index, target_column
 
+        print(target_column)
         return target_location
 
     def get_location_end(self, location: Location) -> Location:

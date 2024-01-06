@@ -331,7 +331,8 @@ class WrappedDocument:
         # the original document.
         target_section = sections[y_offset]
 
-        # Add the offsets from the wrapped sections above this one (from the same raw document line)
+        # Add the offsets from the wrapped sections above this one (from the same raw
+        # document line)
         target_section_start = sum(
             len(wrapped_section) for wrapped_section in sections[:y_offset]
         )
