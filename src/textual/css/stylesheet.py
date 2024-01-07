@@ -30,6 +30,8 @@ _DEFAULT_STYLES = Styles()
 
 
 class StylesheetParseError(StylesheetError):
+    """Raised when the stylesheet could not be parsed."""
+
     def __init__(self, errors: StylesheetErrors) -> None:
         self.errors = errors
 
@@ -38,6 +40,8 @@ class StylesheetParseError(StylesheetError):
 
 
 class StylesheetErrors:
+    """A renderable for stylesheet errors."""
+
     def __init__(self, rules: list[RuleSet]) -> None:
         self.rules = rules
         self.variables: dict[str, str] = {}
@@ -134,6 +138,8 @@ class CssSource(NamedTuple):
 
 @rich.repr.auto(angular=True)
 class Stylesheet:
+    """A Stylsheet generated from Textual CSS."""
+
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []
         self._rules_map: dict[str, list[RuleSet]] | None = None
@@ -183,6 +189,11 @@ class Stylesheet:
 
     @property
     def css(self) -> str:
+        """The equivalent TCSS for this stylesheet.
+
+        Note that this may not produce the same content as the file(s) used to generate the stylesheet.
+
+        """
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 
     def copy(self) -> Stylesheet:
@@ -407,9 +418,18 @@ class Stylesheet:
 
     @classmethod
     def _check_rule(
-        cls, rule: RuleSet, css_path_nodes: list[DOMNode]
+        cls, rule_set: RuleSet, css_path_nodes: list[DOMNode]
     ) -> Iterable[Specificity3]:
-        for selector_set in rule.selector_set:
+        """Check a rule set, return specificity of applicable rules.
+
+        Args:
+            rule_set: A rule set.
+            css_path_nodes: A list of the nodes from the App to the node being checked.
+
+        Yields:
+            Specificity of any matching selectors.
+        """
+        for selector_set in rule_set.selector_set:
             if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
