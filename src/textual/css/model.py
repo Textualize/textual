@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from functools import partial
 from typing import TYPE_CHECKING, Iterable
 
 import rich.repr
@@ -100,6 +101,7 @@ _CHECKS = {
     SelectorType.TYPE: _check_type,
     SelectorType.CLASS: _check_class,
     SelectorType.ID: _check_id,
+    SelectorType.NESTED: _check_universal,
 }
 
 
@@ -120,6 +122,9 @@ class Selector:
     pseudo_classes: set[str] = field(default_factory=set)
     specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
     advance: int = 1
+
+    def __post_init__(self) -> None:
+        self._check = partial(_CHECKS[self.type], self.name)
 
     @property
     def css(self) -> str:
@@ -153,7 +158,7 @@ class Selector:
         Returns:
             True if the selector matches, otherwise False.
         """
-        return _CHECKS[self.type](self.name, node) and (
+        return self._check(node) and (
             node.has_pseudo_classes(self.pseudo_classes)
             if node.pseudo_classes
             else True
