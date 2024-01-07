@@ -166,7 +166,7 @@ class DOMNode(MessagePump):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-        self._classes = set()
+        self._classes: set[str] = set()
         self._name = name
         self._id = None
         if id is not None:

@@ -80,7 +80,7 @@ def _check_class(name: str, node: DOMNode) -> bool:
     Returns:
         `True` if the selector matches.
     """
-    return node.has_class(name)
+    return name in node._classes
 
 
 def _check_id(name: str, node: DOMNode) -> bool:
@@ -160,7 +160,7 @@ class Selector:
         """
         return self._check(node) and (
             node.has_pseudo_classes(self.pseudo_classes)
-            if node.pseudo_classes
+            if self.pseudo_classes
             else True
         )
 
