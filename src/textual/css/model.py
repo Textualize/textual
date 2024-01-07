@@ -43,6 +43,66 @@ class CombinatorType(Enum):
     """Selector is an immediate child of the previous selector"""
 
 
+def _check_universal(name: str, node: DOMNode) -> bool:
+    """Check node matches universal selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return True
+
+
+def _check_type(name: str, node: DOMNode) -> bool:
+    """Check node matches a type selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return name in node._css_type_names
+
+
+def _check_class(name: str, node: DOMNode) -> bool:
+    """Check node matches a class selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return node.has_class(name)
+
+
+def _check_id(name: str, node: DOMNode) -> bool:
+    """Check node matches an ID selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return node.id == name
+
+
+_CHECKS = {
+    SelectorType.UNIVERSAL: _check_universal,
+    SelectorType.TYPE: _check_type,
+    SelectorType.CLASS: _check_class,
+    SelectorType.ID: _check_id,
+}
+
+
 @dataclass
 class Selector:
     """Represents a CSS selector.
@@ -74,14 +134,6 @@ class Selector:
         else:
             return f"#{self.name}{pseudo_suffix}"
 
-    def __post_init__(self) -> None:
-        self._checks = {
-            SelectorType.UNIVERSAL: self._check_universal,
-            SelectorType.TYPE: self._check_type,
-            SelectorType.CLASS: self._check_class,
-            SelectorType.ID: self._check_id,
-        }
-
     def _add_pseudo_class(self, pseudo_class: str) -> None:
         """Adds a pseudo class and updates specificity.
 
@@ -101,31 +153,11 @@ class Selector:
         Returns:
             True if the selector matches, otherwise False.
         """
-        return self._checks[self.type](node)
-
-    def _check_universal(self, node: DOMNode) -> bool:
-        return node.has_pseudo_classes(self.pseudo_classes)
-
-    def _check_type(self, node: DOMNode) -> bool:
-        if self.name not in node._css_type_names:
-            return False
-        if self.pseudo_classes and not node.has_pseudo_classes(self.pseudo_classes):
-            return False
-        return True
-
-    def _check_class(self, node: DOMNode) -> bool:
-        if not node.has_class(self.name):
-            return False
-        if self.pseudo_classes and not node.has_pseudo_classes(self.pseudo_classes):
-            return False
-        return True
-
-    def _check_id(self, node: DOMNode) -> bool:
-        if node.id != self.name:
-            return False
-        if self.pseudo_classes and not node.has_pseudo_classes(self.pseudo_classes):
-            return False
-        return True
+        return _CHECKS[self.type](self.name, node) and (
+            node.has_pseudo_classes(self.pseudo_classes)
+            if node.pseudo_classes
+            else True
+        )
 
 
 @dataclass
