@@ -13,6 +13,8 @@ from .tokenize import Token
 from .types import Specificity3
 
 if TYPE_CHECKING:
+    from typing import Callable
+
     from typing_extensions import Self
 
     from ..dom import DOMNode
@@ -124,7 +126,7 @@ class Selector:
     advance: int = 1
 
     def __post_init__(self) -> None:
-        self._check = partial(_CHECKS[self.type], self.name)
+        self._check: Callable[[DOMNode], bool] = partial(_CHECKS[self.type], self.name)
 
     @property
     def css(self) -> str:
