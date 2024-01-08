@@ -40,6 +40,20 @@ class MonthCalendar(Widget):
     show_cursor: Reactive[bool] = Reactive(True)
     show_other_months: Reactive[bool] = Reactive(True)
 
+    class DateHighlighted(Message):
+        def __init__(
+            self,
+            month_calendar: MonthCalendar,
+            value: datetime.date,
+        ) -> None:
+            super().__init__()
+            self.month_calendar: MonthCalendar = month_calendar
+            self.value: datetime.date = value
+
+        @property
+        def control(self) -> MonthCalendar:
+            return self.month_calendar
+
     class DateSelected(Message):
         def __init__(
             self,
@@ -91,6 +105,7 @@ class MonthCalendar(Widget):
             highlighted_date = self._calendar_dates[row][column]
             assert isinstance(highlighted_date, datetime.date)
             self.date = highlighted_date
+            self.post_message(MonthCalendar.DateHighlighted(self, self.date))
 
     @on(DataTable.CellSelected)
     def _on_datatable_cell_selected(
@@ -144,8 +159,8 @@ class MonthCalendar(Widget):
                     ]
                 )
 
-            date_coordinate = self._get_date_coordinate(self.date)
-            table.cursor_coordinate = date_coordinate
+        date_coordinate = self._get_date_coordinate(self.date)
+        table.cursor_coordinate = date_coordinate
 
         table.hover_coordinate = old_hover_coordinate
 

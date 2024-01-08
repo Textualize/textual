@@ -75,6 +75,7 @@ class MonthCalendarApp(App):
     def compose(self) -> ComposeResult:
         yield MonthCalendar(datetime.date(year=2021, month=6, day=3))
 
+    @on(MonthCalendar.DateHighlighted)
     @on(MonthCalendar.DateSelected)
     def record(self, event: MonthCalendar.DateSelected) -> None:
         self.messages.append((event.__class__.__name__, event.value))
@@ -98,6 +99,7 @@ async def test_calendar_table_days():
         for row, week in enumerate(month_calendar._calendar_dates):
             for column, date in enumerate(week):
                 actual_day = table.get_cell_at(Coordinate(row, column)).plain
+                assert isinstance(date, datetime.date)
                 expected_day = str(date.day)
                 assert actual_day == expected_day
 
@@ -427,27 +429,35 @@ async def test_clicking_data_table_cell_emits_highlighted_before_selected_messag
     app = DataTableApp()
     async with app.run_test() as pilot:
         await pilot.click(DataTable, offset=(8, 1))
-        assert pilot.app.messages == [
+        assert app.messages == [
             ("CellHighlighted", "0/1"),
             ("CellSelected", "0/1"),
         ]
 
 
-async def test_month_calendar_date_selected_message():
+async def test_month_calendar_message_emission():
     app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    expected_messages = []
     async with app.run_test() as pilot:
+        expected_messages.append(("DateHighlighted", datetime.date(2021, 6, 3)))
+        assert app.messages == expected_messages
+
         await pilot.press("enter")
-        assert pilot.app.messages == [("DateSelected", datetime.date(2021, 6, 3))]
+        expected_messages.append(("DateSelected", datetime.date(2021, 6, 3)))
+        assert app.messages == expected_messages
 
+        await pilot.press("right")
+        expected_messages.append(("DateHighlighted", datetime.date(2021, 6, 4)))
+        assert app.messages == expected_messages
 
-async def test_month_calendar_date_selected_message_if_clicked_date_is_outside_month():
-    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
-    async with app.run_test() as pilot:
         await pilot.click(MonthCalendar, offset=(2, 1))
-        assert pilot.app.messages == [("DateSelected", datetime.date(2021, 5, 31))]
+        expected_messages.append(("DateHighlighted", datetime.date(2021, 5, 31)))
+        expected_messages.append(("DateSelected", datetime.date(2021, 5, 31)))
+        expected_messages.append(("DateHighlighted", datetime.date(2021, 5, 31)))
+        assert app.messages == expected_messages
 
-        await pilot.click(MonthCalendar, offset=(7, 6))
-        assert pilot.app.messages == [
-            ("DateSelected", datetime.date(2021, 5, 31)),
-            ("DateSelected", datetime.date(2021, 6, 1)),
-        ]
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        month_calendar.previous_month()
+        expected_messages.append(("DateHighlighted", datetime.date(2021, 5, 31)))
+        expected_messages.append(("DateSelected", datetime.date(2021, 5, 31)))
+        assert app.messages == expected_messages
