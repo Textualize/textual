@@ -422,8 +422,7 @@ TextArea {
             if match_row in range(*self._visible_line_indices):
                 self.refresh_lines(match_row)
 
-        cursor_x, cursor_y = self._cursor_offset
-        self.app.cursor_position = (cursor_x + self.gutter_width, cursor_y)
+        self.app.cursor_position = self.cursor_screen_offset
         self.post_message(self.SelectionChanged(selection, self))
 
     def _recompute_cursor_offset(self):
@@ -1138,7 +1137,8 @@ TextArea {
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
         self._cursor_blink_visible = not self._cursor_blink_visible
-        cursor_row, _ = self.cursor_location
+        cursor_row, _ = self._cursor_offset
+
         self.refresh_lines(cursor_row)
 
     def _restart_blink(self) -> None:
@@ -1345,17 +1345,12 @@ TextArea {
     @property
     def cursor_screen_offset(self) -> Offset:
         """The offset of the cursor relative to the screen."""
-        cursor_row, cursor_column = self.cursor_location
+        cursor_x, cursor_y = self._cursor_offset
         scroll_x, scroll_y = self.scroll_offset
         region_x, region_y, _width, _height = self.content_region
 
-        offset_x = (
-            region_x
-            + self.get_column_width(cursor_row, cursor_column)
-            - scroll_x
-            + self.gutter_width
-        )
-        offset_y = region_y + cursor_row - scroll_y
+        offset_x = region_x + cursor_x - scroll_x + self.gutter_width
+        offset_y = region_y + cursor_y - scroll_y
 
         return Offset(offset_x, offset_y)
 
