@@ -30,8 +30,8 @@ Direction: TypeAlias = Literal[-1, 1]
 In a vertical setting, 1 points down and -1 points up.
 In a horizontal setting, 1 points right and -1 points left.
 """
-_D = TypeVar("_D", bound=Disableable)
-_W = TypeVar("_W", bound="Widget")
+_DisableableType = TypeVar("_DisableableType", bound=Disableable)
+_WidgetType = TypeVar("_WidgetType", bound="Widget")
 
 
 def get_directed_distance(
@@ -69,7 +69,9 @@ def get_directed_distance(
     return direction * (index - start) % wrap_at
 
 
-def find_first_enabled(candidates: Sequence[_D] | Sequence[_W]) -> int | None:
+def find_first_enabled(
+    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
+) -> int | None:
     """Find the first enabled candidate in a sequence of possibly-disabled objects.
 
     Args:
@@ -84,7 +86,9 @@ def find_first_enabled(candidates: Sequence[_D] | Sequence[_W]) -> int | None:
     )
 
 
-def find_last_enabled(candidates: Sequence[_D] | Sequence[_W]) -> int | None:
+def find_last_enabled(
+    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
+) -> int | None:
     """Find the last enabled candidate in a sequence of possibly-disabled objects.
 
     Args:
@@ -105,7 +109,7 @@ def find_last_enabled(candidates: Sequence[_D] | Sequence[_W]) -> int | None:
 
 
 def find_next_enabled(
-    candidates: Sequence[_D] | Sequence[_W],
+    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
     anchor: int | None,
     direction: Direction,
     with_anchor: bool = False,
@@ -151,7 +155,7 @@ def find_next_enabled(
 
 
 def find_next_enabled_no_wrap(
-    candidates: Sequence[_D] | Sequence[_W],
+    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
     anchor: int | None,
     direction: Direction,
     with_anchor: bool = False,

@@ -3,11 +3,11 @@ from __future__ import annotations
 import pytest
 
 from textual.widget_navigation import (
-    distance,
     find_first_enabled,
     find_last_enabled,
     find_next_enabled,
     find_next_enabled_no_wrap,
+    get_directed_distance,
 )
 
 
@@ -36,7 +36,7 @@ E = _D(False)
 )
 def test_distance(index, start, direction, wrap_at, dist):
     assert (
-        distance(
+        get_directed_distance(
             index=index,
             start=start,
             direction=direction,
