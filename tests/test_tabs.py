@@ -13,6 +13,14 @@ async def test_tab_label():
     assert Tab("Pilot").label_text == "Pilot"
 
 
+async def test_tab_relabel():
+    """It should be possible to relabel a tab."""
+    tab = Tab("Pilot")
+    assert tab.label_text == "Pilot"
+    tab.label = "Aeryn"
+    assert tab.label_text == "Aeryn"
+
+
 async def test_compose_empty_tabs():
     """It should be possible to create an empty Tabs."""
 
