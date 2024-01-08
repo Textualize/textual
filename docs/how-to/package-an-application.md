@@ -128,7 +128,7 @@ Keep the following in mind when you want to package your Textual application:
 
 ---
 
-If you need further help, we are here to [help](../help.md).
+If you need further assistance, we are here to [help](../help.md).
 
 [//]: # (REMOVE BEFORE FLIGHT!)
 [//]: # (Local Variables:)
