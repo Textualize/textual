@@ -14,6 +14,34 @@ We recommend first getting familiar with your choice of tool and working with it
 
 While these are concerns for any packaged Python application (and so should be covered by the documentation of your chosen tool), there are two areas to consider with your Textual application that will result in a successful package, publish and install experience:
 
+### Declaring Textual as a dependency
+
+Your deployed application will depend on Textual, so be sure to tell the packaging tool that this is the case; this way, when an end user installs your application with a tool like `pip` or `pipx`, Textual will also be installed.
+The method used to add Textual as a dependency will differ depending on the tool you use, but the result will be an entry being added to `pyproject.toml`:
+
+=== "pyproject.toml (Hatch)"
+
+    ```toml
+    [project]
+    ...
+    dependencies = [
+      "textual",
+    ]
+    ```
+
+=== "pyproject.toml (Poetry)"
+
+    ```toml
+    [tool.poetry.dependencies]
+    ...
+    textual = "*"
+    ```
+
+!!! note
+
+    You may wish to pin the version of Textual; perhaps to a minimum version, or even to the exact version you are using at that the time.
+    Opinions on best practice here do vary.
+
 ### Application entry point and the runnable command
 
 We're going to turn the Textual [calculator example](https://github.com/Textualize/textual/blob/main/examples/calculator.py) into an application that can be packaged, deployed to [PyPi](https://pypi.org/), and installed by users using `pip` or `pipx`.
