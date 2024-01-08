@@ -726,7 +726,6 @@ TextArea {
         return 0
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
-        print(f"wrapping at {self.wrap_width!r}")
         self.wrapped_document.wrap(self.wrap_width)
         self._refresh_size()
 
@@ -1035,7 +1034,6 @@ TextArea {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
-        print(f"wrap offsets = {self.wrapped_document._wrap_offsets}")
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
@@ -1606,8 +1604,7 @@ TextArea {
         cursor_x_offset, _ = self.wrapped_document.location_to_offset(
             self.cursor_location, self.indent_width
         )
-        print(f"recording x offset = {cursor_x_offset}")
-        self.wrapped_document.last_x_offset = cursor_x_offset
+        self._navigator.last_x_offset = cursor_x_offset
 
     # --- Editor operations
     def insert(

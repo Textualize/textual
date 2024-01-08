@@ -342,8 +342,9 @@ class WrappedDocument:
             target_section, x_offset, tab_width
         )
 
-        # If we're on the final section of a line, the cursor can legally rest beyond the end by a single cell.
-        # Otherwise, we'll need to ensure that we're keeping the cursor within the bounds of the target section.
+        # If we're on the final section of a line, the cursor can legally rest beyond
+        # the end by a single cell. Otherwise, we'll need to ensure that we're
+        # keeping the cursor within the bounds of the target section.
         if y_offset != len(sections) - 1 and y_offset != -1:
             target_column_index = min(
                 target_column_index, target_section_start + len(target_section) - 1

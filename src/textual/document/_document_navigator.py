@@ -164,7 +164,9 @@ class DocumentNavigator:
         target_column = 0 if is_end_of_line else column + 1
         return target_row, target_column
 
-    def get_location_above(self, location: Location, tab_width: int) -> Location:
+    def get_location_above(
+        self, location: Location, tab_width: int, maintain_offset: bool = False
+    ) -> Location:
         """Get the location up from the given location in the wrapped document."""
 
         # Get the wrap offsets of the current line.
@@ -182,6 +184,7 @@ class DocumentNavigator:
 
         # Convert that cursor offset to a cell (visual) offset
         current_visual_offset = cell_len(section[:offset_within_section])
+        target_offset = max(current_visual_offset, self.last_x_offset)
 
         # TODO - account for last_x_offset in both branches here.
         if section_index == 0:
@@ -191,7 +194,7 @@ class DocumentNavigator:
             # Get the last section from the line above, and find where to move in it.
             target_row = line_index - 1
             target_column = self._wrapped_document.get_target_document_column(
-                target_row, current_visual_offset, -1, tab_width
+                target_row, target_offset, -1, tab_width
             )
             target_location = target_row, target_column
         else:
@@ -199,7 +202,7 @@ class DocumentNavigator:
             # Since the section above could be shorter, we need to clamp the column
             # to a valid value.
             target_column = self._wrapped_document.get_target_document_column(
-                line_index, current_visual_offset, section_index - 1, tab_width
+                line_index, target_offset, section_index - 1, tab_width
             )
             target_location = line_index, target_column
 
@@ -230,6 +233,7 @@ class DocumentNavigator:
         wrapped_line = self._wrapped_document.get_sections(line_index)
         section = wrapped_line[section_index]
         current_visual_offset = cell_len(section[:offset_within_section])
+        target_offset = max(current_visual_offset, self.last_x_offset)
 
         # If we're at the last section/row of a wrapped line
         if section_index == len(wrapped_line) - 1:
@@ -240,18 +244,17 @@ class DocumentNavigator:
             # Go to the first section of the line below.
             target_row = line_index + 1
             target_column = self._wrapped_document.get_target_document_column(
-                target_row, current_visual_offset, 0, tab_width
+                target_row, target_offset, 0, tab_width
             )
             target_location = target_row, target_column
         else:
             # Stay on the same document line, but move forwards to
             # the location on the section below with the same visual offset.
             target_column = self._wrapped_document.get_target_document_column(
-                line_index, current_visual_offset, section_index + 1, tab_width
+                line_index, target_offset, section_index + 1, tab_width
             )
             target_location = line_index, target_column
 
-        print(target_column)
         return target_location
 
     def get_location_end(self, location: Location) -> Location:
