@@ -295,23 +295,24 @@ class DirectoryTree(Tree[DirEntry]):
         node_label = node._label.copy()
         node_label.stylize(style)
 
+        # If the tree isn't mounted yet we can't use component classes to stylize
+        # the label fully, so we return early.
+        if not self.is_mounted:
+            return node_label
+
         if node._allow_expand:
             prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
-            if self.is_mounted:
-                node_label.stylize_before(
-                    self.get_component_rich_style(
-                        "directory-tree--folder", partial=True
-                    )
-                )
+            node_label.stylize_before(
+                self.get_component_rich_style("directory-tree--folder", partial=True)
+            )
         else:
             prefix = (
                 "📄 ",
                 base_style,
             )
-            if self.is_mounted:
-                node_label.stylize_before(
-                    self.get_component_rich_style("directory-tree--file", partial=True),
-                )
+            node_label.stylize_before(
+                self.get_component_rich_style("directory-tree--file", partial=True),
+            )
             node_label.highlight_regex(
                 r"\..+$",
                 self.get_component_rich_style(
@@ -319,7 +320,7 @@ class DirectoryTree(Tree[DirEntry]):
                 ),
             )
 
-        if node_label.plain.startswith(".") and self.is_mounted:
+        if node_label.plain.startswith("."):
             node_label.stylize_before(
                 self.get_component_rich_style("directory-tree--hidden")
             )
