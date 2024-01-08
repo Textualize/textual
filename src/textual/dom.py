@@ -1279,7 +1279,7 @@ class DOMNode(MessagePump):
         """Check the node has the given pseudo class.
 
         Args:
-            class_name: The pseudo classes to check for.
+            class_name: The pseudo class to check for.
 
         Returns:
             `True` if the DOM node has the pseudo class, `False` if not.
