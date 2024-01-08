@@ -9,11 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Breaking change: DomNode.has_pseudo_class now accepts a single name only https://github.com/Textualize/textual/pull/3970
+- Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 
 ### Added
 
-- Added DomNode.has_psuedo_classes https://github.com/Textualize/textual/pull/3970
+- Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
 
 ## [0.47.1] - 2023-01-05
 

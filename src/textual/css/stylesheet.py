@@ -192,7 +192,6 @@ class Stylesheet:
         """The equivalent TCSS for this stylesheet.
 
         Note that this may not produce the same content as the file(s) used to generate the stylesheet.
-
         """
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 

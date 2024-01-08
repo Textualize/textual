@@ -1282,7 +1282,7 @@ class DOMNode(MessagePump):
             class_name: The pseudo classes to check for.
 
         Returns:
-            `True` if the DOM node has those pseudo classes, `False` if not.
+            `True` if the DOM node has the pseudo class, `False` if not.
         """
         return class_name in self.get_pseudo_classes()
 
