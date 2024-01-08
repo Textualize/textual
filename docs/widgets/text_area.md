@@ -57,9 +57,6 @@ text_area.language = "markdown"
 ```
 
 !!! note
-    Syntax highlighting is unavailable on Python 3.7.
-
-!!! note
     More built-in languages will be added in the future. For now, you can [add your own](#adding-support-for-custom-languages).
 
 
@@ -390,10 +387,6 @@ The easiest way to obtain a `Language` object is using the [`py-tree-sitter-lang
 from tree_sitter_languages import get_language
 java_language = get_language("java")
 ```
-
-!!! note
-
-    `py-tree-sitter-languages` may not be available on some architectures (e.g. Macbooks with Apple Silicon running Python 3.7).
 
 The exact version of the parser used when you call `get_language` can be checked via
 the [`repos.txt` file](https://github.com/grantjenks/py-tree-sitter-languages/blob/a6d4f7c903bf647be1bdcfa504df967d13e40427/repos.txt) in

@@ -12,20 +12,35 @@ from .tokenize import Token
 from .types import Specificity3
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from ..dom import DOMNode
 
 
 class SelectorType(Enum):
+    """Type of selector."""
+
     UNIVERSAL = 1
+    """i.e. * operator"""
     TYPE = 2
+    """A CSS type, e.g  Label"""
     CLASS = 3
+    """CSS class, e.g. .loaded"""
     ID = 4
+    """CSS ID, e.g. #main"""
+    NESTED = 5
+    """Placeholder for nesting operator, i.e &"""
 
 
 class CombinatorType(Enum):
+    """Type of combinator."""
+
     SAME = 1
+    """Selector is combined with previous selector"""
     DESCENDENT = 2
+    """Selector is a descendant of the previous selector"""
     CHILD = 3
+    """Selector is an immediate child of the previous selector"""
 
 
 @dataclass
@@ -106,7 +121,7 @@ class Selector:
         return True
 
     def _check_id(self, node: DOMNode) -> bool:
-        if not node.id == self.name:
+        if node.id != self.name:
             return False
         if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
             return False
@@ -115,6 +130,8 @@ class Selector:
 
 @dataclass
 class Declaration:
+    """A single CSS declaration (not yet processed)."""
+
     token: Token
     name: str
     tokens: list[Token] = field(default_factory=list)
@@ -123,6 +140,8 @@ class Declaration:
 @rich.repr.auto(angular=True)
 @dataclass
 class SelectorSet:
+    """A set of selectors associated with a rule set."""
+
     selectors: list[Selector] = field(default_factory=list)
     specificity: Specificity3 = (0, 0, 0)
 
@@ -139,6 +158,21 @@ class SelectorSet:
         selectors = RuleSet._selector_to_css(self.selectors)
         yield selectors
         yield None, self.specificity
+
+    def _total_specificity(self) -> Self:
+        """Calculate total specificity of selectors.
+
+        Returns:
+            Self.
+        """
+        id_total = class_total = type_total = 0
+        for selector in self.selectors:
+            _id, _class, _type = selector.specificity
+            id_total += _id
+            class_total += _class
+            type_total += _type
+        self.specificity = (id_total, class_total, type_total)
+        return self
 
     @classmethod
     def from_selectors(cls, selectors: list[list[Selector]]) -> Iterable[SelectorSet]:
@@ -161,6 +195,7 @@ class RuleSet:
     is_default_rules: bool = False
     tie_breaker: int = 0
     selector_names: set[str] = field(default_factory=set)
+    pseudo_classes: set[str] = field(default_factory=set)
 
     def __hash__(self):
         return id(self)
@@ -174,8 +209,7 @@ class RuleSet:
             elif selector.combinator == CombinatorType.CHILD:
                 tokens.append(" > ")
             tokens.append(selector.css)
-            for pseudo_class in selector.pseudo_classes:
-                tokens.append(f":{pseudo_class}")
+
         return "".join(tokens).strip()
 
     @property
@@ -205,31 +239,20 @@ class RuleSet:
         type_type = SelectorType.TYPE
         universal_type = SelectorType.UNIVERSAL
 
-        update_selectors = self.selector_names.update
+        add_selector = self.selector_names.add
+        add_pseudo_classes = self.pseudo_classes.update
 
         for selector_set in self.selector_set:
-            update_selectors(
-                "*"
-                for selector in selector_set.selectors
-                if selector.type == universal_type
-            )
-            update_selectors(
-                selector.name
-                for selector in selector_set.selectors
-                if selector.type == type_type
-            )
-            update_selectors(
-                f".{selector.name}"
-                for selector in selector_set.selectors
-                if selector.type == class_type
-            )
-            update_selectors(
-                f"#{selector.name}"
-                for selector in selector_set.selectors
-                if selector.type == id_type
-            )
-            update_selectors(
-                f":{pseudo_class}"
-                for selector in selector_set.selectors
-                for pseudo_class in selector.pseudo_classes
-            )
+            for selector in selector_set.selectors:
+                add_pseudo_classes(selector.pseudo_classes)
+
+            selector = selector_set.selectors[-1]
+            selector_type = selector.type
+            if selector_type == universal_type:
+                add_selector("*")
+            elif selector_type == type_type:
+                add_selector(selector.name)
+            elif selector_type == class_type:
+                add_selector(f".{selector.name}")
+            elif selector_type == id_type:
+                add_selector(f"#{selector.name}")

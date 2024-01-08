@@ -42,6 +42,14 @@ LineCacheKey: TypeAlias = "tuple[int | tuple, ...]"
 TOGGLE_STYLE = Style.from_meta({"toggle": True})
 
 
+class RemoveRootError(Exception):
+    """Exception raised when trying to remove the root of a [`TreeNode`][textual.widgets.tree.TreeNode]."""
+
+
+class UnknownNodeID(Exception):
+    """Exception raised when referring to an unknown [`TreeNode`][textual.widgets.tree.TreeNode] ID."""
+
+
 @dataclass
 class _TreeLine(Generic[TreeDataType]):
     path: list[TreeNode[TreeDataType]]
@@ -352,9 +360,6 @@ class TreeNode(Generic[TreeDataType]):
         node = self.add(label, data, expand=False, allow_expand=False)
         return node
 
-    class RemoveRootError(Exception):
-        """Exception raised when trying to remove a tree's root node."""
-
     def _remove_children(self) -> None:
         """Remove child nodes of this node.
 
@@ -381,10 +386,10 @@ class TreeNode(Generic[TreeDataType]):
         """Remove this node from the tree.
 
         Raises:
-            TreeNode.RemoveRootError: If there is an attempt to remove the root.
+            RemoveRootError: If there is an attempt to remove the root.
         """
         if self.is_root:
-            raise self.RemoveRootError("Attempt to remove the root node of a Tree.")
+            raise RemoveRootError("Attempt to remove the root node of a Tree.")
         self._remove()
         self._tree._invalidate()
 
@@ -392,6 +397,11 @@ class TreeNode(Generic[TreeDataType]):
         """Remove any child nodes of this node."""
         self._remove_children()
         self._tree._invalidate()
+
+    def refresh(self) -> None:
+        """Initiate a refresh (repaint) of this node."""
+        self._updates += 1
+        self._tree._refresh_line(self._line)
 
 
 class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
@@ -707,13 +717,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._current_id = 0
         root_label = self.root._label
         root_data = self.root.data
+        root_expanded = self.root.is_expanded
         self.root = TreeNode(
             self,
             None,
             self._new_id(),
             root_label,
             root_data,
-            expanded=True,
+            expanded=root_expanded,
         )
         self._updates += 1
         self.refresh()
@@ -758,9 +769,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             return line.node
 
-    class UnknownNodeID(Exception):
-        """Exception raised when referring to an unknown `TreeNode` ID."""
-
     def get_node_by_id(self, node_id: NodeID) -> TreeNode[TreeDataType]:
         """Get a tree node by its ID.
 
@@ -771,12 +779,12 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             The node associated with that ID.
 
         Raises:
-            Tree.UnknownID: Raised if the `TreeNode` ID is unknown.
+            UnknownNodeID: Raised if the `TreeNode` ID is unknown.
         """
         try:
             return self._tree_nodes[node_id]
         except KeyError:
-            raise self.UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
+            raise UnknownNodeID(f"Unknown NodeID ({node_id}) in tree") from None
 
     def validate_cursor_line(self, value: int) -> int:
         """Prevent cursor line from going outside of range.
@@ -897,7 +905,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         region = self._get_label_region(line)
         if region is not None:
-            self.scroll_to_region(region, animate=animate)
+            self.scroll_to_region(region, animate=animate, force=True)
 
     def scroll_to_node(
         self, node: TreeNode[TreeDataType], animate: bool = True
@@ -912,7 +920,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         if line != -1:
             self.scroll_to_line(line, animate=animate)
 
-    def refresh_line(self, line: int) -> None:
+    def _refresh_line(self, line: int) -> None:
         """Refresh (repaint) a given line in the tree.
 
         Args:
@@ -937,7 +945,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         visible_lines = self._tree_lines[scroll_y : scroll_y + height]
         for line_no, line in enumerate(visible_lines, scroll_y):
             if node in line.path:
-                self.refresh_line(line_no)
+                self._refresh_line(line_no)
 
     @property
     def _tree_lines(self) -> list[_TreeLine]:

@@ -73,16 +73,26 @@ class HorizontalLayout(Layout):
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
-        for widget, box_model, margin in zip(children, box_models, margins):
+        for widget, (content_width, content_height, box_margin), margin in zip(
+            children, box_models, margins
+        ):
             overlay = widget.styles.overlay == "screen"
-            content_width, content_height, box_margin = box_model
             offset_y = box_margin.top
             next_x = x + content_width
-            region = _Region(
-                int(x), offset_y, int(next_x - int(x)), int(content_height)
-            )
             add_placement(
-                _WidgetPlacement(region, box_model.margin, widget, 0, False, overlay)
+                _WidgetPlacement(
+                    _Region(
+                        int(x),
+                        offset_y,
+                        int(next_x - int(x)),
+                        int(content_height),
+                    ),
+                    box_margin,
+                    widget,
+                    0,
+                    False,
+                    overlay,
+                )
             )
             if not overlay:
                 x = next_x + margin

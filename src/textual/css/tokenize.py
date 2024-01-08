@@ -47,6 +47,7 @@ DECLARATION_VALUES = {
 # in the CSS file. At this level we might expect to see selectors, comments,
 # variable definitions etc.
 expect_root_scope = Expect(
+    "selector or end of file",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
@@ -55,11 +56,27 @@ expect_root_scope = Expect(
     selector_start_universal=r"\*",
     selector_start=IDENTIFIER,
     variable_name=rf"{VARIABLE_REF}:",
+    declaration_set_end=r"\}",
 ).expect_eof(True)
+
+expect_root_nested = Expect(
+    "selector or end of file",
+    whitespace=r"\s+",
+    comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
+    selector_start_id=r"\#" + IDENTIFIER,
+    selector_start_class=r"\." + IDENTIFIER,
+    selector_start_universal=r"\*",
+    selector_start=IDENTIFIER,
+    variable_name=rf"{VARIABLE_REF}:",
+    declaration_set_end=r"\}",
+    nested=r"\&",
+)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
 #              for tokenizing variable value ------^~~~~~~^
 expect_variable_name_continue = Expect(
+    "variable value",
     variable_value_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -68,12 +85,14 @@ expect_variable_name_continue = Expect(
 ).expect_eof(True)
 
 expect_comment_end = Expect(
+    "comment end",
     comment_end=re.escape("*/"),
 )
 
 # After we come across a selector in CSS e.g. ".my-class", we may
 # find other selectors, pseudo-classes... e.g. ".my-class :hover"
 expect_selector_continue = Expect(
+    "selector or {",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
@@ -85,19 +104,28 @@ expect_selector_continue = Expect(
     combinator_child=">",
     new_selector=r",",
     declaration_set_start=r"\{",
-)
+    declaration_set_end=r"\}",
+).expect_eof(True)
 
 # A rule declaration e.g. "text: red;"
 #                          ^---^
 expect_declaration = Expect(
+    "rule or selector",
+    nested=r"\&",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
     declaration_name=r"[a-zA-Z_\-]+\:",
     declaration_set_end=r"\}",
+    #
+    selector_start_id=r"\#" + IDENTIFIER,
+    selector_start_class=r"\." + IDENTIFIER,
+    selector_start_universal=r"\*",
+    selector_start=IDENTIFIER,
 )
 
 expect_declaration_solo = Expect(
+    "rule declaration",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
@@ -108,6 +136,7 @@ expect_declaration_solo = Expect(
 # The value(s)/content from a rule declaration e.g. "text: red;"
 #                                                         ^---^
 expect_declaration_content = Expect(
+    "rule value or end of declaration",
     declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -119,6 +148,7 @@ expect_declaration_content = Expect(
 )
 
 expect_declaration_content_solo = Expect(
+    "rule value or end of declaration",
     declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -156,7 +186,8 @@ class TokenizerState:
         "declaration_set_start": expect_declaration,
         "declaration_name": expect_declaration_content,
         "declaration_end": expect_declaration,
-        "declaration_set_end": expect_root_scope,
+        "declaration_set_end": expect_root_nested,
+        "nested": expect_selector_continue,
     }
 
     def __call__(self, code: str, read_from: CSSLocation) -> Iterable[Token]:
@@ -164,6 +195,7 @@ class TokenizerState:
         expect = self.EXPECT
         get_token = tokenizer.get_token
         get_state = self.STATE_MAP.get
+        nest_level = 0
         while True:
             token = get_token(expect)
             name = token.name
@@ -174,6 +206,13 @@ class TokenizerState:
                 continue
             elif name == "eof":
                 break
+            elif name == "declaration_set_start":
+                nest_level += 1
+            elif name == "declaration_set_end":
+                nest_level -= 1
+                expect = expect_root_nested if nest_level else expect_root_scope
+                yield token
+                continue
             expect = get_state(name, expect)
             yield token
 

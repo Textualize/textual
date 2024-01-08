@@ -243,10 +243,20 @@ class XTermParser(Parser[events.Event]):
             Keys
         """
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
-        if keys is not None:
+        if isinstance(keys, tuple):
+            # If the sequence mapped to a tuple, then it's values from the
+            # `Keys` enum. Raise key events from what we find in the tuple.
             for key in keys:
                 yield events.Key(key.value, sequence if len(sequence) == 1 else None)
-        elif len(sequence) == 1:
+            return
+        # If keys is a string, the intention is that it's a mapping to a
+        # character, which should really be treated as the sequence for the
+        # purposes of the next step...
+        if isinstance(keys, str):
+            sequence = keys
+        # If the sequence is a single character, attempt to process it as a
+        # key.
+        if len(sequence) == 1:
             try:
                 if not sequence.isalnum():
                     name = _character_to_key(sequence)

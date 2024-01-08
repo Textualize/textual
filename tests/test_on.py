@@ -134,11 +134,11 @@ async def test_on_arbitrary_attributes() -> None:
         def on_mount(self) -> None:
             self.query_one(TabbedContent).add_class("tabs")
 
-        @on(TabbedContent.TabActivated, tab="#one")
+        @on(TabbedContent.TabActivated, pane="#one")
         def one(self) -> None:
             log.append("one")
 
-        @on(TabbedContent.TabActivated, ".tabs", tab="#two")
+        @on(TabbedContent.TabActivated, pane="#two")
         def two(self) -> None:
             log.append("two")
 
@@ -188,7 +188,6 @@ async def test_fire_on_inherited_message() -> None:
         def on_mount(self) -> None:
             self.query_one(MessageSender).post_parent()
             self.query_one(MessageSender).post_child()
-
 
     async with InheritTestApp().run_test():
         pass

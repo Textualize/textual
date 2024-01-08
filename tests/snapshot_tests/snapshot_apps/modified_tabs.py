@@ -18,9 +18,9 @@ class FiddleWithTabsApp(App[None]):
             yield Button()
 
     def on_mount(self) -> None:
-        self.query_one(TabbedContent).disable_tab(f"tab-1")
-        self.query_one(TabbedContent).disable_tab(f"tab-2")
-        self.query_one(TabbedContent).hide_tab(f"tab-3")
+        self.query_one(TabbedContent).disable_tab("tab-1")
+        self.query_one(TabbedContent).disable_tab("tab-2")
+        self.query_one(TabbedContent).hide_tab("tab-3")
 
 
 if __name__ == "__main__":

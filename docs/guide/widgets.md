@@ -42,7 +42,7 @@ This (very simple) custom widget may be [styled](./styles.md) in the same way as
 
 === "hello02.tcss"
 
-    ```sass title="hello02.tcss"
+    ```css title="hello02.tcss"
     --8<-- "docs/examples/guide/widgets/hello02.tcss"
     ```
 
@@ -65,7 +65,7 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 === "hello03.tcss"
 
-    ```sass title="hello03.tcss"
+    ```css title="hello03.tcss"
     --8<-- "docs/examples/guide/widgets/hello03.tcss"
     ```
 
@@ -94,7 +94,7 @@ Here's the Hello example again, this time the widget has embedded default CSS:
 
 === "hello04.tcss"
 
-    ```sass title="hello04.tcss"
+    ```css title="hello04.tcss"
     --8<-- "docs/examples/guide/widgets/hello04.tcss"
     ```
 
@@ -137,7 +137,7 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 
 === "hello05.tcss"
 
-    ```sass title="hello05.tcss"
+    ```css title="hello05.tcss"
     --8<-- "docs/examples/guide/widgets/hello05.tcss"
     ```
 
@@ -175,7 +175,7 @@ Let's demonstrate setting a title, both as a class variable and a instance varia
 
 === "hello06.tcss"
 
-    ```sass title="hello06.tcss"
+    ```css title="hello06.tcss"
     --8<-- "docs/examples/guide/widgets/hello06.tcss"
     ```
 
@@ -206,7 +206,7 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
 
 === "fizzbuzz01.tcss"
 
-    ```sass title="fizzbuzz01.tcss" hl_lines="32-35"
+    ```css title="fizzbuzz01.tcss" hl_lines="32-35"
     --8<-- "docs/examples/guide/widgets/fizzbuzz01.tcss"
     ```
 
@@ -230,7 +230,7 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 
 === "fizzbuzz02.tcss"
 
-    ```sass title="fizzbuzz02.tcss"
+    ```css title="fizzbuzz02.tcss"
     --8<-- "docs/examples/guide/widgets/fizzbuzz02.tcss"
     ```
 

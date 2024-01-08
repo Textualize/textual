@@ -30,7 +30,7 @@ This example adds a widget with 50% width of the screen.
 
 === "width.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/styles/width.tcss"
     ```
 
@@ -51,7 +51,7 @@ This example adds a widget with 50% width of the screen.
 
 === "width_comparison.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
+    ```css hl_lines="2 5 8 11 14 17 20 23 26"
     --8<-- "docs/examples/styles/width_comparison.tcss"
     ```
 
@@ -74,7 +74,7 @@ This example adds a widget with 50% width of the screen.
 
 ## CSS
 
-```sass
+```css
 /* Explicit cell width */
 width: 10;
 

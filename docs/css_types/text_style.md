@@ -23,7 +23,7 @@ or any _space-separated_ combination of the following values:
 
 ### CSS
 
-```sass
+```css
 #label1 {
     /* You can specify any value by itself. */
     rule: strike;

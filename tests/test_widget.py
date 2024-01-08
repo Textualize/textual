@@ -194,7 +194,8 @@ def test_get_pseudo_class_state_disabled():
 
 def test_get_pseudo_class_state_parent_disabled():
     child = Widget()
-    _parent = Widget(child, disabled=True)
+    _parent = Widget(disabled=True)
+    child._attach(_parent)
     pseudo_classes = child.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
 
@@ -394,3 +395,44 @@ async def test_is_mounted_property():
         assert widget.is_mounted is False
         await pilot.app.mount(widget)
         assert widget.is_mounted is True
+
+
+async def test_mount_error_not_widget():
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield {}
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass
+
+
+async def test_mount_error_bad_widget():
+    class DaftWidget(Widget):
+        def __init__(self):
+            # intentionally missing super()
+            pass
+
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield DaftWidget()
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass
+
+
+async def test_render_returns_text():
+    """Test that render processes console markup when returning a string."""
+
+    # Regression test for https://github.com/Textualize/textual/issues/3918
+    class SimpleWidget(Widget):
+        def render(self) -> str:
+            return "Hello [b]World[/b]!"
+
+    widget = SimpleWidget()
+    render_result = widget._render()
+    assert isinstance(render_result, Text)
+    assert render_result.plain == "Hello World!"

@@ -69,6 +69,6 @@ The tree widget provides the following component classes:
 
 ---
 
-::: textual.widgets.tree.TreeNode
+::: textual.widgets.tree
     options:
       heading_level: 2

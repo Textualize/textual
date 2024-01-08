@@ -41,7 +41,7 @@ It also shows that `link-style` does not affect hyperlinks.
 
 === "link_style.tcss"
 
-    ```sass hl_lines="2 6 10"
+    ```css hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_style.tcss"
     ```
 
@@ -49,7 +49,7 @@ It also shows that `link-style` does not affect hyperlinks.
 
 ## CSS
 
-```sass
+```css
 link-style: bold;
 link-style: bold italic reverse;
 ```
@@ -63,5 +63,5 @@ widget.styles.link_style = "bold italic reverse"
 
 ## See also
 
- - [`link-hover-style](./link_hover_style.md) to set the style of link text when the mouse pointer is over it.
+ - [`link-style-hover](./link_style_hover.md) to set the style of link text when the mouse pointer is over it.
  - [`text-style`](../text_style.md) to set the style of text in a widget.

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.41.0"
+version = "0.47.1"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -17,7 +17,6 @@ classifiers = [
     "Operating System :: Microsoft :: Windows :: Windows 11",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -41,11 +40,10 @@ include = [
 "Bug Tracker" = "https://github.com/Textualize/textual/issues"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 rich = ">=13.3.3"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 #rich = {path="../rich", develop=true}
-importlib-metadata = ">=4.11.3"
 typing-extensions = "^4.4.0"
 tree-sitter = { version = "^0.20.1", optional = true }
 tree_sitter_languages = { version = ">=1.7.0", optional = true }
@@ -64,7 +62,6 @@ mkdocstrings-python = "0.10.1"
 mkdocs-material = "^9.0.11"
 mkdocs-exclude = "^1.0.2"
 pre-commit = "^2.13.0"
-pytest-aiohttp = "^1.0.4"
 time-machine = "^2.6.0"
 mkdocs-rss-plugin = "^1.5.0"
 httpx = "^0.23.1"
@@ -74,6 +71,7 @@ pytest-asyncio = "*"
 pytest-textual-snapshot = ">=0.4.0"
 types-tree-sitter = "^0.20.1.4"
 types-tree-sitter-languages = "^1.7.0.1"
+griffe = "0.32.3"
 
 [tool.black]
 includes = "src"
@@ -84,6 +82,7 @@ testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "integration_test: marks tests as slow integration tests (deselect with '-m \"not integration_test\"')",
+    "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
 
 [build-system]

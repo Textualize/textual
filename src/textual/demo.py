@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from importlib.metadata import version
 from pathlib import Path
 
-from importlib_metadata import version
 from rich import box
 from rich.console import RenderableType
 from rich.json import JSON

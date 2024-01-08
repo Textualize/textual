@@ -45,109 +45,99 @@ class Button(Widget, can_focus=True):
         text-align: center;
         content-align: center middle;
         text-style: bold;
-    }
 
-    Button:focus {
-        text-style: bold reverse;
-    }
+        &:focus {
+            text-style: bold reverse;
+        }
+        &:hover {
+            border-top: tall $panel;
+            background: $panel-darken-2;
+            color: $text;
+        }
+        &.-active {
+            background: $panel;
+            border-bottom: tall $panel-lighten-2;
+            border-top: tall $panel-darken-2;
+            tint: $background 30%;
+        }
 
-    Button:hover {
-        border-top: tall $panel;
-        background: $panel-darken-2;
-        color: $text;
-    }
+        &.-primary {            
+            background: $primary;
+            color: $text;
+            border-top: tall $primary-lighten-3;
+            border-bottom: tall $primary-darken-3;      
+                  
+            &:hover {
+                background: $primary-darken-2;
+                color: $text;
+                border-top: tall $primary;                
+            }
 
-    Button.-active {
-        background: $panel;
-        border-bottom: tall $panel-lighten-2;
-        border-top: tall $panel-darken-2;
-        tint: $background 30%;
-    }
+            &.-active {
+                background: $primary;
+                border-bottom: tall $primary-lighten-3;
+                border-top: tall $primary-darken-3;
+            }
+        }
 
-    /* Primary variant */
-    Button.-primary {
-        background: $primary;
-        color: $text;
-        border-top: tall $primary-lighten-3;
-        border-bottom: tall $primary-darken-3;
+        &.-success {
+            background: $success;
+            color: $text;
+            border-top: tall $success-lighten-2;
+            border-bottom: tall $success-darken-3;
 
-    }
+            &:hover {
+                background: $success-darken-2;
+                color: $text;
+                border-top: tall $success;
+            }
 
-    Button.-primary:hover {
-        background: $primary-darken-2;
-        color: $text;
-        border-top: tall $primary;
-    }
+            &.-active {
+                background: $success;
+                border-bottom: tall $success-lighten-2;
+                border-top: tall $success-darken-2;
+            }
+        }
 
-    Button.-primary.-active {
-        background: $primary;
-        border-bottom: tall $primary-lighten-3;
-        border-top: tall $primary-darken-3;
-    }
+        &.-warning{
+            background: $warning;
+            color: $text;
+            border-top: tall $warning-lighten-2;
+            border-bottom: tall $warning-darken-3;
 
+            &:hover {
+                background: $warning-darken-2;
+                color: $text;
+                border-top: tall $warning;
+            }
 
-    /* Success variant */
-    Button.-success {
-        background: $success;
-        color: $text;
-        border-top: tall $success-lighten-2;
-        border-bottom: tall $success-darken-3;
-    }
+            &.-active {
+                background: $warning;
+                border-bottom: tall $warning-lighten-2;
+                border-top: tall $warning-darken-2;
+            }
+        }
 
-    Button.-success:hover {
-        background: $success-darken-2;
-        color: $text;
-        border-top: tall $success;
-    }
+        &.-error {
+            background: $error;
+            color: $text;
+            border-top: tall $error-lighten-2;
+            border-bottom: tall $error-darken-3;
 
-    Button.-success.-active {
-        background: $success;
-        border-bottom: tall $success-lighten-2;
-        border-top: tall $success-darken-2;
-    }
+            &:hover {
+                background: $error-darken-1;
+                color: $text;
+                border-top: tall $error;
+            }
 
+            &.-active {
+                background: $error;
+                border-bottom: tall $error-lighten-2;
+                border-top: tall $error-darken-2;
+            }
 
-    /* Warning variant */
-    Button.-warning {
-        background: $warning;
-        color: $text;
-        border-top: tall $warning-lighten-2;
-        border-bottom: tall $warning-darken-3;
-    }
+        }
 
-    Button.-warning:hover {
-        background: $warning-darken-2;
-        color: $text;
-        border-top: tall $warning;
-
-    }
-
-    Button.-warning.-active {
-        background: $warning;
-        border-bottom: tall $warning-lighten-2;
-        border-top: tall $warning-darken-2;
-    }
-
-
-    /* Error variant */
-    Button.-error {
-        background: $error;
-        color: $text;
-        border-top: tall $error-lighten-2;
-        border-bottom: tall $error-darken-3;
-
-    }
-
-    Button.-error:hover {
-        background: $error-darken-1;
-        color: $text;
-        border-top: tall $error;
-    }
-
-    Button.-error.-active {
-        background: $error;
-        border-bottom: tall $error-lighten-2;
-        border-top: tall $error-darken-2;
     }
     """
 
@@ -156,7 +146,7 @@ class Button(Widget, can_focus=True):
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
-    variant = reactive("default")
+    variant = reactive("default", init=False)
     """The variant name for the button."""
 
     class Pressed(Message):
@@ -204,10 +194,8 @@ class Button(Widget, can_focus=True):
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = self.validate_label(label)
-
-        self.variant = self.validate_variant(variant)
-
+        self.label = label
+        self.variant = variant
         self.active_effect_duration = 0.3
         """Amount of time in seconds the button 'press' animation lasts."""
 

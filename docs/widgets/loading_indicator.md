@@ -28,7 +28,7 @@ You can set the color of the loading indicator by setting its `color` style.
 
 Here's how you would do that with CSS:
 
-```sass
+```css
 LoadingIndicator {
     color: red;
 }

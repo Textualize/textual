@@ -23,6 +23,7 @@ from ._style_properties import (
     DockProperty,
     FractionalProperty,
     IntegerProperty,
+    KeylineProperty,
     LayoutProperty,
     NameListProperty,
     NameProperty,
@@ -109,6 +110,8 @@ class RulesMap(TypedDict, total=False):
     outline_bottom: tuple[str, Color]
     outline_left: tuple[str, Color]
 
+    keyline: tuple[str, Color]
+
     box_sizing: BoxSizing
     width: Scalar
     height: Scalar
@@ -167,10 +170,10 @@ class RulesMap(TypedDict, total=False):
     link_background: Color
     link_style: Style
 
-    link_hover_color: Color
-    auto_link_hover_color: bool
-    link_hover_background: Color
-    link_hover_style: Style
+    link_color_hover: Color
+    auto_link_color_hover: bool
+    link_background_hover: Color
+    link_style_hover: Style
 
     auto_border_title_color: bool
     border_title_color: Color
@@ -224,8 +227,8 @@ class StylesBase(ABC):
         "scrollbar_background_active",
         "link_color",
         "link_background",
-        "link_hover_color",
-        "link_hover_background",
+        "link_color_hover",
+        "link_background_hover",
     }
 
     node: DOMNode | None = None
@@ -264,6 +267,8 @@ class StylesBase(ABC):
     outline_right = BoxProperty(Color(0, 255, 0))
     outline_bottom = BoxProperty(Color(0, 255, 0))
     outline_left = BoxProperty(Color(0, 255, 0))
+
+    keyline = KeylineProperty()
 
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
     width = ScalarProperty(percent_unit=Unit.WIDTH)
@@ -334,10 +339,10 @@ class StylesBase(ABC):
     link_background = ColorProperty("transparent")
     link_style = StyleFlagsProperty()
 
-    link_hover_color = ColorProperty("transparent")
-    auto_link_hover_color = BooleanProperty(False)
-    link_hover_background = ColorProperty("transparent")
-    link_hover_style = StyleFlagsProperty()
+    link_color_hover = ColorProperty("transparent")
+    auto_link_color_hover = BooleanProperty(False)
+    link_background_hover = ColorProperty("transparent")
+    link_style_hover = StyleFlagsProperty()
 
     auto_border_title_color = BooleanProperty(default=False)
     border_title_color = ColorProperty(Color(255, 255, 255, 0))
@@ -708,13 +713,15 @@ class Styles(StylesBase):
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
     ) -> None:
-        if parent and self.node and self.node.parent:
-            self.node.parent.refresh()
-        if self.node is not None:
-            self.node.refresh(layout=layout)
-            if children:
-                for child in self.node.walk_children(with_self=False, reverse=True):
-                    child.refresh(layout=layout)
+        node = self.node
+        if node is None or not node._is_mounted:
+            return
+        if parent and node._parent is not None:
+            node._parent.refresh()
+        node.refresh(layout=layout)
+        if children:
+            for child in node.walk_children(with_self=False, reverse=True):
+                child.refresh(layout=layout)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
@@ -752,11 +759,12 @@ class Styles(StylesBase):
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-        rules = [
+        default_rules = 0 if is_default_rules else 1
+        rules: list[tuple[str, Specificity6, Any]] = [
             (
                 rule_name,
                 (
-                    0 if is_default_rules else 1,
+                    default_rules,
                     1 if is_important(rule_name) else 0,
                     *specificity,
                     tie_breaker,
@@ -1019,12 +1027,12 @@ class Styles(StylesBase):
         if "link_style" in rules:
             append_declaration("link-style", str(self.link_style))
 
-        if "link_hover_color" in rules:
-            append_declaration("link-hover-color", self.link_hover_color.css)
-        if "link_hover_background" in rules:
-            append_declaration("link-hover-background", self.link_hover_background.css)
-        if "link_hover_style" in rules:
-            append_declaration("link-hover-style", str(self.link_hover_style))
+        if "link_color_hover" in rules:
+            append_declaration("link-color-hover", self.link_color_hover.css)
+        if "link_background_hover" in rules:
+            append_declaration("link-background-hover", self.link_background_hover.css)
+        if "link_style_hover" in rules:
+            append_declaration("link-style-hover", str(self.link_style_hover))
 
         if "border_title_color" in rules:
             append_declaration("title-color", self.border_title_color.css)
@@ -1045,6 +1053,10 @@ class Styles(StylesBase):
             append_declaration("overlay", str(self.overlay))
         if "constrain" in rules:
             append_declaration("constrain", str(self.constrain))
+        if "keyline" in rules:
+            keyline_type, keyline_color = self.keyline
+            if keyline_type != "none":
+                append_declaration("keyline", f"{keyline_type}, {keyline_color.css}")
         lines.sort()
         return lines
 

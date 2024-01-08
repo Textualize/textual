@@ -2,8 +2,8 @@ from textual.app import App
 from textual.widgets import Label
 
 
-class LinkHoverStyleApp(App):
-    CSS_PATH = "link_hover_style.tcss"
+class LinkHoverBackgroundApp(App):
+    CSS_PATH = "link_background_hover.tcss"
 
     def compose(self):
         yield Label(
@@ -25,5 +25,5 @@ class LinkHoverStyleApp(App):
 
 
 if __name__ == "__main__":
-    app = LinkHoverStyleApp()
+    app = LinkHoverBackgroundApp()
     app.run()
