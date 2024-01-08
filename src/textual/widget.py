@@ -42,7 +42,6 @@ from typing_extensions import Self
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -52,6 +51,7 @@ from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
+from .cache import FIFOCache
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen

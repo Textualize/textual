@@ -10,11 +10,11 @@ from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
 from .. import events
-from .._cache import LRUCache
 from .._immutable_sequence_view import ImmutableSequenceView
 from .._loop import loop_last
 from .._segment_tools import line_pad
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..geometry import Region, Size, clamp
 from ..message import Message
 from ..reactive import reactive, var

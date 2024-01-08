@@ -10,8 +10,8 @@ from rich.style import Style
 from rich.text import Text
 
 from .. import work
-from .._cache import LRUCache
 from .._line_split import line_split
+from ..cache import LRUCache
 from ..geometry import Size
 from ..reactive import var
 from ..scroll_view import ScrollView
