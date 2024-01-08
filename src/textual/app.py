@@ -428,7 +428,7 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stacks: dict[str, list[Screen]] = {"_default": []}
+        self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
         """A stack of screens per mode."""
         self._current_mode: str = "_default"
         """The current mode the app is in."""
@@ -722,7 +722,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_headless
 
     @property
-    def screen_stack(self) -> Sequence[Screen]:
+    def screen_stack(self) -> Sequence[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:
@@ -731,7 +731,7 @@ class App(Generic[ReturnType], DOMNode):
         return self._screen_stacks[self._current_mode].copy()
 
     @property
-    def _screen_stack(self) -> list[Screen]:
+    def _screen_stack(self) -> list[Screen[Any]]:
         """A reference to the current screen stack.
 
         Note:
