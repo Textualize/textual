@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from functools import partial
 from typing import TYPE_CHECKING, Iterable
 
 import rich.repr
@@ -12,6 +13,8 @@ from .tokenize import Token
 from .types import Specificity3
 
 if TYPE_CHECKING:
+    from typing import Callable
+
     from typing_extensions import Self
 
     from ..dom import DOMNode
@@ -43,6 +46,67 @@ class CombinatorType(Enum):
     """Selector is an immediate child of the previous selector"""
 
 
+def _check_universal(name: str, node: DOMNode) -> bool:
+    """Check node matches universal selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return True
+
+
+def _check_type(name: str, node: DOMNode) -> bool:
+    """Check node matches a type selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return name in node._css_type_names
+
+
+def _check_class(name: str, node: DOMNode) -> bool:
+    """Check node matches a class selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return name in node._classes
+
+
+def _check_id(name: str, node: DOMNode) -> bool:
+    """Check node matches an ID selector.
+
+    Args:
+        name: Selector name.
+        node: A DOM node.
+
+    Returns:
+        `True` if the selector matches.
+    """
+    return node.id == name
+
+
+_CHECKS = {
+    SelectorType.UNIVERSAL: _check_universal,
+    SelectorType.TYPE: _check_type,
+    SelectorType.CLASS: _check_class,
+    SelectorType.ID: _check_id,
+    SelectorType.NESTED: _check_universal,
+}
+
+
 @dataclass
 class Selector:
     """Represents a CSS selector.
@@ -57,14 +121,17 @@ class Selector:
     name: str
     combinator: CombinatorType = CombinatorType.DESCENDENT
     type: SelectorType = SelectorType.TYPE
-    pseudo_classes: list[str] = field(default_factory=list)
+    pseudo_classes: set[str] = field(default_factory=set)
     specificity: Specificity3 = field(default_factory=lambda: (0, 0, 0))
     advance: int = 1
+
+    def __post_init__(self) -> None:
+        self._check: Callable[[DOMNode], bool] = partial(_CHECKS[self.type], self.name)
 
     @property
     def css(self) -> str:
         """Rebuilds the selector as it would appear in CSS."""
-        pseudo_suffix = "".join(f":{name}" for name in self.pseudo_classes)
+        pseudo_suffix = "".join(f":{name}" for name in sorted(self.pseudo_classes))
         if self.type == SelectorType.UNIVERSAL:
             return "*"
         elif self.type == SelectorType.TYPE:
@@ -74,21 +141,13 @@ class Selector:
         else:
             return f"#{self.name}{pseudo_suffix}"
 
-    def __post_init__(self) -> None:
-        self._checks = {
-            SelectorType.UNIVERSAL: self._check_universal,
-            SelectorType.TYPE: self._check_type,
-            SelectorType.CLASS: self._check_class,
-            SelectorType.ID: self._check_id,
-        }
-
     def _add_pseudo_class(self, pseudo_class: str) -> None:
         """Adds a pseudo class and updates specificity.
 
         Args:
             pseudo_class: Name of pseudo class.
         """
-        self.pseudo_classes.append(pseudo_class)
+        self.pseudo_classes.add(pseudo_class)
         specificity1, specificity2, specificity3 = self.specificity
         self.specificity = (specificity1, specificity2 + 1, specificity3)
 
@@ -101,31 +160,11 @@ class Selector:
         Returns:
             True if the selector matches, otherwise False.
         """
-        return self._checks[self.type](node)
-
-    def _check_universal(self, node: DOMNode) -> bool:
-        return node.has_pseudo_class(*self.pseudo_classes)
-
-    def _check_type(self, node: DOMNode) -> bool:
-        if self.name not in node._css_type_names:
-            return False
-        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
-            return False
-        return True
-
-    def _check_class(self, node: DOMNode) -> bool:
-        if not node.has_class(self.name):
-            return False
-        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
-            return False
-        return True
-
-    def _check_id(self, node: DOMNode) -> bool:
-        if node.id != self.name:
-            return False
-        if self.pseudo_classes and not node.has_pseudo_class(*self.pseudo_classes):
-            return False
-        return True
+        return self._check(node) and (
+            node.has_pseudo_classes(self.pseudo_classes)
+            if self.pseudo_classes
+            else True
+        )
 
 
 @dataclass

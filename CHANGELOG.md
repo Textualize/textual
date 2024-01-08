@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
+
+### Added
+
+- Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
+
 ### Fixed
 
 - Parameter `animate` from `DataTable.move_cursor` was being ignored https://github.com/Textualize/textual/issues/3840
+
 
 ## [0.47.1] - 2023-01-05
 
