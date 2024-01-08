@@ -1496,7 +1496,6 @@ class App(Generic[ReturnType], DOMNode):
                 self.stylesheet.update(self)
                 for screen in self.screen_stack:
                     self.stylesheet.update(screen)
-                # self.screen.refresh(layout=True)
 
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
