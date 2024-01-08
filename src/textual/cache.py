@@ -2,7 +2,7 @@
 
 Containers to implement caching.
 
-These are used in Textual to avoid re-calculating expensive operations, such as rendering.
+These are used in Textual to avoid recalculating expensive operations, such as rendering.
 
 """
 
@@ -34,7 +34,6 @@ class LRUCache(Generic[CacheKey, CacheValue]):
     @lru_cache where you are caching things that are fairly quick and called many times.
     Use LRUCache where you want increased flexibility and you are caching slow operations
     where the overhead of the cache is a small fraction of the total processing time.
-
     """
 
     __slots__ = [
