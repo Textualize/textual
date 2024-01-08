@@ -20,7 +20,7 @@ While these are concerns for any packaged Python application (and so should be c
 
 ### Declaring Textual as a dependency
 
-Your deployed application will depend on Textual, so be sure to tell the packaging tool that this is the case. This way, when an end user installs your application with a tool like `pip` or `pipx`, Textual will also be installed.
+Your deployed application will depend on Textual, so be sure to tell the packaging tool that this is the case. This way, when an end user installs your application with a tool like [`pip`](https://pip.pypa.io/en/stable/) or [`pipx`](https://pipx.pypa.io/stable/), Textual will also be installed.
 The method used to add Textual as a dependency will differ depending on the tool you use, but the result will be an entry being added to `pyproject.toml`:
 
 === "pyproject.toml (Hatch)"
@@ -48,7 +48,7 @@ The method used to add Textual as a dependency will differ depending on the tool
 
 ### Application entry point and the runnable command
 
-We're going to turn the Textual [calculator example](https://github.com/Textualize/textual/blob/main/examples/calculator.py) into an application that can be packaged, deployed to [PyPi](https://pypi.org/), and installed by users using `pip` or `pipx`.
+We're going to turn the Textual [calculator example](https://github.com/Textualize/textual/blob/main/examples/calculator.py) into an application that can be packaged, deployed to [PyPi](https://pypi.org/), and installed by users using [`pip`](https://pip.pypa.io/en/stable/) or [`pipx`](https://pipx.pypa.io/stable/).
 
 The end result we want is that, after the user has installed the application, they can type `calculator` in the shell and the application will appear.
 
