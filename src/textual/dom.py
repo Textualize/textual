@@ -166,7 +166,7 @@ class DOMNode(MessagePump):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-        self._classes = set()
+        self._classes: set[str] = set()
         self._name = name
         self._id = None
         if id is not None:
@@ -575,8 +575,7 @@ class DOMNode(MessagePump):
     @property
     def pseudo_classes(self) -> frozenset[str]:
         """A (frozen) set of all pseudo classes."""
-        pseudo_classes = frozenset(self.get_pseudo_classes())
-        return pseudo_classes
+        return frozenset(self.get_pseudo_classes())
 
     @property
     def css_path_nodes(self) -> list[DOMNode]:
@@ -1276,17 +1275,27 @@ class DOMNode(MessagePump):
         self._update_styles()
         return self
 
-    def has_pseudo_class(self, *class_names: str) -> bool:
-        """Check for pseudo classes (such as hover, focus etc)
+    def has_pseudo_class(self, class_name: str) -> bool:
+        """Check the node has the given pseudo class.
 
         Args:
-            *class_names: The pseudo classes to check for.
+            class_name: The pseudo class to check for.
 
         Returns:
-            `True` if the DOM node has those pseudo classes, `False` if not.
+            `True` if the DOM node has the pseudo class, `False` if not.
         """
-        has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
-        return has_pseudo_classes
+        return class_name in self.get_pseudo_classes()
+
+    def has_pseudo_classes(self, class_names: set[str]) -> bool:
+        """Check the node has all the given pseudo classes.
+
+        Args:
+            class_names: Set of class names to check for.
+
+        Returns:
+            `True` if all pseudo class names are present.
+        """
+        return class_names.issubset(self.get_pseudo_classes())
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self
