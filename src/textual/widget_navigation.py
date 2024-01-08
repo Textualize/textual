@@ -34,7 +34,9 @@ _D = TypeVar("_D", bound=Disableable)
 _W = TypeVar("_W", bound="Widget")
 
 
-def distance(index: int, start: int, direction: Direction, wrap_at: int) -> int:
+def get_directed_distance(
+    index: int, start: int, direction: Direction, wrap_at: int
+) -> int:
     """Computes the distance going from `start` to `index` in the given direction.
 
     Starting at `start`, this is the number of steps you need to take in the given
@@ -137,7 +139,7 @@ def find_next_enabled(
 
     start = anchor + direction if not with_anchor else anchor
     key_function = partial(
-        distance,
+        get_directed_distance,
         start=start,
         direction=direction,
         wrap_at=len(candidates),
