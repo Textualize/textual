@@ -1738,8 +1738,7 @@ TextArea {
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
-        cursor_row, cursor_column = from_location
-        to_location = (cursor_row, len(self.document[cursor_row]))
+        to_location = self.get_cursor_line_end_location()
         self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_word_left(self) -> None:
