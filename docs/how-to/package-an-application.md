@@ -114,8 +114,8 @@ If your package management tool needs you to list files that should be included,
 
 To illustrate the results of following the above guidelines while also making a repository for the calculator example, we have a pair of repositories you can read through:
 
-- [`textual-calculator-hatch`](https://github.com/Textualize/textual-calculator-hatch)
-- [`textual-calculator-poetry`](https://github.com/Textualize/textual-calculator-poetry)
+- [`textual-calculator-hatch`](https://github.com/Textualize/textual-calculator-hatch) - Built with the help of Hatch.
+- [`textual-calculator-poetry`](https://github.com/Textualize/textual-calculator-poetry) - Built with the help of Poetry.
 
 ## Summary
 
