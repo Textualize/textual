@@ -27,13 +27,13 @@ The example below sets the scrollbar corner (bottom-right corner of the screen) 
 
 === "scrollbar_corner_color.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/styles/scrollbar_corner_color.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-corner-color: white;
 ```
 

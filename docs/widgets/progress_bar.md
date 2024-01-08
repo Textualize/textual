@@ -67,7 +67,7 @@ The example below shows a simple app with a progress bar that is keeping track o
 
 === "progress_bar.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/progress_bar.tcss"
     ```
 
@@ -100,7 +100,7 @@ Refer to the [section below](#styling-the-progress-bar) for more information.
 
 === "progress_bar_styled.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/progress_bar_styled.tcss"
     ```
 

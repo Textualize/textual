@@ -29,7 +29,7 @@ Each of the three text panels has a different text style, respectively `bold`, `
 
 === "text_style.tcss"
 
-    ```sass hl_lines="9 13 17"
+    ```css hl_lines="9 13 17"
     --8<-- "docs/examples/styles/text_style.tcss"
     ```
 
@@ -50,13 +50,13 @@ The next example shows all different text styles on their own, as well as some c
 
 === "text_style_all.tcss"
 
-    ```sass hl_lines="2 6 10 14 18 22 26 30"
+    ```css hl_lines="2 6 10 14 18 22 26 30"
     --8<-- "docs/examples/styles/text_style_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 text-style: italic;
 ```
 

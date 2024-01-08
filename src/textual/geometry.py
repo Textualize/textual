@@ -1152,5 +1152,8 @@ NULL_OFFSET: Final = Offset(0, 0)
 NULL_REGION: Final = Region(0, 0, 0, 0)
 """A [Region][textual.geometry.Region] constant for a null region (at the origin, with both width and height set to zero)."""
 
+NULL_SIZE: Final = Size(0, 0)
+"""A [Size][textual.geometry.Size] constant for a null size (with zero area)."""
+
 NULL_SPACING: Final = Spacing(0, 0, 0, 0)
 """A [Spacing][textual.geometry.Spacing] constant for no space."""

@@ -51,7 +51,7 @@ If the type has many different syntaxes, cover all of them.
 Add comments when needed/if helpful.
 -->
 
-```sass
+```css
 .some-class {
     rule: type-value-1;
     rule: type-value-2;
