@@ -73,7 +73,7 @@ if __name__ == "__main__":
     run()
 ```
 
-In other words: we've created a function called `run`, that runs the calculator application, and then we've chained the `__main__` test to run that function (we're keeping that as it's useful when running with `python -m`; often handy during development).
+In other words: we've created a function called `run` that runs the calculator application; then we've changed the `__main__` test to run that function (we keep that because it lets you run your application with `python -m`; this can be useful during development).
 
 #### Declaring the runnable command
 
