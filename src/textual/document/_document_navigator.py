@@ -186,7 +186,6 @@ class DocumentNavigator:
         current_visual_offset = cell_len(section[:offset_within_section])
         target_offset = max(current_visual_offset, self.last_x_offset)
 
-        # TODO - account for last_x_offset in both branches here.
         if section_index == 0:
             # Moving up from a position on the first visual line moves us to the start.
             if self.is_first_wrapped_line(location):
@@ -304,6 +303,7 @@ class DocumentNavigator:
 
                 if column_offset <= target_column and column_offset != 0:
                     return line_index, target_column
+
             return line_index, 0
 
     def get_location_offset_relative(
