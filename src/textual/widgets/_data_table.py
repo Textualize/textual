@@ -16,11 +16,11 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self, TypeAlias
 
 from .. import events
-from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..color import Color
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
