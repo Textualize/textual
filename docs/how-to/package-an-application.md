@@ -43,7 +43,7 @@ The method used to add Textual as a dependency will differ depending on the tool
 
 !!! note
 
-    You may wish to pin the version of Textual; perhaps to a minimum version, or even to the exact version you are using at that the time.
+    You may wish to pin the version of Textual; perhaps to a minimum version, or even to the exact version you are using at that time.
     Opinions on best practice here do vary.
 
 ### Application entry point and the runnable command
