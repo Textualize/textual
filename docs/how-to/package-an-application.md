@@ -66,7 +66,7 @@ to the correct section of `pyproject.toml`. In the case of our calculator exampl
     calculator = "textual_calculator.calculator:run"
     ```
 
-### Package up the stylesheets
+### Packaging the stylesheets
 
 If you are using [external stylesheets](/guide/CSS/#stylesheets) for your application it will be important that you ensure these get packaged. With Hatch and Poetry you don't need to do anything, both tools will include any files in your source directory unless you explicitly exclude them. If your package management tool needs you to list files that should be included, be sure to list your `tcss` files there.
 
