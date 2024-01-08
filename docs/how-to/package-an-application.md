@@ -1,7 +1,7 @@
 # Package an application
 
 A common question on the [Textual Discord server](https://discord.gg/Enf6Z3qhVr) and [in the Textual discussion area](https://github.com/Textualize/textual/discussions) is how to package a Textual application for distribution.
-At its heart, this is a question of *"how do I package a Python application for distribution?"*; this a reasonably big subject that is covered by a number of tutorials on the web.
+At its heart this is a question of *"how do I package a Python application for distribution?"*; this is a reasonably big subject that is covered by a number of tutorials on the web.
 A good place to start would be [in the Python documentation itself](https://packaging.python.org/en/latest/overview/).
 
 In this HOWTO we'll concentrate on the Textual-specific issues you need to keep in mind.
@@ -12,15 +12,15 @@ The choice of packaging tool will often come down to personal taste, and can be 
 In this document we'll cover two currently-popular tools that help with this: [Hatch](https://hatch.pypa.io/latest/) and [Poetry](https://python-poetry.org/).
 There are a number of other choices but the issues to consider will be similar in all cases.
 
-We recommend first getting familiar with your choice of tool and working with its documentation to get your project set up for packing and distribution.
+We recommend first getting familiar with your choice of tool, using its documentation to get your project set up for packaging and distribution.
 
 ## So what Textual-specifics do I need to worry about?
 
-While these are concerns for any packaged Python application (and so should be covered by the documentation of your chosen tool), there are two areas to consider with your Textual application that will result in a successful package, publish and install experience:
+While these are concerns for any packaged Python application (and so should be covered by the documentation of your chosen tool), there are some details to consider so that your efforts will result in a successful package, publish and install experience:
 
 ### Declaring Textual as a dependency
 
-Your deployed application will depend on Textual, so be sure to tell the packaging tool that this is the case; this way, when an end user installs your application with a tool like `pip` or `pipx`, Textual will also be installed.
+Your deployed application will depend on Textual, so be sure to tell the packaging tool that this is the case. This way, when an end user installs your application with a tool like `pip` or `pipx`, Textual will also be installed.
 The method used to add Textual as a dependency will differ depending on the tool you use, but the result will be an entry being added to `pyproject.toml`:
 
 === "pyproject.toml (Hatch)"
@@ -73,7 +73,9 @@ if __name__ == "__main__":
     run()
 ```
 
-In other words: we've created a function called `run` that runs the calculator application; then we've changed the `__main__` test to run that function (we keep that because it lets you run your application with `python -m`; this can be useful during development).
+In other words:
+we've created a function called `run` that runs the calculator application;
+then we've changed the `__main__` test to run that function (we keep that because it lets us run our application with `python -m`; this can be useful during development).
 
 #### Declaring the runnable command
 
@@ -85,7 +87,7 @@ For Hatch and Poetry it is a case of adding:
 ```
 
 to the correct section of `pyproject.toml`.
-In the case of our calculator example, the command we want is `calculator` and the entry point is the `run` function in `calculator.py` which is in `textual_calculator`;
+In the case of our calculator example, the command we want is `calculator` and the entry point is the `run` function in the module `calculator.py` which is in the package `textual_calculator`;
 we specify this with `textual_calculator.calculator:run`.
 
 === "pyproject.toml (Hatch)"
@@ -110,7 +112,7 @@ If your package management tool needs you to list files that should be included,
 
 ## Example repositories
 
-To illustrate the results of following the above guidelines, while also making a repository for the calculator example, we have a pair of repositories you can read through:
+To illustrate the results of following the above guidelines while also making a repository for the calculator example, we have a pair of repositories you can read through:
 
 - [`textual-calculator-hatch`](https://github.com/Textualize/textual-calculator-hatch)
 - [`textual-calculator-poetry`](https://github.com/Textualize/textual-calculator-poetry)
