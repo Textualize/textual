@@ -108,7 +108,7 @@ we specify this with `textual_calculator.calculator:run`.
 
 If you are using [external stylesheets](/guide/CSS/#stylesheets) for your application it will be important that you ensure these get packaged.
 With Hatch and Poetry you don't need to do anything, both tools will include any files in your source directory unless you explicitly exclude them.
-If your package management tool needs you to list files that should be included, be sure to list your `tcss` files there.
+If your package management tool needs you to list files that should be included, be sure to list [your `tcss` files](https://textual.textualize.io/guide/CSS/#css-files) there.
 
 ## Example repositories
 
