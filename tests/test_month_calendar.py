@@ -453,11 +453,12 @@ async def test_month_calendar_message_emission():
         await pilot.click(MonthCalendar, offset=(2, 1))
         expected_messages.append(("DateHighlighted", datetime.date(2021, 5, 31)))
         expected_messages.append(("DateSelected", datetime.date(2021, 5, 31)))
+        # TODO: This probably shouldn't emit another DateHighlighted message?
         expected_messages.append(("DateHighlighted", datetime.date(2021, 5, 31)))
         assert app.messages == expected_messages
 
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.previous_month()
-        expected_messages.append(("DateHighlighted", datetime.date(2021, 5, 31)))
-        expected_messages.append(("DateSelected", datetime.date(2021, 5, 31)))
+        await pilot.pause()
+        expected_messages.append(("DateHighlighted", datetime.date(2021, 4, 30)))
         assert app.messages == expected_messages
