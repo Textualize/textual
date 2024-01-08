@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Parameter `animate` from `DataTable.move_cursor` was being ignored https://github.com/Textualize/textual/issues/3840
+- Fixed a crash if `DirectoryTree.show_root` was set before the DOM was fully available https://github.com/Textualize/textual/issues/2363
 
 ## [0.47.1] - 2023-01-05
 
@@ -166,7 +167,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
 - Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
 - Method render on a widget could be called before mounting said widget https://github.com/Textualize/textual/issues/2914
-- Fixed a crash if `DirectoryTree.show_root` was set before the DOM was fully available https://github.com/Textualize/textual/issues/2363
 
 ### Added
 
