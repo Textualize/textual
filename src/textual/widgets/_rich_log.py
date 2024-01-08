@@ -12,7 +12,7 @@ from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.text import Text
 
-from .._cache import LRUCache
+from ..cache import LRUCache
 from ..geometry import Region, Size
 from ..reactive import var
 from ..scroll_view import ScrollView

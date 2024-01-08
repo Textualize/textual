@@ -175,6 +175,7 @@ nav:
       - "api/await_complete.md"
       - "api/await_remove.md"
       - "api/binding.md"
+      - "api/cache.md"
       - "api/color.md"
       - "api/command.md"
       - "api/containers.md"

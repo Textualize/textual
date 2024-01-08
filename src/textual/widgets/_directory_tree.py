@@ -295,6 +295,11 @@ class DirectoryTree(Tree[DirEntry]):
         node_label = node._label.copy()
         node_label.stylize(style)
 
+        # If the tree isn't mounted yet we can't use component classes to stylize
+        # the label fully, so we return early.
+        if not self.is_mounted:
+            return node_label
+
         if node._allow_expand:
             prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
             node_label.stylize_before(
