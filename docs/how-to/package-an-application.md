@@ -108,7 +108,20 @@ If you are using [external stylesheets](/guide/CSS/#stylesheets) for your applic
 With Hatch and Poetry you don't need to do anything, both tools will include any files in your source directory unless you explicitly exclude them.
 If your package management tool needs you to list files that should be included, be sure to list your `tcss` files there.
 
-[//]: # (REMOVE (BEFORE FLIGHT!))
+## Summary
+
+Keep the following in mind when you want to package your Textual application:
+
+- Remember to declare Textual as a dependency for your application.
+- Make sure you've written an entry point for your application.
+- Think of the command name the end user will run and declare that.
+- Ensure that any TCSS files that your application needs are packaged too.
+
+---
+
+If you need further help, we are here to [help](../help.md).
+
+[//]: # (REMOVE BEFORE FLIGHT!)
 [//]: # (Local Variables:)
 [//]: # (eval: (auto-fill-mode -1))
 [//]: # (eval: (visual-line-mode 1))
