@@ -11,10 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
 
-### Added
-
-- Added auxiliary module `textual.widget_navigation` https://github.com/Textualize/textual/pull/3912
-
 ### Fixed
 
 - Parameter `animate` from `DataTable.move_cursor` was being ignored https://github.com/Textualize/textual/issues/3840

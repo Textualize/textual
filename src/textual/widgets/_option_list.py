@@ -16,7 +16,8 @@ from rich.rule import Rule
 from rich.style import Style
 from typing_extensions import Self, TypeAlias
 
-from .. import widget_navigation
+from .. import _widget_navigation
+from .._widget_navigation import Direction
 from ..binding import Binding, BindingType
 from ..events import Click, Idle, Leave, MouseMove
 from ..geometry import Region, Size
@@ -24,7 +25,6 @@ from ..message import Message
 from ..reactive import reactive
 from ..scroll_view import ScrollView
 from ..strip import Strip
-from ..widget_navigation import Direction
 
 
 class DuplicateID(Exception):
@@ -726,7 +726,7 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._options[index].disabled = disabled
         if index == self.highlighted:
-            self.highlighted = widget_navigation.find_next_enabled(
+            self.highlighted = _widget_navigation.find_next_enabled(
                 self._options, anchor=index, direction=1
             )
         # TODO: Refresh only if the affected option is visible.
@@ -956,9 +956,9 @@ class OptionList(ScrollView, can_focus=True):
         if highlighted is None:
             return None
         elif highlighted < 0:
-            return widget_navigation.find_first_enabled(self._options)
+            return _widget_navigation.find_first_enabled(self._options)
         elif highlighted >= len(self._options):
-            return widget_navigation.find_last_enabled(self._options)
+            return _widget_navigation.find_last_enabled(self._options)
         elif self._options[highlighted].disabled:
             return self.highlighted
 
@@ -973,7 +973,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def action_cursor_up(self) -> None:
         """Move the highlight up to the previous enabled option."""
-        self.highlighted = widget_navigation.find_next_enabled(
+        self.highlighted = _widget_navigation.find_next_enabled(
             self._options,
             anchor=self.highlighted,
             direction=-1,
@@ -981,7 +981,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def action_cursor_down(self) -> None:
         """Move the highlight down to the next enabled option."""
-        self.highlighted = widget_navigation.find_next_enabled(
+        self.highlighted = _widget_navigation.find_next_enabled(
             self._options,
             anchor=self.highlighted,
             direction=1,
@@ -989,11 +989,11 @@ class OptionList(ScrollView, can_focus=True):
 
     def action_first(self) -> None:
         """Move the highlight to the first enabled option."""
-        self.highlighted = widget_navigation.find_first_enabled(self._options)
+        self.highlighted = _widget_navigation.find_first_enabled(self._options)
 
     def action_last(self) -> None:
         """Move the highlight to the last enabled option."""
-        self.highlighted = widget_navigation.find_last_enabled(self._options)
+        self.highlighted = _widget_navigation.find_last_enabled(self._options)
 
     def _page(self, direction: Direction) -> None:
         """Move the highlight roughly by one page in the given direction.
@@ -1039,7 +1039,7 @@ class OptionList(ScrollView, can_focus=True):
                 # Looks like we've figured where we'd like to jump to, we
                 # just need to make sure we jump to an option that's enabled.
                 if target_option is not None:
-                    target_option = widget_navigation.find_next_enabled_no_wrap(
+                    target_option = _widget_navigation.find_next_enabled_no_wrap(
                         candidates=self._options,
                         anchor=target_option,
                         direction=direction,

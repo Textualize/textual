@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from textual.widget_navigation import (
+from textual._widget_navigation import (
     find_first_enabled,
     find_last_enabled,
     find_next_enabled,
