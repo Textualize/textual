@@ -1479,16 +1479,23 @@ TextArea {
 
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
-        target = self.get_cursor_line_start_location()
+        target = self.get_cursor_line_start_location(smart_home=True)
         self.move_cursor(target, select=select)
 
-    def get_cursor_line_start_location(self) -> Location:
+    def get_cursor_line_start_location(self, smart_home: bool = False) -> Location:
         """Get the location of the start of the current line.
+
+        Args:
+            smart_home: If True, use "smart home key" behavior - go to the first
+                non-whitespace character on the line, and if already there, go to
+                offset 0. Smart home only works when wrapping is disabled.
 
         Returns:
             The (row, column) location of the start of the cursors current line.
         """
-        return self._navigator.get_location_home(self.cursor_location)
+        return self._navigator.get_location_home(
+            self.cursor_location, smart_home=smart_home
+        )
 
     def action_cursor_word_left(self, select: bool = False) -> None:
         """Move the cursor left by a single word, skipping trailing whitespace.

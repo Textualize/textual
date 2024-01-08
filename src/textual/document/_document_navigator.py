@@ -281,7 +281,9 @@ class DocumentNavigator:
             target_column = len(self._document[line_index])
             return line_index, target_column
 
-    def get_location_home(self, location: Location) -> Location:
+    def get_location_home(
+        self, location: Location, smart_home: bool = False
+    ) -> Location:
         """Get the location corresponding to the start of the current section."""
         line_index, column_offset = location
         wrap_offsets = self._wrapped_document.get_offsets(line_index)
@@ -293,14 +295,15 @@ class DocumentNavigator:
         else:
             # No wrapping to consider, go to the start of the document line
             line = self._wrapped_document.document[line_index]
-            first_non_whitespace = 0
-            for index, code_point in enumerate(line):
-                if not code_point.isspace():
-                    first_non_whitespace = index
-                    break
+            target_column = 0
+            if smart_home:
+                for index, code_point in enumerate(line):
+                    if not code_point.isspace():
+                        target_column = index
+                        break
 
-            if column_offset <= first_non_whitespace and column_offset != 0:
-                return line_index, first_non_whitespace
+                if column_offset <= target_column and column_offset != 0:
+                    return line_index, target_column
             return line_index, 0
 
     def get_location_offset_relative(
