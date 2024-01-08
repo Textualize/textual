@@ -50,7 +50,7 @@ The method used to add Textual as a dependency will differ depending on the tool
 
 We're going to turn the Textual [calculator example](https://github.com/Textualize/textual/blob/main/examples/calculator.py) into an application that can be packaged, deployed to [PyPi](https://pypi.org/), and installed by users using [`pip`](https://pip.pypa.io/en/stable/) or [`pipx`](https://pipx.pypa.io/stable/).
 
-The end result we want is that, after the user has installed the application, they can type `calculator` in the shell and the application will appear.
+The end result we want is that, after the user has installed the package, they can type `calculator` in the shell and the application will appear.
 
 #### Making the entry point
 
