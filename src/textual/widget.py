@@ -516,7 +516,7 @@ class Widget(DOMNode):
         This method maybe overridden if additional logic is required.
 
         Returns:
-            `True` if the widget may be focused, or `False` if it can not be focused.
+            `True` if the widget may be focused, or `False` if it may not be focused.
         """
         return self.can_focus
 
