@@ -277,6 +277,7 @@ TextArea {
         language: str | None = None,
         theme: str | None = None,
         wrap: bool = False,
+        tab_behaviour: Literal["focus", "indent"] = "indent",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -288,6 +289,7 @@ TextArea {
             text: The initial text to load into the TextArea.
             language: The language to use.
             theme: The theme to use.
+            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
@@ -349,6 +351,8 @@ TextArea {
         self.theme = theme
 
         self._reactive_wrap = wrap
+
+        self.tab_behaviour = tab_behaviour
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -1052,9 +1056,11 @@ TextArea {
         """Handle key presses which correspond to document inserts."""
         key = event.key
         insert_values = {
-            "tab": " " * self._find_columns_to_next_tab_stop(),
             "enter": "\n",
         }
+        if self.tab_behaviour == "indent":
+            insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
+
         self._restart_blink()
         if event.is_printable or key in insert_values:
             event.stop()
