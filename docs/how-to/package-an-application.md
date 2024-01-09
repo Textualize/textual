@@ -1,9 +1,6 @@
 # Package an application
 
 A common question on the Textual Discord server and in the Textual discussions is how to package a Textual application for distribution.
-At its heart this is a question of *"how do I package a Python application for distribution?"*; this is a reasonably big subject that is covered by a number of tutorials on the web.
-A good place to start would be [in the Python documentation itself](https://packaging.python.org/en/latest/overview/).
-
 In this HOWTO we'll concentrate on the Textual-specific issues you need to keep in mind.
 
 ## What packaging tool should I use?
