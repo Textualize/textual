@@ -46,7 +46,7 @@ The method used to add Textual as a dependency will differ depending on the tool
     You may wish to pin the version of Textual; perhaps to a minimum version, or even to the exact version you are using at that time.
     Opinions on best practice here do vary.
 
-### Application entry point and the runnable command
+### Making the command the user will run
 
 We're going to turn the Textual [calculator example](https://github.com/Textualize/textual/blob/main/examples/calculator.py) into an application that can be packaged, deployed to [PyPi](https://pypi.org/), and installed by users using [`pip`](https://pip.pypa.io/en/stable/) or [`pipx`](https://pipx.pypa.io/stable/).
 
@@ -54,6 +54,7 @@ The end result we want is that after the user has installed the package they can
 
 #### Making the entry point
 
+An entry point is the function in your project that launches your app.
 Normally, somewhere in a Textual application, you'll have some code that looks like this:
 
 ```python
@@ -61,8 +62,7 @@ if __name__ == "__main__":
     CalculatorApp().run()
 ```
 
-We're going to make a small change to this to help us when it comes to telling the packaging tool how to run the application.
-The change is to turn the above into this:
+Let's modify this so we have a function that will become our entry point.
 
 ```python
 def run() -> None:
@@ -75,20 +75,21 @@ if __name__ == "__main__":
 
 In other words:
 we've created a function called `run` that runs the calculator application;
-then we've changed the `__main__` test to run that function (we keep that because it lets us run our application with `python -m`; this can be useful during development).
+note that we've also changed the `__main__` test to run that function (we keep that because it lets us run our application with `python -m`; this can be useful during development).
 
 #### Declaring the runnable command
 
-Having done the above, we're all set to tell the packaging tool what to call the final command that the user will run, and what it should do when they run it.
+Having created the entry point, we're all set to tell the packaging tool what to call the final command that the user will run, and what it should do when they run it.
 For Hatch and Poetry it is a case of adding:
 
 ```
-<application-name> = "<entry-point>"
+application-name = "entry-point"
 ```
 
 to the correct section of `pyproject.toml`.
 In the case of our calculator example, the command we want is `calculator` and the entry point is the `run` function in the module `calculator.py` which is in the package `textual_calculator`;
-we specify this with `textual_calculator.calculator:run`.
+we specify this with `textual_calculator.calculator:run`
+(the format is the import path, a colon, then the name of the function to call).
 
 === "pyproject.toml (Hatch)"
 
