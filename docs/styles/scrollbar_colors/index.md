@@ -51,6 +51,6 @@ The right panel sets `scrollbar-background`, `scrollbar-color`, and `scrollbar-c
 
 === "scrollbars.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/scrollbars.tcss"
     ```

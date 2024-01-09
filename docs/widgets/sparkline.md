@@ -38,7 +38,7 @@ The example below illustrates the relationship between the data, its length, the
 
 === "sparkline_basic.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/sparkline_basic.tcss"
     ```
 
@@ -66,7 +66,7 @@ The summary function is what determines the height of each bar.
 
 === "sparkline.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/sparkline.tcss"
     ```
 
@@ -87,7 +87,7 @@ The example below shows how to use component classes to change the colors of the
 
 === "sparkline_colors.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/sparkline_colors.tcss"
     ```
 

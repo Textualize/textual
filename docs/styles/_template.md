@@ -46,7 +46,7 @@ Short description of the first example.
 
 === "style.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/style.tcss"
     ```
 -->
@@ -68,7 +68,7 @@ Short description of the second example.
 
 === "style.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/style.tcss"
     ```
 
@@ -84,7 +84,7 @@ Include comments when relevant.
 Include all variations.
 List all values, if possible and sensible.
 
-```sass
+```css
 rule-name: value1
 rule-name: value2
 rule-name: different-syntax-value shown-here

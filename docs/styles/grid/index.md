@@ -51,7 +51,7 @@ The spacing between grid cells is defined by the `grid-gutter` style.
 
 === "grid.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/grid.tcss"
     ```
 

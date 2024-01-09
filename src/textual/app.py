@@ -310,7 +310,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
+    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -428,7 +428,7 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stacks: dict[str, list[Screen]] = {"_default": []}
+        self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
         """A stack of screens per mode."""
         self._current_mode: str = "_default"
         """The current mode the app is in."""
@@ -722,7 +722,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_headless
 
     @property
-    def screen_stack(self) -> Sequence[Screen]:
+    def screen_stack(self) -> Sequence[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:
@@ -731,7 +731,7 @@ class App(Generic[ReturnType], DOMNode):
         return self._screen_stacks[self._current_mode].copy()
 
     @property
-    def _screen_stack(self) -> list[Screen]:
+    def _screen_stack(self) -> list[Screen[Any]]:
         """A reference to the current screen stack.
 
         Note:
@@ -1494,7 +1494,8 @@ class App(Generic[ReturnType], DOMNode):
                 self._css_has_errors = False
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
-                self.screen.refresh(layout=True)
+                for screen in self.screen_stack:
+                    self.stylesheet.update(screen)
 
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
@@ -1944,6 +1945,31 @@ class App(Generic[ReturnType], DOMNode):
             return future
         else:
             return await_mount
+
+    @overload
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType]
+    ) -> ScreenResultType:
+        ...
+
+    @overload
+    async def push_screen_wait(self, screen: str) -> Any:
+        ...
+
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType] | str
+    ) -> ScreenResultType | Any:
+        """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
+
+        Note that this method may only be called when running in a worker.
+
+        Args:
+            screen: A screen or the name of an installed screen.
+
+        Returns:
+            The screen's result.
+        """
+        return await self.push_screen(screen, wait_for_dismiss=True)
 
     def switch_screen(self, screen: Screen | str) -> AwaitMount:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.

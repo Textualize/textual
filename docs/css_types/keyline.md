@@ -16,7 +16,7 @@ The `<keyline>` CSS type represents a line style used in the [keyline](../styles
 
 ### CSS
 
-```sass
+```css
 Vertical {
     keyline: thin green;
 }

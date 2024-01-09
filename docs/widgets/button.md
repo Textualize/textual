@@ -25,7 +25,7 @@ Clicking any of the non-disabled buttons in the example app below will result in
 
 === "button.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/button.tcss"
     ```
 

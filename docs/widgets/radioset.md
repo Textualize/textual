@@ -27,7 +27,7 @@ The example below shows two radio sets, one built using a collection of
 
 === "radio_set.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/radio_set.tcss"
     ```
 
@@ -48,7 +48,7 @@ Here is an example of using the message to react to changes in a `RadioSet`:
 
 === "radio_set_changed.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/radio_set_changed.tcss"
     ```
 

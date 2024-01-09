@@ -1,14 +1,9 @@
 """
 
-A LRU (Least Recently Used) Cache container.
+Containers to implement caching.
 
-Use when you want to cache slow operations and new keys are a good predictor
-of subsequent keys.
+These are used in Textual to avoid recalculating expensive operations, such as rendering.
 
-Note that stdlib's @lru_cache is implemented in C and faster! It's best to use
-@lru_cache where you are caching things that are fairly quick and called many times.
-Use LRUCache where you want increased flexibility and you are caching slow operations
-where the overhead of the cache is a small fraction of the total processing time.
 """
 
 from __future__ import annotations
@@ -34,6 +29,11 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     Each entry is stored as [PREV, NEXT, KEY, VALUE] where PREV is a reference
     to the previous entry, and NEXT is a reference to the next value.
+
+    Note that stdlib's @lru_cache is implemented in C and faster! It's best to use
+    @lru_cache where you are caching things that are fairly quick and called many times.
+    Use LRUCache where you want increased flexibility and you are caching slow operations
+    where the overhead of the cache is a small fraction of the total processing time.
     """
 
     __slots__ = [
@@ -46,6 +46,11 @@ class LRUCache(Generic[CacheKey, CacheValue]):
     ]
 
     def __init__(self, maxsize: int) -> None:
+        """Initialize a LRUCache.
+
+        Args:
+            maxsize: Maximum size of the cache, before old items are discarded.
+        """
         self._maxsize = maxsize
         self._cache: Dict[CacheKey, list[object]] = {}
         self._full = False
@@ -208,8 +213,6 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
     It is most suitable for a cache with a relatively low maximum size that is not expected to
     do many lookups.
 
-    Args:
-        maxsize: Maximum size of the cache.
     """
 
     __slots__ = [
@@ -220,6 +223,11 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
     ]
 
     def __init__(self, maxsize: int) -> None:
+        """Initialize a FIFOCache.
+
+        Args:
+            maxsize: Maximum size of cache before discarding items.
+        """
         self._maxsize = maxsize
         self._cache: dict[CacheKey, CacheValue] = {}
         self.hits = 0

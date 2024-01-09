@@ -37,7 +37,7 @@ It also shows that `link-color` does not affect hyperlinks.
 
 === "link_color.tcss"
 
-    ```sass hl_lines="2 6 10"
+    ```css hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_color.tcss"
     ```
 
@@ -45,7 +45,7 @@ It also shows that `link-color` does not affect hyperlinks.
 
 ## CSS
 
-```sass
+```css
 link-color: red 70%;
 link-color: $accent;
 ```
