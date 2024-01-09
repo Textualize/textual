@@ -59,6 +59,7 @@ async def test_css_reloading_applies_to_non_top_screen(monkeypatch) -> None:  # 
 
         # Clear the CSS from the file.
         Path(CSS_PATH).write_text("/* This file has no rules intentionally. */\n")
+        await pilot.pause()
         await pilot.app._on_css_change()
         # Height should fall back to 1.
         assert first_label.styles.height is not None
