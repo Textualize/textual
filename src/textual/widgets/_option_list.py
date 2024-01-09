@@ -461,10 +461,6 @@ class OptionList(ScrollView, can_focus=True):
         """Clear down the content tracking information."""
         self._lines.clear()
         self._spans.clear()
-        # TODO: Having the option ID tracking be tied up with the main
-        # content tracking isn't necessary. Can possibly improve this a wee
-        # bit.
-        self._option_ids.clear()
 
     def _left_gutter_width(self) -> int:
         """Returns the size of any left gutter that should be taken into account.
@@ -503,7 +499,6 @@ class OptionList(ScrollView, can_focus=True):
         # Set up for doing less property access work inside the loop.
         lines_from = self.app.console.render_lines
         add_span = self._spans.append
-        option_ids = self._option_ids
         add_lines = self._lines.extend
 
         # Adjust the options for our purposes.
@@ -521,7 +516,7 @@ class OptionList(ScrollView, can_focus=True):
         # break out the individual lines that will be used to draw it, and
         # also set up the tracking of the actual options.
         line = 0
-        option = 0
+        option_index = 0
         padding = self.get_component_styles("option-list--option").padding
         for content in self._contents:
             if isinstance(content, Option):
@@ -529,8 +524,10 @@ class OptionList(ScrollView, can_focus=True):
                 # work out the lines needed to show it.
                 new_lines = [
                     Line(
-                        Strip(prompt_line).apply_style(Style(meta={"option": option})),
-                        option,
+                        Strip(prompt_line).apply_style(
+                            Style(meta={"option": option_index})
+                        ),
+                        option_index,
                     )
                     for prompt_line in lines_from(
                         Padding(content.prompt, padding) if padding else content.prompt,
@@ -539,11 +536,7 @@ class OptionList(ScrollView, can_focus=True):
                 ]
                 # Record the span information for the option.
                 add_span(OptionLineSpan(line, len(new_lines)))
-                if content.id is not None:
-                    # The option has an ID set, create a mapping from that
-                    # ID to the option so we can use it later.
-                    option_ids[content.id] = option
-                option += 1
+                option_index += 1
             else:
                 # The content isn't an option, so it must be a separator (if
                 # there were to be other non-option content for an option
@@ -604,9 +597,16 @@ class OptionList(ScrollView, can_focus=True):
             content = [self._make_content(item) for item in items]
             self._duplicate_id_check(content)
             self._contents.extend(content)
-            # Pull out the content that is genuine options and add them to the
-            # list of options.
-            self._options.extend([item for item in content if isinstance(item, Option)])
+            # Pull out the content that is genuine options. Add them to the
+            # list of options and map option IDs to their new indices.
+            new_options = [item for item in content if isinstance(item, Option)]
+            self._options.extend(new_options)
+            for new_option_index, new_option in enumerate(
+                new_options, start=len(self._options)
+            ):
+                if new_option.id:
+                    self._option_ids[new_option.id] = new_option_index
+
             self._refresh_content_tracking(force=True)
             self.refresh()
         return self
@@ -637,6 +637,12 @@ class OptionList(ScrollView, can_focus=True):
         option = self._options[index]
         del self._options[index]
         del self._contents[self._contents.index(option)]
+        # Decrement index of options after the one we just removed.
+        self._option_ids = {
+            option_id: option_index - 1 if option_index > index else option_index
+            for option_id, option_index in self._option_ids.items()
+            if option_index != index
+        }
         self._refresh_content_tracking(force=True)
         # Force a re-validation of the highlight.
         self.highlighted = self.highlighted
@@ -734,6 +740,7 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._contents.clear()
         self._options.clear()
+        self._option_ids.clear()
         self.highlighted = None
         self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
