@@ -955,14 +955,7 @@ TextArea {
             line = sections[section_offset]
             line.end = ""
 
-        if self.wrap:
-            # If we're wrapping, the line should be wrapped to the width available for the text.
-            # That is the width of the widget minus the gutter width and scrollbar width.
-            target_width = self.size.width - self.gutter_width
-        else:
-            # If we're not wrapping, then we want to expand the line such that it's equal to the virtual width.
-            target_width = virtual_width - self.gutter_width
-
+        target_width = self.size.width - self.gutter_width
         # Set the width of this section to the target width.
         console = self.app.console
         gutter_segments = console.render(gutter)
