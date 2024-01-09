@@ -1,6 +1,6 @@
 # Package an application
 
-A common question on the [Textual Discord server](https://discord.gg/Enf6Z3qhVr) and [in the Textual discussion area](https://github.com/Textualize/textual/discussions) is how to package a Textual application for distribution.
+A common question on the Textual Discord server and in the Textual discussions is how to package a Textual application for distribution.
 At its heart this is a question of *"how do I package a Python application for distribution?"*; this is a reasonably big subject that is covered by a number of tutorials on the web.
 A good place to start would be [in the Python documentation itself](https://packaging.python.org/en/latest/overview/).
 
@@ -8,11 +8,8 @@ In this HOWTO we'll concentrate on the Textual-specific issues you need to keep 
 
 ## What packaging tool should I use?
 
-The choice of packaging tool will often come down to personal taste, and can be a polarising question.
+The choice of packaging tool will often come down to personal taste.
 In this document we'll cover two currently-popular tools that help with this: [Hatch](https://hatch.pypa.io/latest/) and [Poetry](https://python-poetry.org/).
-There are a number of other choices but the issues to consider will be similar in all cases.
-
-We recommend first getting familiar with your choice of tool, using its documentation to get your project set up for packaging and distribution.
 
 ## So what Textual-specifics do I need to worry about?
 
