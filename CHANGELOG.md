@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Parameter `animate` from `DataTable.move_cursor` was being ignored https://github.com/Textualize/textual/issues/3840
 - Fixed a crash if `DirectoryTree.show_root` was set before the DOM was fully available https://github.com/Textualize/textual/issues/2363
 - Live reloading of TCSS wouldn't apply CSS changes to screens under the top screen of the stack https://github.com/Textualize/textual/issues/3931
+- `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
 
 
 ## [0.47.1] - 2023-01-05
