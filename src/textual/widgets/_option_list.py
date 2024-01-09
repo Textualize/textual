@@ -975,7 +975,6 @@ class OptionList(ScrollView, can_focus=True):
 
         Args:
             top: Scroll highlight to top of the list.
-
         """
         highlighted = self.highlighted
         if highlighted is None:
@@ -1079,11 +1078,11 @@ class OptionList(ScrollView, can_focus=True):
                 # Looks like we've figured out the next option to jump to.
                 self.highlighted = target_option
 
-    def action_page_up(self):
+    def action_page_up(self) -> None:
         """Move the highlight up one page."""
         self._page(-1)
 
-    def action_page_down(self):
+    def action_page_down(self) -> None:
         """Move the highlight down one page."""
         self._page(1)
 
