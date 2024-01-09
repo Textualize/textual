@@ -13,17 +13,17 @@ from textual.widgets.month_calendar import InvalidWeekdayNumber
 
 def test_invalid_month_raises_exception():
     with pytest.raises(ValueError):
-        month_calendar = MonthCalendar(datetime.date(year=2021, month=13, day=3))
+        _ = MonthCalendar(datetime.date(year=2021, month=13, day=3))
 
 
 def test_invalid_day_raises_exception():
     with pytest.raises(ValueError):
-        month_calendar = MonthCalendar(datetime.date(year=2021, month=6, day=32))
+        _ = MonthCalendar(datetime.date(year=2021, month=6, day=32))
 
 
 def test_invalid_weekday_number_raises_exception():
     with pytest.raises(InvalidWeekdayNumber):
-        month_calendar = MonthCalendar(first_weekday=7)
+        _ = MonthCalendar(first_weekday=7)
 
 
 def test_calendar_dates_property():
@@ -77,7 +77,10 @@ class MonthCalendarApp(App):
 
     @on(MonthCalendar.DateHighlighted)
     @on(MonthCalendar.DateSelected)
-    def record(self, event: MonthCalendar.DateSelected) -> None:
+    def record(
+        self,
+        event: MonthCalendar.DateHighlighted | MonthCalendar.DateSelected,
+    ) -> None:
         self.messages.append((event.__class__.__name__, event.value))
 
 
