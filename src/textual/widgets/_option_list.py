@@ -351,7 +351,9 @@ class OptionList(ScrollView, can_focus=True):
         content that isn't an option.
         """
 
-        self._option_ids: dict[str, int] = {}
+        self._option_ids: dict[str, int] = {
+            option.id: index for index, option in enumerate(self._options) if option.id
+        }
         """A dictionary of option IDs and the option indexes they relate to."""
 
         self._lines: list[Line] = []
