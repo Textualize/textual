@@ -829,8 +829,8 @@ TextArea {
 
         line_character_count = len(line)
         line.tab_size = self.indent_width
+        line.set_length(line_character_count + 1)  # space at end for cursor
         virtual_width, virtual_height = self.virtual_size
-        line.set_length(line.cell_len + 1)  # Make space for cursor at end.
 
         selection = self.selection
         start, end = selection
@@ -953,6 +953,7 @@ TextArea {
         if wrap_offsets:
             sections = line.divide(wrap_offsets)  # TODO cache result with edit count
             line = sections[section_offset]
+            line.end = ""
 
         if self.wrap:
             # If we're wrapping, the line should be wrapped to the width available for the text.
@@ -963,8 +964,6 @@ TextArea {
             target_width = virtual_width - self.gutter_width
 
         # Set the width of this section to the target width.
-        line.set_length(target_width)
-
         console = self.app.console
         gutter_segments = console.render(gutter)
         text_segments = console.render(line, console.options.update_width(target_width))
@@ -980,10 +979,11 @@ TextArea {
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:
-            text_strip = text_strip.apply_style(cursor_line_style)
+            line_style = cursor_line_style
         else:
-            text_strip = text_strip.apply_style(theme.base_style if theme else None)
+            line_style = theme.base_style if theme else None
 
+        text_strip = text_strip.extend_cell_length(target_width, line_style)
         strip = Strip.join([gutter_strip, text_strip]).simplify()
 
         return strip.apply_style(

@@ -51,9 +51,6 @@ class WrappedDocument:
         self._line_index_to_offsets: list[list[VerticalOffset]] = []
         """Maps line indices to all the vertical offsets which correspond to that line."""
 
-        # self._offset_to_section_offset: dict[int, int] = {}
-        # """Maps y_offsets to the offsets of the section within the line."""
-
         self._width: int = width
         """The width the document is currently wrapped at. This will correspond with
         the value last passed into the `wrap` method."""
@@ -354,7 +351,7 @@ class WrappedDocument:
 
     def get_sections(self, line_index: int) -> list[str]:
         line_offsets = self._wrap_offsets[line_index]
-        wrapped_lines = Text(self.document[line_index]).divide(line_offsets)
+        wrapped_lines = Text(self.document[line_index], end="").divide(line_offsets)
         return [line.plain for line in wrapped_lines]
 
     def get_offsets(self, line_index: int) -> list[int]:
