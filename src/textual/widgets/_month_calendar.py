@@ -121,6 +121,14 @@ class MonthCalendar(Widget):
         # `CellHighlighted` message *before* the `CellSelected` message.
         self.post_message(MonthCalendar.DateSelected(self, self.date))
 
+    @on(DataTable.HeaderSelected)
+    def _on_datatable_header_selected(
+        self,
+        event: DataTable.HeaderSelected,
+    ) -> None:
+        event.stop()
+        pass
+
     def previous_year(self) -> None:
         self.date -= relativedelta(years=1)
 
