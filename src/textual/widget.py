@@ -509,6 +509,28 @@ class Widget(DOMNode):
         except NoScreen:
             pass
 
+    def allow_focus(self) -> bool:
+        """Check if the widget is permitted to focus.
+
+        The base class returns [`can_focus`][textual.widget.Widget.can_focus].
+        This method maybe overridden if additional logic is required.
+
+        Returns:
+            `True` if the widget may be focused, or `False` if it may not be focused.
+        """
+        return self.can_focus
+
+    def allow_focus_children(self) -> bool:
+        """Check if a widget's children may be focused.
+
+        The base class returns [`can_focus_children`][textual.widget.Widget.can_focus_children].
+        This method maybe overridden if additional logic is required.
+
+        Returns:
+            `True` if the widget's children may be focused, or `False` if the widget's children may not be focused.
+        """
+        return self.can_focus_children
+
     def compose_add_child(self, widget: Widget) -> None:
         """Add a node to children.
 
