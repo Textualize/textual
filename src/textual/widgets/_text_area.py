@@ -1734,6 +1734,7 @@ TextArea {
         to_location = (end_row + 1, 0)
 
         self.delete(from_location, to_location, maintain_selection_offset=False)
+        self.move_cursor_relative(0, end_column)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
