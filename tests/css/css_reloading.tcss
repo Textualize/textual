@@ -1,1 +1,4 @@
-/* This file has no rules intentionally. */
+Label {
+    height: 5;
+    border: panel white;
+}
