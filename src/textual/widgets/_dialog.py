@@ -54,6 +54,16 @@ class Dialog(Vertical):
                 that. */
                 margin-left: 0;
             }
+
+            /* Devs will likely compose labels into the ActionArea,
+            expecting that they'll vertically line up with most other things
+            (most of those other) things going in often being 3 cells high.
+            So let's be super helpful here and have a default styling that
+            just does the right thing out of the box. */
+            Label {
+                height: 100%;
+                content-align: center middle;
+            }
         }
     }
     """
