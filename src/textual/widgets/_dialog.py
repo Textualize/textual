@@ -4,12 +4,36 @@ from __future__ import annotations
 
 from ..app import ComposeResult
 from ..containers import VerticalScroll
+from ..css.query import NoMatches
+from ..geometry import Size
 from ..reactive import var
 from ..widget import Widget
 
 
 class Body(VerticalScroll, can_focus=False):
     """Internal dialog container class for the main body of the dialog."""
+
+    DEFAULT_CSS = """
+    Body {
+        width: auto;
+        height: auto;
+    }
+    """
+
+    def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
+        # Quick hack!
+        height = super().get_content_height(container, viewport, width)
+        if self.parent:
+            try:
+                action_area = self.parent.query_one(Dialog.ActionArea)
+            except NoMatches:
+                pass
+            else:
+                return min(
+                    height,
+                    int(self.screen.size.height * 0.8) - action_area.outer_size.height,
+                )
+        return height
 
 
 class Dialog(Widget):
@@ -25,7 +49,7 @@ class Dialog(Widget):
         width: auto;
         height: auto;
         max-width: 90%;
-        max-height: 90%;
+        /*max-height: 90%; Using the get_content_height hack above instead. */
 
         border: panel $--dialog-border-color;
         border-title-color: $accent;
@@ -47,7 +71,7 @@ class Dialog(Widget):
             align: right middle;
 
             height: auto;
-            width: 1fr;
+            width: auto;
 
             border-top: $--dialog-border-color;
 
