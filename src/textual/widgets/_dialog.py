@@ -90,6 +90,10 @@ class Dialog(Vertical):
         This is the area in which buttons and other widgets should go that
         dictate what actions should be performed on the contents of the
         dialog.
+
+        Widgets composed into this area will be grouped to the right, with a
+        1-cell margin between them. If you wish to group some widgets to the
+        left of the area group them inside a `Dialog.ActionArea.GroupLeft`.
         """
 
         class GroupLeft(Horizontal):
