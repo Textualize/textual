@@ -385,7 +385,7 @@ class Strip:
         add_segment = output_segments.append
         iter_segments = iter(self._segments)
         segment: Segment | None = None
-        if start > self.cell_length:
+        if start >= self.cell_length:
             strip = Strip([], 0)
         else:
             for segment in iter_segments:
