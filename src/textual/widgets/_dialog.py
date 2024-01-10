@@ -11,6 +11,12 @@ from ..widget import Widget
 class Body(VerticalScroll, can_focus=False):
     """Internal dialog container class for the main body of the dialog."""
 
+    DEFAULT_CSS = """
+    Body {
+        width: auto;
+    }
+    """
+
 
 class Dialog(Widget):
     """A dialog widget."""
@@ -32,6 +38,14 @@ class Dialog(Widget):
         background: $surface;
 
         padding: 1 1 0 1;
+
+        /* DEBUG */
+        &> * {
+            background: $boost 200%;
+            &> * {
+                background: $boost 200%;
+            }
+        }
 
         ActionArea {
 
@@ -160,3 +174,10 @@ class Dialog(Widget):
                     yield widget
         if action_area is not None:
             yield action_area
+
+    def on_mount(self) -> None:
+        # DEBUG
+        for widget in [self, *self.query("*")]:
+            widget.tooltip = "\n".join(
+                f"{node!r}" for node in widget.ancestors_with_self
+            )
