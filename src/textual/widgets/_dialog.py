@@ -9,7 +9,7 @@ from ..reactive import var
 from ..widget import Widget
 
 
-class _Body(VerticalScroll, can_focus=False):
+class Body(VerticalScroll, can_focus=False):
     """Internal dialog container class for the main body of the dialog."""
 
 
@@ -117,7 +117,7 @@ class Dialog(Vertical):
         # inside a 'body' container that will scroll the content if
         # necessary.
         action_area: Dialog.ActionArea | None = None
-        with _Body():
+        with Body():
             for widget in self._dialog_children:
                 if isinstance(widget, Dialog.ActionArea):
                     if action_area is not None:
