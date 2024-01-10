@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from ..app import ComposeResult
-from ..containers import Horizontal, Vertical, VerticalScroll
+from ..containers import VerticalScroll
 from ..reactive import var
 from ..widget import Widget
 
@@ -12,28 +12,38 @@ class Body(VerticalScroll, can_focus=False):
     """Internal dialog container class for the main body of the dialog."""
 
 
-class Dialog(Vertical):
+class Dialog(Widget):
     """A dialog widget."""
 
     DEFAULT_CSS = """
     $--dialog-border-color: $primary;
 
     Dialog {
-        border: panel $--dialog-border-color;
-        border-title-color: $accent;
-        background: $surface;
+
+        layout: vertical;
+
         width: auto;
         height: auto;
-        padding: 1 1 0 1;
         max-width: 90%;
         max-height: 90%;
 
+        border: panel $--dialog-border-color;
+        border-title-color: $accent;
+        background: $surface;
+
+        padding: 1 1 0 1;
+
         ActionArea {
+
+            layout: horizontal;
             align: right middle;
+
             height: auto;
             width: 1fr;
-            padding: 1 1 0 1;
+
             border-top: $--dialog-border-color;
+
+            padding: 1 1 0 1;
 
             /* The developer may place widgets directly into the action
             area; they will likely do this half expecting that there will be
@@ -44,9 +54,12 @@ class Dialog(Vertical):
             }
 
             &> GroupLeft {
+
+                layout: horizontal;
+                align: left middle;
+
                 height: auto;
                 width: 1fr;
-                align: left middle;
 
                 /* The rule above for all items in the ActionArea will give
                 this grouping container a left margin too; but we don't want
@@ -98,7 +111,7 @@ class Dialog(Vertical):
         """React to the title being changed."""
         self.border_title = self.title
 
-    class ActionArea(Horizontal):
+    class ActionArea(Widget):
         """A container that holds widgets that specify actions to perform on a dialog.
 
         This is the area in which buttons and other widgets should go that
@@ -110,7 +123,7 @@ class Dialog(Vertical):
         left of the area group them inside a `Dialog.ActionArea.GroupLeft`.
         """
 
-        class GroupLeft(Horizontal):
+        class GroupLeft(Widget):
             """A container for grouping widgets to the left side of a `Dialog.ActionArea`."""
 
     def compose_add_child(self, widget: Widget) -> None:
