@@ -7,6 +7,7 @@ from markdown_it import MarkdownIt
 from markdown_it.token import Token
 from rich import box
 from rich.style import Style
+from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
@@ -500,11 +501,27 @@ class MarkdownFence(MarkdownBlock):
     def __init__(self, markdown: Markdown, code: str, lexer: str) -> None:
         self.code = code
         self.lexer = lexer
+        self.theme = "solarized-dark" if self.app.dark else "solarized-light"
         super().__init__(markdown)
 
-    def compose(self) -> ComposeResult:
-        from rich.syntax import Syntax
+    def _retheme(self) -> None:
+        """Swap between a dark and light theme when the mode changes."""
+        self.theme = "solarized-dark" if self.app.dark else "solarized-light"
+        code_block = self.query_one(Static)
+        code_block.renderable = Syntax(
+            self.code,
+            lexer=self.lexer,
+            word_wrap=False,
+            indent_guides=True,
+            padding=(1, 2),
+            theme=self.theme,
+        )
 
+    def _on_mount(self, _: Mount) -> None:
+        """Watch app theme switching."""
+        self.watch(self.app, "dark", self._retheme)
+
+    def compose(self) -> ComposeResult:
         yield Static(
             Syntax(
                 self.code,
@@ -512,7 +529,7 @@ class MarkdownFence(MarkdownBlock):
                 word_wrap=False,
                 indent_guides=True,
                 padding=(1, 2),
-                theme="material",
+                theme=self.theme,
             ),
             expand=True,
             shrink=False,
