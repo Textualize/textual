@@ -73,9 +73,7 @@ class Dialog(Vertical):
             classes: The CSS classes of the dialog.
             disabled: Whether the dialog is disabled or not.
         """
-        super().__init__(
-            *children, name=name, id=id, classes=classes, disabled=disabled
-        )
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._dialog_children: list[Widget] = list(children)
         """Holds the widgets that will go to making up the dialog."""
         self.title = title
