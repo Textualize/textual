@@ -17,10 +17,15 @@ class Dialog(Vertical):
     """A dialog widget."""
 
     DEFAULT_CSS = """
+    $--dialog-border-color: $primary;
+
     Dialog {
-        border: panel $panel;
+        border: panel $--dialog-border-color;
+        border-title-color: $accent;
+        background: $surface;
         width: auto;
         height: auto;
+        padding: 1 1 0 1;
         max-width: 90%;
         max-height: 90%;
 
@@ -28,6 +33,8 @@ class Dialog(Vertical):
             align: right middle;
             height: auto;
             width: 1fr;
+            padding: 1 1 0 1;
+            border-top: $--dialog-border-color;
 
             /* The developer may place widgets directly into the action
             area; they will likely do this half expecting that there will be
