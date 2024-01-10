@@ -860,7 +860,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.get_cell(row_key, column_key)
 
     def get_cell_coordinate(
-        self, row_key: RowKey | str, column_key: Column | str
+        self, row_key: RowKey | str, column_key: ColumnKey | str
     ) -> Coordinate:
         """Given a row key and column key, return the corresponding cell coordinate.
 
