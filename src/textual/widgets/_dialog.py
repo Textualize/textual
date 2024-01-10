@@ -11,12 +11,6 @@ from ..widget import Widget
 class Body(VerticalScroll, can_focus=False):
     """Internal dialog container class for the main body of the dialog."""
 
-    DEFAULT_CSS = """
-    Body {
-        width: auto;
-    }
-    """
-
 
 class Dialog(Widget):
     """A dialog widget."""
