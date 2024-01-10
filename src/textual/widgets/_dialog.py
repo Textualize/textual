@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from textual.app import ComposeResult
-
+from ..app import ComposeResult
 from ..containers import Horizontal, Vertical, VerticalScroll
 from ..reactive import var
 from ..widget import Widget
