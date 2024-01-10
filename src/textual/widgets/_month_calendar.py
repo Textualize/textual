@@ -86,6 +86,7 @@ class MonthCalendar(Widget):
         self._calendar = calendar.Calendar(first_weekday)
         self.show_cursor = show_cursor
         self.show_other_months = show_other_months
+        self._calendar_dates = self._get_calendar_dates()
 
     def compose(self) -> ComposeResult:
         yield DataTable(show_cursor=self.show_cursor)
@@ -172,8 +173,7 @@ class MonthCalendar(Widget):
 
         table.hover_coordinate = old_hover_coordinate
 
-    @property
-    def _calendar_dates(self) -> list[list[datetime.date | None]]:
+    def _get_calendar_dates(self) -> list[list[datetime.date | None]]:
         """A matrix of `datetime.date` objects for this month calendar, where
         each row represents a week. If `show_other_months` is True, this returns
         a six-week calendar including dates from the previous and next month.
@@ -224,10 +224,9 @@ class MonthCalendar(Widget):
 
     def _get_date_coordinate(self, date: datetime.date) -> Coordinate:
         for week_index, week in enumerate(self._calendar_dates):
-            try:
+            if date in week:
                 return Coordinate(week_index, week.index(date))
-            except ValueError:
-                pass
+
         raise ValueError("Date is out of range for this month calendar.")
 
     def _format_day(self, date: datetime.date) -> Text:
@@ -247,6 +246,7 @@ class MonthCalendar(Widget):
         if not self.is_mounted:
             return
         if (new_date.month != old_date.month) or (new_date.year != old_date.year):
+            self._calendar_dates = self._get_calendar_dates()
             self._update_calendar_table(update_week_header=False)
         else:
             table = self.query_one(DataTable)
@@ -255,6 +255,7 @@ class MonthCalendar(Widget):
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
+        self._calendar_dates = self._get_calendar_dates()
         if not self.is_mounted:
             return
         self._update_calendar_table(update_week_header=True)
@@ -266,6 +267,7 @@ class MonthCalendar(Widget):
         table.show_cursor = show_cursor
 
     def watch_show_other_months(self) -> None:
+        self._calendar_dates = self._get_calendar_dates()
         if not self.is_mounted:
             return
         self._update_calendar_table(update_week_header=False)
