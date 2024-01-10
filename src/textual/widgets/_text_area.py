@@ -955,8 +955,12 @@ TextArea {
             line = sections[section_offset]
             line.end = ""
 
-        target_width = self.size.width - self.gutter_width
-        # Set the width of this section to the target width.
+        base_width = (
+            self.scrollable_content_region.size.width
+            if self.wrap
+            else max(virtual_width, self.region.size.width)
+        )
+        target_width = base_width - self.gutter_width
         console = self.app.console
         gutter_segments = console.render(gutter)
         text_segments = console.render(line, console.options.update_width(target_width))
