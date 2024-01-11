@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
+from typing_extensions import Final
+
 from ..app import ComposeResult
 from ..containers import VerticalScroll
 from ..css.query import NoMatches
 from ..geometry import Size
 from ..reactive import var
 from ..widget import Widget
+
+_MAX_DIALOG_DIMENSION: Final[float] = 0.9
+"""The idea maximum dimension for the dialog in respect to the sceen."""
 
 
 class Body(VerticalScroll, can_focus=False):
@@ -21,17 +26,48 @@ class Body(VerticalScroll, can_focus=False):
     """
 
     def get_content_height(self, container: Size, viewport: Size, width: int) -> int:
-        # Quick hack!
+        """Get the ideal height for the body of the dialog.
+
+        Args:
+            container: The container size.
+            viewport: The viewport.
+            width: The content width.
+
+        Returns:
+            The height of the body portion of the dialog (in lines).
+
+        Ideally we'd want this widget to be `height: auto` and `max-height:
+        1fr`, with the constraint on the ultimate height being a
+        `max-height` on the container. As of the time of writing, there's no
+        (obvious?) way to do this in CSS (that particular CSS setup doesn't
+        do what you'd probably expect).
+
+        So in this widget we simply set the `height` to `auto` and then
+        constrain the maximum height with this method; the idea being that
+        the content height will be capped at the maximum height that will
+        push the container to what we want its `max-height` to be, and no
+        further.
+        """
         height = super().get_content_height(container, viewport, width)
-        if self.parent:
+        if isinstance(self.parent, Widget):
             try:
+                # See if the dialog has an ActionArea.
                 action_area = self.parent.query_one(Dialog.ActionArea)
             except NoMatches:
+                # It's fine if it doesn't; that just means we don't need to
+                # take it into account for this calculation to take place.
                 pass
             else:
                 return min(
+                    # Use the minimum of either the actual content height...
                     height,
-                    int(self.screen.size.height * 0.8) - action_area.outer_size.height,
+                    # ...or maximum fraction of the screen...
+                    int(self.screen.size.height * _MAX_DIALOG_DIMENSION)
+                    # ...minus the full height of the ActionArea...
+                    - action_area.outer_size.height
+                    # ...and minus the size of the "non-content" parts of
+                    # the container.
+                    - (self.parent.outer_size.height - self.parent.size.height),
                 )
         return height
 
