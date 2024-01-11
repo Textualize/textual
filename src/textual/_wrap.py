@@ -65,9 +65,8 @@ def divide_line(
     #  now, for each offset
 
     for start, _end, chunk in chunks(text):
-        word_width = _cell_len(
-            chunk
-        )  # todo, 1st, terrible name, 2nd can we get the "word width" here to account for tab widths?
+        # todo, 1st, terrible name, 2nd can we get the "word width" here to account for tab widths?
+        word_width = _cell_len(chunk)
         if keep_whitespace:
             chunk_width = word_width
             width_contribution = chunk_width
