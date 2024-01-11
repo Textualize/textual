@@ -93,14 +93,6 @@ class Dialog(Widget):
 
         padding: 1 1 0 1;
 
-        /* DEBUG */
-        &> * {
-            background: $boost 200%;
-            &> * {
-                background: $boost 200%;
-            }
-        }
-
         ActionArea {
 
             layout: horizontal;
