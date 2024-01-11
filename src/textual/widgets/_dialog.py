@@ -36,11 +36,10 @@ class Body(VerticalScroll, can_focus=False):
         Returns:
             The height of the body portion of the dialog (in lines).
 
-        Ideally we'd want this widget to be `height: auto` and `max-height:
-        1fr`, with the constraint on the ultimate height being a
-        `max-height` on the container. As of the time of writing, there's no
-        (obvious?) way to do this in CSS (that particular CSS setup doesn't
-        do what you'd probably expect).
+        Ideally we'd want this widget to be `height: auto` until it would be
+        too tall for the maximum height of the dialog, minus the height
+        needed for the `ActionArea`. At the moment there's no simple method
+        of doing this in with Textual's CSS.
 
         So in this widget we simply set the `height` to `auto` and then
         constrain the maximum height with this method; the idea being that
@@ -49,7 +48,7 @@ class Body(VerticalScroll, can_focus=False):
         further.
         """
         height = super().get_content_height(container, viewport, width)
-        if isinstance(self.parent, Widget):
+        if isinstance(self.parent, Dialog):
             try:
                 # See if the dialog has an ActionArea.
                 action_area = self.parent.query_one(Dialog.ActionArea)
@@ -98,6 +97,7 @@ class Dialog(Widget):
             layout: horizontal;
             align: right middle;
 
+            /* Action area should perfectly wrap its content. */
             height: auto;
             width: auto;
 
@@ -118,8 +118,10 @@ class Dialog(Widget):
                 layout: horizontal;
                 align: left middle;
 
+                /* The grouping container should perfectly wrap its content. */
                 height: auto;
-                width: 1fr;
+                width: auto;
+                dock: left;
 
                 /* The rule above for all items in the ActionArea will give
                 this grouping container a left margin too; but we don't want
@@ -185,6 +187,51 @@ class Dialog(Widget):
 
         class GroupLeft(Widget):
             """A container for grouping widgets to the left side of a `Dialog.ActionArea`."""
+
+        def get_content_width(self, container: Size, viewport: Size) -> int:
+            """Get the ideal width for the `ActionArea`.
+
+            Args:
+                container: The container size.
+                viewport: The viewport.
+
+            Returns:
+                The width of the action area for the dialog.
+
+            Much like with `Body.get_content_height` this seeks to work
+            around a thing we need to figure out in CSS; where we want the
+            width of the dialog itself to be enough for the width of the
+            body or the width of the content of the action area; whichever
+            is greater.
+
+            There's no easy way to say that in CSS right at the moment, so
+            this in concert with `Body.get_content_height` helps push the
+            layout in the right direction.
+            """
+            width = super().get_content_width(container, viewport)
+            if isinstance(self.parent, Dialog):
+                try:
+                    # See if the dialog has a body yet.
+                    body = self.parent.query_one(Body)
+                except NoMatches:
+                    # It's fine if it doesn't; that just means we'll go
+                    # ahead and use our "normal" content width.
+                    pass
+                else:
+                    return max(
+                        # Use our own content width...
+                        width,
+                        # ...or the width of the body, minus our horizontal
+                        # padding and margins; whichever is greater.
+                        body.size.width
+                        - (
+                            self.styles.padding.right
+                            + self.styles.padding.left
+                            + self.styles.margin.right
+                            + self.styles.margin.left
+                        ),
+                    )
+            return width
 
     def compose_add_child(self, widget: Widget) -> None:
         """Capture the widgets being added to the dialog for later processing.
