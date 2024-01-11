@@ -9,10 +9,10 @@ from __future__ import annotations
 
 from bisect import bisect_right
 
-from rich._wrap import divide_line
 from rich.text import Text
 
 from textual._cells import cell_len, cell_width_to_column_index
+from textual._wrap import divide_line
 from textual.document._document import DocumentBase, Location
 from textual.expand_tabs import expand_tabs_inline
 from textual.geometry import Offset, clamp
@@ -27,6 +27,7 @@ class WrappedDocument:
         self,
         document: DocumentBase,
         width: int = 0,
+        tab_width: int = 4,
     ) -> None:
         """Construct a WrappedDocument.
 
@@ -36,6 +37,7 @@ class WrappedDocument:
         Args:
             document: The document to wrap.
             width: The width to wrap at.
+            tab_width: The maximum width to consider for tab characters.
         """
         self.document = document
         """The document wrapping is performed on."""
@@ -55,13 +57,14 @@ class WrappedDocument:
         """The width the document is currently wrapped at. This will correspond with
         the value last passed into the `wrap` method."""
 
-        self.wrap(width)
+        self.wrap(width, tab_width)
 
-    def wrap(self, width: int) -> None:
+    def wrap(self, width: int, tab_width: int) -> None:
         """Wrap and cache all lines in the document.
 
         Args:
             width: The width to wrap at. 0 for no wrapping.
+            tab_width: The maximum width to consider for tab characters.
         """
         self._width = width
 
@@ -74,7 +77,10 @@ class WrappedDocument:
         current_offset = 0
 
         for line_index, line in enumerate(self.document.lines):
-            wrap_offsets = divide_line(line, width) if width else []
+            line = expand_tabs_inline(line, tab_width)
+            wrap_offsets = (
+                divide_line(line, width, keep_whitespace=True) if width else []
+            )
             append_wrap_offset(wrap_offsets)
             line_index_to_offsets.append([])
             for section_y_offset in range(len(wrap_offsets) + 1):
@@ -115,6 +121,7 @@ class WrappedDocument:
         start: Location,
         old_end: Location,
         new_end: Location,
+        tab_width: int,
     ) -> None:
         """Incrementally recompute wrapping based on a performed edit.
 
@@ -124,6 +131,7 @@ class WrappedDocument:
             start: The start location of the edit that was performed in document-space.
             old_end: The old end location of the edit in document-space.
             new_end: The new end location of the edit in document-space.
+            tab_width: The maximum width to consider for tab characters.
         """
 
         # Get all the text on the lines between start and end in document space
@@ -165,7 +173,10 @@ class WrappedDocument:
         # Add the new offsets between the top and new bottom (the new post-edit offsets)
         current_y_offset = top_y_offset
         for line_index, line in enumerate(new_lines, top_line_index):
-            wrap_offsets = divide_line(line, width) if width else []
+            line = expand_tabs_inline(line, tab_width)
+            wrap_offsets = (
+                divide_line(line, width, keep_whitespace=True) if width else []
+            )
             append_wrap_offsets(wrap_offsets)
 
             # Collect up the new y offsets for this document line

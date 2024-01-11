@@ -327,13 +327,13 @@ TextArea {
         self._highlight_query: "Query" | None = None
         """The query that's currently being used for highlighting."""
 
-        self.document: DocumentBase
+        self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
 
-        self.wrapped_document: WrappedDocument
+        self.wrapped_document: WrappedDocument = WrappedDocument(self.document)
         """The wrapped view of the document."""
 
-        self._navigator: DocumentNavigator
+        self._navigator: DocumentNavigator = DocumentNavigator(self.wrapped_document)
         """Queried to determine where the cursor should move given a navigation
         action, accounting for wrapping etc."""
 
@@ -681,7 +681,7 @@ TextArea {
             document = Document(text)
 
         self.document = document
-        self.wrapped_document = WrappedDocument(document)
+        self.wrapped_document = WrappedDocument(document, tab_width=self.indent_width)
         self._navigator = DocumentNavigator(self.wrapped_document)
         self._build_highlight_map()
         self.move_cursor((0, 0))
@@ -729,7 +729,7 @@ TextArea {
         return 0
 
     def _rewrap_and_refresh_virtual_size(self) -> None:
-        self.wrapped_document.wrap(self.wrap_width)
+        self.wrapped_document.wrap(self.wrap_width, tab_width=self.indent_width)
         self._refresh_size()
 
     @property
@@ -1037,10 +1037,13 @@ TextArea {
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
-            self.wrapped_document.wrap(self.wrap_width)
+            self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                edit.from_location, edit.to_location, result.end_location
+                edit.from_location,
+                edit.to_location,
+                result.end_location,
+                self.indent_width,
             )
 
         self._refresh_size()
