@@ -35,7 +35,6 @@ def divide_line(
     width: int,
     tab_size: int,
     fold: bool = True,
-    keep_whitespace: bool = False,
 ) -> list[int]:
     """Given a string of text, and a width (measured in cells), return a list
     of codepoint indices which the string should be split at in order for it to fit
@@ -46,7 +45,6 @@ def divide_line(
         width: The available cell width.
         tab_size: The tab stop width.
         fold: If True, words longer than `width` will be folded onto a new line.
-        keep_whitespace: If True, consecutive spaces will not be collapsed at line ends.
 
     Returns:
         A list of indices to break the line at.
@@ -64,15 +62,18 @@ def divide_line(
     # these wrap offsets all assume every tab has width 1.
     #  now, for each offset
 
+    tab_widths = get_tab_widths(text, tab_size)
+
     for start, _end, chunk in chunks(text):
         # todo, 1st, terrible name, 2nd can we get the "word width" here to account for tab widths?
-        word_width = _cell_len(chunk)
-        if keep_whitespace:
-            chunk_width = word_width
-            width_contribution = chunk_width
-        else:
-            chunk_width = _cell_len(chunk.rstrip())
-            width_contribution = word_width
+        chunk_width = _cell_len(chunk)
+        # Count the tabs
+        # Determine the total widths of the tabs in this chunk
+        # Account for the tabs such that we convert every tab
+        # character from width 1 to the new width by adding tab_width
+        # MINUS one for each tab.
+        # So old width + total tab width - num tabs in chunk
+        num_tabs = chunk.count(tab)
 
         remaining_space = width - cell_offset
         chunk_fits = remaining_space >= chunk_width
@@ -99,11 +100,11 @@ def divide_line(
                     # Folding isn't allowed, so crop the word.
                     if start:
                         append(start)
-                    cell_offset = width_contribution
+                    cell_offset = chunk_width
             elif cell_offset and start:
                 # The word doesn't fit within the remaining space on the current
                 # line, but it *can* fit on to the next (empty) line.
                 append(start)
-                cell_offset = width_contribution
+                cell_offset = chunk_width
 
     return break_positions
