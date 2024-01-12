@@ -41,6 +41,6 @@ class Signal:
         """
         count = 0
         for node in self._subscriptions.keys():
-            node.post_message(copy(message))
-            count += 1
+            if node.post_message(copy(message)):
+                count += 1
         return count
