@@ -250,8 +250,11 @@ class MonthCalendar(Widget):
             self._update_calendar_table(update_week_header=False)
         else:
             table = self.query_one(DataTable)
-            date_coordinate = self._get_date_coordinate(self.date)
-            table.cursor_coordinate = date_coordinate
+            cursor_row = table.cursor_coordinate.row
+            cursor_column = table.cursor_coordinate.column
+            if self._calendar_dates[cursor_row][cursor_column] != new_date:
+                date_coordinate = self._get_date_coordinate(self.date)
+                table.cursor_coordinate = date_coordinate
 
     def watch_first_weekday(self) -> None:
         self._calendar = calendar.Calendar(self.first_weekday)
