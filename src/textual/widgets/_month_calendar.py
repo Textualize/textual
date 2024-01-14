@@ -102,8 +102,8 @@ class MonthCalendar(Widget):
             date_coordinate = self._get_date_coordinate(self.date)
             table.cursor_coordinate = date_coordinate
         else:
-            row, column = event.coordinate
-            highlighted_date = self._calendar_dates[row][column]
+            cursor_row, cursor_column = event.coordinate
+            highlighted_date = self._calendar_dates[cursor_row][cursor_column]
             assert isinstance(highlighted_date, datetime.date)
             self.date = highlighted_date
             self.post_message(MonthCalendar.DateHighlighted(self, self.date))
@@ -250,8 +250,7 @@ class MonthCalendar(Widget):
             self._update_calendar_table(update_week_header=False)
         else:
             table = self.query_one(DataTable)
-            cursor_row = table.cursor_coordinate.row
-            cursor_column = table.cursor_coordinate.column
+            cursor_row, cursor_column = table.cursor_coordinate
             if self._calendar_dates[cursor_row][cursor_column] != new_date:
                 date_coordinate = self._get_date_coordinate(self.date)
                 table.cursor_coordinate = date_coordinate
