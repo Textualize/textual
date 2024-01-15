@@ -17,6 +17,7 @@ class InputApp(App):
     }
     Input {
         margin: 1 2;
+        width: 1fr;
     }
     """
 
@@ -41,5 +42,5 @@ class InputApp(App):
 
 app = InputApp()
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()

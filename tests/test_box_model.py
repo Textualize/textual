@@ -84,7 +84,7 @@ def test_width():
     styles.width = "100%"
 
     box_model = widget._get_box_model(Size(60, 20), Size(80, 24), one, one)
-    assert box_model == BoxModel(Fraction(54), Fraction(16), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Fraction(60), Fraction(16), Spacing(1, 2, 3, 4))
 
     styles.width = "100vw"
     styles.max_width = "50%"
@@ -127,7 +127,7 @@ def test_height():
     styles.height = "100%"
 
     box_model = widget._get_box_model(Size(60, 20), Size(80, 24), one, one)
-    assert box_model == BoxModel(Fraction(54), Fraction(16), Spacing(1, 2, 3, 4))
+    assert box_model == BoxModel(Fraction(54), Fraction(20), Spacing(1, 2, 3, 4))
 
     styles.height = "auto"
     styles.margin = 2

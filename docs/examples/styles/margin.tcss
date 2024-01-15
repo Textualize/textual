@@ -7,5 +7,5 @@ Label {
     margin: 4 8;
     background: blue 20%;
     border: blue wide;
-    width: 100%;
+    width: 1fr;
 }

@@ -14,7 +14,7 @@
 }
 
 Screen > Label {
-    width: 100%;
+    width: 1fr;
     height: 5;
     content-align: center middle;
     color: white;
