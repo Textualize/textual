@@ -674,8 +674,3 @@ class Print(Event, bubble=False):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.text
         yield self.stderr
-
-
-@rich.repr.auto
-class Signal(Event):
-    pass
