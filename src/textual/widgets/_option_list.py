@@ -965,11 +965,9 @@ class OptionList(ScrollView, can_focus=True):
         if highlighted is None:
             return None
         elif highlighted < 0:
-            return _widget_navigation.find_first_enabled(self._options)
+            return 0
         elif highlighted >= len(self._options):
-            return _widget_navigation.find_last_enabled(self._options)
-        elif self._options[highlighted].disabled:
-            return self.highlighted
+            return len(self._options) - 1
 
         return highlighted
 

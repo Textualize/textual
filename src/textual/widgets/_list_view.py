@@ -150,11 +150,9 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         if index is None:
             return None
         elif index < 0:
-            return _widget_navigation.find_first_enabled(self._nodes)
+            return 0
         elif index >= len(self._nodes):
-            return _widget_navigation.find_last_enabled(self._nodes)
-        elif self._nodes[index].disabled:
-            return self.index
+            return len(self._nodes) - 1
 
         return index
 
