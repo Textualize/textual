@@ -95,7 +95,7 @@ class Body(VerticalScroll, can_focus=False):
                 # take it into account for this calculation to take place.
                 pass
             else:
-                return min(
+                height = min(
                     # Use the minimum of either the actual content height...
                     height,
                     # ...or maximum fraction of the screen...
@@ -306,7 +306,7 @@ class Dialog(Widget):
                     # ahead and use our "normal" content width.
                     pass
                 else:
-                    return max(
+                    width = max(
                         # Use our own content width...
                         width,
                         # ...or the width of the body, minus our horizontal
