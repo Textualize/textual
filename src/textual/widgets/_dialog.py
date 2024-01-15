@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
-from typing_extensions import Final
+from typing import get_args
+
+from typing_extensions import Final, Literal
 
 from ..app import ComposeResult
 from ..containers import VerticalScroll
+from ..css._error_tools import friendly_list
 from ..css.query import NoMatches
 from ..geometry import Size
 from ..reactive import var
@@ -13,6 +16,12 @@ from ..widget import Widget
 
 _MAX_DIALOG_DIMENSION: Final[float] = 0.9
 """The ideal maximum dimension for the dialog in respect to the screen."""
+
+DialogVariant = Literal["default", "success", "warning", "error"]
+"""The names of the valid dialog variants.
+
+These are the variants that can be used with a [`Dialog`][textual.widgets.Dialog].
+"""
 
 
 class Body(VerticalScroll, can_focus=False):
@@ -75,8 +84,6 @@ class Dialog(Widget):
     """A dialog widget."""
 
     DEFAULT_CSS = """
-    $--dialog-border-color: $primary;
-
     Dialog {
 
         layout: vertical;
@@ -86,7 +93,7 @@ class Dialog(Widget):
         max-width: 90%;
         /*max-height: 90%; Using the get_content_height hack above instead. */
 
-        border: panel $--dialog-border-color;
+        border: panel $primary;
         border-title-color: $accent;
         background: $surface;
 
@@ -101,7 +108,7 @@ class Dialog(Widget):
             height: auto;
             width: auto;
 
-            border-top: $--dialog-border-color;
+            border-top: $primary;
 
             padding: 1 1 0 1;
 
@@ -139,8 +146,47 @@ class Dialog(Widget):
                 content-align: center middle;
             }
         }
+
+        /*
+         * Success variant styling.
+         */
+        &.-success {
+            border: panel $success;
+            border-title-color: initial;
+
+            ActionArea {
+                border-top: $success;
+            }
+        }
+
+        /*
+         * Warning variant styling.
+         */
+        &.-warning {
+            border: panel $warning;
+            border-title-color: initial;
+
+            ActionArea {
+                border-top: $warning;
+            }
+        }
+
+        /*
+         * Error variant styling.
+         */
+        &.-error {
+            border: panel $error;
+            border-title-color: initial;
+
+            ActionArea {
+                border-top: $error;
+            }
+        }
     }
     """
+
+    variant: var[DialogVariant] = var("default")
+    """The variant of dialog."""
 
     title: var[str] = var("")
     """The title of the dialog."""
@@ -149,6 +195,7 @@ class Dialog(Widget):
         self,
         *children: Widget,
         title: str = "",
+        variant: DialogVariant = "default",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -159,6 +206,7 @@ class Dialog(Widget):
         Args:
             children: The child widgets for the dialog.
             title: The title for the dialog.
+            variant: The variant of the dialog.
             name: The name of the dialog.
             id: The ID of the dialog in the DOM.
             classes: The CSS classes of the dialog.
@@ -167,7 +215,23 @@ class Dialog(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._dialog_children: list[Widget] = list(children)
         """Holds the widgets that will go to making up the dialog."""
+        self.variant = variant
         self.title = title
+
+    def _watch_variant(
+        self, old_variant: DialogVariant, new_variant: DialogVariant
+    ) -> None:
+        """React to the variant being changed."""
+        self.remove_class(f"-{old_variant}")
+        self.add_class(f"-{new_variant}")
+
+    def _validate_variant(self, variant: DialogVariant) -> DialogVariant:
+        """Ensure that the given variant is a supported value."""
+        if variant not in get_args(DialogVariant):
+            raise ValueError(
+                f"Valid dialog variants are {friendly_list(get_args(DialogVariant))}"
+            )
+        return variant
 
     def _watch_title(self) -> None:
         """React to the title being changed."""
@@ -274,3 +338,90 @@ class Dialog(Widget):
             widget.tooltip = "\n".join(
                 f"{node!r}" for node in widget.ancestors_with_self
             )
+
+    @staticmethod
+    def success(
+        *children: Widget,
+        title: str = "",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> Dialog:
+        """Create a success variant dialog widget.
+
+        Args:
+            children: The child widgets for the dialog.
+            title: The title for the dialog.
+            name: The name of the dialog.
+            id: The ID of the dialog in the DOM.
+            classes: The CSS classes of the dialog.
+            disabled: Whether the dialog is disabled or not.
+        """
+        return Dialog(
+            *children,
+            title=title,
+            variant="success",
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
+
+    @staticmethod
+    def warning(
+        *children: Widget,
+        title: str = "",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> Dialog:
+        """Create a warning variant dialog widget.
+
+        Args:
+            children: The child widgets for the dialog.
+            title: The title for the dialog.
+            name: The name of the dialog.
+            id: The ID of the dialog in the DOM.
+            classes: The CSS classes of the dialog.
+            disabled: Whether the dialog is disabled or not.
+        """
+        return Dialog(
+            *children,
+            title=title,
+            variant="warning",
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
+
+    @staticmethod
+    def error(
+        *children: Widget,
+        title: str = "",
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> Dialog:
+        """Create a warning variant dialog widget.
+
+        Args:
+            children: The child widgets for the dialog.
+            title: The title for the dialog.
+            name: The name of the dialog.
+            id: The ID of the dialog in the DOM.
+            classes: The CSS classes of the dialog.
+            disabled: Whether the dialog is disabled or not.
+        """
+        return Dialog(
+            *children,
+            title=title,
+            variant="error",
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
