@@ -216,7 +216,6 @@ nav:
       - "how-to/index.md"
       - "how-to/center-things.md"
       - "how-to/design-a-layout.md"
-      - "how-to/package-an-application.md"
       - "how-to/render-and-compose.md"
   - "FAQ.md"
   - "roadmap.md"
