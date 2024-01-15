@@ -12,7 +12,7 @@ from ..reactive import var
 from ..widget import Widget
 
 _MAX_DIALOG_DIMENSION: Final[float] = 0.9
-"""The ideal maximum dimension for the dialog in respect to the sceen."""
+"""The ideal maximum dimension for the dialog in respect to the screen."""
 
 
 class Body(VerticalScroll, can_focus=False):
