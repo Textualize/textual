@@ -979,3 +979,8 @@ def test_nested_specificity(snap_compare):
     """Test specificity of nested rules is working."""
     # https://github.com/Textualize/textual/issues/3961
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_specificity.py")
+
+
+def test_tab_rename(snap_compare):
+    """Test setting a new label for a tab amongst a TabbedContent."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")

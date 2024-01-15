@@ -10,15 +10,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
-- - Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+- Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
+- `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
+- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
 
 ### Added
 
 - Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
+- Added `Widget.allow_focus` and `Widget.allow_focus_children` https://github.com/Textualize/textual/pull/3989
 
 ### Fixed
 
 - Parameter `animate` from `DataTable.move_cursor` was being ignored https://github.com/Textualize/textual/issues/3840
+- Fixed a crash if `DirectoryTree.show_root` was set before the DOM was fully available https://github.com/Textualize/textual/issues/2363
+- Live reloading of TCSS wouldn't apply CSS changes to screens under the top screen of the stack https://github.com/Textualize/textual/issues/3931
+- `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
+- Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
+- Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
 
 
 ## [0.47.1] - 2023-01-05

@@ -42,7 +42,6 @@ from typing_extensions import Self
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
@@ -52,6 +51,7 @@ from ._styles_cache import StylesCache
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
+from .cache import FIFOCache
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -508,6 +508,28 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def allow_focus(self) -> bool:
+        """Check if the widget is permitted to focus.
+
+        The base class returns [`can_focus`][textual.widget.Widget.can_focus].
+        This method maybe overridden if additional logic is required.
+
+        Returns:
+            `True` if the widget may be focused, or `False` if it may not be focused.
+        """
+        return self.can_focus
+
+    def allow_focus_children(self) -> bool:
+        """Check if a widget's children may be focused.
+
+        The base class returns [`can_focus_children`][textual.widget.Widget.can_focus_children].
+        This method maybe overridden if additional logic is required.
+
+        Returns:
+            `True` if the widget's children may be focused, or `False` if the widget's children may not be focused.
+        """
+        return self.can_focus_children
 
     def compose_add_child(self, widget: Widget) -> None:
         """Add a node to children.

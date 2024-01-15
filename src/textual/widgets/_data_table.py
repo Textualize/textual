@@ -16,11 +16,11 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self, TypeAlias
 
 from .. import events
-from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..color import Color
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
@@ -860,7 +860,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.get_cell(row_key, column_key)
 
     def get_cell_coordinate(
-        self, row_key: RowKey | str, column_key: Column | str
+        self, row_key: RowKey | str, column_key: ColumnKey | str
     ) -> Coordinate:
         """Given a row key and column key, return the corresponding cell coordinate.
 

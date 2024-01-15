@@ -14,7 +14,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 
-from .._cache import LRUCache
+from ..cache import LRUCache
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
