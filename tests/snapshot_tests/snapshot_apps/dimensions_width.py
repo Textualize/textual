@@ -56,6 +56,10 @@ class DimensionsApp(App[None]):
             yield TextArea(classes="target")
             yield DataTable(classes="target")
 
+    def on_mount(self) -> None:
+        self.query_one(Input).cursor_blink = False
+        self.query_one(TextArea).cursor_blink = False
+
 
 if __name__ == "__main__":
     DimensionsApp().run()
