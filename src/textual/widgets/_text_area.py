@@ -515,9 +515,6 @@ TextArea {
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
-    def _watch_wrap(self) -> None:
-        self._rewrap_and_refresh_virtual_size()
-
     def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
