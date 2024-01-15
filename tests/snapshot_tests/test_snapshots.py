@@ -57,6 +57,30 @@ def test_alignment_containers(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "alignment_containers.py")
 
 
+def test_dimensions_width(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dimensions_width.py", terminal_size=(80, 24))
+
+
+def test_dimensions_max_width(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dimensions_max_width.py", terminal_size=(80, 24))
+
+
+def test_dimensions_min_width(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dimensions_min_width.py", terminal_size=(80, 24))
+
+
+def test_dimensions_height(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dimensions_height.py", terminal_size=(80, 24))
+
+
+def test_dimensions_max_height(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dimensions_max_height.py", terminal_size=(80, 24))
+
+
+def test_dimensions_min_height(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dimensions_min_height.py", terminal_size=(80, 24))
+
+
 # --- Widgets - rendering and basic interactions ---
 # Each widget should have a canonical example that is display in the docs.
 # When adding a new widget, ideally we should also create a snapshot test
