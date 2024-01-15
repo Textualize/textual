@@ -18,7 +18,10 @@ class ListViewDisabledItemsApp(App[None]):
         )
 
     def _on_list_view_highlighted(self, message: ListView.Highlighted) -> None:
-        self.highlighted.append(str(message.item.children[0].renderable))
+        if message.item is None:
+            self.highlighted.append(None)
+        else:
+            self.highlighted.append(str(message.item.children[0].renderable))
 
 
 async def test_keyboard_navigation_with_disabled_items() -> None:
@@ -32,6 +35,7 @@ async def test_keyboard_navigation_with_disabled_items() -> None:
             await pilot.press("up")
 
     assert app.highlighted == [
+        None,
         "1",
         "4",
         "5",

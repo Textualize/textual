@@ -11,7 +11,7 @@ from ..containers import VerticalScroll
 from ..events import Mount
 from ..message import Message
 from ..reactive import reactive
-from ..widget import AwaitMount, Widget
+from ..widget import AwaitMount
 from ..widgets._list_item import ListItem
 
 
@@ -147,7 +147,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         Returns:
             The clamped index.
         """
-        if index is None:
+        if index is None or not self._nodes:
             return None
         elif index < 0:
             return 0
@@ -169,16 +169,14 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             assert isinstance(old_child, ListItem)
             old_child.highlighted = False
 
-        new_child: Widget | None
         if self._is_valid_index(new_index) and not self._nodes[new_index].disabled:
             new_child = self._nodes[new_index]
             assert isinstance(new_child, ListItem)
             new_child.highlighted = True
+            self._scroll_highlighted_region()
+            self.post_message(self.Highlighted(self, new_child))
         else:
-            new_child = None
-
-        self._scroll_highlighted_region()
-        self.post_message(self.Highlighted(self, new_child))
+            self.post_message(self.Highlighted(self, None))
 
     def extend(self, items: Iterable[ListItem]) -> AwaitMount:
         """Append multiple new ListItems to the end of the ListView.

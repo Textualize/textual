@@ -656,7 +656,7 @@ class OptionList(ScrollView, can_focus=True):
             self._remove_option(index)
         except IndexError:
             raise OptionDoesNotExist(
-                f"There is no option with an index of {index}"
+                f"There is no option with an index of {index!r}"
             ) from None
         return self
 
@@ -962,7 +962,7 @@ class OptionList(ScrollView, can_focus=True):
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
         """Validate the `highlighted` property value on access."""
-        if highlighted is None:
+        if highlighted is None or not self._options:
             return None
         elif highlighted < 0:
             return 0
@@ -973,10 +973,9 @@ class OptionList(ScrollView, can_focus=True):
 
     def watch_highlighted(self, highlighted: int | None) -> None:
         """React to the highlighted option having changed."""
-        if highlighted is not None:
+        if highlighted is not None and not self._options[highlighted].disabled:
             self.scroll_to_highlight()
-            if not self._options[highlighted].disabled:
-                self.post_message(self.OptionHighlighted(self, highlighted))
+            self.post_message(self.OptionHighlighted(self, highlighted))
 
     def action_cursor_up(self) -> None:
         """Move the highlight up to the previous enabled option."""
