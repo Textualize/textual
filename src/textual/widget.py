@@ -1075,8 +1075,6 @@ class Widget(DOMNode):
 
         # Container minus padding and border
         content_container = container - gutter.totals
-        # The container including the content
-        sizing_container = content_container if is_border_box else container
 
         if styles.width is None:
             # No width specified, fill available space
@@ -1096,28 +1094,20 @@ class Widget(DOMNode):
             ):
                 content_width = Fraction(content_container.width)
         else:
-            # An explicit width
-            styles_width = styles.width
-            content_width = styles_width.resolve(
-                sizing_container - styles.margin.totals, viewport, width_fraction
-            )
-            if is_border_box and styles_width.excludes_border:
+            content_width = styles.width.resolve(container, viewport, width_fraction)
+            if is_border_box:
                 content_width -= gutter.width
 
         if styles.min_width is not None:
             # Restrict to minimum width, if set
-            min_width = styles.min_width.resolve(
-                content_container, viewport, width_fraction
-            )
+            min_width = styles.min_width.resolve(container, viewport, width_fraction)
             if is_border_box:
                 min_width -= gutter.width
             content_width = max(content_width, min_width, Fraction(0))
 
         if styles.max_width is not None:
             # Restrict to maximum width, if set
-            max_width = styles.max_width.resolve(
-                content_container, viewport, width_fraction
-            )
+            max_width = styles.max_width.resolve(container, viewport, width_fraction)
             if is_border_box:
                 max_width -= gutter.width
             content_width = min(content_width, max_width)
@@ -1130,7 +1120,11 @@ class Widget(DOMNode):
         elif is_auto_height:
             # Calculate dimensions based on content
             content_height = Fraction(
-                self.get_content_height(content_container, viewport, int(content_width))
+                self.get_content_height(
+                    content_container - styles.margin.totals,
+                    viewport,
+                    int(content_width),
+                )
             )
             if styles.scrollbar_gutter == "stable" and styles.overflow_y == "auto":
                 content_height += styles.scrollbar_size_horizontal
@@ -1140,28 +1134,20 @@ class Widget(DOMNode):
             ):
                 content_height = Fraction(content_container.height)
         else:
-            styles_height = styles.height
-            # Explicit height set
-            content_height = styles_height.resolve(
-                sizing_container - styles.margin.totals, viewport, height_fraction
-            )
-            if is_border_box and styles_height.excludes_border:
+            content_height = styles.height.resolve(container, viewport, height_fraction)
+            if is_border_box:
                 content_height -= gutter.height
 
         if styles.min_height is not None:
             # Restrict to minimum height, if set
-            min_height = styles.min_height.resolve(
-                content_container, viewport, height_fraction
-            )
+            min_height = styles.min_height.resolve(container, viewport, height_fraction)
             if is_border_box:
                 min_height -= gutter.height
             content_height = max(content_height, min_height, Fraction(0))
 
         if styles.max_height is not None:
             # Restrict maximum height, if set
-            max_height = styles.max_height.resolve(
-                content_container, viewport, height_fraction
-            )
+            max_height = styles.max_height.resolve(container, viewport, height_fraction)
             if is_border_box:
                 max_height -= gutter.height
             content_height = min(content_height, max_height)
