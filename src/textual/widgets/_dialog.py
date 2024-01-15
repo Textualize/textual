@@ -36,6 +36,9 @@ class DOMInfo:
         return Group(
             Rule("DOM hierarchy"),
             "\n".join(f"{node!r}" for node in self._widget.ancestors_with_self),
+            Rule("Dimensions"),
+            f"Container: {self._widget.container_size}",
+            f"Content: {self._widget.content_size}",
             Rule("CSS"),
             self._widget.styles.css,
             Rule(),
