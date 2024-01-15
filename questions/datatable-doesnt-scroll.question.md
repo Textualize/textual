@@ -1,5 +1,5 @@
 ---
-title: "Why doesn't the `DataTable` scroll programmatically?"
+title: "Why doesn't the DataTable scroll programmatically?"
 alt_titles:
   - "Scroll bindings from `DataTable` not working."
   - "Datatable cursor goes off screen and doesn't scroll."
