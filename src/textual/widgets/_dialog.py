@@ -147,9 +147,10 @@ class Dialog(Widget):
             }
         }
 
-        /*
-         * Success variant styling.
+        /***
+         * Styling exceptions for each of the variants.
          */
+
         &.-success {
             border: panel $success;
             border-title-color: initial;
@@ -159,9 +160,6 @@ class Dialog(Widget):
             }
         }
 
-        /*
-         * Warning variant styling.
-         */
         &.-warning {
             border: panel $warning;
             border-title-color: initial;
@@ -171,9 +169,6 @@ class Dialog(Widget):
             }
         }
 
-        /*
-         * Error variant styling.
-         */
         &.-error {
             border: panel $error;
             border-title-color: initial;
