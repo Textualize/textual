@@ -97,7 +97,7 @@ Additionally there is a `tests` directory where you can add any [test](../guide/
 
 ### More on naming
 
-Note how Hatch replaced the space in the project name with a hyphen (i.e. `textual-calculator`), but the directory in src with an underscore (i.e. `textual_calculator`). This is because the directory in `src` contains the Python module, and a hyphen is not legal in a Python import. The name of the top level directory is typically the name of the (pip installable) project.
+Note how Hatch replaced the space in the project name with a hyphen (i.e. `textual-calculator`), but the directory in src with an underscore (i.e. `textual_calculator`). This is because the directory in `src` contains the Python module, and a hyphen is not legal in a Python import. The top-level directory doesn't have this restriction and uses a hyphen, which is more typical for a directory name.
 
 Bear this in mind, if your project name contains spaces.
 
