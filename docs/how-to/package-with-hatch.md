@@ -327,8 +327,8 @@ Hatch will upload the distribution files, and you should see a PyPI URL in the t
 
 ### Managing API Tokens
 
-Creating an API token for all projects is required for the first upload.
-You may want to regenerate an API token for just the one project when you upload the next version.
+Creating an API token with the "all projects" permission is required for the first upload.
+You may want to generate a new API token with permissions to upload a single project when you upload a new version of your app (and delete the old one).
 This way if your token is leaked, it will only impact the one project.
 
 ### Publishing new versions
