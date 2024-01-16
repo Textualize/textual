@@ -28,6 +28,10 @@ Packaging with Python can be a little intimidating if you haven't tackled it bef
 But it's not all that complicated. 
 When you have been through it once or twice, you should find it fairly straightforward.
 
+## Example repository
+
+See the [textual-calculator-hatch](https://github.com/Textualize/textual-calculator-hatch) repository for the project created in this How-To.
+
 ## The example app
 
 To demonstrate packaging we are going to take the calculator example from the examples directory, and publish it to PyPi.
