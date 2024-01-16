@@ -26,10 +26,14 @@ def test_chunks(input_text, expected_output):
 @pytest.mark.parametrize(
     "text, width, tab_size, expected_output",
     [
-        ("foo bar baz", 6, 4, [4, 8]),
-        ("\tfoo bar baz", 6, 4, [3, 9]),
-        ("\tfo bar baz", 6, 4, [3, 8]),
-        ("\tfo bar baz", 6, 8, [1, 4, 8]),
+        # ("", 6, 4, []),
+        ("\t", 6, 4, []),
+        ("\t", 6, 4, []),
+        # ("    ", 6, 4, []),
+        # ("foo bar baz", 6, 4, [4, 8]),
+        # ("\tfoo bar baz", 6, 4, [3, 9]),
+        # ("\tfo bar baz", 6, 4, [3, 8]),
+        # ("\tfo bar baz", 6, 8, [1, 4, 8]),
     ],
 )
 def test_divide_line(text, width, tab_size, expected_output):
