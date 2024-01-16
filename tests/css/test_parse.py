@@ -3,8 +3,8 @@ from __future__ import annotations
 import pytest
 
 from textual.color import Color
-from textual.css.errors import InvalidIDError, UnresolvedVariableError
-from textual.css.parse import substitute_references, validate_identifier
+from textual.css.errors import UnresolvedVariableError
+from textual.css.parse import substitute_references
 from textual.css.scalar import Scalar, Unit
 from textual.css.stylesheet import Stylesheet, StylesheetParseError
 from textual.css.tokenize import tokenize
@@ -1272,40 +1272,3 @@ Widget:blu {
         stylesheet.parse()
 
     assert error.value.start == (2, 7)
-
-
-@pytest.mark.parametrize(
-    "identifier",
-    [
-        "the",
-        "quick",
-        "brown",
-        "f0x",
-        "jump5",
-        "ov3r",
-        "_the__",
-        "l4zy_",
-        "_d0g",
-    ],
-)
-def test_identifier_validation_passes(identifier: str):
-    assert validate_identifier(identifier) == identifier
-
-
-@pytest.mark.parametrize(
-    "identifier",
-    [
-        " the",
-        "quick ",
-        "bro wn",
-        "f0x&",
-        "+jump5",
-        "0v3r",
-        "—the",
-        "läzy_",
-        "_d0g!",
-    ],
-)
-def test_identifier_validation_fails(identifier: str):
-    with pytest.raises(InvalidIDError):
-        validate_identifier(identifier)

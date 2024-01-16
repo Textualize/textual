@@ -1,6 +1,6 @@
 import pytest
 
-from textual.css.errors import InvalidIDError, StyleValueError
+from textual.css.errors import StyleValueError
 from textual.dom import BadIdentifier, DOMNode
 
 
