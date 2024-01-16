@@ -1,14 +1,14 @@
 # Package a Textual app with Hatch
 
-Python apps may be distributed via [PyPi](https://pypi.org/) so they can be installed via `pip`.
+Python apps may be distributed via [PyPI](https://pypi.org/) so they can be installed via `pip`.
 This is known as *packaging*.
 The packaging process for Textual apps is much the same as any Python library, with the additional requirement that we can launch our app from the command line.
 
 !!! tip
 
-    An alternative to packaging your app is to turn it in to a web application with [textual-web](https://github.com/Textualize/textual-web).
+    An alternative to packaging your app is to turn it into a web application with [textual-web](https://github.com/Textualize/textual-web).
 
-In this How-To we will cover how to use [Hatch](https://github.com/pypa/hatch) to package an example application.
+In this How To we will cover how to use [Hatch](https://github.com/pypa/hatch) to package an example application.
 
 Hatch is a *build tool*.
 There are other build tools, such as [Poetry](https://python-poetry.org/).
@@ -30,7 +30,7 @@ When you have been through it once or twice, you should find it fairly straightf
 
 ## Example repository
 
-See the [textual-calculator-hatch](https://github.com/Textualize/textual-calculator-hatch) repository for the project created in this How-To.
+See the [textual-calculator-hatch](https://github.com/Textualize/textual-calculator-hatch) repository for the project created in this How To.
 
 ## The example app
 
@@ -97,13 +97,13 @@ In the top level is a directory called `src`.
 This should contain a directory named after your project, and will be the name your code can be imported from.
 In our example, this directory is `textual_calculator` so we can do `import textual_calculator` in Python code.
 
-Additionally there is a `tests` directory where you can add any [test](../guide/testing.md) code.
+Additionally, there is a `tests` directory where you can add any [test](../guide/testing.md) code.
 
 ### More on naming
 
-Note how Hatch replaced the space in the project name with a hyphen (i.e. `textual-calculator`), but the directory in src with an underscore (i.e. `textual_calculator`). This is because the directory in `src` contains the Python module, and a hyphen is not legal in a Python import. The top-level directory doesn't have this restriction and uses a hyphen, which is more typical for a directory name.
+Note how Hatch replaced the space in the project name with a hyphen (i.e. `textual-calculator`), but the directory in `src` with an underscore (i.e. `textual_calculator`). This is because the directory in `src` contains the Python module, and a hyphen is not legal in a Python import. The top-level directory doesn't have this restriction and uses a hyphen, which is more typical for a directory name.
 
-Bear this in mind, if your project name contains spaces.
+Bear this in mind if your project name contains spaces.
 
 
 ### Got existing code?
@@ -191,7 +191,7 @@ See the Hatch docs for more information on specifying [dependencies](https://hat
 
 ## Environments
 
-A common problem when working with Python code, is managing multiple projects with different dependencies.
+A common problem when working with Python code is managing multiple projects with different dependencies.
 For instance, if we had another app that used version `0.40.0` of Textual, it *may* break if we installed version `0.47.1`.
 
 The standard way of solving this is with *virtual environments* (or *venvs*), which allow each project to have its own set of dependencies.
@@ -228,8 +228,8 @@ python -m textual_calculator.calculator
 
 The `-m` switch tells Python to import the module and run it.
 
-Although you can run your app this way (and it is fine for development), its not ideal for sharing.
-It would be preferable to have a single command to launch the app, so the user can easily run it from the command line.
+Although you can run your app this way (and it is fine for development), it's not ideal for sharing.
+It would be preferable to have a dedicated command to launch the app, so the user can easily run it from the command line.
 To do that, we will need to add an *entry point* to pyproject.toml
 
 ## Entry points
@@ -305,17 +305,17 @@ You don't typically need to use these files directly, but feel free to have a lo
 
 ## Publishing
 
-After your project has been successfully built you are ready to publish it to PyPi.
+After your project has been successfully built you are ready to publish it to PyPI.
 
-If you don't have a PyPi account, you can [create one now](https://pypi.org/account/register/).
+If you don't have a PyPI account, you can [create one now](https://pypi.org/account/register/).
 Be sure to follow the instructions to validate your email and set up 2FA (Two Factor Authentication).
 
-Once you have an account, login to PyPi and go to the Account Settings tab.
+Once you have an account, login to PyPI and go to the Account Settings tab.
 Scroll down and click the "Add API token" button.
 In the "Create API Token" form, create a token with name "Uploads" and select the "Entire project" scope, then click the "Create token" button.
 
 Copy this API token (long string of random looking characters) somewhere safe.
-This API token is how PyPi authenticates uploads are for your account, so you should never share your API token or upload it to the internet.
+This API token is how PyPI authenticates uploads are for your account, so you should never share your API token or upload it to the internet.
 
 Run the following command (replacing `<YOUR API TOKEN>` with the text generated in the previous step):
 
@@ -323,7 +323,7 @@ Run the following command (replacing `<YOUR API TOKEN>` with the text generated 
 hatch publish -u __token__ -a <YOUR API TOKEN>
 ```
 
-Hatch will upload the distribution files, and you should see a PyPi URL in the terminal.
+Hatch will upload the distribution files, and you should see a PyPI URL in the terminal.
 
 ### Managing API Tokens
 
@@ -357,21 +357,21 @@ calculator
 
 A downside of installing apps this way is that unless the user has created a [virtual environment](https://docs.python.org/3/library/venv.html), they may find it breaks other packages with conflicting dependencies.
 
-A good solution to this issue is [pipx](https://docs.python.org/3/library/venv.html) which automatically creates virtual environments that won't conflict with any other Python commands.
-Once PipX is installed, you can advise users install your app with the following command:
+A good solution to this issue is [pipx](https://github.com/pypa/pipx) which automatically creates virtual environments that won't conflict with any other Python commands.
+Once PipX is installed, you can advise users to install your app with the following command:
 
 ```bash
 pipx install textual_calculator
 ```
 
-This will install `textual` as before, but without the potential of dependency conflicts.
+This will install the calculator and the `textual` dependency as before, but without the potential of dependency conflicts.
 
 ## Summary
 
 1. Use a build system, such as [Hatch](https://hatch.pypa.io/latest/).
 2. Initialize your project with `hatch new` (or equivalent).
 3. Write a function to run your app, if there isn't one already.
-4. Add your dependencies and entry points to `pyproject.toml`
+4. Add your dependencies and entry points to `pyproject.toml`.
 5. Build your app with `hatch build`.
 6. Publish your app with `hatch publish`.
 
