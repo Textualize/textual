@@ -16,13 +16,20 @@ from typing import (
     Generic,
     Type,
     TypeVar,
+    cast,
 )
 
 import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._types import MessageTarget, WatchCallbackType
+from ._types import (
+    MessageTarget,
+    WatchCallbackBothValuesType,
+    WatchCallbackNewValueType,
+    WatchCallbackNoArgsType,
+    WatchCallbackType,
+)
 
 if TYPE_CHECKING:
     from .dom import DOMNode
@@ -61,11 +68,13 @@ def invoke_watcher(
     _rich_traceback_omit = True
     param_count = count_parameters(watch_function)
     if param_count == 2:
-        watch_result = watch_function(old_value, value)
+        watch_result = cast(WatchCallbackBothValuesType, watch_function)(
+            old_value, value
+        )
     elif param_count == 1:
-        watch_result = watch_function(value)
+        watch_result = cast(WatchCallbackNewValueType, watch_function)(value)
     else:
-        watch_result = watch_function()
+        watch_result = cast(WatchCallbackNoArgsType, watch_function)()
     if isawaitable(watch_result):
         # Result is awaitable, so we need to await it within an async context
         watcher_object.call_next(partial(await_watcher, watcher_object, watch_result))
@@ -234,7 +243,7 @@ class Reactive(Generic[ReactiveType]):
                 obj.refresh(repaint=self._repaint, layout=self._layout)
 
     @classmethod
-    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
+    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
         """Check watchers, and call watch methods / computes
 
         Args:
@@ -256,7 +265,7 @@ class Reactive(Generic[ReactiveType]):
             invoke_watcher(obj, public_watch_function, old_value, value)
 
         # Process "global" watchers
-        watchers: list[tuple[Reactable, Callable]]
+        watchers: list[tuple[Reactable, WatchCallbackType]]
         watchers = getattr(obj, "__watchers", {}).get(name, [])
         # Remove any watchers for reactables that have since closed
         if watchers:
@@ -365,7 +374,9 @@ def _watch(
     """
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")
+    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = getattr(
+        obj, "__watchers"
+    )
     watcher_list = watchers.setdefault(attribute_name, [])
     if callback in watcher_list:
         return
