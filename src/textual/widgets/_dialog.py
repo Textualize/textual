@@ -23,35 +23,6 @@ DialogVariant = Literal["default", "success", "warning", "error"]
 These are the variants that can be used with a [`Dialog`][textual.widgets.Dialog].
 """
 
-##############################################################################
-from rich.console import Group
-from rich.rule import Rule
-
-
-class DOMInfo:
-    def __init__(self, widget: Widget) -> None:
-        self._widget = widget
-
-    def __rich__(self) -> Group:
-        return Group(
-            Rule("DOM hierarchy"),
-            "\n".join(f"{node!r}" for node in self._widget.ancestors_with_self),
-            Rule("Dimensions"),
-            f"Container: {self._widget.container_size}",
-            f"Content: {self._widget.content_size}",
-            Rule("CSS"),
-            self._widget.styles.css,
-            Rule(),
-        )
-
-    @classmethod
-    def attach_to(cls, node: Widget) -> None:
-        for widget in [node, *node.query("*")]:
-            widget.tooltip = cls(widget)
-
-
-##############################################################################
-
 
 class Body(VerticalScroll, can_focus=False):
     """Internal dialog container class for the main body of the dialog."""
@@ -399,9 +370,6 @@ class Dialog(Widget):
                     yield widget
         if action_area is not None:
             yield action_area
-
-    def on_mount(self) -> None:
-        DOMInfo.attach_to(self)
 
     @staticmethod
     def success(
