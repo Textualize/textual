@@ -34,7 +34,7 @@ See the [textual-calculator-hatch](https://github.com/Textualize/textual-calcula
 
 ## The example app
 
-To demonstrate packaging we are going to take the calculator example from the examples directory, and publish it to PyPi.
+To demonstrate packaging we are going to take the calculator example from the examples directory, and publish it to PyPI.
 The end goal is to allow a user to install it with pip:
 
 
@@ -88,7 +88,7 @@ textual-calculator
 This follows a well established convention when packaging Python code, and will create the following files:
 
 - `LICENSE.txt` contains the license you want to distribute your code under.
-- `README.md` is a markdown file containing information about your project, which will be displayed in PyPi and Github (if you use it). You can edit this with information about your app and how to use it.
+- `README.md` is a markdown file containing information about your project, which will be displayed in PyPI and Github (if you use it). You can edit this with information about your app and how to use it.
 - `pyproject.toml` is a [TOML](https://en.wikipedia.org/wiki/TOML) file which contains *metadata* (additional information) about your project and how to package it. This is a Python standard. This file may be edited manually or by a build tool (such as Hatch).
 - `src/textual_calculator/__about__.py` contains the version number of your app. You should update this when you release new versions.
 - `src/textual_calculator/__init__.py`  and `tests/__init__py` indicate the directory they are within contains Python code (these files are often empty).
@@ -109,7 +109,7 @@ Bear this in mind if your project name contains spaces.
 ### Got existing code?
 
 The `hatch new` command assumes you are starting from scratch.
-If you have existing code you would like to package, navigate to your directory and run the following command:
+If you have existing code you would like to package, navigate to your directory and run the following command (replace `<YOUR ROJECT NAME>` with the name of your project):
 
 ```
 hatch new --init <YOUR PROJECT NAME>
