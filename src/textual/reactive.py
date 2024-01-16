@@ -383,4 +383,4 @@ def _watch(
     watcher_list.append((node, callback))
     if init:
         current_value = getattr(obj, attribute_name, None)
-        Reactive._check_watchers(obj, attribute_name, current_value)
+        invoke_watcher(obj, callback, current_value, current_value)
