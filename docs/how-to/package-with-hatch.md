@@ -1,7 +1,7 @@
 # Package a Textual app with Hatch
 
 Python apps may be distributed via [PyPi](https://pypi.org/) so they can be installed via `pip`.
-This is known as *packing*.
+This is known as *packaging*.
 The packaging process for Textual apps is much the same as any Python library, with the additional requirement that we can launch our app from the command line.
 
 !!! tip
