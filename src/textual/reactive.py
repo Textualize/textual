@@ -36,6 +36,41 @@ class TooManyComputesError(Exception):
     """Raised when an attribute has public and private compute methods."""
 
 
+async def await_watcher(obj: Reactable, awaitable: Awaitable[object]) -> None:
+    """Coroutine to await an awaitable returned from a watcher"""
+    _rich_traceback_omit = True
+    await awaitable
+    # Watcher may have changed the state, so run compute again
+    obj.post_message(events.Callback(callback=partial(Reactive._compute, obj)))
+
+
+def invoke_watcher(
+    watcher_object: Reactable,
+    watch_function: WatchCallbackType,
+    old_value: object,
+    value: object,
+) -> None:
+    """Invoke a watch function.
+
+    Args:
+        watcher_object: The object watching for the changes.
+        watch_function: A watch function, which may be sync or async.
+        old_value: The old value of the attribute.
+        value: The new value of the attribute.
+    """
+    _rich_traceback_omit = True
+    param_count = count_parameters(watch_function)
+    if param_count == 2:
+        watch_result = watch_function(old_value, value)
+    elif param_count == 1:
+        watch_result = watch_function(value)
+    else:
+        watch_result = watch_function()
+    if isawaitable(watch_result):
+        # Result is awaitable, so we need to await it within an async context
+        watcher_object.call_next(partial(await_watcher, watcher_object, watch_result))
+
+
 @rich.repr.auto
 class Reactive(Generic[ReactiveType]):
     """Reactive descriptor.
@@ -211,39 +246,6 @@ class Reactive(Generic[ReactiveType]):
         # Get the current value.
         internal_name = f"_reactive_{name}"
         value = getattr(obj, internal_name)
-
-        async def await_watcher(awaitable: Awaitable) -> None:
-            """Coroutine to await an awaitable returned from a watcher"""
-            _rich_traceback_omit = True
-            await awaitable
-            # Watcher may have changed the state, so run compute again
-            obj.post_message(events.Callback(callback=partial(Reactive._compute, obj)))
-
-        def invoke_watcher(
-            watcher_object: Reactable,
-            watch_function: Callable,
-            old_value: object,
-            value: object,
-        ) -> None:
-            """Invoke a watch function.
-
-            Args:
-                watcher_object: The object watching for the changes.
-                watch_function: A watch function, which may be sync or async.
-                old_value: The old value of the attribute.
-                value: The new value of the attribute.
-            """
-            _rich_traceback_omit = True
-            param_count = count_parameters(watch_function)
-            if param_count == 2:
-                watch_result = watch_function(old_value, value)
-            elif param_count == 1:
-                watch_result = watch_function(value)
-            else:
-                watch_result = watch_function()
-            if isawaitable(watch_result):
-                # Result is awaitable, so we need to await it within an async context
-                watcher_object.call_next(partial(await_watcher, watch_result))
 
         private_watch_function = getattr(obj, f"_watch_{name}", None)
         if callable(private_watch_function):
