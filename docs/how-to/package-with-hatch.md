@@ -10,7 +10,7 @@ The packaging process for Textual apps is much the same as any Python library, w
 
 In this How To we will cover how to use [Hatch](https://github.com/pypa/hatch) to package an example application.
 
-Hatch is a *build tool*.
+Hatch is a *build tool* (a command line app to assist with packaging).
 There are other build tools, such as [Poetry](https://python-poetry.org/).
 Packaging with Poetry is similar to Hatch, so you may want to read this even if you are a Poetry user.
 
