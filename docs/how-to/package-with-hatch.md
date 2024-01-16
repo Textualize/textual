@@ -275,6 +275,11 @@ To add the `calculator` command once you have edited `pyproject.toml`, run the f
 pip install -e .
 ```
 
+!!! info
+
+    You will have no doubt used `pip` before, but perhaps not with `-e .`.
+    The addition of `-e` installs the project in *editable* mode which means pip won't copy the `.py` files code anywhere, the dot (`.`) indicates were installing the project in the current directory. 
+
 Now you can launch the calculator from the command line as follows:
 
 ```bash
