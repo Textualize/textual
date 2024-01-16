@@ -14,8 +14,6 @@ Hatch is a *build tool* (a command line app to assist with packaging).
 You could use any build tool to package a Textual app (such as [Poetry](https://python-poetry.org/) for example), but Hatch is a good choice given its large feature set and ease of use.
 
 
-
-
 !!! info inline end "Calculator example"
 
     ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
