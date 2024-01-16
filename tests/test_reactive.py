@@ -575,3 +575,27 @@ async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
         await pilot.pause()
         assert from_holder
         assert from_app
+
+
+async def test_no_duplicate_external_watchers() -> None:
+    """Make sure we skip duplicated watchers."""
+
+    class Holder(Widget):
+        attr = var(None)
+
+    class MyApp(App[None]):
+        def __init__(self):
+            super().__init__()
+            self.holder = Holder()
+
+        def on_mount(self):
+            self.watch(self.holder, "attr", self.callback)
+            self.watch(self.holder, "attr", self.callback)
+
+        def callback(self) -> None:
+            return
+
+    app = MyApp()
+    async with app.run_test():
+        pass
+    assert len(app.holder.__watchers["attr"]) == 1

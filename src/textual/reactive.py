@@ -378,7 +378,7 @@ def _watch(
         obj, "__watchers"
     )
     watcher_list = watchers.setdefault(attribute_name, [])
-    if callback in watcher_list:
+    if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return
     watcher_list.append((node, callback))
     if init:
