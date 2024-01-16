@@ -260,7 +260,7 @@ calculator = "textual_calculator.entry_points:calculator"
 
 Each entry in the `[project.scripts]` section (there can be more than one) maps a command on to an import and function name.
 In the second line above, before the `=` character, `calculator` is the name of the command.
-The string contains the name of the import (`textual_calculator.entry_points`) followed by a colon (`:`) and the name of a function (also called `calculator`).
+The string after the `=` character contains the name of the import (`textual_calculator.entry_points`), followed by a colon (`:`), and then the name of the function (also called `calculator`).
 
 It is equivalent to doing the following from the Python REPL:
 
