@@ -261,6 +261,9 @@ class Dialog(Widget):
         """React to the title being changed."""
         self.border_title = self.title
 
+    class MisplacedActionGroup(Exception):
+        """Error raised if an action group is misplaced."""
+
     class ActionArea(Widget):
         """A container that holds widgets that specify actions to perform on a dialog.
 
@@ -275,6 +278,13 @@ class Dialog(Widget):
 
         class GroupLeft(Widget):
             """A container for grouping widgets to the left side of a `Dialog.ActionArea`."""
+
+            def on_mount(self) -> None:
+                """Check that we're only inside an `ActionArea`."""
+                if not isinstance(self.parent, Dialog.ActionArea):
+                    raise Dialog.MisplacedActionGroup(
+                        "A GroupLeft can only be used inside an ActionArea."
+                    )
 
         def get_content_width(self, container: Size, viewport: Size) -> int:
             """Get the ideal width for the `ActionArea`.
