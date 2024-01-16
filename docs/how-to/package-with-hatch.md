@@ -203,7 +203,7 @@ To create a new virtual environment, navigate to the directory with the `pyproje
 hatch env create
 ```
 
-Then run the following command to active the virtual environment:
+Then run the following command to activate the virtual environment:
 
 ```bash
 hatch shell
