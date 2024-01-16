@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import dataclasses
+import re
 from functools import lru_cache
 from typing import Iterable, Iterator, NoReturn
 
 from ..suggestions import get_suggestion
 from ._help_renderables import HelpText
 from ._styles_builder import DeclarationError, StylesBuilder
-from .errors import UnresolvedVariableError
+from .errors import InvalidIDError, UnresolvedVariableError
 from .model import (
     CombinatorType,
     Declaration,
@@ -17,7 +18,13 @@ from .model import (
     SelectorType,
 )
 from .styles import Styles
-from .tokenize import Token, tokenize, tokenize_declarations, tokenize_values
+from .tokenize import (
+    IDENTIFIER,
+    Token,
+    tokenize,
+    tokenize_declarations,
+    tokenize_values,
+)
 from .tokenizer import EOFError, ReferencedBy
 from .types import CSSLocation, Specificity3
 
@@ -50,6 +57,27 @@ def _add_specificity(
     a1, b1, c1 = specificity1
     a2, b2, c2 = specificity2
     return (a1 + a2, b1 + b2, c1 + c2)
+
+
+_IDENTIFIER_REGEX = re.compile(f"^{IDENTIFIER}$")
+"""Regular expression that matches strings that contain valid identifiers."""
+
+
+def validate_identifier(identifier: str) -> str:
+    """Determines whether the given identifier is valid or not.
+
+    Args:
+        identifier: Identifier to validate.
+
+    Returns:
+        The identifier, if it is valid.
+
+    Raises:
+        InvalidIDError: If the identifier is invalid.
+    """
+    if _IDENTIFIER_REGEX.match(identifier) is None:
+        raise InvalidIDError(f"{identifier!r} is not a valid identifier.")
+    return identifier
 
 
 @lru_cache(maxsize=1024)

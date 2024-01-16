@@ -48,3 +48,7 @@ class StyleValueError(ValueError):
 
 class StylesheetError(Exception):
     pass
+
+
+class InvalidIDError(Exception):
+    """For when invalid identifiers are used."""
