@@ -599,3 +599,39 @@ async def test_no_duplicate_external_watchers() -> None:
     async with app.run_test():
         pass
     assert len(app.holder.__watchers["attr"]) == 1
+
+
+async def test_external_watch_init_does_not_propagate() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3878.
+
+    Make sure that when setting an extra watcher programmatically and `init` is set,
+    we init only the new watcher and not the other ones.
+    """
+
+    logs: list[str] = []
+
+    class SomeWidget(Widget):
+        test_1: var[int] = var(0)
+        test_2: var[int] = var(0, init=False)
+
+        def watch_test_1(self) -> None:
+            logs.append("test_1")
+
+        def watch_test_2(self) -> None:
+            logs.append("test_2")
+
+    class InitOverrideApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield SomeWidget()
+
+        def on_mount(self) -> None:
+            def nop() -> None:
+                return
+
+            self.watch(self.query_one(SomeWidget), "test_2", nop)
+
+    app = InitOverrideApp()
+    async with app.run_test():
+        pass
+
+    assert logs == ["test_1"]
