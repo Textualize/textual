@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import Iterable
 
-from rich.cells import chop_cells
+from rich.cells import get_character_cell_size
 
 from ._cells import cell_len
 from ._loop import loop_last
@@ -53,28 +53,19 @@ def divide_line(
     cell_offset = 0
     _cell_len = cell_len
 
-    # todo! could we offset the wrap offsets after computing them, by going through them, and summing the widths of
-    #  all tab characters that appeared before the wrap offset on the line? for example if we have a wrap offset of
-    #  14, then we go through the tab_widths tuples until we’ve seen 14 codepoints, and note the total widths of tabs
-    #  encountered.
-
-    # build mapping of tab positions to tab widths. then, for each chunk, check if a
-    # get all of the tab
-
-    # foo\tbar\t\baz
-
-    tab_widths = get_tab_widths(text, tab_size)
+    tab_size = min(tab_size, width)
+    tab_sections = get_tab_widths(text, tab_size)
+    tab_section_index = 0
     cumulative_widths = []
     cumulative_width = 0
-    for tab_section, tab_width in tab_widths:
-        cumulative_widths.extend([cumulative_width] * len(tab_section))
+    for tab_section, tab_width in tab_sections:
+        # add 1 since the \t character is stripped by get_tab_widths
+        section_codepoint_length = len(tab_section) + 1
+        cumulative_widths.extend([cumulative_width] * section_codepoint_length)
         cumulative_width += tab_width
 
     for start, end, chunk in chunks(text):
-        # todo, 1st, terrible name, 2nd can we get the "word width" here to account
-        #  for tab widths?
         chunk_width = _cell_len(chunk)
-        print(start, end, chunk, len(chunk))
         tab_width_before_start = cumulative_widths[start]
         tab_width_before_end = cumulative_widths[end]
         chunk_tab_width = tab_width_before_end - tab_width_before_start
@@ -88,11 +79,32 @@ def divide_line(
         else:
             # Not enough space remaining for this word on the current line.
             if chunk_width > width:
-                # The word doesn't fit on any line, so we can't simply
-                # place it on the next line...
+                # The word doesn't fit on any line, so we must fold it
                 if fold:
-                    # Fold the word across multiple lines.
-                    folded_word = chop_cells(chunk, width=width)
+                    _get_character_cell_size = get_character_cell_size
+                    lines: list[list[str]] = [[]]
+
+                    append_new_line = lines.append
+                    append_to_last_line = lines[-1].append
+
+                    total_width = 0
+                    for character in chunk:
+                        if character == "\t":
+                            # Tab characters have dynamic width, so we need to look
+                            cell_width = tab_sections[tab_section_index][1]
+                            tab_section_index += 1
+                        else:
+                            cell_width = _get_character_cell_size(character)
+
+                        if total_width + cell_width > width:
+                            append_new_line([character])
+                            append_to_last_line = lines[-1].append
+                            total_width = cell_width
+                        else:
+                            append_to_last_line(character)
+                            total_width += cell_width
+
+                    folded_word = ["".join(line) for line in lines]
                     for last, line in loop_last(folded_word):
                         if start:
                             append(start)
