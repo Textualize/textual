@@ -1,6 +1,6 @@
 import pytest
 
-from textual.css.errors import StyleValueError
+from textual.css.errors import InvalidIDError, StyleValueError
 from textual.dom import BadIdentifier, DOMNode
 
 
@@ -259,3 +259,24 @@ def test_walk_children_with_self_breadth(search):
     ]
 
     assert children == ["f", "e", "d", "c", "b", "a"]
+
+
+@pytest.mark.parametrize(
+    "identifier",
+    [
+        " bad",
+        "  terrible  ",
+        "worse!  ",
+        "&ampersand",
+        "amper&sand",
+        "ampersand&",
+        "2_leading_digits",
+        "água",  # water
+        "cão",  # dog
+        "@'/.23",
+    ],
+)
+def test_id_validation(identifier: str):
+    """Regression test for https://github.com/Textualize/textual/issues/3954."""
+    with pytest.raises(InvalidIDError):
+        DOMNode(id=identifier)
