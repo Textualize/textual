@@ -277,6 +277,6 @@ def test_walk_children_with_self_breadth(search):
     ],
 )
 def test_id_validation(identifier: str):
-    """Regression test for https://github.com/Textualize/textual/issues/3954."""
-    with pytest.raises(InvalidIDError):
+    """Regression tests for https://github.com/Textualize/textual/issues/3954."""
+    with pytest.raises(BadIdentifier):
         DOMNode(id=identifier)

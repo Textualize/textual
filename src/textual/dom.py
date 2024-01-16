@@ -38,7 +38,7 @@ from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
 from .css.constants import VALID_DISPLAY, VALID_VISIBILITY
 from .css.errors import DeclarationError, StyleValueError
-from .css.parse import parse_declarations, validate_identifier
+from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
@@ -62,7 +62,7 @@ if TYPE_CHECKING:
 
 from typing_extensions import Literal
 
-_re_identifier = re.compile(IDENTIFIER)
+_re_identifier = re.compile(f"^{IDENTIFIER}$")
 
 
 WalkMethod: TypeAlias = Literal["depth", "breadth"]
@@ -170,7 +170,7 @@ class DOMNode(MessagePump):
         self._name = name
         self._id = None
         if id is not None:
-            self.id = validate_identifier(id)
+            self.id = id
 
         _classes = classes.split() if classes else []
         check_identifiers("class name", *_classes)
