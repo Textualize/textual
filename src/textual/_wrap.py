@@ -9,7 +9,7 @@ from ._cells import cell_len
 from ._loop import loop_last
 from .expand_tabs import get_tab_widths
 
-re_chunk = re.compile(r"\s*\S+\s*")
+re_chunk = re.compile(r"(\s*)(\S+)(\s*)|(\s+)")
 
 
 def chunks(text: str) -> Iterable[tuple[int, int, str]]:

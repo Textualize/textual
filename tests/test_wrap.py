@@ -3,8 +3,8 @@ from textual._wrap import chunks
 
 def test_chunks():
     assert list(chunks("")) == []
-    assert list(chunks("    ")) == []
-    assert list(chunks("\t")) == []
+    assert list(chunks("    ")) == [(0, 4, "    ")]
+    assert list(chunks("\t")) == [(0, 1, "\t")]
     assert list(chunks("foo")) == [(0, 3, "foo")]
     assert list(chunks("  foo  ")) == [(0, 7, "  foo  ")]
     assert list(chunks("foo bar")) == [(0, 4, "foo "), (4, 7, "bar")]
