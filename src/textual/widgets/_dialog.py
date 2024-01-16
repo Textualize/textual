@@ -76,8 +76,9 @@ class Body(VerticalScroll, can_focus=False):
 
         Ideally we'd want this widget to be `height: auto` until it would be
         too tall for the maximum height of the dialog, minus the height
-        needed for the `ActionArea`. At the moment there's no simple method
-        of doing this in with Textual's CSS.
+        needed for the [`ActionArea`][textual.widgets.Dialog.ActionArea]. At
+        the moment there's no simple method of doing this in with Textual's
+        CSS.
 
         So in this widget we simply set the `height` to `auto` and then
         constrain the maximum height with this method; the idea being that
@@ -110,7 +111,20 @@ class Body(VerticalScroll, can_focus=False):
 
 
 class Dialog(Widget):
-    """A dialog widget."""
+    """A dialog widget.
+
+    `Dialog` is a container class that helps provide a classic dialog layout
+    for other widgets. An example use may be:
+
+    ```python
+    def compose(self) -> ComposeResult:
+        with Dialog(title="Confirm"):
+            yield Label("Shall we play a game?")
+            with Dialog.ActionArea():
+                yield Button("Yes", id="yes")
+                yield Button("No", id="no")
+    ```
+    """
 
     DEFAULT_CSS = """
     Dialog {
@@ -262,7 +276,15 @@ class Dialog(Widget):
         self.border_title = self.title
 
     class MisplacedActionGroup(Exception):
-        """Error raised if an action group is misplaced."""
+        """Error raised if an action group is misplaced.
+
+        [`GroupLeft`][textual.widgets.Dialog.ActionArea.GroupLeft] should
+        only be used inside an
+        [`ActionArea`][textual.widgets.Dialog.ActionArea]; this exception
+        will be raised if there is an attempt to mount a
+        [`GroupLeft`][textual.widgets.Dialog.ActionArea.GroupLeft]
+        elsewhere.
+        """
 
     class ActionArea(Widget):
         """A container that holds widgets that specify actions to perform on a dialog.
@@ -273,14 +295,26 @@ class Dialog(Widget):
 
         Widgets composed into this area will be grouped to the right, with a
         1-cell margin between them. If you wish to group some widgets to the
-        left of the area group them inside a `Dialog.ActionArea.GroupLeft`.
+        left of the area group them inside a
+        [`GroupLeft`][textual.widgets.Dialog.ActionArea.GroupLeft]; for example:
+
+        ```python
+        def compose(self) -> ComposeResult:
+            with Dialog(title="Search"):
+                yield Input(placeholder="Search Text")
+                with Dialog.ActionArea():
+                    with Dialog.ActionArea.GroupLeft():
+                        yield Checkbox("RegExp")
+                    yield Button("First", id="first")
+                    yield Button("Next", id="next")
+        ```
         """
 
         class GroupLeft(Widget):
             """A container for grouping widgets to the left side of a `Dialog.ActionArea`."""
 
             def on_mount(self) -> None:
-                """Check that we're only inside an `ActionArea`."""
+                # Check that we're only inside an `ActionArea`.
                 if not isinstance(self.parent, Dialog.ActionArea):
                     raise Dialog.MisplacedActionGroup(
                         "A GroupLeft can only be used inside an ActionArea."
