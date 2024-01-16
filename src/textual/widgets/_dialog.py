@@ -438,7 +438,7 @@ class Dialog(Widget):
         classes: str | None = None,
         disabled: bool = False,
     ) -> Dialog:
-        """Create a warning variant dialog widget.
+        """Create a error variant dialog widget.
 
         Args:
             children: The child widgets for the dialog.
