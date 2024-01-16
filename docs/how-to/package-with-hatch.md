@@ -91,7 +91,7 @@ This follows a well established convention when packaging Python code, and will 
 - `README.md` is a markdown file containing information about your project, which will be displayed in PyPi and Github (if you use it). You can edit this with information about your app and how to use it.
 - `pyproject.toml` is a [TOML](https://en.wikipedia.org/wiki/TOML) file which contains *metadata* (additional information) about your project and how to package it. This is a Python standard. This file may be edited manually or by a build tool (such as Hatch).
 - `src/textual_calculator/__about__.py` contains the version number of your app. You should update this when you release new versions.
-- `src/textual_calculator/__init__.py`  and `tests/__init__py` indicate the directory contains Python code (these files are often empty).
+- `src/textual_calculator/__init__.py`  and `tests/__init__py` indicate the directory they are within contains Python code (these files are often empty).
  
 In the top level is a directory called `src`.
 This should contain a directory named after your project, and will be the name your code can be imported from.
