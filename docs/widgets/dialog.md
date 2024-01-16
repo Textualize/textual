@@ -2,33 +2,57 @@
 
 !!! tip "Added in version x.y.z"
 
-Widget description.
+A container widget designed to help build classic dialog layouts.
 
 - [ ] Focusable
 - [X] Container
 
-
 ## Example
 
-Example app showing the widget:
+### Simple example
+
+The example below shows a classic confirmation dialog, with a title, some
+text to prompt the user, and then a pair of buttons to confirm or cancel the
+following operation.
 
 === "Output"
 
-    ```{.textual path="docs/examples/widgets/dialog.py"}
+    ```{.textual path="docs/examples/widgets/dialog_simple.py"}
     ```
 
-=== "checkbox.py"
+=== "dialog_simple.py"
 
     ```python
-    --8<-- "docs/examples/widgets/dialog.py"
+    --8<-- "docs/examples/widgets/dialog_simple.py"
     ```
 
-=== "checkbox.tcss"
+=== "dialog_simple.tcss"
 
     ```css
-    --8<-- "docs/examples/widgets/dialog.tcss"
+    --8<-- "docs/examples/widgets/dialog_simple.tcss"
     ```
 
+### Longer example
+
+The dialog can contain any Textual widget, and the "action area" (where
+buttons ordinarily live) can contain other widgets too. For example:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/dialog_complex.py"}
+    ```
+
+=== "dialog_complex.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/dialog_complex.py"
+    ```
+
+=== "dialog_complex.tcss"
+
+    ```css
+    --8<-- "docs/examples/widgets/dialog_complex.tcss"
+    ```
 
 ## Reactive Attributes
 

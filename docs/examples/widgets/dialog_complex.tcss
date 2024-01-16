@@ -1,0 +1,15 @@
+Screen {
+    align: center middle;
+
+    Dialog {
+
+        Input {
+            width: 1fr;
+            margin: 0 0 1 0;
+        }
+
+        Label {
+            margin: 0 0 0 1;
+        }
+    }
+}

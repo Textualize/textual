@@ -3,7 +3,7 @@ from textual.widgets import Button, Dialog, Label
 
 
 class DialogApp(App[None]):
-    CSS_PATH = "dialog.tcss"
+    CSS_PATH = "dialog_simple.tcss"
 
     def compose(self) -> ComposeResult:
         with Dialog(title="Greetings Professor Falken"):

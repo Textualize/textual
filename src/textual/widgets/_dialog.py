@@ -15,12 +15,24 @@ from ..reactive import var
 from ..widget import Widget
 
 _MAX_DIALOG_DIMENSION: Final[float] = 0.9
-"""The ideal maximum dimension for the dialog in respect to the screen."""
+"""The ideal maximum dimension for the dialog in respect to the screen.
+
+This is currently being used inside get_content_width/height in the code
+below, as a stand-in for being able to max-width/height to 90% while also
+doing a lot of `auto` sizing. Eventually, once we can support this via CSS,
+this can go away.
+"""
 
 DialogVariant = Literal["default", "success", "warning", "error"]
 """The names of the valid dialog variants.
 
 These are the variants that can be used with a [`Dialog`][textual.widgets.Dialog].
+
+See also:
+
+- [`Dialog.success`][textual.widgets.Dialog.success]
+- [`Dialog.warning`][textual.widgets.Dialog.warning]
+- [`Dialog.error`][textual.widgets.Dialog.error]
 """
 
 
