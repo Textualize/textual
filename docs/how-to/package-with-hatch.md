@@ -197,7 +197,7 @@ For instance, if we had another app that used version `0.40.0` of Textual, it *m
 The standard way of solving this is with *virtual environments* (or *venvs*), which allow each project to have its own set of dependencies.
 Hatch can create virtual environments for us, and makes working with them very easy.
 
-To create a new virtual environment, navigate to the directory with the `pyproject.toml` file and run the following command (you will only need this on first run):
+To create a new virtual environment, navigate to the directory with the `pyproject.toml` file and run the following command (this is only require once, as the virtual environment will persist):
 
 ```bash
 hatch env create
