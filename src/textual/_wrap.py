@@ -7,6 +7,7 @@ from rich.cells import chop_cells
 
 from ._cells import cell_len
 from ._loop import loop_last
+from .expand_tabs import get_tab_widths
 
 re_chunk = re.compile(r"\s*\S+\s*")
 
@@ -21,13 +22,11 @@ def chunks(text: str) -> Iterable[tuple[int, int, str]]:
     Returns:
         Yields tuples containing the start, end and content for each chunk.
     """
-    position = 0
-    chunk_match = re_chunk.match(text, position)
-    while chunk_match is not None:
+    end = 0
+    while (chunk_match := re_chunk.match(text, end)) is not None:
         start, end = chunk_match.span()
         chunk = chunk_match.group(0)
         yield start, end, chunk
-        chunk_match = re_chunk.match(text, end)
 
 
 def divide_line(
@@ -59,28 +58,33 @@ def divide_line(
     #  14, then we go through the tab_widths tuples until we’ve seen 14 codepoints, and note the total widths of tabs
     #  encountered.
 
-    # these wrap offsets all assume every tab has width 1.
-    #  now, for each offset
+    # build mapping of tab positions to tab widths. then, for each chunk, check if a
+    # get all of the tab
+
+    # foo\tbar\t\baz
 
     tab_widths = get_tab_widths(text, tab_size)
+    cumulative_widths = []
+    cumulative_width = 0
+    for tab_section, tab_width in tab_widths:
+        cumulative_widths.extend([cumulative_width] * len(tab_section))
+        cumulative_width += tab_width
 
-    for start, _end, chunk in chunks(text):
-        # todo, 1st, terrible name, 2nd can we get the "word width" here to account for tab widths?
+    for start, end, chunk in chunks(text):
+        # todo, 1st, terrible name, 2nd can we get the "word width" here to account
+        #  for tab widths?
         chunk_width = _cell_len(chunk)
-        # Count the tabs
-        # Determine the total widths of the tabs in this chunk
-        # Account for the tabs such that we convert every tab
-        # character from width 1 to the new width by adding tab_width
-        # MINUS one for each tab.
-        # So old width + total tab width - num tabs in chunk
-        num_tabs = chunk.count(tab)
-
+        print(start, end, chunk, len(chunk))
+        tab_width_before_start = cumulative_widths[start]
+        tab_width_before_end = cumulative_widths[end]
+        chunk_tab_width = tab_width_before_end - tab_width_before_start
+        chunk_width += chunk_tab_width
         remaining_space = width - cell_offset
         chunk_fits = remaining_space >= chunk_width
 
         if chunk_fits:
             # Simplest case - the word fits within the remaining width for this line.
-            cell_offset += width_contribution
+            cell_offset += chunk_width
         else:
             # Not enough space remaining for this word on the current line.
             if chunk_width > width:

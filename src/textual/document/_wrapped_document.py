@@ -77,10 +77,7 @@ class WrappedDocument:
         current_offset = 0
 
         for line_index, line in enumerate(self.document.lines):
-            line = expand_tabs_inline(line, tab_width)
-            wrap_offsets = (
-                divide_line(line, width, keep_whitespace=True) if width else []
-            )
+            wrap_offsets = divide_line(line, width, tab_size=tab_width) if width else []
             append_wrap_offset(wrap_offsets)
             line_index_to_offsets.append([])
             for section_y_offset in range(len(wrap_offsets) + 1):
@@ -173,10 +170,7 @@ class WrappedDocument:
         # Add the new offsets between the top and new bottom (the new post-edit offsets)
         current_y_offset = top_y_offset
         for line_index, line in enumerate(new_lines, top_line_index):
-            line = expand_tabs_inline(line, tab_width)
-            wrap_offsets = (
-                divide_line(line, width, keep_whitespace=True) if width else []
-            )
+            wrap_offsets = divide_line(line, width, tab_size=tab_width) if width else []
             append_wrap_offsets(wrap_offsets)
 
             # Collect up the new y offsets for this document line

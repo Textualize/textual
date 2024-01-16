@@ -1056,7 +1056,10 @@ TextArea {
             "enter": "\n",
         }
         if self.tab_behaviour == "indent":
-            insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
+            if self.indent_type == "tabs":
+                insert_values["tab"] = "\t"
+            else:
+                insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
 
         self._restart_blink()
         if event.is_printable or key in insert_values:
