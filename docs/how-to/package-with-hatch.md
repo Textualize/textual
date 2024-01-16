@@ -1,6 +1,6 @@
 # Package a Textual app with Hatch
 
-Python apps may be distributed via [PyPi](https://pypi.org/) so they can be installed via pip.
+Python apps may be distributed via [PyPi](https://pypi.org/) so they can be installed via `pip`.
 This is known as *packing*.
 The packaging process for Textual apps is much the same as any Python library, with the additional requirement that we can launch our app from the command line.
 
@@ -44,9 +44,6 @@ Then launch the app from the command line:
 calculator
 ```
 
-As a side-effect, this will add the module "textual_calculator" to your Python path.
-
-
 ## Installing Hatch
 
 There are a few ways to install Hatch.
@@ -63,7 +60,7 @@ hatch
 
 Hatch can create an initial directory structure and files with the `new` *subcommand*.
 Enter `hatch new` followed by the name of your project.
-For the calculator example we will used "textual calculator".
+For the calculator example, the name will be "textual calculator":
 
 ```batch
 hatch new "textual calculator"
@@ -100,7 +97,7 @@ Additionally there is a `tests` directory where you can add any [test](../guide/
 
 ### More on naming
 
-Note how Hatch replaced the space in the project name with a hyphen (i.e. `textual-calculator`), but the directory in src with an underscore (i.e. `textual_calculator`). This is because the directory in `src` contains the Python module, and a hyphen is not legal in a Python import name. The name of the top level directory is typically the name of the (pip installable) project.
+Note how Hatch replaced the space in the project name with a hyphen (i.e. `textual-calculator`), but the directory in src with an underscore (i.e. `textual_calculator`). This is because the directory in `src` contains the Python module, and a hyphen is not legal in a Python import. The name of the top level directory is typically the name of the (pip installable) project.
 
 Bear this in mind, if your project name contains spaces.
 
@@ -108,7 +105,7 @@ Bear this in mind, if your project name contains spaces.
 ### Got existing code?
 
 The `hatch new` command assumes you are starting from scratch.
-If you have existing code you can navigate to your directory and run the following command:
+If you have existing code you would like to package, navigate to your directory and run the following command:
 
 ```
 hatch new --init <YOUR PROJECT NAME>
@@ -191,7 +188,7 @@ See the Hatch docs for more information on specifying [dependencies](https://hat
 ## Environments
 
 A common problem when working with Python code, is managing multiple projects with different dependencies.
-For instance, if we were building another app that uses version `0.40.0` of Textual, it *may* break if we installed version `0.47.1`.
+For instance, if we had another app that used version `0.40.0` of Textual, it *may* break if we installed version `0.47.1`.
 
 The standard way of solving this is with *virtual environments* (or *venvs*), which allow each project to have its own set of dependencies.
 Hatch can create virtual environments for us, and makes working with them very easy.
@@ -211,7 +208,7 @@ hatch shell
 If you were to run `python` now, it will have our app and dependencies available for import:
 
 ```
-❯ python
+$ python
 Python 3.11.1 (main, Jan  1 2023, 10:28:48) [Clang 14.0.0 (clang-1400.0.29.202)] on darwin
 Type "help", "copyright", "credits" or "license" for more information.
 >>> from textual_calculator import calculator
@@ -295,7 +292,7 @@ hatch build
 After a moment, you should find that Hatch has created a `dist` (distribution) folder, which contains the project archive files.
 You don't typically need to use these files directly, but feel free to have a look at the directory contents.
 
-!!! note
+!!! note "Packaging TCSS and other files"
 
     Hatch will typically include all the files needed by your project, i.e. the `.py` files.
     It will also include any Textual CSS (`.tcss`) files in the project directory.
