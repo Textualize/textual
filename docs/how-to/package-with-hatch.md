@@ -209,7 +209,7 @@ Then run the following command to active the virtual environment:
 hatch shell
 ```
 
-If you were to run `python` now, it will have our app and dependencies available for import:
+If you run `python` now, it will have our app and its dependencies available for import:
 
 ```
 $ python
