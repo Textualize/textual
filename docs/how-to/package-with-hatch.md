@@ -358,7 +358,7 @@ They will then be able to launch the calculator with the following command:
 calculator
 ```
 
-### PipX
+### Pipx
 
 A downside of installing apps this way is that unless the user has created a [virtual environment](https://docs.python.org/3/library/venv.html), they may find it breaks other packages with conflicting dependencies.
 
