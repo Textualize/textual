@@ -34,6 +34,10 @@
     border: outer $accent;
 }
 
+#panel {
+    border: panel $accent;
+}
+
 #round {
     border: round $accent;
 }
