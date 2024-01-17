@@ -988,18 +988,14 @@ def test_tab_rename(snap_compare):
 
 
 # --- Example apps ---
+# We skip the code browser because the length of the scrollbar in the tree depends on
+# the number of files and folders we have locally and that typically differs from the
+# pristine setting in which CI runs.
 
 
 def test_example_calculator(snap_compare):
     """Test the calculator example."""
     assert snap_compare(EXAMPLES_DIR / "calculator.py")
-
-
-def test_example_code_browser(snap_compare):
-    """Test the code_browser example."""
-    assert snap_compare(
-        EXAMPLES_DIR / "code_browser.py", press=["down", "enter", "down", "enter"]
-    )
 
 
 def test_example_color_command(snap_compare):
@@ -1035,6 +1031,19 @@ def test_example_json_tree(snap_compare):
 def test_example_markdown(snap_compare):
     """Test the markdown example."""
     assert snap_compare(EXAMPLES_DIR / "markdown.py")
+
+
+def test_example_merlin(snap_compare):
+    """Test the merlin example."""
+    on_switches = {2, 3, 5, 8}
+
+    async def run_before(pilot):
+        pilot.app.query_one("Timer").running = False  # This will freeze the clock.
+        for switch in pilot.app.query("LabelSwitch"):
+            switch.query_one("Switch").value = switch.switch_no in on_switches
+        await pilot.pause()
+
+    assert snap_compare(EXAMPLES_DIR / "merlin.py", run_before=run_before)
 
 
 def test_example_pride(snap_compare):
