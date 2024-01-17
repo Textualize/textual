@@ -6,14 +6,14 @@ class DialogApp(App[None]):
     CSS_PATH = "dialog_complex.tcss"
 
     def compose(self) -> ComposeResult:
-        with Dialog(title="Find and Replace"):
+        with Dialog(title="Find and replace"):
             yield Label("Find what:")
             yield Input(placeholder="The text to find")
             yield Label("Replace with:")
             yield Input(placeholder="The text to replace with")
             with Dialog.ActionArea():
                 with Dialog.ActionArea.GroupLeft():
-                    yield Checkbox("Regular Expression")
+                    yield Checkbox("Ignore case")
                 yield Button("Cancel", variant="error")
                 yield Button("First", variant="default")
                 yield Button("All", variant="primary")

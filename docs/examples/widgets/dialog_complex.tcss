@@ -11,5 +11,9 @@ Screen {
         Label {
             margin: 0 0 0 1;
         }
+
+        ActionArea Button {
+            min-width: 11;
+        }
     }
 }

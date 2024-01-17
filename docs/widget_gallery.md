@@ -68,7 +68,7 @@ A widget for laying out a classic dialog.
 
 [Dialog reference](./widgets/dialog.md){ .md-button .md-button--primary}
 
-```{.textual path="docs/examples/widgets/dialog_simple.py"}
+```{.textual path="docs/examples/widgets/dialog_complex.py"}
 ```
 
 ## Digits
