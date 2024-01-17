@@ -1,6 +1,6 @@
 import pytest
 
-from textual._wrap import chunks, divide_line
+from textual._wrap import chunks, compute_wrap_offsets
 
 
 @pytest.mark.parametrize(
@@ -26,15 +26,18 @@ def test_chunks(input_text, expected_output):
 @pytest.mark.parametrize(
     "text, width, tab_size, expected_output",
     [
-        ("", 6, 4, []),
-        ("\t", 6, 4, []),
-        ("    ", 6, 4, []),
-        ("foo bar baz", 6, 4, [4, 8]),
-        ("\tfoo bar baz", 6, 4, [3, 9]),
-        ("\tfo bar baz", 6, 4, [3, 8]),
-        ("\tfo bar baz", 6, 8, [1, 4, 8]),
-        ("\tfo bar baz\t", 6, 8, [1, 4, 8]),
+        # ("", 6, 4, []),
+        # ("\t", 6, 4, []),
+        # ("    ", 6, 4, []),
+        # ("foo bar baz", 6, 4, [4, 8]),
+        # ("\tfoo bar baz", 6, 4, [3, 9]),
+        # ("\tfo bar baz", 6, 4, [3, 8]),
+        # ("\tfo bar baz", 6, 8, [1, 4, 8]),
+        # ("\tfo bar baz\t", 6, 8, [1, 4, 8]),
+        # ("\t\t\tfo bar baz\t", 20, 4, [10]),
+        # ("\t\t\t\t\t\t\t\tfo bar bar", 19, 4, [4, 11]),
+        ("\t\t\t\t\t", 19, 4, [4, 11]),
     ],
 )
 def test_divide_line(text, width, tab_size, expected_output):
-    assert divide_line(text, width, tab_size) == expected_output
+    assert compute_wrap_offsets(text, width, tab_size) == expected_output

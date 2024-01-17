@@ -29,7 +29,7 @@ def chunks(text: str) -> Iterable[tuple[int, int, str]]:
         yield start, end, chunk
 
 
-def divide_line(
+def compute_wrap_offsets(
     text: str,
     width: int,
     tab_size: int,
@@ -60,12 +60,12 @@ def divide_line(
     cumulative_width = 0
     for tab_section, tab_width in tab_sections:
         # add 1 since the \t character is stripped by get_tab_widths
-        section_codepoint_length = len(tab_section) + 1
+        section_codepoint_length = len(tab_section) + int(bool(tab_width))
         cumulative_widths.extend([cumulative_width] * section_codepoint_length)
         cumulative_width += tab_width
 
     for start, end, chunk in chunks(text):
-        chunk_width = _cell_len(chunk)
+        chunk_width = _cell_len(chunk)  # this cell len excludes tabs completely
         tab_width_before_start = cumulative_widths[start]
         tab_width_before_end = cumulative_widths[end - 1]
         chunk_tab_width = tab_width_before_end - tab_width_before_start
@@ -109,7 +109,13 @@ def divide_line(
                         if start:
                             append(start)
                         if last:
-                            cell_offset = _cell_len(line)
+                            # Since cell_len ignores tabs, we need to check the width
+                            # of the tabs in this line
+                            line_tab_widths = (
+                                cumulative_widths[start + len(line) - 1]
+                                - cumulative_widths[start]
+                            )
+                            cell_offset = _cell_len(line) + line_tab_widths
                         else:
                             start += len(line)
                 else:

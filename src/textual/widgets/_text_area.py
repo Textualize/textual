@@ -946,7 +946,6 @@ TextArea {
         # TODO: Lets not apply the division each time through render_line.
         #  We should cache sections with the edit counts.
         wrap_offsets = wrapped_document.get_offsets(line_index)
-
         if wrap_offsets:
             sections = line.divide(wrap_offsets)  # TODO cache result with edit count
             line = sections[section_offset]
@@ -960,7 +959,10 @@ TextArea {
         target_width = base_width - self.gutter_width
         console = self.app.console
         gutter_segments = console.render(gutter)
-        text_segments = console.render(line, console.options.update_width(target_width))
+        line.expand_tabs(self.indent_width)
+        text_segments = list(
+            console.render(line, console.options.update_width(target_width))
+        )
 
         gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
         text_strip = Strip(text_segments)

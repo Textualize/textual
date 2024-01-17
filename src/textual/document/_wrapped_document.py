@@ -12,7 +12,7 @@ from bisect import bisect_right
 from rich.text import Text
 
 from textual._cells import cell_len, cell_width_to_column_index
-from textual._wrap import divide_line
+from textual._wrap import compute_wrap_offsets
 from textual.document._document import DocumentBase, Location
 from textual.expand_tabs import expand_tabs_inline
 from textual.geometry import Offset, clamp
@@ -77,7 +77,9 @@ class WrappedDocument:
         current_offset = 0
 
         for line_index, line in enumerate(self.document.lines):
-            wrap_offsets = divide_line(line, width, tab_size=tab_width) if width else []
+            wrap_offsets = (
+                compute_wrap_offsets(line, width, tab_size=tab_width) if width else []
+            )
             append_wrap_offset(wrap_offsets)
             line_index_to_offsets.append([])
             for section_y_offset in range(len(wrap_offsets) + 1):
@@ -170,7 +172,9 @@ class WrappedDocument:
         # Add the new offsets between the top and new bottom (the new post-edit offsets)
         current_y_offset = top_y_offset
         for line_index, line in enumerate(new_lines, top_line_index):
-            wrap_offsets = divide_line(line, width, tab_size=tab_width) if width else []
+            wrap_offsets = (
+                compute_wrap_offsets(line, width, tab_size=tab_width) if width else []
+            )
             append_wrap_offsets(wrap_offsets)
 
             # Collect up the new y offsets for this document line
