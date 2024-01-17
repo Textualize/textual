@@ -64,6 +64,7 @@ expect_root_nested = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
+    declaration_name=r"[a-zA-Z_\-]+\:",
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",

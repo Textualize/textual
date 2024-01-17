@@ -987,3 +987,95 @@ def test_nested_css_selector_list_with_ampersand():
             location=(0, 36),
         ),
     ]
+
+
+def test_declaration_after_nested_declaration_set():
+    """Regression test for https://github.com/Textualize/textual/issues/3999."""
+    css = "Screen{Label{background:red;}background:green;}"
+    tokens = list(tokenize(css, ("", "")))
+    assert tokens == [
+        Token(
+            name="selector_start",
+            value="Screen",
+            read_from=("", ""),
+            code=css,
+            location=(0, 0),
+        ),
+        Token(
+            name="declaration_set_start",
+            value="{",
+            read_from=("", ""),
+            code=css,
+            location=(0, 6),
+        ),
+        Token(
+            name="selector_start",
+            value="Label",
+            read_from=("", ""),
+            code=css,
+            location=(0, 7),
+        ),
+        Token(
+            name="declaration_set_start",
+            value="{",
+            read_from=("", ""),
+            code=css,
+            location=(0, 12),
+        ),
+        Token(
+            name="declaration_name",
+            value="background:",
+            read_from=("", ""),
+            code=css,
+            location=(0, 13),
+        ),
+        Token(
+            name="token",
+            value="red",
+            read_from=("", ""),
+            code=css,
+            location=(0, 24),
+        ),
+        Token(
+            name="declaration_end",
+            value=";",
+            read_from=("", ""),
+            code=css,
+            location=(0, 27),
+        ),
+        Token(
+            name="declaration_set_end",
+            value="}",
+            read_from=("", ""),
+            code=css,
+            location=(0, 28),
+        ),
+        Token(
+            name="declaration_name",
+            value="background:",
+            read_from=("", ""),
+            code=css,
+            location=(0, 29),
+        ),
+        Token(
+            name="token",
+            value="green",
+            read_from=("", ""),
+            code=css,
+            location=(0, 40),
+        ),
+        Token(
+            name="declaration_end",
+            value=";",
+            read_from=("", ""),
+            code=css,
+            location=(0, 45),
+        ),
+        Token(
+            name="declaration_set_end",
+            value="}",
+            read_from=("", ""),
+            code=css,
+            location=(0, 46),
+        ),
+    ]
