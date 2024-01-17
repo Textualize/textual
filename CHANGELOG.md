@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
 - Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
+- Fix for percentage dimensions
 
 
 ## [0.47.1] - 2023-01-05
