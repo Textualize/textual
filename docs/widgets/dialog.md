@@ -92,11 +92,6 @@ This widget has no bindings.
 
 This widget has no component classes.
 
-## Additional notes
-
-- Did you know this?
-- Another pro tip.
-
 
 ## See also
 
