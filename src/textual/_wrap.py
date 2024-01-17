@@ -67,7 +67,7 @@ def divide_line(
     for start, end, chunk in chunks(text):
         chunk_width = _cell_len(chunk)
         tab_width_before_start = cumulative_widths[start]
-        tab_width_before_end = cumulative_widths[end]
+        tab_width_before_end = cumulative_widths[end - 1]
         chunk_tab_width = tab_width_before_end - tab_width_before_start
         chunk_width += chunk_tab_width
         remaining_space = width - cell_offset
