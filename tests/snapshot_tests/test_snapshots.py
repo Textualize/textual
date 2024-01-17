@@ -11,6 +11,7 @@ from textual.widgets.text_area import TextAreaTheme
 WIDGET_EXAMPLES_DIR = Path("../../docs/examples/widgets")
 LAYOUT_EXAMPLES_DIR = Path("../../docs/examples/guide/layout")
 STYLES_EXAMPLES_DIR = Path("../../docs/examples/styles")
+EXAMPLES_DIR = Path("../../examples")
 SNAPSHOT_APPS_DIR = Path("./snapshot_apps")
 
 
@@ -984,3 +985,58 @@ def test_nested_specificity(snap_compare):
 def test_tab_rename(snap_compare):
     """Test setting a new label for a tab amongst a TabbedContent."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")
+
+
+# --- Example apps ---
+
+
+def test_example_calculator(snap_compare):
+    """Test the calculator example."""
+    assert snap_compare(EXAMPLES_DIR / "calculator.py")
+
+
+def test_example_code_browser(snap_compare):
+    """Test the code_browser example."""
+    assert snap_compare(
+        EXAMPLES_DIR / "code_browser.py", press=["down", "enter", "down", "enter"]
+    )
+
+
+def test_example_color_command(snap_compare):
+    """Test the color_command example."""
+    assert snap_compare(
+        EXAMPLES_DIR / "color_command.py",
+        press=["ctrl+backslash", "r", "e", "d", "down", "down", "enter"],
+    )
+
+
+def test_example_dictionary(snap_compare):
+    """Test the dictionary example (basic layout test)."""
+
+    async def run_before(pilot):
+        pilot.app.query(Input).first().cursor_blink = False
+
+    assert snap_compare(EXAMPLES_DIR / "dictionary.py", run_before=run_before)
+
+
+def test_example_five_by_five(snap_compare):
+    """Test the five_by_five example."""
+    assert snap_compare(EXAMPLES_DIR / "five_by_five.py")
+
+
+def test_example_json_tree(snap_compare):
+    """Test the json_tree example."""
+    assert snap_compare(
+        EXAMPLES_DIR / "json_tree.py",
+        press=["a", "down", "enter", "down", "down", "enter"],
+    )
+
+
+def test_example_markdown(snap_compare):
+    """Test the markdown example."""
+    assert snap_compare(EXAMPLES_DIR / "markdown.py")
+
+
+def test_example_pride(snap_compare):
+    """Test the pride example."""
+    assert snap_compare(EXAMPLES_DIR / "pride.py")
