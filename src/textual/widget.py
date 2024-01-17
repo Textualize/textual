@@ -1076,15 +1076,15 @@ class Widget(DOMNode):
         # Container minus padding and border
         content_container = container - gutter.totals
 
+        print(self, width_fraction)
+
         if styles.width is None:
             # No width specified, fill available space
             content_width = Fraction(content_container.width - margin.width)
         elif is_auto_width:
             # When width is auto, we want enough space to always fit the content
             content_width = Fraction(
-                self.get_content_width(
-                    content_container - styles.margin.totals, viewport
-                )
+                self.get_content_width(content_container - margin.totals, viewport)
             )
             if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
                 content_width += styles.scrollbar_size_vertical
@@ -1097,7 +1097,7 @@ class Widget(DOMNode):
             # An explicit width
             styles_width = styles.width
             content_width = styles_width.resolve(
-                container - styles.margin.totals, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
             if is_border_box:
                 content_width -= gutter.width
@@ -1137,7 +1137,7 @@ class Widget(DOMNode):
             styles_height = styles.height
             # Explicit height set
             content_height = styles_height.resolve(
-                container - styles.margin.totals, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
             if is_border_box:
                 content_height -= gutter.height
