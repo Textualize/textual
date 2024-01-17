@@ -56,18 +56,23 @@ def compute_wrap_offsets(
     tab_size = min(tab_size, width)
     tab_sections = get_tab_widths(text, tab_size)
     tab_section_index = 0
-    cumulative_widths = []
     cumulative_width = 0
-    for tab_section, tab_width in tab_sections:
+    cumulative_widths = []  # Accumulated tab widths of all codepoints prior (exclusive)
+    record_widths = cumulative_widths.extend
+
+    for last, (tab_section, tab_width) in loop_last(tab_sections):
         # add 1 since the \t character is stripped by get_tab_widths
         section_codepoint_length = len(tab_section) + int(bool(tab_width))
-        cumulative_widths.extend([cumulative_width] * section_codepoint_length)
+        widths = [cumulative_width] * section_codepoint_length
+        record_widths(widths)
         cumulative_width += tab_width
+        if last:
+            cumulative_widths.append(cumulative_width)
 
     for start, end, chunk in chunks(text):
         chunk_width = _cell_len(chunk)  # this cell len excludes tabs completely
         tab_width_before_start = cumulative_widths[start]
-        tab_width_before_end = cumulative_widths[end - 1]
+        tab_width_before_end = cumulative_widths[end]
         chunk_tab_width = tab_width_before_end - tab_width_before_start
         chunk_width += chunk_tab_width
         remaining_space = width - cell_offset
@@ -90,7 +95,7 @@ def compute_wrap_offsets(
                     total_width = 0
                     for character in chunk:
                         if character == "\t":
-                            # Tab characters have dynamic width, so we need to look
+                            # Tab characters have dynamic width, so look it up
                             cell_width = tab_sections[tab_section_index][1]
                             tab_section_index += 1
                         else:
@@ -110,9 +115,12 @@ def compute_wrap_offsets(
                             append(start)
                         if last:
                             # Since cell_len ignores tabs, we need to check the width
-                            # of the tabs in this line
+                            # of the tabs in this line. The width of tabs within the
+                            # line is computed by taking the difference between the
+                            # cumulative width of tabs up to the end of the line and the
+                            # cumulative width of tabs up to the start of the line.
                             line_tab_widths = (
-                                cumulative_widths[start + len(line) - 1]
+                                cumulative_widths[start + len(line)]
                                 - cumulative_widths[start]
                             )
                             cell_offset = _cell_len(line) + line_tab_widths
