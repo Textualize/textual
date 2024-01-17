@@ -1076,8 +1076,6 @@ class Widget(DOMNode):
         # Container minus padding and border
         content_container = container - gutter.totals
 
-        print(self, width_fraction)
-
         if styles.width is None:
             # No width specified, fill available space
             content_width = Fraction(content_container.width - margin.width)
