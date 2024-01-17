@@ -258,6 +258,15 @@ class Dialog(Widget):
         """React to the title being changed."""
         self.border_title = self.title
 
+    class MisplacedActionArea(Exception):
+        """Error raised if an action area is misplaced.
+
+        [`ActionArea`][textual.widgets.Dialog.ActionArea] should only be
+        used inside a [`Dialog` widget][textual.widgets.Dialog]; this
+        exception will be raised if there is an attempt to mount an
+        [`ActionArea`][textual.widgets.Dialog.ActionArea] elsewhere.
+        """
+
     class MisplacedActionGroup(Exception):
         """Error raised if an action group is misplaced.
 
@@ -292,6 +301,13 @@ class Dialog(Widget):
                     yield Button("Next", id="next")
         ```
         """
+
+        def on_mount(self) -> None:
+            # Check that we're only inside a `Dialog`.
+            if not isinstance(self.parent, Dialog):
+                raise Dialog.MisplacedActionArea(
+                    "An ActionArea can only be used inside a Dialog."
+                )
 
         class GroupLeft(Widget):
             """A container for grouping widgets to the left side of a `Dialog.ActionArea`."""
