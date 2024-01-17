@@ -357,7 +357,7 @@ class Strip:
         cached_result = self._crop_extend_cache.get(cache_key)
         if cached_result is not None:
             return cached_result
-        strip = self.extend_cell_length(end).crop(start, end)
+        strip = self.extend_cell_length(end, style).crop(start, end)
         self._crop_extend_cache[cache_key] = strip
         return strip
 
