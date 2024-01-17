@@ -62,10 +62,6 @@
     border: wide $accent;
 }
 
-#panel {
-    border: panel $accent;
-}
-
 Grid {
     grid-size: 4 4;
     align: center middle;

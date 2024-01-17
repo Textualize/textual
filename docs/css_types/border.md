@@ -25,7 +25,6 @@ The [`<border>`](./border.md) type can take any of the following values:
 | `thick`     | Border style that is consistently thick across edges.    |
 | `vkey`      | Vertical key-line border.                                |
 | `wide`      | Solid border with additional space left and right.       |
-| `panel`     | Solid border with thick top.                             |
 
 ## Border command
 

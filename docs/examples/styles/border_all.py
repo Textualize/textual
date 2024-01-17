@@ -24,7 +24,6 @@ class AllBordersApp(App):
             Label("thick", id="thick"),
             Label("vkey", id="vkey"),
             Label("wide", id="wide"),
-            Label("panel", id="panel"),
         )
 
 
