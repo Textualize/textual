@@ -62,6 +62,15 @@ A powerful data table, with configurable cursors.
 ```{.textual path="docs/examples/widgets/data_table.py"}
 ```
 
+## Dialog
+
+A widget for laying out a classic dialog.
+
+[Dialog reference](./widgets/dialog.md){ .md-button .md-button--primary}
+
+```{.textual path="docs/examples/widgets/dialog_simple.py"}
+```
+
 ## Digits
 
 Display numbers in tall characters.
