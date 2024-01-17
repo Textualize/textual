@@ -236,6 +236,8 @@ class Dialog(Widget):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._dialog_children: list[Widget] = list(children)
         """Holds the widgets that will go to making up the dialog."""
+        self._action_area_count = 0
+        """Keeps track of how many action areas were found."""
         self.variant = variant
         self.title = title
 
@@ -389,15 +391,26 @@ class Dialog(Widget):
         with Body():
             for widget in self._dialog_children:
                 if isinstance(widget, Dialog.ActionArea):
-                    if action_area is not None:
-                        raise self.TooManyActionAreas(
-                            "Only one ActionArea can be defined for a Dialog."
-                        )
+                    # Note that we're always going to go with the last
+                    # action area found; but we're also always keeping track
+                    # of how many we saw. We should only ever see the one.
+                    # In on_mount we'll raise an exception of more than one
+                    # was found (that choice stems from exceptions from
+                    # compose not always playing well with pytest).
                     action_area = widget
+                    self._action_area_count += 1
                 else:
                     yield widget
         if action_area is not None:
             yield action_area
+
+    def on_mount(self) -> None:
+        # Now is a good idea to complain if there are too many ActionArea in
+        # the dialog.
+        if self._action_area_count > 1:
+            raise self.TooManyActionAreas(
+                "Only one ActionArea can be defined for a Dialog."
+            )
 
     @staticmethod
     def success(
