@@ -50,7 +50,9 @@ def test_refresh_range():
 
     # Inform the wrapped document about the range impacted by the edit
     wrapped_document.wrap_range(
-        start_location, old_end_location, edit_result.end_location
+        start_location,
+        old_end_location,
+        edit_result.end_location,
     )
 
     # Now confirm the resulting wrapped version is as we would expect
@@ -134,7 +136,7 @@ def test_offset_to_location_wrapping_enabled(offset, location):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
 
-    assert wrapped_document.offset_to_location(offset, 2) == location
+    assert wrapped_document.offset_to_location(offset) == location
 
 
 @pytest.mark.parametrize(
@@ -153,16 +155,22 @@ def test_offset_to_location_wrapping_disabled(offset, location):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=0)
 
-    assert wrapped_document.offset_to_location(offset, 4) == location
+    assert wrapped_document.offset_to_location(offset) == location
 
 
-@pytest.mark.parametrize("offset", [Offset(-3, 0), Offset(0, -10)])
-def test_offset_to_location_invalid_offset_raises_exception(offset):
+@pytest.mark.parametrize(
+    "offset,location",
+    [
+        [Offset(-3, 0), (0, 0)],
+        [Offset(0, -10), (0, 0)],
+    ],
+)
+def test_offset_to_location_invalid_offset_clamps_to_valid_offset(offset, location):
     document = Document(SIMPLE_TEXT)
     wrapped_document = WrappedDocument(document, width=4)
 
-    with pytest.raises(ValueError):
-        wrapped_document.offset_to_location(offset, 10)
+    result = wrapped_document.offset_to_location(offset)
+    assert result == location
 
 
 @pytest.mark.parametrize(

@@ -57,16 +57,21 @@ class WrappedDocument:
         """The width the document is currently wrapped at. This will correspond with
         the value last passed into the `wrap` method."""
 
+        self._tab_width: int = tab_width
+
         self.wrap(width, tab_width)
 
-    def wrap(self, width: int, tab_width: int) -> None:
+    def wrap(self, width: int, tab_width: int | None = None) -> None:
         """Wrap and cache all lines in the document.
 
         Args:
             width: The width to wrap at. 0 for no wrapping.
-            tab_width: The maximum width to consider for tab characters.
+            tab_width: The maximum width to consider for tab characters. If None,
+                reuse the  tab width.
         """
         self._width = width
+        if tab_width:
+            self._tab_width = tab_width
 
         # We're starting wrapping from scratch
         new_wrap_offsets: list[list[int]] = []
@@ -120,7 +125,6 @@ class WrappedDocument:
         start: Location,
         old_end: Location,
         new_end: Location,
-        tab_width: int,
     ) -> None:
         """Incrementally recompute wrapping based on a performed edit.
 
@@ -130,7 +134,6 @@ class WrappedDocument:
             start: The start location of the edit that was performed in document-space.
             old_end: The old end location of the edit in document-space.
             new_end: The new end location of the edit in document-space.
-            tab_width: The maximum width to consider for tab characters.
         """
 
         # Get all the text on the lines between start and end in document space
@@ -171,10 +174,9 @@ class WrappedDocument:
 
         # Add the new offsets between the top and new bottom (the new post-edit offsets)
         current_y_offset = top_y_offset
+        tab_width = self._tab_width
         for line_index, line in enumerate(new_lines, top_line_index):
-            wrap_offsets = (
-                compute_wrap_offsets(line, width, tab_size=tab_width) if width else []
-            )
+            wrap_offsets = compute_wrap_offsets(line, width, tab_width) if width else []
             append_wrap_offsets(wrap_offsets)
 
             # Collect up the new y offsets for this document line
@@ -226,7 +228,7 @@ class WrappedDocument:
             top_line_index : old_bottom_line_index + 1
         ] = new_wrap_offsets
 
-    def offset_to_location(self, offset: Offset, tab_width: int) -> Location:
+    def offset_to_location(self, offset: Offset) -> Location:
         """Given an offset within the wrapped/visual display of the document,
         return the corresponding location in the document.
 
@@ -260,6 +262,7 @@ class WrappedDocument:
             # y-offset is too large
             offset_data = self._offset_to_line_info[-1]
 
+        tab_width = self._tab_width
         if offset_data is not None:
             line_index, section_y = offset_data
             location = line_index, get_target_document_column(
