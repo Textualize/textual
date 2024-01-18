@@ -150,7 +150,7 @@ wish to style the main body you can target `Dialog Body` in your CSS:
 
 === "dialog_styling.tcss"
 
-    ~~~python
+    ~~~css hl_lines="7-12"
     --8<-- "docs/examples/widgets/dialog_styling.tcss"
     ~~~
 
