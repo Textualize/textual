@@ -81,6 +81,7 @@ class WrappedDocument:
         append_wrap_offset = new_wrap_offsets.append
         current_offset = 0
 
+        tab_width = self._tab_width
         for line_index, line in enumerate(self.document.lines):
             wrap_offsets = (
                 compute_wrap_offsets(line, width, tab_size=tab_width) if width else []
@@ -234,7 +235,6 @@ class WrappedDocument:
 
         Args:
             offset: The y-offset within the document.
-            tab_width: The maximum width of tab characters in the document.
 
         Raises:
             ValueError: When the given offset does not correspond to a line
@@ -262,30 +262,27 @@ class WrappedDocument:
             # y-offset is too large
             offset_data = self._offset_to_line_info[-1]
 
-        tab_width = self._tab_width
         if offset_data is not None:
             line_index, section_y = offset_data
             location = line_index, get_target_document_column(
                 line_index,
                 x,
                 section_y,
-                tab_width,
             )
         else:
             location = len(self._wrap_offsets) - 1, get_target_document_column(
-                -1, x, -1, tab_width
+                -1, x, -1
             )
 
         # Offset doesn't match any line => land on bottom wrapped line
         return location
 
-    def location_to_offset(self, location: Location, tab_width: int) -> Offset:
+    def location_to_offset(self, location: Location) -> Offset:
         """
         Convert a location in the document to an offset within the wrapped/visual display of the document.
 
         Args:
             location: The location in the document.
-            tab_width: The maximum width of tab characters in the document.
 
         Returns:
             The Offset in the document's visual display corresponding to the given location.
@@ -306,7 +303,7 @@ class WrappedDocument:
 
         section = self.get_sections(line_index)[section_index]
         x_offset = cell_len(
-            expand_tabs_inline(section[:section_column_index], tab_width)
+            expand_tabs_inline(section[:section_column_index], self._tab_width)
         )
 
         return Offset(x_offset, y_offsets[section_index])
@@ -316,7 +313,6 @@ class WrappedDocument:
         line_index: int,
         x_offset: int,
         y_offset: int,
-        tab_width: int,
     ) -> int:
         """Given a line index and the offsets within the wrapped version of that
         line, return the corresponding column index in the raw document.
@@ -325,7 +321,6 @@ class WrappedDocument:
              line_index: The index of the line in the document.
              x_offset: The x-offset within the wrapped line.
              y_offset: The y-offset within the wrapped line (supports negative indexing).
-             tab_width: The size of the tab stop.
 
         Returns:
             The column index corresponding to the line index and y offset.
@@ -348,7 +343,7 @@ class WrappedDocument:
 
         # Get the column index within this wrapped section of the line
         target_column_index = target_section_start + cell_width_to_column_index(
-            target_section, x_offset, tab_width
+            target_section, x_offset, self._tab_width
         )
 
         # If we're on the final section of a line, the cursor can legally rest beyond

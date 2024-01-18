@@ -165,7 +165,7 @@ class DocumentNavigator:
         return target_row, target_column
 
     def get_location_above(
-        self, location: Location, tab_width: int, maintain_offset: bool = False
+        self, location: Location, maintain_offset: bool = False
     ) -> Location:
         """Get the location up from the given location in the wrapped document."""
 
@@ -193,7 +193,7 @@ class DocumentNavigator:
             # Get the last section from the line above, and find where to move in it.
             target_row = line_index - 1
             target_column = self._wrapped_document.get_target_document_column(
-                target_row, target_offset, -1, tab_width
+                target_row, target_offset, -1
             )
             target_location = target_row, target_column
         else:
@@ -201,14 +201,14 @@ class DocumentNavigator:
             # Since the section above could be shorter, we need to clamp the column
             # to a valid value.
             target_column = self._wrapped_document.get_target_document_column(
-                line_index, target_offset, section_index - 1, tab_width
+                line_index, target_offset, section_index - 1
             )
             target_location = line_index, target_column
 
         return target_location
 
     def get_location_below(
-        self, location: Location, tab_width: int, maintain_offset: bool = True
+        self, location: Location, maintain_offset: bool = True
     ) -> Location:
         """Given a location in the raw document, return the raw document
         location corresponding to moving down in the wrapped representation
@@ -216,7 +216,6 @@ class DocumentNavigator:
 
         Args:
             location: The location in the raw document.
-            tab_width: The width of the tab stops.
             maintain_offset: Maintain the visual x-offset of the cursor.
 
         Returns:
@@ -243,14 +242,14 @@ class DocumentNavigator:
             # Go to the first section of the line below.
             target_row = line_index + 1
             target_column = self._wrapped_document.get_target_document_column(
-                target_row, target_offset, 0, tab_width
+                target_row, target_offset, 0
             )
             target_location = target_row, target_column
         else:
             # Stay on the same document line, but move forwards to
             # the location on the section below with the same visual offset.
             target_column = self._wrapped_document.get_target_document_column(
-                line_index, target_offset, section_index + 1, tab_width
+                line_index, target_offset, section_index + 1
             )
             target_location = line_index, target_column
 
@@ -307,16 +306,13 @@ class DocumentNavigator:
             return line_index, 0
 
     def get_location_offset_relative(
-        self, location: Location, offset_delta: int, tab_width: int
+        self, location: Location, offset_delta: int
     ) -> Location:
         # Convert into offset-space to apply the offset.
-        x_offset, y_offset = self._wrapped_document.location_to_offset(
-            location, tab_width
-        )
+        x_offset, y_offset = self._wrapped_document.location_to_offset(location)
         # Convert the offset with the delta applied back to location-space.
         return self._wrapped_document.offset_to_location(
             Offset(x_offset, y_offset + offset_delta),
-            tab_width,
         )
 
     def clamp_reachable(self, location: Location) -> Location:

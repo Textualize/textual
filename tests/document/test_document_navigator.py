@@ -41,7 +41,7 @@ def make_navigator(text, width):
     ],
 )
 def test_get_location_above(start, end):
-    assert make_navigator(TEXT, 4).get_location_above(start, 4) == end
+    assert make_navigator(TEXT, 4).get_location_above(start) == end
 
 
 @pytest.mark.parametrize(
@@ -59,7 +59,7 @@ def test_get_location_above(start, end):
     ],
 )
 def test_get_location_below(start, end):
-    assert make_navigator(TEXT, 4).get_location_below(start, 4) == end
+    assert make_navigator(TEXT, 4).get_location_below(start) == end
 
 
 @pytest.mark.parametrize(

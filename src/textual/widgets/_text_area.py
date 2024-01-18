@@ -432,7 +432,7 @@ TextArea {
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
         self._cursor_offset = self.wrapped_document.location_to_offset(
-            self.cursor_location, self.indent_width
+            self.cursor_location
         )
 
     def find_matching_bracket(
@@ -1042,7 +1042,6 @@ TextArea {
                 edit.from_location,
                 edit.to_location,
                 result.end_location,
-                self.indent_width,
             )
 
         self._refresh_size()
@@ -1449,9 +1448,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves down.
         """
-        return self._navigator.get_location_below(
-            self.cursor_location, self.indent_width
-        )
+        return self._navigator.get_location_below(self.cursor_location)
 
     def action_cursor_up(self, select: bool = False) -> None:
         """Move the cursor up one cell.
@@ -1468,9 +1465,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves up.
         """
-        return self._navigator.get_location_above(
-            self.cursor_location, self.indent_width
-        )
+        return self._navigator.get_location_above(self.cursor_location)
 
     def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
@@ -1574,7 +1569,8 @@ TextArea {
         height = self.content_size.height
         _, cursor_location = self.selection
         target = self._navigator.get_location_offset_relative(
-            cursor_location, -height, self.indent_width
+            cursor_location,
+            -height,
         )
         self.scroll_relative(y=-height, animate=False)
         self.move_cursor(target)
@@ -1584,7 +1580,8 @@ TextArea {
         height = self.content_size.height
         _, cursor_location = self.selection
         target = self._navigator.get_location_offset_relative(
-            cursor_location, height, self.indent_width
+            cursor_location,
+            height,
         )
         self.scroll_relative(y=height, animate=False)
         self.move_cursor(target)
@@ -1611,7 +1608,7 @@ TextArea {
         jump back to the same offset that we were originally at.
         """
         cursor_x_offset, _ = self.wrapped_document.location_to_offset(
-            self.cursor_location, self.indent_width
+            self.cursor_location
         )
         self._navigator.last_x_offset = cursor_x_offset
 
