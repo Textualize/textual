@@ -141,6 +141,29 @@ constructor](#textual.widgets._dialog.Dialog.error).
     --8<-- "docs/examples/widgets/dialog_error.py"
     ~~~
 
+## Styling the Dialog
+
+The `Dialog` will always contain one sub-widget, called `Body`; this is
+where the widgets that are not in the
+[`ActionArea`](#textual.widgets._dialog.Dialog.ActionArea) are held. If you
+wish to style the main body you can target `Dialog Body` in your CSS:
+
+=== "dialog_styling.tcss"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/dialog_styling.tcss"
+    ~~~
+
+=== "dialog_styling.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/dialog_styling.py"
+    ~~~
+
+=== "Styled dialog body"
+
+    ```{.textual path="docs/examples/widgets/dialog_styling.py"}
+    ```
 
 ## Reactive Attributes
 

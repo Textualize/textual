@@ -1,0 +1,17 @@
+Screen {
+    align: center middle;
+}
+
+Dialog {
+
+    Body {
+        border: thick red;
+        background: red 40%;
+        color: $text;
+        padding: 1 2;
+    }
+
+    Label {
+        width: 1fr;
+    }
+}
