@@ -1106,9 +1106,7 @@ TextArea {
         scroll_x, scroll_y = self.scroll_offset
         target_x = event.x - self.gutter_width + scroll_x - self.gutter.left
         target_y = event.y + scroll_y - self.gutter.top
-        location = self.wrapped_document.offset_to_location(
-            Offset(target_x, target_y), self.indent_width
-        )
+        location = self.wrapped_document.offset_to_location(Offset(target_x, target_y))
         return location
 
     @property
@@ -1738,7 +1736,7 @@ TextArea {
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
         from_location = self.selection.end
-        to_location = self.get_cursor_line_start_location()
+        to_location = self.get_cursor_line_start_location(smart_home=True)
         self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_to_end_of_line(self) -> None:

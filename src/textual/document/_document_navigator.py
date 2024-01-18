@@ -300,7 +300,7 @@ class DocumentNavigator:
                         target_column = index
                         break
 
-                if column_offset <= target_column and column_offset != 0:
+                if column_offset == 0 or column_offset > target_column:
                     return line_index, target_column
 
             return line_index, 0
