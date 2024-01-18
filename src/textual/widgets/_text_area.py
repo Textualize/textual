@@ -200,7 +200,9 @@ TextArea {
     Syntax highlighting is only possible when the `language` attribute is set.
     """
 
-    selection: Reactive[Selection] = reactive(Selection(), init=False)
+    selection: Reactive[Selection] = reactive(
+        Selection(), init=False, always_update=True
+    )
     """The selection start and end locations (zero-based line_index, offset).
 
     This represents the cursor location and the current selection.
@@ -402,7 +404,9 @@ TextArea {
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
 
-    def _watch_selection(self, selection: Selection) -> None:
+    def _watch_selection(
+        self, previous_selection: Selection, selection: Selection
+    ) -> None:
         """When the cursor moves, scroll it into view."""
         # Find the visual offset of the cursor in the document
         cursor_location = selection.end
@@ -425,7 +429,8 @@ TextArea {
                 self.refresh_lines(match_row)
 
         self.app.cursor_position = self.cursor_screen_offset
-        self.post_message(self.SelectionChanged(selection, self))
+        if previous_selection != selection:
+            self.post_message(self.SelectionChanged(selection, self))
 
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
