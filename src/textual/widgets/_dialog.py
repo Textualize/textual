@@ -356,7 +356,7 @@ class Dialog(Widget):
                         width,
                         # ...or the width of the body, minus our horizontal
                         # padding and margins; whichever is greater.
-                        body.size.width
+                        body.outer_size.width
                         - (
                             self.styles.padding.right
                             + self.styles.padding.left
