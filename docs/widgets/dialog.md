@@ -75,6 +75,73 @@ The resulting dialog looks like this:
 ```{.textual path="docs/examples/widgets/dialog_complex.py"}
 ```
 
+### Dialog variants
+
+Much like with [`Button`](./button.md) the `Dialog` widget has variants;
+these provide ready-made semantic styles for your dialogs. As well as
+`default`, there are also:
+
+#### "success"
+
+A `success` variant `Dialog` can be created by either passing `"success"` as
+the `variant` parameter when [creating the
+`Dialog`](#textual.widgets.Dialog), by setting the [`variant`
+reactive](#textual.widgets._dialog.Dialog.variant) to `"success"`, or by
+calling the [`Dialog.success`
+constructor](#textual.widgets._dialog.Dialog.success).
+
+=== "Success variant dialog"
+
+    ```{.textual path="docs/examples/widgets/dialog_success.py"}
+    ```
+
+=== "dialog_success.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/dialog_success.py"
+    ~~~
+
+#### "warning"
+
+A `warning` variant `Dialog` can be created by either passing `"warning"` as
+the `variant` parameter when [creating the
+`Dialog`](#textual.widgets.Dialog), by setting the [`variant`
+reactive](#textual.widgets._dialog.Dialog.variant) to `"warning"`, or by
+calling the [`Dialog.warning`
+constructor](#textual.widgets._dialog.Dialog.warning).
+
+=== "Warning variant dialog"
+
+    ```{.textual path="docs/examples/widgets/dialog_warning.py"}
+    ```
+
+=== "dialog_warning.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/dialog_warning.py"
+    ~~~
+
+#### "error"
+
+An `error` variant `Dialog` can be created by either passing `"error"` as
+the `variant` parameter when [creating the
+`Dialog`](#textual.widgets.Dialog), by setting the [`variant`
+reactive](#textual.widgets._dialog.Dialog.variant) to `"error"`, or by
+calling the [`Dialog.error`
+constructor](#textual.widgets._dialog.Dialog.error).
+
+=== "Error variant dialog"
+
+    ```{.textual path="docs/examples/widgets/dialog_error.py"}
+    ```
+
+=== "dialog_error.py"
+
+    ~~~python
+    --8<-- "docs/examples/widgets/dialog_error.py"
+    ~~~
+
+
 ## Reactive Attributes
 
 | Name      | Type            | Default     | Description                                                                |
