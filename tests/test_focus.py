@@ -64,6 +64,46 @@ def test_focus_chain():
     assert focus_chain == ["foo", "container1", "Paul", "baz", "child"]
 
 
+def test_allow_focus():
+    """Test allow_focus and allow_focus_children are called and the result used."""
+    focusable_allow_focus_called = False
+    non_focusable_allow_focus_called = False
+
+    class Focusable(Widget, can_focus=False):
+        def allow_focus(self) -> bool:
+            nonlocal focusable_allow_focus_called
+            focusable_allow_focus_called = True
+            return True
+
+    class NonFocusable(Container, can_focus=True):
+        def allow_focus(self) -> bool:
+            nonlocal non_focusable_allow_focus_called
+            non_focusable_allow_focus_called = True
+            return False
+
+    class FocusableContainer(Container, can_focus_children=False):
+        def allow_focus_children(self) -> bool:
+            return True
+
+    class NonFocusableContainer(Container, can_focus_children=True):
+        def allow_focus_children(self) -> bool:
+            return False
+
+    app = App()
+    app._set_active()
+    app.push_screen(Screen())
+
+    app.screen._add_children(
+        Focusable(id="foo"),
+        NonFocusable(id="bar"),
+        FocusableContainer(Button("egg", id="egg")),
+        NonFocusableContainer(Button("EGG", id="qux")),
+    )
+    assert [widget.id for widget in app.screen.focus_chain] == ["foo", "egg"]
+    assert focusable_allow_focus_called
+    assert non_focusable_allow_focus_called
+
+
 def test_focus_next_and_previous(screen: Screen):
     assert screen.focus_next().id == "foo"
     assert screen.focus_next().id == "container1"
