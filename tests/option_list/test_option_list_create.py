@@ -153,3 +153,11 @@ async def test_adding_multiple_duplicates_at_once() -> None:
                 ]
             )
         assert option_list.option_count == 5
+
+
+async def test_options_are_available_soon() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3903."""
+
+    option = Option("", id="some_id")
+    option_list = OptionList(option)
+    assert option_list.get_option("some_id") is option
