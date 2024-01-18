@@ -73,7 +73,7 @@ class Body(VerticalScroll, can_focus=False):
         if isinstance(self.parent, Dialog):
             try:
                 # See if the dialog has an ActionArea.
-                action_area = self.parent.query_one(Dialog.ActionArea)
+                action_area = self.parent.get_child_by_type(Dialog.ActionArea)
             except NoMatches:
                 # It's fine if it doesn't; that just means we don't need to
                 # take it into account for this calculation to take place.
@@ -345,7 +345,7 @@ class Dialog(Widget):
             if isinstance(self.parent, Dialog):
                 try:
                     # See if the dialog has a body yet.
-                    body = self.parent.query_one(Body)
+                    body = self.parent.get_child_by_type(Body)
                 except NoMatches:
                     # It's fine if it doesn't; that just means we'll go
                     # ahead and use our "normal" content width.
