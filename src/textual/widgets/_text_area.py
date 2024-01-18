@@ -200,9 +200,7 @@ TextArea {
     Syntax highlighting is only possible when the `language` attribute is set.
     """
 
-    selection: Reactive[Selection] = reactive(
-        Selection(), always_update=False, init=False
-    )
+    selection: Reactive[Selection] = reactive(Selection(), init=False)
     """The selection start and end locations (zero-based line_index, offset).
 
     This represents the cursor location and the current selection.
