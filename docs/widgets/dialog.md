@@ -9,6 +9,8 @@ A container widget designed to help build classic dialog layouts.
 
 ## Guide
 
+### Composing a `Dialog`
+
 The `Dialog` widget helps with laying out a classic dialog, one with
 "content" widgets in the main body, and with a horizontal area of "action
 items" (which will normally be buttons) at the bottom. This is ideally done
