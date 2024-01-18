@@ -1730,7 +1730,7 @@ TextArea {
             end_row -= 1
 
         from_location = (start_row, 0)
-        to_location = (end_row + 1, end_column)
+        to_location = (end_row + 1, 0)
 
         self.delete(from_location, to_location, maintain_selection_offset=False)
         self.move_cursor_relative(columns=end_column, record_width=False)
