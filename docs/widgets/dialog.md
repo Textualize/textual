@@ -154,16 +154,17 @@ wish to style the main body you can target `Dialog Body` in your CSS:
     --8<-- "docs/examples/widgets/dialog_styling.tcss"
     ~~~
 
+=== "Styled dialog body"
+
+    ```{.textual path="docs/examples/widgets/dialog_styling.py"}
+    ```
+
 === "dialog_styling.py"
 
     ~~~python
     --8<-- "docs/examples/widgets/dialog_styling.py"
     ~~~
 
-=== "Styled dialog body"
-
-    ```{.textual path="docs/examples/widgets/dialog_styling.py"}
-    ```
 
 ## Reactive Attributes
 
