@@ -97,16 +97,7 @@ class Dialog(Widget):
     """A dialog widget.
 
     `Dialog` is a container class that helps provide a classic dialog layout
-    for other widgets. An example use may be:
-
-    ```python
-    def compose(self) -> ComposeResult:
-        with Dialog(title="Confirm"):
-            yield Label("Shall we play a game?")
-            with Dialog.ActionArea():
-                yield Button("Yes", id="yes")
-                yield Button("No", id="no")
-    ```
+    for other widgets.
     """
 
     DEFAULT_CSS = """
