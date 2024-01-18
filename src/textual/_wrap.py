@@ -34,6 +34,7 @@ def compute_wrap_offsets(
     width: int,
     tab_size: int,
     fold: bool = True,
+    precomputed_tab_sections: list[tuple[str, int]] | None = None,  # TODO consider this
 ) -> list[int]:
     """Given a string of text, and a width (measured in cells), return a list
     of codepoint indices which the string should be split at in order for it to fit
@@ -44,17 +45,23 @@ def compute_wrap_offsets(
         width: The available cell width.
         tab_size: The tab stop width.
         fold: If True, words longer than `width` will be folded onto a new line.
+        precomputed_tab_sections: The output of `get_tab_widths` can be passed here directly,
+            to prevent us from having to recompute the value.
 
     Returns:
         A list of indices to break the line at.
     """
+    tab_size = min(tab_size, width)
+    if precomputed_tab_sections:
+        tab_sections = precomputed_tab_sections
+    else:
+        tab_sections = get_tab_widths(text, tab_size)
+
     break_positions: list[int] = []  # offsets to insert the breaks at
     append = break_positions.append
     cell_offset = 0
     _cell_len = cell_len
 
-    tab_size = min(tab_size, width)
-    tab_sections = get_tab_widths(text, tab_size)
     tab_section_index = 0
     cumulative_width = 0
     cumulative_widths = []  # Accumulated tab widths of all codepoints prior (exclusive)

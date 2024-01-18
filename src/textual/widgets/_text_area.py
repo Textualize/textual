@@ -962,7 +962,13 @@ TextArea {
         target_width = base_width - self.gutter_width
         console = self.app.console
         gutter_segments = console.render(gutter)
+
+        # TODO - we can't just expand tabs here, because the width of the tab
+        #  was earlier computed while the tab was a document line,
+        #  we need to expand them back to the width we calculated inside the document line,
+        #  pre-division.
         line.expand_tabs(self.indent_width)
+
         text_segments = list(
             console.render(line, console.options.update_width(target_width))
         )
