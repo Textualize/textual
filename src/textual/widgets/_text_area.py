@@ -201,7 +201,7 @@ TextArea {
     """
 
     selection: Reactive[Selection] = reactive(
-        Selection(), always_update=True, init=False
+        Selection(), always_update=False, init=False
     )
     """The selection start and end locations (zero-based line_index, offset).
 
