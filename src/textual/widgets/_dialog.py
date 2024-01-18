@@ -136,7 +136,7 @@ class Dialog(Widget):
 
             border-top: $primary;
 
-            padding: 1 1 0 1;
+            padding: 1 0 0 0;
 
             /* The developer may place widgets directly into the action
             area; they will likely do this half expecting that there will be
