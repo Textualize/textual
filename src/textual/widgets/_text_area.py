@@ -232,7 +232,7 @@ TextArea {
     cursor_blink: Reactive[bool] = reactive(True)
     """True if the cursor should blink."""
 
-    wrap: Reactive[bool] = reactive(False)
+    soft_wrap: Reactive[bool] = reactive(False)
     """True if text should soft wrap."""
 
     _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
@@ -276,7 +276,7 @@ TextArea {
         *,
         language: str | None = None,
         theme: str | None = None,
-        wrap: bool = False,
+        soft_wrap: bool = False,
         tab_behaviour: Literal["focus", "indent"] = "indent",
         name: str | None = None,
         id: str | None = None,
@@ -350,7 +350,7 @@ TextArea {
 
         self.theme = theme
 
-        self._reactive_wrap = wrap
+        self._reactive_soft_wrap = soft_wrap
 
         self.tab_behaviour = tab_behaviour
 
@@ -724,7 +724,7 @@ TextArea {
     def wrap_width(self) -> int:
         width, _ = self.scrollable_content_region.size
         cursor_width = 1
-        if self.wrap:
+        if self.soft_wrap:
             return width - self.gutter_width - cursor_width
         return 0
 
@@ -780,7 +780,7 @@ TextArea {
 
     def _refresh_size(self) -> None:
         """Update the virtual size of the TextArea."""
-        if self.wrap:
+        if self.soft_wrap:
             self.virtual_size = Size(0, self.wrapped_document.height)
         else:
             # +1 width to make space for the cursor resting at the end of the line
@@ -956,7 +956,7 @@ TextArea {
 
         base_width = (
             self.scrollable_content_region.size.width
-            if self.wrap
+            if self.soft_wrap
             else max(virtual_width, self.region.size.width)
         )
         target_width = base_width - self.gutter_width
@@ -971,7 +971,7 @@ TextArea {
         text_strip = Strip(text_segments)
 
         # Crop the line to show only the visible part (some may be scrolled out of view)
-        if not self.wrap:
+        if not self.soft_wrap:
             text_strip = text_strip.crop(
                 scroll_x, scroll_x + virtual_width - gutter_width
             )
