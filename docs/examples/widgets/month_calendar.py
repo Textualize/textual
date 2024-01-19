@@ -17,6 +17,7 @@ class MonthCalendarApp(App):
         Binding("pagedown", "previous_month", priority=True),
         Binding("ctrl+pageup", "next_year", priority=True),
         Binding("ctrl+pagedown", "previous_year", priority=True),
+        Binding("ctrl+s", "toggle_show_other_months"),
     ]
 
     def compose(self) -> ComposeResult:
@@ -33,6 +34,10 @@ class MonthCalendarApp(App):
 
     def action_previous_year(self) -> None:
         self.query_one(MonthCalendar).previous_year()
+
+    def action_toggle_show_other_months(self) -> None:
+        calendar = self.query_one(MonthCalendar)
+        calendar.show_other_months = not calendar.show_other_months
 
 
 if __name__ == "__main__":
