@@ -100,9 +100,9 @@ class MonthCalendar(Widget):
         event.stop()
         if not self.show_other_months and event.value is None:
             table = self.query_one(DataTable)
-            table._show_hover_cursor = False
             date_coordinate = self._get_date_coordinate(self.date)
-            table.cursor_coordinate = date_coordinate
+            with self.prevent(DataTable.CellHighlighted):
+                table.cursor_coordinate = date_coordinate
         else:
             cursor_row, cursor_column = event.coordinate
             highlighted_date = self._calendar_dates[cursor_row][cursor_column]
@@ -116,6 +116,10 @@ class MonthCalendar(Widget):
         event: DataTable.CellSelected,
     ) -> None:
         event.stop()
+        if not self.show_other_months and event.value is None:
+            table = self.query_one(DataTable)
+            table._show_hover_cursor = False
+            return
         # We cannot rely on the `event.coordinate` for the selected date,
         # as selecting a date from the previous or next month will update the
         # calendar to bring that entire month into view and the date at this
