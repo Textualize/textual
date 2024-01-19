@@ -14,6 +14,7 @@ from textual.message import Message
 from textual.reactive import Reactive
 from textual.widget import Widget
 from textual.widgets import DataTable
+from textual.widgets.data_table import CellDoesNotExist
 
 
 class InvalidWeekdayNumber(Exception):
@@ -144,6 +145,22 @@ class MonthCalendar(Widget):
 
     def _on_mount(self, _: Mount) -> None:
         self._update_calendar_table(update_week_header=True)
+
+        def hide_hover_cursor_if_blank_cell(hover_coordinate: Coordinate) -> None:
+            table = self.query_one(DataTable)
+            try:
+                hover_cell_value = table.get_cell_at(hover_coordinate)
+            except CellDoesNotExist:
+                table._set_hover_cursor(False)
+                return
+            if hover_cell_value is None:
+                table._set_hover_cursor(False)
+
+        self.watch(
+            self.query_one(DataTable),
+            "hover_coordinate",
+            hide_hover_cursor_if_blank_cell,
+        )
 
     def _update_calendar_table(self, update_week_header: bool) -> None:
         table = self.query_one(DataTable)
