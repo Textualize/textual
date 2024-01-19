@@ -100,6 +100,7 @@ class MonthCalendar(Widget):
         event.stop()
         if not self.show_other_months and event.value is None:
             table = self.query_one(DataTable)
+            table._show_hover_cursor = False
             date_coordinate = self._get_date_coordinate(self.date)
             table.cursor_coordinate = date_coordinate
         else:
