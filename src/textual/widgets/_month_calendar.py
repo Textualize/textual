@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import calendar
 import datetime
+from typing import Sequence
 
 from dateutil.relativedelta import relativedelta  # type: ignore[import-untyped]
 from rich.text import Text
@@ -195,7 +196,7 @@ class MonthCalendar(Widget):
 
         table.hover_coordinate = old_hover_coordinate
 
-    def _get_calendar_dates(self) -> list[list[datetime.date | None]]:
+    def _get_calendar_dates(self) -> list[Sequence[datetime.date | None]]:
         """A matrix of `datetime.date` objects for this month calendar, where
         each row represents a week. If `show_other_months` is True, this returns
         a six-week calendar including dates from the previous and next month.
@@ -203,7 +204,7 @@ class MonthCalendar(Widget):
         included and any dates outside the month are 'None'.
         """
         month_weeks = self._calendar.monthdatescalendar(self.date.year, self.date.month)
-        calendar_dates: list[list[datetime.date | None]]
+        calendar_dates: list[Sequence[datetime.date | None]]
         if not self.show_other_months:
             calendar_dates = [
                 [date if date.month == self.date.month else None for date in week]
@@ -228,17 +229,17 @@ class MonthCalendar(Widget):
 
             if len(calendar_dates) == 4:  # special case for February
                 calendar_dates = (
-                    [prev_month_weeks[-1]] + calendar_dates + [next_month_weeks[0]]  # type: ignore[assignment]
+                    [prev_month_weeks[-1]] + calendar_dates + [next_month_weeks[0]]
                 )
             elif curr_first_date.day == 1:
-                calendar_dates = [prev_month_weeks[-1]] + calendar_dates  # type: ignore[assignment]
+                calendar_dates = [prev_month_weeks[-1]] + calendar_dates
             else:
                 curr_last_date = calendar_dates[-1][6]
                 assert isinstance(curr_last_date, datetime.date)
                 if curr_last_date.month == self.date.month:
-                    calendar_dates = calendar_dates + [next_month_weeks[0]]  # type: ignore[list-item]
+                    calendar_dates = calendar_dates + [next_month_weeks[0]]
                 else:
-                    calendar_dates = calendar_dates + [next_month_weeks[1]]  # type: ignore[list-item]
+                    calendar_dates = calendar_dates + [next_month_weeks[1]]
 
         assert len(calendar_dates) == 6
 
