@@ -348,29 +348,54 @@ async def test_calendar_if_show_other_months_is_false():
     should be displayed and other blank cells should not be selectable"""
 
     class HideOtherMonthsApp(App):
+        def __init__(self) -> None:
+            super().__init__()
+            self.messages: list[tuple[str, datetime.date]] = []
+
         def compose(self) -> ComposeResult:
             yield MonthCalendar(
                 datetime.date(year=2021, month=6, day=1),
                 show_other_months=False,
             )
 
+        @on(MonthCalendar.DateHighlighted)
+        @on(MonthCalendar.DateSelected)
+        def record(
+            self,
+            event: MonthCalendar.DateHighlighted | MonthCalendar.DateSelected,
+        ) -> None:
+            self.messages.append((event.__class__.__name__, event.value))
+
     app = HideOtherMonthsApp()
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(DataTable)
+
+        expected_messages = [("DateHighlighted", datetime.date(2021, 6, 1))]
+        expected_coordinate = Coordinate(0, 1)
+        expected_date = datetime.date(2021, 6, 1)
         # Sanity check
-        assert table.cursor_coordinate == Coordinate(0, 1)
         expected_first_monday = None
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
-        assert table.get_cell_at(Coordinate(0, 0)) is None
+        assert table.get_cell_at(Coordinate(0, 0)) == expected_first_monday
+
+        assert month_calendar.date == expected_date
+        assert table.cursor_coordinate == expected_coordinate
+        assert app.messages == expected_messages
 
         await pilot.press("left")
-        assert table.cursor_coordinate == Coordinate(0, 1)
-        assert month_calendar.date == datetime.date(2021, 6, 1)
-        actual_first_monday = month_calendar._calendar_dates[0][0]
-        assert actual_first_monday == expected_first_monday
-        assert table.get_cell_at(Coordinate(0, 0)) is None
+        assert table.cursor_coordinate == expected_coordinate
+        assert app.messages == expected_messages
+        assert month_calendar.date == expected_date
+
+        await pilot.click(MonthCalendar, offset=(3, 1))
+        assert table.cursor_coordinate == expected_coordinate
+        assert app.messages == expected_messages
+        assert month_calendar.date == expected_date
+
+        await pilot.hover(MonthCalendar, offset=(3, 1))
+        assert table._show_hover_cursor is False
 
 
 async def test_calendar_after_reactive_show_other_months_change():
