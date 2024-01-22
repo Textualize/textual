@@ -29,7 +29,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocumentError,
 )
 from textual.document._wrapped_document import WrappedDocument
-from textual.expand_tabs import expand_tabs_inline
+from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_inline
 
 if TYPE_CHECKING:
     from tree_sitter import Language
@@ -518,6 +518,10 @@ TextArea {
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
+    def _watch_show_vertical_scrollbar(self) -> None:
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
+
     def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
@@ -952,7 +956,26 @@ TextArea {
         if wrap_offsets:
             sections = line.divide(wrap_offsets)  # TODO cache result with edit count
             line = sections[section_offset]
+            line_tab_widths = wrapped_document.get_tab_widths(line_index)
             line.end = ""
+
+            # Get the widths of the tabs corresponding only to the section of the
+            # line that is currently being rendered. We don't care about tabs in
+            # other sections of the same line.
+
+            # Count the tabs before this section.
+            tabs_before = 0
+            for section_index in range(section_offset):
+                tabs_before += sections[section_index].plain.count("\t")
+
+            # Count the tabs in this section.
+            tabs_within = line.plain.count("\t")
+            section_tab_widths = line_tab_widths[
+                tabs_before : tabs_before + tabs_within
+            ]
+            line = expand_text_tabs_inline(line, section_tab_widths)
+        else:
+            line.expand_tabs(self.indent_width)
 
         base_width = (
             self.scrollable_content_region.size.width
@@ -962,12 +985,6 @@ TextArea {
         target_width = base_width - self.gutter_width
         console = self.app.console
         gutter_segments = console.render(gutter)
-
-        # TODO - we can't just expand tabs here, because the width of the tab
-        #  was earlier computed while the tab was a document line,
-        #  we need to expand them back to the width we calculated inside the document line,
-        #  pre-division.
-        line.expand_tabs(self.indent_width)
 
         text_segments = list(
             console.render(line, console.options.update_width(target_width))

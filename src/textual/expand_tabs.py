@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 from rich.cells import cell_len
+from rich.text import Text
 
 _TABS_SPLITTER_RE = re.compile(r"(.*?\t|.+?$)")
 
@@ -58,6 +59,28 @@ def expand_tabs_inline(line: str, tab_size: int = 4) -> str:
     return "".join(
         [part + expansion_width * " " for part, expansion_width in tab_widths]
     )
+
+
+def expand_text_tabs_inline(line: Text, tab_widths: list[int]) -> Text:
+    """Expand tabs to the widths defined in the `tab_widths` list, retaining style information
+    across the expanded tab characters.
+    """
+    if "\t" not in line.plain:
+        return line
+
+    parts = line.split("\t", include_separator=True)
+    tab_widths_iter = iter(tab_widths)
+
+    new_parts = []
+    append_part = new_parts.append
+    for part in parts:
+        if part.plain.endswith("\t"):
+            part._text[-1] = part._text[-1][:-1] + " "
+            spaces = next(tab_widths_iter)
+            part.extend_style(spaces - 1)
+        append_part(part)
+
+    return Text("", end="").join(new_parts)
 
 
 if __name__ == "__main__":

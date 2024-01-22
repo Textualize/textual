@@ -34,7 +34,7 @@ def compute_wrap_offsets(
     width: int,
     tab_size: int,
     fold: bool = True,
-    precomputed_tab_sections: list[tuple[str, int]] | None = None,  # TODO consider this
+    precomputed_tab_sections: list[tuple[str, int]] | None = None,
 ) -> list[int]:
     """Given a string of text, and a width (measured in cells), return a list
     of codepoint indices which the string should be split at in order for it to fit
