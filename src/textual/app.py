@@ -38,6 +38,7 @@ from typing import (
     Generator,
     Generic,
     Iterable,
+    Iterator,
     List,
     Sequence,
     Type,
@@ -3292,3 +3293,11 @@ class App(Generic[ReturnType], DOMNode):
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
             self.push_screen(CommandPalette(), callback=self.call_next)
+
+    @contextmanager
+    def suspend(self) -> Iterator[None]:
+        if self._driver is not None:
+            self._driver.stop_application_mode()
+            with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
+                yield
+            self._driver.start_application_mode()
