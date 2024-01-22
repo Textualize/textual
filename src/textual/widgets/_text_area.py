@@ -720,7 +720,7 @@ TextArea {
     def _on_resize(self) -> None:
         self._rewrap_and_refresh_virtual_size()
 
-    def _watch_wrap(self) -> None:
+    def _watch_soft_wrap(self) -> None:
         self._rewrap_and_refresh_virtual_size()
         self.call_after_refresh(self.scroll_cursor_visible, center=True)
 
