@@ -36,7 +36,7 @@ class Notification:
     severity: SeverityLevel = "information"
     """The severity level for the notification."""
 
-    timeout: float = 3
+    timeout: float = 5
     """The timeout for the notification."""
 
     raised_at: float = field(default_factory=time)
