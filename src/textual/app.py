@@ -371,7 +371,7 @@ class App(Generic[ReturnType], DOMNode):
     """Indicates if the app has focus.
 
     When run in the terminal, the app always has focus. When run in the web, the app will
-    get focus when the terminal widget has focus.        
+    get focus when the terminal widget has focus.
     """
 
     def __init__(
