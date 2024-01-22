@@ -161,8 +161,8 @@ def enable_application_mode() -> Callable[[], None]:
         A callable that will restore terminal to previous state.
     """
 
-    terminal_in = sys.__stdin__
-    terminal_out = sys.__stdout__
+    terminal_in = sys.stdin
+    terminal_out = sys.stdout
 
     current_console_mode_in = get_console_mode(terminal_in)
     current_console_mode_out = get_console_mode(terminal_out)
