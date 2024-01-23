@@ -449,8 +449,9 @@ class DOMQuery(Generic[QueryType]):
         Returns:
             Query for chaining.
         """
-        for node in self:
-            if node.has_focus:
-                node.blur()
-                break
+        focused = self._node.screen.focused
+        if focused is not None:
+            nodes: list[Widget] = list(self)
+            if focused in nodes:
+                self._node.screen._reset_focus(focused, avoiding=nodes)
         return self
