@@ -64,7 +64,7 @@ def compute_wrap_offsets(
 
     tab_section_index = 0
     cumulative_width = 0
-    cumulative_widths = []  # Accumulated tab widths of all codepoints prior (exclusive)
+    cumulative_widths: list[int] = []  # prefix sum of tab widths for each codepoint
     record_widths = cumulative_widths.extend
 
     for last, (tab_section, tab_width) in loop_last(tab_sections):

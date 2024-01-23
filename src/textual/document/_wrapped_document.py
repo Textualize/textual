@@ -197,7 +197,7 @@ class WrappedDocument:
         new_wrap_offsets: list[list[int]] = []
         new_line_index_to_offsets: list[list[VerticalOffset]] = []
         new_offset_to_line_info: list[tuple[LineIndex, SectionOffset]] = []
-        new_tab_widths: list[int] = []
+        new_tab_widths: list[list[int]] = []
 
         append_wrap_offsets = new_wrap_offsets.append
         append_tab_widths = new_tab_widths.append

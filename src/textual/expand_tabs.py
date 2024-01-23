@@ -71,7 +71,7 @@ def expand_text_tabs_inline(line: Text, tab_widths: list[int]) -> Text:
     parts = line.split("\t", include_separator=True)
     tab_widths_iter = iter(tab_widths)
 
-    new_parts = []
+    new_parts: list[Text] = []
     append_part = new_parts.append
     for part in parts:
         if part.plain.endswith("\t"):
