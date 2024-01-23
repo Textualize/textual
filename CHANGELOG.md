@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
+- Changed the default notification timeout from 3 to 5 seconds https://github.com/Textualize/textual/pull/4059
 
 ### Added
 
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
 - ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
+- Fixed a crash if the `TextArea` language was set but tree-sitter lanuage binaries were not installed https://github.com/Textualize/textual/issues/4045
 
 
 ## [0.47.1] - 2023-01-05
