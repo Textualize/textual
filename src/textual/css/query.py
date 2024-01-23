@@ -430,3 +430,28 @@ class DOMQuery(Generic[QueryType]):
         for node in self:
             node.refresh(repaint=repaint, layout=layout)
         return self
+
+    def focus(self) -> DOMQuery[QueryType]:
+        """Focus the first matching node that permits focus.
+
+        Returns:
+            Query for chaining.
+        """
+        for node in self:
+            if node.allow_focus():
+                node.focus()
+                break
+        return self
+
+    def blur(self) -> DOMQuery[QueryType]:
+        """Blur the first matching node that is focused.
+
+        Returns:
+            Query for chaining.
+        """
+        focused = self._node.screen.focused
+        if focused is not None:
+            nodes: list[Widget] = list(self)
+            if focused in nodes:
+                self._node.screen._reset_focus(focused, avoiding=nodes)
+        return self
