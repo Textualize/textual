@@ -17,6 +17,7 @@ class AllBordersApp(App):
             Label("hkey", id="hkey"),
             Label("inner", id="inner"),
             Label("outer", id="outer"),
+            Label("panel", id="panel"),
             Label("round", id="round"),
             Label("solid", id="solid"),
             Label("tall", id="tall"),
