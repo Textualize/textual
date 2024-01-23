@@ -13,6 +13,7 @@ from .. import events
 from ..app import ComposeResult, RenderResult
 from ..await_complete import AwaitComplete
 from ..binding import Binding, BindingType
+from ..constants import SHOW_ANIMATIONS, AnimationsEnum
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
 from ..events import Mount
@@ -590,11 +591,17 @@ class Tabs(Widget, can_focus=True):
             underline.highlight_end = 0
             self.post_message(self.Cleared(self))
 
-    def _highlight_active(self, animate: bool = True) -> None:
+    def _highlight_active(
+        self,
+        animate: bool = True,
+        *,
+        animate_on_level: AnimationsEnum = AnimationsEnum.BASIC,
+    ) -> None:
         """Move the underline bar to under the active tab.
 
         Args:
             animate: Should the bar animate?
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
         """
         underline = self.query_one(Underline)
         try:
@@ -607,7 +614,7 @@ class Tabs(Widget, can_focus=True):
             underline.show_highlight = True
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
-            if animate:
+            if animate and SHOW_ANIMATIONS.value >= animate_on_level.value:
 
                 def animate_underline() -> None:
                     """Animate the underline."""
@@ -620,8 +627,18 @@ class Tabs(Widget, can_focus=True):
                             active_tab.styles.gutter
                         )
                         start, end = tab_region.column_span
-                        underline.animate("highlight_start", start, duration=0.3)
-                        underline.animate("highlight_end", end, duration=0.3)
+                        underline.animate(
+                            "highlight_start",
+                            start,
+                            duration=0.3,
+                            animate_on_level=animate_on_level,
+                        )
+                        underline.animate(
+                            "highlight_end",
+                            end,
+                            duration=0.3,
+                            animate_on_level=animate_on_level,
+                        )
 
                 self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:

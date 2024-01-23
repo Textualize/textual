@@ -10,6 +10,7 @@ from typing_extensions import Literal, Self
 
 from .. import events
 from ..binding import Binding
+from ..constants import SHOW_ANIMATIONS, AnimationsEnum
 from ..css._error_tools import friendly_list
 from ..message import Message
 from ..pad import HorizontalPad
@@ -239,22 +240,34 @@ class Button(Widget, can_focus=True):
         event.stop()
         self.press()
 
-    def press(self) -> Self:
+    def press(self, *, animate_on_level: AnimationsEnum = AnimationsEnum.BASIC) -> Self:
         """Respond to a button press.
+
+        Args:
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             The button instance."""
         if self.disabled or not self.display:
             return self
         # Manage the "active" effect:
-        self._start_active_affect()
+        self._start_active_affect(animate_on_level=animate_on_level)
         # ...and let other components know that we've just been clicked:
         self.post_message(Button.Pressed(self))
         return self
 
-    def _start_active_affect(self) -> None:
-        """Start a small animation to show the button was clicked."""
-        if self.active_effect_duration > 0:
+    def _start_active_affect(
+        self, *, animate_on_level: AnimationsEnum = AnimationsEnum.BASIC
+    ) -> None:
+        """Start a small animation to show the button was clicked.
+
+        Args:
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
+        """
+        if (
+            self.active_effect_duration > 0
+            and SHOW_ANIMATIONS.value >= animate_on_level.value
+        ):
             self.add_class("-active")
             self.set_timer(
                 self.active_effect_duration, partial(self.remove_class, "-active")

@@ -12,6 +12,7 @@ from . import _time
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
+from .constants import SHOW_ANIMATIONS, AnimationsEnum
 from .timer import Timer
 
 if TYPE_CHECKING:
@@ -93,9 +94,11 @@ class SimpleAnimation(Animation):
     final_value: object
     easing: EasingFunction
     on_complete: CallbackType | None = None
+    animate_on_level: AnimationsEnum = AnimationsEnum.BASIC
+    """Minimum level required for the animation to take place (inclusive)."""
 
     def __call__(self, time: float) -> bool:
-        if self.duration == 0:
+        if self.duration == 0 or self.animate_on_level.value > SHOW_ANIMATIONS.value:
             setattr(self.obj, self.attribute, self.final_value)
             return True
 
@@ -170,6 +173,7 @@ class BoundAnimator:
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
     ) -> None:
         """Animate an attribute.
 
@@ -182,6 +186,7 @@ class BoundAnimator:
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
         """
         start_value = getattr(self._obj, attribute)
         if isinstance(value, str) and hasattr(start_value, "parse"):
@@ -200,6 +205,7 @@ class BoundAnimator:
             delay=delay,
             easing=easing_function,
             on_complete=on_complete,
+            animate_on_level=animate_on_level,
         )
 
 
@@ -284,6 +290,7 @@ class Animator:
         easing: EasingFunction | str = DEFAULT_EASING,
         delay: float = 0.0,
         on_complete: CallbackType | None = None,
+        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
     ) -> None:
         """Animate an attribute to a new value.
 
@@ -297,6 +304,7 @@ class Animator:
             easing: An easing function.
             delay: Number of seconds to delay the start of the animation by.
             on_complete: Callback to run after the animation completes.
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
         """
         animate_callback = partial(
             self._animate,
@@ -308,6 +316,7 @@ class Animator:
             speed=speed,
             easing=easing,
             on_complete=on_complete,
+            animate_on_level=animate_on_level,
         )
         if delay:
             self._complete_event.clear()
@@ -328,7 +337,8 @@ class Animator:
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
-    ):
+        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
+    ) -> None:
         """Animate an attribute to a new value.
 
         Args:
@@ -340,6 +350,7 @@ class Animator:
             speed: The speed of the animation.
             easing: An easing function.
             on_complete: Callback to run after the animation completes.
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
         """
         if not hasattr(obj, attribute):
             raise AttributeError(
@@ -373,6 +384,7 @@ class Animator:
                 speed=speed,
                 easing=easing_function,
                 on_complete=on_complete,
+                animate_on_level=animate_on_level,
             )
 
         if animation is None:
@@ -410,6 +422,7 @@ class Animator:
                 final_value=final_value,
                 easing=easing_function,
                 on_complete=on_complete,
+                animate_on_level=animate_on_level,
             )
         assert animation is not None, "animation expected to be non-None"
 

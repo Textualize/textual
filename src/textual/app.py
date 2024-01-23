@@ -72,6 +72,7 @@ from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
+from .constants import AnimationsEnum
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
@@ -670,6 +671,7 @@ class App(Generic[ReturnType], DOMNode):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
     ) -> None:
         """Animate an attribute.
 
@@ -684,6 +686,7 @@ class App(Generic[ReturnType], DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            animate_on_level: Minimum level required for the animation to take place (inclusive).
         """
         self._animate(
             attribute,
@@ -694,6 +697,7 @@ class App(Generic[ReturnType], DOMNode):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
+            animate_on_level=animate_on_level,
         )
 
     async def stop_animation(self, attribute: str, complete: bool = True) -> None:

@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, ClassVar
 from rich.console import RenderableType
 
 from ..binding import Binding, BindingType
+from ..constants import AnimationsEnum
 from ..events import Click
 from ..geometry import Size
 from ..message import Message
@@ -130,7 +131,12 @@ class Switch(Widget, can_focus=True):
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
         if self._should_animate:
-            self.animate("slider_pos", target_slider_pos, duration=0.3)
+            self.animate(
+                "slider_pos",
+                target_slider_pos,
+                duration=0.3,
+                animate_on_level=AnimationsEnum.BASIC,
+            )
         else:
             self.slider_pos = target_slider_pos
         self.post_message(self.Changed(self, self.value))

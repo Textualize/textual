@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 from .._animator import Animation, EasingFunction
 from .._types import CallbackType
+from ..constants import SHOW_ANIMATIONS, AnimationsEnum
 from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
@@ -23,6 +24,7 @@ class ScalarAnimation(Animation):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
+        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
     ):
         assert (
             speed is not None or duration is not None
@@ -34,6 +36,7 @@ class ScalarAnimation(Animation):
         self.final_value = value
         self.easing = easing
         self.on_complete = on_complete
+        self.animate_on_level = animate_on_level
 
         size = widget.outer_size
         viewport = widget.app.size
@@ -52,7 +55,7 @@ class ScalarAnimation(Animation):
         factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
-        if eased_factor >= 1:
+        if eased_factor >= 1 or self.animate_on_level.value > SHOW_ANIMATIONS.value:
             setattr(self.styles, self.attribute, self.final_value)
             return True
 
