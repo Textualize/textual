@@ -13,6 +13,7 @@ import inspect
 import io
 import os
 import platform
+import signal
 import sys
 import threading
 import warnings
@@ -361,6 +362,7 @@ class App(Generic[ReturnType], DOMNode):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
         Binding("ctrl+backslash", "command_palette", show=False, priority=True),
+        Binding("ctrl+z", "suspend_process", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
@@ -3338,3 +3340,18 @@ class App(Generic[ReturnType], DOMNode):
             raise SuspendNotSupported(
                 "App.suspend is not supported in this environment."
             )
+
+    def action_suspend_process(self) -> None:
+        """Suspend the process into the background.
+
+        Note:
+            On Unix and Unix-like systems a [`SIGTSTP`][signal.SIGTSTP] is
+            sent to the application's process. Currently on Windows this is
+            a non-operation.
+        """
+        if not WINDOWS:
+            try:
+                with self.suspend():
+                    os.kill(os.getpid(), signal.SIGTSTP)
+            except SuspendNotSupported:
+                pass
