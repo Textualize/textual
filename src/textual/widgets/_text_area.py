@@ -29,7 +29,7 @@ from textual.document._syntax_aware_document import (
     SyntaxAwareDocumentError,
 )
 from textual.document._wrapped_document import WrappedDocument
-from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_inline
+from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
 
 if TYPE_CHECKING:
     from tree_sitter import Language
@@ -1024,7 +1024,7 @@ TextArea {
             section_tab_widths = line_tab_widths[
                 tabs_before : tabs_before + tabs_within
             ]
-            line = expand_text_tabs_inline(line, section_tab_widths)
+            line = expand_text_tabs_from_widths(line, section_tab_widths)
         else:
             line.expand_tabs(self.indent_width)
 

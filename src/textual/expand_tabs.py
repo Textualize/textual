@@ -61,9 +61,20 @@ def expand_tabs_inline(line: str, tab_size: int = 4) -> str:
     )
 
 
-def expand_text_tabs_inline(line: Text, tab_widths: list[int]) -> Text:
-    """Expand tabs to the widths defined in the `tab_widths` list, retaining style information
-    across the expanded tab characters.
+def expand_text_tabs_from_widths(line: Text, tab_widths: list[int]) -> Text:
+    """Expand tabs to the widths defined in the `tab_widths` list.
+
+    This will return a new Text instance with tab characters expanded into a
+    number of spaces. Each time a tab is encountered, it's expanded into the
+    next integer encountered in the `tab_widths` list. Consequently, the length
+    of `tab_widths` should match the number of tab chracters in `line`.
+
+    Args:
+        line: The `Text` instance to expand tabs in.
+        tab_widths: The widths to expand tabs to.
+
+    Returns:
+        A new text instance with tab characters converted to spaces.
     """
     if "\t" not in line.plain:
         return line
