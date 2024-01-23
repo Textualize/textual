@@ -202,6 +202,14 @@ class ActiveModeError(ModeError):
     """Raised when attempting to remove the currently active mode."""
 
 
+class SuspendNotSupported(Exception):
+    """Raised if suspending the application is not supported.
+
+    This exception is raised if [`App.suspend`][App.suspend] is called while
+    the application is running in an environment where this isn't supported.
+    """
+
+
 ReturnType = TypeVar("ReturnType")
 
 CSSPathType = Union[
@@ -3310,9 +3318,15 @@ class App(Generic[ReturnType], DOMNode):
                 os.system("emacs -nw")
             ```
         """
-        if self._driver is not None:
+        if self._driver is None:
+            return
+        if self._driver.can_suspend:
             self._driver.stop_application_mode()
             self._driver.close()
             with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
                 yield
             self._driver.start_application_mode()
+        else:
+            raise SuspendNotSupported(
+                "App.suspend is not supported in this environment."
+            )
