@@ -336,7 +336,7 @@ TextArea {
         self.wrapped_document: WrappedDocument = WrappedDocument(self.document)
         """The wrapped view of the document."""
 
-        self._navigator: DocumentNavigator = DocumentNavigator(self.wrapped_document)
+        self.navigator: DocumentNavigator = DocumentNavigator(self.wrapped_document)
         """Queried to determine where the cursor should move given a navigation
         action, accounting for wrapping etc."""
 
@@ -736,7 +736,7 @@ TextArea {
 
         self.document = document
         self.wrapped_document = WrappedDocument(document, tab_width=self.indent_width)
-        self._navigator = DocumentNavigator(self.wrapped_document)
+        self.navigator = DocumentNavigator(self.wrapped_document)
         self._build_highlight_map()
         self.move_cursor((0, 0))
         self._rewrap_and_refresh_virtual_size()
@@ -1486,7 +1486,7 @@ TextArea {
         Returns:
             The location of the cursor if it moves left.
         """
-        return self._navigator.get_location_left(self.cursor_location)
+        return self.navigator.get_location_left(self.cursor_location)
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one location to the right.
@@ -1505,7 +1505,7 @@ TextArea {
         Returns:
             the location the cursor will move to if it moves right.
         """
-        return self._navigator.get_location_right(self.cursor_location)
+        return self.navigator.get_location_right(self.cursor_location)
 
     def action_cursor_down(self, select: bool = False) -> None:
         """Move the cursor down one cell.
@@ -1522,7 +1522,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves down.
         """
-        return self._navigator.get_location_below(self.cursor_location)
+        return self.navigator.get_location_below(self.cursor_location)
 
     def action_cursor_up(self, select: bool = False) -> None:
         """Move the cursor up one cell.
@@ -1539,7 +1539,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves up.
         """
-        return self._navigator.get_location_above(self.cursor_location)
+        return self.navigator.get_location_above(self.cursor_location)
 
     def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
@@ -1552,7 +1552,7 @@ TextArea {
         Returns:
             The (row, column) location of the end of the cursors current line.
         """
-        return self._navigator.get_location_end(self.cursor_location)
+        return self.navigator.get_location_end(self.cursor_location)
 
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
@@ -1570,7 +1570,7 @@ TextArea {
         Returns:
             The (row, column) location of the start of the cursors current line.
         """
-        return self._navigator.get_location_home(
+        return self.navigator.get_location_home(
             self.cursor_location, smart_home=smart_home
         )
 
@@ -1642,7 +1642,7 @@ TextArea {
         """Move the cursor and scroll up one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
-        target = self._navigator.get_location_at_y_offset(
+        target = self.navigator.get_location_at_y_offset(
             cursor_location,
             -height,
         )
@@ -1653,7 +1653,7 @@ TextArea {
         """Move the cursor and scroll down one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
-        target = self._navigator.get_location_at_y_offset(
+        target = self.navigator.get_location_at_y_offset(
             cursor_location,
             height,
         )
@@ -1684,7 +1684,7 @@ TextArea {
         cursor_x_offset, _ = self.wrapped_document.location_to_offset(
             self.cursor_location
         )
-        self._navigator.last_x_offset = cursor_x_offset
+        self.navigator.last_x_offset = cursor_x_offset
 
     # --- Editor operations
     def insert(

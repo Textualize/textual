@@ -18,7 +18,7 @@ class DocumentNavigator:
 
     Your cursor visually moves through the wrapped version of the document, rather
     than the raw document. So, for example, pressing down on the keyboard
-    may move your cursor to a position further along the current document line,
+    may move your cursor to a position further along the current raw document line,
     rather than on to the next line in the raw document.
 
     The DocumentNavigator class manages that behaviour.
