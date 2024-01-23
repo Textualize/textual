@@ -4,6 +4,7 @@ Constants that we might want to expose via the public API.
 
 from __future__ import annotations
 
+import enum
 import os
 
 from typing_extensions import Final
@@ -11,7 +12,23 @@ from typing_extensions import Final
 get_environ = os.environ.get
 
 
-def get_environ_bool(name: str) -> bool:
+class AnimationsEnum(enum.Enum):
+    """Valid values for the environment variable `TEXTUAL_ANIMATIONS`.
+
+    - `NONE` disables all animations.
+    - `BASIC` will only display animations that don't delay content appearing
+    (e.g., scrolling).
+    - `FULL` displays all animations.
+
+    See also: [`SHOW_ANIMATIONS`][textual.constants.SHOW_ANIMATIONS].
+    """
+
+    NONE = 0
+    BASIC = 1
+    FULL = 2
+
+
+def _get_environ_bool(name: str) -> bool:
     """Check an environment variable switch.
 
     Args:
@@ -24,7 +41,7 @@ def get_environ_bool(name: str) -> bool:
     return has_environ
 
 
-def get_environ_int(name: str, default: int) -> int:
+def _get_environ_int(name: str, default: int) -> int:
     """Retrieves an integer environment variable.
 
     Args:
@@ -44,7 +61,21 @@ def get_environ_int(name: str, default: int) -> int:
         return default
 
 
-DEBUG: Final[bool] = get_environ_bool("TEXTUAL_DEBUG")
+def _get_textual_animations() -> AnimationsEnum:
+    """Get the value of the environment variable that controls textual animations.
+
+    The variable can be in any of the values defined by [`AnimationsEnum`][textual.constants.AnimationsEnum].
+
+    Returns:
+        The value that the variable was set to. If the environment variable is set to an
+            invalid value, we default to showing all animations.
+    """
+    value: str = get_environ("TEXTUAL_ANIMATIONS", "FULL")
+    enum_value = AnimationsEnum.__members__.get(value, AnimationsEnum.FULL)
+    return enum_value
+
+
+DEBUG: Final[bool] = _get_environ_bool("TEXTUAL_DEBUG")
 """Enable debug mode."""
 
 DRIVER: Final[str | None] = get_environ("TEXTUAL_DRIVER", None)
@@ -59,20 +90,26 @@ LOG_FILE: Final[str | None] = get_environ("TEXTUAL_LOG", None)
 DEVTOOLS_HOST: Final[str] = get_environ("TEXTUAL_DEVTOOLS_HOST", "127.0.0.1")
 """The host where textual console is running."""
 
-DEVTOOLS_PORT: Final[int] = get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
+DEVTOOLS_PORT: Final[int] = _get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
 """Constant with the port that the devtools will connect to."""
 
-SCREENSHOT_DELAY: Final[int] = get_environ_int("TEXTUAL_SCREENSHOT", -1)
+SCREENSHOT_DELAY: Final[int] = _get_environ_int("TEXTUAL_SCREENSHOT", -1)
 """Seconds delay before taking screenshot."""
 
 PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
 """Keys to automatically press."""
 
-SHOW_RETURN: Final[bool] = get_environ_bool("TEXTUAL_SHOW_RETURN")
+SHOW_RETURN: Final[bool] = _get_environ_bool("TEXTUAL_SHOW_RETURN")
 """Write the return value on exit."""
 
-MAX_FPS: Final[int] = get_environ_int("TEXTUAL_FPS", 60)
+MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
 """Maximum frames per second for updates."""
 
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
 """Force color system override"""
+
+SHOW_ANIMATIONS: Final[AnimationsEnum] = _get_textual_animations()
+"""Controls what animations Textual will display.
+
+This constant is defined by the environment variable `TEXTUAL_ANIMATIONS`.
+"""
