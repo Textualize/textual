@@ -27,7 +27,7 @@ class SignalError(Exception):
 
 @rich.repr.auto(angular=True)
 class Signal:
-    """A signal that a widget may subscribe to, in order to receive Signal events."""
+    """A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs."""
 
     def __init__(self, owner: DOMNode, name: str) -> None:
         """Initialize a signal.
@@ -50,10 +50,11 @@ class Signal:
     def subscribe(self, node: DOMNode, callback: IgnoreReturnCallbackType) -> None:
         """Subscribe a node to this signal.
 
-        When the signal is published, the node will receive a [Signal][textual.events.Signal] event.
+        When the signal is published, the callback will be invoked.
 
         Args:
             node: Node to subscribe.
+            callback: A callback function which takes no arguments, and returns anything (return type ignored).
         """
         if not node.is_running:
             raise SignalError(
