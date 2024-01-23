@@ -295,9 +295,9 @@ class DocumentNavigator:
             line = self._wrapped_document.document[line_index]
             target_column = 0
             if smart_home:
-                for index, code_point in enumerate(line):
+                for code_point_index, code_point in enumerate(line):
                     if not code_point.isspace():
-                        target_column = index
+                        target_column = code_point_index
                         break
 
                 if column_offset == 0 or column_offset > target_column:
