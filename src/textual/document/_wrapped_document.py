@@ -1,10 +1,3 @@
-"""A view into a Document which wraps the document at a certain
-width and can be queried to retrieve lines from the *wrapped* version
-of the document.
-
-Allows for incremental updates, ensuring that we only re-wrap ranges of the document
-that were influenced by edits.
-"""
 from __future__ import annotations
 
 from bisect import bisect_right
@@ -23,6 +16,14 @@ SectionOffset = int
 
 
 class WrappedDocument:
+    """A view into a Document which wraps the document at a certain
+    width and can be queried to retrieve lines from the *wrapped* version
+    of the document.
+
+    Allows for incremental updates, ensuring that we only re-wrap ranges of the document
+    that were influenced by edits.
+    """
+
     def __init__(
         self,
         document: DocumentBase,
@@ -62,14 +63,17 @@ class WrappedDocument:
         the value last passed into the `wrap` method."""
 
         self._tab_width: int = tab_width
+        """The maximum width to expand tabs to when considering their widths."""
 
         self.wrap(width, tab_width)
 
     @property
     def wrapped(self) -> bool:
-        """True if the content is wrapped. This is not the same as wrapping being enabled.
+        """True if the content is wrapped. This is not the same as wrapping being "enabled".
         For example, an empty document can have wrapping enabled, but no wrapping has actually
-        occurred. In other words, this is True if the length of any line in the document is greater
+        occurred.
+
+        In other words, this is True if the length of any line in the document is greater
         than the available width."""
         return len(self._line_index_to_offsets) == len(self._offset_to_line_info)
 
@@ -162,9 +166,6 @@ class WrappedDocument:
             old_end: The old end location of the edit in document-space.
             new_end: The new end location of the edit in document-space.
         """
-
-        # Get all the text on the lines between start and end in document space
-
         start_line_index, _ = start
         old_end_line_index, _ = old_end
         new_end_line_index, _ = new_end
@@ -399,6 +400,18 @@ class WrappedDocument:
         return target_column_index
 
     def get_sections(self, line_index: int) -> list[str]:
+        """Return the sections for the given line index.
+
+        When wrapping is enabled, a single line in the document can visually span
+        multiple lines. The list returned represents that visually (each string in
+        the list represents a single section (y-offset) after wrapping happens).
+
+        Args:
+            line_index: The index of the line to get sections for.
+
+        Returns:
+            The wrapped line as a list of strings.
+        """
         line_offsets = self._wrap_offsets[line_index]
         wrapped_lines = Text(self.document[line_index], end="").divide(line_offsets)
         return [line.plain for line in wrapped_lines]

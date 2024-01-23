@@ -1642,7 +1642,7 @@ TextArea {
         """Move the cursor and scroll up one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
-        target = self._navigator.get_location_offset_relative(
+        target = self._navigator.get_location_at_y_offset(
             cursor_location,
             -height,
         )
@@ -1653,7 +1653,7 @@ TextArea {
         """Move the cursor and scroll down one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
-        target = self._navigator.get_location_offset_relative(
+        target = self._navigator.get_location_at_y_offset(
             cursor_location,
             height,
         )
