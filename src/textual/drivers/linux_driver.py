@@ -49,6 +49,11 @@ class LinuxDriver(Driver):
         self._key_thread: Thread | None = None
         self._writer_thread: WriterThread | None = None
 
+    @property
+    def can_suspend(self) -> bool:
+        """Can this driver be suspended?"""
+        return True
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._app
 
