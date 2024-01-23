@@ -80,7 +80,7 @@ def check_identifiers(description: str, *names: str) -> None:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
     """
-    match = _re_identifier.match
+    match = _re_identifier.fullmatch
     for name in names:
         if match(name) is None:
             raise BadIdentifier(
