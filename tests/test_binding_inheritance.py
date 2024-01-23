@@ -28,8 +28,8 @@ MOVEMENT_KEYS = ["up", "down", "left", "right", "home", "end", "pageup", "pagedo
 # An application with no bindings anywhere.
 #
 # The idea of this first little test is that an application that has no
-# bindings set anywhere, and uses a default screen, should only have the one
-# binding in place: ctrl+c; it's hard-coded in the app class for now.
+# bindings set anywhere, and uses a default screen, should only its
+# hard-coded bindings in place.
 
 
 class NoBindings(App[None]):
@@ -37,9 +37,13 @@ class NoBindings(App[None]):
 
 
 async def test_just_app_no_bindings() -> None:
-    """An app with no bindings should have no bindings, other than ctrl+c."""
+    """An app with no bindings should have no bindings, other than the app's hard-coded ones."""
     async with NoBindings().run_test() as pilot:
-        assert list(pilot.app._bindings.keys.keys()) == ["ctrl+c", "ctrl+backslash"]
+        assert list(pilot.app._bindings.keys.keys()) == [
+            "ctrl+c",
+            "ctrl+backslash",
+            "ctrl+z",
+        ]
         assert pilot.app._bindings.get_key("ctrl+c").priority is True
 
 
@@ -48,7 +52,8 @@ async def test_just_app_no_bindings() -> None:
 #
 # Sticking with just an app and the default screen: this configuration has a
 # BINDINGS on the app itself, and simply binds the letter a. The result
-# should be that we see the letter a, ctrl+c, and nothing else.
+# should be that we see the letter a, the app's default bindings, and
+# nothing else.
 
 
 class AlphaBinding(App[None]):
@@ -61,7 +66,7 @@ async def test_just_app_alpha_binding() -> None:
     """An app with a single binding should have just the one binding."""
     async with AlphaBinding().run_test() as pilot:
         assert sorted(pilot.app._bindings.keys.keys()) == sorted(
-            ["ctrl+c", "ctrl+backslash", "a"]
+            ["ctrl+c", "ctrl+backslash", "ctrl+z", "a"]
         )
         assert pilot.app._bindings.get_key("ctrl+c").priority is True
         assert pilot.app._bindings.get_key("a").priority is True
@@ -85,7 +90,7 @@ async def test_just_app_low_priority_alpha_binding() -> None:
     """An app with a single low-priority binding should have just the one binding."""
     async with LowAlphaBinding().run_test() as pilot:
         assert sorted(pilot.app._bindings.keys.keys()) == sorted(
-            ["ctrl+c", "ctrl+backslash", "a"]
+            ["ctrl+c", "ctrl+backslash", "ctrl+z", "a"]
         )
         assert pilot.app._bindings.get_key("ctrl+c").priority is True
         assert pilot.app._bindings.get_key("a").priority is False
