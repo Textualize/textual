@@ -214,28 +214,28 @@ TextArea {
     The text selected in the document is available via the `TextArea.selected_text` property.
     """
 
-    show_line_numbers: Reactive[bool] = reactive(True)
+    show_line_numbers: Reactive[bool] = reactive(True, init=False)
     """True to show the line number column on the left edge, otherwise False.
 
     Changing this value will immediately re-render the `TextArea`."""
 
-    indent_width: Reactive[int] = reactive(4)
+    indent_width: Reactive[int] = reactive(4, init=False)
     """The width of tabs or the multiple of spaces to align to on pressing the `tab` key.
 
     If the document currently open contains tabs that are currently visible on screen,
     altering this value will immediately change the display width of the visible tabs.
     """
 
-    match_cursor_bracket: Reactive[bool] = reactive(True)
+    match_cursor_bracket: Reactive[bool] = reactive(True, init=False)
     """If the cursor is at a bracket, highlight the matching bracket (if found)."""
 
-    cursor_blink: Reactive[bool] = reactive(True)
+    cursor_blink: Reactive[bool] = reactive(True, init=False)
     """True if the cursor should blink."""
 
-    soft_wrap: Reactive[bool] = reactive(False)
+    soft_wrap: Reactive[bool] = reactive(False, init=False)
     """True if text should soft wrap."""
 
-    _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
+    _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
 
