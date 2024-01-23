@@ -3298,6 +3298,7 @@ class App(Generic[ReturnType], DOMNode):
     def suspend(self) -> Iterator[None]:
         if self._driver is not None:
             self._driver.stop_application_mode()
+            self._driver.close()
             with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
                 yield
             self._driver.start_application_mode()
