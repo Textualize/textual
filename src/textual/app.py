@@ -206,7 +206,7 @@ class ActiveModeError(ModeError):
 class SuspendNotSupported(Exception):
     """Raised if suspending the application is not supported.
 
-    This exception is raised if [`App.suspend`][App.suspend] is called while
+    This exception is raised if [`App.suspend`][textual.app.App.suspend] is called while
     the application is running in an environment where this isn't supported.
     """
 
@@ -3345,9 +3345,9 @@ class App(Generic[ReturnType], DOMNode):
         """Suspend the process into the background.
 
         Note:
-            On Unix and Unix-like systems a [`SIGTSTP`][signal.SIGTSTP] is
-            sent to the application's process. Currently on Windows this is
-            a non-operation.
+            On Unix and Unix-like systems a `SIGTSTP` is sent to the
+            application's process. Currently on Windows this is a
+            non-operation.
         """
         if not WINDOWS:
             try:
