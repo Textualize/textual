@@ -321,6 +321,10 @@ class TabbedContent(Widget):
         self._initial = initial
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
+    @property
+    def active_pane(self) -> TabPane | None:
+        return self.get_pane(self.active)
+
     def validate_active(self, active: str) -> str:
         """It doesn't make sense for `active` to be an empty string.
 
