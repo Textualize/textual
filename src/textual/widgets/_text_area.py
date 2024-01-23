@@ -576,6 +576,7 @@ TextArea {
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
 
+        theme_object: TextAreaTheme | None
         if theme is None:
             # If the theme is None, use the default.
             theme_object = TextAreaTheme.default()
