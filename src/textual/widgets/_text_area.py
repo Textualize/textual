@@ -232,7 +232,7 @@ TextArea {
     cursor_blink: Reactive[bool] = reactive(True, init=False)
     """True if the cursor should blink."""
 
-    soft_wrap: Reactive[bool] = reactive(False, init=False)
+    soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
     _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
@@ -276,8 +276,9 @@ TextArea {
         *,
         language: str | None = None,
         theme: str | None = None,
-        soft_wrap: bool = False,
-        tab_behaviour: Literal["focus", "indent"] = "indent",
+        soft_wrap: bool = True,
+        tab_behaviour: Literal["focus", "indent"] = "focus",
+        show_line_numbers: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -289,7 +290,9 @@ TextArea {
             text: The initial text to load into the TextArea.
             language: The language to use.
             theme: The theme to use.
+            soft_wrap: Enable soft wrapping.
             tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
@@ -352,7 +355,54 @@ TextArea {
 
         self._reactive_soft_wrap = soft_wrap
 
+        self._reactive_show_line_numbers = show_line_numbers
+
         self.tab_behaviour = tab_behaviour
+
+    @classmethod
+    def code_editor(
+        cls,
+        text: str = "",
+        *,
+        language: str | None = None,
+        theme: str | None = None,
+        soft_wrap: bool = False,
+        tab_behaviour: Literal["focus", "indent"] = "indent",
+        show_line_numbers: bool = True,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> TextArea:
+        """Construct a new `TextArea` with sensible defaults for editing code.
+
+        This instantiates a `TextArea` with line numbers enabled, soft wrapping
+        disabled, and "indent" tab behaviour.
+
+        Args:
+            text: The initial text to load into the TextArea.
+            language: The language to use.
+            theme: The theme to use.
+            soft_wrap: Enable soft wrapping.
+            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            show_line_numbers: Show line numbers on the left edge.
+            name: The name of the `TextArea` widget.
+            id: The ID of the widget, used to refer to it from Textual CSS.
+            classes: One or more Textual CSS compatible class names separated by spaces.
+            disabled: True if the widget is disabled.
+        """
+        return TextArea(
+            text,
+            language=language,
+            theme=theme,
+            soft_wrap=soft_wrap,
+            tab_behaviour=tab_behaviour,
+            show_line_numbers=show_line_numbers,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
