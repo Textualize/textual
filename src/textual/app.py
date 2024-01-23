@@ -3317,6 +3317,14 @@ class App(Generic[ReturnType], DOMNode):
             with self.suspend():
                 os.system("emacs -nw")
             ```
+
+        Raises:
+            SuspendNotSupported: If the environment doesn't support suspending.
+
+        !!! note
+            Suspending the application is currently only supported on
+            Unix-like operating systems and Microsoft Windows. Suspending is
+            not supported in Textual-Web.
         """
         if self._driver is None:
             return
