@@ -1357,7 +1357,7 @@ TextArea {
         center: bool = False,
         record_width: bool = True,
     ) -> None:
-        """Move the cursor relative to its current location.
+        """Move the cursor relative to its current location in document-space.
 
         Args:
             rows: The number of rows to move down by (negative to move up)

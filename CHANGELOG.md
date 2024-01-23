@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Breaking change: Significant changes to `TextArea.__init__` default values/behaviour https://github.com/Textualize/textual/pull/3933
+  - `soft_wrap=True` - soft wrapping is now enabled by default.
+  - `show_line_numbers=False` - line numbers are now disabled by default.
+  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default. 
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
@@ -18,6 +22,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
 - Added `Widget.allow_focus` and `Widget.allow_focus_children` https://github.com/Textualize/textual/pull/3989
+- Added `TextArea.soft_wrap` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.tab_behaviour` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
+- Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
 
 ### Fixed
 
@@ -27,7 +36,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
 - Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
-- Fixed a crash if the `TextArea` language was set but tree-sitter lanuage binaries were not installed https://github.com/Textualize/textual/issues/4045
+- Fixed a crash if the `TextArea` language was set but tree-sitter language binaries were not installed https://github.com/Textualize/textual/issues/4045
+- Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
 
 
 ## [0.47.1] - 2023-01-05
