@@ -3296,6 +3296,20 @@ class App(Generic[ReturnType], DOMNode):
 
     @contextmanager
     def suspend(self) -> Iterator[None]:
+        """A context manager that temporarily suspends the app.
+
+        While inside the `with` block, the app will stop reading input and
+        emitting output. Other applications will have full control of the
+        terminal, configured as it was before the app started running. When
+        the `with` block ends, the application will start reading input and
+        emitting output again.
+
+        Example:
+            ```python
+            with self.suspend():
+                os.system("emacs -nw")
+            ```
+        """
         if self._driver is not None:
             self._driver.stop_application_mode()
             self._driver.close()
