@@ -29,7 +29,7 @@ Z"""
 
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea()
+        text_area = TextArea.code_editor()
         text_area.load_text(TEXT)
         yield text_area
 

@@ -341,6 +341,7 @@ TextArea {
         action, accounting for wrapping etc."""
 
         self._cursor_offset = (0, 0)
+        """The virtual offset of the cursor (not screen-space offset)."""
 
         self._set_document(text, language)
 
@@ -474,9 +475,8 @@ TextArea {
         match_location = self.find_matching_bracket(character, cursor_location)
         self._matching_bracket_location = match_location
         if match_location is not None:
-            match_row, match_column = match_location
-            if match_row in range(*self._visible_line_indices):
-                self.refresh_lines(match_row)
+            _, offset_y = self._cursor_offset
+            self.refresh_lines(offset_y)
 
         self.app.cursor_position = self.cursor_screen_offset
         if previous_selection != selection:
