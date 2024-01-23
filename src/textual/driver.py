@@ -40,6 +40,11 @@ class Driver(ABC):
         """Is the driver 'headless' (no output)?"""
         return False
 
+    @property
+    def can_suspend(self) -> bool:
+        """Can this driver be suspended?"""
+        return False
+
     def send_event(self, event: events.Event) -> None:
         """Send an event to the target app.
 
