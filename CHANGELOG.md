@@ -18,9 +18,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
 - Added `Widget.allow_focus` and `Widget.allow_focus_children` https://github.com/Textualize/textual/pull/3989
-- Added Query.blur and Query.focus https://github.com/Textualize/textual/pull/4012
-- Added MessagePump.message_queue_size https://github.com/Textualize/textual/pull/4012
-- Added TabbedContent.active_pane https://github.com/Textualize/textual/pull/4012
+- Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
+- Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
+- Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
 
 ### Fixed
 
