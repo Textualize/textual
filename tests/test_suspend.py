@@ -42,7 +42,20 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
             nonlocal calls
             calls.add("close")
 
-    async with App(driver_class=HeadlessSuspendDriver).run_test(
+    class SuspendApp(App[None]):
+        def on_suspend(self) -> None:
+            nonlocal calls
+            calls.add("suspend signal")
+
+        def on_resume(self) -> None:
+            nonlocal calls
+            calls.add("resume signal")
+
+        def on_mount(self) -> None:
+            self.app_suspend_signal.subscribe(self, self.on_suspend)
+            self.app_resume_signal.subscribe(self, self.on_resume)
+
+    async with SuspendApp(driver_class=HeadlessSuspendDriver).run_test(
         headless=False
     ) as pilot:
         calls = set()
@@ -51,4 +64,4 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
             print("USE THEM TOGETHER.", end="", flush=True)
             print("USE THEM IN PEACE.", file=sys.stderr, end="", flush=True)
             assert ("USE THEM TOGETHER.", "USE THEM IN PEACE.") == capfd.readouterr()
-        assert calls == {"start", "stop", "close"}
+        assert calls == {"start", "stop", "close", "suspend signal", "resume signal"}
