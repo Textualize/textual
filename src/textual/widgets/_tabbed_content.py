@@ -321,6 +321,11 @@ class TabbedContent(Widget):
         self._initial = initial
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
+    @property
+    def active_pane(self) -> TabPane | None:
+        """The currently active pane, or `None` if no pane is active."""
+        return self.get_pane(self.active)
+
     def validate_active(self, active: str) -> str:
         """It doesn't make sense for `active` to be an empty string.
 

@@ -189,6 +189,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._parent is not None
 
     @property
+    def message_queue_size(self) -> int:
+        """The current size of the message queue."""
+        return self._message_queue.qsize()
+
+    @property
     def app(self) -> "App[object]":
         """
         Get the current app.
