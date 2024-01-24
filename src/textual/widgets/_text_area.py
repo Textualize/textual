@@ -214,7 +214,7 @@ TextArea {
     The text selected in the document is available via the `TextArea.selected_text` property.
     """
 
-    show_line_numbers: Reactive[bool] = reactive(True, init=False)
+    show_line_numbers: Reactive[bool] = reactive(False, init=False)
     """True to show the line number column on the left edge, otherwise False.
 
     Changing this value will immediately re-render the `TextArea`."""

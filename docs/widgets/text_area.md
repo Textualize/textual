@@ -12,7 +12,7 @@ and a variety of keybindings.
 
 ## Guide
 
-### Default behavior
+### Code editing vs plain text editing
 
 By default, the `TextArea` widget is a standard multi-line input box with soft-wrapping enabled.
 
@@ -455,16 +455,16 @@ A detailed view of these classes is out of scope, but do note that a lot of the 
 
 ## Reactive attributes
 
-| Name                   | Type                     | Default            | Description                                                      |
-|------------------------|--------------------------|--------------------|------------------------------------------------------------------|
-| `language`             | `str | None`             | `None`                                                           | The language to use for syntax highlighting.     |
-| `theme`                | `str | None`             | `TextAreaTheme.default()`                                        | The theme to use for syntax highlighting.         |
-| `selection`            | `Selection`              | `Selection()`      | The current selection.                                           |
-| `show_line_numbers`    | `bool`                   | `True`             | Show or hide line numbers.                                       |
-| `indent_width`         | `int`                    | `4`                | The number of spaces to indent and width of tabs.                |
-| `match_cursor_bracket` | `bool`                   | `True`            | Enable/disable highlighting matching brackets under cursor.      |
-| `cursor_blink`         | `bool`                   | `True`            | Enable/disable blinking of the cursor when the widget has focus. |
-| `soft_wrap`            | `bool`                   | `True`            | Enable/disable soft wrapping.                                    |
+| Name                   | Type                     | Default       | Description                                                      |
+|------------------------|--------------------------|---------------|------------------------------------------------------------------|
+| `language`             | `str | None`         | `None`                                                           | The language to use for syntax highlighting.     |
+| `theme`                | `str | None`         | `TextAreaTheme.default()`                                        | The theme to use for syntax highlighting.         |
+| `selection`            | `Selection`              | `Selection()` | The current selection.                                           |
+| `show_line_numbers`    | `bool`                   | `False`       | Show or hide line numbers.                                       |
+| `indent_width`         | `int`                    | `4`           | The number of spaces to indent and width of tabs.                |
+| `match_cursor_bracket` | `bool`                   | `True`        | Enable/disable highlighting matching brackets under cursor.      |
+| `cursor_blink`         | `bool`                   | `True`        | Enable/disable blinking of the cursor when the widget has focus. |
+| `soft_wrap`            | `bool`                   | `True`        | Enable/disable soft wrapping.                                    |
 
 ## Messages
 
