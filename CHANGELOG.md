@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
 - Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
 - Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
+- Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
+- Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
+- Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
 
 ### Fixed
 
@@ -38,6 +41,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
 - Fixed a crash if the `TextArea` language was set but tree-sitter language binaries were not installed https://github.com/Textualize/textual/issues/4045
 - Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
+- Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
+- ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
 
 ## [0.47.1] - 2023-01-05
 

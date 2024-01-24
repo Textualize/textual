@@ -248,11 +248,14 @@ class Tokenizer:
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
+            error_line = line[col_no:].rstrip()
+            error_message = (
+                f"{expect.description} (found {error_line.split(';')[0]!r})."
+            )
+            if not error_line.endswith(";"):
+                error_message += "; Did you forget a semicolon at the end of a line?"
             raise TokenError(
-                self.read_from,
-                self.code,
-                (line_no + 1, col_no + 1),
-                f"{expect.description} (found {line[col_no:].rstrip()!r}).; Did you forget a semicolon at the end of a line?",
+                self.read_from, self.code, (line_no + 1, col_no + 1), error_message
             )
         iter_groups = iter(match.groups())
 

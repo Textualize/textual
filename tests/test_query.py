@@ -11,7 +11,7 @@ from textual.css.query import (
     WrongType,
 )
 from textual.widget import Widget
-from textual.widgets import Label
+from textual.widgets import Input, Label
 
 
 def test_query():
@@ -313,3 +313,33 @@ async def test_query_refresh(args):
     async with app.run_test() as pilot:
         app.query(MyWidget).refresh(repaint=args[0], layout=args[1])
         assert refreshes[-1] == args
+
+
+async def test_query_focus_blur():
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield Input(id="foo")
+            yield Input(id="bar")
+            yield Input(id="baz")
+
+    app = FocusApp()
+    async with app.run_test() as pilot:
+        # Nothing focused
+        assert app.focused is None
+        # Focus first input
+        app.query(Input).focus()
+        await pilot.pause()
+        assert app.focused.id == "foo"
+        # Blur inputs
+        app.query(Input).blur()
+        await pilot.pause()
+        assert app.focused is None
+        # Focus another
+        app.query("#bar").focus()
+        await pilot.pause()
+        assert app.focused.id == "bar"
+        # Focus non existing
+        app.query("#egg").focus()
+        assert app.focused.id == "bar"
