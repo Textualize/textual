@@ -100,6 +100,7 @@ from .screen import (
     ScreenResultType,
     _SystemModalScreen,
 )
+from .signal import Signal
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -582,6 +583,24 @@ class App(Generic[ReturnType], DOMNode):
         """The original stdout stream (before redirection etc)."""
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
+
+        self.app_suspend_signal = Signal(self, "app-suspend")
+        """The signal that is published when the app is suspended.
+
+        When [`App.suspend`][textual.app.App.suspend] is called this signal
+        will be [published][textual.signal.Signal.publish];
+        [subscribe][textual.signal.Signal.subscribe] to this signal to
+        perform work before the suspension takes place.
+        """
+        self.app_resume_signal = Signal(self, "app-resume")
+        """The signal that is published when the app is resumes after a suspend.
+
+        When the app is resumed after a
+        [`App.suspend`][textual.app.App.suspend] call this signal will be
+        [published][textual.signal.Signal.publish];
+        [subscribe][textual.signal.Signal.subscribe] to this signal to
+        perform work after the app has resumed.
+        """
 
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
@@ -3331,11 +3350,13 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
         if self._driver.can_suspend:
+            self.app_suspend_signal.publish()
             self._driver.stop_application_mode()
             self._driver.close()
             with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
                 yield
             self._driver.start_application_mode()
+            self.app_resume_signal.publish()
         else:
             raise SuspendNotSupported(
                 "App.suspend is not supported in this environment."
