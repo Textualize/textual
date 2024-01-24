@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 
 from rich.cells import cell_len
+from rich.text import Text
 
 _TABS_SPLITTER_RE = re.compile(r"(.*?\t|.+?$)")
 
@@ -58,6 +59,39 @@ def expand_tabs_inline(line: str, tab_size: int = 4) -> str:
     return "".join(
         [part + expansion_width * " " for part, expansion_width in tab_widths]
     )
+
+
+def expand_text_tabs_from_widths(line: Text, tab_widths: list[int]) -> Text:
+    """Expand tabs to the widths defined in the `tab_widths` list.
+
+    This will return a new Text instance with tab characters expanded into a
+    number of spaces. Each time a tab is encountered, it's expanded into the
+    next integer encountered in the `tab_widths` list. Consequently, the length
+    of `tab_widths` should match the number of tab chracters in `line`.
+
+    Args:
+        line: The `Text` instance to expand tabs in.
+        tab_widths: The widths to expand tabs to.
+
+    Returns:
+        A new text instance with tab characters converted to spaces.
+    """
+    if "\t" not in line.plain:
+        return line
+
+    parts = line.split("\t", include_separator=True)
+    tab_widths_iter = iter(tab_widths)
+
+    new_parts: list[Text] = []
+    append_part = new_parts.append
+    for part in parts:
+        if part.plain.endswith("\t"):
+            part._text[-1] = part._text[-1][:-1] + " "
+            spaces = next(tab_widths_iter)
+            part.extend_style(spaces - 1)
+        append_part(part)
+
+    return Text("", end="").join(new_parts)
 
 
 if __name__ == "__main__":

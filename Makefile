@@ -2,7 +2,7 @@ run := poetry run
 
 .PHONY: test
 test:
-	$(run) pytest  	--cov-report term-missing --cov=textual tests/ -vv
+	$(run) pytest --cov-report term-missing --cov=textual tests/ -vv
 
 .PHONY: unit-test
 unit-test:

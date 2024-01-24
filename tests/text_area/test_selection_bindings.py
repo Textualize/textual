@@ -14,7 +14,7 @@ I will face my fear.
 
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea()
+        text_area = TextArea(show_line_numbers=True)
         text_area.load_text(TEXT)
         yield text_area
 
