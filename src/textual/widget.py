@@ -3231,7 +3231,8 @@ class Widget(DOMNode):
 
         Example:
             ```python
-            from textual.app import RenderableType
+            from rich.console import RenderableType
+
             from textual.widget import Widget
 
             class CustomWidget(Widget):

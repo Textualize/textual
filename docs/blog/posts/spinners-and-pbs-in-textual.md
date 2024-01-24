@@ -264,10 +264,10 @@ When writing the code for this app, I realised both widgets had a lot of shared 
 That led to the code shown below (more or less) where I implemented the updating functionality in `IntervalUpdater` and then let the `IndeterminateProgressBar` and `SpinnerWidget` instantiate the correct Rich renderable.
 
 ```py hl_lines="8-15 22 30"
+from rich.console import RenderableType
 from rich.progress import Progress, BarColumn
 from rich.spinner import Spinner
 
-from textual.app import RenderableType
 from textual.widgets import Button, Static
 
 

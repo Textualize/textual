@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 import pytest
+from rich.console import RenderableType
 from rich.panel import Panel
 from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
-from textual.app import App, RenderableType
+from textual.app import App
 from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
