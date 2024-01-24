@@ -135,6 +135,8 @@ class WrappedDocument:
         document. The list[str] at each index is the content of the raw document line
         split into multiple lines via wrapping.
 
+        Note that this is expensive to compute and is not cached.
+
         Returns:
             A list of lines from the wrapped version of the document.
         """
