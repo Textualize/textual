@@ -240,6 +240,53 @@ if __name__ == "__main__"
     sys.exit(app.return_code or 0)
 ```
 
+## Suspending
+
+A Textual app can be suspended; this means that app input and output will be paused and the terminal display will be returned to its previous state.
+When the app is resumed the display will be restored and all input and output will resume.
+
+!!! info "Compatible Environments"
+
+    App suspension is only available in the following environments:
+
+    - GNU/Lnux
+    - macOS
+    - Windows
+
+    It is currently not available when an application is being served via Textual Web.
+
+### Suspending in code
+
+To suspend your application use the [App.suspend](/api/app/#textual.app.App.suspend) context manager.
+For example, here is an application that has a button that will open an external editor, suspending the application before running it:
+
+```python hl_lines="14-15"
+from os import system
+
+from textual import on
+from textual.app import App, ComposeResult
+from textual.widgets import Button
+
+class SuspendingApp(App[None]):
+
+    def compose(self) -> ComposeResult:
+        yield Button("Open the editor", id="edit")
+
+    @on(Button.Pressed, "#edit")
+    def run_external_editor(self) -> None:
+        with self.suspend():    # (1)!
+            system("vim")
+
+if __name__ == "__main__":
+    SuspendingApp().run()
+```
+
+1. All code in the body of the `with` statement will be run while the app is suspended.
+
+### Backgrounding with <kbd>Ctrl</kbd>+<kbd>Z</kbd>
+
+On Unix and Unix-like systems (GNU/Linux, macOS, etc) Textual has support for the user pressing <kbd>Ctrl</kbd>+<kbd>Z</kbd> to background the application.
+
 ## CSS
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
