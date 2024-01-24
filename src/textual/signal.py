@@ -55,6 +55,9 @@ class Signal:
         Args:
             node: Node to subscribe.
             callback: A callback function which takes no arguments, and returns anything (return type ignored).
+
+        Raises:
+            SignalError: Raised when subscribing a non-mounted widget.
         """
         if not node.is_running:
             raise SignalError(
