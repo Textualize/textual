@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 class SignalError(Exception):
-    """Base class for a signal."""
+    """Raised for Signal errors."""
 
 
 @rich.repr.auto(angular=True)
