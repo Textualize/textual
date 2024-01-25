@@ -63,10 +63,11 @@ class TextAreaTheme:
     syntax_styles: dict[str, Style] = field(default_factory=dict)
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
-    def __post_init__(self) -> None:
-        """Generate some styles if they haven't been supplied."""
-        if self.base_style is None:
-            self.base_style = Style()
+    def apply_css_base_style(self, base_style: Style | None) -> None:
+        if self.base_style is not None:
+            return
+
+        self.base_style = base_style or Style()
 
         if self.base_style.color is None:
             self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
@@ -342,12 +343,15 @@ _GITHUB_LIGHT = TextAreaTheme(
     },
 )
 
+_CSS_THEME = TextAreaTheme(name="css")
+
 _BUILTIN_THEMES = {
+    "css": _CSS_THEME,
     "monokai": _MONOKAI,
     "dracula": _DRACULA,
     "vscode_dark": _DARK_VS,
     "github_light": _GITHUB_LIGHT,
 }
 
-DEFAULT_THEME = TextAreaTheme.get_builtin_theme("monokai")
+DEFAULT_THEME = TextAreaTheme.get_builtin_theme("basic")
 """The default TextAreaTheme used by Textual."""

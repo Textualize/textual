@@ -851,6 +851,8 @@ TextArea {
         Returns:
             A rendered line.
         """
+        self._theme.apply_css_base_style(self.rich_style)
+
         document = self.document
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
