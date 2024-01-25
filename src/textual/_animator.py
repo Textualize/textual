@@ -8,8 +8,9 @@ from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from typing_extensions import Protocol, runtime_checkable
 
-from . import _time, constants
+from . import _time
 from ._callback import invoke
+from ._context import active_app
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
 from .constants import AnimationsEnum
@@ -97,10 +98,15 @@ class SimpleAnimation(Animation):
     animate_on_level: AnimationsEnum = AnimationsEnum.BASIC
     """Minimum level required for the animation to take place (inclusive)."""
 
+    def __post_init__(self) -> None:
+        """Cache baseline that determines whether an animation runs."""
+        # We cache this value so we don't have to `.get` the context var repeatedly.
+        self.show_animations = active_app.get().show_animations
+
     def __call__(self, time: float) -> bool:
         if (
             self.duration == 0
-            or self.animate_on_level.value > constants.SHOW_ANIMATIONS.value
+            or self.animate_on_level.value > self.show_animations.value
         ):
             setattr(self.obj, self.attribute, self.final_value)
             return True

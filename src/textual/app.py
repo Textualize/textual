@@ -576,6 +576,12 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
 
+        self.show_animations: AnimationsEnum = constants._get_textual_animations()
+        """Determines what type of animations the app will display.
+
+        See [`textual.constants.SHOW_ANIMATIONS`][textual.constants.SHOW_ANIMATIONS].
+        """
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)

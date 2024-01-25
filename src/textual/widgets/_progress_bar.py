@@ -8,7 +8,6 @@ from typing import Callable, Optional
 
 from rich.style import Style
 
-from .. import constants
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
 from ..constants import AnimationsEnum
@@ -107,7 +106,7 @@ class Bar(Widget, can_focus=False):
         # Width used to enable the visual effect of the bar going into the corners.
         total_imaginary_width = width + highlighted_bar_width
 
-        if constants.SHOW_ANIMATIONS is AnimationsEnum.NONE:
+        if self.app.show_animations is AnimationsEnum.NONE:
             start = 0
             end = width
         else:

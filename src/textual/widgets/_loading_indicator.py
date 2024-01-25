@@ -6,7 +6,6 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
-from .. import constants
 from ..color import Gradient
 from ..constants import AnimationsEnum
 from ..events import Mount
@@ -56,7 +55,7 @@ class LoadingIndicator(Widget):
         self.auto_refresh = 1 / 16
 
     def render(self) -> RenderableType:
-        if constants.SHOW_ANIMATIONS is AnimationsEnum.NONE:
+        if self.app.show_animations is AnimationsEnum.NONE:
             return Text("Loading...")
 
         elapsed = time() - self._start_time

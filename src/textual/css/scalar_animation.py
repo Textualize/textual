@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .. import constants
 from .._animator import Animation, EasingFunction
+from .._context import active_app
 from .._types import CallbackType
 from ..constants import AnimationsEnum
 from .scalar import Scalar, ScalarOffset
@@ -52,13 +52,20 @@ class ScalarAnimation(Animation):
             assert duration is not None, "Duration expected to be non-None"
             self.duration = duration
 
+        self.show_animations = active_app.get().show_animations
+        """Cached version of [`App.show_animations`][textual.app.App.show_animations].
+
+        Caching this avoids repeatedly getting the context variable when the animation
+        is supposed to play.
+        """
+
     def __call__(self, time: float) -> bool:
         factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
         if (
             eased_factor >= 1
-            or self.animate_on_level.value > constants.SHOW_ANIMATIONS.value
+            or self.animate_on_level.value > self.show_animations.value
         ):
             setattr(self.styles, self.attribute, self.final_value)
             return True

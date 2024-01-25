@@ -20,7 +20,7 @@ class AnimationsEnum(enum.Enum):
     (e.g., scrolling).
     - `FULL` displays all animations.
 
-    See also: [`SHOW_ANIMATIONS`][textual.constants.SHOW_ANIMATIONS].
+    See also: [`App.show_animations`][textual.app.App.show_animations].
     """
 
     NONE = 0
@@ -107,9 +107,3 @@ MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
 
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
 """Force color system override"""
-
-SHOW_ANIMATIONS: Final[AnimationsEnum] = _get_textual_animations()
-"""Controls what animations Textual will display.
-
-This constant is defined by the environment variable `TEXTUAL_ANIMATIONS`.
-"""
