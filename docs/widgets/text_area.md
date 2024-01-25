@@ -1,7 +1,9 @@
 
 # TextArea
 
-!!! tip "Added in version 0.38.0". Soft wrapping added in version 0.48.0.
+!!! tip 
+
+    Added in version 0.38.0. Soft wrapping added in version 0.48.0.
 
 A widget for editing text which may span multiple lines.
 Supports text selection, soft wrapping, optional syntax highlighting with tree-sitter
@@ -448,8 +450,8 @@ If you notice some highlights are missing after registering a language, the issu
 
 If you're building functionality on top of `TextArea`, it may be useful to inspect the `navigator` and `wrapped_document` attributes.
 
-- `navigator` is a `DocumentNavigator` instance. It can give us general information about the cursor's location within a document, as well as where the cursor will move to when certain actions are performed.
-- `wrapped_document` is a `WrappedDocument` it can be used to convert document locations to visual locations, taking wrapping into account. It also offers a variety of other convenience methods and properties.
+- `navigator` is a [`DocumentNavigator`][textual.widgets.text_area.DocumentNavigator] instance which can give us general information about the cursor's location within a document, as well as where the cursor will move to when certain actions are performed.
+- `wrapped_document` is a [`WrappedDocument`][textual.widgets.text_area.WrappedDocument] instance which can be used to convert document locations to visual locations, taking wrapping into account. It also offers a variety of other convenience methods and properties.
 
 A detailed view of these classes is out of scope, but do note that a lot of the functionality of `TextArea` exists within them, so inspecting them could be worthwhile.
 
