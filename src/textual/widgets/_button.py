@@ -8,9 +8,9 @@ from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
-from .. import events
+from .. import constants, events
 from ..binding import Binding
-from ..constants import SHOW_ANIMATIONS, AnimationsEnum
+from ..constants import AnimationsEnum
 from ..css._error_tools import friendly_list
 from ..message import Message
 from ..pad import HorizontalPad
@@ -266,7 +266,7 @@ class Button(Widget, can_focus=True):
         """
         if (
             self.active_effect_duration > 0
-            and SHOW_ANIMATIONS.value >= animate_on_level.value
+            and constants.SHOW_ANIMATIONS.value >= animate_on_level.value
         ):
             self.add_class("-active")
             self.set_timer(

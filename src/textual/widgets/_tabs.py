@@ -9,11 +9,11 @@ from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
-from .. import events
+from .. import constants, events
 from ..app import ComposeResult, RenderResult
 from ..await_complete import AwaitComplete
 from ..binding import Binding, BindingType
-from ..constants import SHOW_ANIMATIONS, AnimationsEnum
+from ..constants import AnimationsEnum
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
 from ..events import Mount
@@ -614,7 +614,7 @@ class Tabs(Widget, can_focus=True):
             underline.show_highlight = True
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
-            if animate and SHOW_ANIMATIONS.value >= animate_on_level.value:
+            if animate and constants.SHOW_ANIMATIONS.value >= animate_on_level.value:
 
                 def animate_underline() -> None:
                     """Animate the underline."""

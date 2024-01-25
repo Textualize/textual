@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from .. import constants
 from .._animator import Animation, EasingFunction
 from .._types import CallbackType
-from ..constants import SHOW_ANIMATIONS, AnimationsEnum
+from ..constants import AnimationsEnum
 from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
@@ -55,7 +56,10 @@ class ScalarAnimation(Animation):
         factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
-        if eased_factor >= 1 or self.animate_on_level.value > SHOW_ANIMATIONS.value:
+        if (
+            eased_factor >= 1
+            or self.animate_on_level.value > constants.SHOW_ANIMATIONS.value
+        ):
             setattr(self.styles, self.attribute, self.final_value)
             return True
 

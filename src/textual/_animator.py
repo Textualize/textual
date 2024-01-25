@@ -8,11 +8,11 @@ from typing import TYPE_CHECKING, Any, Callable, TypeVar
 
 from typing_extensions import Protocol, runtime_checkable
 
-from . import _time
+from . import _time, constants
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
 from ._types import CallbackType
-from .constants import SHOW_ANIMATIONS, AnimationsEnum
+from .constants import AnimationsEnum
 from .timer import Timer
 
 if TYPE_CHECKING:
@@ -98,7 +98,10 @@ class SimpleAnimation(Animation):
     """Minimum level required for the animation to take place (inclusive)."""
 
     def __call__(self, time: float) -> bool:
-        if self.duration == 0 or self.animate_on_level.value > SHOW_ANIMATIONS.value:
+        if (
+            self.duration == 0
+            or self.animate_on_level.value > constants.SHOW_ANIMATIONS.value
+        ):
             setattr(self.obj, self.attribute, self.final_value)
             return True
 
