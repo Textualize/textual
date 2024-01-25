@@ -3,6 +3,7 @@ import pytest
 from textual.app import App, ComposeResult
 from textual.errors import DuplicateKeyHandlers
 from textual.events import Key
+from textual.message import Message
 from textual.widget import Widget
 from textual.widgets import Input
 
@@ -68,6 +69,25 @@ class PreventTestApp(App):
 
     def on_input_changed(self, event: Input.Changed) -> None:
         self.input_changed_events.append(event)
+
+
+async def test_message_queue_size():
+    """Test message queue size property."""
+    app = App()
+    assert app.message_queue_size == 0
+
+    class TestMessage(Message):
+        pass
+
+    async with app.run_test() as pilot:
+        assert app.message_queue_size == 0
+        app.post_message(TestMessage())
+        assert app.message_queue_size == 1
+        app.post_message(TestMessage())
+        assert app.message_queue_size == 2
+        # A pause will process all the messages
+        await pilot.pause()
+        assert app.message_queue_size == 0
 
 
 async def test_prevent() -> None:

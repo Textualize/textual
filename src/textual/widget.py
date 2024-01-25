@@ -2874,10 +2874,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = (
+        show_vertical_scrollbar: bool = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = (
+        show_horizontal_scrollbar: bool = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -2911,10 +2911,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = (
+        show_vertical_scrollbar: bool = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = (
+        show_horizontal_scrollbar: bool = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
