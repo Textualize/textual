@@ -150,7 +150,7 @@ def property_invalid_value_help_text(
         suggested_property_name = _contextualize_property_name(
             suggested_property_name, context
         )
-        summary += f'. Did you mean "{suggested_property_name}"?'
+        summary += f". Did you mean '{suggested_property_name}'?"
     return HelpText(summary)
 
 
@@ -324,7 +324,7 @@ def color_property_help_text(
         error.suggested_color if error and isinstance(error, ColorParseError) else None
     )
     if suggested_color:
-        summary += f'. Did you mean "{suggested_color}"?'
+        summary += f". Did you mean '{suggested_color}'?"
     return HelpText(
         summary=summary,
         bullets=[

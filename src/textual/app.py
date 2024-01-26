@@ -73,7 +73,7 @@ from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
 from .css.query import NoMatches
-from .css.stylesheet import Stylesheet
+from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
@@ -310,7 +310,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
+    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -428,7 +428,7 @@ class App(Generic[ReturnType], DOMNode):
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stacks: dict[str, list[Screen]] = {"_default": []}
+        self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
         """A stack of screens per mode."""
         self._current_mode: str = "_default"
         """The current mode the app is in."""
@@ -722,7 +722,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_headless
 
     @property
-    def screen_stack(self) -> Sequence[Screen]:
+    def screen_stack(self) -> Sequence[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:
@@ -731,7 +731,7 @@ class App(Generic[ReturnType], DOMNode):
         return self._screen_stacks[self._current_mode].copy()
 
     @property
-    def _screen_stack(self) -> list[Screen]:
+    def _screen_stack(self) -> list[Screen[Any]]:
         """A reference to the current screen stack.
 
         Note:
@@ -776,7 +776,10 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The currently focused widget, or `None` if nothing is focused.
         """
-        return self.screen.focused
+        focused = self.screen.focused
+        if focused is not None and focused.loading:
+            return None
+        return focused
 
     @property
     def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
@@ -826,8 +829,8 @@ class App(Generic[ReturnType], DOMNode):
         This method handles the transition between light and dark mode when you
         change the [dark][textual.app.App.dark] attribute.
         """
-        self.set_class(dark, "-dark-mode")
-        self.set_class(not dark, "-light-mode")
+        self.set_class(dark, "-dark-mode", update=False)
+        self.set_class(not dark, "-light-mode", update=False)
         self.call_later(self.refresh_css)
 
     def get_driver_class(self) -> Type[Driver]:
@@ -992,6 +995,18 @@ class App(Generic[ReturnType], DOMNode):
                 )
         except Exception as error:
             self._handle_exception(error)
+
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to be used as a loading indicator.
+
+        Extend this method if you want to display the loading state a little differently.
+
+        Returns:
+            A widget to display a loading state.
+        """
+        from .widgets import LoadingIndicator
+
+        return LoadingIndicator()
 
     def call_from_thread(
         self,
@@ -1170,6 +1185,9 @@ class App(Generic[ReturnType], DOMNode):
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 await asyncio.sleep(float(wait_ms) / 1000)
+                await wait_for_idle(0)
+                await app._animator.wait_until_complete()
+                await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
@@ -1476,7 +1494,8 @@ class App(Generic[ReturnType], DOMNode):
                 self._css_has_errors = False
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
-                self.screen.refresh(layout=True)
+                for screen in self.screen_stack:
+                    self.stylesheet.update(screen)
 
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
@@ -1571,7 +1590,6 @@ class App(Generic[ReturnType], DOMNode):
         will be added, and this method is called to apply the corresponding
         :hover styles.
         """
-
         descendants = node.walk_children(with_self=True)
         self.stylesheet.update_nodes(descendants, animate=True)
 
@@ -1928,6 +1946,31 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return await_mount
 
+    @overload
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType]
+    ) -> ScreenResultType:
+        ...
+
+    @overload
+    async def push_screen_wait(self, screen: str) -> Any:
+        ...
+
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType] | str
+    ) -> ScreenResultType | Any:
+        """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
+
+        Note that this method may only be called when running in a worker.
+
+        Args:
+            screen: A screen or the name of an installed screen.
+
+        Returns:
+            The screen's result.
+        """
+        return await self.push_screen(screen, wait_for_dismiss=True)
+
     def switch_screen(self, screen: Screen | str) -> AwaitMount:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
 
@@ -1974,7 +2017,7 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
             raise ScreenError(
-                "Can't install screen; {screen!r} has already been installed"
+                f"Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
         self.log.system(f"{screen} INSTALLED name={name!r}")
@@ -2232,9 +2275,9 @@ class App(Generic[ReturnType], DOMNode):
 
                     Reactive._initialize_object(self)
 
-                    self.stylesheet.update(self)
+                    self.stylesheet.apply(self)
                     if self.screen is not default_screen:
-                        self.stylesheet.update(default_screen)
+                        self.stylesheet.apply(default_screen)
 
                     await self.animator.start()
 
@@ -2378,6 +2421,7 @@ class App(Generic[ReturnType], DOMNode):
         *widgets: Widget,
         before: int | None = None,
         after: int | None = None,
+        cache: dict[tuple, RulesMap] | None = None,
     ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
@@ -2386,6 +2430,7 @@ class App(Generic[ReturnType], DOMNode):
             *widgets: The widget(s) to register.
             before: A location to mount before.
             after: A location to mount after.
+            cache: Optional rules map cache.
 
         Returns:
             List of modified widgets.
@@ -2394,6 +2439,8 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
+        if cache is None:
+            cache = {}
         widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
@@ -2410,8 +2457,8 @@ class App(Generic[ReturnType], DOMNode):
             if widget not in self._registry:
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
-                    self._register(widget, *widget._nodes)
-                apply_stylesheet(widget)
+                    self._register(widget, *widget._nodes, cache=cache)
+                apply_stylesheet(widget, cache=cache)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks

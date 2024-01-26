@@ -10,11 +10,11 @@ from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
 from .. import events
-from .._cache import LRUCache
 from .._immutable_sequence_view import ImmutableSequenceView
 from .._loop import loop_last
 from .._segment_tools import line_pad
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..geometry import Region, Size, clamp
 from ..message import Message
 from ..reactive import reactive, var
@@ -717,13 +717,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._current_id = 0
         root_label = self.root._label
         root_data = self.root.data
+        root_expanded = self.root.is_expanded
         self.root = TreeNode(
             self,
             None,
             self._new_id(),
             root_label,
             root_data,
-            expanded=True,
+            expanded=root_expanded,
         )
         self._updates += 1
         self.refresh()
@@ -904,7 +905,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         """
         region = self._get_label_region(line)
         if region is not None:
-            self.scroll_to_region(region, animate=animate)
+            self.scroll_to_region(region, animate=animate, force=True)
 
     def scroll_to_node(
         self, node: TreeNode[TreeDataType], animate: bool = True

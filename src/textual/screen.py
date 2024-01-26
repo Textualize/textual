@@ -354,7 +354,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if node is None:
                 pop()
             else:
-                if node.disabled:
+                if node._check_disabled():
                     continue
                 node_styles_visibility = node.styles.get_rule("visibility")
                 node_is_visible = (
@@ -362,14 +362,14 @@ class Screen(Generic[ScreenResultType], Widget):
                     if node_styles_visibility
                     else parent_visibility  # Inherit visibility if the style is unset.
                 )
-                if node.is_container and node.can_focus_children:
+                if node.is_container and node.allow_focus_children():
                     sorted_displayed_children = sorted(
                         node.displayed_children, key=focus_sorter
                     )
                     push((iter(sorted_displayed_children), node_is_visible))
                 # Same check as `if node.focusable`, but we cached inherited visibility
                 # and we also skipped disabled nodes altogether.
-                if node_is_visible and node.can_focus:
+                if node_is_visible and node.allow_focus():
                     add_widget(node)
 
         return widgets

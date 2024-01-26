@@ -302,7 +302,7 @@ When you set padding or border it reduces the size of the widget's content area.
 
 This is generally desirable when you arrange things on screen as you can add border or padding without breaking your layout. Occasionally though you may want to keep the size of the content area constant and grow the size of the widget to fit padding and border. The [box-sizing](../styles/box_sizing.md) style allows you to switch between these two modes.
 
-If you set `box_sizing` to `"content-box"` then space required for padding and border will be added to the widget dimensions. The default value of `box_sizing` is `"border-box"`. Compare the box model diagram for `content-box` to the to the box model for `border-box`.
+If you set `box_sizing` to `"content-box"` then the space required for padding and border will be added to the widget dimensions. The default value of `box_sizing` is `"border-box"`. Compare the box model diagram for `content-box` to the box model for `border-box`.
 
 === "content-box"
 

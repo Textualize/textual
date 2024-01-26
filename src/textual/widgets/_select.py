@@ -107,23 +107,26 @@ class SelectCurrent(Horizontal):
         width: 100%;
         height: auto;
         padding: 0 2;
-    }
-    SelectCurrent Static#label {
-        width: 1fr;
-        height: auto;
-        color: $text-disabled;
-        background: transparent;
-    }
-    SelectCurrent.-has-value Static#label {
-        color: $text;
-    }
-    SelectCurrent .arrow {
-        box-sizing: content-box;
-        width: 1;
-        height: 1;
-        padding: 0 0 0 1;
-        color: $text-muted;
-        background: transparent;
+
+        Static#label {
+            width: 1fr;
+            height: auto;
+            color: $text-disabled;
+            background: transparent;
+        }
+
+        &.-has-value Static#label {
+            color: $text;
+        }
+
+        .arrow {
+            box-sizing: content-box;
+            width: 1;
+            height: 1;
+            padding: 0 0 0 1;
+            color: $text-muted;
+            background: transparent;
+        }
     }
     """
 
@@ -196,40 +199,41 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     DEFAULT_CSS = """
     Select {
         height: auto;
+
+        & > SelectOverlay {
+            width: 1fr;
+            display: none;
+            height: auto;
+            max-height: 12;
+            overlay: screen;
+            constrain: y;
+        }
+
+        &:focus > SelectCurrent {
+            border: tall $accent;
+        }
+
+        .up-arrow {
+            display: none;
+        }
+
+        &.-expanded .down-arrow {
+            display: none;
+        }
+
+        &.-expanded .up-arrow {
+            display: block;
+        }
+
+        &.-expanded > SelectOverlay {
+            display: block;
+        }
+
+        &.-expanded > SelectCurrent {
+            border: tall $accent;
+        }
     }
 
-    Select:focus > SelectCurrent {
-        border: tall $accent;
-    }
-
-    Select > SelectOverlay {
-        width: 1fr;
-        display: none;
-        height: auto;
-        max-height: 12;
-        overlay: screen;
-        constrain: y;
-    }
-
-    Select .up-arrow {
-        display:none;
-    }
-
-    Select.-expanded .down-arrow {
-        display:none;
-    }
-
-    Select.-expanded .up-arrow {
-        display: block;
-    }
-
-    Select.-expanded > SelectOverlay {
-        display: block;
-    }
-
-    Select.-expanded > SelectCurrent {
-        border: tall $accent;
-    }
     """
 
     expanded: var[bool] = var(False, init=False)
@@ -284,7 +288,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         Args:
             options: Options to select from. If no options are provided then
                 `allow_blank` must be set to `True`.
-            prompt: Text to show in the control when no option is select.
+            prompt: Text to show in the control when no option is selected.
             allow_blank: Enables or disables the ability to have the widget in a state
                 with no selection made, in which case its value is set to the constant
                 [`Select.BLANK`][textual.widgets.Select.BLANK].
@@ -292,7 +296,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                 If no initial value is set and `allow_blank` is `False`, the widget
                 will auto-select the first available option.
             name: The name of the select control.
-            id: The ID of the control the DOM.
+            id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
 
@@ -304,6 +308,54 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self.prompt = prompt
         self._value = value
         self._setup_variables_for_options(options)
+
+    @classmethod
+    def from_values(
+        cls,
+        values: Iterable[SelectType],
+        *,
+        prompt: str = "Select",
+        allow_blank: bool = True,
+        value: SelectType | NoSelection = BLANK,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> Select[SelectType]:
+        """Initialize the Select control with values specified by an arbitrary iterable
+
+        The options shown in the control are computed by calling the built-in `str`
+        on each value.
+
+        Args:
+            values: Values used to generate options to select from.
+            prompt: Text to show in the control when no option is selected.
+            allow_blank: Enables or disables the ability to have the widget in a state
+                with no selection made, in which case its value is set to the constant
+                [`Select.BLANK`][textual.widgets.Select.BLANK].
+            value: Initial value selected. Should be one of the values in `values`.
+                If no initial value is set and `allow_blank` is `False`, the widget
+                will auto-select the first available value.
+            name: The name of the select control.
+            id: The ID of the control in the DOM.
+            classes: The CSS classes of the control.
+            disabled: Whether the control is disabled or not.
+
+        Returns:
+            A new Select widget with the provided values as options.
+        """
+        options_iterator = [(str(value), value) for value in values]
+
+        return cls(
+            options_iterator,
+            prompt=prompt,
+            allow_blank=allow_blank,
+            value=value,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
 
     def _setup_variables_for_options(
         self,

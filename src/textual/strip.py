@@ -16,8 +16,8 @@ from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-from ._cache import FIFOCache
 from ._segment_tools import index_to_cell_position
+from .cache import FIFOCache
 from .color import Color
 from .constants import DEBUG
 from .filter import LineFilter
@@ -199,7 +199,7 @@ class Strip:
         return strip
 
     def __bool__(self) -> bool:
-        return bool(self._segments)
+        return not not self._segments  # faster than bool(...)
 
     def __iter__(self) -> Iterator[Segment]:
         return iter(self._segments)
@@ -357,7 +357,7 @@ class Strip:
         cached_result = self._crop_extend_cache.get(cache_key)
         if cached_result is not None:
             return cached_result
-        strip = self.extend_cell_length(end).crop(start, end)
+        strip = self.extend_cell_length(end, style).crop(start, end)
         self._crop_extend_cache[cache_key] = strip
         return strip
 
@@ -385,7 +385,7 @@ class Strip:
         add_segment = output_segments.append
         iter_segments = iter(self._segments)
         segment: Segment | None = None
-        if start > self.cell_length:
+        if start >= self.cell_length:
             strip = Strip([], 0)
         else:
             for segment in iter_segments:

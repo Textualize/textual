@@ -103,11 +103,20 @@ class TokenError(Exception):
 
 
 class EOFError(TokenError):
-    pass
+    """Indicates that the CSS ended prematurely."""
 
 
+@rich.repr.auto
 class Expect:
-    def __init__(self, **tokens: str) -> None:
+    """Object that describes the format of tokens."""
+
+    def __init__(self, description: str, **tokens: str) -> None:
+        """Create Expect object.
+
+        Args:
+            description: Description of this class of tokens, used in errors.
+        """
+        self.description = f"Expected {description}"
         self.names = list(tokens.keys())
         self.regexes = list(tokens.values())
         self._regex = re.compile(
@@ -134,7 +143,7 @@ class ReferencedBy(NamedTuple):
     code: str
 
 
-@rich.repr.auto
+@rich.repr.auto(angular=True)
 class Token(NamedTuple):
     name: str
     value: str
@@ -188,7 +197,15 @@ class Token(NamedTuple):
 
 
 class Tokenizer:
+    """Tokenizes Textual CSS."""
+
     def __init__(self, text: str, read_from: CSSLocation = ("", "")) -> None:
+        """Initialize the tokenizer.
+
+        Args:
+            text: String containing CSS.
+            read_from: Information regarding where the CSS was read from.
+        """
         self.read_from = read_from
         self.code = text
         self.lines = text.splitlines(keepends=True)
@@ -196,6 +213,19 @@ class Tokenizer:
         self.col_no = 0
 
     def get_token(self, expect: Expect) -> Token:
+        """Get the next token.
+
+        Args:
+            expect: Expect object which describes which tokens may be read.
+
+        Raises:
+            EOFError: If there is an unexpected end of file.
+            TokenError: If there is an error with the token.
+
+        Returns:
+            A new Token.
+        """
+
         line_no = self.line_no
         col_no = self.col_no
         if line_no >= len(self.lines):
@@ -213,18 +243,19 @@ class Tokenizer:
                     self.read_from,
                     self.code,
                     (line_no + 1, col_no + 1),
-                    "Unexpected end of file",
+                    "Unexpected end of file; did you forget a '}' ?",
                 )
         line = self.lines[line_no]
         match = expect.match(line, col_no)
         if match is None:
-            expected = friendly_list(" ".join(name.split("_")) for name in expect.names)
-            message = f"Expected one of {expected}.; Did you forget a semicolon at the end of a line?"
+            error_line = line[col_no:].rstrip()
+            error_message = (
+                f"{expect.description} (found {error_line.split(';')[0]!r})."
+            )
+            if not error_line.endswith(";"):
+                error_message += "; Did you forget a semicolon at the end of a line?"
             raise TokenError(
-                self.read_from,
-                self.code,
-                (line_no + 1, col_no + 1),
-                message,
+                self.read_from, self.code, (line_no + 1, col_no + 1), error_message
             )
         iter_groups = iter(match.groups())
 
@@ -277,6 +308,17 @@ class Tokenizer:
         return token
 
     def skip_to(self, expect: Expect) -> Token:
+        """Skip tokens.
+
+        Args:
+            expect: Expect object describing the expected token.
+
+        Raises:
+            EOFError: If end of file is reached.
+
+        Returns:
+            A new token.
+        """
         line_no = self.line_no
         col_no = self.col_no
 
@@ -286,7 +328,7 @@ class Tokenizer:
                     self.read_from,
                     self.code,
                     (line_no, col_no),
-                    "Unexpected end of file",
+                    "Unexpected end of file; did you forget a '}' ?",
                 )
             line = self.lines[line_no]
             match = expect.search(line, col_no)

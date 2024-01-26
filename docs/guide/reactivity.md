@@ -81,7 +81,7 @@ Let's look at an example which illustrates this. In the following app, the value
 
 === "refresh01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/refresh01.tcss"
     ```
 
@@ -125,7 +125,7 @@ The following example modifies "refresh01.py" so that the greeting has an automa
 
 === "refresh02.tcss"
 
-    ```sass hl_lines="7-9"
+    ```css hl_lines="7-9"
     --8<-- "docs/examples/guide/reactivity/refresh02.tcss"
     ```
 
@@ -152,7 +152,7 @@ A common use for this is to restrict numbers to a given range. The following exa
 
 === "validate01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/validate01.tcss"
     ```
 
@@ -185,7 +185,7 @@ The following app will display any color you type in to the input. Try it with a
 
 === "watch01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/watch01.tcss"
     ```
 
@@ -246,7 +246,7 @@ The following example uses a computed attribute. It displays three inputs for ea
 
 === "computed01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/computed01.tcss"
     ```
 

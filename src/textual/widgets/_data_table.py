@@ -16,11 +16,11 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self, TypeAlias
 
 from .. import events
-from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..color import Color
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
@@ -791,12 +791,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if isinstance(column_key, str):
             column_key = ColumnKey(column_key)
 
-        try:
-            self._data[row_key][column_key] = value
-        except KeyError:
+        if (
+            row_key not in self._row_locations
+            or column_key not in self._column_locations
+        ):
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
-            ) from None
+            )
+
+        self._data[row_key][column_key] = value
         self._update_count += 1
 
         # Recalculate widths if necessary
@@ -857,7 +860,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.get_cell(row_key, column_key)
 
     def get_cell_coordinate(
-        self, row_key: RowKey | str, column_key: Column | str
+        self, row_key: RowKey | str, column_key: ColumnKey | str
     ) -> Coordinate:
         """Given a row key and column key, return the corresponding cell coordinate.
 
@@ -1091,7 +1094,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._highlight_column(new_coordinate.column)
             # If the coordinate was changed via `move_cursor`, give priority to its
             # scrolling because it may be animated.
-            self.call_next(self._scroll_cursor_into_view)
+            self.call_after_refresh(self._scroll_cursor_into_view)
 
     def move_cursor(
         self,
@@ -1116,19 +1119,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column: The new column to move the cursor to.
             animate: Whether to animate the change of coordinates.
         """
+
         cursor_row, cursor_column = self.cursor_coordinate
         if row is not None:
             cursor_row = row
         if column is not None:
             cursor_column = column
         destination = Coordinate(cursor_row, cursor_column)
-        self.cursor_coordinate = destination
 
         # Scroll the cursor after refresh to ensure the virtual height
         # (calculated in on_idle) has settled. If we tried to scroll before
         # the virtual size has been set, then it might fail if we added a bunch
         # of rows then tried to immediately move the cursor.
+        # We do this before setting `cursor_coordinate` because its watcher will also
+        # schedule a call to `_scroll_cursor_into_view` without optionally animating.
         self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
+
+        self.cursor_coordinate = destination
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""

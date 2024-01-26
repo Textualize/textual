@@ -65,8 +65,17 @@ class DockArrangeResult:
         Returns:
             Set of placements.
         """
+        if self.total_region in region:
+            # Short circuit for when we want all the placements
+            return self.placements
         visible_placements = self.spatial_map.get_values_in_region(region)
-        return visible_placements
+        overlaps = region.overlaps
+        culled_placements = [
+            placement
+            for placement in visible_placements
+            if placement.fixed or overlaps(placement.region)
+        ]
+        return culled_placements
 
 
 class WidgetPlacement(NamedTuple):
@@ -174,7 +183,17 @@ class Layout(ABC):
             height = 0
         else:
             # Use a height of zero to ignore relative heights
-            arrangement = widget._arrange(Size(width, 0))
+            styles_height = widget.styles.height
+            if widget._parent and len(widget._nodes) == 1:
+                # If it is an only child with height auto we want it to expand
+                height = (
+                    container.height
+                    if styles_height is not None and styles_height.is_auto
+                    else 0
+                )
+            else:
+                height = 0
+            arrangement = widget._arrange(Size(width, height))
             height = arrangement.total_region.bottom
 
         return height

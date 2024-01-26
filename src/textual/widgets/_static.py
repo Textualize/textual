@@ -44,8 +44,6 @@ class Static(Widget, inherit_bindings=False):
     }
     """
 
-    ALLOW_CHILDREN = False
-
     _renderable: RenderableType
 
     def __init__(

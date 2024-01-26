@@ -80,7 +80,7 @@ def check_identifiers(description: str, *names: str) -> None:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
     """
-    match = _re_identifier.match
+    match = _re_identifier.fullmatch
     for name in names:
         if match(name) is None:
             raise BadIdentifier(
@@ -166,7 +166,7 @@ class DOMNode(MessagePump):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-        self._classes = set()
+        self._classes: set[str] = set()
         self._name = name
         self._id = None
         if id is not None:
@@ -575,8 +575,7 @@ class DOMNode(MessagePump):
     @property
     def pseudo_classes(self) -> frozenset[str]:
         """A (frozen) set of all pseudo classes."""
-        pseudo_classes = frozenset(self.get_pseudo_classes())
-        return pseudo_classes
+        return frozenset(self.get_pseudo_classes())
 
     @property
     def css_path_nodes(self) -> list[DOMNode]:
@@ -595,20 +594,19 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
-    def _selector_names(self) -> list[str]:
+    def _selector_names(self) -> set[str]:
         """Get a set of selectors applicable to this widget.
 
         Returns:
             Set of selector names.
         """
-        selectors: list[str] = [
+        selectors: set[str] = {
             "*",
             *(f".{class_name}" for class_name in self._classes),
-            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
             *self._css_types,
-        ]
+        }
         if self._id is not None:
-            selectors.append(f"#{self._id}")
+            selectors.add(f"#{self._id}")
         return selectors
 
     @property
@@ -998,6 +996,9 @@ class DOMNode(MessagePump):
     def _add_child(self, node: Widget) -> None:
         """Add a new child node.
 
+        !!! note
+            For tests only.
+
         Args:
             node: A DOM node.
         """
@@ -1007,6 +1008,9 @@ class DOMNode(MessagePump):
     def _add_children(self, *nodes: Widget) -> None:
         """Add multiple children to this node.
 
+        !!! note
+            For tests only.
+
         Args:
             *nodes: Positional args should be new DOM nodes.
         """
@@ -1014,6 +1018,7 @@ class DOMNode(MessagePump):
         for node in nodes:
             node._attach(self)
             _append(node)
+            node._add_children(*node._pending_children)
 
     WalkType = TypeVar("WalkType", bound="DOMNode")
 
@@ -1176,19 +1181,20 @@ class DOMNode(MessagePump):
         """
         return self._classes.issuperset(class_names)
 
-    def set_class(self, add: bool, *class_names: str) -> Self:
+    def set_class(self, add: bool, *class_names: str, update: bool = True) -> Self:
         """Add or remove class(es) based on a condition.
 
         Args:
             add: Add the classes if True, otherwise remove them.
+            update: Also update styles.
 
         Returns:
             Self.
         """
         if add:
-            self.add_class(*class_names)
+            self.add_class(*class_names, update=update)
         else:
-            self.remove_class(*class_names)
+            self.remove_class(*class_names, update=update)
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> Self:
@@ -1214,11 +1220,12 @@ class DOMNode(MessagePump):
         except NoActiveAppError:
             pass
 
-    def add_class(self, *class_names: str) -> Self:
+    def add_class(self, *class_names: str, update: bool = True) -> Self:
         """Add class names to this Node.
 
         Args:
             *class_names: CSS class names to add.
+            update: Also update styles.
 
         Returns:
             Self.
@@ -1228,14 +1235,16 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if update:
+            self._update_styles()
         return self
 
-    def remove_class(self, *class_names: str) -> Self:
+    def remove_class(self, *class_names: str, update: bool = True) -> Self:
         """Remove class names from this Node.
 
         Args:
             *class_names: CSS class names to remove.
+            update: Also update styles.
 
         Returns:
             Self.
@@ -1245,7 +1254,8 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if update:
+            self._update_styles()
         return self
 
     def toggle_class(self, *class_names: str) -> Self:
@@ -1265,17 +1275,27 @@ class DOMNode(MessagePump):
         self._update_styles()
         return self
 
-    def has_pseudo_class(self, *class_names: str) -> bool:
-        """Check for pseudo classes (such as hover, focus etc)
+    def has_pseudo_class(self, class_name: str) -> bool:
+        """Check the node has the given pseudo class.
 
         Args:
-            *class_names: The pseudo classes to check for.
+            class_name: The pseudo class to check for.
 
         Returns:
-            `True` if the DOM node has those pseudo classes, `False` if not.
+            `True` if the DOM node has the pseudo class, `False` if not.
         """
-        has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
-        return has_pseudo_classes
+        return class_name in self.get_pseudo_classes()
+
+    def has_pseudo_classes(self, class_names: set[str]) -> bool:
+        """Check the node has all the given pseudo classes.
+
+        Args:
+            class_names: Set of class names to check for.
+
+        Returns:
+            `True` if all pseudo class names are present.
+        """
+        return class_names.issubset(self.get_pseudo_classes())
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self

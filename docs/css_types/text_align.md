@@ -27,7 +27,7 @@ A [`<text-align>`](./text_align.md) can be any of the following values:
 
 ### CSS
 
-```sass
+```css
 Label {
     text-align: justify;
 }

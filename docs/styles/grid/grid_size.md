@@ -37,7 +37,7 @@ In the first example, we create a grid with 2 columns and 5 rows, although we do
 
 === "grid_size_both.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/styles/grid_size_both.tcss"
     ```
 
@@ -60,7 +60,7 @@ In the second example, we create a grid with 2 columns and however many rows are
 
 === "grid_size_columns.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/styles/grid_size_columns.tcss"
     ```
 
@@ -68,7 +68,7 @@ In the second example, we create a grid with 2 columns and however many rows are
 
 ## CSS
 
-```sass
+```css
 /* Grid with 3 rows and 5 columns */
 grid-size: 3 5;
 

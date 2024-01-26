@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.44.0"
+version = "0.47.1"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -44,7 +44,6 @@ python = "^3.8"
 rich = ">=13.3.3"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
 #rich = {path="../rich", develop=true}
-importlib-metadata = ">=4.11.3"
 typing-extensions = "^4.4.0"
 tree-sitter = { version = "^0.20.1", optional = true }
 tree_sitter_languages = { version = ">=1.7.0", optional = true }
@@ -72,6 +71,7 @@ pytest-asyncio = "*"
 pytest-textual-snapshot = ">=0.4.0"
 types-tree-sitter = "^0.20.1.4"
 types-tree-sitter-languages = "^1.7.0.1"
+griffe = "0.32.3"
 
 [tool.black]
 includes = "src"
@@ -82,6 +82,7 @@ testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "integration_test: marks tests as slow integration tests (deselect with '-m \"not integration_test\"')",
+    "syntax: marks tests that require syntax highlighting (deselect with '-m \"not syntax\"')",
 ]
 
 [build-system]

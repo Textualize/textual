@@ -18,6 +18,7 @@ The [`<border>`](./border.md) type can take any of the following values:
 | `inner`     | Thick solid border.                                      |
 | `none`      | Disabled border.                                         |
 | `outer`     | Solid border with additional space around content.       |
+| `panel`     | Solid border with thick top.                             |
 | `round`     | Rounded corners.                                         |
 | `solid`     | Solid border.                                            |
 | `tall`      | Solid border with additional space top and bottom.       |
@@ -37,7 +38,7 @@ textual borders
 
 ### CSS
 
-```sass
+```css
 #container {
     border: heavy red;
 }

@@ -35,13 +35,13 @@ However, since `#box1` is on the higher layer, it is drawn on top of `#box2`.
 
 === "layers.tcss"
 
-    ```sass hl_lines="3 14 19"
+    ```css hl_lines="3 14 19"
     --8<-- "docs/examples/guide/layout/layers.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Bottom layer is called 'below', layer above it is called 'above' */
 layers: below above;
 ```

@@ -49,6 +49,8 @@ class ScrollRight(ScrollMessage, verbose=True):
 class ScrollTo(ScrollMessage, verbose=True):
     """Message sent when click and dragging handle."""
 
+    __slots__ = ["x", "y", "animate"]
+
     def __init__(
         self,
         x: float | None = None,
@@ -217,16 +219,6 @@ class ScrollBar(Widget):
     ```
     my_widget.horizontal_scrollbar.renderer = MyScrollBarRender
     ```
-    """
-
-    DEFAULT_CSS = """
-    ScrollBar {
-        link-color-hover: ;
-        link-background-hover:;
-        link-style-hover: ;
-        link-color: transparent;
-        link-background: transparent;
-    }
     """
 
     def __init__(

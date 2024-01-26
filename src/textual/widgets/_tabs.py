@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import ClassVar
 
 import rich.repr
+from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
@@ -143,6 +144,9 @@ class Tab(Static):
     class Enabled(TabMessage):
         """A tab was enabled."""
 
+    class Relabelled(TabMessage):
+        """A tab was relabelled."""
+
     def __init__(
         self,
         label: TextType,
@@ -159,9 +163,23 @@ class Tab(Static):
             classes: Space separated list of class names.
             disabled: Whether the tab is disabled or not.
         """
-        self.label = Text.from_markup(label) if isinstance(label, str) else label
         super().__init__(id=id, classes=classes, disabled=disabled)
-        self.update(label)
+        self._label: Text
+        self.label = label
+
+    @property
+    def label(self) -> Text:
+        """The label for the tab."""
+        return self._label
+
+    @label.setter
+    def label(self, label: TextType) -> None:
+        self._label = Text.from_markup(label) if isinstance(label, str) else label
+        self.update(self._label)
+
+    def update(self, renderable: RenderableType = "") -> None:
+        self.post_message(self.Relabelled(self))
+        return super().update(renderable)
 
     @property
     def label_text(self) -> str:
@@ -590,8 +608,22 @@ class Tabs(Widget, can_focus=True):
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
             if animate:
-                underline.animate("highlight_start", start, duration=0.3)
-                underline.animate("highlight_end", end, duration=0.3)
+
+                def animate_underline() -> None:
+                    """Animate the underline."""
+                    try:
+                        active_tab = self.query_one(f"#tabs-list > Tab.-active")
+                    except NoMatches:
+                        pass
+                    else:
+                        tab_region = active_tab.virtual_region.shrink(
+                            active_tab.styles.gutter
+                        )
+                        start, end = tab_region.column_span
+                        underline.animate("highlight_start", start, duration=0.3)
+                        underline.animate("highlight_end", end, duration=0.3)
+
+                self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:
                 underline.highlight_start = start
                 underline.highlight_end = end
@@ -678,6 +710,11 @@ class Tabs(Widget, can_focus=True):
         """Re-post the enabled message."""
         event.stop()
         self.post_message(self.TabEnabled(self, event.tab))
+
+    def _on_tab_relabelled(self, event: Tab.Relabelled) -> None:
+        """Redraw the highlight when tab is relabelled."""
+        event.stop()
+        self._highlight_active()
 
     def disable(self, tab_id: str) -> Tab:
         """Disable the indicated tab.

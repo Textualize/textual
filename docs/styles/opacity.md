@@ -36,13 +36,13 @@ When the opacity is zero, all we see is the (black) background.
 
 === "opacity.tcss"
 
-    ```sass hl_lines="2 6 10 14 18"
+    ```css hl_lines="2 6 10 14 18"
     --8<-- "docs/examples/styles/opacity.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Fade the widget to 50% against its parent's background */
 opacity: 50%;
 ```

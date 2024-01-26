@@ -13,7 +13,7 @@ A [`<name>`](./name.md) is any non-empty sequence of characters:
 
 ### CSS
 
-```sass
+```css
 Screen {
     layers: onlyLetters Letters-and-hiphens _lead-under letters-1-digit;
 }

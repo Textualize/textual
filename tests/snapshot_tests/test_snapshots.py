@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import pytest
@@ -103,7 +102,7 @@ def test_input_validation(snap_compare):
 
 def test_input_suggestions(snap_compare):
     async def run_before(pilot):
-        pilot.app.query_one(Input).cursor_blink = False
+        pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before
@@ -348,6 +347,12 @@ def test_selection_list_tuples(snap_compare):
 def test_select_expanded(snap_compare):
     assert snap_compare(
         WIDGET_EXAMPLES_DIR / "select_widget.py", press=["tab", "enter"]
+    )
+
+
+def test_select_from_values_expanded(snap_compare):
+    assert snap_compare(
+        WIDGET_EXAMPLES_DIR / "select_from_values_widget.py", press=["tab", "enter"]
     )
 
 
@@ -789,6 +794,7 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -840,6 +846,7 @@ I am the final line."""
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
 )
@@ -892,8 +899,10 @@ def test_unscoped_css(snap_compare) -> None:
 def test_big_buttons(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "big_button.py")
 
+
 def test_keyline(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "keyline.py")
+
 
 def test_button_outline(snap_compare):
     """Outline style rendered incorrectly when applied to a `Button` widget.
@@ -928,3 +937,50 @@ def test_vertical_max_height(snap_compare):
     """Test vertical max height takes border in to account."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "vertical_max_height.py")
 
+
+def test_max_height_100(snap_compare):
+    """Test vertical max height takes border in to account."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "max_height_100.py")
+
+
+def test_loading_indicator(snap_compare):
+    """Test loading indicator."""
+    # https://github.com/Textualize/textual/pull/3816
+    assert snap_compare(SNAPSHOT_APPS_DIR / "loading.py", press=["space"])
+
+
+def test_loading_indicator_disables_widget(snap_compare):
+    """Test loading indicator disabled widget."""
+    # https://github.com/Textualize/textual/pull/3816
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "loading.py", press=["space", "down", "down", "space"]
+    )
+
+
+def test_mount_style_fix(snap_compare):
+    """Regression test for broken style update on mount."""
+    # https://github.com/Textualize/textual/issues/3858
+    assert snap_compare(SNAPSHOT_APPS_DIR / "mount_style_fix.py")
+
+
+def test_zero_scrollbar_size(snap_compare):
+    """Regression test for missing content with 0 sized scrollbars"""
+    # https://github.com/Textualize/textual/issues/3886
+    assert snap_compare(SNAPSHOT_APPS_DIR / "zero_scrollbar_size.py")
+
+
+def test_tree_clearing_and_expansion(snap_compare):
+    """Test the Tree.root.is_expanded state after a Tree.clear"""
+    # https://github.com/Textualize/textual/issues/3557
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tree_clearing.py")
+
+
+def test_nested_specificity(snap_compare):
+    """Test specificity of nested rules is working."""
+    # https://github.com/Textualize/textual/issues/3961
+    assert snap_compare(SNAPSHOT_APPS_DIR / "nested_specificity.py")
+
+
+def test_tab_rename(snap_compare):
+    """Test setting a new label for a tab amongst a TabbedContent."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")

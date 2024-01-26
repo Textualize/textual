@@ -22,7 +22,7 @@ The example below shows switches in various states.
 
 === "switch.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/switch.tcss"
     ```
 
