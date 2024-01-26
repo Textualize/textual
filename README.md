@@ -10,7 +10,7 @@
 
 Textual is a *Rapid Application Development* framework for Python.
 
-Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (coming soon) a web browser!
+Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and a [web browser](https://github.com/Textualize/textual-web)!
 
 
 <details>
@@ -36,7 +36,7 @@ On modern terminal software (installed by default on most systems), Textual apps
 
 ## Compatibility
 
-Textual runs on Linux, macOS, and Windows. Textual requires Python 3.7 or above.
+Textual runs on Linux, macOS, and Windows. Textual requires Python 3.8 or above.
 
 ## Installing
 

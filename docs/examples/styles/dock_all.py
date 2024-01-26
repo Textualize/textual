@@ -4,6 +4,8 @@ from textual.widgets import Label
 
 
 class DockAllApp(App):
+    CSS_PATH = "dock_all.tcss"
+
     def compose(self):
         yield Container(
             Container(Label("left"), id="left"),
@@ -14,4 +16,6 @@ class DockAllApp(App):
         )
 
 
-app = DockAllApp(css_path="dock_all.css")
+if __name__ == "__main__":
+    app = DockAllApp()
+    app.run()

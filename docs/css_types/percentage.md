@@ -9,14 +9,14 @@ It is often used to represent values that are relative to the parent's values.
 
 ## Syntax
 
-A [`<percentage>`](/css_types/percentage) is a [`<number>`](/css_types/number) followed by the percent sign `%` (without spaces).
+A [`<percentage>`](./percentage.md) is a [`<number>`](./number.md) followed by the percent sign `%` (without spaces).
 Some rules may clamp the values between `0%` and `100%`.
 
 ## Examples
 
 ### CSS
 
-```sass
+```css
 #footer {
     /* Integer followed by % */
     color: red 70%;

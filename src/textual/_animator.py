@@ -349,6 +349,7 @@ class Animator:
             duration is None and speed is not None
         ), "An Animation should have a duration OR a speed"
 
+        # If an animation is already scheduled for this attribute, unschedule it.
         animation_key = (id(obj), attribute)
         try:
             del self._scheduled[animation_key]
@@ -359,9 +360,7 @@ class Animator:
             final_value = value
 
         start_time = self._get_time()
-
         easing_function = EASING[easing] if isinstance(easing, str) else easing
-
         animation: Animation | None = None
 
         if hasattr(obj, "__textual_animation__"):
@@ -476,9 +475,7 @@ class Animator:
             complete: Should the animation be set to its final value?
 
         Note:
-            If there is no animation running, this is a no-op. If there is
-            an animation running the attribute will be left in the last
-            state it was in before the call to stop.
+            If there is no animation scheduled or running, this is a no-op.
         """
         key = (id(obj), attribute)
         if key in self._scheduled:

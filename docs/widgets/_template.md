@@ -23,15 +23,16 @@ Example app showing the widget:
     --8<-- "docs/examples/widgets/checkbox.py"
     ```
 
-=== "checkbox.css"
+=== "checkbox.tcss"
 
-    ```sass
-    --8<-- "docs/examples/widgets/checkbox.css"
+    ```css
+    --8<-- "docs/examples/widgets/checkbox.tcss"
     ```
 
 
-## Reactive attributes
+## Reactive Attributes
 
+## Messages
 
 ## Bindings
 

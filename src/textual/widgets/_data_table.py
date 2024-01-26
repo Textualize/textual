@@ -4,7 +4,7 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -16,11 +16,11 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self, TypeAlias
 
 from .. import events
-from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..color import Color
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
@@ -33,32 +33,34 @@ from ..strip import Strip
 from ..widget import PseudoClasses
 
 CellCacheKey: TypeAlias = (
-    "tuple[RowKey, ColumnKey, Style, bool, bool, int, PseudoClasses]"
+    "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
 )
 LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
 RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
 CursorType = Literal["cell", "row", "column", "none"]
-"""The legal types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
+"""The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
+"""Type used for cells in the DataTable."""
 
-CELL_X_PADDING = 2
+_DEFAULT_CELL_X_PADDING = 1
+"""Default padding to use on each side of a column in the data table."""
 
 
 class CellDoesNotExist(Exception):
     """The cell key/index was invalid.
 
-    Raised when the user supplies coordinates or cell keys which
-    do not exist in the DataTable."""
+    Raised when the coordinates or cell key provided does not exist
+    in the DataTable (e.g. out of bounds index, invalid key)"""
 
 
 class RowDoesNotExist(Exception):
-    """Raised when the user supplies a row index or row key which does
-    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+    """Raised when the row index or row key provided does not exist
+    in the DataTable (e.g. out of bounds index, invalid key)"""
 
 
 class ColumnDoesNotExist(Exception):
-    """Raised when the user supplies a column index or column key which does
-    not exist in the DataTable (e.g. out of bounds index, invalid key)"""
+    """Raised when the column index or column key provided does not exist
+    in the DataTable (e.g. out of bounds index, invalid key)"""
 
 
 class DuplicateKey(Exception):
@@ -130,12 +132,16 @@ class ColumnKey(StringKey):
 class CellKey(NamedTuple):
     """A unique identifier for a cell in the DataTable.
 
+    A cell key is a `(row_key, column_key)` tuple.
+
     Even if the cell changes
     visual location (i.e. moves to a different coordinate in the table), this key
     can still be used to retrieve it, regardless of where it currently is."""
 
     row_key: RowKey
+    """The key of this cell's row."""
     column_key: ColumnKey
+    """The key of this cell's column."""
 
     def __rich_repr__(self):
         yield "row_key", self.row_key
@@ -170,14 +176,18 @@ class Column:
     content_width: int = 0
     auto_width: bool = False
 
-    @property
-    def render_width(self) -> int:
-        """Width in cells, required to render a column."""
-        # +2 is to account for space padding either side of the cell
-        if self.auto_width:
-            return self.content_width + CELL_X_PADDING
-        else:
-            return self.width + CELL_X_PADDING
+    def get_render_width(self, data_table: DataTable[Any]) -> int:
+        """Width, in cells, required to render the column with padding included.
+
+        Args:
+            data_table: The data table where the column will be rendered.
+
+        Returns:
+            The width, in cells, required to render the column with padding included.
+        """
+        return 2 * data_table.cell_padding + (
+            self.content_width if self.auto_width else self.width
+        )
 
 
 @dataclass
@@ -187,6 +197,7 @@ class Row:
     key: RowKey
     height: int
     label: Text | None = None
+    auto_height: bool = False
 
 
 class RowRenderables(NamedTuple):
@@ -244,14 +255,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     """
 
     DEFAULT_CSS = """
-    App.-dark DataTable {
-        background:;
+    DataTable:dark {
+        background: initial;
     }
     DataTable {
         background: $surface ;
         color: $text;
         height: auto;
-        max-height: 100%;
+        max-height: 100vh;
     }
     DataTable > .datatable--header {
         text-style: bold;
@@ -290,7 +301,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         background: $secondary 30%;
     }
 
-    .-dark-mode DataTable > .datatable--even-row {
+    DataTable:dark > .datatable--even-row {
         background: $primary 15%;
     }
 
@@ -308,6 +319,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     show_cursor = Reactive(True)
     cursor_type: Reactive[CursorType] = Reactive[CursorType]("cell")
     """The type of the cursor of the `DataTable`."""
+    cell_padding = Reactive(_DEFAULT_CELL_X_PADDING)
+    """Horizontal padding between cells, applied on each side of each cell."""
 
     cursor_coordinate: Reactive[Coordinate] = Reactive(
         Coordinate(0, 0), repaint=False, always_update=True
@@ -322,7 +335,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     )
     """The coordinate of the `DataTable` that is being hovered."""
 
-    class CellHighlighted(Message, bubble=True):
+    class CellHighlighted(Message):
         """Posted when the cursor moves to highlight a new cell.
 
         This is only relevant when the `cursor_type` is `"cell"`.
@@ -359,7 +372,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class CellSelected(Message, bubble=True):
+    class CellSelected(Message):
         """Posted by the `DataTable` widget when a cell is selected.
 
         This is only relevant when the `cursor_type` is `"cell"`. Can be handled using
@@ -394,7 +407,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class RowHighlighted(Message, bubble=True):
+    class RowHighlighted(Message):
         """Posted when a row is highlighted.
 
         This message is only posted when the
@@ -423,7 +436,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class RowSelected(Message, bubble=True):
+    class RowSelected(Message):
         """Posted when a row is selected.
 
         This message is only posted when the
@@ -452,7 +465,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class ColumnHighlighted(Message, bubble=True):
+    class ColumnHighlighted(Message):
         """Posted when a column is highlighted.
 
         This message is only posted when the
@@ -481,7 +494,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class ColumnSelected(Message, bubble=True):
+    class ColumnSelected(Message):
         """Posted when a column is selected.
 
         This message is only posted when the
@@ -510,7 +523,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class HeaderSelected(Message, bubble=True):
+    class HeaderSelected(Message):
         """Posted when a column header/label is clicked."""
 
         def __init__(
@@ -540,7 +553,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             """Alias for the data table."""
             return self.data_table
 
-    class RowLabelSelected(Message, bubble=True):
+    class RowLabelSelected(Message):
         """Posted when a row label is clicked."""
 
         def __init__(
@@ -582,11 +595,44 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         show_cursor: bool = True,
         cursor_foreground_priority: Literal["renderable", "css"] = "css",
         cursor_background_priority: Literal["renderable", "css"] = "renderable",
+        cursor_type: CursorType = "cell",
+        cell_padding: int = _DEFAULT_CELL_X_PADDING,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
+        """Initialises a widget to display tabular data.
+
+        Args:
+            show_header: Whether the table header should be visible or not.
+            show_row_labels: Whether the row labels should be shown or not.
+            fixed_rows: The number of rows, counting from the top, that should be fixed
+                and still visible when the user scrolls down.
+            fixed_columns: The number of columns, counting from the left, that should be
+                fixed and still visible when the user scrolls right.
+            zebra_stripes: Enables or disables a zebra effect applied to the background
+                color of the rows of the table, where alternate colors are styled
+                differently to improve the readability of the table.
+            header_height: The height, in number of cells, of the data table header.
+            show_cursor: Whether the cursor should be visible when navigating the data
+                table or not.
+            cursor_foreground_priority: If the data associated with a cell is an
+                arbitrary renderable with a set foreground color, this determines whether
+                that color is prioritized over the cursor component class or not.
+            cursor_background_priority: If the data associated with a cell is an
+                arbitrary renderable with a set background color, this determines whether
+                that color is prioritized over the cursor component class or not.
+            cursor_type: The type of cursor to be used when navigating the data table
+                with the keyboard.
+            cell_padding: The number of cells added on each side of each column. Setting
+                this value to zero will likely make your table very heard to read.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._data: dict[RowKey, dict[ColumnKey, CellType]] = {}
         """Contains the cells of the table, indexed by row key and column key.
@@ -669,6 +715,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.cursor_background_priority = cursor_background_priority
         """Should we prioritize the cursor component class CSS background or the renderable background
          in the event where a cell contains a renderable with a background color."""
+        self.cursor_type = cursor_type
+        """The type of cursor of the `DataTable`."""
+        self.cell_padding = cell_padding
+        """Horizontal padding between cells, applied on each side of each cell."""
 
     @property
     def hover_row(self) -> int:
@@ -741,12 +791,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if isinstance(column_key, str):
             column_key = ColumnKey(column_key)
 
-        try:
-            self._data[row_key][column_key] = value
-        except KeyError:
+        if (
+            row_key not in self._row_locations
+            or column_key not in self._column_locations
+        ):
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
-            ) from None
+            )
+
+        self._data[row_key][column_key] = value
         self._update_count += 1
 
         # Recalculate widths if necessary
@@ -807,7 +860,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.get_cell(row_key, column_key)
 
     def get_cell_coordinate(
-        self, row_key: RowKey | str, column_key: Column | str
+        self, row_key: RowKey | str, column_key: ColumnKey | str
     ) -> Coordinate:
         """Given a row key and column key, return the corresponding cell coordinate.
 
@@ -948,6 +1001,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._styles_cache.clear()
         self._offset_cache.clear()
         self._ordered_row_cache.clear()
+        self._get_styles_to_render_cell.cache_clear()
 
     def get_row_height(self, row_key: RowKey) -> int:
         """Given a row key, return the height of that row in terminal cells.
@@ -962,7 +1016,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             return self.header_height
         return self.rows[row_key].height
 
-    async def _on_styles_updated(self) -> None:
+    def notify_style_update(self) -> None:
         self._clear_caches()
         self.refresh()
 
@@ -991,7 +1045,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     def watch_show_row_labels(self, show: bool) -> None:
         width, height = self.virtual_size
-        column_width = self._label_column.render_width
+        column_width = self._label_column.get_render_width(self)
         width_change = column_width if show else -column_width
         self.virtual_size = Size(width + width_change, height)
         self._scroll_cursor_into_view()
@@ -1004,6 +1058,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._clear_caches()
 
     def watch_zebra_stripes(self) -> None:
+        self._clear_caches()
+
+    def validate_cell_padding(self, cell_padding: int) -> int:
+        return max(cell_padding, 0)
+
+    def watch_cell_padding(self, old_padding: int, new_padding: int) -> None:
+        # A single side of a single cell will have its width changed by (new - old),
+        # so the total width change is double that per column, times the number of
+        # columns for the whole data table.
+        width_change = 2 * (new_padding - old_padding) * len(self.columns)
+        width, height = self.virtual_size
+        self.virtual_size = Size(width + width_change, height)
+        self._scroll_cursor_into_view()
         self._clear_caches()
 
     def watch_hover_coordinate(self, old: Coordinate, value: Coordinate) -> None:
@@ -1027,7 +1094,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._highlight_column(new_coordinate.column)
             # If the coordinate was changed via `move_cursor`, give priority to its
             # scrolling because it may be animated.
-            self.call_next(self._scroll_cursor_into_view)
+            self.call_after_refresh(self._scroll_cursor_into_view)
 
     def move_cursor(
         self,
@@ -1052,14 +1119,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column: The new column to move the cursor to.
             animate: Whether to animate the change of coordinates.
         """
+
         cursor_row, cursor_column = self.cursor_coordinate
         if row is not None:
             cursor_row = row
         if column is not None:
             cursor_column = column
         destination = Coordinate(cursor_row, cursor_column)
+
+        # Scroll the cursor after refresh to ensure the virtual height
+        # (calculated in on_idle) has settled. If we tried to scroll before
+        # the virtual size has been set, then it might fail if we added a bunch
+        # of rows then tried to immediately move the cursor.
+        # We do this before setting `cursor_coordinate` because its watcher will also
+        # schedule a call to `_scroll_cursor_into_view` without optionally animating.
+        self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
+
         self.cursor_coordinate = destination
-        self._scroll_cursor_into_view(animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""
@@ -1159,7 +1235,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     @property
     def _row_label_column_width(self) -> int:
         """The render width of the column containing row labels"""
-        return self._label_column.render_width if self._should_render_row_labels else 0
+        return (
+            self._label_column.get_render_width(self)
+            if self._should_render_row_labels
+            else 0
+        )
 
     def _update_column_widths(self, updated_cells: set[CellKey]) -> None:
         """Update the widths of the columns based on the newly updated cell widths."""
@@ -1187,8 +1267,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._require_update_dimensions = True
 
     def _update_dimensions(self, new_rows: Iterable[RowKey]) -> None:
-        """Called to recalculate the virtual (scrollable) size."""
+        """Called to recalculate the virtual (scrollable) size.
+
+        This recomputes column widths and then checks if any of the new rows need
+        to have their height computed.
+
+        Args:
+            new_rows: The new rows that will affect the `DataTable` dimensions.
+        """
         console = self.app.console
+        auto_height_rows: list[tuple[int, Row, list[RenderableType]]] = []
         for row_key in new_rows:
             row_index = self._row_locations.get(row_key)
 
@@ -1198,6 +1286,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 continue
 
             row = self.rows.get(row_key)
+            assert row is not None
 
             if row.label is not None:
                 self._labelled_row_exists = True
@@ -1212,9 +1301,69 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 content_width = measure(console, renderable, 1)
                 column.content_width = max(column.content_width, content_width)
 
-        self._clear_caches()
+            if row.auto_height:
+                auto_height_rows.append((row_index, row, cells_in_row))
 
-        data_cells_width = sum(column.render_width for column in self.columns.values())
+        # If there are rows that need to have their height computed, render them correctly
+        # so that we can cache this rendering for later.
+        if auto_height_rows:
+            render_cell = self._render_cell  # This method renders & caches.
+            should_highlight = self._should_highlight
+            cursor_type = self.cursor_type
+            cursor_location = self.cursor_coordinate
+            hover_location = self.hover_coordinate
+            base_style = self.rich_style
+            fixed_style = self.get_component_styles(
+                "datatable--fixed"
+            ).rich_style + Style.from_meta({"fixed": True})
+            ordered_columns = self.ordered_columns
+            fixed_columns = self.fixed_columns
+
+            for row_index, row, cells_in_row in auto_height_rows:
+                height = 0
+                row_style = self._get_row_style(row_index, base_style)
+
+                # As we go through the cells, save their rendering, height, and
+                # column width. After we compute the height of the row, go over the cells
+                # that were rendered with the wrong height and append the missing padding.
+                rendered_cells: list[tuple[SegmentLines, int, int]] = []
+                for column_index, column in enumerate(ordered_columns):
+                    style = fixed_style if column_index < fixed_columns else row_style
+                    cell_location = Coordinate(row_index, column_index)
+                    rendered_cell = render_cell(
+                        row_index,
+                        column_index,
+                        style,
+                        column.get_render_width(self),
+                        cursor=should_highlight(
+                            cursor_location, cell_location, cursor_type
+                        ),
+                        hover=should_highlight(
+                            hover_location, cell_location, cursor_type
+                        ),
+                    )
+                    cell_height = len(rendered_cell)
+                    rendered_cells.append(
+                        (rendered_cell, cell_height, column.get_render_width(self))
+                    )
+                    height = max(height, cell_height)
+
+                row.height = height
+                # Do surgery on the cache for cells that were rendered with the incorrect
+                # height during the first pass.
+                for cell_renderable, cell_height, column_width in rendered_cells:
+                    if cell_height < height:
+                        first_line_space_style = cell_renderable[0][0].style
+                        cell_renderable.extend(
+                            [
+                                [Segment(" " * column_width, first_line_space_style)]
+                                for _ in range(height - cell_height)
+                            ]
+                        )
+
+        data_cells_width = sum(
+            column.get_render_width(self) for column in self.columns.values()
+        )
         total_width = data_cells_width + self._row_label_column_width
         header_height = self.header_height if self.show_header else 0
         self.virtual_size = Size(
@@ -1234,11 +1383,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # The x-coordinate of a cell is the sum of widths of the data cells to the left
         # plus the width of the render width of the longest row label.
         x = (
-            sum(column.render_width for column in self.ordered_columns[:column_index])
+            sum(
+                column.get_render_width(self)
+                for column in self.ordered_columns[:column_index]
+            )
             + self._row_label_column_width
         )
         column_key = self._column_locations.get_key(column_index)
-        width = self.columns[column_key].render_width
+        width = self.columns[column_key].get_render_width(self)
         height = row.height
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
         if self.show_header:
@@ -1255,7 +1407,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row_key = self._row_locations.get_key(row_index)
         row = rows[row_key]
         row_width = (
-            sum(column.render_width for column in self.columns.values())
+            sum(column.get_render_width(self) for column in self.columns.values())
             + self._row_label_column_width
         )
         y = sum(ordered_row.height for ordered_row in self.ordered_rows[:row_index])
@@ -1271,11 +1423,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         columns = self.columns
         x = (
-            sum(column.render_width for column in self.ordered_columns[:column_index])
+            sum(
+                column.get_render_width(self)
+                for column in self.ordered_columns[:column_index]
+            )
             + self._row_label_column_width
         )
         column_key = self._column_locations.get_key(column_index)
-        width = columns[column_key].render_width
+        width = columns[column_key].get_render_width(self)
         header_height = self.header_height if self.show_header else 0
         height = self._total_row_height + header_height
         full_column_region = Region(x, 0, width, height)
@@ -1370,7 +1525,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def add_row(
         self,
         *cells: CellType,
-        height: int = 1,
+        height: int | None = 1,
         key: str | None = None,
         label: TextType | None = None,
     ) -> RowKey:
@@ -1378,13 +1533,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         Args:
             *cells: Positional arguments should contain cell data.
-            height: The height of a row (in lines).
+            height: The height of a row (in lines). Use `None` to auto-detect the optimal
+                height.
             key: A key which uniquely identifies this row. If None, it will be generated
                 for you and returned.
             label: The label for the row. Will be displayed to the left if supplied.
 
         Returns:
-            Uniquely identifies this row. Can be used to retrieve this row regardless
+            Unique identifier for this row. Can be used to retrieve this row regardless
                 of its current location in the DataTable (it could have moved after
                 being added due to sorting or insertion/deletion of other rows).
         """
@@ -1404,7 +1560,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
         label = Text.from_markup(label) if isinstance(label, str) else label
-        self.rows[row_key] = Row(row_key, height, label)
+        # Rows with auto-height get a height of 0 because 1) we need an integer height
+        # to do some intermediate computations and 2) because 0 doesn't impact the data
+        # table while we don't figure out how tall this row is.
+        self.rows[row_key] = Row(
+            row_key,
+            height or 0,
+            label,
+            height is None,
+        )
         self._new_rows.add(row_key)
         self._require_update_dimensions = True
         self.cursor_coordinate = self.cursor_coordinate
@@ -1482,6 +1646,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         self._row_locations = new_row_locations
 
+        # Prevent the removed cells from triggering dimension updates
+        for column_key in self._data.get(row_key):
+            self._updated_cells.discard(CellKey(row_key, column_key))
+
         del self.rows[row_key]
         del self._data[row_key]
 
@@ -1518,8 +1686,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self._column_locations = new_column_locations
 
         del self.columns[column_key]
-        for row in self._data:
-            del self._data[row][column_key]
+
+        for row_key in self._data:
+            self._updated_cells.discard(CellKey(row_key, column_key))
+            del self._data[row_key][column_key]
 
         self.cursor_coordinate = self.cursor_coordinate
         self.hover_coordinate = self.hover_coordinate
@@ -1537,13 +1707,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self._updated_cells:
             # Cell contents have already been updated at this point.
             # Now we only need to worry about measuring column widths.
-            updated_columns = self._updated_cells.copy()
+            updated_cells = self._updated_cells.copy()
             self._updated_cells.clear()
-            self._update_column_widths(updated_columns)
+            self._update_column_widths(updated_cells)
 
         if self._require_update_dimensions:
             # Add the new rows *before* updating the column widths, since
-            # cells in a new row may influence the final width of a column
+            # cells in a new row may influence the final width of a column.
+            # Only then can we compute optimal height of rows with "auto" height.
             self._require_update_dimensions = False
             new_rows = self._new_rows.copy()
             self._new_rows.clear()
@@ -1751,19 +1922,19 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row_key = self._row_locations.get_key(row_index)
 
         column_key = self._column_locations.get_key(column_index)
-        cell_cache_key = (
+        cell_cache_key: CellCacheKey = (
             row_key,
             column_key,
             base_style,
             cursor,
             hover,
+            self._show_hover_cursor,
             self._update_count,
             self._pseudo_class_state,
         )
 
         if cell_cache_key not in self._cell_render_cache:
             base_style += Style.from_meta({"row": row_index, "column": column_index})
-            height = self.header_height if is_header_cell else self.rows[row_key].height
             row_label, row_cells = self._get_row_renderables(row_index)
 
             if is_row_label_cell:
@@ -1771,49 +1942,103 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             else:
                 cell = row_cells[column_index]
 
-            get_component = self.get_component_rich_style
-            show_cursor = self.show_cursor
-            component_style = Style()
-
-            if hover and show_cursor and self._show_hover_cursor:
-                component_style += get_component("datatable--hover")
-                if is_header_cell or is_row_label_cell:
-                    # Apply subtle variation in style for the header/label (blue background by
-                    # default) rows and columns affected by the cursor, to ensure we can
-                    # still differentiate between the labels and the data.
-                    component_style += get_component("datatable--header-hover")
-
-            if cursor and show_cursor:
-                cursor_style = get_component("datatable--cursor")
-                component_style += cursor_style
-                if is_header_cell or is_row_label_cell:
-                    component_style += get_component("datatable--header-cursor")
-                elif is_fixed_style_cell:
-                    component_style += get_component("datatable--fixed-cursor")
-
-            post_foreground = (
-                Style.from_color(color=component_style.color)
-                if self.cursor_foreground_priority == "css"
-                else Style.null()
-            )
-            post_background = (
-                Style.from_color(bgcolor=component_style.bgcolor)
-                if self.cursor_background_priority == "css"
-                else Style.null()
+            component_style, post_style = self._get_styles_to_render_cell(
+                is_header_cell,
+                is_row_label_cell,
+                is_fixed_style_cell,
+                hover,
+                cursor,
+                self.show_cursor,
+                self._show_hover_cursor,
+                self.cursor_foreground_priority == "css",
+                self.cursor_background_priority == "css",
             )
 
+            if is_header_cell:
+                options = self.app.console.options.update_dimensions(
+                    width, self.header_height
+                )
+            else:
+                row = self.rows[row_key]
+                # If an auto-height row hasn't had its height calculated, we don't fix
+                # the value for `height` so that we can measure the height of the cell.
+                if row.auto_height and row.height == 0:
+                    options = self.app.console.options.update_width(width)
+                else:
+                    options = self.app.console.options.update_dimensions(
+                        width, row.height
+                    )
             lines = self.app.console.render_lines(
                 Styled(
-                    Padding(cell, (0, 1)),
+                    Padding(cell, (0, self.cell_padding)),
                     pre_style=base_style + component_style,
-                    post_style=post_foreground + post_background,
+                    post_style=post_style,
                 ),
-                self.app.console.options.update_dimensions(width, height),
+                options,
             )
 
             self._cell_render_cache[cell_cache_key] = lines
 
         return self._cell_render_cache[cell_cache_key]
+
+    @functools.lru_cache(maxsize=32)
+    def _get_styles_to_render_cell(
+        self,
+        is_header_cell: bool,
+        is_row_label_cell: bool,
+        is_fixed_style_cell: bool,
+        hover: bool,
+        cursor: bool,
+        show_cursor: bool,
+        show_hover_cursor: bool,
+        has_css_foreground_priority: bool,
+        has_css_background_priority: bool,
+    ) -> tuple[Style, Style]:
+        """Auxiliary method to compute styles used to render a given cell.
+
+        Args:
+            is_header_cell: Is this a cell from a header?
+            is_row_label_cell: Is this the label of any given row?
+            is_fixed_style_cell: Should this cell be styled like a fixed cell?
+            hover: Does this cell have the hover pseudo class?
+            cursor: Is this cell covered by the cursor?
+            show_cursor: Do we want to show the cursor in the data table?
+            show_hover_cursor: Do we want to show the mouse hover when using the keyboard
+                to move the cursor?
+            has_css_foreground_priority: `self.cursor_foreground_priority == "css"`?
+            has_css_background_priority: `self.cursor_background_priority == "css"`?
+        """
+        get_component = self.get_component_rich_style
+        component_style = Style()
+
+        if hover and show_cursor and show_hover_cursor:
+            component_style += get_component("datatable--hover")
+            if is_header_cell or is_row_label_cell:
+                # Apply subtle variation in style for the header/label (blue background by
+                # default) rows and columns affected by the cursor, to ensure we can
+                # still differentiate between the labels and the data.
+                component_style += get_component("datatable--header-hover")
+
+        if cursor and show_cursor:
+            cursor_style = get_component("datatable--cursor")
+            component_style += cursor_style
+            if is_header_cell or is_row_label_cell:
+                component_style += get_component("datatable--header-cursor")
+            elif is_fixed_style_cell:
+                component_style += get_component("datatable--fixed-cursor")
+
+        post_foreground = (
+            Style.from_color(color=component_style.color)
+            if has_css_foreground_priority
+            else Style.null()
+        )
+        post_background = (
+            Style.from_color(bgcolor=component_style.bgcolor)
+            if has_css_background_priority
+            else Style.null()
+        )
+
+        return component_style, post_foreground + post_background
 
     def _render_line_in_row(
         self,
@@ -1855,29 +2080,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if cache_key in self._row_render_cache:
             return self._row_render_cache[cache_key]
 
-        def _should_highlight(
-            cursor: Coordinate,
-            target_cell: Coordinate,
-            type_of_cursor: CursorType,
-        ) -> bool:
-            """Determine whether we should highlight a cell given the location
-            of the cursor, the location of the cell, and the type of cursor that
-            is currently active."""
-            if type_of_cursor == "cell":
-                return cursor == target_cell
-            elif type_of_cursor == "row":
-                cursor_row, _ = cursor
-                cell_row, _ = target_cell
-                return cursor_row == cell_row
-            elif type_of_cursor == "column":
-                _, cursor_column = cursor
-                _, cell_column = target_cell
-                return cursor_column == cell_column
-            else:
-                return False
-
-        is_header_row = row_key is self._header_row_key
+        should_highlight = self._should_highlight
         render_cell = self._render_cell
+        header_style = self.get_component_styles("datatable--header").rich_style
 
         if row_key in self._row_locations:
             row_index = self._row_locations.get(row_key)
@@ -1886,7 +2091,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         # If the row has a label, add it to fixed_row here with correct style.
         fixed_row = []
-        header_style = self.get_component_styles("datatable--header").rich_style
 
         if self._labelled_row_exists and self.show_row_labels:
             # The width of the row label is updated again on idle
@@ -1896,14 +2100,17 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 -1,
                 header_style,
                 width=self._row_label_column_width,
-                cursor=_should_highlight(cursor_location, cell_location, cursor_type),
-                hover=_should_highlight(hover_location, cell_location, cursor_type),
+                cursor=should_highlight(cursor_location, cell_location, cursor_type),
+                hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             fixed_row.append(label_cell_lines)
 
         if self.fixed_columns:
-            fixed_style = self.get_component_styles("datatable--fixed").rich_style
-            fixed_style += Style.from_meta({"fixed": True})
+            if row_key is self._header_row_key:
+                fixed_style = header_style  # We use the header style either way.
+            else:
+                fixed_style = self.get_component_styles("datatable--fixed").rich_style
+                fixed_style += Style.from_meta({"fixed": True})
             for column_index, column in enumerate(
                 self.ordered_columns[: self.fixed_columns]
             ):
@@ -1911,28 +2118,16 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 fixed_cell_lines = render_cell(
                     row_index,
                     column_index,
-                    header_style if is_header_row else fixed_style,
-                    column.render_width,
-                    cursor=_should_highlight(
+                    fixed_style,
+                    column.get_render_width(self),
+                    cursor=should_highlight(
                         cursor_location, cell_location, cursor_type
                     ),
-                    hover=_should_highlight(hover_location, cell_location, cursor_type),
+                    hover=should_highlight(hover_location, cell_location, cursor_type),
                 )[line_no]
                 fixed_row.append(fixed_cell_lines)
 
-        is_header_row = row_key is self._header_row_key
-        if is_header_row:
-            row_style = self.get_component_styles("datatable--header").rich_style
-        elif row_index < self.fixed_rows:
-            row_style = self.get_component_styles("datatable--fixed").rich_style
-        else:
-            if self.zebra_stripes:
-                component_row_style = (
-                    "datatable--odd-row" if row_index % 2 else "datatable--even-row"
-                )
-                row_style = self.get_component_styles(component_row_style).rich_style
-            else:
-                row_style = base_style
+        row_style = self._get_row_style(row_index, base_style)
 
         scrollable_row = []
         for column_index, column in enumerate(self.ordered_columns):
@@ -1941,9 +2136,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 row_index,
                 column_index,
                 row_style,
-                column.render_width,
-                cursor=_should_highlight(cursor_location, cell_location, cursor_type),
-                hover=_should_highlight(hover_location, cell_location, cursor_type),
+                column.get_render_width(self),
+                cursor=should_highlight(cursor_location, cell_location, cursor_type),
+                hover=should_highlight(hover_location, cell_location, cursor_type),
             )[line_no]
             scrollable_row.append(cell_lines)
 
@@ -1951,7 +2146,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         widget_width = self.size.width
         table_width = (
             sum(
-                column.render_width
+                column.get_render_width(self)
                 for column in self.ordered_columns[self.fixed_columns :]
             )
             + self._row_label_column_width
@@ -2035,7 +2230,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             hover_location=self.hover_coordinate,
         )
         fixed_width = sum(
-            column.render_width for column in self.ordered_columns[: self.fixed_columns]
+            column.get_render_width(self)
+            for column in self.ordered_columns[: self.fixed_columns]
         )
 
         fixed_line: list[Segment] = list(chain.from_iterable(fixed)) if fixed else []
@@ -2071,13 +2267,73 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
         return self._render_line(y, scroll_x, scroll_x + width, self.rich_style)
 
+    def _should_highlight(
+        self,
+        cursor: Coordinate,
+        target_cell: Coordinate,
+        type_of_cursor: CursorType,
+    ) -> bool:
+        """Determine if the given cell should be highlighted because of the cursor.
+
+        This auxiliary method takes the cursor position and type into account when
+        determining whether the cell should be highlighted.
+
+        Args:
+            cursor: The current position of the cursor.
+            target_cell: The cell we're checking for the need to highlight.
+            type_of_cursor: The type of cursor that is currently active.
+
+        Returns:
+            Whether or not the given cell should be highlighted.
+        """
+        if type_of_cursor == "cell":
+            return cursor == target_cell
+        elif type_of_cursor == "row":
+            cursor_row, _ = cursor
+            cell_row, _ = target_cell
+            return cursor_row == cell_row
+        elif type_of_cursor == "column":
+            _, cursor_column = cursor
+            _, cell_column = target_cell
+            return cursor_column == cell_column
+        else:
+            return False
+
+    def _get_row_style(self, row_index: int, base_style: Style) -> Style:
+        """Gets the Style that should be applied to the row at the given index.
+
+        Args:
+            row_index: The index of the row to style.
+            base_style: The base style to use by default.
+
+        Returns:
+            The appropriate style.
+        """
+
+        if row_index == -1:
+            row_style = self.get_component_styles("datatable--header").rich_style
+        elif row_index < self.fixed_rows:
+            row_style = self.get_component_styles("datatable--fixed").rich_style
+        else:
+            if self.zebra_stripes:
+                component_row_style = (
+                    "datatable--odd-row" if row_index % 2 else "datatable--even-row"
+                )
+                row_style = self.get_component_styles(component_row_style).rich_style
+            else:
+                row_style = base_style
+        return row_style
+
     def _on_mouse_move(self, event: events.MouseMove):
         """If the hover cursor is visible, display it by extracting the row
         and column metadata from the segments present in the cells."""
         self._set_hover_cursor(True)
         meta = event.style.meta
+        if not meta:
+            self._set_hover_cursor(False)
+            return
 
-        if meta and self.show_cursor and self.cursor_type != "none":
+        if self.show_cursor and self.cursor_type != "none":
             try:
                 self.hover_coordinate = Coordinate(meta["row"], meta["column"])
             except KeyError:
@@ -2094,7 +2350,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         top += sum(row.height for row in self.ordered_rows[: self.fixed_rows])
         left = (
             sum(
-                column.render_width
+                column.get_render_width(self)
                 for column in self.ordered_columns[: self.fixed_columns]
             )
             + self._row_label_column_width
@@ -2104,30 +2360,40 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def sort(
         self,
         *columns: ColumnKey | str,
+        key: Callable[[Any], Any] | None = None,
         reverse: bool = False,
     ) -> Self:
-        """Sort the rows in the `DataTable` by one or more column keys.
+        """Sort the rows in the `DataTable` by one or more column keys or a
+        key function (or other callable). If both columns and a key function
+        are specified, only data from those columns will sent to the key function.
 
         Args:
             columns: One or more columns to sort by the values in.
+            key: A function (or other callable) that returns a key to
+                use for sorting purposes.
             reverse: If True, the sort order will be reversed.
 
         Returns:
             The `DataTable` instance.
         """
 
-        def sort_by_column_keys(
-            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
-        ) -> Any:
+        def key_wrapper(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
             _, row_data = row
-            result = itemgetter(*columns)(row_data)
+            if columns:
+                result = itemgetter(*columns)(row_data)
+            else:
+                result = tuple(row_data.values())
+            if key is not None:
+                return key(result)
             return result
 
         ordered_rows = sorted(
-            self._data.items(), key=sort_by_column_keys, reverse=reverse
+            self._data.items(),
+            key=key_wrapper,
+            reverse=reverse,
         )
         self._row_locations = TwoWayDict(
-            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
+            {row_key: new_index for new_index, (row_key, _) in enumerate(ordered_rows)}
         )
         self._update_count += 1
         self.refresh()
@@ -2201,9 +2467,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_page_down(self) -> None:
         """Move the cursor one page down."""
         self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            height = self.size.height - self.header_height if self.show_header else 0
+        if self.show_cursor and self.cursor_type in ("cell", "row"):
+            height = self.size.height - (self.header_height if self.show_header else 0)
 
             # Determine how many rows constitutes a "page"
             offset = 0
@@ -2224,9 +2489,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def action_page_up(self) -> None:
         """Move the cursor one page up."""
         self._set_hover_cursor(False)
-        cursor_type = self.cursor_type
-        if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            height = self.size.height - self.header_height if self.show_header else 0
+        if self.show_cursor and self.cursor_type in ("cell", "row"):
+            height = self.size.height - (self.header_height if self.show_header else 0)
 
             # Determine how many rows constitutes a "page"
             offset = 0

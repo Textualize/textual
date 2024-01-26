@@ -4,6 +4,9 @@ from textual.widgets import Static
 
 class BackgroundTransparencyApp(App):
     """Simple app to exemplify different transparency settings."""
+
+    CSS_PATH = "background_transparency.tcss"
+
     def compose(self) -> ComposeResult:
         yield Static("10%", id="t10")
         yield Static("20%", id="t20")
@@ -17,4 +20,6 @@ class BackgroundTransparencyApp(App):
         yield Static("100%", id="t100")
 
 
-app = BackgroundTransparencyApp(css_path="background_transparency.css")
+if __name__ == "__main__":
+    app = BackgroundTransparencyApp()
+    app.run()

@@ -12,8 +12,12 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 
 class Scrollbar2App(App):
+    CSS_PATH = "scrollbars2.tcss"
+
     def compose(self):
         yield Label(TEXT * 10)
 
 
-app = Scrollbar2App(css_path="scrollbars2.css")
+if __name__ == "__main__":
+    app = Scrollbar2App()
+    app.run()

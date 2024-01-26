@@ -10,7 +10,7 @@ from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
 from textual.widget import MountError, PseudoClasses, Widget
-from textual.widgets import Label
+from textual.widgets import Label, LoadingIndicator
 
 
 @pytest.mark.parametrize(
@@ -194,7 +194,8 @@ def test_get_pseudo_class_state_disabled():
 
 def test_get_pseudo_class_state_parent_disabled():
     child = Widget()
-    _parent = Widget(child, disabled=True)
+    _parent = Widget(disabled=True)
+    child._attach(_parent)
     pseudo_classes = child.get_pseudo_class_state()
     assert pseudo_classes == PseudoClasses(enabled=False, focus=False, hover=False)
 
@@ -355,3 +356,83 @@ def test_get_set_tooltip():
     assert widget.tooltip == "This is a tooltip."
 
 
+async def test_loading():
+    """Test setting the loading reactive."""
+
+    class LoadingApp(App):
+        def compose(self) -> ComposeResult:
+            yield Label("Hello, World")
+
+    async with LoadingApp().run_test() as pilot:
+        app = pilot.app
+        label = app.query_one(Label)
+        assert label.loading == False
+        assert len(label.query(LoadingIndicator)) == 0
+
+        label.loading = True
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 1
+
+        label.loading = True  # Setting to same value is a null-op
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 1
+
+        label.loading = False
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 0
+
+        label.loading = False  # Setting to same value is a null-op
+        await pilot.pause()
+        assert len(label.query(LoadingIndicator)) == 0
+
+
+async def test_is_mounted_property():
+    class TestWidgetIsMountedApp(App):
+        pass
+
+    async with TestWidgetIsMountedApp().run_test() as pilot:
+        widget = Widget()
+        assert widget.is_mounted is False
+        await pilot.app.mount(widget)
+        assert widget.is_mounted is True
+
+
+async def test_mount_error_not_widget():
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield {}
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass
+
+
+async def test_mount_error_bad_widget():
+    class DaftWidget(Widget):
+        def __init__(self):
+            # intentionally missing super()
+            pass
+
+    class NotWidgetApp(App):
+        def compose(self) -> ComposeResult:
+            yield DaftWidget()
+
+    app = NotWidgetApp()
+    with pytest.raises(MountError):
+        async with app.run_test():
+            pass
+
+
+async def test_render_returns_text():
+    """Test that render processes console markup when returning a string."""
+
+    # Regression test for https://github.com/Textualize/textual/issues/3918
+    class SimpleWidget(Widget):
+        def render(self) -> str:
+            return "Hello [b]World[/b]!"
+
+    widget = SimpleWidget()
+    render_result = widget._render()
+    assert isinstance(render_result, Text)
+    assert render_result.plain == "Hello World!"

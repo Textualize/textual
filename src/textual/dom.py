@@ -1,5 +1,4 @@
 """
-
 A DOMNode is a base class for any object within the Textual Document Object Model,
 which includes all Widgets, Screens, and Apps.
 """
@@ -8,10 +7,12 @@ which includes all Widgets, Screens, and Apps.
 from __future__ import annotations
 
 import re
-from functools import lru_cache
+import threading
+from functools import lru_cache, partial
 from inspect import getfile
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     ClassVar,
     Iterable,
@@ -24,7 +25,6 @@ from typing import (
 
 import rich.repr
 from rich.highlighter import ReprHighlighter
-from rich.pretty import Pretty
 from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
@@ -50,6 +50,7 @@ if TYPE_CHECKING:
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
+    from .css.types import CSSLocation
     from .message import Message
     from .screen import Screen
     from .widget import Widget
@@ -79,7 +80,7 @@ def check_identifiers(description: str, *names: str) -> None:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
     """
-    match = _re_identifier.match
+    match = _re_identifier.fullmatch
     for name in names:
         if match(name) is None:
             raise BadIdentifier(
@@ -132,6 +133,10 @@ class DOMNode(MessagePump):
     # Mapping of key bindings
     BINDINGS: ClassVar[list[BindingType]] = []
 
+    # Indicates if the CSS should be automatically scoped
+    SCOPED_CSS: ClassVar[bool] = True
+    """Should default css be limited to the widget type?"""
+
     # True if this node inherits the CSS from the base class.
     _inherit_css: ClassVar[bool] = True
 
@@ -143,6 +148,9 @@ class DOMNode(MessagePump):
 
     # List of names of base classes that inherit CSS
     _css_type_names: ClassVar[frozenset[str]] = frozenset()
+
+    # Name of the widget in CSS
+    _css_type_name: str = ""
 
     # Generated list of bindings
     _merged_bindings: ClassVar[_Bindings | None] = None
@@ -158,7 +166,7 @@ class DOMNode(MessagePump):
         id: str | None = None,
         classes: str | None = None,
     ) -> None:
-        self._classes = set()
+        self._classes: set[str] = set()
         self._name = name
         self._id = None
         if id is not None:
@@ -260,7 +268,14 @@ class DOMNode(MessagePump):
         Returns:
             New Worker instance.
         """
-        worker: Worker[ResultType] = self.workers._new_worker(
+
+        # If we're running a worker from inside a secondary thread,
+        # do so in a thread-safe way.
+        if self.app._thread_id != threading.get_ident():
+            creator = partial(self.app.call_from_thread, self.workers._new_worker)
+        else:
+            creator = self.workers._new_worker
+        worker: Worker[ResultType] = creator(
             work,
             self,
             name=name,
@@ -304,7 +319,9 @@ class DOMNode(MessagePump):
         cls._inherit_bindings = inherit_bindings
         cls._inherit_component_classes = inherit_component_classes
         css_type_names: set[str] = set()
-        for base in cls._css_bases(cls):
+        bases = cls._css_bases(cls)
+        cls._css_type_name = bases[0].__name__
+        for base in bases:
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
@@ -399,36 +416,54 @@ class DOMNode(MessagePump):
         """
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "name", self._name, None
-        yield "id", self._id, None
-        if self._classes:
+        # Being a bit defensive here to guard against errors when calling repr before initialization
+        if hasattr(self, "_name"):
+            yield "name", self._name, None
+        if hasattr(self, "_id"):
+            yield "id", self._id, None
+        if hasattr(self, "_classes") and self._classes:
             yield "classes", " ".join(self._classes)
 
-    def _get_default_css(self) -> list[tuple[str, str, int]]:
+    def _get_default_css(self) -> list[tuple[CSSLocation, str, int, str]]:
         """Gets the CSS for this class and inherited from bases.
 
         Default CSS is inherited from base classes, unless `inherit_css` is set to
         `False` when subclassing.
 
         Returns:
-            A list of tuples containing (PATH, SOURCE) for this
-                and inherited from base classes.
+            A list of tuples containing (LOCATION, SOURCE, SPECIFICITY, SCOPE) for this
+                class and inherited from base classes.
         """
 
-        css_stack: list[tuple[str, str, int]] = []
+        css_stack: list[tuple[CSSLocation, str, int, str]] = []
 
-        def get_path(base: Type[DOMNode]) -> str:
-            """Get a path to the DOM Node"""
+        def get_location(base: Type[DOMNode]) -> CSSLocation:
+            """Get the original location of this DEFAULT_CSS.
+
+            Args:
+                base: The class from which the default css was extracted.
+
+            Returns:
+                The filename where the class was defined (if possible) and the class
+                    variable the CSS was extracted from.
+            """
             try:
-                return f"{getfile(base)}:{base.__name__}"
+                return (getfile(base), f"{base.__name__}.DEFAULT_CSS")
             except (TypeError, OSError):
-                return f"{base.__name__}"
+                return ("", f"{base.__name__}.DEFAULT_CSS")
 
         for tie_breaker, base in enumerate(self._node_bases):
-            css = base.__dict__.get("DEFAULT_CSS", "").strip()
+            css: str = base.__dict__.get("DEFAULT_CSS", "")
             if css:
-                css_stack.append((get_path(base), css, -tie_breaker))
-
+                scoped: bool = base.__dict__.get("SCOPED_CSS", True)
+                css_stack.append(
+                    (
+                        get_location(base),
+                        css,
+                        -tie_breaker,
+                        base._css_type_name if scoped else "",
+                    )
+                )
         return css_stack
 
     @classmethod
@@ -540,8 +575,7 @@ class DOMNode(MessagePump):
     @property
     def pseudo_classes(self) -> frozenset[str]:
         """A (frozen) set of all pseudo classes."""
-        pseudo_classes = frozenset(self.get_pseudo_classes())
-        return pseudo_classes
+        return frozenset(self.get_pseudo_classes())
 
     @property
     def css_path_nodes(self) -> list[DOMNode]:
@@ -560,20 +594,19 @@ class DOMNode(MessagePump):
         return result[::-1]
 
     @property
-    def _selector_names(self) -> list[str]:
+    def _selector_names(self) -> set[str]:
         """Get a set of selectors applicable to this widget.
 
         Returns:
             Set of selector names.
         """
-        selectors: list[str] = [
+        selectors: set[str] = {
             "*",
             *(f".{class_name}" for class_name in self._classes),
-            *(f":{class_name}" for class_name in self.get_pseudo_classes()),
             *self._css_types,
-        ]
+        }
         if self._id is not None:
-            selectors.append(f"#{self._id}")
+            selectors.add(f"#{self._id}")
         return selectors
 
     @property
@@ -612,13 +645,21 @@ class DOMNode(MessagePump):
 
     @property
     def visible(self) -> bool:
-        """Is the visibility style set to a visible state?
+        """Is this widget visible in the DOM?
 
-        May be set to a boolean to make the node visible (`True`) or invisible (`False`), or to any valid value for the `visibility` rule.
+        If a widget hasn't had its visibility set explicitly, then it inherits it from its
+        DOM ancestors.
 
-        When a node is invisible, Textual will reserve space for it, but won't display anything there.
+        This may be set explicitly to override inherited values.
+        The valid values include the valid values for the `visibility` rule and the booleans
+        `True` or `False`, to set the widget to be visible or invisible, respectively.
+
+        When a node is invisible, Textual will reserve space for it, but won't display anything.
         """
-        return self.styles.visibility != "hidden"
+        own_value = self.styles.get_rule("visibility")
+        if own_value is not None:
+            return own_value != "hidden"
+        return self.parent.visible if self.parent else True
 
     @visible.setter
     def visible(self, new_value: bool | str) -> None:
@@ -646,6 +687,7 @@ class DOMNode(MessagePump):
         Returns:
             A Tree renderable.
         """
+        from rich.pretty import Pretty
 
         def render_info(node: DOMNode) -> Pretty:
             """Render a node for the tree."""
@@ -680,6 +722,7 @@ class DOMNode(MessagePump):
         from rich.columns import Columns
         from rich.console import Group
         from rich.panel import Panel
+        from rich.pretty import Pretty
 
         from .widget import Widget
 
@@ -869,7 +912,7 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors_with_self(self) -> list[DOMNode]:
-        """A list of Nodes by tracing a path all the way back to App.
+        """A list of ancestor nodes found by tracing a path all the way back to App.
 
         Note:
             This is inclusive of ``self``.
@@ -887,7 +930,7 @@ class DOMNode(MessagePump):
 
     @property
     def ancestors(self) -> list[DOMNode]:
-        """A list of ancestor nodes Nodes by tracing ancestors all the way back to App.
+        """A list of ancestor nodes found by tracing a path all the way back to App.
 
         Returns:
             A list of nodes.
@@ -953,6 +996,9 @@ class DOMNode(MessagePump):
     def _add_child(self, node: Widget) -> None:
         """Add a new child node.
 
+        !!! note
+            For tests only.
+
         Args:
             node: A DOM node.
         """
@@ -962,6 +1008,9 @@ class DOMNode(MessagePump):
     def _add_children(self, *nodes: Widget) -> None:
         """Add multiple children to this node.
 
+        !!! note
+            For tests only.
+
         Args:
             *nodes: Positional args should be new DOM nodes.
         """
@@ -969,6 +1018,7 @@ class DOMNode(MessagePump):
         for node in nodes:
             node._attach(self)
             _append(node)
+            node._add_children(*node._pending_children)
 
     WalkType = TypeVar("WalkType", bound="DOMNode")
 
@@ -1096,12 +1146,12 @@ class DOMNode(MessagePump):
 
         return query.only_one() if expect_type is None else query.only_one(expect_type)
 
-    def set_styles(self, css: str | None = None, **update_styles) -> Self:
+    def set_styles(self, css: str | None = None, **update_styles: Any) -> Self:
         """Set custom styles on this object.
 
         Args:
             css: Styles in CSS format.
-            **update_styles: Keyword arguments map style names on to style.
+            update_styles: Keyword arguments map style names onto style values.
 
         Returns:
             Self.
@@ -1109,7 +1159,7 @@ class DOMNode(MessagePump):
 
         if css is not None:
             try:
-                new_styles = parse_declarations(css, path="set_styles")
+                new_styles = parse_declarations(css, read_from=("set_styles", ""))
             except DeclarationError as error:
                 raise DeclarationError(error.name, error.token, error.message) from None
             self._inline_styles.merge(new_styles)
@@ -1131,19 +1181,20 @@ class DOMNode(MessagePump):
         """
         return self._classes.issuperset(class_names)
 
-    def set_class(self, add: bool, *class_names: str) -> Self:
+    def set_class(self, add: bool, *class_names: str, update: bool = True) -> Self:
         """Add or remove class(es) based on a condition.
 
         Args:
             add: Add the classes if True, otherwise remove them.
+            update: Also update styles.
 
         Returns:
             Self.
         """
         if add:
-            self.add_class(*class_names)
+            self.add_class(*class_names, update=update)
         else:
-            self.remove_class(*class_names)
+            self.remove_class(*class_names, update=update)
         return self
 
     def set_classes(self, classes: str | Iterable[str]) -> Self:
@@ -1169,11 +1220,12 @@ class DOMNode(MessagePump):
         except NoActiveAppError:
             pass
 
-    def add_class(self, *class_names: str) -> Self:
+    def add_class(self, *class_names: str, update: bool = True) -> Self:
         """Add class names to this Node.
 
         Args:
             *class_names: CSS class names to add.
+            update: Also update styles.
 
         Returns:
             Self.
@@ -1183,14 +1235,16 @@ class DOMNode(MessagePump):
         self._classes.update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if update:
+            self._update_styles()
         return self
 
-    def remove_class(self, *class_names: str) -> Self:
+    def remove_class(self, *class_names: str, update: bool = True) -> Self:
         """Remove class names from this Node.
 
         Args:
             *class_names: CSS class names to remove.
+            update: Also update styles.
 
         Returns:
             Self.
@@ -1200,7 +1254,8 @@ class DOMNode(MessagePump):
         self._classes.difference_update(class_names)
         if old_classes == self._classes:
             return self
-        self._update_styles()
+        if update:
+            self._update_styles()
         return self
 
     def toggle_class(self, *class_names: str) -> Self:
@@ -1220,17 +1275,27 @@ class DOMNode(MessagePump):
         self._update_styles()
         return self
 
-    def has_pseudo_class(self, *class_names: str) -> bool:
-        """Check for pseudo classes (such as hover, focus etc)
+    def has_pseudo_class(self, class_name: str) -> bool:
+        """Check the node has the given pseudo class.
 
         Args:
-            *class_names: The pseudo classes to check for.
+            class_name: The pseudo class to check for.
 
         Returns:
-            `True` if the DOM node has those pseudo classes, `False` if not.
+            `True` if the DOM node has the pseudo class, `False` if not.
         """
-        has_pseudo_classes = self.pseudo_classes.issuperset(class_names)
-        return has_pseudo_classes
+        return class_name in self.get_pseudo_classes()
+
+    def has_pseudo_classes(self, class_names: set[str]) -> bool:
+        """Check the node has all the given pseudo classes.
+
+        Args:
+            class_names: Set of class names to check for.
+
+        Returns:
+            `True` if all pseudo class names are present.
+        """
+        return class_names.issubset(self.get_pseudo_classes())
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self

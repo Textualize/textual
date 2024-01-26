@@ -18,7 +18,7 @@ from typing_extensions import TypeAlias
 
 from .._border import normalize_border_value
 from ..color import Color, ColorParseError
-from ..geometry import Spacing, SpacingDimensions, clamp
+from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
 from ._help_text import (
     border_property_help_text,
@@ -31,7 +31,7 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import NULL_SPACING, VALID_STYLE_FLAGS
+from .constants import VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     NULL_SCALAR,
@@ -46,8 +46,9 @@ from .scalar import (
 from .transition import Transition
 
 if TYPE_CHECKING:
+    from ..canvas import CanvasLineType
     from .._layout import Layout
-    from .styles import Styles, StylesBase
+    from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
 
@@ -497,6 +498,26 @@ class BorderProperty:
         check_refresh()
 
 
+class KeylineProperty:
+    """Descriptor for getting and setting keyline information."""
+
+    def __get__(
+        self, obj: StylesBase, objtype: type[StylesBase] | None = None
+    ) -> tuple[CanvasLineType, Color]:
+        return cast(
+            "tuple[CanvasLineType, Color]",
+            obj.get_rule("keyline", ("none", Color.parse("transparent"))),
+        )
+
+    def __set__(self, obj: StylesBase, keyline: tuple[str, Color] | None):
+        if keyline is None:
+            if obj.clear_rule("keyline"):
+                obj.refresh(layout=True)
+        else:
+            if obj.set_rule("keyline", keyline):
+                obj.refresh(layout=True)
+
+
 class SpacingProperty:
     """Descriptor for getting and setting spacing properties (e.g. padding and margin)."""
 
@@ -614,10 +635,10 @@ class LayoutProperty:
         _rich_traceback_omit = True
         if layout is None:
             if obj.clear_rule("layout"):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, children=True)
         elif isinstance(layout, Layout):
             if obj.set_rule("layout", layout):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, children=True)
         else:
             try:
                 layout_object = get_layout(layout)
@@ -627,7 +648,7 @@ class LayoutProperty:
                     help_text=layout_property_help_text(self.name, context="inline"),
                 )
             if obj.set_rule("layout", layout_object):
-                obj.refresh(layout=True)
+                obj.refresh(layout=True, children=True)
 
 
 class OffsetProperty:
@@ -740,7 +761,7 @@ class StringEnumProperty:
         Returns:
             The string property value.
         """
-        return cast(str, obj.get_rule(self.name, self._default))
+        return obj.get_rule(self.name, self._default)  # type: ignore
 
     def _before_refresh(self, obj: StylesBase, value: str | None) -> None:
         """Do any housekeeping before asking for a layout refresh after a value change."""
@@ -1063,8 +1084,8 @@ class FractionalProperty:
                 obj.refresh(children=self.children)
             return
 
-        if isinstance(value, float):
-            float_value = value
+        if isinstance(value, (int, float)):
+            float_value = float(value)
         elif isinstance(value, str) and value.endswith("%"):
             float_value = float(Scalar.parse(value).value) / 100
         else:

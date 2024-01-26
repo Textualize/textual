@@ -11,8 +11,8 @@ The following examples demonstrates customization of the border color and text s
     --8<-- "docs/examples/styles/border_title_colors.py"
     ```
 
-=== "border_title_colors.css"
+=== "border_title_colors.tcss"
 
-    ```sass
-    --8<-- "docs/examples/styles/border_title_colors.css"
+    ```css
+    --8<-- "docs/examples/styles/border_title_colors.tcss"
     ```

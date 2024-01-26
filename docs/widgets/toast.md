@@ -7,13 +7,11 @@ A widget which displays a notification message.
 - [ ] Focusable
 - [ ] Container
 
-Note that `Toast` isn't designed to be used directly in your applications,
-but it is instead used by [`notify`][textual.app.App.notify] to
-display a message when using Textual's built-in notification system.
+!!! warning "Note that `Toast` isn't designed to be used directly in your applications, but it is instead used by [`notify`][textual.app.App.notify] to display a message when using Textual's built-in notification system."
 
 ## Styling
 
-You can customize the style of Toasts by targeting the `Toast` [CSS type](/guide/CSS/#type-selector).
+You can customize the style of Toasts by targeting the `Toast` [CSS type](../guide/CSS.md#type-selector).
 For example:
 
 
@@ -24,7 +22,7 @@ Toast {
 ```
 
 The three severity levels also have corresponding
-[classes](/guide/CSS/#class-name-selector), allowing you to target the
+[classes](../guide/CSS.md#class-name-selector), allowing you to target the
 different styles of notification. They are:
 
 - `-information`
@@ -71,9 +69,30 @@ Toast.-information .toast--title {
     --8<-- "docs/examples/widgets/toast.py"
     ```
 
+## Reactive Attributes
+
+This widget has no reactive attributes.
+
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+The toast widget provides the following component classes:
+
+::: textual.widgets._toast.Toast.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
+
 ---
 
-::: textual.widgets._toast
+::: textual.widgets._toast.Toast
     options:
       show_root_heading: true
       show_root_toc_entry: true

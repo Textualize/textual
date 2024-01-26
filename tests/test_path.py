@@ -10,33 +10,33 @@ APP_DIR = Path(__file__).parent
 
 
 class RelativePathObjectApp(App[None]):
-    CSS_PATH = Path("test.css")
+    CSS_PATH = Path("test.tcss")
 
 
 class RelativePathStrApp(App[None]):
-    CSS_PATH = "test.css"
+    CSS_PATH = "test.tcss"
 
 
 class AbsolutePathObjectApp(App[None]):
-    CSS_PATH = Path("/tmp/test.css")
+    CSS_PATH = Path("/tmp/test.tcss")
 
 
 class AbsolutePathStrApp(App[None]):
-    CSS_PATH = "/tmp/test.css"
+    CSS_PATH = "/tmp/test.tcss"
 
 
 class ListPathApp(App[None]):
-    CSS_PATH = ["test.css", Path("/another/path.css")]
+    CSS_PATH = ["test.tcss", Path("/another/path.tcss")]
 
 
 @pytest.mark.parametrize(
     "app,expected_css_path_attribute",
     [
-        (RelativePathObjectApp(), [APP_DIR / "test.css"]),
-        (RelativePathStrApp(), [APP_DIR / "test.css"]),
-        (AbsolutePathObjectApp(), [Path("/tmp/test.css")]),
-        (AbsolutePathStrApp(), [Path("/tmp/test.css")]),
-        (ListPathApp(), [APP_DIR / "test.css", Path("/another/path.css")]),
+        (RelativePathObjectApp(), [APP_DIR / "test.tcss"]),
+        (RelativePathStrApp(), [APP_DIR / "test.tcss"]),
+        (AbsolutePathObjectApp(), [Path("/tmp/test.tcss")]),
+        (AbsolutePathStrApp(), [Path("/tmp/test.tcss")]),
+        (ListPathApp(), [APP_DIR / "test.tcss", Path("/another/path.tcss")]),
     ],
 )
 def test_css_paths_of_various_types(app, expected_css_path_attribute):

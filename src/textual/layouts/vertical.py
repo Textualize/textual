@@ -73,17 +73,25 @@ class VerticalLayout(Layout):
 
         _Region = Region
         _WidgetPlacement = WidgetPlacement
-
-        for widget, box_model, margin in zip(children, box_models, margins):
+        for widget, (content_width, content_height, box_margin), margin in zip(
+            children, box_models, margins
+        ):
             overlay = widget.styles.overlay == "screen"
-            content_width, content_height, box_margin = box_model
             next_y = y + content_height
-
-            region = _Region(
-                box_margin.left, int(y), int(content_width), int(next_y) - int(y)
-            )
             add_placement(
-                _WidgetPlacement(region, box_model.margin, widget, 0, False, overlay)
+                _WidgetPlacement(
+                    _Region(
+                        box_margin.left,
+                        int(y),
+                        int(content_width),
+                        int(next_y) - int(y),
+                    ),
+                    box_margin,
+                    widget,
+                    0,
+                    False,
+                    overlay,
+                )
             )
             if not overlay:
                 y = next_y + margin

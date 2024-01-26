@@ -20,6 +20,7 @@ from ._help_text import (
     dock_property_help_text,
     fractional_property_help_text,
     integer_help_text,
+    keyline_help_text,
     layout_property_help_text,
     offset_property_help_text,
     offset_single_axis_help_text,
@@ -42,6 +43,7 @@ from .constants import (
     VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_EDGE,
+    VALID_KEYLINE,
     VALID_OVERFLOW,
     VALID_OVERLAY,
     VALID_SCROLLBAR_GUTTER,
@@ -65,19 +67,6 @@ from .transition import Transition
 from .types import BoxSizing, Display, EdgeType, Overflow, Visibility
 
 
-def _join_tokens(tokens: Iterable[Token], joiner: str = "") -> str:
-    """Convert tokens into a string by joining their values
-
-    Args:
-        tokens: Tokens to join
-        joiner: String to join on.
-
-    Returns:
-        The tokens, joined together to form a string.
-    """
-    return joiner.join(token.value for token in tokens)
-
-
 class StylesBuilder:
     """
     The StylesBuilder object takes tokens parsed from the CSS and converts
@@ -97,9 +86,17 @@ class StylesBuilder:
         raise DeclarationError(name, token, message)
 
     def add_declaration(self, declaration: Declaration) -> None:
-        if not declaration.tokens:
+        if not declaration.name:
             return
         rule_name = declaration.name.replace("-", "_")
+
+        if not declaration.tokens:
+            self.error(
+                rule_name,
+                declaration.token,
+                f"Missing property value for '{declaration.name}:'",
+            )
+
         process_method = getattr(self, f"process_{rule_name}", None)
 
         if process_method is None:
@@ -122,6 +119,13 @@ class StylesBuilder:
         if important:
             tokens = tokens[:-1]
             self.styles.important.add(rule_name)
+
+        # Check for special token(s)
+        if tokens[0].name == "token":
+            value = tokens[0].value
+            if value == "initial":
+                self.styles._rules[rule_name] = None
+                return
         try:
             process_method(declaration.name, tokens)
         except DeclarationError:
@@ -259,7 +263,7 @@ class StylesBuilder:
 
         Args:
             prefix: The prefix of the style.
-            siffixes: The suffixes to distribute amongst.
+            suffixes: The suffixes to distribute amongst.
 
         A number of styles can be set with the 'prefix' of the style,
         providing the values as a series of parameters; or they can be set
@@ -543,6 +547,33 @@ class StylesBuilder:
     def process_outline_left(self, name: str, tokens: list[Token]) -> None:
         self._process_outline("left", name, tokens)
 
+    def process_keyline(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        if len(tokens) > 2:
+            self.error(name, tokens[0], keyline_help_text())
+        keyline_style = "none"
+        keyline_color = Color.parse("green")
+        for token in tokens:
+            if token.name == "color":
+                try:
+                    keyline_color = Color.parse(token.value)
+                except Exception as error:
+                    self.error(
+                        name,
+                        token,
+                        color_property_help_text(name, context="css", error=error),
+                    )
+            elif token.name == "token":
+                try:
+                    keyline_color = Color.parse(token.value)
+                except Exception as error:
+                    keyline_style = token.value
+                    if keyline_style not in VALID_KEYLINE:
+                        self.error(name, token, keyline_help_text())
+
+        self.styles._rules["keyline"] = (keyline_style, keyline_color)
+
     def process_offset(self, name: str, tokens: list[Token]) -> None:
         def offset_error(name: str, token: Token) -> None:
             self.error(name, token, offset_property_help_text(context="css"))
@@ -659,8 +690,8 @@ class StylesBuilder:
 
     process_link_color = process_color
     process_link_background = process_color
-    process_link_hover_color = process_color
-    process_link_hover_background = process_color
+    process_link_color_hover = process_color
+    process_link_background_hover = process_color
 
     process_border_title_color = process_color
     process_border_title_background = process_color
@@ -681,7 +712,7 @@ class StylesBuilder:
         self.styles._rules[name.replace("-", "_")] = style_definition  # type: ignore
 
     process_link_style = process_text_style
-    process_link_hover_style = process_text_style
+    process_link_style_hover = process_text_style
 
     process_border_title_style = process_text_style
     process_border_subtitle_style = process_text_style
@@ -722,8 +753,8 @@ class StylesBuilder:
     def process_layers(self, name: str, tokens: list[Token]) -> None:
         layers: list[str] = []
         for token in tokens:
-            if token.name != "token":
-                self.error(name, token, "{token.name} not expected here")
+            if token.name not in {"token", "string"}:
+                self.error(name, token, f"{token.name} not expected here")
             layers.append(token.value)
         self.styles._rules["layers"] = tuple(layers)
 
@@ -876,11 +907,7 @@ class StylesBuilder:
                 scrollbar_size_error(name, token2)
 
             horizontal = int(token1.value)
-            if horizontal == 0:
-                scrollbar_size_error(name, token1)
             vertical = int(token2.value)
-            if vertical == 0:
-                scrollbar_size_error(name, token2)
             self.styles._rules["scrollbar_size_horizontal"] = horizontal
             self.styles._rules["scrollbar_size_vertical"] = vertical
             self._distribute_importance("scrollbar_size", ("horizontal", "vertical"))
@@ -895,8 +922,6 @@ class StylesBuilder:
             if token.name != "number" or not token.value.isdigit():
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             value = int(token.value)
-            if value == 0:
-                self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_vertical"] = value
 
     def process_scrollbar_size_horizontal(self, name: str, tokens: list[Token]) -> None:
@@ -909,8 +934,6 @@ class StylesBuilder:
             if token.name != "number" or not token.value.isdigit():
                 self.error(name, token, scrollbar_size_single_axis_help_text(name))
             value = int(token.value)
-            if value == 0:
-                self.error(name, token, scrollbar_size_single_axis_help_text(name))
             self.styles._rules["scrollbar_size_horizontal"] = value
 
     def _process_grid_rows_or_columns(self, name: str, tokens: list[Token]) -> None:
@@ -921,6 +944,8 @@ class StylesBuilder:
                 scalars.append(Scalar.from_number(float(token.value)))
             elif token.name == "scalar":
                 scalars.append(Scalar.parse(token.value, percent_unit=percent_unit))
+            elif token.name == "token" and token.value == "auto":
+                scalars.append(Scalar.parse("auto"))
             else:
                 self.error(
                     name,

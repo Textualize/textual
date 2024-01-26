@@ -1,4 +1,5 @@
 from pathlib import Path
+from sys import argv
 
 from textual.app import App, ComposeResult
 from textual.reactive import var
@@ -25,7 +26,9 @@ class MarkdownApp(App):
 
     async def on_mount(self) -> None:
         self.markdown_viewer.focus()
-        if not await self.markdown_viewer.go(self.path):
+        try:
+            await self.markdown_viewer.go(self.path)
+        except FileNotFoundError:
             self.exit(message=f"Unable to load {self.path!r}")
 
     def action_toggle_table_of_contents(self) -> None:
@@ -42,4 +45,6 @@ class MarkdownApp(App):
 
 if __name__ == "__main__":
     app = MarkdownApp()
+    if len(argv) > 1 and Path(argv[1]).exists():
+        app.path = Path(argv[1])
     app.run()

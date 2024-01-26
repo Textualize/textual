@@ -16,7 +16,7 @@ Textual pre-defines a number of colors as [CSS variables](../guide/CSS.md#css-va
 
 Here's an example of CSS that uses color variables:
 
-```sass
+```css
 MyWidget {
     background: $primary;
     color: $text;
@@ -93,10 +93,13 @@ textual colors
 
 Here's a list of the colors defined in the default light and dark themes.
 
+!!! note
+
+    `$boost` will look different on different backgrounds because of its alpha channel.
+
 ```{.rich title="Textual Theme Colors"}
 from rich import print
 from textual.app import DEFAULT_COLORS
 from textual.design import show_design
 output = show_design(DEFAULT_COLORS["light"], DEFAULT_COLORS["dark"])
 ```
-

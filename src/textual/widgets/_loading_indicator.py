@@ -18,10 +18,36 @@ class LoadingIndicator(Widget):
     LoadingIndicator {
         width: 100%;
         height: 100%;
+        min-height: 1;
         content-align: center middle;
         color: $accent;
     }
+    LoadingIndicator.-textual-loading-indicator {
+        layer: _loading;
+        background: $boost;
+        dock: top;
+    }
     """
+
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """Initialize a loading indicator.
+
+        Args:
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
+        """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+
+        self._start_time: float = 0.0
+        """The time the loading indicator was mounted (a Unix timestamp)."""
 
     def _on_mount(self, _: Mount) -> None:
         self._start_time = time()
@@ -30,7 +56,7 @@ class LoadingIndicator(Widget):
     def render(self) -> RenderableType:
         elapsed = time() - self._start_time
         speed = 0.8
-        dot = "\u25CF"
+        dot = "\u25cf"
         _, _, background, color = self.colors
 
         gradient = Gradient(

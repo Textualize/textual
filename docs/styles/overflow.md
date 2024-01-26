@@ -45,15 +45,15 @@ The right side has `overflow-y: hidden` which will prevent a scrollbar from bein
     --8<-- "docs/examples/styles/overflow.py"
     ```
 
-=== "overflow.css"
+=== "overflow.tcss"
 
-    ```sass hl_lines="19"
-    --8<-- "docs/examples/styles/overflow.css"
+    ```css hl_lines="19"
+    --8<-- "docs/examples/styles/overflow.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Automatic scrollbars on both axes (the default) */
 overflow: auto auto;
 

@@ -3,6 +3,8 @@ from textual.widgets import Label
 
 
 class TextOpacityApp(App):
+    CSS_PATH = "text_opacity.tcss"
+
     def compose(self):
         yield Label("text-opacity: 0%", id="zero-opacity")
         yield Label("text-opacity: 25%", id="quarter-opacity")
@@ -11,4 +13,6 @@ class TextOpacityApp(App):
         yield Label("text-opacity: 100%", id="full-opacity")
 
 
-app = TextOpacityApp(css_path="text_opacity.css")
+if __name__ == "__main__":
+    app = TextOpacityApp()
+    app.run()

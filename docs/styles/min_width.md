@@ -8,7 +8,7 @@ The `min-width` style sets a minimum width for a widget.
 min-width: <a href="../../css_types/scalar">&lt;scalar&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `min-width` style accepts a [`<scalar>`](../../css_types/scalar) that defines a lower bound for the [`width`](./width) of a widget.
+The `min-width` style accepts a [`<scalar>`](../css_types/scalar.md) that defines a lower bound for the [`width`](./width.md) of a widget.
 That is, the width of a widget is never allowed to be under `min-width`.
 
 ## Example
@@ -27,17 +27,17 @@ Then, we set `min-width` individually on each placeholder.
     --8<-- "docs/examples/styles/min_width.py"
     ```
 
-=== "min_width.css"
+=== "min_width.tcss"
 
-    ```sass hl_lines="13 17 21 25"
-    --8<-- "docs/examples/styles/min_width.css"
+    ```css hl_lines="13 17 21 25"
+    --8<-- "docs/examples/styles/min_width.tcss"
     ```
 
     1. This won't affect the placeholder because its width is larger than the minimum width.
 
 ## CSS
 
-```sass
+```css
 /* Set the minimum width to 10 rows */
 min-width: 10;
 

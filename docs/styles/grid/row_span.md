@@ -12,7 +12,7 @@ The `row-span` style specifies how many rows a widget will span in a grid layout
 row-span: <a href="../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `row-span` style accepts a single non-negative [`<integer>`](../../../css_types/integer) that quantifies how many rows the given widget spans.
+The `row-span` style accepts a single non-negative [`<integer>`](../../css_types/integer.md) that quantifies how many rows the given widget spans.
 
 ## Example
 
@@ -32,15 +32,15 @@ After placing the placeholders `#p1`, `#p2`, `#p3`, and `#p4`, the next availabl
     --8<-- "docs/examples/styles/row_span.py"
     ```
 
-=== "row_span.css"
+=== "row_span.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20"
-    --8<-- "docs/examples/styles/row_span.css"
+    ```css hl_lines="2 5 8 11 14 17 20"
+    --8<-- "docs/examples/styles/row_span.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 row-span: 3
 ```
 

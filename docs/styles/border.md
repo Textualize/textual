@@ -51,10 +51,10 @@ This examples shows three widgets with different border styles.
     --8<-- "docs/examples/styles/border.py"
     ```
 
-=== "border.css"
+=== "border.tcss"
 
-    ```sass hl_lines="4 10 16"
-    --8<-- "docs/examples/styles/border.css"
+    ```css hl_lines="4 10 16"
+    --8<-- "docs/examples/styles/border.tcss"
     ```
 
 ### All border types
@@ -68,14 +68,14 @@ The next example shows a grid with all the available border types.
 
 === "border_all.py"
 
-    ```py hl_lines="2 6 10 14 18 22 26 30 34 38 42 46 50 54 58"
+    ```py
     --8<-- "docs/examples/styles/border_all.py"
     ```
 
-=== "border_all.css"
+=== "border_all.tcss"
 
-    ```sass
-    --8<-- "docs/examples/styles/border_all.css"
+    ```css
+    --8<-- "docs/examples/styles/border_all.tcss"
     ```
 
 ### Borders and outlines
@@ -84,7 +84,7 @@ The next example shows a grid with all the available border types.
 
 ## CSS
 
-```sass
+```css
 /* Set a heavy white border */
 border: heavy white;
 

@@ -33,6 +33,18 @@ The following example displays Markdown from a string and a Table of Contents.
 | ------------------------ | ---- | ------- | ----------------------------------------------------------------- |
 | `show_table_of_contents` | bool | True    | Wether a Table of Contents should be displayed with the Markdown. |
 
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
+
 ## See Also
 
 * [Markdown][textual.widgets.Markdown] code reference
@@ -45,3 +57,9 @@ The following example displays Markdown from a string and a Table of Contents.
 ::: textual.widgets.MarkdownViewer
     options:
       heading_level: 2
+
+
+::: textual.widgets.markdown
+    options:
+      show_root_heading: true
+      show_root_toc_entry: true

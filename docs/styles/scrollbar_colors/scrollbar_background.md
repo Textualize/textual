@@ -7,7 +7,7 @@ The `scrollbar-background` style sets the background color of the scrollbar.
 <a href="./scrollbar_background">scrollbar-background</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`scrollbar-background` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of a scrollbar.
+`scrollbar-background` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of a scrollbar.
 
 ## Example
 
@@ -26,15 +26,15 @@ The `scrollbar-background` style sets the background color of the scrollbar.
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-backround: blue;
 ```
 

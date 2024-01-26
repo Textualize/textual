@@ -1,27 +1,30 @@
 """
 
-A message pump is a base class for any object which processes messages, which includes Widget, Screen, and App.
+A `MessagePump` is a base class for any object which processes messages, which includes Widget, Screen, and App.
+
+!!! tip
+
+    Most of the method here are useful in general app development.
+
 """
 from __future__ import annotations
 
 import asyncio
 import inspect
 import threading
-from asyncio import CancelledError, Queue, QueueEmpty, Task
+from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
 from functools import partial
 from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable, cast
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
-from ._asyncio import create_task
 from ._callback import invoke
 from ._context import NoActiveAppError, active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
-from ._types import CallbackType
 from .case import camel_to_snake
 from .css.match import match
 from .errors import DuplicateKeyHandlers
@@ -118,7 +121,14 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._last_idle: float = time()
         self._max_idle: float | None = None
         self._mounted_event = asyncio.Event()
-        self._next_callbacks: list[CallbackType] = []
+        self._is_mounted = False
+        """Having this explicit Boolean is an optimization.
+
+        The same information could be retrieved from `self._mounted_event.is_set()`, but
+        we need to access this frequently in the compositor and the attribute with the
+        explicit Boolean value is faster than the two lookups and the function call.
+        """
+        self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
 
     @property
@@ -179,6 +189,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._parent is not None
 
     @property
+    def message_queue_size(self) -> int:
+        """The current size of the message queue."""
+        return self._message_queue.qsize()
+
+    @property
     def app(self) -> "App[object]":
         """
         Get the current app.
@@ -225,7 +240,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     @property
     def is_attached(self) -> bool:
-        """Is the node is attached to the app via the DOM?"""
+        """Is the node attached to the app via the DOM?"""
         from .app import App
 
         node = self
@@ -417,7 +432,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
         """
-        self._next_callbacks.append(partial(callback, *args, **kwargs))
+        callback_message = events.Callback(callback=partial(callback, *args, **kwargs))
+        callback_message._prevent.update(self._get_prevented_messages())
+        self._next_callbacks.append(callback_message)
         self.check_idle()
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
@@ -468,7 +485,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._running = True
         active_message_pump.set(self)
 
-        await self._pre_process()
+        if not await self._pre_process():
+            self._running = False
+            return
 
         try:
             await self._process_messages_loop()
@@ -479,10 +498,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
             for timer in list(self._timers):
                 timer.stop()
 
-    async def _pre_process(self) -> None:
-        """Procedure to run before processing messages."""
+    async def _pre_process(self) -> bool:
+        """Procedure to run before processing messages.
+
+        Returns:
+            `True` if successful, or `False` if any exception occurred.
+
+        """
         # Dispatch compose and mount messages without going through loop
         # These events must occur in this order, and at the start.
+
         try:
             await self._dispatch_message(events.Compose())
             await self._dispatch_message(events.Mount())
@@ -490,9 +515,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
             self._post_mount()
         except Exception as error:
             self.app._handle_exception(error)
+            return False
         finally:
             # This is critical, mount may be waiting
             self._mounted_event.set()
+            self._is_mounted = True
+        return True
 
     def _post_mount(self):
         """Called after the object has been mounted."""
@@ -531,6 +559,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 raise
             except Exception as error:
                 self._mounted_event.set()
+                self._is_mounted = True
                 self.app._handle_exception(error)
                 break
             finally:
@@ -562,7 +591,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._next_callbacks.clear()
         for callback in callbacks:
             try:
-                await invoke(callback)
+                await self._dispatch_message(callback)
             except Exception as error:
                 self.app._handle_exception(error)
                 break
@@ -718,6 +747,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
             `True` if the messages was processed, `False` if it wasn't.
         """
         _rich_traceback_omit = True
+        if not hasattr(message, "_prevent"):
+            # Catch a common error (forgetting to call super)
+            raise RuntimeError(
+                "Message is missing attributes; did you forget to call super().__init__() ?"
+            )
         if self._closing or self._closed:
             return False
         if not self.check_message_enabled(message):

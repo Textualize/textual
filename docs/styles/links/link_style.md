@@ -30,26 +30,26 @@ It also shows that `link-style` does not affect hyperlinks.
 
 === "link_style.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-19 22-23"
     --8<-- "docs/examples/styles/link_style.py"
     ```
 
-    1. This label has an hyperlink so it won't be affected by the `link-style` rule.
+    1. This label has a hyperlink so it won't be affected by the `link-style` rule.
     2. This label has an "action link" that can be styled with `link-style`.
     3. This label has an "action link" that can be styled with `link-style`.
     4. This label has an "action link" that can be styled with `link-style`.
 
-=== "link_style.css"
+=== "link_style.tcss"
 
-    ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_style.css"
+    ```css hl_lines="2 6 10"
+    --8<-- "docs/examples/styles/link_style.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.
 
 ## CSS
 
-```sass
+```css
 link-style: bold;
 link-style: bold italic reverse;
 ```
@@ -63,5 +63,5 @@ widget.styles.link_style = "bold italic reverse"
 
 ## See also
 
- - [`link-hover-style](./link_hover_style.md) to set the style of link text when the mouse pointer is over it.
+ - [`link-style-hover](./link_style_hover.md) to set the style of link text when the mouse pointer is over it.
  - [`text-style`](../text_style.md) to set the style of text in a widget.

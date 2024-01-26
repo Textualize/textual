@@ -13,6 +13,8 @@ def make_label_container(  # (11)!
 
 
 class BorderSubTitleAlignAll(App[None]):
+    CSS_PATH = "border_sub_title_align_all.tcss"
+
     def compose(self):
         with Grid():
             yield make_label_container(  # (1)!
@@ -68,7 +70,6 @@ class BorderSubTitleAlignAll(App[None]):
             )
 
 
-app = BorderSubTitleAlignAll(css_path="border_sub_title_align_all.css")
-
 if __name__ == "__main__":
+    app = BorderSubTitleAlignAll()
     app.run()

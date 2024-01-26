@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class MinWidthApp(App):
+    CSS_PATH = "min_width.tcss"
+
     def compose(self):
         yield VerticalScroll(
             Placeholder("min-width: 25%", id="p1"),
@@ -13,4 +15,6 @@ class MinWidthApp(App):
         )
 
 
-app = MinWidthApp(css_path="min_width.css")
+if __name__ == "__main__":
+    app = MinWidthApp()
+    app.run()

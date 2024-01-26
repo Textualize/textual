@@ -24,7 +24,7 @@ Let's create a simple custom widget to display a greeting.
 --8<-- "docs/examples/guide/widgets/hello01.py"
 ```
 
-The three highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
+The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
 
 Note that the text contains tags in square brackets, i.e. `[b]`. This is [console markup](https://rich.readthedocs.io/en/latest/markup.html) which allows you to embed various styles within your content. If you run this you will find that `World` is in bold.
 
@@ -40,10 +40,10 @@ This (very simple) custom widget may be [styled](./styles.md) in the same way as
     --8<-- "docs/examples/guide/widgets/hello02.py"
     ```
 
-=== "hello02.css"
+=== "hello02.tcss"
 
-    ```sass title="hello02.css"
-    --8<-- "docs/examples/guide/widgets/hello02.css"
+    ```css title="hello02.tcss"
+    --8<-- "docs/examples/guide/widgets/hello02.tcss"
     ```
 
 The addition of the CSS has completely transformed our custom widget.
@@ -59,14 +59,14 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 === "hello03.py"
 
-    ```python title="hello03.py" hl_lines="24-36"
+    ```python title="hello03.py" hl_lines="23-35"
     --8<-- "docs/examples/guide/widgets/hello03.py"
     ```
 
-=== "hello03.css"
+=== "hello03.tcss"
 
-    ```sass title="hello03.css"
-    --8<-- "docs/examples/guide/widgets/hello03.css"
+    ```css title="hello03.tcss"
+    --8<-- "docs/examples/guide/widgets/hello03.tcss"
     ```
 
 === "Output"
@@ -88,14 +88,14 @@ Here's the Hello example again, this time the widget has embedded default CSS:
 
 === "hello04.py"
 
-    ```python title="hello04.py" hl_lines="27-36"
+    ```python title="hello04.py" hl_lines="26-35"
     --8<-- "docs/examples/guide/widgets/hello04.py"
     ```
 
-=== "hello04.css"
+=== "hello04.tcss"
 
-    ```sass title="hello04.css"
-    --8<-- "docs/examples/guide/widgets/hello04.css"
+    ```css title="hello04.tcss"
+    --8<-- "docs/examples/guide/widgets/hello04.tcss"
     ```
 
 === "Output"
@@ -103,6 +103,13 @@ Here's the Hello example again, this time the widget has embedded default CSS:
     ```{.textual path="docs/examples/guide/widgets/hello04.py"}
     ```
 
+#### Scoped CSS
+
+Default CSS is *scoped* by default.
+All this means is that CSS defined in `DEFAULT_CSS` will affect the widget and potentially its children only.
+This is to prevent you from inadvertently breaking an unrelated widget.
+
+You can disable scoped CSS by setting the class var `SCOPED_CSS` to `False`.
 
 #### Default specificity
 
@@ -124,14 +131,14 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 
 === "hello05.py"
 
-    ```python title="hello05.py"  hl_lines="24-33"
+    ```python title="hello05.py"  hl_lines="23-32"
     --8<-- "docs/examples/guide/widgets/hello05.py"
     ```
 
-=== "hello05.css"
+=== "hello05.tcss"
 
-    ```sass title="hello05.css"
-    --8<-- "docs/examples/guide/widgets/hello05.css"
+    ```css title="hello05.tcss"
+    --8<-- "docs/examples/guide/widgets/hello05.tcss"
     ```
 
 === "Output"
@@ -141,6 +148,47 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 
 If you run this example you will see that the greeting has been underlined, which indicates it is clickable. If you click on the greeting it will run the `next_word` action which updates the next word.
 
+
+## Border titles
+
+Every widget has a [`border_title`][textual.widgets.Widget.border_title] and [`border_subtitle`][textual.widgets.Widget.border_subtitle] attribute.
+Setting `border_title` will display text within the top border, and setting `border_subtitle` will display text within the bottom border.
+
+!!! note
+
+    Border titles will only display if the widget has a [border](../styles/border.md) enabled.
+
+The default value for these attributes is empty string, which disables the title.
+You can change the default value for the title attributes with the [`BORDER_TITLE`][textual.widget.Widget.BORDER_TITLE] and [`BORDER_SUBTITLE`][textual.widget.Widget.BORDER_SUBTITLE] class variables.
+
+Let's demonstrate setting a title, both as a class variable and a instance variable:
+
+
+=== "hello06.py"
+
+    ```python title="hello06.py"  hl_lines="26 30"
+    --8<-- "docs/examples/guide/widgets/hello06.py"
+    ```
+
+    1. Setting the default for the `title` attribute via class variable.
+    2. Setting `subtitle` via an instance attribute.
+
+=== "hello06.tcss"
+
+    ```css title="hello06.tcss"
+    --8<-- "docs/examples/guide/widgets/hello06.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/hello06.py"}
+    ```
+
+Note that titles are limited to a single line of text.
+If the supplied text is too long to fit within the widget, it will be cropped (and an ellipsis added).
+
+There are a number of styles that influence how titles are displayed (color and alignment).
+See the [style reference](../styles/index.md) for details.
 
 ## Rich renderables
 
@@ -156,10 +204,10 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
     --8<-- "docs/examples/guide/widgets/fizzbuzz01.py"
     ```
 
-=== "fizzbuzz01.css"
+=== "fizzbuzz01.tcss"
 
-    ```sass title="fizzbuzz01.css" hl_lines="32-35"
-    --8<-- "docs/examples/guide/widgets/fizzbuzz01.css"
+    ```css title="fizzbuzz01.tcss" hl_lines="32-35"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz01.tcss"
     ```
 
 === "Output"
@@ -180,10 +228,10 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
     --8<-- "docs/examples/guide/widgets/fizzbuzz02.py"
     ```
 
-=== "fizzbuzz02.css"
+=== "fizzbuzz02.tcss"
 
-    ```sass title="fizzbuzz02.css"
-    --8<-- "docs/examples/guide/widgets/fizzbuzz02.css"
+    ```css title="fizzbuzz02.tcss"
+    --8<-- "docs/examples/guide/widgets/fizzbuzz02.tcss"
     ```
 
 === "Output"
@@ -245,6 +293,37 @@ Add a rule to your CSS that targets `Tooltip`. Here's an example:
 
     ```{.textual path="docs/examples/guide/widgets/tooltip02.py" hover="Button"}
     ```
+
+## Loading indicator
+
+Widgets have a [`loading`][textual.widget.Widget.loading] reactive which when set to `True` will temporarily replace your widget with a [`LoadingIndicator`](../widgets/loading_indicator.md).
+
+You can use this to indicate to the user that the app is currently working on getting data, and there will be content when that data is available.
+Let's look at an example of this.
+
+=== "loading01.py"
+
+    ```python title="loading01.py"
+    --8<-- "docs/examples/guide/widgets/loading01.py"
+    ```
+
+    1. Shows the loading indicator in place of the data table.
+    2. Insert a random sleep to simulate a network request.
+    3. Show the new data.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/widgets/loading01.py"}
+    ```
+
+
+In this example we have four [DataTable](../widgets/data_table.md) widgets, which we put into a loading state by setting the widget's `loading` property to `True`.
+This will temporarily replace the widget with a loading indicator animation.
+When the (simulated) data has been retrieved, we reset the `loading` property to show the new data.
+
+!!! tip
+
+    See the guide on [Workers](./workers.md) if you want to know more about the `@work` decorator.
 
 ## Line API
 
@@ -434,7 +513,7 @@ You should find that if you move the mouse over the widget now, it will highligh
 The following builtin widgets use the Line API. If you are building advanced widgets, it may be worth looking through the code for inspiration!
 
 - [DataTable](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_data_table.py)
-- [TextLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_text_log.py)
+- [RichLog](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_rich_log.py)
 - [Tree](https://github.com/Textualize/textual/blob/main/src/textual/widgets/_tree.py)
 
 ## Compound widgets
@@ -472,7 +551,7 @@ In this section we will show how to design and build a fully-working app, while 
 
 ### Designing the app
 
-We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this a teaching aid for binary numbers.
+We are going to build a *byte editor* which allows you to enter a number in both decimal and binary. You could use this as a teaching aid for binary numbers.
 
 Here's a sketch of what the app should ultimately look like:
 
@@ -485,7 +564,11 @@ Here's a sketch of what the app should ultimately look like:
 --8<-- "docs/images/byte01.excalidraw.svg"
 </div>
 
-There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them in to logical groups with compound widgets. This will make our app easier to work with.
+There are three types of built-in widget in the sketch, namely ([Input](../widgets/input.md), [Label](../widgets/label.md), and [Switch](../widgets/switch.md)). Rather than manage these as a single collection of widgets, we can arrange them into logical groups with compound widgets. This will make our app easier to work with.
+
+??? textualize "Try in Textual-web"
+
+    <div class="textual-web-demo" data-app="byte03"></div>
 
 ###  Identifying components
 
@@ -522,7 +605,7 @@ Note the `compose()` methods of each of the widgets.
 
 - The `ByteInput` yields 8 `BitSwitch` widgets and arranges them horizontally. It also adds a `focus-within` style in its CSS to draw an accent border when any of the switches are focused.
 
-- The `ByteEditor` yields a `ByteInput` and an `Input` control. The default CSS stacks the two controls on top of each other to divide the screen in to two parts.
+- The `ByteEditor` yields a `ByteInput` and an `Input` control. The default CSS stacks the two controls on top of each other to divide the screen into two parts.
 
 With these three widgets, the [DOM](CSS.md#the-dom) for our app will look like this:
 

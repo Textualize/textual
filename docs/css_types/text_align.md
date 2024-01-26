@@ -8,7 +8,7 @@ The `<text-align>` CSS type represents alignments that can be applied to text.
 
 ## Syntax
 
-A [`<text-align>`](/css_types/text_align) can be any of the following values:
+A [`<text-align>`](./text_align.md) can be any of the following values:
 
 | Value     | Alignment type                       |
 |-----------|--------------------------------------|
@@ -27,9 +27,9 @@ A [`<text-align>`](/css_types/text_align) can be any of the following values:
 
 ### CSS
 
-```sass
+```css
 Label {
-    rule: justify;
+    text-align: justify;
 }
 ```
 

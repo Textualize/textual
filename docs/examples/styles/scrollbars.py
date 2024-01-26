@@ -13,6 +13,8 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 
 class ScrollbarApp(App):
+    CSS_PATH = "scrollbars.tcss"
+
     def compose(self):
         yield Horizontal(
             ScrollableContainer(Label(TEXT * 10)),
@@ -20,6 +22,6 @@ class ScrollbarApp(App):
         )
 
 
-app = ScrollbarApp(css_path="scrollbars.css")
 if __name__ == "__main__":
+    app = ScrollbarApp()
     app.run()

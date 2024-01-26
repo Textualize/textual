@@ -29,17 +29,17 @@ This example shows, from top to bottom: `left`, `center`, `right`, and `justify`
     --8<-- "docs/examples/styles/text_align.py"
     ```
 
-=== "text_align.css"
+=== "text_align.tcss"
 
-    ```sass hl_lines="2 7 12 17"
-    --8<-- "docs/examples/styles/text_align.css"
+    ```css hl_lines="2 7 12 17"
+    --8<-- "docs/examples/styles/text_align.tcss"
     ```
 
 [//]: # (TODO: Add an example that shows how `start` and `end` change when RTL support is added.)
 
 ## CSS
 
-```sass
+```css
 /* Set text in the widget to be right aligned */
 text-align: right;
 ```

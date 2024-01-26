@@ -3,7 +3,7 @@ from textual.widgets import RadioButton, RadioSet
 
 
 class RadioChoicesApp(App[None]):
-    CSS_PATH = "radio_button.css"
+    CSS_PATH = "radio_button.tcss"
 
     def compose(self) -> ComposeResult:
         with RadioSet():

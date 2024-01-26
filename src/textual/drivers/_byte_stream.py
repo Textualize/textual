@@ -2,7 +2,16 @@ from __future__ import annotations
 
 import io
 from collections import deque
-from typing import Callable, Deque, Generator, Generic, Iterable, NamedTuple, TypeVar
+from typing import (
+    Callable,
+    Deque,
+    Generator,
+    Generic,
+    Iterable,
+    NamedTuple,
+    Tuple,
+    TypeVar,
+)
 
 from typing_extensions import TypeAlias
 
@@ -126,7 +135,7 @@ class BytePacket(NamedTuple):
     payload: bytes
 
 
-class ByteStream(ByteStreamParser[tuple[str, bytes]]):
+class ByteStream(ByteStreamParser[Tuple[str, bytes]]):
     """A stream of packets in the following format.
 
     1 Byte for the type.
@@ -142,7 +151,7 @@ class ByteStream(ByteStreamParser[tuple[str, bytes]]):
         read = self.read
         from_bytes = int.from_bytes
         while not self.is_eof:
-            packet_type = (yield read1()).decode("utf-8")
+            packet_type = (yield read1()).decode("utf-8", "ignore")
             size = from_bytes((yield read(4)), "big")
             payload = (yield read(size)) if size else b""
             on_token(BytePacket(packet_type, payload))

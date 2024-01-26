@@ -97,15 +97,15 @@ class SelectionList(Generic[SelectionType], OptionList):
         height: auto;
     }
 
-    .-light-mode SelectionList:focus > .selection-list--button-selected {
+    SelectionList:light:focus > .selection-list--button-selected {
         color: $primary;
     }
 
-    .-light-mode SelectionList > .selection-list--button-selected-highlighted {
+    SelectionList:light > .selection-list--button-selected-highlighted {
         color: $primary;
     }
 
-    .-light-mode SelectionList:focus > .selection-list--button-selected-highlighted {
+    SelectionList:light:focus > .selection-list--button-selected-highlighted {
         color: $primary;
     }
 
@@ -694,3 +694,12 @@ class SelectionList(Generic[SelectionType], OptionList):
             SelectionError: If the selection option is of the wrong form.
         """
         return self.add_options([item])
+
+    def clear_options(self) -> Self:
+        """Clear the content of the selection list.
+
+        Returns:
+            The `SelectionList` instance.
+        """
+        self._selected.clear()
+        return super().clear_options()

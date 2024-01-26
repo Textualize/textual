@@ -14,6 +14,7 @@ h3 .doc-heading code {
 }
 
 body[data-md-color-primary="black"] .excalidraw  svg  {
+  will-change: filter;
   filter: invert(100%) hue-rotate(180deg);
 }
 
@@ -71,4 +72,46 @@ td code {
 .doc-function p strong {
   opacity: 0.85;
 
+}
+
+.textual-web-demo iframe {
+  border: none;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  margin: 0;
+}
+
+
+.textual-web-demo {
+  display: flex;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  margin: 0;
+  opacity: 0;
+  transition: 0.3s opacity;
+}
+
+.textual-web-demo.-loaded {
+  opacity: 1.0;
+  transition: 0.3s opacity;
+}
+
+:root {
+  --md-admonition-icon--textualize: url('/images/icons/logo light transparent.svg')
+}
+.md-typeset .admonition.textualize,
+.md-typeset details.textualize {
+  border-color: rgb(43, 155, 70);
+}
+.md-typeset .textualize > .admonition-title,
+.md-typeset .textualize > summary {
+  background-color: rgba(43, 155, 70, 0.1);
+}
+.md-typeset .textualize > .admonition-title::before,
+.md-typeset .textualize > summary::before {
+  background-color: rgb(43, 155, 70);
+  -webkit-mask-image: var(--md-admonition-icon--textualize);
+          mask-image: var(--md-admonition-icon--textualize);
 }

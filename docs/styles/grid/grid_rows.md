@@ -12,10 +12,10 @@ The `grid-rows` style allows to define the height of the rows of the grid.
 grid-rows: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `grid-rows` style takes one or more [`<scalar>`](../../../css_types/scalar) that specify the length of the rows of the grid.
+The `grid-rows` style takes one or more [`<scalar>`](../../css_types/scalar.md) that specify the length of the rows of the grid.
 
 If there are more rows in the grid than scalars specified in `grid-rows`, they are reused cyclically.
-If the number of [`<scalar>`](../../../css_types/scalar) is in excess, the excess is ignored.
+If the number of [`<scalar>`](../../css_types/scalar.md) is in excess, the excess is ignored.
 
 ## Example
 
@@ -40,15 +40,15 @@ Because there are more rows than scalars in the style definition, the scalars wi
     --8<-- "docs/examples/styles/grid_rows.py"
     ```
 
-=== "grid_rows.css"
+=== "grid_rows.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/grid_rows.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/styles/grid_rows.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Set all rows to have 50% height */
 grid-rows: 50%;
 

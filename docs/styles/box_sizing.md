@@ -32,15 +32,15 @@ The bottom widget has `box-sizing: content-box` which increases the size of the 
     --8<-- "docs/examples/styles/box_sizing.py"
     ```
 
-=== "box_sizing.css"
+=== "box_sizing.tcss"
 
-    ```sass hl_lines="2 6"
-    --8<-- "docs/examples/styles/box_sizing.css"
+    ```css hl_lines="2 6"
+    --8<-- "docs/examples/styles/box_sizing.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Set box sizing to border-box (default) */
 box-sizing: border-box;
 

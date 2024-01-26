@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class MyApp(App):
+    CSS_PATH = "row_span.tcss"
+
     def compose(self):
         yield Grid(
             Placeholder(id="p1"),
@@ -16,4 +18,6 @@ class MyApp(App):
         )
 
 
-app = MyApp(css_path="row_span.css")
+if __name__ == "__main__":
+    app = MyApp()
+    app.run()

@@ -3,55 +3,50 @@ name: Test Textual module
 on:
   pull_request:
     paths:
-      - '.github/workflows/pythonpackage.yml'
-      - '**.py'
-      - '**.pyi'
-      - '**.css'
-      - '**.ambr'
-      - '**.lock'
-      - 'Makefile'
+      - ".github/workflows/pythonpackage.yml"
+      - "**.py"
+      - "**.pyi"
+      - "**.css"
+      - "**.ambr"
+      - "**.lock"
+      - "Makefile"
 
 jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.7", "3.8", "3.9", "3.10", "3.11"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     defaults:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v3.5.2
-      - name: Install and configure Poetry  # This could be cached, too...
-        uses: snok/install-poetry@v1.3.3
-        with:
-          version: 1.4.2
-          virtualenvs-in-project: true
+      - uses: actions/checkout@v4.1.1
+      - name: Install Poetry
+        run: pipx install poetry==1.7.1
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4.6.0
+        uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
-          architecture: x64
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v3
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          cache: 'poetry'
       - name: Install dependencies
-        run: poetry install
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-#      - name: Typecheck with mypy
-#        run: |
-#          make typecheck
+        run: poetry install --no-interaction --extras syntax
+        if: ${{ matrix.python-version != '3.12' }}
+      - name: Install dependencies for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
+        run: poetry install --no-interaction
+        if: ${{ matrix.python-version == '3.12' }}
       - name: Test with pytest
         run: |
-          source $VENV
-          pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
+          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
+        if: ${{ matrix.python-version != '3.12' }}
+      - name: Test with pytest for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
+        run: |
+          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax'
+        if: ${{ matrix.python-version == '3.12' }}
       - name: Upload snapshot report
         if: always()
         uses: actions/upload-artifact@v3
         with:
           name: snapshot-report-textual
-          path: tests/snapshot_tests/output/snapshot_report.html
+          path: snapshot_report.html

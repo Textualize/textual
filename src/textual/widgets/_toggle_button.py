@@ -94,16 +94,16 @@ class ToggleButton(Static, can_focus=True):
 
     /* Light mode overrides. */
 
-    App.-light-mode ToggleButton > .toggle--button {
+    ToggleButton:light > .toggle--button {
         color: $background;
         background: $foreground 10%;
     }
 
-    App.-light-mode ToggleButton:focus > .toggle--button {
+    ToggleButton:light:focus > .toggle--button {
         background: $foreground 25%;
     }
 
-    App.-light-mode ToggleButton.-on > .toggle--button {
+    ToggleButton:light.-on > .toggle--button {
         color: $primary;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
@@ -147,17 +147,34 @@ class ToggleButton(Static, can_focus=True):
         # NOTE: Don't send a Changed message in response to the initial set.
         with self.prevent(self.Changed):
             self.value = value
-        self._label = Text.from_markup(label) if isinstance(label, str) else label
+        self._label = self._make_label(label)
+
+    def _make_label(self, label: TextType) -> Text:
+        """Make a `Text` label from a `TextType` value.
+
+        Args:
+            label: The source value for the label.
+
+        Returns:
+            A `Text` rendering of the label for use in the button.
+        """
+        label = Text.from_markup(label) if isinstance(label, str) else label
         try:
             # Only use the first line if it's a multi-line label.
-            self._label = self._label.split()[0]
+            label = label.split()[0]
         except IndexError:
             pass
+        return label
 
     @property
     def label(self) -> Text:
         """The label associated with the button."""
         return self._label
+
+    @label.setter
+    def label(self, label: TextType) -> None:
+        self._label = self._make_label(label)
+        self.refresh(layout=True)
 
     @property
     def _button(self) -> Text:
@@ -232,7 +249,7 @@ class ToggleButton(Static, can_focus=True):
         """Toggle the value of the widget when clicked with the mouse."""
         self.toggle()
 
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the value of the toggle button changes."""
 
         def __init__(self, toggle_button: ToggleButton, value: bool) -> None:

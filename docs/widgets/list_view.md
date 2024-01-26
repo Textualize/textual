@@ -23,17 +23,17 @@ The example below shows an app with a simple `ListView`.
     --8<-- "docs/examples/widgets/list_view.py"
     ```
 
-=== "list_view.css"
+=== "list_view.tcss"
 
-    ```sass
-    --8<-- "docs/examples/widgets/list_view.css"
+    ```css
+    --8<-- "docs/examples/widgets/list_view.tcss"
     ```
 
 ## Reactive Attributes
 
-| Name    | Type  | Default | Description                     |
-| ------- | ----- | ------- | ------------------------------- |
-| `index` | `int` | `0`     | The currently highlighted index |
+| Name    | Type  | Default | Description                      |
+| ------- | ----- | ------- | -------------------------------- |
+| `index` | `int` | `0`     | The currently highlighted index. |
 
 ## Messages
 
@@ -48,6 +48,10 @@ The list view widget defines the following bindings:
     options:
       show_root_heading: false
       show_root_toc_entry: false
+
+## Component Classes
+
+This widget has no component classes.
 
 ---
 

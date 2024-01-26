@@ -27,6 +27,11 @@ Here's our sketch:
 It's rough, but it's all we need.
 
 
+??? textualize "Try in Textual-web"
+
+    <div class="textual-web-demo" data-app="layout06"></div>
+
+
 ## Tip 2. Work outside in
 
 Like a sculpture with a block of marble, it is best to work from the outside towards the center.
@@ -197,4 +202,6 @@ The following tips will help you get started.
 4. Make use of `fr` for flexible space within layouts.
 5. Use containers to contain other widgets, particularly if they scroll!
 
-If you need further help, we are here to [help](/help/).
+---
+
+If you need further help, we are here to [help](../help.md).

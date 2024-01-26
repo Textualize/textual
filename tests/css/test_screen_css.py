@@ -16,13 +16,14 @@ class BaseScreen(Screen):
 
 
 class ScreenWithCSS(Screen):
+    SCOPED_CSS = False
     CSS = """
     #screen-css {
         background: #ff0000;
     }
     """
 
-    CSS_PATH = "test_screen_css.css"
+    CSS_PATH = "test_screen_css.tcss"
 
     def compose(self):
         yield Label("Hello, world!", id="app-css")

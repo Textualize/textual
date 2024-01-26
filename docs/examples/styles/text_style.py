@@ -11,10 +11,14 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class TextStyleApp(App):
+    CSS_PATH = "text_style.tcss"
+
     def compose(self):
         yield Label(TEXT, id="lbl1")
         yield Label(TEXT, id="lbl2")
         yield Label(TEXT, id="lbl3")
 
 
-app = TextStyleApp(css_path="text_style.css")
+if __name__ == "__main__":
+    app = TextStyleApp()
+    app.run()

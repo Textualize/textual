@@ -27,7 +27,7 @@ def on(
     """Decorator to declare that the method is a message handler.
 
     The decorator accepts an optional CSS selector that will be matched against a widget exposed by
-    a `control` attribute on the message.
+    a `control` property on the message.
 
     Example:
         ```python

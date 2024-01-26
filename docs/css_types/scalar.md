@@ -10,7 +10,7 @@ It is used to represent lengths, for example in the [`width`](../styles/width.md
 
 ## Syntax
 
-A [`<scalar>`](/css_types/scalar) can be any of the following:
+A [`<scalar>`](./scalar.md) can be any of the following:
 
  - a fixed number of cells (e.g., `10`);
  - a fractional proportion relative to the sizes of the other widgets (e.g., `1fr`);
@@ -98,7 +98,7 @@ For example, if its container is big enough, a label with `width: auto` will be 
 
 ### CSS
 
-```sass
+```css
 Horizontal {
     width: 60;     /* 60 cells */
     height: 1fr;   /* proportional size of 1 */

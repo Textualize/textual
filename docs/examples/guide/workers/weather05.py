@@ -1,3 +1,4 @@
+from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 from rich.text import Text
@@ -12,7 +13,7 @@ from textual.worker import Worker, get_current_worker
 class WeatherApp(App):
     """App to display the current weather."""
 
-    CSS_PATH = "weather.css"
+    CSS_PATH = "weather.tcss"
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Enter a City")
@@ -30,7 +31,7 @@ class WeatherApp(App):
         worker = get_current_worker()
         if city:
             # Query the network API
-            url = f"https://wttr.in/{city}"
+            url = f"https://wttr.in/{quote(city)}"
             request = Request(url)
             request.add_header("User-agent", "CURL")
             response_text = urlopen(request).read().decode("utf-8")

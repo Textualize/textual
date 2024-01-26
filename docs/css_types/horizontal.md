@@ -4,7 +4,7 @@ The `<horizontal>` CSS type represents a position along the horizontal axis.
 
 ## Syntax
 
-The [`<horizontal>`](/css_types/horizontal) type can take any of the following values:
+The [`<horizontal>`](./horizontal.md) type can take any of the following values:
 
 | Value            | Description                                  |
 | ---------------- | -------------------------------------------- |
@@ -16,7 +16,7 @@ The [`<horizontal>`](/css_types/horizontal) type can take any of the following v
 
 ### CSS
 
-```sass
+```css
 .container {
     align-horizontal: right;
 }

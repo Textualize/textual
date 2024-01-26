@@ -3,6 +3,8 @@ from textual.widgets import Static
 
 
 class GridApp(App):
+    CSS_PATH = "grid.tcss"
+
     def compose(self):
         yield Static("Grid cell 1\n\nrow-span: 3;\ncolumn-span: 2;", id="static1")
         yield Static("Grid cell 2", id="static2")
@@ -13,4 +15,6 @@ class GridApp(App):
         yield Static("Grid cell 7", id="static7")
 
 
-app = GridApp(css_path="grid.css")
+if __name__ == "__main__":
+    app = GridApp()
+    app.run()

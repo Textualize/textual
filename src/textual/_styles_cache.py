@@ -9,10 +9,12 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 
+from . import log
 from ._border import get_box, render_border_label, render_row
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color
+from .constants import DEBUG
 from .filter import LineFilter
 from .geometry import Region, Size, Spacing
 from .renderables.text_opacity import TextOpacity
@@ -148,10 +150,10 @@ class StylesCache:
                 and hover_style._meta
                 and "@click" in hover_style.meta
             ):
-                link_hover_style = widget.link_hover_style
-                if link_hover_style:
+                link_style_hover = widget.link_style_hover
+                if link_style_hover:
                     strips = [
-                        strip.style_links(hover_style.link_id, link_hover_style)
+                        strip.style_links(hover_style.link_id, link_style_hover)
                         for strip in strips
                     ]
 
@@ -228,10 +230,17 @@ class StylesCache:
                 self._cache[y] = strip
             else:
                 strip = self._cache[y]
+
             if filters:
                 for filter in filters:
                     strip = strip.apply_filter(filter, background)
+
+            if DEBUG:
+                if any([not (segment.control or segment.text) for segment in strip]):
+                    log.warning(f"Strip contains invalid empty Segments: {strip!r}.")
+
             add_strip(strip)
+
         self._dirty_lines.difference_update(crop.line_range)
 
         if crop.column_span != (0, width):

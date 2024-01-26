@@ -1,14 +1,17 @@
 from __future__ import annotations
 
+import asyncio
+from dataclasses import dataclass
 from typing import ClassVar
 
 import rich.repr
+from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
 from .. import events
 from ..app import ComposeResult, RenderResult
-from ..await_remove import AwaitRemove
+from ..await_complete import AwaitComplete
 from ..binding import Binding, BindingType
 from ..containers import Container, Horizontal, Vertical
 from ..css.query import NoMatches
@@ -17,7 +20,7 @@ from ..geometry import Offset
 from ..message import Message
 from ..reactive import reactive
 from ..renderables.bar import Bar
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ..widgets import Static
 
 
@@ -104,17 +107,45 @@ class Tab(Static):
     Tab.-active:hover {
         color: $text;
     }
+    Tab:disabled {
+        color: $text-disabled;
+        text-opacity: 50%;
+    }
+    Tab.-hidden {
+        display: none;
+    }
     """
 
-    class Clicked(Message):
-        """A tab was clicked."""
+    @dataclass
+    class TabMessage(Message):
+        """Tab-related messages.
+
+        These are mostly intended for internal use when interacting with `Tabs`.
+        """
 
         tab: Tab
-        """The tab that was clicked."""
+        """The tab that is the object of this message."""
 
-        def __init__(self, tab: Tab) -> None:
-            self.tab = tab
-            super().__init__()
+        @property
+        def control(self) -> Tab:
+            """The tab that is the object of this message.
+
+            This is an alias for the attribute `tab` and is used by the
+            [`on`][textual.on] decorator.
+            """
+            return self.tab
+
+    class Clicked(TabMessage):
+        """A tab was clicked."""
+
+    class Disabled(TabMessage):
+        """A tab was disabled."""
+
+    class Enabled(TabMessage):
+        """A tab was enabled."""
+
+    class Relabelled(TabMessage):
+        """A tab was relabelled."""
 
     def __init__(
         self,
@@ -122,6 +153,7 @@ class Tab(Static):
         *,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """Initialise a Tab.
 
@@ -129,10 +161,25 @@ class Tab(Static):
             label: The label to use in the tab.
             id: Optional ID for the widget.
             classes: Space separated list of class names.
+            disabled: Whether the tab is disabled or not.
         """
-        self.label = Text.from_markup(label) if isinstance(label, str) else label
-        super().__init__(id=id, classes=classes)
-        self.update(label)
+        super().__init__(id=id, classes=classes, disabled=disabled)
+        self._label: Text
+        self.label = label
+
+    @property
+    def label(self) -> Text:
+        """The label for the tab."""
+        return self._label
+
+    @label.setter
+    def label(self, label: TextType) -> None:
+        self._label = Text.from_markup(label) if isinstance(label, str) else label
+        self.update(self._label)
+
+    def update(self, renderable: RenderableType = "") -> None:
+        self.post_message(self.Relabelled(self))
+        return super().update(renderable)
 
     @property
     def label_text(self) -> str:
@@ -143,6 +190,10 @@ class Tab(Static):
         """Inform the message that the tab was clicked."""
         self.post_message(self.Clicked(self))
 
+    def _watch_disabled(self, disabled: bool) -> None:
+        """Notify the parent `Tabs` that a tab was enabled/disabled."""
+        self.post_message(self.Disabled(self) if disabled else self.Enabled(self))
+
 
 class Tabs(Widget, can_focus=True):
     """A row of tabs."""
@@ -150,7 +201,7 @@ class Tabs(Widget, can_focus=True):
     DEFAULT_CSS = """
     Tabs {
         width: 100%;
-        height:3;
+        height: 3;
     }
     Tabs > #tabs-scroll {
         overflow: hidden;
@@ -184,8 +235,8 @@ class Tabs(Widget, can_focus=True):
     class TabError(Exception):
         """Exception raised when there is an error relating to tabs."""
 
-    class TabActivated(Message):
-        """Sent when a new tab is activated."""
+    class TabMessage(Message):
+        """Parent class for all messages that have to do with a specific tab."""
 
         ALLOW_SELECTOR_MATCH = {"tab"}
         """Additional message attributes that can be used with the [`on` decorator][textual.on]."""
@@ -195,20 +246,20 @@ class Tabs(Widget, can_focus=True):
 
             Args:
                 tabs: The Tabs widget.
-                tab: The tab that was activated.
+                tab: The tab that is the object of this message.
             """
             self.tabs: Tabs = tabs
             """The tabs widget containing the tab."""
             self.tab: Tab = tab
-            """The tab that was activated."""
+            """The tab that is the object of this message."""
             super().__init__()
 
         @property
         def control(self) -> Tabs:
-            """The tabs widget containing the tab that was activated.
+            """The tabs widget containing the tab that is the object of this message.
 
-            This is an alias for [`TabActivated.tabs`][textual.widgets.Tabs.TabActivated.tabs]
-            which is used by the [`on`][textual.on] decorator.
+            This is an alias for the attribute `tabs` and is used by the
+            [`on`][textual.on] decorator.
             """
             return self.tabs
 
@@ -216,8 +267,26 @@ class Tabs(Widget, can_focus=True):
             yield self.tabs
             yield self.tab
 
+    class TabActivated(TabMessage):
+        """Sent when a new tab is activated."""
+
+    class TabDisabled(TabMessage):
+        """Sent when a tab is disabled."""
+
+    class TabEnabled(TabMessage):
+        """Sent when a tab is enabled."""
+
+    class TabHidden(TabMessage):
+        """Sent when a tab is hidden."""
+
+    class TabShown(TabMessage):
+        """Sent when a tab is shown."""
+
     class Cleared(Message):
-        """Sent when there are no active tabs."""
+        """Sent when there are no active tabs.
+
+        This can occur when Tabs are cleared, or if all tabs are hidden.
+        """
 
         def __init__(self, tabs: Tabs) -> None:
             """Initialize the event.
@@ -300,9 +369,22 @@ class Tabs(Widget, can_focus=True):
         return len(self.query("#tabs-list > Tab"))
 
     @property
+    def _potentially_active_tabs(self) -> list[Tab]:
+        """List of all tabs that could be active.
+
+        This list is comprised of all tabs that are shown and enabled,
+        plus the active tab in case it is disabled.
+        """
+        return [
+            tab
+            for tab in self.query("#tabs-list > Tab").results(Tab)
+            if ((not tab.disabled or tab is self.active_tab) and tab.display)
+        ]
+
+    @property
     def _next_active(self) -> Tab | None:
         """Next tab to make active if the active tab is removed."""
-        tabs = list(self.query("#tabs-list > Tab").results(Tab))
+        tabs = self._potentially_active_tabs
         if self.active_tab is None:
             return None
         try:
@@ -325,7 +407,7 @@ class Tabs(Widget, can_focus=True):
         *,
         before: Tab | str | None = None,
         after: Tab | str | None = None,
-    ) -> AwaitMount:
+    ) -> AwaitComplete:
         """Add a new tab to the end of the tab list.
 
         Args:
@@ -334,7 +416,8 @@ class Tabs(Widget, can_focus=True):
             after: Optional tab or tab ID to add the tab after.
 
         Returns:
-            An awaitable object that waits for the tab to be mounted.
+            An optionally awaitable object that waits for the tab to be mounted and
+                internal state to be fully updated to reflect the new tab.
 
         Raises:
             Tabs.TabError: If there is a problem with the addition request.
@@ -386,17 +469,23 @@ class Tabs(Widget, can_focus=True):
 
             async def refresh_active() -> None:
                 """Wait for things to be mounted before highlighting."""
+                await mount_await
                 self.active = tab_widget.id or ""
                 self._highlight_active(animate=False)
                 self.post_message(activated_message)
 
-            self.call_after_refresh(refresh_active)
+            return AwaitComplete(refresh_active())
         elif before or after:
-            self.call_after_refresh(self._highlight_active, animate=False)
 
-        return mount_await
+            async def refresh_active() -> None:
+                await mount_await
+                self._highlight_active(animate=False)
 
-    def clear(self) -> AwaitRemove:
+            return AwaitComplete(refresh_active())
+
+        return AwaitComplete(mount_await())
+
+    def clear(self) -> AwaitComplete:
         """Clear all the tabs.
 
         Returns:
@@ -406,50 +495,50 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_start = 0
         underline.highlight_end = 0
         self.call_after_refresh(self.post_message, self.Cleared(self))
-        return self.query("#tabs-list > Tab").remove()
+        self.active = ""
+        return AwaitComplete(self.query("#tabs-list > Tab").remove()())
 
-    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitRemove:
+    def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitComplete:
         """Remove a tab.
 
         Args:
-            tab_or_id: The Tab's id.
+            tab_or_id: The Tab to remove or its id.
 
         Returns:
-            An awaitable object that waits for the tab to be removed.
+            An optionally awaitable object that waits for the tab to be removed.
         """
-        if tab_or_id is None:
-            return self.app._remove_nodes([], None)
+        if not tab_or_id:
+            return AwaitComplete(self.app._remove_nodes([], None)())
+
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
         else:
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return self.app._remove_nodes([], None)
+                return AwaitComplete(self.app._remove_nodes([], None)())
+
         removing_active_tab = remove_tab.has_class("-active")
-
         next_tab = self._next_active
-        result_message: Tabs.Cleared | Tabs.TabActivated | None = None
-        if removing_active_tab and next_tab is not None:
-            result_message = self.TabActivated(self, next_tab)
-        elif self.tab_count == 1:
-            result_message = self.Cleared(self)
-
         remove_await = remove_tab.remove()
+
+        highlight_updated = asyncio.Event()
 
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_await
-            if removing_active_tab:
-                if next_tab is not None:
-                    next_tab.add_class("-active")
-                self.call_after_refresh(self._highlight_active, animate=True)
-            if result_message is not None:
-                self.post_message(result_message)
+            if next_tab is None:
+                self.active = ""
+            elif removing_active_tab:
+                self.active = next_tab.id
+                next_tab.add_class("-active")
 
-        self.call_after_refresh(do_remove)
+            highlight_updated.set()
 
-        return remove_await
+        async def wait_for_highlight_update() -> None:
+            await highlight_updated.wait()
+
+        return AwaitComplete(do_remove(), wait_for_highlight_update())
 
     def validate_active(self, active: str) -> str:
         """Check id assigned to active attribute is a valid tab."""
@@ -493,7 +582,7 @@ class Tabs(Widget, can_focus=True):
                 return
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
-            self.call_later(self._highlight_active, animate=previously_active != "")
+            self._highlight_active(animate=previously_active != "")
             self.post_message(self.TabActivated(self, active_tab))
         else:
             underline = self.query_one(Underline)
@@ -519,8 +608,22 @@ class Tabs(Widget, can_focus=True):
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
             if animate:
-                underline.animate("highlight_start", start, duration=0.3)
-                underline.animate("highlight_end", end, duration=0.3)
+
+                def animate_underline() -> None:
+                    """Animate the underline."""
+                    try:
+                        active_tab = self.query_one(f"#tabs-list > Tab.-active")
+                    except NoMatches:
+                        pass
+                    else:
+                        tab_region = active_tab.virtual_region.shrink(
+                            active_tab.styles.gutter
+                        )
+                        start, end = tab_region.column_span
+                        underline.animate("highlight_start", start, duration=0.3)
+                        underline.animate("highlight_end", end, duration=0.3)
+
+                self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:
                 underline.highlight_start = start
                 underline.highlight_end = end
@@ -590,10 +693,122 @@ class Tabs(Widget, can_focus=True):
         active_tab = self.active_tab
         if active_tab is None:
             return
-        tabs = list(self.query(Tab))
+        tabs = self._potentially_active_tabs
         if not tabs:
             return
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
         self._scroll_active_tab()
+
+    def _on_tab_disabled(self, event: Tab.Disabled) -> None:
+        """Re-post the disabled message."""
+        event.stop()
+        self.post_message(self.TabDisabled(self, event.tab))
+
+    def _on_tab_enabled(self, event: Tab.Enabled) -> None:
+        """Re-post the enabled message."""
+        event.stop()
+        self.post_message(self.TabEnabled(self, event.tab))
+
+    def _on_tab_relabelled(self, event: Tab.Relabelled) -> None:
+        """Redraw the highlight when tab is relabelled."""
+        event.stop()
+        self._highlight_active()
+
+    def disable(self, tab_id: str) -> Tab:
+        """Disable the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to disable.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_disable = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(
+                f"There is no tab with ID {tab_id!r} to disable."
+            ) from None
+
+        tab_to_disable.disabled = True
+        return tab_to_disable
+
+    def enable(self, tab_id: str) -> Tab:
+        """Enable the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to enable.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_enable = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(
+                f"There is no tab with ID {tab_id!r} to enable."
+            ) from None
+
+        tab_to_enable.disabled = False
+        return tab_to_enable
+
+    def hide(self, tab_id: str) -> Tab:
+        """Hide the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to hide.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_hide = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(f"There is no tab with ID {tab_id!r} to hide.")
+
+        if tab_to_hide.has_class("-active"):
+            next_tab = self._next_active
+            self.active = next_tab.id or "" if next_tab else ""
+        tab_to_hide.add_class("-hidden")
+        self.post_message(self.TabHidden(self, tab_to_hide))
+        self.call_after_refresh(self._highlight_active)
+        return tab_to_hide
+
+    def show(self, tab_id: str) -> Tab:
+        """Show the indicated tab.
+
+        Args:
+            tab_id: The ID of the [`Tab`][textual.widgets.Tab] to show.
+
+        Returns:
+            The [`Tab`][textual.widgets.Tab] that was targeted.
+
+        Raises:
+            TabError: If there are any issues with the request.
+        """
+
+        try:
+            tab_to_show = self.query_one(f"#tabs-list > Tab#{tab_id}", Tab)
+        except NoMatches:
+            raise self.TabError(f"There is no tab with ID {tab_id!r} to show.")
+
+        tab_to_show.remove_class("-hidden")
+        self.post_message(self.TabShown(self, tab_to_show))
+        if not self.active:
+            self._activate_tab(tab_to_show)
+        self.call_after_refresh(self._highlight_active)
+        return tab_to_show

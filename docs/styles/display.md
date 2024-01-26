@@ -30,15 +30,15 @@ Note that the second widget is hidden by adding the `"remove"` class which sets 
     --8<-- "docs/examples/styles/display.py"
     ```
 
-=== "display.css"
+=== "display.tcss"
 
-    ```sass hl_lines="13"
-    --8<-- "docs/examples/styles/display.css"
+    ```css hl_lines="13"
+    --8<-- "docs/examples/styles/display.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Widget is shown */
 display: block;
 

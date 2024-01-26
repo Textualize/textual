@@ -4,7 +4,7 @@ The `<border>` CSS type represents a border style.
 
 ## Syntax
 
-The [`<border>`](/css_types/border) type can take any of the following values:
+The [`<border>`](./border.md) type can take any of the following values:
 
 | Border type | Description                                              |
 |-------------|----------------------------------------------------------|
@@ -18,6 +18,7 @@ The [`<border>`](/css_types/border) type can take any of the following values:
 | `inner`     | Thick solid border.                                      |
 | `none`      | Disabled border.                                         |
 | `outer`     | Solid border with additional space around content.       |
+| `panel`     | Solid border with thick top.                             |
 | `round`     | Rounded corners.                                         |
 | `solid`     | Solid border.                                            |
 | `tall`      | Solid border with additional space top and bottom.       |
@@ -37,7 +38,7 @@ textual borders
 
 ### CSS
 
-```sass
+```css
 #container {
     border: heavy red;
 }

@@ -4,13 +4,13 @@ The `<number>` CSS type represents a real number, which can be an integer or a n
 
 ## Syntax
 
-A [`<number>`](/css_types/number) is an [`<integer>`](/css_types/integer), optionally followed by the decimal point `.` and a decimal part composed of one or more digits.
+A [`<number>`](./number.md) is an [`<integer>`](./integer.md), optionally followed by the decimal point `.` and a decimal part composed of one or more digits.
 
 ## Examples
 
 ### CSS
 
-```sass
+```css
 Grid {
     grid-size: 3 6  /* Integers are numbers */
 }

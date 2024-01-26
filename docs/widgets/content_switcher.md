@@ -33,10 +33,10 @@ between the different views.
     4. Note that the initial visible content is set by its ID, see below.
     5. When a button is pressed, its ID is used to switch to a different widget in the `ContentSwitcher`. Remember that IDs are unique within parent, so the buttons and the widgets in the `ContentSwitcher` can share IDs.
 
-=== "content_switcher.css"
+=== "content_switcher.tcss"
 
     ~~~sass
-    --8<-- "docs/examples/widgets/content_switcher.css"
+    --8<-- "docs/examples/widgets/content_switcher.tcss"
     ~~~
 
 When the user presses the "Markdown" button the view is switched:
@@ -49,6 +49,18 @@ When the user presses the "Markdown" button the view is switched:
 | Name      | Type            | Default | Description                                                             |
 | --------- | --------------- | ------- | ----------------------------------------------------------------------- |
 | `current` | `str` \| `None` | `None`  | The ID of the currently-visible child. `None` means nothing is visible. |
+
+## Messages
+
+This widget posts no messages.
+
+## Bindings
+
+This widget has no bindings.
+
+## Component Classes
+
+This widget has no component classes.
 
 
 ---
