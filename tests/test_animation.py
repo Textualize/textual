@@ -196,7 +196,7 @@ async def test_scalar_animation_with_percentages() -> None:
 
         # The animation duration is set to 0.6 seconds, so after every 0.1
         # seconds the width should have increased by 1 cell
-        await pilot.pause(0.05)
+        await pilot.pause(0.02)
         assert static.size.width == 2  # No change yet
         await pilot.pause(0.1)
         assert static.size.width == 3
