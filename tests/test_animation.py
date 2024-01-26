@@ -161,36 +161,33 @@ async def test_schedule_reverse_animations() -> None:
         assert styles.background.rgb == (0, 0, 0)
 
 
-class ScalarPercentAnimApp(App):
-    # To simplify percentage calculations, the widget to be animated is placed
-    # inside a container with a width/height of 10
-    CSS = """
-    #container {
-        width: 10;
-        height: 10;
-    }
-
-    #foo {
-        width: 20%;
-        height: 20%;
-    }
-    """
-
-    def compose(self) -> ComposeResult:
-        with Container(id="container"):
-            yield Static(id="foo")
-
-
 async def test_scalar_animation_with_percentages() -> None:
     """Test scalar animations work with percentages.
 
     Regression test for #2940: https://github.com/Textualize/textual/issues/2940
     """
 
+    class ScalarPercentAnimApp(App):
+        CSS = """
+        Container {
+            width: 10;
+            height: 10;
+        }
+
+        Static {
+            width: 20%;
+            height: 20%;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            with Container():
+                yield Static()
+
     app = ScalarPercentAnimApp()
 
     async with app.run_test() as pilot:
-        static = app.query_one("#foo", Static)
+        static = app.query_one(Static)
         assert static.size.width == 2
         assert static.styles.width.value == 20
 
