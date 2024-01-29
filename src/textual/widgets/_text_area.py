@@ -89,10 +89,10 @@ TextArea {
     width: 1fr;
     height: 1fr;
     border: tall $background;
+    padding: 0 1;
     
     &:focus {
         border: tall $accent;
-        background: red;
     }
 }
 
@@ -522,6 +522,7 @@ TextArea:light .text-area--cursor {
 
     def watch_has_focus(self, value: bool) -> None:
         self._cursor_visible = value
+        super().watch_has_focus(value)
 
     def _watch_selection(
         self, previous_selection: Selection, selection: Selection
