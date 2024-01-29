@@ -440,9 +440,11 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def _make_selection(
         self,
-        selection: Selection
-        | tuple[TextType, SelectionType]
-        | tuple[TextType, SelectionType, bool],
+        selection: (
+            Selection
+            | tuple[TextType, SelectionType]
+            | tuple[TextType, SelectionType, bool]
+        ),
     ) -> Selection[SelectionType]:
         """Turn incoming selection data into a `Selection` instance.
 
@@ -676,10 +678,12 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def add_option(
         self,
-        item: NewOptionListContent
-        | Selection
-        | tuple[TextType, SelectionType]
-        | tuple[TextType, SelectionType, bool] = None,
+        item: (
+            NewOptionListContent
+            | Selection
+            | tuple[TextType, SelectionType]
+            | tuple[TextType, SelectionType, bool]
+        ) = None,
     ) -> Self:
         """Add a new selection option to the end of the list.
 

@@ -9,7 +9,6 @@ Additional methods apply actions to all nodes in the query.
     If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Iterable, Iterator, TypeVar, cast, overload

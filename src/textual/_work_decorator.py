@@ -2,7 +2,6 @@
 A decorator used to create [workers](/guide/workers).
 """
 
-
 from __future__ import annotations
 
 from functools import partial, wraps
@@ -76,9 +75,11 @@ def work(
 
 
 def work(
-    method: Callable[FactoryParamSpec, ReturnType]
-    | Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
-    | None = None,
+    method: (
+        Callable[FactoryParamSpec, ReturnType]
+        | Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]]
+        | None
+    ) = None,
     *,
     name: str = "",
     group: str = "default",
