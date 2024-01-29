@@ -88,7 +88,6 @@ class TextAreaTheme:
         if self.cursor_style is None:
             # If the theme doesn't contain a cursor style, fallback to component styles.
             cursor_style = component_styles.get("text-area--cursor")
-            print(cursor_style)
             if cursor_style:
                 self.cursor_style = cursor_style
             else:
@@ -97,6 +96,12 @@ class TextAreaTheme:
                     color=background_color.rich_color,
                     bgcolor=background_color.inverse.rich_color,
                 )
+
+        # Apply fallbacks for the styles of the active line and active line gutter.
+        if self.cursor_line_style is None:
+            cursor_line_style = component_styles.get("text-area--cursor-line")
+            if cursor_line_style:
+                self.cursor_line_style = cursor_line_style
 
         if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
             self.cursor_line_gutter_style = self.cursor_line_style.copy()

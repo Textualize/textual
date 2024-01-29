@@ -92,6 +92,10 @@ TextArea {
 .text-area--cursor {
     background: $accent;
 }
+
+.text-area--cursor-line {
+    background: $boost;
+}
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
