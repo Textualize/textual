@@ -721,24 +721,6 @@ class Widget(DOMNode):
 
         return partial_style if partial else style
 
-    def get_all_component_rich_styles(
-        self, *, partial: bool = False
-    ) -> dict[str, Style]:
-        """Get the Rich styles corresponding to the component classes for this widget.
-
-        Args:
-            partial: Return partial styles (not combined with parent).
-
-        Returns:
-            A dict which maps component style names to Rich style objects.
-        """
-        return {
-            component_name: self.get_component_rich_style(
-                component_name, partial=partial
-            )
-            for component_name in self.COMPONENT_CLASSES
-        }
-
     def render_str(self, text_content: str | Text) -> Text:
         """Convert str in to a Text object.
 

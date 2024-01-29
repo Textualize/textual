@@ -96,6 +96,11 @@ TextArea {
 .text-area--cursor-line {
     background: $boost;
 }
+
+.text-area--cursor-gutter {
+    background: $boost;
+}
+
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -886,7 +891,8 @@ TextArea {
         Returns:
             A rendered line.
         """
-        self._theme.apply_css(self.rich_style, self.get_all_component_rich_styles())
+        theme = self._theme
+        theme.apply_css(self)
 
         document = self.document
         wrapped_document = self.wrapped_document
@@ -911,8 +917,6 @@ TextArea {
             return Strip.blank(self.size.width)
 
         line_index, section_offset = line_info
-
-        theme = self._theme
 
         # Get the line from the Document.
         line_string = document.get_line(line_index)

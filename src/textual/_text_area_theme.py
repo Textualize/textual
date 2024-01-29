@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Mapping
+from typing import TYPE_CHECKING
 
 from rich.style import Style
 
 from textual.app import DEFAULT_COLORS
 from textual.color import Color
 from textual.design import DEFAULT_DARK_SURFACE
+
+if TYPE_CHECKING:
+    from textual.widgets import TextArea
 
 
 @dataclass
@@ -64,10 +67,9 @@ class TextAreaTheme:
     syntax_styles: dict[str, Style] = field(default_factory=dict)
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
-    def apply_css(
-        self, base_style: Style | None, component_styles: Mapping[str, Style]
-    ) -> None:
-        self.base_style = base_style or Style()
+    def apply_css(self, text_area: TextArea) -> None:
+        self.base_style = text_area.rich_style or Style()
+        get_style = text_area.get_component_rich_style
 
         if self.base_style.color is None:
             self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
@@ -87,7 +89,7 @@ class TextAreaTheme:
         background_color = Color.from_rich_color(self.base_style.bgcolor)
         if self.cursor_style is None:
             # If the theme doesn't contain a cursor style, fallback to component styles.
-            cursor_style = component_styles.get("text-area--cursor")
+            cursor_style = get_style("text-area--cursor")
             if cursor_style:
                 self.cursor_style = cursor_style
             else:
@@ -99,9 +101,10 @@ class TextAreaTheme:
 
         # Apply fallbacks for the styles of the active line and active line gutter.
         if self.cursor_line_style is None:
-            cursor_line_style = component_styles.get("text-area--cursor-line")
-            if cursor_line_style:
-                self.cursor_line_style = cursor_line_style
+            self.cursor_line_style = get_style("text-area--cursor-line")
+
+        if self.cursor_line_gutter_style is None:
+            self.cursor_line_gutter_style = get_style("text-area--cursor-gutter")
 
         if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
             self.cursor_line_gutter_style = self.cursor_line_style.copy()
