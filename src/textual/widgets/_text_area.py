@@ -878,7 +878,7 @@ TextArea {
         Returns:
             A rendered line.
         """
-        self._theme.apply_css_base_style(self.rich_style)
+        self._theme.apply_css(self.rich_style, self.get_all_component_rich_styles())
 
         document = self.document
         wrapped_document = self.wrapped_document

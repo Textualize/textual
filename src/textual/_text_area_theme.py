@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Mapping
 
 from rich.style import Style
 
@@ -63,7 +64,9 @@ class TextAreaTheme:
     syntax_styles: dict[str, Style] = field(default_factory=dict)
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
-    def apply_css_base_style(self, base_style: Style | None) -> None:
+    def apply_css(
+        self, base_style: Style | None, component_styles: Mapping[str, Style]
+    ) -> None:
         if self.base_style is not None:
             return
 
