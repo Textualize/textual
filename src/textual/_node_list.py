@@ -136,12 +136,10 @@ class NodeList(Sequence["Widget"]):
         return reversed(self._nodes)
 
     @overload
-    def __getitem__(self, index: int) -> Widget:
-        ...
+    def __getitem__(self, index: int) -> Widget: ...
 
     @overload
-    def __getitem__(self, index: slice) -> list[Widget]:
-        ...
+    def __getitem__(self, index: slice) -> list[Widget]: ...
 
     def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]

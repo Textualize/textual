@@ -3,6 +3,7 @@ Implements the scrollbar-related widgets for internal use.
 
 You will not need to use the widgets defined in this module.
 """
+
 from __future__ import annotations
 
 from math import ceil
@@ -146,18 +147,22 @@ class ScrollBarRender:
                 if bar_character != " ":
                     segments[start_index] = _Segment(
                         bar_character * width_thickness,
-                        _Style(bgcolor=back, color=bar, meta=foreground_meta)
-                        if vertical
-                        else _Style(bgcolor=bar, color=back, meta=foreground_meta),
+                        (
+                            _Style(bgcolor=back, color=bar, meta=foreground_meta)
+                            if vertical
+                            else _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                        ),
                     )
             if end_index < len(segments):
                 bar_character = bars[len_bars - 1 - end_bar]
                 if bar_character != " ":
                     segments[end_index] = _Segment(
                         bar_character * width_thickness,
-                        _Style(bgcolor=bar, color=back, meta=foreground_meta)
-                        if vertical
-                        else _Style(bgcolor=back, color=bar, meta=foreground_meta),
+                        (
+                            _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                            if vertical
+                            else _Style(bgcolor=back, color=bar, meta=foreground_meta)
+                        ),
                     )
         else:
             style = _Style(bgcolor=back)

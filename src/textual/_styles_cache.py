@@ -347,9 +347,11 @@ class StylesCache:
                         if label_color.a
                         else None
                     ),
-                    (base_label_background + label_background).rich_color
-                    if label_background.a
-                    else None,
+                    (
+                        (base_label_background + label_background).rich_color
+                        if label_background.a
+                        else None
+                    ),
                 )
                 render_label = (label, style)
             # Try to save time with expensive call to `render_border_label`:
