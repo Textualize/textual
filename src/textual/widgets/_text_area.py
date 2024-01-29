@@ -109,7 +109,11 @@ TextArea {
 }
 
 .text-area--selection {
-    background: white 25%;
+    background: $foreground 25%;
+}
+
+.text-area--matching-bracket {
+    background: $foreground 30%;
 }
 """
 
@@ -119,7 +123,7 @@ TextArea {
         "text-area--cursor-gutter",
         "text-area--cursor-line",
         "text-area--selection",
-        "text-area--matched-bracket",
+        "text-area--matching-bracket",
     }
     """
     `TextArea` offers some component classes which can be used to style aspects of the widget.
@@ -133,7 +137,7 @@ TextArea {
     | `text-area--cursor-gutter` | Target the gutter area of the line the cursor is on. |
     | `text-area--cursor-line` | Target the line the cursor is on. |
     | `text-area--selection` | Target the current selection. |
-    | `text-area--matched-bracket` | Target matched brackets. |
+    | `text-area--matching-bracket` | Target matching brackets. |
     """
 
     BINDINGS = [

@@ -114,12 +114,16 @@ class TextAreaTheme:
             self.cursor_line_gutter_style = self.cursor_line_style.copy()
 
         if self.bracket_matching_style is None:
-            bracket_matching_background = background_color.blend(
-                background_color.inverse, factor=0.05
-            )
-            self.bracket_matching_style = Style(
-                bgcolor=bracket_matching_background.rich_color
-            )
+            matching_bracket_style = get_style("text-area--matching-bracket")
+            if matching_bracket_style:
+                self.bracket_matching_style = matching_bracket_style
+            else:
+                bracket_matching_background = background_color.blend(
+                    background_color.inverse, factor=0.05
+                )
+                self.bracket_matching_style = Style(
+                    bgcolor=bracket_matching_background.rich_color
+                )
 
         if self.selection_style is None:
             selection_style = get_style("text-area--selection")
