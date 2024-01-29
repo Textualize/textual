@@ -84,7 +84,11 @@ class TextAreaTheme:
         assert self.base_style.bgcolor is not None
 
         if self.gutter_style is None:
-            self.gutter_style = self.base_style.copy()
+            gutter_style = get_style("text-area--gutter")
+            if gutter_style:
+                self.gutter_style = gutter_style
+            else:
+                self.gutter_style = self.base_style.copy()
 
         background_color = Color.from_rich_color(self.base_style.bgcolor)
         if self.cursor_style is None:

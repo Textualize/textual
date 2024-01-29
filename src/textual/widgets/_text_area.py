@@ -90,7 +90,11 @@ TextArea {
 }
 
 .text-area--cursor {
-    background: $accent;
+    background: $accent-lighten-1;
+}
+
+.text-area--gutter {
+    color: $text 40%;
 }
 
 .text-area--cursor-line {
@@ -98,7 +102,9 @@ TextArea {
 }
 
 .text-area--cursor-gutter {
+    color: $text 60%;
     background: $boost;
+    text-style: bold;
 }
 
 """
@@ -1027,9 +1033,9 @@ TextArea {
         gutter_width = self.gutter_width
         if self.show_line_numbers:
             if cursor_row == line_index:
-                gutter_style = theme.cursor_line_gutter_style if theme else None
+                gutter_style = theme.cursor_line_gutter_style
             else:
-                gutter_style = theme.gutter_style if theme else None
+                gutter_style = theme.gutter_style
 
             gutter_width_no_margin = gutter_width - 2
             gutter_content = str(line_index + 1) if section_offset == 0 else ""
