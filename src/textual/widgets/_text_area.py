@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -109,7 +110,7 @@ TextArea {
 }
 
 .text-area--selection {
-    background: $foreground 25%;
+    background: $accent-lighten-1 40%;
 }
 
 .text-area--matching-bracket {
@@ -410,6 +411,9 @@ TextArea {
 
         self.tab_behaviour = tab_behaviour
 
+        # When `app.dark` is toggled, reset the theme (since it caches values).
+        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+
     @classmethod
     def code_editor(
         cls,
@@ -625,7 +629,12 @@ TextArea {
     def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
+        self._set_theme(theme)
 
+    def _app_dark_toggled(self):
+        self._set_theme(self._theme.name)
+
+    def _set_theme(self, theme: str | None):
         theme_object: TextAreaTheme | None
         if theme is None:
             # If the theme is None, use the default.
@@ -644,7 +653,7 @@ TextArea {
                     f"then switch to that theme by setting the `TextArea.theme` attribute."
                 )
 
-        self._theme = theme_object
+        self._theme = dataclasses.replace(theme_object)
         if theme_object:
             base_style = theme_object.base_style
             if base_style:
