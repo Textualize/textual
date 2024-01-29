@@ -122,12 +122,16 @@ class TextAreaTheme:
             )
 
         if self.selection_style is None:
-            selection_background_color = background_color.blend(
-                DEFAULT_COLORS["dark"].primary, factor=0.75
-            )
-            self.selection_style = Style.from_color(
-                bgcolor=selection_background_color.rich_color
-            )
+            selection_style = get_style("text-area--selection")
+            if selection_style:
+                self.selection_style = selection_style
+            else:
+                selection_background_color = background_color.blend(
+                    DEFAULT_COLORS["dark"].primary, factor=0.75
+                )
+                self.selection_style = Style.from_color(
+                    bgcolor=selection_background_color.rich_color
+                )
 
     @classmethod
     def get_builtin_theme(cls, theme_name: str) -> TextAreaTheme | None:

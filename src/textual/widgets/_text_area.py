@@ -107,6 +107,10 @@ TextArea {
     background: $boost;
     text-style: bold;
 }
+
+.text-area--selection {
+    background: white 25%;
+}
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
