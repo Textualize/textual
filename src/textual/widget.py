@@ -733,7 +733,9 @@ class Widget(DOMNode):
             A dict which maps component style names to Rich style objects.
         """
         return {
-            component_name: self.get_all_component_rich_styles(partial=partial)
+            component_name: self.get_component_rich_style(
+                component_name, partial=partial
+            )
             for component_name in self.COMPONENT_CLASSES
         }
 

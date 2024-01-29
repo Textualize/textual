@@ -67,9 +67,6 @@ class TextAreaTheme:
     def apply_css(
         self, base_style: Style | None, component_styles: Mapping[str, Style]
     ) -> None:
-        if self.base_style is not None:
-            return
-
         self.base_style = base_style or Style()
 
         if self.base_style.color is None:
@@ -89,10 +86,17 @@ class TextAreaTheme:
 
         background_color = Color.from_rich_color(self.base_style.bgcolor)
         if self.cursor_style is None:
-            self.cursor_style = Style(
-                color=background_color.rich_color,
-                bgcolor=background_color.inverse.rich_color,
-            )
+            # If the theme doesn't contain a cursor style, fallback to component styles.
+            cursor_style = component_styles.get("text-area--cursor")
+            print(cursor_style)
+            if cursor_style:
+                self.cursor_style = cursor_style
+            else:
+                # There's no component style either, fallback to a default.
+                self.cursor_style = Style(
+                    color=background_color.rich_color,
+                    bgcolor=background_color.inverse.rich_color,
+                )
 
         if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
             self.cursor_line_gutter_style = self.cursor_line_style.copy()

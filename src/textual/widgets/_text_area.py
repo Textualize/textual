@@ -88,6 +88,10 @@ TextArea {
     width: 1fr;
     height: 1fr;
 }
+
+.text-area--cursor {
+    background: $accent;
+}
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
