@@ -5,7 +5,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Optional, Tuple
 
 from rich.style import Style
 from rich.text import Text
@@ -89,6 +89,15 @@ TextArea {
     height: 1fr;
 }
 """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "text-area--gutter",
+        "text-area--cursor",
+        "text-area--cursor-gutter",
+        "text-area--cursor-line",
+        "text-area--cursor-selection",
+        "text-area--matched-bracket",
+    }
 
     BINDINGS = [
         Binding("escape", "screen.focus_next", "Shift Focus", show=False),
