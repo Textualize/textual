@@ -1029,8 +1029,7 @@ class DOMNode(MessagePump):
         with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
-    ) -> list[WalkType]:
-        ...
+    ) -> list[WalkType]: ...
 
     @overload
     def walk_children(
@@ -1039,8 +1038,7 @@ class DOMNode(MessagePump):
         with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
-    ) -> list[DOMNode]:
-        ...
+    ) -> list[DOMNode]: ...
 
     def walk_children(
         self,
@@ -1077,12 +1075,10 @@ class DOMNode(MessagePump):
         return cast("list[DOMNode]", nodes)
 
     @overload
-    def query(self, selector: str | None) -> DOMQuery[Widget]:
-        ...
+    def query(self, selector: str | None) -> DOMQuery[Widget]: ...
 
     @overload
-    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]:
-        ...
+    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
     def query(
         self, selector: str | type[QueryType] | None = None
@@ -1104,16 +1100,13 @@ class DOMNode(MessagePump):
             return DOMQuery[QueryType](self, filter=selector.__name__)
 
     @overload
-    def query_one(self, selector: str) -> Widget:
-        ...
+    def query_one(self, selector: str) -> Widget: ...
 
     @overload
-    def query_one(self, selector: type[QueryType]) -> QueryType:
-        ...
+    def query_one(self, selector: type[QueryType]) -> QueryType: ...
 
     @overload
-    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType:
-        ...
+    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType: ...
 
     def query_one(
         self,

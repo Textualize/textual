@@ -43,8 +43,7 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
-    ...
+) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
 
 
 @overload
@@ -57,8 +56,7 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]:
-    ...
+) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
 
 
 @overload
@@ -70,8 +68,7 @@ def work(
     exclusive: bool = False,
     description: str | None = None,
     thread: bool = False,
-) -> Decorator[..., ReturnType]:
-    ...
+) -> Decorator[..., ReturnType]: ...
 
 
 def work(
