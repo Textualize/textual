@@ -291,7 +291,7 @@ TextArea:light .text-area--cursor {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
-    _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
+    _cursor_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
 
@@ -513,6 +513,9 @@ TextArea:light .text-area--cursor {
 
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
+
+    def watch_has_focus(self, value: bool) -> None:
+        self._cursor_visible = value
 
     def _watch_selection(
         self, previous_selection: Selection, selection: Selection
@@ -1022,7 +1025,7 @@ TextArea:light .text-area--cursor {
 
         if cursor_row == line_index:
             draw_cursor = not self.cursor_blink or (
-                self.cursor_blink and self._cursor_blink_visible
+                self.cursor_blink and self._cursor_visible
             )
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
@@ -1287,19 +1290,19 @@ TextArea:light .text-area--cursor {
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
-        self._cursor_blink_visible = not self._cursor_blink_visible
+        self._cursor_visible = not self._cursor_visible
         _, cursor_y = self._cursor_offset
         self.refresh_lines(cursor_y)
 
     def _restart_blink(self) -> None:
         """Reset the cursor blink timer."""
         if self.cursor_blink:
-            self._cursor_blink_visible = True
+            self._cursor_visible = True
             self.blink_timer.reset()
 
     def _pause_blink(self, visible: bool = True) -> None:
         """Pause the cursor blinking but ensure it stays visible."""
-        self._cursor_blink_visible = visible
+        self._cursor_visible = visible
         self.blink_timer.pause()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
