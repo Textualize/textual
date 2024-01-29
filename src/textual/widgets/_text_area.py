@@ -90,7 +90,8 @@ TextArea {
 }
 
 .text-area--cursor {
-    background: $accent-lighten-1;
+    color: $text 90%;
+    background: $foreground 90%;
 }
 
 .text-area--gutter {
@@ -106,7 +107,6 @@ TextArea {
     background: $boost;
     text-style: bold;
 }
-
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
