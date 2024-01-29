@@ -777,6 +777,10 @@ TextArea {
 
     @property
     def wrap_width(self) -> int:
+        """The width which gets used when the document wraps.
+
+        Accounts for gutter, scrollbars, etc.
+        """
         width, _ = self.scrollable_content_region.size
         cursor_width = 1
         if self.soft_wrap:
@@ -862,10 +866,9 @@ TextArea {
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
-        blank_line = Strip.blank(self.size.width)
 
         if out_of_bounds:
-            return blank_line
+            return Strip.blank(self.size.width)
 
         # Get the line corresponding to this offset
         try:
@@ -874,7 +877,7 @@ TextArea {
             line_info = None
 
         if line_info is None:
-            return blank_line
+            return Strip.blank(self.size.width)
 
         line_index, section_offset = line_info
 

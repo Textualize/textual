@@ -205,9 +205,6 @@ class Document(DocumentBase):
         if text.endswith(tuple(VALID_NEWLINES)) or not text:
             self._lines.append("")
 
-        self.edit_count = 0
-        """The number of edit operations performed on the document."""
-
     @property
     def lines(self) -> list[str]:
         """Get the document as a list of strings, where each string represents a line.
@@ -257,8 +254,6 @@ class Document(DocumentBase):
             The EditResult containing information about the completed
                 replace operation.
         """
-        self.edit_count += 1
-
         top, bottom = sorted((start, end))
         top_row, top_column = top
         bottom_row, bottom_column = bottom

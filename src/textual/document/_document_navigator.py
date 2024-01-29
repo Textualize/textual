@@ -270,7 +270,6 @@ class DocumentNavigator:
         Returns:
             The cell above the given location.
         """
-        """Get the location up from the given location in the wrapped document."""
 
         # Get the wrap offsets of the current line.
         line_index, column_index = location
