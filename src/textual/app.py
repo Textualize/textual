@@ -3371,8 +3371,4 @@ class App(Generic[ReturnType], DOMNode):
             non-operation.
         """
         if not WINDOWS:
-            try:
-                with self.suspend():
-                    os.kill(os.getpid(), signal.SIGTSTP)
-            except SuspendNotSupported:
-                pass
+            os.kill(os.getpid(), signal.SIGTSTP)

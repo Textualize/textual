@@ -49,6 +49,24 @@ class LinuxDriver(Driver):
         self._key_thread: Thread | None = None
         self._writer_thread: WriterThread | None = None
 
+        # Put handlers for SIGTSTP and SIGCONT in place. These are necessary
+        # to support the user pressing Ctrl+Z to suspend the application.
+        signal.signal(signal.SIGTSTP, self._sigtsop_application)
+        signal.signal(signal.SIGCONT, self._sigcont_application)
+
+    def _sigtsop_application(self, *_) -> None:
+        """Handle a SIGTSTP signal."""
+        # First off, shut down application mode.
+        self.stop_application_mode()
+        self.close()
+        # Now that we're all closed down, send a SIGSTOP to our process to
+        # *actually* suspend the process.
+        os.kill(os.getpid(), signal.SIGSTOP)
+
+    def _sigcont_application(self, *_) -> None:
+        """Handle a SICONT application."""
+        self.start_application_mode()
+
     @property
     def can_suspend(self) -> bool:
         """Can this driver be suspended?"""
@@ -120,6 +138,34 @@ class LinuxDriver(Driver):
 
     def start_application_mode(self):
         """Start application mode."""
+
+        def _stop_again(*_) -> None:
+            """Signal handler that will put the application back to sleep."""
+            os.kill(os.getpid(), signal.SIGSTOP)
+
+        # Set up handlers to ensure that, if there's a SIGTTOU or a SIGTTIN,
+        # we go back to sleep.
+        signal.signal(signal.SIGTTOU, _stop_again)
+        signal.signal(signal.SIGTTIN, _stop_again)
+        try:
+            # Here we perform a NOP tcsetattr. The reason for this is that,
+            # if we're suspended and the user has performed a `bg` in the
+            # shell, we'll SIGCONT *but* we won't be allowed to do terminal
+            # output; so rather than get into the business of spinning up
+            # application mode again and then finding out, we perform a
+            # no-consequence change and detect the problem right away.
+            termios.tcsetattr(
+                self.fileno, termios.TCSANOW, termios.tcgetattr(self.fileno)
+            )
+        except termios.error:
+            # There was an error doing the tcsetattr; there is no sense in
+            # carrying on because we'll be doing a SIGSTOP (see above).
+            return
+        finally:
+            # We don't need to be hooking SIGTTOU or SIGTTIN any more.
+            signal.signal(signal.SIGTTOU, signal.SIG_DFL)
+            signal.signal(signal.SIGTTIN, signal.SIG_DFL)
+
         loop = asyncio.get_running_loop()
 
         def send_size_event():
