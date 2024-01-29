@@ -515,6 +515,11 @@ Styles from the `theme` attribute take priority.
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
 - `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
 
+
+## Additional notes
+
+- To remove the outline effect when the `TextArea` is focussed, you can set `border: none; padding: 0;` in your CSS.
+
 ---
 
 ::: textual.widgets._text_area.TextArea
