@@ -91,13 +91,27 @@ TextArea {
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "text-area--gutter",
         "text-area--cursor",
+        "text-area--gutter",
         "text-area--cursor-gutter",
         "text-area--cursor-line",
-        "text-area--cursor-selection",
+        "text-area--selection",
         "text-area--matched-bracket",
     }
+    """
+    `TextArea` offers some component classes which can be used to style aspects of the widget.
+    
+    Note that any attributes provided in the chosen `TextAreaTheme` will take priority here.
+    
+    | Class | Description |
+    | :- | :- |
+    | `text-area--cursor` | Target the cursor. |
+    | `text-area--gutter` | Target the gutter (line number column). |
+    | `text-area--cursor-gutter` | Target the gutter area of the line the cursor is on. |
+    | `text-area--cursor-line` | Target the line the cursor is on. |
+    | `text-area--selection` | Target the current selection. |
+    | `text-area--matched-bracket` | Target matched brackets. |
+    """
 
     BINDINGS = [
         Binding("escape", "screen.focus_next", "Shift Focus", show=False),
