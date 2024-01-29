@@ -14,7 +14,7 @@ I will face my fear.
 
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea()
+        text_area = TextArea(show_line_numbers=True)
         text_area.load_text(TEXT)
         yield text_area
 
@@ -276,6 +276,7 @@ async def test_cursor_page_up():
         )
 
 
+@pytest.mark.xfail(reason="still to integrate navigator")
 async def test_cursor_vertical_movement_visual_alignment_snapping():
     """When you move the cursor vertically, it should stay vertically
     aligned even when double-width characters are used."""

@@ -7,7 +7,7 @@ class TextAreaUnfocusSnapshot(App):
     AUTO_FOCUS = None
 
     def compose(self) -> ComposeResult:
-        text_area = TextArea()
+        text_area = TextArea.code_editor()
         text_area.cursor_blink = False
         yield text_area
 

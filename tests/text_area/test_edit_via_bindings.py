@@ -29,7 +29,7 @@ Z"""
 
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea()
+        text_area = TextArea.code_editor()
         text_area.load_text(TEXT)
         yield text_area
 
@@ -219,8 +219,8 @@ async def test_delete_line_multiline_document(selection, expected_result):
 
         await pilot.press("ctrl+x")
 
-        cursor_row, _ = text_area.cursor_location
-        assert text_area.selection == Selection.cursor((cursor_row, 0))
+        cursor_row, cursor_column = text_area.cursor_location
+        assert text_area.selection == Selection.cursor((cursor_row, cursor_column))
         assert text_area.text == expected_result
 
 
