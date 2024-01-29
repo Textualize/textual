@@ -58,7 +58,19 @@ from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 
-from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
+from textual.drivers.linux_driver import LinuxDriver
+
+from . import (
+    Logger,
+    LogGroup,
+    LogVerbosity,
+    actions,
+    constants,
+    events,
+    log,
+    messages,
+    on,
+)
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
@@ -3324,6 +3336,15 @@ class App(Generic[ReturnType], DOMNode):
         if self.use_command_palette and not CommandPalette.is_open(self):
             self.push_screen(CommandPalette(), callback=self.call_next)
 
+    def _suspend_signal(self) -> None:
+        """Signal that the application is being suspended."""
+        self.app_suspend_signal.publish()
+
+    @on(LinuxDriver.SignalResume)
+    def _resume_signal(self) -> None:
+        """Signal that the application is being resumed from a suspension."""
+        self.app_resume_signal.publish()
+
     @contextmanager
     def suspend(self) -> Iterator[None]:
         """A context manager that temporarily suspends the app.
@@ -3351,13 +3372,13 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
         if self._driver.can_suspend:
-            self.app_suspend_signal.publish()
+            self._suspend_signal()
             self._driver.stop_application_mode()
             self._driver.close()
             with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
                 yield
             self._driver.start_application_mode()
-            self.app_resume_signal.publish()
+            self._resume_signal()
         else:
             raise SuspendNotSupported(
                 "App.suspend is not supported in this environment."
@@ -3368,8 +3389,9 @@ class App(Generic[ReturnType], DOMNode):
 
         Note:
             On Unix and Unix-like systems a `SIGTSTP` is sent to the
-            application's process. Currently on Windows this is a
-            non-operation.
+            application's process. Currently on Windows and when running
+            under Textual-Web this is a non-operation.
         """
-        if not WINDOWS:
+        if not WINDOWS and self._driver is not None and self._driver.can_suspend:
+            self._suspend_signal()
             os.kill(os.getpid(), signal.SIGTSTP)

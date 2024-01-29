@@ -17,6 +17,7 @@ from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
+from ..message import Message
 from ._writer_thread import WriterThread
 
 if TYPE_CHECKING:
@@ -26,6 +27,9 @@ if TYPE_CHECKING:
 @rich.repr.auto(angular=True)
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
+
+    class SignalResume(Message):
+        """Message sent to the app when a resume signal should be published."""
 
     def __init__(
         self,
@@ -49,6 +53,12 @@ class LinuxDriver(Driver):
         self._key_thread: Thread | None = None
         self._writer_thread: WriterThread | None = None
 
+        # If we've finally and properly come back from a SIGSTOP we want to
+        # be able to ask the app to publish its resume signal; to do that we
+        # need to know that we came in here via a SIGTSTP; this flag helps
+        # keep track of this.
+        self._must_signal_resume = False
+
         # Put handlers for SIGTSTP and SIGCONT in place. These are necessary
         # to support the user pressing Ctrl+Z to suspend the application.
         signal.signal(signal.SIGTSTP, self._sigtsop_application)
@@ -59,6 +69,9 @@ class LinuxDriver(Driver):
         # First off, shut down application mode.
         self.stop_application_mode()
         self.close()
+        # Flag that we'll need to signal a resume on successful startup
+        # again.
+        self._must_signal_resume = True
         # Now that we're all closed down, send a SIGSTOP to our process to
         # *actually* suspend the process.
         os.kill(os.getpid(), signal.SIGSTOP)
@@ -220,6 +233,15 @@ class LinuxDriver(Driver):
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
+
+        # If we need to ask the app to signal that we've come back from a
+        # SIGTSTP...
+        if self._must_signal_resume:
+            self._must_signal_resume = False
+            asyncio.run_coroutine_threadsafe(
+                self._app._post_message(self.SignalResume()),
+                loop=loop,
+            )
 
     def _request_terminal_sync_mode_support(self) -> None:
         """Writes an escape sequence to query the terminal support for the sync protocol."""
