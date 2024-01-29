@@ -88,6 +88,12 @@ class TextArea(ScrollView, can_focus=True):
 TextArea {
     width: 1fr;
     height: 1fr;
+    border: tall $background;
+    
+    &:focus {
+        border: tall $accent;
+        background: red;
+    }
 }
 
 .text-area--cursor {

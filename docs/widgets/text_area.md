@@ -173,6 +173,17 @@ There are some methods available which make common selections easier:
 Themes give you control over the look and feel, including syntax highlighting,
 the cursor, selection, gutter, and more.
 
+#### Default theme
+
+The default `TextArea` theme is called `css`.
+This a theme which takes values entirely from CSS.
+This means that the default appearance of the widget fits nicely into a standard Textual application,
+and looks right on both dark and light mode.
+
+More complex applications such as code editors, will likely want to use pre-defined themes such as `monokai`.
+This involves using a `TextAreaTheme` object, which we cover in detail below.
+This allows full customization of the `TextArea`, including syntax highlighting, at the code level.
+
 #### Using builtin themes
 
 The initial theme of the `TextArea` is determined by the `theme` parameter.
@@ -232,6 +243,7 @@ my_theme = TextAreaTheme(
 
 Attributes like `cursor_style` and `cursor_line_style` apply general language-agnostic
 styling to the widget.
+If you choose not to supply a value for one of these attributes, it will be taken from the CSS component styles.
 
 The `syntax_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
 depends on the `language` currently in use.
@@ -485,9 +497,13 @@ The `TextArea` widget defines the following bindings:
 
 ## Component classes
 
-The `TextArea` widget defines no component classes.
+The `TextArea` defines component classes that can style various aspects of the widget.
+Styles from the `theme` attribute take priority.
 
-Styling should be done exclusively via [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
+::: textual.widgets.TextArea.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See also
 
