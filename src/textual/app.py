@@ -424,6 +424,7 @@ class App(Generic[ReturnType], DOMNode):
             _environ=environ,
             force_terminal=True,
             safe_box=False,
+            soft_wrap=False,
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)

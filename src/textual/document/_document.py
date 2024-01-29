@@ -91,6 +91,16 @@ class DocumentBase(ABC):
     def newline(self) -> Newline:
         """Return the line separator used in the document."""
 
+    @property
+    @abstractmethod
+    def lines(self) -> list[str]:
+        """Get the lines of the document as a list of strings.
+
+        The strings should *not* include newline characters. The newline
+        character used for the document can be retrieved via the newline
+        property.
+        """
+
     @abstractmethod
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
@@ -232,6 +242,8 @@ class Document(DocumentBase):
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
+
+        This is the only method by which a document may be updated.
 
         Args:
             start: A tuple (row, column) where the edit starts.

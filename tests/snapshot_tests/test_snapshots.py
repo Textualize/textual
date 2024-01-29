@@ -876,6 +876,14 @@ def hello(name):
     )
 
 
+@pytest.mark.syntax
+def test_text_area_wrapping_and_folding(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_wrapping.py",
+        terminal_size=(20, 26)
+    )
+
+
 def test_digits(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
 
