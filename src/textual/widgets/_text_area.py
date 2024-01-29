@@ -95,6 +95,11 @@ TextArea {
     background: $foreground 90%;
 }
 
+TextArea:light .text-area--cursor {
+    color: $text 90%;
+    background: $foreground 70%;
+}
+
 .text-area--gutter {
     color: $text 40%;
 }
