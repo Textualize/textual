@@ -920,7 +920,8 @@ TextArea:light .text-area--cursor {
             A rendered line.
         """
         theme = self._theme
-        theme.apply_css(self)
+        if theme:
+            theme.apply_css(self)
 
         document = self.document
         wrapped_document = self.wrapped_document
