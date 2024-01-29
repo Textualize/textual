@@ -3,7 +3,7 @@ import pytest
 from textual.app import App, ComposeResult
 from textual.geometry import Offset
 from textual.widgets import TextArea
-from textual.widgets.text_area import Document, Selection
+from textual.widgets.text_area import Selection
 
 TEXT = """I must not fear.
 Fear is the mind-killer.
@@ -276,14 +276,13 @@ async def test_cursor_page_up():
         )
 
 
-@pytest.mark.xfail(reason="still to integrate navigator")
 async def test_cursor_vertical_movement_visual_alignment_snapping():
     """When you move the cursor vertically, it should stay vertically
     aligned even when double-width characters are used."""
     app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
-        text_area.load_document(Document("こんにちは\n012345"))
+        text_area.text = "こんにちは\n012345"
         text_area.move_cursor((1, 3), record_width=True)
 
         # The '3' is aligned with ん at (0, 1)
