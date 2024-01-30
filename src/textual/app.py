@@ -3369,7 +3369,9 @@ class App(Generic[ReturnType], DOMNode):
             self._suspend_signal()
             self._driver.stop_application_mode()
             self._driver.close()
-            with redirect_stdout(sys.__stdout__), redirect_stderr(sys.__stderr__):
+            with self._driver.no_automatic_restart(), redirect_stdout(
+                sys.__stdout__
+            ), redirect_stderr(sys.__stderr__):
                 yield
             self._driver.start_application_mode()
             self._resume_signal()

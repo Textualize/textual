@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import asyncio
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from contextlib import contextmanager
+from typing import TYPE_CHECKING, Iterator
 
 from . import events
 from .events import MouseUp
@@ -34,6 +35,8 @@ class Driver(ABC):
         self._loop = asyncio.get_running_loop()
         self._down_buttons: list[int] = []
         self._last_move_event: events.MouseMove | None = None
+        self._auto_restart = True
+        """Should the application auto-restart (where appropriate)?"""
 
     @property
     def is_headless(self) -> bool:
@@ -122,6 +125,21 @@ class Driver(ABC):
     @abstractmethod
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
+
+    @contextmanager
+    def no_automatic_restart(self) -> Iterator[None]:
+        """A context manager used to tell the driver to not auto-restart.
+
+        For drivers that support the application being suspended by the
+        operating system, this context manager is used to mark a body of
+        code as one that will manage its own stop and start.
+        """
+        auto_restart = self._auto_restart
+        self._auto_restart = False
+        try:
+            yield
+        finally:
+            self._auto_restart = auto_restart
 
     def close(self) -> None:
         """Perform any final cleanup."""

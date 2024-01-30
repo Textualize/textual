@@ -66,19 +66,22 @@ class LinuxDriver(Driver):
 
     def _sigtstp_application(self, *_) -> None:
         """Handle a SIGTSTP signal."""
-        # First off, shut down application mode.
-        self.stop_application_mode()
-        self.close()
-        # Flag that we'll need to signal a resume on successful startup
-        # again.
-        self._must_signal_resume = True
-        # Now that we're all closed down, send a SIGSTOP to our process to
-        # *actually* suspend the process.
+        # If we're supposed to auto-restart, that means we need to shut down
+        # first.
+        if self._auto_restart:
+            self.stop_application_mode()
+            self.close()
+            # Flag that we'll need to signal a resume on successful startup
+            # again.
+            self._must_signal_resume = True
+        # Now send a SIGSTOP to our process to *actually* suspend the
+        # process.
         os.kill(os.getpid(), signal.SIGSTOP)
 
     def _sigcont_application(self, *_) -> None:
         """Handle a SICONT application."""
-        self.start_application_mode()
+        if self._auto_restart:
+            self.start_application_mode()
 
     @property
     def can_suspend(self) -> bool:
