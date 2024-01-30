@@ -283,9 +283,22 @@ if __name__ == "__main__":
 
 1. All code in the body of the `with` statement will be run while the app is suspended.
 
-### Backgrounding with <kbd>Ctrl</kbd>+<kbd>Z</kbd>
+### Suspending from foreground
 
-On Unix and Unix-like systems (GNU/Linux, macOS, etc) Textual has support for the user pressing <kbd>Ctrl</kbd>+<kbd>Z</kbd> to background the application.
+On Unix and Unix-like systems (GNU/Linux, macOS, etc) Textual has support for the user pressing a key combination to suspend the application as the foreground process.
+Ordinarily this key combination is <kbd>Ctrl</kbd>+<kbd>Z</kbd>;
+in a Textual application this is disabled by default, but an action is provided ([`action_suspend_process`](/api/app/#textual.app.App.action_suspend_process)) that you can bind in the usual way.
+For example:
+
+```python
+BINDINGS = [
+    Binding("ctrl+z", "suspend_process")
+]
+```
+
+!!! note
+
+    If `suspend_process` is called on Windows, or when your application is being hosted under Textual Web, the call will be ignored.
 
 ## CSS
 

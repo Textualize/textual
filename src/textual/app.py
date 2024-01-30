@@ -373,7 +373,6 @@ class App(Generic[ReturnType], DOMNode):
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("ctrl+c", "quit", "Quit", show=False, priority=True),
         Binding("ctrl+backslash", "command_palette", show=False, priority=True),
-        Binding("ctrl+z", "suspend_process", show=False, priority=True),
     ]
 
     title: Reactive[str] = Reactive("", compute=False)
@@ -3372,9 +3371,10 @@ class App(Generic[ReturnType], DOMNode):
             # We're going to handle the start of the driver again so mark
             # this next part as such; the reason for this is that the code
             # the developer may be running could be in this process, and on
-            # Unix-like systems the user may Ctrl-Z the app, and we don't
-            # want to have the driver auto-restart application mode when the
-            # application comes back to the foreground, in this context.
+            # Unix-like systems the user may `action_suspend_process` the
+            # app, and we don't want to have the driver auto-restart
+            # application mode when the application comes back to the
+            # foreground, in this context.
             with self._driver.no_automatic_restart(), redirect_stdout(
                 sys.__stdout__
             ), redirect_stderr(sys.__stderr__):

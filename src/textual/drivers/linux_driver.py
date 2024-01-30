@@ -56,7 +56,9 @@ class LinuxDriver(Driver):
         self._must_signal_resume = False
 
         # Put handlers for SIGTSTP and SIGCONT in place. These are necessary
-        # to support the user pressing Ctrl+Z to suspend the application.
+        # to support the user pressing Ctrl+Z (or whatever the dev might
+        # have bound to call the relevant action on App) to suspend the
+        # application.
         signal.signal(signal.SIGTSTP, self._sigtstp_application)
         signal.signal(signal.SIGCONT, self._sigcont_application)
 
