@@ -232,17 +232,17 @@ class WrappedDocument:
             new_line_index_to_offsets.append(y_offsets_for_line)
 
         # Replace the range start -> old with the new wrapped lines
-        self._offset_to_line_info[
-            top_y_offset : old_bottom_y_offset + 1
-        ] = new_offset_to_line_info
+        self._offset_to_line_info[top_y_offset : old_bottom_y_offset + 1] = (
+            new_offset_to_line_info
+        )
 
-        self._line_index_to_offsets[
-            top_line_index : old_bottom_line_index + 1
-        ] = new_line_index_to_offsets
+        self._line_index_to_offsets[top_line_index : old_bottom_line_index + 1] = (
+            new_line_index_to_offsets
+        )
 
-        self._tab_width_cache[
-            top_line_index : old_bottom_line_index + 1
-        ] = new_tab_widths
+        self._tab_width_cache[top_line_index : old_bottom_line_index + 1] = (
+            new_tab_widths
+        )
 
         # How much did the edit/rewrap alter the offsets?
         old_height = old_bottom_y_offset - top_y_offset + 1
@@ -270,9 +270,9 @@ class WrappedDocument:
                 new_offsets = [offset + offset_shift for offset in old_offsets]
                 self._line_index_to_offsets[line_index] = new_offsets
 
-        self._wrap_offsets[
-            top_line_index : old_bottom_line_index + 1
-        ] = new_wrap_offsets
+        self._wrap_offsets[top_line_index : old_bottom_line_index + 1] = (
+            new_wrap_offsets
+        )
 
     def offset_to_location(self, offset: Offset) -> Location:
         """Given an offset within the wrapped/visual display of the document,

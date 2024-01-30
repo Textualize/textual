@@ -7,6 +7,7 @@ A `MessagePump` is a base class for any object which processes messages, which i
     Most of the method here are useful in general app development.
 
 """
+
 from __future__ import annotations
 
 import asyncio
@@ -591,7 +592,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._next_callbacks.clear()
         for callback in callbacks:
             try:
-                await self._dispatch_message(callback)
+                with self.prevent(*callback._prevent):
+                    await invoke(callback.callback)
             except Exception as error:
                 self.app._handle_exception(error)
                 break

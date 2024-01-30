@@ -24,7 +24,7 @@ repos:
         language_version: '3.11'
         args: ["--profile", "black", "--filter-files"]
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 24.1.1
     hooks:
       - id: black
   - repo: https://github.com/hadialqattan/pycln  # removes unused imports
