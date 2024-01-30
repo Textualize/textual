@@ -592,7 +592,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._next_callbacks.clear()
         for callback in callbacks:
             try:
-                await self._dispatch_message(callback)
+                with self.prevent(*callback._prevent):
+                    await invoke(callback.callback)
             except Exception as error:
                 self.app._handle_exception(error)
                 break
