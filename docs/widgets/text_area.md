@@ -518,7 +518,7 @@ Styles from the `theme` attribute take priority.
 
 ## Additional notes
 
-- To remove the outline effect when the `TextArea` is focussed, you can set `border: none; padding: 0;` in your CSS.
+- To remove the outline effect when the `TextArea` is focused, you can set `border: none; padding: 0;` in your CSS.
 
 ---
 
