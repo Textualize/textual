@@ -33,15 +33,15 @@ terminal window.
     --8<-- "docs/examples/styles/scrollbar_gutter.py"
     ```
 
-=== "scrollbar_gutter.css"
+=== "scrollbar_gutter.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/scrollbar_gutter.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/styles/scrollbar_gutter.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-gutter: auto;    /* Don't reserve space for a vertical scrollbar. */
 scrollbar-gutter: stable;  /* Reserve space for a vertical scrollbar. */
 ```

@@ -33,10 +33,10 @@ This example shows three labels, each with a different border title alignment:
     --8<-- "docs/examples/styles/border_title_align.py"
     ```
 
-=== "border_title_align.css"
+=== "border_title_align.tcss"
 
-    ```sass
-    --8<-- "docs/examples/styles/border_title_align.css"
+    ```css
+    --8<-- "docs/examples/styles/border_title_align.tcss"
     ```
 
 
@@ -47,7 +47,7 @@ This example shows three labels, each with a different border title alignment:
 
 ## CSS
 
-```sass
+```css
 border-title-align: left;
 border-title-align: center;
 border-title-align: right;

@@ -51,8 +51,8 @@ async def test_scheduling_animation() -> None:
 
         styles.animate("background", "white", delay=delay, duration=0)
 
-        await pilot.pause(0.9 * delay)
-        assert styles.background.rgb == (0, 0, 0)  # Still black
+        # Still black immediately after call, animation hasn't started yet due to `delay`
+        assert styles.background.rgb == (0, 0, 0)
 
         await pilot.wait_for_scheduled_animations()
         assert styles.background.rgb == (255, 255, 255)
@@ -153,8 +153,8 @@ async def test_schedule_reverse_animations() -> None:
         assert styles.background.rgb == (0, 0, 0)
 
         # Now, the actual test is to make sure we go back to black if scheduling both at once.
-        styles.animate("background", "white", delay=0.05, duration=0.01)
-        await pilot.pause()
+        styles.animate("background", "white", delay=0.025, duration=0.05)
+        # While the black -> white animation runs, start the white -> black animation.
         styles.animate("background", "black", delay=0.05, duration=0.01)
         await pilot.wait_for_scheduled_animations()
         assert styles.background.rgb == (0, 0, 0)

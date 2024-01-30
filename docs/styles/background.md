@@ -27,10 +27,10 @@ This example creates three widgets and applies a different background to each.
     --8<-- "docs/examples/styles/background.py"
     ```
 
-=== "background.css"
+=== "background.tcss"
 
-    ```sass hl_lines="9 13 17"
-    --8<-- "docs/examples/styles/background.css"
+    ```css hl_lines="9 13 17"
+    --8<-- "docs/examples/styles/background.tcss"
     ```
 
 ### Different opacity settings
@@ -48,15 +48,15 @@ The next example creates ten widgets laid out side by side to show the effect of
     --8<-- "docs/examples/styles/background_transparency.py"
     ```
 
-=== "background_transparency.css"
+=== "background_transparency.tcss"
 
-    ```sass hl_lines="2 6 10 14 18 22 26 30 34 38"
-    --8<-- "docs/examples/styles/background_transparency.css"
+    ```css hl_lines="2 6 10 14 18 22 26 30 34 38"
+    --8<-- "docs/examples/styles/background_transparency.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Blue background */
 background: blue;
 

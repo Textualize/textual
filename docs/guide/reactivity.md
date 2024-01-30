@@ -79,10 +79,10 @@ Let's look at an example which illustrates this. In the following app, the value
     --8<-- "docs/examples/guide/reactivity/refresh01.py"
     ```
 
-=== "refresh01.css"
+=== "refresh01.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/reactivity/refresh01.css"
+    ```css
+    --8<-- "docs/examples/guide/reactivity/refresh01.tcss"
     ```
 
 === "Output"
@@ -123,10 +123,10 @@ The following example modifies "refresh01.py" so that the greeting has an automa
 
     1. This attribute will update the layout when changed.
 
-=== "refresh02.css"
+=== "refresh02.tcss"
 
-    ```sass hl_lines="7-9"
-    --8<-- "docs/examples/guide/reactivity/refresh02.css"
+    ```css hl_lines="7-9"
+    --8<-- "docs/examples/guide/reactivity/refresh02.tcss"
     ```
 
 === "Output"
@@ -150,10 +150,10 @@ A common use for this is to restrict numbers to a given range. The following exa
     --8<-- "docs/examples/guide/reactivity/validate01.py"
     ```
 
-=== "validate01.css"
+=== "validate01.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/reactivity/validate01.css"
+    ```css
+    --8<-- "docs/examples/guide/reactivity/validate01.tcss"
     ```
 
 === "Output"
@@ -183,10 +183,10 @@ The following app will display any color you type in to the input. Try it with a
     2. Called when `self.color` is changed.
     3. New color is assigned here.
 
-=== "watch01.css"
+=== "watch01.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/reactivity/watch01.css"
+    ```css
+    --8<-- "docs/examples/guide/reactivity/watch01.tcss"
     ```
 
 === "Output"
@@ -201,6 +201,31 @@ The color is parsed in `on_input_submitted` and assigned to `self.color`. Becaus
 Textual only calls watch methods if the value of a reactive attribute _changes_.
 If the newly assigned value is the same as the previous value, the watch method is not called.
 You can override this behaviour by passing `always_update=True` to `reactive`.
+
+
+### Dynamically watching reactive attributes
+
+You can programmatically add watchers to reactive attributes with the method [`watch`][textual.dom.DOMNode.watch].
+This is useful when you want to react to changes to reactive attributes for which you can't edit the watch methods.
+
+The example below shows a widget `Counter` that defines a reactive attribute `counter`.
+The app that uses `Counter` uses the method `watch` to keep its progress bar synced with the reactive attribute:
+
+=== "dynamic_watch.py"
+
+    ```python hl_lines="9 28-29 31"
+    --8<-- "docs/examples/guide/reactivity/dynamic_watch.py"
+    ```
+
+    1. `counter` is a reactive attribute defined inside `Counter`.
+    2. `update_progress` is a custom callback that will update the progress bar when `counter` changes.
+    3. We use the method `watch` to set `update_progress` as an additional watcher for the reactive attribute `counter`.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/dynamic_watch.py" press="enter,enter,enter"}
+    ```
+
 
 ## Compute methods
 
@@ -219,10 +244,10 @@ The following example uses a computed attribute. It displays three inputs for ea
     1. Combines color components in to a Color object.
     2. The watch method is called when the _result_ of `compute_color` changes.
 
-=== "computed01.css"
+=== "computed01.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/reactivity/computed01.css"
+    ```css
+    --8<-- "docs/examples/guide/reactivity/computed01.tcss"
     ```
 
 === "Output"

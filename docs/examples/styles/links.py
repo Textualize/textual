@@ -7,9 +7,13 @@ Here is a [@click='app.bell']link[/] which you can click!
 
 
 class LinksApp(App):
+    CSS_PATH = "links.tcss"
+
     def compose(self) -> ComposeResult:
         yield Static(TEXT)
         yield Static(TEXT, id="custom")
 
 
-app = LinksApp(css_path="links.css")
+if __name__ == "__main__":
+    app = LinksApp()
+    app.run()

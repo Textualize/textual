@@ -19,9 +19,8 @@ High-level features we plan on implementing.
     * [x] Monochrome mode
     * [ ] High contrast theme
     * [ ] Color-blind themes
-- [ ] Command interface
-    * [ ] Command menu
-    * [ ] Fuzzy search
+- [X] Command palette
+    * [X] Fuzzy search
 - [ ] Configuration (.toml based extensible configuration format)
 - [x] Console
 - [ ] Devtools
@@ -75,8 +74,8 @@ Widgets are key to making user-friendly interfaces. The builtin widgets should c
 - [X] Spark-lines
 - [X] Switch
 - [X] Tabs
-- [ ] TextArea (multi-line input)
-    * [ ] Basic controls
+- [X] TextArea (multi-line input)
+    * [X] Basic controls
     * [ ] Indentation guides
     * [ ] Smart features for various languages
-    * [ ] Syntax highlighting
+    * [X] Syntax highlighting

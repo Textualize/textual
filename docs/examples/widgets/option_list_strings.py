@@ -3,7 +3,7 @@ from textual.widgets import Footer, Header, OptionList
 
 
 class OptionListApp(App[None]):
-    CSS_PATH = "option_list.css"
+    CSS_PATH = "option_list.tcss"
 
     def compose(self) -> ComposeResult:
         yield Header()

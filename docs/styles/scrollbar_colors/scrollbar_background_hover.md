@@ -27,15 +27,15 @@ The `scrollbar-background-hover` style sets the background color of the scrollba
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
-    ```sass hl_lines="4"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    ```css hl_lines="4"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-background-hover: purple;
 ```
 

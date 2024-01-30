@@ -10,7 +10,7 @@ Docked widgets will not scroll out of view, making them ideal for sticky headers
 
 
 class DockLayoutExample(App):
-    CSS_PATH = "dock_layout3_sidebar_header.css"
+    CSS_PATH = "dock_layout3_sidebar_header.tcss"
 
     def compose(self) -> ComposeResult:
         yield Header(id="header")

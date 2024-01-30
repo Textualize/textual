@@ -10,8 +10,8 @@ from rich.style import Style
 from rich.text import Text
 
 from .. import work
-from .._cache import LRUCache
 from .._line_split import line_split
+from ..cache import LRUCache
 from ..geometry import Size
 from ..reactive import var
 from ..scroll_view import ScrollView
@@ -75,7 +75,7 @@ class Log(ScrollView, can_focus=True):
 
     @property
     def lines(self) -> Sequence[str]:
-        """The raw lines in the TextLog.
+        """The raw lines in the Log.
 
         Note that this attribute is read only.
         Changing the lines will not update the Log's contents.
@@ -294,6 +294,7 @@ class Log(ScrollView, can_focus=True):
             line = Strip(line_text.render(self.app.console), cell_len(_line))
         else:
             line = Strip([Segment(_line, rich_style)], cell_len(_line))
+
         self._render_line_cache[y] = line
         return line
 

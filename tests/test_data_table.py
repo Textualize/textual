@@ -1,15 +1,17 @@
 from __future__ import annotations
 
 import pytest
+from rich.panel import Panel
 from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
-from textual.app import App
+from textual.app import App, RenderableType
 from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
 from textual.widgets import DataTable
+from textual.widgets._data_table import _DEFAULT_CELL_X_PADDING
 from textual.widgets.data_table import (
     CellDoesNotExist,
     CellKey,
@@ -270,7 +272,10 @@ async def test_add_column_with_width():
         row = table.add_row("123")
         assert table.get_cell(row, column) == "123"
         assert table.columns[column].width == 10
-        assert table.columns[column].render_width == 12  # 10 + (2 padding)
+        assert (
+            table.columns[column].get_render_width(table)
+            == 10 + 2 * _DEFAULT_CELL_X_PADDING
+        )
 
 
 async def test_add_columns():
@@ -304,6 +309,19 @@ async def test_remove_row():
         assert len(table.rows) == 2
 
 
+async def test_remove_row_and_update():
+    """Regression test for https://github.com/Textualize/textual/issues/3470 -
+    Crash when attempting to remove and update the same cell."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table: DataTable = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "X", update_width=True)
+        table.remove_row("1")
+        await pilot.pause()
+
+
 async def test_remove_column():
     app = DataTableApp()
     async with app.run_test():
@@ -316,6 +334,19 @@ async def test_remove_column():
         assert table.get_row_at(0) == ["0/1"]
         assert table.get_row_at(1) == ["1/1"]
         assert table.get_row_at(2) == ["2/1"]
+
+
+async def test_remove_column_and_update():
+    """Regression test for https://github.com/Textualize/textual/issues/3470 -
+    Crash when attempting to remove and update the same cell."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table: DataTable = app.query_one(DataTable)
+        table.add_column("A", key="A")
+        table.add_row("1", key="1")
+        table.update_cell("1", "A", "X", update_width=True)
+        table.remove_column("A")
+        await pilot.pause()
 
 
 async def test_clear():
@@ -419,11 +450,11 @@ async def test_get_cell_coordinate_returns_coordinate():
         table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
         table.add_row("ValR3C1", "ValR3C2", "ValR3C3", key="R3")
 
-        assert table.get_cell_coordinate('R1', 'C1') == Coordinate(0, 0)
-        assert table.get_cell_coordinate('R2', 'C2') == Coordinate(1, 1)
-        assert table.get_cell_coordinate('R1', 'C3') == Coordinate(0, 2)
-        assert table.get_cell_coordinate('R3', 'C1') == Coordinate(2, 0)
-        assert table.get_cell_coordinate('R3', 'C2') == Coordinate(2, 1)
+        assert table.get_cell_coordinate("R1", "C1") == Coordinate(0, 0)
+        assert table.get_cell_coordinate("R2", "C2") == Coordinate(1, 1)
+        assert table.get_cell_coordinate("R1", "C3") == Coordinate(0, 2)
+        assert table.get_cell_coordinate("R3", "C1") == Coordinate(2, 0)
+        assert table.get_cell_coordinate("R3", "C2") == Coordinate(2, 1)
 
 
 async def test_get_cell_coordinate_invalid_row_key():
@@ -434,7 +465,7 @@ async def test_get_cell_coordinate_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate('INVALID_ROW', 'C1')
+            coordinate = table.get_cell_coordinate("INVALID_ROW", "C1")
 
 
 async def test_get_cell_coordinate_invalid_column_key():
@@ -445,7 +476,7 @@ async def test_get_cell_coordinate_invalid_column_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(CellDoesNotExist):
-            coordinate = table.get_cell_coordinate('R1', 'INVALID_COLUMN')
+            coordinate = table.get_cell_coordinate("R1", "INVALID_COLUMN")
 
 
 async def test_get_cell_at_returns_value_at_cell():
@@ -531,9 +562,9 @@ async def test_get_row_index_returns_index():
         table.add_row("ValR2C1", "ValR2C2", key="R2")
         table.add_row("ValR3C1", "ValR3C2", key="R3")
 
-        assert table.get_row_index('R1') == 0
-        assert table.get_row_index('R2') == 1
-        assert table.get_row_index('R3') == 2
+        assert table.get_row_index("R1") == 0
+        assert table.get_row_index("R2") == 1
+        assert table.get_row_index("R3") == 2
 
 
 async def test_get_row_index_invalid_row_key():
@@ -544,7 +575,7 @@ async def test_get_row_index_invalid_row_key():
         table.add_row("TargetValue", key="R1")
 
         with pytest.raises(RowDoesNotExist):
-            index = table.get_row_index('InvalidRow')
+            index = table.get_row_index("InvalidRow")
 
 
 async def test_get_column():
@@ -591,6 +622,7 @@ async def test_get_column_at_invalid_index(index):
         with pytest.raises(ColumnDoesNotExist):
             list(table.get_column_at(index))
 
+
 async def test_get_column_index_returns_index():
     app = DataTableApp()
     async with app.run_test():
@@ -598,12 +630,12 @@ async def test_get_column_index_returns_index():
         table.add_column("Column1", key="C1")
         table.add_column("Column2", key="C2")
         table.add_column("Column3", key="C3")
-        table.add_row("ValR1C1", "ValR1C2", "ValR1C3",  key="R1")
-        table.add_row("ValR2C1", "ValR2C2", "ValR2C3",  key="R2")
+        table.add_row("ValR1C1", "ValR1C2", "ValR1C3", key="R1")
+        table.add_row("ValR2C1", "ValR2C2", "ValR2C3", key="R2")
 
-        assert table.get_column_index('C1') == 0
-        assert table.get_column_index('C2') == 1
-        assert table.get_column_index('C3') == 2
+        assert table.get_column_index("C1") == 0
+        assert table.get_column_index("C2") == 1
+        assert table.get_column_index("C3") == 2
 
 
 async def test_get_column_index_invalid_column_key():
@@ -613,11 +645,10 @@ async def test_get_column_index_invalid_column_key():
         table.add_column("Column1", key="C1")
         table.add_column("Column2", key="C2")
         table.add_column("Column3", key="C3")
-        table.add_row("TargetValue1", "TargetValue2", "TargetValue3",  key="R1")
+        table.add_row("TargetValue1", "TargetValue2", "TargetValue3", key="R1")
 
         with pytest.raises(ColumnDoesNotExist):
-            index = table.get_column_index('InvalidCol')
-
+            index = table.get_column_index("InvalidCol")
 
 
 async def test_update_cell_cell_exists():
@@ -638,6 +669,17 @@ async def test_update_cell_cell_doesnt_exist():
         table.add_row("1", key="1")
         with pytest.raises(CellDoesNotExist):
             table.update_cell("INVALID", "CELL", "Value")
+
+
+async def test_update_cell_invalid_column_key():
+    """Regression test for https://github.com/Textualize/textual/issues/3335"""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.update_cell("R1", "INVALID_COLUMN", "New Value")
 
 
 async def test_update_cell_at_coordinate_exists():
@@ -688,7 +730,10 @@ async def test_update_cell_at_column_width(label, new_value, new_content_width):
         table.update_cell_at(Coordinate(0, 0), new_value, update_width=True)
         await wait_for_idle()
         assert first_column.content_width == new_content_width
-        assert first_column.render_width == new_content_width + 2
+        assert (
+            first_column.get_render_width(table)
+            == new_content_width + 2 * _DEFAULT_CELL_X_PADDING
+        )
 
 
 async def test_coordinate_to_cell_key():
@@ -814,7 +859,7 @@ async def test_hover_mouse_leave():
         await pilot.hover(DataTable, offset=Offset(1, 1))
         assert table._show_hover_cursor
         # Move our cursor away from the DataTable, and the hover cursor is hidden
-        await pilot.hover(DataTable, offset=Offset(-1, -1))
+        await pilot.hover(DataTable, offset=Offset(20, 20))
         assert not table._show_hover_cursor
 
 
@@ -1161,3 +1206,217 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
         # the widget, and the hover cursor is hidden
         await pilot.hover(DataTable, offset=Offset(42, 1))
         assert not table._show_hover_cursor
+
+
+async def test_sort_by_all_columns_no_key():
+    """Test sorting a `DataTable` by all columns."""
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(1, 3, 8)
+        table.add_row(2, 9, 5)
+        table.add_row(1, 1, 9)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [2, 9, 5]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+        table.sort()
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(reverse=True)
+        assert table.get_row_at(0) == [2, 9, 5]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+
+async def test_sort_by_multiple_columns_no_key():
+    """Test sorting a `DataTable` by multiple columns."""
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(1, 3, 8)
+        table.add_row(2, 9, 5)
+        table.add_row(1, 1, 9)
+
+        table.sort(a, b, c)
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(a, c, b)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [1, 1, 9]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(c, a, b, reverse=True)
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(a, c)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [1, 1, 9]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+
+async def test_sort_by_function_sum():
+    """Test sorting a `DataTable` using a custom sort function."""
+
+    def custom_sort(row_data):
+        return sum(row_data)
+
+    row_data = (
+        [1, 3, 8],  # SUM=12
+        [2, 9, 5],  # SUM=16
+        [1, 1, 9],  # SUM=11
+    )
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        for i, row in enumerate(row_data):
+            table.add_row(*row)
+
+        # Sorting by all columns
+        table.sort(a, b, c, key=custom_sort)
+        sorted_row_data = sorted(row_data, key=sum)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        # Passing a sort function but no columns also sorts by all columns
+        table.sort(key=custom_sort)
+        sorted_row_data = sorted(row_data, key=sum)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        table.sort(a, b, c, key=custom_sort, reverse=True)
+        sorted_row_data = sorted(row_data, key=sum, reverse=True)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+
+@pytest.mark.parametrize(
+    ["cell", "height"],
+    [
+        ("hey there", 1),
+        (Text("hey there"), 1),
+        (Text("long string", overflow="fold"), 2),
+        (Panel.fit("Hello\nworld"), 4),
+        ("1\n2\n3\n4\n5\n6\n7", 7),
+    ],
+)
+async def test_add_row_auto_height(cell: RenderableType, height: int):
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("C", width=10)
+        row_key = table.add_row(cell, height=None)
+        row = table.rows.get(row_key)
+        await pilot.pause()
+        assert row.height == height
+
+
+async def test_add_row_expands_column_widths():
+    """Regression test for https://github.com/Textualize/textual/issues/1026."""
+    app = DataTableApp()
+
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("First")
+        table.add_column("Second", width=10)
+        await pilot.pause()
+        assert (
+            table.ordered_columns[0].get_render_width(table)
+            == 5 + 2 * _DEFAULT_CELL_X_PADDING
+        )
+        assert (
+            table.ordered_columns[1].get_render_width(table)
+            == 10 + 2 * _DEFAULT_CELL_X_PADDING
+        )
+
+        table.add_row("a" * 20, "a" * 20)
+        await pilot.pause()
+        assert (
+            table.ordered_columns[0].get_render_width(table)
+            == 20 + 2 * _DEFAULT_CELL_X_PADDING
+        )
+        assert (
+            table.ordered_columns[1].get_render_width(table)
+            == 10 + 2 * _DEFAULT_CELL_X_PADDING
+        )
+
+
+async def test_cell_padding_updates_virtual_size():
+    app = DataTableApp()
+
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.add_column("First")
+        table.add_column("Second", width=10)
+        table.add_column("Third")
+
+        width = table.virtual_size.width
+
+        table.cell_padding += 5
+        assert width + 5 * 2 * 3 == table.virtual_size.width
+
+        table.cell_padding -= 2
+        assert width + 3 * 2 * 3 == table.virtual_size.width
+
+        table.cell_padding += 10
+        assert width + 13 * 2 * 3 == table.virtual_size.width
+
+
+async def test_cell_padding_cannot_be_negative():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.cell_padding = -3
+        assert table.cell_padding == 0
+        table.cell_padding = -1234
+        assert table.cell_padding == 0
+
+
+async def test_move_cursor_respects_animate_parameter():
+    """Regression test for https://github.com/Textualize/textual/issues/3840
+
+    Make sure that the call to `_scroll_cursor_into_view` from `move_cursor` happens
+    before the call from the watcher method from `cursor_coordinate`.
+    The former should animate because we call it with `animate=True` whereas the later
+    should not.
+    """
+
+    scrolls = []
+
+    class _DataTable(DataTable):
+        def _scroll_cursor_into_view(self, animate=False):
+            nonlocal scrolls
+            scrolls.append(animate)
+            super()._scroll_cursor_into_view(animate)
+
+    class LongDataTableApp(App):
+        def compose(self):
+            yield _DataTable()
+
+        def on_mount(self):
+            dt = self.query_one(_DataTable)
+            dt.add_columns("one", "two")
+            for _ in range(100):
+                dt.add_row("one", "two")
+
+        def key_s(self):
+            table = self.query_one(_DataTable)
+            table.move_cursor(row=99, animate=True)
+
+    app = LongDataTableApp()
+    async with app.run_test() as pilot:
+        await pilot.press("s")
+
+    assert scrolls == [True, False]

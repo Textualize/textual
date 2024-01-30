@@ -45,6 +45,12 @@ class Toast(Static, inherit_css=False):
         padding: 1 1;
         background: $panel;
         tint: white 5%;
+        link-background: initial;
+        link-color: $text;
+        link-style: underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
 
     .toast--title {
@@ -52,11 +58,11 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast {
-        border-right: wide $background;
+        border-right: outer $background;
     }
 
     Toast.-information {
-        border-left: wide $success;
+        border-left: outer $success;
     }
 
     Toast.-information .toast--title {
@@ -64,7 +70,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-warning {
-        border-left: wide $warning;
+        border-left: outer $warning;
     }
 
     Toast.-warning .toast--title {
@@ -72,7 +78,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-error {
-        border-left: wide $error;
+        border-left: outer $error;
     }
 
     Toast.-error .toast--title {
@@ -128,7 +134,7 @@ class Toast(Static, inherit_css=False):
         # the notification that caused us to exist. Note that we tell the
         # app to not bother refreshing the display on our account, we're
         # about to handle that anyway.
-        self.app.unnotify(self._notification, refresh=False)
+        self.app._unnotify(self._notification, refresh=False)
         # Note that we attempt to remove our parent, because we're wrapped
         # inside an alignment container. The testing that we are is as much
         # to keep type checkers happy as anything else.

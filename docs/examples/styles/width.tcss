@@ -1,0 +1,5 @@
+Screen > Widget {
+    background: green;
+    width: 50%;
+    color: white;
+}

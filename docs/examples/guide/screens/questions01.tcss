@@ -1,0 +1,17 @@
+QuestionScreen {
+    layout: grid;
+    grid-size: 2 2;                
+    align: center bottom;
+}
+
+QuestionScreen > Label {
+    margin: 1;       
+    text-align: center;
+    column-span: 2;    
+    width: 1fr;
+}
+
+QuestionScreen Button {
+    margin: 2; 
+    width: 1fr;     
+}

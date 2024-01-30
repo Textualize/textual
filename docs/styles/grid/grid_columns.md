@@ -40,15 +40,15 @@ Because there are more rows than scalars in the style definition, the scalars wi
     --8<-- "docs/examples/styles/grid_columns.py"
     ```
 
-=== "grid_columns.css"
+=== "grid_columns.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/grid_columns.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/styles/grid_columns.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Set all columns to have 50% width */
 grid-columns: 50%;
 

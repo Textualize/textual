@@ -3,18 +3,19 @@
 from __future__ import annotations
 
 from itertools import cycle
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 from weakref import WeakKeyDictionary
 
 from rich.console import RenderableType
 from typing_extensions import Literal, Self
 
-from textual.app import App
-
 from .. import events
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
 from ..widget import Widget
+
+if TYPE_CHECKING:
+    from textual.app import App
 
 PlaceholderVariant = Literal["default", "size", "text"]
 """The different variants of placeholder."""
@@ -120,7 +121,7 @@ class Placeholder(Widget):
         while next(self._variants_cycle) != self.variant:
             pass
 
-    def _on_mount(self) -> None:
+    async def _on_compose(self, event: events.Compose) -> None:
         """Set the color for this placeholder."""
         colors = Placeholder._COLORS.setdefault(
             self.app, cycle(_PLACEHOLDER_BACKGROUND_COLORS)

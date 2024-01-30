@@ -16,6 +16,8 @@ class ListItem(Widget, can_focus=False):
     documentation for more details on use.
     """
 
+    SCOPED_CSS = False
+
     DEFAULT_CSS = """
     ListItem {
         color: $text;

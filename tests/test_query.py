@@ -1,9 +1,17 @@
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.color import Color
 from textual.containers import Container
-from textual.css.query import InvalidQueryFormat, NoMatches, TooManyMatches, WrongType
+from textual.css.query import (
+    DeclarationError,
+    InvalidQueryFormat,
+    NoMatches,
+    TooManyMatches,
+    WrongType,
+)
 from textual.widget import Widget
+from textual.widgets import Input, Label
 
 
 def test_query():
@@ -230,3 +238,108 @@ async def test_universal_selector_doesnt_select_self():
         results = list(query.results())
         assert len(results) == 5
         assert not any(node.id == "root-container" for node in results)
+
+
+async def test_query_set_styles_invalid_css_raises_error():
+    app = App()
+    async with app.run_test():
+        with pytest.raises(DeclarationError):
+            app.query(Widget).set_styles(css="random_rule: 1fr;")
+
+
+async def test_query_set_styles_kwds():
+    class LabelApp(App):
+        def compose(self):
+            yield Label("Some text")
+
+    app = LabelApp()
+    async with app.run_test():
+        # Sanity check.
+        assert app.query_one(Label).styles.color != Color(255, 0, 0)
+        app.query(Label).set_styles(color="red")
+        assert app.query_one(Label).styles.color == Color(255, 0, 0)
+
+
+async def test_query_set_styles_css_and_kwds():
+    class LabelApp(App):
+        def compose(self):
+            yield Label("Some text")
+
+    app = LabelApp()
+    async with app.run_test():
+        # Sanity checks.
+        lbl = app.query_one(Label)
+        assert lbl.styles.color != Color(255, 0, 0)
+        assert lbl.styles.background != Color(255, 0, 0)
+
+        app.query(Label).set_styles(css="background: red;", color="red")
+        assert app.query_one(Label).styles.color == Color(255, 0, 0)
+        assert app.query_one(Label).styles.background == Color(255, 0, 0)
+
+
+async def test_query_set_styles_css():
+    class LabelApp(App):
+        def compose(self):
+            yield Label("Some text")
+
+    app = LabelApp()
+    async with app.run_test():
+        # Sanity checks.
+        lbl = app.query_one(Label)
+        assert lbl.styles.color != Color(255, 0, 0)
+        assert lbl.styles.background != Color(255, 0, 0)
+
+        app.query(Label).set_styles(css="background: red; color: red;")
+        assert app.query_one(Label).styles.color == Color(255, 0, 0)
+        assert app.query_one(Label).styles.background == Color(255, 0, 0)
+
+
+@pytest.mark.parametrize(
+    "args", [(False, False), (True, False), (True, True), (False, True)]
+)
+async def test_query_refresh(args):
+    refreshes = []
+
+    class MyWidget(Widget):
+        def refresh(self, *, repaint=None, layout=None):
+            super().refresh(repaint=repaint, layout=layout)
+            refreshes.append((repaint, layout))
+
+    class MyApp(App):
+        def compose(self):
+            yield MyWidget()
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        app.query(MyWidget).refresh(repaint=args[0], layout=args[1])
+        assert refreshes[-1] == args
+
+
+async def test_query_focus_blur():
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            yield Input(id="foo")
+            yield Input(id="bar")
+            yield Input(id="baz")
+
+    app = FocusApp()
+    async with app.run_test() as pilot:
+        # Nothing focused
+        assert app.focused is None
+        # Focus first input
+        app.query(Input).focus()
+        await pilot.pause()
+        assert app.focused.id == "foo"
+        # Blur inputs
+        app.query(Input).blur()
+        await pilot.pause()
+        assert app.focused is None
+        # Focus another
+        app.query("#bar").focus()
+        await pilot.pause()
+        assert app.focused.id == "bar"
+        # Focus non existing
+        app.query("#egg").focus()
+        assert app.focused.id == "bar"

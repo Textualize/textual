@@ -28,10 +28,10 @@ This examples creates a widget with a height of 50% of the screen.
     --8<-- "docs/examples/styles/height.py"
     ```
 
-=== "height.css"
+=== "height.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/height.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/styles/height.tcss"
     ```
 
 ### All height formats
@@ -47,16 +47,16 @@ Open the CSS file tab to see the comments that explain how each height is comput
 
 === "height_comparison.py"
 
-    ```py hl_lines="15-23"
+    ```py hl_lines="17-25"
     --8<-- "docs/examples/styles/height_comparison.py"
     ```
 
     1. The id of the placeholder identifies which unit will be used to set the height of the widget.
 
-=== "height_comparison.css"
+=== "height_comparison.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
-    --8<-- "docs/examples/styles/height_comparison.css"
+    ```css hl_lines="2 5 8 11 14 17 20 23 26"
+    --8<-- "docs/examples/styles/height_comparison.tcss"
     ```
 
     1. This sets the height to 2 lines.
@@ -73,7 +73,7 @@ Open the CSS file tab to see the comments that explain how each height is comput
 
 ## CSS
 
-```sass
+```css
 /* Explicit cell height */
 height: 10;
 

@@ -48,10 +48,10 @@ Note how the outline occludes the text area.
     --8<-- "docs/examples/styles/outline.py"
     ```
 
-=== "outline.css"
+=== "outline.tcss"
 
-    ```sass hl_lines="8"
-    --8<-- "docs/examples/styles/outline.css"
+    ```css hl_lines="8"
+    --8<-- "docs/examples/styles/outline.tcss"
     ```
 
 ### All outline types
@@ -69,10 +69,10 @@ The next example shows a grid with all the available outline types.
     --8<-- "docs/examples/styles/outline_all.py"
     ```
 
-=== "outline_all.css"
+=== "outline_all.tcss"
 
-    ```sass hl_lines="2 6 10 14 18 22 26 30 34 38 42 46 50 54 58"
-    --8<-- "docs/examples/styles/outline_all.css"
+    ```css hl_lines="2 6 10 14 18 22 26 30 34 38 42 46 50 54 58"
+    --8<-- "docs/examples/styles/outline_all.tcss"
     ```
 
 ### Borders and outlines
@@ -81,7 +81,7 @@ The next example shows a grid with all the available outline types.
 
 ## CSS
 
-```sass
+```css
 /* Set a heavy white outline */
 outline:heavy white;
 

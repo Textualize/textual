@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import typing
 
-from ..geometry import Spacing
-
 if typing.TYPE_CHECKING:
     from typing_extensions import Final
 
@@ -64,13 +62,14 @@ VALID_STYLE_FLAGS: Final = {
 VALID_PSEUDO_CLASSES: Final = {
     "blur",
     "can-focus",
+    "dark",
     "disabled",
     "enabled",
     "focus-within",
     "focus",
     "hover",
+    "light",
 }
 VALID_OVERLAY: Final = {"none", "screen"}
 VALID_CONSTRAIN: Final = {"x", "y", "both", "inflect", "none"}
-
-NULL_SPACING: Final = Spacing.all(0)
+VALID_KEYLINE: Final = {"none", "thin", "heavy", "double"}

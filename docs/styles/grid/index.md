@@ -49,10 +49,10 @@ The spacing between grid cells is defined by the `grid-gutter` style.
     --8<-- "docs/examples/styles/grid.py"
     ```
 
-=== "grid.css"
+=== "grid.tcss"
 
-    ```sass
-    --8<-- "docs/examples/styles/grid.css"
+    ```css
+    --8<-- "docs/examples/styles/grid.tcss"
     ```
 
 !!! warning

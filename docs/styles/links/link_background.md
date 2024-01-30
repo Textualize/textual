@@ -26,26 +26,26 @@ It also shows that `link-background` does not affect hyperlinks.
 
 === "link_background.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-20 22-23"
     --8<-- "docs/examples/styles/link_background.py"
     ```
 
-    1. This label has an hyperlink so it won't be affected by the `link-background` rule.
+    1. This label has a hyperlink so it won't be affected by the `link-background` rule.
     2. This label has an "action link" that can be styled with `link-background`.
     3. This label has an "action link" that can be styled with `link-background`.
     4. This label has an "action link" that can be styled with `link-background`.
 
-=== "link_background.css"
+=== "link_background.tcss"
 
-    ```sass hl_lines="2 6 10"
-    --8<-- "docs/examples/styles/link_background.css"
+    ```css hl_lines="2 6 10"
+    --8<-- "docs/examples/styles/link_background.tcss"
     ```
 
     1. This will only affect one of the labels because action links are the only links that this rule affects.
 
 ## CSS
 
-```sass
+```css
 link-background: red 70%;
 link-background: $accent;
 ```
@@ -63,4 +63,4 @@ widget.styles.link_background = Color(100, 30, 173)
 ## See also
 
  - [`link-color`](./link_color.md) to set the color of link text.
- - [`link-hover-background](./link_hover_background.md) to set the background color of link text when the mouse pointer is over it.
+ - [`link-background-hover](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.

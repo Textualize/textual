@@ -37,10 +37,10 @@ This first example shows three labels stacked vertically, each with different co
     --8<-- "docs/examples/styles/content_align.py"
     ```
 
-=== "content_align.css"
+=== "content_align.tcss"
 
-    ```sass hl_lines="2 7-8 13"
-    --8<-- "docs/examples/styles/content_align.css"
+    ```css hl_lines="2 7-8 13"
+    --8<-- "docs/examples/styles/content_align.tcss"
     ```
 
 ### All content alignments
@@ -59,15 +59,15 @@ Each label has its text aligned differently.
     --8<-- "docs/examples/styles/content_align_all.py"
     ```
 
-=== "content_align_all.css"
+=== "content_align_all.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
-    --8<-- "docs/examples/styles/content_align_all.css"
+    ```css hl_lines="2 5 8 11 14 17 20 23 26"
+    --8<-- "docs/examples/styles/content_align_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Align content in the very center of a widget */
 content-align: center middle;
 /* Align content at the top right of a widget */

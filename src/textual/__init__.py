@@ -28,16 +28,11 @@ LogCallable: TypeAlias = "Callable"
 
 
 def __getattr__(name: str) -> str:
-    """Lazily get the version from whatever API is available."""
+    """Lazily get the version."""
     if name == "__version__":
-        try:
-            from importlib.metadata import version
-        except ImportError:
-            import pkg_resources
+        from importlib.metadata import version
 
-            return pkg_resources.get_distribution("textual").version
-        else:
-            return version("textual")
+        return version("textual")
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
@@ -64,12 +59,6 @@ class Logger:
         yield self._verbosity, LogVerbosity.NORMAL
 
     def __call__(self, *args: object, **kwargs) -> None:
-        try:
-            app = active_app.get()
-        except LookupError:
-            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
-            print(*print_args)
-            return
         if constants.LOG_FILE:
             output = " ".join(str(arg) for arg in args)
             if kwargs:
@@ -80,6 +69,12 @@ class Logger:
 
             with open(constants.LOG_FILE, "a") as log_file:
                 print(output, file=log_file)
+        try:
+            app = active_app.get()
+        except LookupError:
+            print_args = (*args, *[f"{key}={value!r}" for key, value in kwargs.items()])
+            print(*print_args)
+            return
         if app.devtools is None or not app.devtools.is_connected:
             return
 

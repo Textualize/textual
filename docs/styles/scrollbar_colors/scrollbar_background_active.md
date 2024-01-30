@@ -27,15 +27,15 @@ The `scrollbar-background-active` style sets the background color of the scrollb
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-backround-active: red;
 ```
 

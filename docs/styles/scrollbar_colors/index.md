@@ -49,8 +49,8 @@ The right panel sets `scrollbar-background`, `scrollbar-color`, and `scrollbar-c
     --8<-- "docs/examples/styles/scrollbars.py"
     ```
 
-=== "scrollbars.css"
+=== "scrollbars.tcss"
 
-    ```sass
-    --8<-- "docs/examples/styles/scrollbars.css"
+    ```css
+    --8<-- "docs/examples/styles/scrollbars.tcss"
     ```

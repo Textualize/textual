@@ -3,6 +3,7 @@ Implements the scrollbar-related widgets for internal use.
 
 You will not need to use the widgets defined in this module.
 """
+
 from __future__ import annotations
 
 from math import ceil
@@ -48,6 +49,8 @@ class ScrollRight(ScrollMessage, verbose=True):
 
 class ScrollTo(ScrollMessage, verbose=True):
     """Message sent when click and dragging handle."""
+
+    __slots__ = ["x", "y", "animate"]
 
     def __init__(
         self,
@@ -144,18 +147,22 @@ class ScrollBarRender:
                 if bar_character != " ":
                     segments[start_index] = _Segment(
                         bar_character * width_thickness,
-                        _Style(bgcolor=back, color=bar, meta=foreground_meta)
-                        if vertical
-                        else _Style(bgcolor=bar, color=back, meta=foreground_meta),
+                        (
+                            _Style(bgcolor=back, color=bar, meta=foreground_meta)
+                            if vertical
+                            else _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                        ),
                     )
             if end_index < len(segments):
                 bar_character = bars[len_bars - 1 - end_bar]
                 if bar_character != " ":
                     segments[end_index] = _Segment(
                         bar_character * width_thickness,
-                        _Style(bgcolor=bar, color=back, meta=foreground_meta)
-                        if vertical
-                        else _Style(bgcolor=back, color=bar, meta=foreground_meta),
+                        (
+                            _Style(bgcolor=bar, color=back, meta=foreground_meta)
+                            if vertical
+                            else _Style(bgcolor=back, color=bar, meta=foreground_meta)
+                        ),
                     )
         else:
             style = _Style(bgcolor=back)
@@ -217,16 +224,6 @@ class ScrollBar(Widget):
     ```
     my_widget.horizontal_scrollbar.renderer = MyScrollBarRender
     ```
-    """
-
-    DEFAULT_CSS = """
-    ScrollBar {
-        link-hover-color: ;
-        link-hover-background:;
-        link-hover-style: ;
-        link-color: transparent;
-        link-background: transparent;
-    }
     """
 
     def __init__(
@@ -315,6 +312,10 @@ class ScrollBar(Widget):
     def action_grab(self) -> None:
         """Begin capturing the mouse cursor."""
         self.capture_mouse()
+
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
+        # We don't want mouse events on the scrollbar bubbling
+        event.stop()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         if self.grabbed:

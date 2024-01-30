@@ -1,5 +1,4 @@
 from contextlib import nullcontext as does_not_raise
-from typing import Any
 
 import pytest
 
@@ -13,7 +12,7 @@ from textual.widget import Widget
 
 def _make_user_stylesheet(css: str) -> Stylesheet:
     stylesheet = Stylesheet()
-    stylesheet.source["test.css"] = CssSource(css, is_defaults=False)
+    stylesheet.source["test.tcss"] = CssSource(css, is_defaults=False)
     stylesheet.parse()
     return stylesheet
 
@@ -204,7 +203,7 @@ def test_did_you_mean_for_css_property_names(
     displayed_css_property_name = css_property_name.replace("_", "-")
     expected_summary = f"Invalid CSS property {displayed_css_property_name!r}"
     if expected_property_name_suggestion:
-        expected_summary += f'. Did you mean "{expected_property_name_suggestion}"?'
+        expected_summary += f". Did you mean '{expected_property_name_suggestion}'?"
     assert help_text.summary == expected_summary
 
 
@@ -244,6 +243,6 @@ def test_did_you_mean_for_color_names(
     )
 
     if expected_color_suggestion is not None:
-        expected_error_summary += f'. Did you mean "{expected_color_suggestion}"?'
+        expected_error_summary += f". Did you mean '{expected_color_suggestion}'?"
 
     assert help_text.summary == expected_error_summary

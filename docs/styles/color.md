@@ -29,10 +29,10 @@ This example sets a different text color for each of three different widgets.
     --8<-- "docs/examples/styles/color.py"
     ```
 
-=== "color.css"
+=== "color.tcss"
 
-    ```sass hl_lines="8 12 16"
-    --8<-- "docs/examples/styles/color.css"
+    ```css hl_lines="8 12 16"
+    --8<-- "docs/examples/styles/color.tcss"
     ```
 
 ### Auto
@@ -50,15 +50,15 @@ The next example shows how `auto` chooses between a lighter or a darker text col
     --8<-- "docs/examples/styles/color_auto.py"
     ```
 
-=== "color_auto.css"
+=== "color_auto.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/color_auto.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/styles/color_auto.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Blue text */
 color: blue;
 

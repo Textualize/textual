@@ -204,10 +204,49 @@ The addition of `[str]` tells mypy that `run()` is expected to return a string. 
 
     Type annotations are entirely optional (but recommended) with Textual.
 
+### Return code
+
+When you exit a Textual app with [`App.exit()`][textual.app.App.exit], you can optionally specify a *return code* with the `return_code` parameter.
+
+
+!!! info "What are return codes?"
+
+    Returns codes are a standard feature provided by your operating system.
+    When any application exits it can return an integer to indicate if it was successful or not.
+    A return code of `0` indicates success, any other value indicates that an error occurred.
+    The exact meaning of a non-zero return code is application-dependant.
+
+When a Textual app exits normally, the return code will be `0`. If there is an unhandled exception, Textual will set a return code of `1`.
+You may want to set a different value for the return code if there is error condition that you want to differentiate from an unhandled exception.
+
+Here's an example of setting a return code for an error condition:
+
+```python
+if critical_error:
+    self.exit(return_code=4, message="Critical error occurred")
+```
+
+The app's return code can be queried with `app.return_code`, which will be `None` if it hasn't been set, or an integer.
+
+Textual won't explicitly exit the process.
+To exit the app with a return code, you should call `sys.exit`.
+Here's how you might do that:
+
+```python
+if __name__ == "__main__"
+    app = MyApp()
+    app.run()
+    import sys
+    sys.exit(app.return_code or 0)
+```
 
 ## CSS
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
+
+!!! info
+
+    Textual apps typically use the extension `.tcss` for external CSS files to differentiate them from browser (`.css`) files.
 
 The chapter on [Textual CSS](CSS.md) describes how to use CSS in detail. For now let's look at how your app references external CSS files.
 
@@ -221,13 +260,13 @@ The following example enables loading of CSS by adding a `CSS_PATH` class variab
 
     We also added an `id` to the `Label`, because we want to style it in the CSS.
 
-If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.css"` in the same directory as the Python code. Here is that CSS file:
+If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.tcss"` in the same directory as the Python code. Here is that CSS file:
 
-```sass title="question02.css"
---8<-- "docs/examples/app/question02.css"
+```css title="question02.tcss"
+--8<-- "docs/examples/app/question02.tcss"
 ```
 
-When `"question02.py"` runs it will load `"question02.css"` and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:
+When `"question02.py"` runs it will load `"question02.tcss"` and update the app and widgets accordingly. Even though the code is almost identical to the previous sample, the app now looks quite different:
 
 ```{.textual path="docs/examples/app/question02.py"}
 ```

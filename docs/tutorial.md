@@ -31,6 +31,21 @@ Here's what the finished app will look like:
 ```{.textual path="docs/examples/tutorial/stopwatch.py" title="stopwatch.py" press="tab,enter,tab,enter,tab,enter,tab,enter"}
 ```
 
+### Try it out!
+
+The following is *not* a screenshot, but a fully interactive Textual app running in your browser.
+
+
+!!! textualize "Try in Textual-web"
+
+    <div class="textual-web-demo" data-app="tutorial"></div>
+
+
+!!! tip
+
+    See [textual-web](https://github.com/Textualize/textual-web) if you are interested in publishing your Textual apps on the web.
+
+
 ### Get the code
 
 If you want to try the finished Stopwatch app and follow along with the code, first make sure you have [Textual installed](getting_started.md) then check out the [Textual](https://github.com/Textualize/textual) repository:
@@ -216,8 +231,8 @@ Let's add a CSS file to our application.
 
 Adding the `CSS_PATH` class variable tells Textual to load the following file when the app starts:
 
-```sass title="stopwatch03.css"
---8<-- "docs/examples/tutorial/stopwatch03.css"
+```css title="stopwatch03.tcss"
+--8<-- "docs/examples/tutorial/stopwatch03.tcss"
 ```
 
 If we run the app now, it will look *very* different.
@@ -225,13 +240,13 @@ If we run the app now, it will look *very* different.
 ```{.textual path="docs/examples/tutorial/stopwatch03.py" title="stopwatch03.py"}
 ```
 
-This app looks much more like our sketch. Let's look at how Textual uses `stopwatch03.css` to apply styles.
+This app looks much more like our sketch. Let's look at how Textual uses `stopwatch03.tcss` to apply styles.
 
 ### CSS basics
 
-CSS files contain a number of _declaration blocks_. Here's the first such block from `stopwatch03.css` again:
+CSS files contain a number of _declaration blocks_. Here's the first such block from `stopwatch03.tcss` again:
 
-```sass
+```css
 Stopwatch {
     layout: horizontal;
     background: $boost;
@@ -258,9 +273,9 @@ Here's how this CSS code changes how the `Stopwatch` widget is displayed.
 - `padding: 1` sets a padding of 1 cell around the child widgets.
 
 
-Here's the rest of `stopwatch03.css` which contains further declaration blocks:
+Here's the rest of `stopwatch03.tcss` which contains further declaration blocks:
 
-```sass
+```css
 TimeDisplay {
     content-align: center middle;
     opacity: 60%;
@@ -308,15 +323,15 @@ We can accomplish this with a CSS _class_. Not to be confused with a Python clas
 
 Here's the new CSS:
 
-```sass title="stopwatch04.css" hl_lines="33-53"
---8<-- "docs/examples/tutorial/stopwatch04.css"
+```css title="stopwatch04.tcss" hl_lines="33-53"
+--8<-- "docs/examples/tutorial/stopwatch04.tcss"
 ```
 
 These new rules are prefixed with `.started`. The `.` indicates that `.started` refers to a CSS class called "started". The new styles will be applied only to widgets that have this CSS class.
 
 Some of the new styles have more than one selector separated by a space. The space indicates that the rule should match the second selector if it is a child of the first. Let's look at one of these styles:
 
-```sass
+```css
 .started #start {
     display: none
 }

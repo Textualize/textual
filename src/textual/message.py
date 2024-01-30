@@ -11,12 +11,11 @@ import rich.repr
 
 from . import _time
 from ._context import active_message_pump
-from ._types import MessageTarget
 from .case import camel_to_snake
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .message_pump import MessagePump
-    from .widget import Widget
 
 
 @rich.repr.auto
@@ -78,7 +77,7 @@ class Message:
         cls.handler_name = f"on_{namespace}_{name}" if namespace else f"on_{name}"
 
     @property
-    def control(self) -> Widget | None:
+    def control(self) -> DOMNode | None:
         """The widget associated with this message, or None by default."""
         return None
 

@@ -13,8 +13,12 @@ Where the fear has gone there will be nothing. Only I will remain.
 
 
 class ScrollbarApp(App):
+    CSS_PATH = "scrollbar_size.tcss"
+
     def compose(self):
         yield ScrollableContainer(Label(TEXT * 5), classes="panel")
 
 
-app = ScrollbarApp(css_path="scrollbar_size.css")
+if __name__ == "__main__":
+    app = ScrollbarApp()
+    app.run()

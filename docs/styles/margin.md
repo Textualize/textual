@@ -49,10 +49,10 @@ In the example below we add a large margin to a label, which makes it move away 
     --8<-- "docs/examples/styles/margin.py"
     ```
 
-=== "margin.css"
+=== "margin.tcss"
 
-    ```sass hl_lines="7"
-    --8<-- "docs/examples/styles/margin.css"
+    ```css hl_lines="7"
+    --8<-- "docs/examples/styles/margin.tcss"
     ```
 
 ### All margin settings
@@ -71,15 +71,15 @@ In each cell, we have a placeholder that has its margins set in different ways.
     --8<-- "docs/examples/styles/margin_all.py"
     ```
 
-=== "margin_all.css"
+=== "margin_all.tcss"
 
-    ```sass hl_lines="25 29 33 37 41 45 49 53"
-    --8<-- "docs/examples/styles/margin_all.css"
+    ```css hl_lines="25 29 33 37 41 45 49 53"
+    --8<-- "docs/examples/styles/margin_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Set margin of 1 around all edges */
 margin: 1;
 /* Set margin of 2 on the top and bottom edges, and 4 on the left and right */

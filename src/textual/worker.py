@@ -21,7 +21,6 @@ from typing import (
 )
 
 import rich.repr
-from rich.traceback import Traceback
 from typing_extensions import TypeAlias
 
 from .message import Message
@@ -369,6 +368,8 @@ class Worker(Generic[ResultType]):
             self.state = WorkerState.ERROR
             self._error = error
             app.log.worker(self, "failed", repr(error))
+            from rich.traceback import Traceback
+
             app.log.worker(Traceback())
             if self.exit_on_error:
                 app._fatal_error()

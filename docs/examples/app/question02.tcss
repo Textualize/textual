@@ -1,0 +1,17 @@
+Screen {
+    layout: grid;
+    grid-size: 2;
+    grid-gutter: 2;
+    padding: 2;
+}
+#question {
+    width: 100%;
+    height: 100%;
+    column-span: 2;
+    content-align: center bottom;
+    text-style: bold;
+}
+
+Button {
+    width: 100%;
+}

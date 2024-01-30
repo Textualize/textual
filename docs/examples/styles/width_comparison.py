@@ -10,6 +10,8 @@ class Ruler(Static):
 
 
 class WidthComparisonApp(App):
+    CSS_PATH = "width_comparison.tcss"
+
     def compose(self):
         yield Horizontal(
             Placeholder(id="cells"),  # (1)!
@@ -25,6 +27,6 @@ class WidthComparisonApp(App):
         yield Ruler()
 
 
-app = WidthComparisonApp(css_path="width_comparison.css")
 if __name__ == "__main__":
+    app = WidthComparisonApp()
     app.run()

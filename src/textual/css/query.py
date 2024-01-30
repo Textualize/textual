@@ -9,7 +9,6 @@ Additional methods apply actions to all nodes in the query.
     If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Iterable, Iterator, TypeVar, cast, overload
@@ -49,6 +48,9 @@ class WrongType(QueryError):
 
 
 QueryType = TypeVar("QueryType", bound="Widget")
+"""Type variable used to type generic queries."""
+ExpectType = TypeVar("ExpectType")
+"""Type variable used to further restrict queries."""
 
 
 @rich.repr.auto(angular=True)
@@ -142,12 +144,10 @@ class DOMQuery(Generic[QueryType]):
         return reversed(self.nodes)
 
     @overload
-    def __getitem__(self, index: int) -> QueryType:
-        ...
+    def __getitem__(self, index: int) -> QueryType: ...
 
     @overload
-    def __getitem__(self, index: slice) -> list[QueryType]:
-        ...
+    def __getitem__(self, index: slice) -> list[QueryType]: ...
 
     def __getitem__(self, index: int | slice) -> QueryType | list[QueryType]:
         return self.nodes[index]
@@ -187,15 +187,11 @@ class DOMQuery(Generic[QueryType]):
         """
         return DOMQuery(self.node, exclude=selector, parent=self)
 
-    ExpectType = TypeVar("ExpectType")
+    @overload
+    def first(self) -> QueryType: ...
 
     @overload
-    def first(self) -> Widget:
-        ...
-
-    @overload
-    def first(self, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def first(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def first(
         self, expect_type: type[ExpectType] | None = None
@@ -226,16 +222,14 @@ class DOMQuery(Generic[QueryType]):
             raise NoMatches(f"No nodes match {self!r}")
 
     @overload
-    def only_one(self) -> Widget:
-        ...
+    def only_one(self) -> QueryType: ...
 
     @overload
-    def only_one(self, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def only_one(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def only_one(
         self, expect_type: type[ExpectType] | None = None
-    ) -> Widget | ExpectType:
+    ) -> QueryType | ExpectType:
         """Get the *only* matching node.
 
         Args:
@@ -253,7 +247,9 @@ class DOMQuery(Generic[QueryType]):
         _rich_traceback_omit = True
         # Call on first to get the first item. Here we'll use all of the
         # testing and checking it provides.
-        the_one = self.first(expect_type) if expect_type is not None else self.first()
+        the_one: ExpectType | QueryType = (
+            self.first(expect_type) if expect_type is not None else self.first()
+        )
         try:
             # Now see if we can access a subsequent item in the nodes. There
             # should *not* be anything there, so we *should* get an
@@ -268,15 +264,13 @@ class DOMQuery(Generic[QueryType]):
             # The IndexError was got, that's a good thing in this case. So
             # we return what we found.
             pass
-        return cast("Widget", the_one)
+        return the_one
 
     @overload
-    def last(self) -> Widget:
-        ...
+    def last(self) -> QueryType: ...
 
     @overload
-    def last(self, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def last(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def last(
         self, expect_type: type[ExpectType] | None = None
@@ -304,16 +298,14 @@ class DOMQuery(Generic[QueryType]):
         return last
 
     @overload
-    def results(self) -> Iterator[Widget]:
-        ...
+    def results(self) -> Iterator[QueryType]: ...
 
     @overload
-    def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]:
-        ...
+    def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]: ...
 
     def results(
         self, filter_type: type[ExpectType] | None = None
-    ) -> Iterator[Widget | ExpectType]:
+    ) -> Iterator[QueryType | ExpectType]:
         """Get query results, optionally filtered by a given type.
 
         Args:
@@ -404,7 +396,7 @@ class DOMQuery(Generic[QueryType]):
             node.set_styles(**update_styles)
         if css is not None:
             try:
-                new_styles = parse_declarations(css, path="set_styles")
+                new_styles = parse_declarations(css, read_from=("set_styles", ""))
             except DeclarationError as error:
                 raise DeclarationError(error.name, error.token, error.message) from None
             for node in self:
@@ -426,4 +418,29 @@ class DOMQuery(Generic[QueryType]):
         """
         for node in self:
             node.refresh(repaint=repaint, layout=layout)
+        return self
+
+    def focus(self) -> DOMQuery[QueryType]:
+        """Focus the first matching node that permits focus.
+
+        Returns:
+            Query for chaining.
+        """
+        for node in self:
+            if node.allow_focus():
+                node.focus()
+                break
+        return self
+
+    def blur(self) -> DOMQuery[QueryType]:
+        """Blur the first matching node that is focused.
+
+        Returns:
+            Query for chaining.
+        """
+        focused = self._node.screen.focused
+        if focused is not None:
+            nodes: list[Widget] = list(self)
+            if focused in nodes:
+                self._node.screen._reset_focus(focused, avoiding=nodes)
         return self

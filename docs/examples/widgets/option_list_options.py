@@ -4,7 +4,7 @@ from textual.widgets.option_list import Option, Separator
 
 
 class OptionListApp(App[None]):
-    CSS_PATH = "option_list.css"
+    CSS_PATH = "option_list.tcss"
 
     def compose(self) -> ComposeResult:
         yield Header()

@@ -32,15 +32,15 @@ After placing the placeholders `#p1`, `#p2`, `#p3`, and `#p4`, the next availabl
     --8<-- "docs/examples/styles/row_span.py"
     ```
 
-=== "row_span.css"
+=== "row_span.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20"
-    --8<-- "docs/examples/styles/row_span.css"
+    ```css hl_lines="2 5 8 11 14 17 20"
+    --8<-- "docs/examples/styles/row_span.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 row-span: 3
 ```
 

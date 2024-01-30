@@ -26,15 +26,15 @@ The `scrollbar-background` style sets the background color of the scrollbar.
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-backround: blue;
 ```
 

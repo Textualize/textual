@@ -1,3 +1,5 @@
+import contextlib
+
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Input
 
@@ -28,14 +30,25 @@ async def test_hover_update_styles():
     app = MyApp()
     async with app.run_test() as pilot:
         button = app.query_one(Button)
-        assert button.pseudo_classes == {"enabled", "can-focus"}
+        assert button.pseudo_classes == {
+            "blur",
+            "can-focus",
+            "dark",
+            "enabled",
+        }
 
         # Take note of the initial background colour
         initial_background = button.styles.background
         await pilot.hover(Button)
 
         # We've hovered, so ensure the pseudoclass is present and background changed
-        assert button.pseudo_classes == {"enabled", "hover", "can-focus"}
+        assert button.pseudo_classes == {
+            "blur",
+            "can-focus",
+            "dark",
+            "enabled",
+            "hover",
+        }
         assert button.styles.background != initial_background
 
 
@@ -67,3 +80,40 @@ def test_setting_sub_title():
 
     app.sub_title = [True, False, 2]
     assert app.sub_title == "[True, False, 2]"
+
+
+async def test_default_return_code_is_zero():
+    app = App()
+    async with app.run_test():
+        app.exit()
+    assert app.return_code == 0
+
+
+async def test_return_code_is_one_after_crash():
+    class MyApp(App):
+        def key_p(self):
+            1 / 0
+
+    app = MyApp()
+    with contextlib.suppress(ZeroDivisionError):
+        async with app.run_test() as pilot:
+            await pilot.press("p")
+    assert app.return_code == 1
+
+
+async def test_set_return_code():
+    app = App()
+    async with app.run_test():
+        app.exit(return_code=42)
+    assert app.return_code == 42
+
+
+def test_no_return_code_before_running():
+    app = App()
+    assert app.return_code is None
+
+
+async def test_no_return_code_while_running():
+    app = App()
+    async with app.run_test():
+        assert app.return_code is None

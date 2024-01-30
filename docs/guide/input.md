@@ -94,10 +94,10 @@ The following example shows how focus works in practice.
     --8<-- "docs/examples/guide/input/key03.py"
     ```
 
-=== "key03.css"
+=== "key03.tcss"
 
-    ```python title="key03.css" hl_lines="15-17"
-    --8<-- "docs/examples/guide/input/key03.css"
+    ```python title="key03.tcss" hl_lines="15-17"
+    --8<-- "docs/examples/guide/input/key03.tcss"
     ```
 
 === "Output"
@@ -136,10 +136,10 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
     --8<-- "docs/examples/guide/input/binding01.py"
     ```
 
-=== "binding01.css"
+=== "binding01.tcss"
 
-    ```python title="binding01.css"
-    --8<-- "docs/examples/guide/input/binding01.css"
+    ```python title="binding01.tcss"
+    --8<-- "docs/examples/guide/input/binding01.tcss"
     ```
 
 === "Output"
@@ -202,14 +202,14 @@ The following example shows mouse movements being used to _attach_ a widget to t
 
 === "mouse01.py"
 
-    ```python title="mouse01.py" hl_lines="11-13"
+    ```python title="mouse01.py" hl_lines="17-19"
     --8<-- "docs/examples/guide/input/mouse01.py"
     ```
 
-=== "mouse01.css"
+=== "mouse01.tcss"
 
-    ```python title="mouse01.css"
-    --8<-- "docs/examples/guide/input/mouse01.css"
+    ```python title="mouse01.tcss"
+    --8<-- "docs/examples/guide/input/mouse01.tcss"
     ```
 
 If you run `mouse01.py` you should find that it logs the mouse move event, and keeps a widget pinned directly under the cursor.

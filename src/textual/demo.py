@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from importlib.metadata import version
 from pathlib import Path
 
-from importlib_metadata import version
 from rich import box
 from rich.console import RenderableType
 from rich.json import JSON
@@ -271,7 +271,7 @@ class SubTitle(Static):
 
 
 class DemoApp(App[None]):
-    CSS_PATH = "demo.css"
+    CSS_PATH = "demo.tcss"
     TITLE = "Textual Demo"
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "Sidebar"),

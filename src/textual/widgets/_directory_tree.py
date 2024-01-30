@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
 
+from ..await_complete import AwaitComplete
+
 if TYPE_CHECKING:
     from typing_extensions import Self
 
@@ -20,7 +22,7 @@ from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
 @dataclass
 class DirEntry:
-    """Attaches directory information to a node."""
+    """Attaches directory information to a [`DirectoryTree`][textual.widgets.DirectoryTree] node."""
 
     path: Path
     """The path of the directory entry."""
@@ -65,7 +67,7 @@ class DirectoryTree(Tree[DirEntry]):
     PATH: Callable[[str | Path], Path] = Path
     """Callable that returns a fresh path object."""
 
-    class FileSelected(Message, bubble=True):
+    class FileSelected(Message):
         """Posted when a file is selected.
 
         Can be handled using `on_directory_tree_file_selected` in a subclass of
@@ -88,6 +90,31 @@ class DirectoryTree(Tree[DirEntry]):
         @property
         def control(self) -> Tree[DirEntry]:
             """The `Tree` that had a file selected."""
+            return self.node.tree
+
+    class DirectorySelected(Message):
+        """Posted when a directory is selected.
+
+        Can be handled using `on_directory_tree_directory_selected` in a
+        subclass of `DirectoryTree` or in a parent widget in the DOM.
+        """
+
+        def __init__(self, node: TreeNode[DirEntry], path: Path) -> None:
+            """Initialise the DirectorySelected object.
+
+            Args:
+                node: The tree node for the directory that was selected.
+                path: The path of the directory that was selected.
+            """
+            super().__init__()
+            self.node: TreeNode[DirEntry] = node
+            """The tree node of the directory that was selected."""
+            self.path: Path = path
+            """The path of the directory that was selected."""
+
+        @property
+        def control(self) -> Tree[DirEntry]:
+            """The `Tree` that had a directory selected."""
             return self.node.tree
 
     path: var[str | Path] = var["str | Path"](PATH("."), init=False, always_update=True)
@@ -127,18 +154,26 @@ class DirectoryTree(Tree[DirEntry]):
         )
         self.path = path
 
-    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> None:
+    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Add the given node to the load queue.
+
+        The return value can optionally be awaited until the queue is empty.
 
         Args:
             node: The node to add to the load queue.
+
+        Returns:
+            An optionally awaitable object that can be awaited until the
+            load queue has finished processing.
         """
         assert node.data is not None
         if not node.data.loaded:
             node.data.loaded = True
             self._load_queue.put_nowait(node)
 
-    def reload(self) -> None:
+        return AwaitComplete(self._load_queue.join())
+
+    def reload(self) -> AwaitComplete:
         """Reload the `DirectoryTree` contents."""
         self.reset(str(self.path), DirEntry(self.PATH(self.path)))
         # Orphan the old queue...
@@ -147,7 +182,8 @@ class DirectoryTree(Tree[DirEntry]):
         self._loader()
         # We have a fresh queue, we have a fresh loader, get the fresh root
         # loading up.
-        self._add_to_load_queue(self.root)
+        queue_processed = self._add_to_load_queue(self.root)
+        return queue_processed
 
     def clear_node(self, node: TreeNode[DirEntry]) -> Self:
         """Clear all nodes under the given node.
@@ -177,6 +213,7 @@ class DirectoryTree(Tree[DirEntry]):
         """Clear the subtree and reset the given node.
 
         Args:
+            node: The node to reset.
             label: The label for the node.
             data: Optional data for the node.
 
@@ -188,8 +225,12 @@ class DirectoryTree(Tree[DirEntry]):
         node.data = data
         return self
 
-    def reload_node(self, node: TreeNode[DirEntry]) -> None:
+    def reload_node(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Reload the given node's contents.
+
+        The return value may be awaited to ensure the DirectoryTree has reached
+        a stable state and is no longer performing any node reloading (of this node
+        or any other nodes).
 
         Args:
             node: The node to reload.
@@ -197,7 +238,7 @@ class DirectoryTree(Tree[DirEntry]):
         self.reset_node(
             node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
         )
-        self._add_to_load_queue(node)
+        return self._add_to_load_queue(node)
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -214,13 +255,13 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return self.PATH(path)
 
-    def watch_path(self) -> None:
+    async def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.
 
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
-        self.reload()
+        await self.reload()
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
@@ -253,6 +294,11 @@ class DirectoryTree(Tree[DirEntry]):
         """
         node_label = node._label.copy()
         node_label.stylize(style)
+
+        # If the tree isn't mounted yet we can't use component classes to stylize
+        # the label fully, so we return early.
+        if not self.is_mounted:
+            return node_label
 
         if node._allow_expand:
             prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
@@ -396,16 +442,17 @@ class DirectoryTree(Tree[DirEntry]):
                 # the tree.
                 if content:
                     self._populate_node(node, content)
-            # Mark this iteration as done.
-            self._load_queue.task_done()
+            finally:
+                # Mark this iteration as done.
+                self._load_queue.task_done()
 
-    def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
+    async def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
         if self._safe_is_dir(dir_entry.path):
-            self._add_to_load_queue(event.node)
+            await self._add_to_load_queue(event.node)
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
 
@@ -414,5 +461,7 @@ class DirectoryTree(Tree[DirEntry]):
         dir_entry = event.node.data
         if dir_entry is None:
             return
-        if not self._safe_is_dir(dir_entry.path):
+        if self._safe_is_dir(dir_entry.path):
+            self.post_message(self.DirectorySelected(event.node, dir_entry.path))
+        else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))

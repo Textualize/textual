@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class MinHeightApp(App):
+    CSS_PATH = "min_height.tcss"
+
     def compose(self):
         yield Horizontal(
             Placeholder("min-height: 25%", id="p1"),
@@ -13,4 +15,6 @@ class MinHeightApp(App):
         )
 
 
-app = MinHeightApp(css_path="min_height.css")
+if __name__ == "__main__":
+    app = MinHeightApp()
+    app.run()

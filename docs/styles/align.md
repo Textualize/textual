@@ -32,10 +32,10 @@ This example contains a simple app with two labels centered on the screen with `
     --8<-- "docs/examples/styles/align.py"
     ```
 
-=== "align.css"
+=== "align.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/styles/align.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/styles/align.tcss"
     ```
 
 ### All alignments
@@ -54,15 +54,15 @@ Each label has been aligned differently inside its container, and its text shows
     --8<-- "docs/examples/styles/align_all.py"
     ```
 
-=== "align_all.css"
+=== "align_all.tcss"
 
-    ```sass hl_lines="2 6 10 14 18 22 26 30 34"
-    --8<-- "docs/examples/styles/align_all.css"
+    ```css hl_lines="2 6 10 14 18 22 26 30 34"
+    --8<-- "docs/examples/styles/align_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Align child widgets to the center. */
 align: center middle;
 /* Align child widget to the top right */

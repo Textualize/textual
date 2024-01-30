@@ -5,9 +5,12 @@ The `Screen` class is a special widget which represents the content in the termi
 
 from __future__ import annotations
 
+import asyncio
 from functools import partial
+from operator import attrgetter
 from typing import (
     TYPE_CHECKING,
+    Any,
     Awaitable,
     Callable,
     ClassVar,
@@ -47,6 +50,8 @@ from .widgets._toast import ToastRack
 if TYPE_CHECKING:
     from typing_extensions import Final
 
+    from .command import Provider
+
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .errors import NoWidget  # type: ignore  # noqa: F401
     from .message_pump import MessagePump
@@ -68,19 +73,23 @@ class ResultCallback(Generic[ScreenResultType]):
 
     def __init__(
         self,
-        requester: Widget | None,
+        requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
+        future: asyncio.Future[ScreenResultType] | None = None,
     ) -> None:
         """Initialise the result callback object.
 
         Args:
             requester: The object making a request for the callback.
             callback: The callback function.
+            future: A Future to hold the result.
         """
-        self.requester: Widget | None = requester
+        self.requester = requester
         """The object in the DOM that requested the callback."""
         self.callback: ScreenResultCallbackType | None = callback
         """The callback function."""
+        self.future = future
+        """A future for the result"""
 
     def __call__(self, result: ScreenResultType) -> None:
         """Call the callback, passing the given result.
@@ -91,6 +100,8 @@ class ResultCallback(Generic[ScreenResultType]):
         Note:
             If the requested or the callback are `None` this will be a no-op.
         """
+        if self.future is not None:
+            self.future.set_result(result)
         if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
 
@@ -127,10 +138,37 @@ class Screen(Generic[ScreenResultType], Widget):
         background: $surface;
     }
     """
+
+    TITLE: ClassVar[str | None] = None
+    """A class variable to set the *default* title for the screen.
+
+    This overrides the app title.
+    To update the title while the screen is running,
+    you can set the [title][textual.screen.Screen.title] attribute.
+    """
+
+    SUB_TITLE: ClassVar[str | None] = None
+    """A class variable to set the *default* sub-title for the screen.
+
+    This overrides the app sub-title.
+    To update the sub-title while the screen is running,
+    you can set the [sub_title][textual.screen.Screen.sub_title] attribute.
+    """
+
     focused: Reactive[Widget | None] = Reactive(None)
     """The focused [widget][textual.widget.Widget] or `None` for no focus."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
     """An integer that updates when the screen is resumed."""
+    sub_title: Reactive[str | None] = Reactive(None, compute=False)
+    """Screen sub-title to override [the app sub-title][textual.app.App.sub_title]."""
+    title: Reactive[str | None] = Reactive(None, compute=False)
+    """Screen title to override [the app title][textual.app.App.title]."""
+
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = set()
+    """Command providers used by the [command palette](/guide/command_palette), associated with the screen.
+
+    Should be a set of [`command.Provider`][textual.command.Provider] classes.
+    """
 
     BINDINGS = [
         Binding("tab", "focus_next", "Focus Next", show=False),
@@ -172,6 +210,9 @@ class Screen(Generic[ScreenResultType], Widget):
         ]
         self.css_path = css_paths
 
+        self.title = self.TITLE
+        self.sub_title = self.SUB_TITLE
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -203,7 +244,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             Tuple of layer names.
         """
-        extras = []
+        extras = ["_loading"]
         if not self.app._disable_notifications:
             extras.append("_toastrack")
         if not self.app._disable_tooltips:
@@ -293,18 +334,42 @@ class Screen(Generic[ScreenResultType], Widget):
 
         widgets: list[Widget] = []
         add_widget = widgets.append
-        stack: list[Iterator[Widget]] = [iter(self.focusable_children)]
-        pop = stack.pop
-        push = stack.append
+        focus_sorter = attrgetter("_focus_sort_key")
+        # We traverse the DOM and keep track of where we are at with a node stack.
+        # Additionally, we manually keep track of the visibility of the DOM
+        # instead of relying on the property `.visible` to save on DOM traversals.
+        # node_stack: list[tuple[iterator over node children, node visibility]]
+        node_stack: list[tuple[Iterator[Widget], bool]] = [
+            (
+                iter(sorted(self.displayed_children, key=focus_sorter)),
+                self.visible,
+            )
+        ]
+        pop = node_stack.pop
+        push = node_stack.append
 
-        while stack:
-            node = next(stack[-1], None)
+        while node_stack:
+            children_iterator, parent_visibility = node_stack[-1]
+            node = next(children_iterator, None)
             if node is None:
                 pop()
             else:
-                if node.is_container and node.can_focus_children:
-                    push(iter(node.focusable_children))
-                if node.focusable:
+                if node._check_disabled():
+                    continue
+                node_styles_visibility = node.styles.get_rule("visibility")
+                node_is_visible = (
+                    node_styles_visibility != "hidden"
+                    if node_styles_visibility
+                    else parent_visibility  # Inherit visibility if the style is unset.
+                )
+                if node.is_container and node.allow_focus_children():
+                    sorted_displayed_children = sorted(
+                        node.displayed_children, key=focus_sorter
+                    )
+                    push((iter(sorted_displayed_children), node_is_visible))
+                # Same check as `if node.focusable`, but we cached inherited visibility
+                # and we also skipped disabled nodes altogether.
+                if node_is_visible and node.allow_focus():
                     add_widget(node)
 
         return widgets
@@ -457,7 +522,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 chosen = candidate
                 break
 
-        # Go with the what was found.
+        # Go with what was found.
         self.set_focus(chosen)
 
     def _update_focus_styles(
@@ -524,6 +589,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self.screen.scroll_to_center(widget, origin_visible=True)
 
                     self.call_after_refresh(scroll_to_center, widget)
+
                 widget.post_message(events.Focus())
                 focused = widget
 
@@ -579,7 +645,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         self._update_timer.pause()
-        if self.is_current:
+        if self.is_current and not self.app._batch_count:
             if self._layout_required:
                 self._refresh_layout()
                 self._layout_required = False
@@ -627,17 +693,19 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _push_result_callback(
         self,
-        requester: Widget | None,
+        requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
+        future: asyncio.Future[ScreenResultType] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 
         Args:
             requester: The object requesting the callback.
             callback: The callback.
+            future: A Future to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[ScreenResultType](requester, callback)
+            ResultCallback[ScreenResultType](requester, callback, future)
         )
 
     def _pop_result_callback(self) -> None:
@@ -751,12 +819,16 @@ class Screen(Generic[ScreenResultType], Widget):
         size = self.app.size
         self._refresh_layout(size, full=True)
         self.refresh()
-        auto_focus = self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
-        if auto_focus and self.focused is None:
-            for widget in self.query(auto_focus):
-                if widget.focusable:
-                    self.set_focus(widget)
-                    break
+        # Only auto-focus when the app has focus (textual-web only)
+        if self.app.app_focus:
+            auto_focus = (
+                self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
+            )
+            if auto_focus and self.focused is None:
+                for widget in self.query(auto_focus):
+                    if widget.focusable:
+                        self.set_focus(widget)
+                        break
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
@@ -895,11 +967,8 @@ class Screen(Generic[ScreenResultType], Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseUp) and widget.focusable:
-                    if self.focused is not widget:
-                        self.set_focus(widget)
-                        event.stop()
-                        return
+                if isinstance(event, events.MouseDown) and widget.focusable:
+                    self.set_focus(widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()
@@ -907,17 +976,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 else:
                     widget._forward_event(event._apply_offset(-region.x, -region.y))
 
-        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y)
-            except errors.NoWidget:
-                return
-            scroll_widget = widget
-            if scroll_widget is not None:
-                if scroll_widget is self:
-                    self.post_message(event)
-                else:
-                    scroll_widget._forward_event(event)
         else:
             self.post_message(event)
 
@@ -977,6 +1035,14 @@ class Screen(Generic[ScreenResultType], Widget):
         # Failing that fall back to normal checking.
         return super().can_view(widget)
 
+    def validate_title(self, title: Any) -> str | None:
+        """Ensure the title is a string or `None`."""
+        return None if title is None else str(title)
+
+    def validate_sub_title(self, sub_title: Any) -> str | None:
+        """Ensure the sub-title is a string or `None`."""
+        return None if sub_title is None else str(sub_title)
+
 
 @rich.repr.auto
 class ModalScreen(Screen[ScreenResultType]):
@@ -1001,3 +1067,15 @@ class ModalScreen(Screen[ScreenResultType]):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
         self._modal = True
+
+
+class _SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
+    """A variant of `ModalScreen` for internal use.
+
+    This version of `ModalScreen` allows us to build system-level screens;
+    the type being used to indicate that the screen should be isolated from
+    the main application.
+
+    Note:
+        This screen is set to *not* inherit CSS.
+    """
