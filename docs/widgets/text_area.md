@@ -180,7 +180,7 @@ This a theme which takes values entirely from CSS.
 This means that the default appearance of the widget fits nicely into a standard Textual application,
 and looks right on both dark and light mode.
 
-More complex applications such as code editors, will likely want to use pre-defined themes such as `monokai`.
+More complex applications such as code editors will likely want to use pre-defined themes such as `monokai`.
 This involves using a `TextAreaTheme` object, which we cover in detail below.
 This allows full customization of the `TextArea`, including syntax highlighting, at the code level.
 
