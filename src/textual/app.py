@@ -3364,14 +3364,25 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
         if self._driver.can_suspend:
+            # Publish a suspend signal *before* we stop application mode and
+            # close the driver.
             self._suspend_signal()
             self._driver.stop_application_mode()
             self._driver.close()
+            # We're going to handle the start of the driver again so mark
+            # this next part as such; the reason for this is that the code
+            # the developer may be running could be in this process, and on
+            # Unix-like systems the user may Ctrl-Z the app, and we don't
+            # want to have the driver auto-restart application mode when the
+            # application comes back to the foreground, in this context.
             with self._driver.no_automatic_restart(), redirect_stdout(
                 sys.__stdout__
             ), redirect_stderr(sys.__stderr__):
                 yield
+            # We're done with the dev's code so start up application mode
+            # again...
             self._driver.start_application_mode()
+            # ...and publish a resume signal.
             self._resume_signal()
         else:
             raise SuspendNotSupported(
@@ -3386,6 +3397,14 @@ class App(Generic[ReturnType], DOMNode):
             application's process. Currently on Windows and when running
             under Textual-Web this is a non-operation.
         """
+        # Check if we're in an environment that permits this kind of
+        # suspend.
         if not WINDOWS and self._driver is not None and self._driver.can_suspend:
+            # First, ensure that the suspend signal gets published while
+            # we're still in application mode.
             self._suspend_signal()
+            # With that out of the way, send the SIGTSTP signal.
             os.kill(os.getpid(), signal.SIGTSTP)
+            # NOTE: There is no call to publish the resume signal here, this
+            # will be handled by the driver posting a SignalResume event
+            # (see the event handler on App._resume_signal) above.
