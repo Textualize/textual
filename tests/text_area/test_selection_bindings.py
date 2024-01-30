@@ -25,7 +25,7 @@ async def test_mouse_click():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         await pilot.click(TextArea, Offset(x=5, y=2))
-        assert text_area.selection == Selection.cursor((2, 2))
+        assert text_area.selection == Selection.cursor((1, 0))
 
 
 async def test_mouse_click_clamp_from_right():
@@ -44,7 +44,7 @@ async def test_mouse_click_gutter_clamp():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         await pilot.click(TextArea, Offset(x=0, y=3))
-        assert text_area.selection == Selection.cursor((3, 0))
+        assert text_area.selection == Selection.cursor((2, 0))
 
 
 async def test_cursor_movement_basic():
@@ -260,7 +260,10 @@ async def test_cursor_page_down():
         text_area.load_text("XXX\n" * 200)
         text_area.selection = Selection.cursor((0, 1))
         await pilot.press("pagedown")
-        assert text_area.selection == Selection.cursor((app.console.height - 1, 1))
+        margin = 2
+        assert text_area.selection == Selection.cursor(
+            (app.console.height - 1 - margin, 1)
+        )
 
 
 async def test_cursor_page_up():
@@ -271,8 +274,9 @@ async def test_cursor_page_up():
         text_area.load_text("XXX\n" * 200)
         text_area.selection = Selection.cursor((100, 1))
         await pilot.press("pageup")
+        margin = 2
         assert text_area.selection == Selection.cursor(
-            (100 - app.console.height + 1, 1)
+            (100 - app.console.height + 1 + margin, 1)
         )
 
 
