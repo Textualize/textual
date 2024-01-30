@@ -129,12 +129,12 @@ class LRUCache(Generic[CacheKey, CacheValue]):
     __setitem__ = set
 
     @overload
-    def get(self, key: CacheKey) -> CacheValue | None:
-        ...
+    def get(self, key: CacheKey) -> CacheValue | None: ...
 
     @overload
-    def get(self, key: CacheKey, default: DefaultValue) -> CacheValue | DefaultValue:
-        ...
+    def get(
+        self, key: CacheKey, default: DefaultValue
+    ) -> CacheValue | DefaultValue: ...
 
     def get(
         self, key: CacheKey, default: DefaultValue | None = None
@@ -269,12 +269,12 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
     __setitem__ = set
 
     @overload
-    def get(self, key: CacheKey) -> CacheValue | None:
-        ...
+    def get(self, key: CacheKey) -> CacheValue | None: ...
 
     @overload
-    def get(self, key: CacheKey, default: DefaultValue) -> CacheValue | DefaultValue:
-        ...
+    def get(
+        self, key: CacheKey, default: DefaultValue
+    ) -> CacheValue | DefaultValue: ...
 
     def get(
         self, key: CacheKey, default: DefaultValue | None = None

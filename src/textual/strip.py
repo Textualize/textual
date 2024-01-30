@@ -3,7 +3,6 @@ A Strip contains the result of rendering a widget.
 See [line API](/guide/widgets#line-api) for how to use Strips.
 """
 
-
 from __future__ import annotations
 
 from itertools import chain

@@ -301,7 +301,7 @@ async def test_select_line(index, content, expected_selection):
 async def test_cursor_screen_offset_and_terminal_cursor_position_update():
     class TextAreaCursorScreenOffset(App):
         def compose(self) -> ComposeResult:
-            yield TextArea("abc\ndef")
+            yield TextArea.code_editor("abc\ndef")
 
     app = TextAreaCursorScreenOffset()
     async with app.run_test():
@@ -321,7 +321,7 @@ async def test_cursor_screen_offset_and_terminal_cursor_position_update():
 async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
     class TextAreaCursorScreenOffset(App):
         def compose(self) -> ComposeResult:
-            yield TextArea("AB\nAB\nAB\nAB\nAB\nAB\n")
+            yield TextArea.code_editor("AB\nAB\nAB\nAB\nAB\nAB\n")
 
     app = TextAreaCursorScreenOffset()
     async with app.run_test(size=(80, 2)) as pilot:
