@@ -72,6 +72,7 @@ from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
+from .css.errors import StylesheetError
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
@@ -1471,11 +1472,12 @@ class App(Generic[ReturnType], DOMNode):
                 stylesheet = self.stylesheet.copy()
                 try:
                     stylesheet.read_all(css_paths)
-                except FileNotFoundError:
+                except StylesheetError as error:
                     # If one of the CSS paths is no longer available (or perhaps temporarily unavailable),
                     #  we'll end up with partial CSS, which is probably confusing more than anything. We opt to do
                     #  nothing here, knowing that we'll retry again very soon, on the next file monitor invocation.
                     #  Related issue: https://github.com/Textualize/textual/issues/3996
+                    self.log.debug(str(error))
                     return
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
