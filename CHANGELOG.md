@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Significant changes to `TextArea.__init__` default values/behaviour https://github.com/Textualize/textual/pull/3933
   - `soft_wrap=True` - soft wrapping is now enabled by default.
   - `show_line_numbers=False` - line numbers are now disabled by default.
-  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default. 
+  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default.
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
 - Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
 - Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
+- Added `App.suspend` https://github.com/Textualize/textual/pull/4064
+- Added `App.action_suspend_process` https://github.com/Textualize/textual/pull/4064
 
 ### Fixed
 
