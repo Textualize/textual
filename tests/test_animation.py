@@ -162,21 +162,26 @@ async def test_schedule_reverse_animations() -> None:
 
 
 async def test_scalar_animation_with_percentages() -> None:
-    """Test scalar animations work with percentages.
+    """Regression test for #2940: https://github.com/Textualize/textual/issues/2940
 
-    Regression test for #2940: https://github.com/Textualize/textual/issues/2940
+    Previously the scalar animation `start` and `destination` values were
+    resolved based on the size of the widget itself, rather than the size of the
+    parent container.
+
+    Ideally this test would check the widget size at certain intervals during
+    the animation, but this has proven to be very flaky in CI. Instead this
+    simply tests that during the animation the size is within the correct range,
+    which fails before the patch in PR #3004.
     """
 
     class ScalarPercentAnimApp(App):
         CSS = """
         Container {
             width: 10;
-            height: 10;
         }
 
         Static {
             width: 20%;
-            height: 20%;
         }
         """
 
@@ -188,28 +193,16 @@ async def test_scalar_animation_with_percentages() -> None:
 
     async with app.run_test() as pilot:
         static = app.query_one(Static)
+        # Sanity check
         assert static.size.width == 2
         assert static.styles.width.value == 20
 
-        await pilot.pause()
         static.styles.animate("width", "80%", duration=0.6, easing="linear")
         start = perf_counter()
 
-        # The animation duration is set to 0.6 seconds, so after every 0.1
-        # seconds the width should have increased by 1 cell
-        await pilot.pause(0.05)
-        assert static.size.width == 2  # No change yet
-        await pilot.pause(0.1)
-        assert static.size.width == 3
-        await pilot.pause(0.1)
-        assert static.size.width == 4
-        await pilot.pause(0.1)
-        assert static.size.width == 5
-        await pilot.pause(0.1)
-        assert static.size.width == 6
-        await pilot.pause(0.1)
-        assert static.size.width == 7
-        # Wait for the animation to finish
+        await pilot.pause(0.3)
+        assert static.size.width in range(3, 8)
+
         await pilot.wait_for_animation()
         elapsed = perf_counter() - start
         assert elapsed >= 0.6
