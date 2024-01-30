@@ -16,6 +16,7 @@ from typing import (
     Generic,
     Type,
     TypeVar,
+    overload,
 )
 
 import rich.repr
@@ -29,10 +30,15 @@ if TYPE_CHECKING:
 
     Reactable = DOMNode
 
-ReactiveType = TypeVar("ReactiveType")
+ReactiveType = TypeVar("ReactiveType", covariant=True)
+ReactableType = TypeVar("ReactableType", bound="DOMNode", contravariant=True)
 
 
-class TooManyComputesError(Exception):
+class ReactiveError(Exception):
+    """Base class for reactive errors."""
+
+
+class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
 
 
@@ -148,7 +154,25 @@ class Reactive(Generic[ReactiveType]):
         default = self._default
         setattr(owner, f"_default_{name}", default)
 
-    def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
+    @overload
+    def __get__(
+        self: Reactive[ReactiveType], obj: ReactableType, obj_type: type[ReactableType]
+    ) -> ReactiveType:
+        ...
+
+    @overload
+    def __get__(
+        self: Reactive[ReactiveType], obj: None, obj_type: type[Reactable]
+    ) -> Reactive[ReactiveType]:
+        ...
+
+    def __get__(
+        self: Reactive[ReactiveType],
+        obj: Reactable | None,
+        obj_type: type[ReactableType],
+    ) -> Reactive[ReactiveType] | ReactiveType:
+        if obj is None:
+            return self
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)

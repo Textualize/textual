@@ -3,7 +3,6 @@ A DOMNode is a base class for any object within the Textual Document Object Mode
 which includes all Widgets, Screens, and Apps.
 """
 
-
 from __future__ import annotations
 
 import re
@@ -42,7 +41,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive, _watch
+from .reactive import Reactive, ReactiveError, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
@@ -196,7 +195,48 @@ class DOMNode(MessagePump):
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
 
+        self._reactive_connect: dict[str, Reactive | None] | None = None
+        self._compose_parent: DOMNode | None = None
+        self._composing: bool = False
+
         super().__init__()
+
+    def data_bind(
+        self, *reactive_names: str, **bind_vars: Reactive[object] | object
+    ) -> Self:
+        """Bind reactive data.
+
+        Raises:
+            ReactiveError: If the data wasn't bound.
+
+        Returns:
+            Self.
+        """
+        _rich_traceback_omit = True
+        if not self._composing:
+            raise ReactiveError("data_bind() may only be called within compose()")
+        if self._reactive_connect is None:
+            self._reactive_connect = {}
+        for name in reactive_names:
+            if name not in self._reactives:
+                raise ReactiveError(
+                    f"Unable to assign non-reactive attribute {name!r} on {self}"
+                )
+            self._reactive_connect[name] = None
+        for name, reactive in bind_vars.items():
+            if name in reactive_names:
+                raise ReactiveError(
+                    f"Keyword argument {name!r} has been used in positional arguments."
+                )
+            if isinstance(reactive, Reactive):
+                self._reactive_connect[name] = reactive
+            else:
+                if name not in self._reactives:
+                    raise ReactiveError(
+                        f"Unable to assign non-reactive attribute {name!r} on {self}"
+                    )
+                setattr(self, name, reactive)
+        return self
 
     def compose_add_child(self, widget: Widget) -> None:
         """Add a node to children.
@@ -347,6 +387,18 @@ class DOMNode(MessagePump):
         """Called after the object has been mounted."""
         _rich_traceback_omit = True
         Reactive._initialize_object(self)
+        if self._reactive_connect is not None:
+            for variable_name, reactive in self._reactive_connect.items():
+
+                def setter(value):
+                    setattr(self, variable_name, value)
+
+                if self._compose_parent is not None:
+                    self.watch(
+                        self._compose_parent,
+                        variable_name if reactive is None else reactive.name,
+                        setter,
+                    )
 
     def notify_style_update(self) -> None:
         """Called after styles are updated.
@@ -1299,3 +1351,7 @@ class DOMNode(MessagePump):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self
+
+    async def action_toggle(self, value_name: str) -> None:
+        value = getattr(self, value_name)
+        setattr(self, value_name, not value)

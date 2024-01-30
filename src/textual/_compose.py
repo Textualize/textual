@@ -27,6 +27,7 @@ def compose(node: App | Widget) -> list[Widget]:
     app._composed.append(composed)
     iter_compose = iter(node.compose())
     is_generator = hasattr(iter_compose, "throw")
+    node._composing = True
     try:
         while True:
             try:
@@ -54,6 +55,8 @@ def compose(node: App | Widget) -> list[Widget]:
                 else:
                     raise mount_error from None
 
+            child._compose_parent = node
+
             if composed:
                 nodes.extend(composed)
                 composed.clear()
@@ -73,6 +76,7 @@ def compose(node: App | Widget) -> list[Widget]:
             nodes.extend(composed)
             composed.clear()
     finally:
+        node._composing = False
         app._compose_stacks.pop()
         app._composed.pop()
     return nodes
