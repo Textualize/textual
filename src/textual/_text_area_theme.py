@@ -68,6 +68,15 @@ class TextAreaTheme:
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
     def apply_css(self, text_area: TextArea) -> None:
+        """Apply CSS rules from a TextArea to be used for fallback styling.
+
+        If any attributes in the theme aren't supplied, they'll be filled with the appropriate
+        base CSS (e.g. color, background, etc.) and component CSS (e.g. text-area--cursor) from
+        the supplied TextArea.
+
+        Args:
+            text_area: The TextArea instance to retrieve fallback styling from.
+        """
         self.base_style = text_area.rich_style or Style()
         get_style = text_area.get_component_rich_style
 
