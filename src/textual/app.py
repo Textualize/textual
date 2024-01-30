@@ -3358,7 +3358,7 @@ class App(Generic[ReturnType], DOMNode):
         !!! note
             Suspending the application is currently only supported on
             Unix-like operating systems and Microsoft Windows. Suspending is
-            not supported in Textual-Web.
+            not supported in Textual Web.
         """
         if self._driver is None:
             return
@@ -3395,7 +3395,7 @@ class App(Generic[ReturnType], DOMNode):
         Note:
             On Unix and Unix-like systems a `SIGTSTP` is sent to the
             application's process. Currently on Windows and when running
-            under Textual-Web this is a non-operation.
+            under Textual Web this is a non-operation.
         """
         # Check if we're in an environment that permits this kind of
         # suspend.
