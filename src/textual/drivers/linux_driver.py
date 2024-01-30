@@ -17,7 +17,6 @@ from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
-from ..message import Message
 from ._writer_thread import WriterThread
 
 if TYPE_CHECKING:
@@ -27,9 +26,6 @@ if TYPE_CHECKING:
 @rich.repr.auto(angular=True)
 class LinuxDriver(Driver):
     """Powers display and input for Linux / MacOS"""
-
-    class SignalResume(Message):
-        """Message sent to the app when a resume signal should be published."""
 
     def __init__(
         self,

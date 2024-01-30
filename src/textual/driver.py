@@ -126,6 +126,9 @@ class Driver(ABC):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
 
+    class SignalResume(events.Event):
+        """Event sent to the app when a resume signal should be published."""
+
     @contextmanager
     def no_automatic_restart(self) -> Iterator[None]:
         """A context manager used to tell the driver to not auto-restart.

@@ -58,8 +58,6 @@ from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 
-from textual.drivers.linux_driver import LinuxDriver
-
 from . import (
     Logger,
     LogGroup,
@@ -3334,7 +3332,7 @@ class App(Generic[ReturnType], DOMNode):
         """Signal that the application is being suspended."""
         self.app_suspend_signal.publish()
 
-    @on(LinuxDriver.SignalResume)
+    @on(Driver.SignalResume)
     def _resume_signal(self) -> None:
         """Signal that the application is being resumed from a suspension."""
         self.app_resume_signal.publish()
