@@ -3,7 +3,6 @@ A Strip contains the result of rendering a widget.
 See [line API](/guide/widgets#line-api) for how to use Strips.
 """
 
-
 from __future__ import annotations
 
 from itertools import chain
@@ -357,7 +356,7 @@ class Strip:
         cached_result = self._crop_extend_cache.get(cache_key)
         if cached_result is not None:
             return cached_result
-        strip = self.extend_cell_length(end).crop(start, end)
+        strip = self.extend_cell_length(end, style).crop(start, end)
         self._crop_extend_cache[cache_key] = strip
         return strip
 
@@ -385,7 +384,7 @@ class Strip:
         add_segment = output_segments.append
         iter_segments = iter(self._segments)
         segment: Segment | None = None
-        if start > self.cell_length:
+        if start >= self.cell_length:
             strip = Strip([], 0)
         else:
             for segment in iter_segments:

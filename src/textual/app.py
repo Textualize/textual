@@ -424,6 +424,7 @@ class App(Generic[ReturnType], DOMNode):
             _environ=environ,
             force_terminal=True,
             safe_box=False,
+            soft_wrap=False,
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
@@ -559,9 +560,9 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self._notifications = Notifications()
 
-        self._capture_print: WeakKeyDictionary[
-            MessageTarget, tuple[bool, bool]
-        ] = WeakKeyDictionary()
+        self._capture_print: WeakKeyDictionary[MessageTarget, tuple[bool, bool]] = (
+            WeakKeyDictionary()
+        )
         """Registry of the MessageTargets which are capturing output at any given time."""
         self._capture_stdout = _PrintCapture(self, stderr=False)
         """File-like object capturing data written to stdout."""
@@ -1503,12 +1504,10 @@ class App(Generic[ReturnType], DOMNode):
     ExpectType = TypeVar("ExpectType", bound=Widget)
 
     @overload
-    def get_child_by_id(self, id: str) -> Widget:
-        ...
+    def get_child_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1534,12 +1533,12 @@ class App(Generic[ReturnType], DOMNode):
         )
 
     @overload
-    def get_widget_by_id(self, id: str) -> Widget:
-        ...
+    def get_widget_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType]
+    ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1874,8 +1873,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: Literal[False] = False,
-    ) -> AwaitMount:
-        ...
+    ) -> AwaitMount: ...
 
     @overload
     def push_screen(
@@ -1883,8 +1881,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: Literal[True] = True,
-    ) -> asyncio.Future[ScreenResultType]:
-        ...
+    ) -> asyncio.Future[ScreenResultType]: ...
 
     def push_screen(
         self,
@@ -1949,12 +1946,10 @@ class App(Generic[ReturnType], DOMNode):
     @overload
     async def push_screen_wait(
         self, screen: Screen[ScreenResultType]
-    ) -> ScreenResultType:
-        ...
+    ) -> ScreenResultType: ...
 
     @overload
-    async def push_screen_wait(self, screen: str) -> Any:
-        ...
+    async def push_screen_wait(self, screen: str) -> Any: ...
 
     async def push_screen_wait(
         self, screen: Screen[ScreenResultType] | str

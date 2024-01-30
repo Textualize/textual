@@ -10,15 +10,6 @@ from textual.widgets import Label
 
 CSS_PATH = (Path(__file__) / "../css_reloading.tcss").resolve()
 
-Path(CSS_PATH).write_text(
-    """\
-Label {
-    height: 5;
-    border: panel white;
-}
-"""
-)
-
 
 class BaseScreen(Screen[None]):
     def compose(self) -> ComposeResult:
@@ -49,6 +40,16 @@ async def test_css_reloading_applies_to_non_top_screen(monkeypatch) -> None:  # 
         "TEXTUAL", "debug"
     )  # This will make sure we create a file monitor.
 
+    # Write some initial CSS.
+    Path(CSS_PATH).write_text(
+        """\
+Label {
+    height: 5;
+    border: panel white;
+}
+"""
+    )
+
     app = MyApp()
     async with app.run_test() as pilot:
         await pilot.pause()
@@ -59,6 +60,7 @@ async def test_css_reloading_applies_to_non_top_screen(monkeypatch) -> None:  # 
 
         # Clear the CSS from the file.
         Path(CSS_PATH).write_text("/* This file has no rules intentionally. */\n")
+        await pilot.pause()
         await pilot.app._on_css_change()
         # Height should fall back to 1.
         assert first_label.styles.height is not None
