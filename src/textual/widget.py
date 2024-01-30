@@ -337,9 +337,9 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache: FIFOCache[
-            tuple[Size, int], DockArrangeResult
-        ] = FIFOCache(4)
+        self._arrangement_cache: FIFOCache[tuple[Size, int], DockArrangeResult] = (
+            FIFOCache(4)
+        )
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -602,12 +602,10 @@ class Widget(DOMNode):
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
     @overload
-    def get_child_by_id(self, id: str) -> Widget:
-        ...
+    def get_child_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -638,12 +636,12 @@ class Widget(DOMNode):
         return child
 
     @overload
-    def get_widget_by_id(self, id: str) -> Widget:
-        ...
+    def get_widget_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType]
+    ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -930,8 +928,7 @@ class Widget(DOMNode):
         *,
         before: int | Widget,
         after: None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def move_child(
@@ -940,8 +937,7 @@ class Widget(DOMNode):
         *,
         after: int | Widget,
         before: None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def move_child(
         self,

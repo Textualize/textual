@@ -7,6 +7,7 @@ A `MessagePump` is a base class for any object which processes messages, which i
     Most of the method here are useful in general app development.
 
 """
+
 from __future__ import annotations
 
 import asyncio
