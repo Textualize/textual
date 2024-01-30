@@ -603,7 +603,7 @@ class App(Generic[ReturnType], DOMNode):
         perform work before the suspension takes place.
         """
         self.app_resume_signal = Signal(self, "app-resume")
-        """The signal that is published when the app is resumes after a suspend.
+        """The signal that is published when the app is resumed after a suspend.
 
         When the app is resumed after a
         [`App.suspend`][textual.app.App.suspend] call this signal will be
