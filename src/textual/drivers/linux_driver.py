@@ -61,10 +61,10 @@ class LinuxDriver(Driver):
 
         # Put handlers for SIGTSTP and SIGCONT in place. These are necessary
         # to support the user pressing Ctrl+Z to suspend the application.
-        signal.signal(signal.SIGTSTP, self._sigtsop_application)
+        signal.signal(signal.SIGTSTP, self._sigtstp_application)
         signal.signal(signal.SIGCONT, self._sigcont_application)
 
-    def _sigtsop_application(self, *_) -> None:
+    def _sigtstp_application(self, *_) -> None:
         """Handle a SIGTSTP signal."""
         # First off, shut down application mode.
         self.stop_application_mode()
