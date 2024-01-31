@@ -197,7 +197,6 @@ class DOMNode(MessagePump):
 
         self._reactive_connect: dict[str, Reactive | None] | None = None
         self._compose_parent: DOMNode | None = None
-        self._composing: bool = False
 
         super().__init__()
 
