@@ -85,6 +85,22 @@ async def test_data_binding_positional_error():
             pass
 
 
+async def test_data_binding_positional_repeated_error():
+
+    class DataBindErrorApp(App):
+        foo = reactive("Bar")
+
+        def compose(self) -> ComposeResult:
+            yield FooLabel(id="label1").data_bind(
+                "foo", foo=DataBindErrorApp.foo
+            )  # Duplicate name
+
+    app = DataBindErrorApp()
+    with pytest.raises(ReactiveError):
+        async with app.run_test():
+            pass
+
+
 async def test_data_binding_keyword_args_errors():
 
     class DataBindErrorApp(App):
