@@ -992,3 +992,9 @@ def test_nested_specificity(snap_compare):
 def test_tab_rename(snap_compare):
     """Test setting a new label for a tab amongst a TabbedContent."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")
+
+
+def test_input_percentage_width(snap_compare):
+    """Check percentage widths work correctly."""
+    # https://github.com/Textualize/textual/issues/3721
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")

@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
 - Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
+- Fix for percentage dimensions https://github.com/Textualize/textual/pull/4037
 - Fixed a crash if the `TextArea` language was set but tree-sitter language binaries were not installed https://github.com/Textualize/textual/issues/4045
 - Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
 - Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
