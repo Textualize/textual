@@ -194,9 +194,7 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
-
         self._reactive_connect: dict[str, Reactive | None] | None = None
-        self._compose_parent: DOMNode | None = None
 
         super().__init__()
 
