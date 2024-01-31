@@ -43,8 +43,6 @@ def compose(node: App | Widget) -> list[Widget]:
                 else:
                     raise mount_error from None
 
-            child._initialize_data_bind(node)
-
             try:
                 child.id
             except AttributeError:
@@ -55,6 +53,8 @@ def compose(node: App | Widget) -> list[Widget]:
                     iter_compose.throw(mount_error)  # type: ignore
                 else:
                     raise mount_error from None
+
+            child._initialize_data_bind(node)
 
             if composed:
                 nodes.extend(composed)
