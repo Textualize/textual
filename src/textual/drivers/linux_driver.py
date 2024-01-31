@@ -67,8 +67,7 @@ class LinuxDriver(Driver):
         # If we're supposed to auto-restart, that means we need to shut down
         # first.
         if self._auto_restart:
-            self.stop_application_mode()
-            self.close()
+            self.suspend_application_mode()
             # Flag that we'll need to signal a resume on successful startup
             # again.
             self._must_signal_resume = True
@@ -79,7 +78,7 @@ class LinuxDriver(Driver):
     def _sigcont_application(self, *_) -> None:
         """Handle a SICONT application."""
         if self._auto_restart:
-            self.start_application_mode()
+            self.resume_application_mode()
 
     @property
     def can_suspend(self) -> bool:
@@ -306,6 +305,15 @@ class LinuxDriver(Driver):
         """Perform cleanup."""
         if self._writer_thread is not None:
             self._writer_thread.stop()
+
+    def suspend_application_mode(self) -> None:
+        """Suspend application mode.
+
+        Used to suspend application mode and allow uninhibited access to the
+        terminal.
+        """
+        super().suspend_application_mode()
+        self.close()
 
     def _run_input_thread(self) -> None:
         """

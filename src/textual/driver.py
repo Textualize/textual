@@ -126,6 +126,22 @@ class Driver(ABC):
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
 
+    def suspend_application_mode(self) -> None:
+        """Suspend application mode.
+
+        Used to suspend application mode and allow uninhibited access to the
+        terminal.
+        """
+        self.stop_application_mode()
+
+    def resume_application_mode(self) -> None:
+        """Resume application mode.
+
+        Used to resume application mode after it has been previously
+        suspended.
+        """
+        self.start_application_mode()
+
     class SignalResume(events.Event):
         """Event sent to the app when a resume signal should be published."""
 

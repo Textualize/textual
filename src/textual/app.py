@@ -3363,11 +3363,9 @@ class App(Generic[ReturnType], DOMNode):
         if self._driver is None:
             return
         if self._driver.can_suspend:
-            # Publish a suspend signal *before* we stop application mode and
-            # close the driver.
+            # Publish a suspend signal *before* we suspend application mode.
             self._suspend_signal()
-            self._driver.stop_application_mode()
-            self._driver.close()
+            self._driver.suspend_application_mode()
             # We're going to handle the start of the driver again so mark
             # this next part as such; the reason for this is that the code
             # the developer may be running could be in this process, and on
@@ -3379,9 +3377,8 @@ class App(Generic[ReturnType], DOMNode):
                 sys.__stdout__
             ), redirect_stderr(sys.__stderr__):
                 yield
-            # We're done with the dev's code so start up application mode
-            # again...
-            self._driver.start_application_mode()
+            # We're done with the dev's code so resume application mode.
+            self._driver.resume_application_mode()
             # ...and publish a resume signal.
             self._resume_signal()
         else:
