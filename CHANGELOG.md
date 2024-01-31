@@ -9,14 +9,29 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+- Breaking change: Significant changes to `TextArea.__init__` default values/behaviour https://github.com/Textualize/textual/pull/3933
+  - `soft_wrap=True` - soft wrapping is now enabled by default.
+  - `show_line_numbers=False` - line numbers are now disabled by default.
+  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default.
+- Breaking change: `TextArea` default theme changed to CSS, and default styling changed https://github.com/Textualize/textual/pull/4074
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
+- Changed the default notification timeout from 3 to 5 seconds https://github.com/Textualize/textual/pull/4059
 
 ### Added
 
 - Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
 - Added `Widget.allow_focus` and `Widget.allow_focus_children` https://github.com/Textualize/textual/pull/3989
+- Added `TextArea.soft_wrap` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.tab_behaviour` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
+- Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
+- Added component classes allowing `TextArea` to be styled using CSS https://github.com/Textualize/textual/pull/4074
+- Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
+- Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
+- Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
 
 ### Fixed
 
@@ -27,7 +42,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
 - Fix for percentage dimensions https://github.com/Textualize/textual/pull/4037
-
+- Fixed a crash if the `TextArea` language was set but tree-sitter language binaries were not installed https://github.com/Textualize/textual/issues/4045
+- Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
+- Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
+- ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
+- Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 
 ## [0.47.1] - 2023-01-05
 
@@ -421,7 +440,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 ## [0.33.0] - 2023-08-15
-
 
 ### Fixed
 

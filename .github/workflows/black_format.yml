@@ -17,6 +17,6 @@ jobs:
         with:
           python-version: 3.11
       - name: Install black
-        run: python -m pip install black
+        run: python -m pip install black==24.1.1
       - name: Run black
         run: black --check src

@@ -2,7 +2,6 @@
 Tools for lazy loading widgets.
 """
 
-
 from __future__ import annotations
 
 from .widget import Widget

@@ -811,7 +811,7 @@ def test_text_area_language_rendering(language, snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_language,
-        terminal_size=(80, snippet.count("\n") + 2),
+        terminal_size=(80, snippet.count("\n") + 4),
     )
 
 
@@ -842,7 +842,7 @@ I am the final line."""
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_selection,
-        terminal_size=(30, text.count("\n") + 1),
+        terminal_size=(30, text.count("\n") + 4),
     )
 
 
@@ -872,7 +872,15 @@ def hello(name):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_theme,
-        terminal_size=(48, text.count("\n") + 2),
+        terminal_size=(48, text.count("\n") + 4),
+    )
+
+
+@pytest.mark.syntax
+def test_text_area_wrapping_and_folding(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_wrapping.py",
+        terminal_size=(20, 26)
     )
 
 
