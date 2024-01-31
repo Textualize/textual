@@ -253,7 +253,7 @@ You could use this to allow the user to edit content with their preferred text e
 
 ### Suspend context manager
 
-To suspend your application use the [App.suspend](/api/app/#textual.app.App.suspend) context manager.
+You can use the [App.suspend](/api/app/#textual.app.App.suspend) context manager to suspend your app.
 For example, here is an application that has a button that will open an external editor, suspending the application before running it:
 
 ```python hl_lines="14-15"
