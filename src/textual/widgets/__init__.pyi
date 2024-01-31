@@ -4,6 +4,7 @@ from ._checkbox import Checkbox as Checkbox
 from ._collapsible import Collapsible as Collapsible
 from ._content_switcher import ContentSwitcher as ContentSwitcher
 from ._data_table import DataTable as DataTable
+from ._dialog import Dialog as Dialog
 from ._digits import Digits as Digits
 from ._directory_tree import DirectoryTree as DirectoryTree
 from ._footer import Footer as Footer

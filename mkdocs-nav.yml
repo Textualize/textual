@@ -138,6 +138,7 @@ nav:
           - "widgets/collapsible.md"
           - "widgets/content_switcher.md"
           - "widgets/data_table.md"
+          - "widgets/dialog.md"
           - "widgets/digits.md"
           - "widgets/directory_tree.md"
           - "widgets/footer.md"

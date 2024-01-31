@@ -15,6 +15,7 @@ if typing.TYPE_CHECKING:
     from ._collapsible import Collapsible
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
+    from ._dialog import Dialog
     from ._digits import Digits
     from ._directory_tree import DirectoryTree
     from ._footer import Footer
@@ -52,6 +53,7 @@ __all__ = [
     "Collapsible",
     "ContentSwitcher",
     "DataTable",
+    "Dialog",
     "Digits",
     "DirectoryTree",
     "Footer",

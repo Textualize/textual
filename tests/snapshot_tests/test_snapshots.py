@@ -992,3 +992,22 @@ def test_nested_specificity(snap_compare):
 def test_tab_rename(snap_compare):
     """Test setting a new label for a tab amongst a TabbedContent."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")
+
+
+def test_dialog_complex(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "dialog_complex.py")
+
+def test_dialog_error(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "dialog_error.py")
+
+def test_dialog_simple(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "dialog_simple.py")
+
+def test_dialog_styling(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "dialog_styling.py")
+
+def test_dialog_success(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "dialog_success.py")
+
+def test_dialog_warning(snap_compare):
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "dialog_warning.py")
