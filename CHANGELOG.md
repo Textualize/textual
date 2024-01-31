@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
 - Fixed CSS watcher crash if file becomes unreadable (even temporarily) https://github.com/Textualize/textual/pull/4079
 - Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
+- Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
 
 ## [0.47.1] - 2023-01-05
 
