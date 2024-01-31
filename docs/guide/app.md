@@ -251,7 +251,7 @@ You could use this to allow the user to edit content with their preferred text e
 
     App suspension is unavailable with [textual-web](https://github.com/Textualize/textual-web).
 
-### Suspending in code
+### Suspend context manager
 
 To suspend your application use the [App.suspend](/api/app/#textual.app.App.suspend) context manager.
 For example, here is an application that has a button that will open an external editor, suspending the application before running it:
