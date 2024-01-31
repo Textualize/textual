@@ -264,7 +264,7 @@ class EventMonitor(threading.Thread):
                         # Key event, store unicode char in keys list
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
-                        if key_event.bKeyDown or key == "\x1b":
+                        if key_event.bKeyDown:
                             if (
                                 key_event.dwControlKeyState
                                 and key_event.wVirtualKeyCode == 0
