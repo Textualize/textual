@@ -276,11 +276,16 @@ Ordinarily this key combination is <kbd>Ctrl</kbd>+<kbd>Z</kbd>;
 in a Textual application this is disabled by default, but an action is provided ([`action_suspend_process`](/api/app/#textual.app.App.action_suspend_process)) that you can bind in the usual way.
 For example:
 
-```python
-BINDINGS = [
-    Binding("ctrl+z", "suspend_process")
-]
-```
+=== "suspend_process.py"
+
+    ```python hl_lines="8"
+    --8<-- "docs/examples/app/suspend_process.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/app/suspend_process.py"}
+    ```
 
 !!! note
 
