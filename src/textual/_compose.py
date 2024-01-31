@@ -34,7 +34,7 @@ def compose(node: App | Widget) -> list[Widget]:
             except StopIteration:
                 break
 
-            child._post_compose(node)
+            child._initialize_data_bind(node)
 
             if not isinstance(child, Widget):
                 mount_error = MountError(

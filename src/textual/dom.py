@@ -28,7 +28,7 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
-from ._context import NoActiveAppError
+from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
 from ._worker_manager import WorkerManager
@@ -235,23 +235,26 @@ class DOMNode(MessagePump):
                         f"Unable to assign non-reactive attribute {name!r} on {self}"
                     )
                 setattr(self, name, reactive)
-
+        if self._parent is not None:
+            self._initialize_data_bind(active_message_pump.get())
         return self
 
-    def _post_compose(self, compose_parent: DOMNode) -> None:
+    def _initialize_data_bind(self, compose_parent: MessagePump) -> None:
         if not self._reactive_connect:
             return
         for variable_name, reactive in self._reactive_connect.items():
 
             def setter(value: object) -> None:
+                """Set bound data,=,"""
                 Reactive._initialize_object(self)
                 setattr(self, variable_name, value)
 
+            assert isinstance(compose_parent, DOMNode)
             self.watch(
                 compose_parent,
                 variable_name if reactive is None else reactive.name,
                 setter,
-                init=False,
+                init=self._parent is not None,
             )
         self._reactive_connect = None
 
