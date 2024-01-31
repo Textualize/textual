@@ -10,7 +10,6 @@ from rich.style import Style
 
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
-from ..containers import Horizontal
 from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
@@ -263,13 +262,10 @@ class ProgressBar(Widget, can_focus=False):
     """A progress bar widget."""
 
     DEFAULT_CSS = """
-    ProgressBar > Horizontal {
-        width: auto;
-        height: auto;
-    }
     ProgressBar {
         width: auto;
         height: 1;
+        layout: horizontal;
     }
     """
 
@@ -352,19 +348,18 @@ class ProgressBar(Widget, can_focus=False):
 
             return updater
 
-        with Horizontal():
-            if self.show_bar:
-                bar = Bar(id="bar")
-                self.watch(self, "percentage", update_percentage(bar))
-                yield bar
-            if self.show_percentage:
-                percentage_status = PercentageStatus(id="percentage")
-                self.watch(self, "percentage", update_percentage(percentage_status))
-                yield percentage_status
-            if self.show_eta:
-                eta_status = ETAStatus(id="eta")
-                self.watch(self, "percentage", update_percentage(eta_status))
-                yield eta_status
+        if self.show_bar:
+            bar = Bar(id="bar")
+            self.watch(self, "percentage", update_percentage(bar))
+            yield bar
+        if self.show_percentage:
+            percentage_status = PercentageStatus(id="percentage")
+            self.watch(self, "percentage", update_percentage(percentage_status))
+            yield percentage_status
+        if self.show_eta:
+            eta_status = ETAStatus(id="eta")
+            self.watch(self, "percentage", update_percentage(eta_status))
+            yield eta_status
 
     def validate_progress(self, progress: float) -> float:
         """Clamp the progress between 0 and the maximum total."""
