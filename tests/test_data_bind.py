@@ -109,7 +109,7 @@ async def test_data_binding_keyword_args_errors():
         def compose(self) -> ComposeResult:
             yield FooLabel(id="label1").data_bind(
                 bar=DataBindErrorApp.foo
-            )  # Missing reactive
+            )  # Missing reactive in keyword args
 
     app = DataBindErrorApp()
     with pytest.raises(ReactiveError):

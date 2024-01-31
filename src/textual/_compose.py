@@ -34,8 +34,6 @@ def compose(node: App | Widget) -> list[Widget]:
             except StopIteration:
                 break
 
-            child._initialize_data_bind(node)
-
             if not isinstance(child, Widget):
                 mount_error = MountError(
                     f"Can't mount {type(child)}; expected a Widget instance."
@@ -44,6 +42,8 @@ def compose(node: App | Widget) -> list[Widget]:
                     iter_compose.throw(mount_error)  # type: ignore
                 else:
                     raise mount_error from None
+
+            child._initialize_data_bind(node)
 
             try:
                 child.id
