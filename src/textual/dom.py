@@ -213,6 +213,7 @@ class DOMNode(MessagePump):
             Self.
         """
         _rich_traceback_omit = True
+
         if self._reactive_connect is None:
             self._reactive_connect = {}
         for name in reactive_names:
@@ -234,7 +235,25 @@ class DOMNode(MessagePump):
                         f"Unable to assign non-reactive attribute {name!r} on {self}"
                     )
                 setattr(self, name, reactive)
+
         return self
+
+    def _post_compose(self, compose_parent: DOMNode) -> None:
+        if not self._reactive_connect:
+            return
+        for variable_name, reactive in self._reactive_connect.items():
+
+            def setter(value: object) -> None:
+                Reactive._initialize_object(self)
+                setattr(self, variable_name, value)
+
+            self.watch(
+                compose_parent,
+                variable_name if reactive is None else reactive.name,
+                setter,
+                init=False,
+            )
+        self._reactive_connect = None
 
     def compose_add_child(self, widget: Widget) -> None:
         """Add a node to children.
@@ -385,18 +404,6 @@ class DOMNode(MessagePump):
         """Called after the object has been mounted."""
         _rich_traceback_omit = True
         Reactive._initialize_object(self)
-        if self._reactive_connect is not None:
-            for variable_name, reactive in self._reactive_connect.items():
-
-                def setter(value):
-                    setattr(self, variable_name, value)
-
-                if self._compose_parent is not None:
-                    self.watch(
-                        self._compose_parent,
-                        variable_name if reactive is None else reactive.name,
-                        setter,
-                    )
 
     def notify_style_update(self) -> None:
         """Called after styles are updated.

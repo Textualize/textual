@@ -157,14 +157,12 @@ class Reactive(Generic[ReactiveType]):
     @overload
     def __get__(
         self: Reactive[ReactiveType], obj: ReactableType, obj_type: type[ReactableType]
-    ) -> ReactiveType:
-        ...
+    ) -> ReactiveType: ...
 
     @overload
     def __get__(
         self: Reactive[ReactiveType], obj: None, obj_type: type[Reactable]
-    ) -> Reactive[ReactiveType]:
-        ...
+    ) -> Reactive[ReactiveType]: ...
 
     def __get__(
         self: Reactive[ReactiveType],
@@ -285,7 +283,7 @@ class Reactive(Generic[ReactiveType]):
             watchers[:] = [
                 (reactable, callback)
                 for reactable, callback in watchers
-                if reactable.is_attached and not reactable._closing
+                if not reactable._closing
             ]
             for reactable, callback in watchers:
                 with reactable.prevent(*obj._prevent_message_types_stack[-1]):
@@ -380,6 +378,7 @@ def _watch(
     """Watch a reactive variable on an object.
 
     Args:
+        node: The node that created the watcher.
         obj: The parent object.
         attribute_name: The attribute to watch.
         callback: A callable to call when the attribute changes.

@@ -34,6 +34,8 @@ def compose(node: App | Widget) -> list[Widget]:
             except StopIteration:
                 break
 
+            child._post_compose(node)
+
             if not isinstance(child, Widget):
                 mount_error = MountError(
                     f"Can't mount {type(child)}; expected a Widget instance."
