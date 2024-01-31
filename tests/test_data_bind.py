@@ -1,5 +1,7 @@
+import pytest
+
 from textual.app import App, ComposeResult
-from textual.reactive import reactive
+from textual.reactive import ReactiveError, reactive
 from textual.widgets import Label
 
 
@@ -11,18 +13,17 @@ class FooLabel(Label):
 
 
 class DataBindApp(App):
-    foo = reactive("Bar", init=False)
+    foo = reactive("Bar")
 
     def compose(self) -> ComposeResult:
-        yield FooLabel(id="label1").data_bind("foo")
-        yield FooLabel(id="label2").data_bind(foo=DataBindApp.foo)
-
-        yield FooLabel(id="label3")
+        yield FooLabel(id="label1").data_bind("foo")  # Bind similarly named
+        yield FooLabel(id="label2").data_bind(foo=DataBindApp.foo)  # Explicit bind
+        yield FooLabel(id="label3")  # Not bound
 
 
 async def test_data_binding():
     app = DataBindApp()
-    async with app.run_test() as pilot:
+    async with app.run_test():
 
         # Check default
         assert app.foo == "Bar"
@@ -31,8 +32,10 @@ async def test_data_binding():
         label2 = app.query_one("#label2", FooLabel)
         label3 = app.query_one("#label3", FooLabel)
 
-        assert label1.foo == "Foo"
-        assert label2.foo == "Foo"
+        # These are bound, so should have the same value as the App.foo
+        assert label1.foo == "Bar"
+        assert label2.foo == "Bar"
+        # Not yet bound, so should have its own default
         assert label3.foo == "Foo"
 
         # Changing this reactive, should also change the bound widgets
@@ -66,3 +69,33 @@ async def test_data_binding():
         # Confirm remaining widgets still propagate
         assert label2.foo == "Spam"
         assert label3.foo == "Spam"
+
+
+async def test_data_binding_positional_error():
+
+    class DataBindErrorApp(App):
+        foo = reactive("Bar")
+
+        def compose(self) -> ComposeResult:
+            yield FooLabel(id="label1").data_bind("bar")  # Missing reactive
+
+    app = DataBindErrorApp()
+    with pytest.raises(ReactiveError):
+        async with app.run_test():
+            pass
+
+
+async def test_data_binding_keyword_args_errors():
+
+    class DataBindErrorApp(App):
+        foo = reactive("Bar")
+
+        def compose(self) -> ComposeResult:
+            yield FooLabel(id="label1").data_bind(
+                bar=DataBindErrorApp.foo
+            )  # Missing reactive
+
+    app = DataBindErrorApp()
+    with pytest.raises(ReactiveError):
+        async with app.run_test():
+            pass

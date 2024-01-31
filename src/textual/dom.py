@@ -219,7 +219,7 @@ class DOMNode(MessagePump):
         for name in reactive_names:
             if name not in self._reactives:
                 raise ReactiveError(
-                    f"Unable to assign non-reactive attribute {name!r} on {self}"
+                    f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
             self._reactive_connect[name] = None
         for name, reactive in bind_vars.items():
@@ -227,19 +227,24 @@ class DOMNode(MessagePump):
                 raise ReactiveError(
                     f"Keyword argument {name!r} has already been used in positional arguments."
                 )
+            if name not in self._reactives:
+                raise ReactiveError(
+                    f"Unable to bind non-reactive attribute {name!r} on {self}"
+                )
             if isinstance(reactive, Reactive):
                 self._reactive_connect[name] = reactive
             else:
-                if name not in self._reactives:
-                    raise ReactiveError(
-                        f"Unable to assign non-reactive attribute {name!r} on {self}"
-                    )
                 setattr(self, name, reactive)
         if self._parent is not None:
             self._initialize_data_bind(active_message_pump.get())
         return self
 
     def _initialize_data_bind(self, compose_parent: MessagePump) -> None:
+        """initialize a data binding.
+
+        Args:
+            compose_parent: The node doing the binding.
+        """
         if not self._reactive_connect:
             return
         for variable_name, reactive in self._reactive_connect.items():
