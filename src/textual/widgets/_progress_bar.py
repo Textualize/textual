@@ -362,23 +362,23 @@ class ProgressBar(Widget, can_focus=False):
             self.watch(self, "percentage", update_percentage(eta_status))
             yield eta_status
 
-    def validate_progress(self, progress: float) -> float:
+    def _validate_progress(self, progress: float) -> float:
         """Clamp the progress between 0 and the maximum total."""
         if self.total is not None:
             return clamp(progress, 0, self.total)
         return progress
 
-    def validate_total(self, total: float | None) -> float | None:
+    def _validate_total(self, total: float | None) -> float | None:
         """Ensure the total is not negative."""
         if total is None:
             return total
         return max(0, total)
 
-    def watch_total(self, total: float | None) -> None:
+    def _watch_total(self) -> None:
         """Re-validate progress."""
         self.progress = self.progress
 
-    def compute_percentage(self) -> float | None:
+    def _compute_percentage(self) -> float | None:
         """Keep the percentage of progress updated automatically.
 
         This will report a percentage of `1` if the total is zero.
