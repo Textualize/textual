@@ -42,18 +42,19 @@ class Bar(Widget, can_focus=False):
     Bar {
         width: 32;
         height: 1;
-    }
-    Bar > .bar--bar {
-        color: $warning;
-        background: $foreground 10%;
-    }
-    Bar > .bar--indeterminate {
-        color: $error;
-        background: $foreground 10%;
-    }
-    Bar > .bar--complete {
-        color: $success;
-        background: $foreground 10%;
+
+        &> .bar--bar {
+            color: $warning;
+            background: $foreground 10%;
+        }
+        &> .bar--indeterminate {
+            color: $error;
+            background: $foreground 10%;
+        }
+        &> .bar--complete {
+            color: $success;
+            background: $foreground 10%;
+        }
     }
     """
 
