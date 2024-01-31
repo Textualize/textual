@@ -242,8 +242,10 @@ if __name__ == "__main__"
 
 ## Suspending
 
-A Textual app can be suspended; this means that app input and output will be paused and the terminal display will be returned to its previous state.
-When the app is resumed the display will be restored and all input and output will resume.
+A Textual app may be suspended so you can leave application mode for a period of time.
+This is often used to temporarily replace your app with another terminal application.
+
+You could use this to allow the user to edit content with their preferred text editor, for example.
 
 !!! info "Compatible Environments"
 
