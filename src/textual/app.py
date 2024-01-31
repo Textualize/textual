@@ -13,6 +13,7 @@ import inspect
 import io
 import os
 import platform
+import signal
 import sys
 import threading
 import warnings
@@ -38,6 +39,7 @@ from typing import (
     Generator,
     Generic,
     Iterable,
+    Iterator,
     List,
     Sequence,
     Type,
@@ -56,7 +58,17 @@ from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 
-from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
+from . import (
+    Logger,
+    LogGroup,
+    LogVerbosity,
+    actions,
+    constants,
+    events,
+    log,
+    messages,
+    on,
+)
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
@@ -99,6 +111,7 @@ from .screen import (
     ScreenResultType,
     _SystemModalScreen,
 )
+from .signal import Signal
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -200,6 +213,14 @@ class UnknownModeError(ModeError):
 
 class ActiveModeError(ModeError):
     """Raised when attempting to remove the currently active mode."""
+
+
+class SuspendNotSupported(Exception):
+    """Raised if suspending the application is not supported.
+
+    This exception is raised if [`App.suspend`][textual.app.App.suspend] is called while
+    the application is running in an environment where this isn't supported.
+    """
 
 
 ReturnType = TypeVar("ReturnType")
@@ -372,7 +393,7 @@ class App(Generic[ReturnType], DOMNode):
     """Indicates if the app has focus.
 
     When run in the terminal, the app always has focus. When run in the web, the app will
-    get focus when the terminal widget has focus.        
+    get focus when the terminal widget has focus.
     """
 
     def __init__(
@@ -573,6 +594,24 @@ class App(Generic[ReturnType], DOMNode):
         """The original stdout stream (before redirection etc)."""
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
+
+        self.app_suspend_signal = Signal(self, "app-suspend")
+        """The signal that is published when the app is suspended.
+
+        When [`App.suspend`][textual.app.App.suspend] is called this signal
+        will be [published][textual.signal.Signal.publish];
+        [subscribe][textual.signal.Signal.subscribe] to this signal to
+        perform work before the suspension takes place.
+        """
+        self.app_resume_signal = Signal(self, "app-resume")
+        """The signal that is published when the app is resumed after a suspend.
+
+        When the app is resumed after a
+        [`App.suspend`][textual.app.App.suspend] call this signal will be
+        [published][textual.signal.Signal.publish];
+        [subscribe][textual.signal.Signal.subscribe] to this signal to
+        perform work after the app has resumed.
+        """
 
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
@@ -3296,3 +3335,82 @@ class App(Generic[ReturnType], DOMNode):
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
             self.push_screen(CommandPalette(), callback=self.call_next)
+
+    def _suspend_signal(self) -> None:
+        """Signal that the application is being suspended."""
+        self.app_suspend_signal.publish()
+
+    @on(Driver.SignalResume)
+    def _resume_signal(self) -> None:
+        """Signal that the application is being resumed from a suspension."""
+        self.app_resume_signal.publish()
+
+    @contextmanager
+    def suspend(self) -> Iterator[None]:
+        """A context manager that temporarily suspends the app.
+
+        While inside the `with` block, the app will stop reading input and
+        emitting output. Other applications will have full control of the
+        terminal, configured as it was before the app started running. When
+        the `with` block ends, the application will start reading input and
+        emitting output again.
+
+        Example:
+            ```python
+            with self.suspend():
+                os.system("emacs -nw")
+            ```
+
+        Raises:
+            SuspendNotSupported: If the environment doesn't support suspending.
+
+        !!! note
+            Suspending the application is currently only supported on
+            Unix-like operating systems and Microsoft Windows. Suspending is
+            not supported in Textual Web.
+        """
+        if self._driver is None:
+            return
+        if self._driver.can_suspend:
+            # Publish a suspend signal *before* we suspend application mode.
+            self._suspend_signal()
+            self._driver.suspend_application_mode()
+            # We're going to handle the start of the driver again so mark
+            # this next part as such; the reason for this is that the code
+            # the developer may be running could be in this process, and on
+            # Unix-like systems the user may `action_suspend_process` the
+            # app, and we don't want to have the driver auto-restart
+            # application mode when the application comes back to the
+            # foreground, in this context.
+            with self._driver.no_automatic_restart(), redirect_stdout(
+                sys.__stdout__
+            ), redirect_stderr(sys.__stderr__):
+                yield
+            # We're done with the dev's code so resume application mode.
+            self._driver.resume_application_mode()
+            # ...and publish a resume signal.
+            self._resume_signal()
+        else:
+            raise SuspendNotSupported(
+                "App.suspend is not supported in this environment."
+            )
+
+    def action_suspend_process(self) -> None:
+        """Suspend the process into the background.
+
+        Note:
+            On Unix and Unix-like systems a `SIGTSTP` is sent to the
+            application's process. Currently on Windows and when running
+            under Textual Web this is a non-operation.
+        """
+        # Check if we're in an environment that permits this kind of
+        # suspend.
+        if not WINDOWS and self._driver is not None and self._driver.can_suspend:
+            # First, ensure that the suspend signal gets published while
+            # we're still in application mode.
+            self._suspend_signal()
+            # With that out of the way, send the SIGTSTP signal.
+            os.kill(os.getpid(), signal.SIGTSTP)
+            # NOTE: There is no call to publish the resume signal here, this
+            # will be handled by the driver posting a SignalResume event
+            # (see the event handler on App._resume_signal) above.
