@@ -1911,6 +1911,11 @@ class Widget(DOMNode):
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
+
+        animator = self.app.animator
+        animator.force_stop_animation(self, "scroll_x")
+        animator.force_stop_animation(self, "scroll_y")
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
