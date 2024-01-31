@@ -483,31 +483,6 @@ class Animator:
         elif key in self._animations:
             await self._stop_running_animation(key, complete)
 
-    def force_stop_animation(self, obj: object, attribute: str) -> None:
-        """Force stop an animation on an attribute. This will immediately stop the animation,
-        without running any associated callbacks and without setting the animation to its
-        final value.
-
-        Args:
-            obj: The object containing the attribute.
-            attribute: The name of the attribute.
-
-        Note:
-            If there is no animation scheduled or running, this is a no-op.
-        """
-        from .css.scalar_animation import ScalarAnimation
-
-        animation_key = (id(obj), attribute)
-        try:
-            animation = self._animations.pop(animation_key)
-        except KeyError:
-            return
-
-        if isinstance(animation, SimpleAnimation):
-            setattr(obj, attribute, animation.end_value)
-        elif isinstance(animation, ScalarAnimation):
-            setattr(obj, attribute, animation.final_value)
-
     async def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()

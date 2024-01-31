@@ -267,20 +267,3 @@ async def test_animator_on_complete_callback_fired_at_duration():
     await animator()
 
     callback.assert_called_once_with()
-
-
-def test_force_stop():
-    callback = Mock()
-    animate_test = AnimateTest()
-    animator = MockAnimator(Mock())
-
-    animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
-
-    assert animator.is_being_animated(animate_test, "foo")
-
-    animator.force_stop_animation(animate_test, "foo")
-
-    # The animation of the attribute was force cancelled. It's no longer
-    # animation and the callback was not fired.
-    assert not animator.is_being_animated(animate_test, "foo")
-    callback.assert_not_called()
