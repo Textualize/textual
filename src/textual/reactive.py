@@ -30,8 +30,8 @@ if TYPE_CHECKING:
 
     Reactable = DOMNode
 
-ReactiveType = TypeVar("ReactiveType", covariant=True)
-ReactableType = TypeVar("ReactableType", bound="DOMNode", contravariant=True)
+ReactiveType = TypeVar("ReactiveType")
+ReactableType = TypeVar("ReactableType", bound="DOMNode")
 
 
 class ReactiveError(Exception):
@@ -169,7 +169,9 @@ class Reactive(Generic[ReactiveType]):
         obj: Reactable | None,
         obj_type: type[ReactableType],
     ) -> Reactive[ReactiveType] | ReactiveType:
+        _rich_traceback_omit = True
         if obj is None:
+            # obj is None means we are invoking the descriptor via the class, and not the instance
             return self
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
@@ -178,7 +180,6 @@ class Reactive(Generic[ReactiveType]):
         if hasattr(obj, self.compute_name):
             value: ReactiveType
             old_value = getattr(obj, internal_name)
-            _rich_traceback_omit = True
             value = getattr(obj, self.compute_name)()
             setattr(obj, internal_name, value)
             self._check_watchers(obj, self.name, old_value)
