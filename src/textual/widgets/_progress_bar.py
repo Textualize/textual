@@ -340,7 +340,9 @@ class ProgressBar(Widget, can_focus=False):
         # We create a closure so that we can determine what are the sub-widgets
         # that are present and, therefore, will need to be notified about changes
         # to the percentage.
-        def update_percentage(widget: Widget) -> Callable[[float | None], None]:
+        def update_percentage(
+            widget: Bar | PercentageStatus | ETAStatus,
+        ) -> Callable[[float | None], None]:
             """Closure to allow updating the percentage of a given widget."""
 
             def updater(percentage: float | None) -> None:
