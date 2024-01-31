@@ -409,7 +409,11 @@ class Animator:
                 end_value=value,
                 final_value=final_value,
                 easing=easing_function,
-                on_complete=on_complete,
+                on_complete=(
+                    partial(self.app.call_later, on_complete)
+                    if on_complete is not None
+                    else None
+                ),
             )
         assert animation is not None, "animation expected to be non-None"
 
@@ -485,8 +489,7 @@ class Animator:
 
     def force_stop_animation(self, obj: object, attribute: str) -> None:
         """Force stop an animation on an attribute. This will immediately stop the animation,
-        without running any associated callbacks and without setting the animation to its
-        final value.
+        without running any associated callbacks, setting the attribute to its final value.
 
         Args:
             obj: The object containing the attribute.
@@ -507,6 +510,9 @@ class Animator:
             setattr(obj, attribute, animation.end_value)
         elif isinstance(animation, ScalarAnimation):
             setattr(obj, attribute, animation.final_value)
+
+        if animation.on_complete is not None:
+            animation.on_complete()
 
     async def __call__(self) -> None:
         if not self._animations:
