@@ -213,8 +213,6 @@ class DOMNode(MessagePump):
             Self.
         """
         _rich_traceback_omit = True
-        if not self._composing:
-            raise ReactiveError("data_bind() may only be called within compose()")
         if self._reactive_connect is None:
             self._reactive_connect = {}
         for name in reactive_names:
@@ -226,7 +224,7 @@ class DOMNode(MessagePump):
         for name, reactive in bind_vars.items():
             if name in reactive_names:
                 raise ReactiveError(
-                    f"Keyword argument {name!r} has been used in positional arguments."
+                    f"Keyword argument {name!r} has already been used in positional arguments."
                 )
             if isinstance(reactive, Reactive):
                 self._reactive_connect[name] = reactive

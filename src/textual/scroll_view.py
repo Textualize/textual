@@ -144,6 +144,16 @@ class ScrollView(ScrollableContainer):
             on_complete=on_complete,
         )
 
+    def refresh_line(self, y: int) -> None:
+        """Refresh a single line.
+
+        Args:
+            y: Coordinate of line.
+        """
+        width = self.virtual_size.width
+        scroll_x, scroll_y = self.scroll_offset
+        self.refresh(Region(0, y - scroll_y, width, 1))
+
     def refresh_lines(self, y_start: int, line_count: int = 1) -> None:
         """Refresh one or more lines.
 
@@ -152,7 +162,7 @@ class ScrollView(ScrollableContainer):
             line_count: Total number of lines to refresh.
         """
 
-        width = self.size.width
+        width = self.virtual_size.width
         scroll_x, scroll_y = self.scroll_offset
-        refresh_region = Region(scroll_x, y_start - scroll_y, width, line_count)
+        refresh_region = Region(0, y_start - scroll_y, width, line_count)
         self.refresh(refresh_region)
