@@ -1916,59 +1916,44 @@ class Widget(DOMNode):
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
 
-        animator = self.app.animator
-        animator.force_stop_animation(self, "scroll_x")
-        animator.force_stop_animation(self, "scroll_y")
+        if not animate:
+            duration = 0
+        elif duration is None and speed is None:
+            speed = 50
 
-        if animate:
-            # TODO: configure animation speed
-            if duration is None and speed is None:
-                speed = 50
+        if easing is None:
+            easing = DEFAULT_SCROLL_EASING
 
-            if easing is None:
-                easing = DEFAULT_SCROLL_EASING
+        if maybe_scroll_x:
+            assert x is not None
+            self.scroll_target_x = x
+            if x != self.scroll_x:
+                self.animate(
+                    "scroll_x",
+                    self.scroll_target_x,
+                    speed=speed,
+                    duration=duration,
+                    easing=easing,
+                    on_complete=on_complete,
+                )
+                scrolled_x = True
 
-            if maybe_scroll_x:
-                assert x is not None
-                self.scroll_target_x = x
-                if x != self.scroll_x:
-                    self.animate(
-                        "scroll_x",
-                        self.scroll_target_x,
-                        speed=speed,
-                        duration=duration,
-                        easing=easing,
-                        on_complete=on_complete,
-                    )
-                    scrolled_x = True
-            if maybe_scroll_y:
-                assert y is not None
-                self.scroll_target_y = y
-                if y != self.scroll_y:
-                    self.animate(
-                        "scroll_y",
-                        self.scroll_target_y,
-                        speed=speed,
-                        duration=duration,
-                        easing=easing,
-                        on_complete=on_complete,
-                    )
-                    scrolled_y = True
+        if maybe_scroll_y:
+            assert y is not None
+            self.scroll_target_y = y
+            if y != self.scroll_y:
+                self.animate(
+                    "scroll_y",
+                    self.scroll_target_y,
+                    speed=speed,
+                    duration=duration,
+                    easing=easing,
+                    on_complete=on_complete,
+                )
+                scrolled_y = True
 
-        else:
-            if maybe_scroll_x:
-                assert x is not None
-                scroll_x = self.scroll_x
-                self.scroll_target_x = self.scroll_x = x
-                scrolled_x = scroll_x != self.scroll_x
-            if maybe_scroll_y:
-                assert y is not None
-                scroll_y = self.scroll_y
-                self.scroll_target_y = self.scroll_y = y
-                scrolled_y = scroll_y != self.scroll_y
-
-            if on_complete is not None:
-                self.call_after_refresh(on_complete)
+        if on_complete is not None:
+            self.call_after_refresh(on_complete)
 
         return scrolled_x or scrolled_y
 
