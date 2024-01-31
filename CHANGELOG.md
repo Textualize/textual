@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
 - Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
 - ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
+- Fixed CSS watcher crash if file becomes unreadable (even temporarily) https://github.com/Textualize/textual/pull/4079
 - Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 
 ## [0.47.1] - 2023-01-05
