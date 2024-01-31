@@ -1068,9 +1068,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     def _on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated
     ) -> None:
-        self.query_one(
-            MarkdownTableOfContents
-        ).table_of_contents = message.table_of_contents
+        self.query_one(MarkdownTableOfContents).table_of_contents = (
+            message.table_of_contents
+        )
         message.stop()
 
     def _on_markdown_table_of_contents_selected(
