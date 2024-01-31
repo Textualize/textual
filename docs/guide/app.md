@@ -254,7 +254,7 @@ You could use this to allow the user to edit content with their preferred text e
 ### Suspend context manager
 
 You can use the [App.suspend](/api/app/#textual.app.App.suspend) context manager to suspend your app.
-For example, here is an application that has a button that will open an external editor, suspending the application before running it:
+The following Textual app will launch [vim](https://www.vim.org/) (a text editor) when the user clicks a button:
 
 ```python hl_lines="14-15"
 from os import system
