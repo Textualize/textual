@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - `soft_wrap=True` - soft wrapping is now enabled by default.
   - `show_line_numbers=False` - line numbers are now disabled by default.
   - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default.
+- Breaking change: `TextArea` default theme changed to CSS, and default styling changed https://github.com/Textualize/textual/pull/4074
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
@@ -27,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
 - Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
 - Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
+- Added component classes allowing `TextArea` to be styled using CSS https://github.com/Textualize/textual/pull/4074
 - Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
 - Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
 - Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
@@ -45,6 +47,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
 - Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
 - ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
+- Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 
 ## [0.47.1] - 2023-01-05
 
@@ -438,7 +441,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 ## [0.33.0] - 2023-08-15
-
 
 ### Fixed
 
