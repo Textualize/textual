@@ -247,15 +247,9 @@ This is often used to temporarily replace your app with another terminal applica
 
 You could use this to allow the user to edit content with their preferred text editor, for example.
 
-!!! info "Compatible Environments"
+!!! info
 
-    App suspension is only available in the following environments:
-
-    - GNU/Lnux
-    - macOS
-    - Windows
-
-    It is currently not available when an application is being served via Textual Web.
+    App suspension is unavailable with [textual-web](https://github.com/Textualize/textual-web).
 
 ### Suspending in code
 
