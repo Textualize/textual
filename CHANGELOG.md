@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
 - Changed the default notification timeout from 3 to 5 seconds https://github.com/Textualize/textual/pull/4059
+- Prior scroll animations are now cancelled on new scrolls https://github.com/Textualize/textual/pull/4081
 
 ### Added
 
