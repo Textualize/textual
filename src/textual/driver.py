@@ -133,6 +133,7 @@ class Driver(ABC):
         terminal.
         """
         self.stop_application_mode()
+        self.close()
 
     def resume_application_mode(self) -> None:
         """Resume application mode.
@@ -141,7 +142,6 @@ class Driver(ABC):
         suspended.
         """
         self.start_application_mode()
-        self.close()
 
     class SignalResume(events.Event):
         """Event sent to the app when a resume signal should be published."""
