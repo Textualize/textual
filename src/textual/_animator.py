@@ -514,7 +514,7 @@ class Animator:
         if animation.on_complete is not None:
             animation.on_complete()
 
-    async def __call__(self) -> None:
+    def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
             self._idle_event.set()
@@ -528,7 +528,8 @@ class Animator:
                 animation_complete = animation(animation_time)
                 if animation_complete:
                     del self._animations[animation_key]
-                    await animation.invoke_callback()
+                    if animation.on_complete is not None:
+                        animation.on_complete()
 
     def _get_time(self) -> float:
         """Get the current wall clock time, via the internal Timer.
@@ -537,7 +538,7 @@ class Animator:
             The wall clock time.
         """
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
-        # but it's handy to have in mocking situations
+        # but it's handy to have in mocking situations.
         return _time.get_time()
 
     async def wait_for_idle(self) -> None:
