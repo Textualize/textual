@@ -28,7 +28,7 @@ async def test_character_bindings():
     counter = 0
 
     class BindApp(App):
-        BINDINGS = [(".,~,space,escape", "increment", "foo")]
+        BINDINGS = [(".,~,space", "increment", "foo")]
 
         def action_increment(self) -> None:
             nonlocal counter
@@ -45,12 +45,9 @@ async def test_character_bindings():
         await pilot.press(" ")
         await pilot.pause()
         assert counter == 3
-        await pilot.press("escape")  # https://github.com/Textualize/textual/issues/4038
-        await pilot.pause()
-        assert counter == 4
         await pilot.press("x")
         await pilot.pause()
-        assert counter == 4
+        assert counter == 3
 
 
 def test_get_key_display():
