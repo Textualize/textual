@@ -1098,14 +1098,18 @@ class Widget(DOMNode):
 
         if styles.min_width is not None:
             # Restrict to minimum width, if set
-            min_width = styles.min_width.resolve(container, viewport, width_fraction)
+            min_width = styles.min_width.resolve(
+                container - margin.totals, viewport, width_fraction
+            )
             if is_border_box:
                 min_width -= gutter.width
             content_width = max(content_width, min_width, Fraction(0))
 
         if styles.max_width is not None:
             # Restrict to maximum width, if set
-            max_width = styles.max_width.resolve(container, viewport, width_fraction)
+            max_width = styles.max_width.resolve(
+                container - margin.totals, viewport, width_fraction
+            )
             if is_border_box:
                 max_width -= gutter.width
             content_width = min(content_width, max_width)
@@ -1138,14 +1142,18 @@ class Widget(DOMNode):
 
         if styles.min_height is not None:
             # Restrict to minimum height, if set
-            min_height = styles.min_height.resolve(container, viewport, height_fraction)
+            min_height = styles.min_height.resolve(
+                container - margin.totals, viewport, height_fraction
+            )
             if is_border_box:
                 min_height -= gutter.height
             content_height = max(content_height, min_height, Fraction(0))
 
         if styles.max_height is not None:
             # Restrict maximum height, if set
-            max_height = styles.max_height.resolve(container, viewport, height_fraction)
+            max_height = styles.max_height.resolve(
+                container - margin.totals, viewport, height_fraction
+            )
             if is_border_box:
                 max_height -= gutter.height
             content_height = min(content_height, max_height)
