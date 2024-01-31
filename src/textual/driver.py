@@ -141,6 +141,7 @@ class Driver(ABC):
         suspended.
         """
         self.start_application_mode()
+        self.close()
 
     class SignalResume(events.Event):
         """Event sent to the app when a resume signal should be published."""

@@ -306,15 +306,6 @@ class LinuxDriver(Driver):
         if self._writer_thread is not None:
             self._writer_thread.stop()
 
-    def suspend_application_mode(self) -> None:
-        """Suspend application mode.
-
-        Used to suspend application mode and allow uninhibited access to the
-        terminal.
-        """
-        super().suspend_application_mode()
-        self.close()
-
     def _run_input_thread(self) -> None:
         """
         Key thread target that wraps run_input_thread() to die gracefully if it raises
