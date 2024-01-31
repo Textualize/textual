@@ -256,28 +256,18 @@ You could use this to allow the user to edit content with their preferred text e
 You can use the [App.suspend](/api/app/#textual.app.App.suspend) context manager to suspend your app.
 The following Textual app will launch [vim](https://www.vim.org/) (a text editor) when the user clicks a button:
 
-```python hl_lines="14-15"
-from os import system
+=== "suspend.py"
 
-from textual import on
-from textual.app import App, ComposeResult
-from textual.widgets import Button
+    ```python hl_lines="14-15"
+    --8<-- "docs/examples/app/suspend.py"
+    ```
 
-class SuspendingApp(App[None]):
+    1. All code in the body of the `with` statement will be run while the app is suspended.
 
-    def compose(self) -> ComposeResult:
-        yield Button("Open the editor", id="edit")
+=== "Output"
 
-    @on(Button.Pressed, "#edit")
-    def run_external_editor(self) -> None:
-        with self.suspend():    # (1)!
-            system("vim")
-
-if __name__ == "__main__":
-    SuspendingApp().run()
-```
-
-1. All code in the body of the `with` statement will be run while the app is suspended.
+    ```{.textual path="docs/examples/app/suspend.py"}
+    ```
 
 ### Suspending from foreground
 
