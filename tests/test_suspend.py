@@ -30,17 +30,13 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
         def can_suspend(self) -> bool:
             return True
 
-        def start_application_mode(self) -> None:
+        def suspend_application_mode(self) -> None:
             nonlocal calls
-            calls.add("start")
+            calls.add("suspend")
 
-        def stop_application_mode(self) -> None:
+        def resume_application_mode(self) -> None:
             nonlocal calls
-            calls.add("stop")
-
-        def close(self) -> None:
-            nonlocal calls
-            calls.add("close")
+            calls.add("resume")
 
     class SuspendApp(App[None]):
         def on_suspend(self) -> None:
@@ -64,4 +60,4 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
             print("USE THEM TOGETHER.", end="", flush=True)
             print("USE THEM IN PEACE.", file=sys.stderr, end="", flush=True)
             assert ("USE THEM TOGETHER.", "USE THEM IN PEACE.") == capfd.readouterr()
-        assert calls == {"start", "stop", "close", "suspend signal", "resume signal"}
+        assert calls == {"suspend", "resume", "suspend signal", "resume signal"}
