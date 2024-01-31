@@ -10,7 +10,6 @@ from rich.style import Style
 
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
-from ..constants import AnimationsEnum
 from ..containers import Horizontal
 from ..geometry import clamp
 from ..reactive import reactive
@@ -106,7 +105,7 @@ class Bar(Widget, can_focus=False):
         # Width used to enable the visual effect of the bar going into the corners.
         total_imaginary_width = width + highlighted_bar_width
 
-        if self.app.show_animations is AnimationsEnum.NONE:
+        if self.app.animation_level == "none":
             start = 0
             end = width
         else:

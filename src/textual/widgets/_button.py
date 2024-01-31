@@ -10,7 +10,7 @@ from typing_extensions import Literal, Self
 
 from .. import events
 from ..binding import Binding
-from ..constants import AnimationsEnum
+from ..constants import AnimationLevel
 from ..css._error_tools import friendly_list
 from ..message import Message
 from ..pad import HorizontalPad
@@ -240,34 +240,29 @@ class Button(Widget, can_focus=True):
         event.stop()
         self.press()
 
-    def press(self, *, animate_on_level: AnimationsEnum = AnimationsEnum.BASIC) -> Self:
+    def press(self, *, level: AnimationLevel = "basic") -> Self:
         """Respond to a button press.
 
         Args:
-            animate_on_level: Minimum level required for the animation to take place (inclusive).
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             The button instance."""
         if self.disabled or not self.display:
             return self
         # Manage the "active" effect:
-        self._start_active_affect(animate_on_level=animate_on_level)
+        self._start_active_affect(level=level)
         # ...and let other components know that we've just been clicked:
         self.post_message(Button.Pressed(self))
         return self
 
-    def _start_active_affect(
-        self, *, animate_on_level: AnimationsEnum = AnimationsEnum.BASIC
-    ) -> None:
+    def _start_active_affect(self, *, level: AnimationLevel = "basic") -> None:
         """Start a small animation to show the button was clicked.
 
         Args:
-            animate_on_level: Minimum level required for the animation to take place (inclusive).
+            level: Minimum level required for the animation to take place (inclusive).
         """
-        if (
-            self.active_effect_duration > 0
-            and self.app.show_animations.value >= animate_on_level.value
-        ):
+        if self.active_effect_duration > 0 and self.app.animation_level != "none":
             self.add_class("-active")
             self.set_timer(
                 self.active_effect_duration, partial(self.remove_class, "-active")

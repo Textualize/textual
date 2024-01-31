@@ -72,7 +72,7 @@ from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
-from .constants import AnimationsEnum
+from .constants import AnimationLevel
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
@@ -576,10 +576,10 @@ class App(Generic[ReturnType], DOMNode):
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
 
-        self.show_animations: AnimationsEnum = constants._get_textual_animations()
+        self.animation_level: AnimationLevel = constants.TEXTUAL_ANIMATIONS
         """Determines what type of animations the app will display.
 
-        See [`textual.constants.SHOW_ANIMATIONS`][textual.constants.SHOW_ANIMATIONS].
+        See [`textual.constants.TEXTUAL_ANIMATIONS`][textual.constants.TEXTUAL_ANIMATIONS].
         """
 
     def validate_title(self, title: Any) -> str:
@@ -677,7 +677,7 @@ class App(Generic[ReturnType], DOMNode):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
-        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -692,7 +692,7 @@ class App(Generic[ReturnType], DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-            animate_on_level: Minimum level required for the animation to take place (inclusive).
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self._animate(
             attribute,
@@ -703,7 +703,7 @@ class App(Generic[ReturnType], DOMNode):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
-            animate_on_level=animate_on_level,
+            level=level,
         )
 
     async def stop_animation(self, attribute: str, complete: bool = True) -> None:

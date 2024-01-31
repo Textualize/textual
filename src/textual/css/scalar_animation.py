@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._animator import Animation, EasingFunction
-from .._context import active_app
 from .._types import CallbackType
-from ..constants import AnimationsEnum
+from ..constants import AnimationLevel
 from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
@@ -25,7 +24,7 @@ class ScalarAnimation(Animation):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
-        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
+        level: AnimationLevel = "full",
     ):
         assert (
             speed is not None or duration is not None
@@ -37,7 +36,7 @@ class ScalarAnimation(Animation):
         self.final_value = value
         self.easing = easing
         self.on_complete = on_complete
-        self.animate_on_level = animate_on_level
+        self.level = level
 
         size = widget.outer_size
         viewport = widget.app.size
@@ -52,20 +51,17 @@ class ScalarAnimation(Animation):
             assert duration is not None, "Duration expected to be non-None"
             self.duration = duration
 
-        self.show_animations = active_app.get().show_animations
-        """Cached version of [`App.show_animations`][textual.app.App.show_animations].
-
-        Caching this avoids repeatedly getting the context variable when the animation
-        is supposed to play.
-        """
-
-    def __call__(self, time: float) -> bool:
+    def __call__(
+        self, time: float, app_animation_level: AnimationLevel = "full"
+    ) -> bool:
         factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
         if (
             eased_factor >= 1
-            or self.animate_on_level.value > self.show_animations.value
+            or app_animation_level == "none"
+            or app_animation_level == "basic"
+            and self.level == "full"
         ):
             setattr(self.styles, self.attribute, self.final_value)
             return True

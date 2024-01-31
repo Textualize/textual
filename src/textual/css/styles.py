@@ -13,7 +13,7 @@ from typing_extensions import TypedDict
 from .._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from .._types import CallbackType
 from ..color import Color
-from ..constants import AnimationsEnum
+from ..constants import AnimationLevel
 from ..geometry import Offset, Spacing
 from ._style_properties import (
     AlignProperty,
@@ -370,7 +370,7 @@ class StylesBase(ABC):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
-        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
+        level: AnimationLevel = "full",
     ) -> ScalarAnimation | None:
         if self.node is None:
             return None
@@ -398,7 +398,7 @@ class StylesBase(ABC):
                 speed=speed,
                 easing=easing,
                 on_complete=on_complete,
-                animate_on_level=animate_on_level,
+                level=level,
             )
         return None
 
@@ -1141,7 +1141,7 @@ class RenderStyles(StylesBase):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
-        animate_on_level: AnimationsEnum = AnimationsEnum.FULL,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -1154,7 +1154,7 @@ class RenderStyles(StylesBase):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
-            animate_on_level: Minimum level required for the animation to take place (inclusive).
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if self._animate is None:
             assert self.node is not None
@@ -1169,7 +1169,7 @@ class RenderStyles(StylesBase):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
-            animate_on_level=animate_on_level,
+            level=level,
         )
 
     def __rich_repr__(self) -> rich.repr.Result:

@@ -1,17 +1,18 @@
 import pytest
 
+from textual import constants
 from textual.app import App
-from textual.constants import AnimationsEnum, _get_textual_animations
+from textual.constants import _get_textual_animations
 
 
 @pytest.mark.parametrize(
     ["env_variable", "value"],
     [
-        ("", AnimationsEnum.FULL),  # default
-        ("FULL", AnimationsEnum.FULL),
-        ("BASIC", AnimationsEnum.BASIC),
-        ("NONE", AnimationsEnum.NONE),
-        ("garbanzo beans", AnimationsEnum.FULL),  # fallback
+        ("", "full"),  # default
+        ("FULL", "full"),
+        ("BASIC", "basic"),
+        ("NONE", "none"),
+        ("garbanzo beans", "full"),  # fallback
     ],
 )
 def test__get_textual_animations(monkeypatch, env_variable, value):  # type: ignore
@@ -21,17 +22,11 @@ def test__get_textual_animations(monkeypatch, env_variable, value):  # type: ign
 
 
 @pytest.mark.parametrize(
-    ["env_variable", "value"],
-    [
-        ("", AnimationsEnum.FULL),  # default
-        ("FULL", AnimationsEnum.FULL),
-        ("BASIC", AnimationsEnum.BASIC),
-        ("NONE", AnimationsEnum.NONE),
-        ("garbanzo beans", AnimationsEnum.FULL),  # fallback
-    ],
+    ["value"],
+    [("full",), ("basic",), ("none",)],
 )
-def test_app_show_animations(monkeypatch, env_variable, value):  # type: ignore
+def test_app_show_animations(monkeypatch, value):  # type: ignore
     """Test that the app gets the value of `show_animations` correctly."""
-    monkeypatch.setenv("TEXTUAL_ANIMATIONS", env_variable)
+    monkeypatch.setattr(constants, "TEXTUAL_ANIMATIONS", value)
     app = App()
-    assert app.show_animations == value
+    assert app.animation_level == value

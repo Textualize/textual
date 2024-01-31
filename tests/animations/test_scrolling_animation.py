@@ -4,7 +4,6 @@ Tests for scrolling animations, which are considered a basic animation.
 """
 
 from textual.app import App, ComposeResult
-from textual.constants import AnimationsEnum
 from textual.containers import VerticalScroll
 from textual.widgets import Label
 
@@ -18,41 +17,53 @@ class TallApp(App[None]):
 
 async def test_scrolling_animates_on_full() -> None:
     app = TallApp()
-    app.show_animations = AnimationsEnum.FULL
+    app.animation_level = "full"
 
     async with app.run_test() as pilot:
         vertical_scroll = app.query_one(VerticalScroll)
-        current_scroll = vertical_scroll.scroll_offset
-        # A ridiculously long duration means that in the fraction of a second
-        # we take to check the scroll position again we haven't moved yet.
+        animator = app.animator
+        # Freeze time at 0 before triggering the animation.
+        animator._get_time = lambda *_: 0
         vertical_scroll.scroll_end(duration=10000)
         await pilot.pause()
-        assert vertical_scroll.scroll_offset == current_scroll
+        # Freeze time after the animation start and before animation end.
+        animator._get_time = lambda *_: 0.01
+        # Move to the next frame.
+        await animator()
+        assert animator.is_being_animated(vertical_scroll, "scroll_y")
 
 
 async def test_scrolling_animates_on_basic() -> None:
     app = TallApp()
-    app.show_animations = AnimationsEnum.BASIC
+    app.animation_level = "basic"
 
     async with app.run_test() as pilot:
         vertical_scroll = app.query_one(VerticalScroll)
-        current_scroll = vertical_scroll.scroll_offset
-        # A ridiculously long duration means that in the fraction of a second
-        # we take to check the scroll position again we haven't moved yet.
+        animator = app.animator
+        # Freeze time at 0 before triggering the animation.
+        animator._get_time = lambda *_: 0
         vertical_scroll.scroll_end(duration=10000)
         await pilot.pause()
-        assert vertical_scroll.scroll_offset == current_scroll
+        # Freeze time after the animation start and before animation end.
+        animator._get_time = lambda *_: 0.01
+        # Move to the next frame.
+        await animator()
+        assert animator.is_being_animated(vertical_scroll, "scroll_y")
 
 
 async def test_scrolling_does_not_animate_on_none() -> None:
     app = TallApp()
-    app.show_animations = AnimationsEnum.NONE
+    app.animation_level = "none"
 
     async with app.run_test() as pilot:
         vertical_scroll = app.query_one(VerticalScroll)
-        current_scroll = vertical_scroll.scroll_offset
-        # Even with a supposedly really long scroll animation duration,
-        # we jump to the end because we're not animating.
+        animator = app.animator
+        # Freeze time at 0 before triggering the animation.
+        animator._get_time = lambda *_: 0
         vertical_scroll.scroll_end(duration=10000)
         await pilot.pause()
-        assert vertical_scroll.scroll_offset != current_scroll
+        # Freeze time after the animation start and before animation end.
+        animator._get_time = lambda *_: 0.01
+        # Move to the next frame.
+        await animator()
+        assert not animator.is_being_animated(vertical_scroll, "scroll_y")

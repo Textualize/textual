@@ -4,7 +4,6 @@ animation. (An animation that also plays on the level BASIC.)
 """
 
 from textual.app import App, ComposeResult
-from textual.constants import AnimationsEnum
 from textual.widgets import ProgressBar
 from textual.widgets._progress_bar import Bar
 
@@ -17,7 +16,7 @@ class ProgressBarApp(App[None]):
 async def test_progress_bar_animates_on_full() -> None:
     """An indeterminate progress bar is not fully highlighted when animating."""
     app = ProgressBarApp()
-    app.show_animations = AnimationsEnum.FULL
+    app.animation_level = "full"
 
     async with app.run_test():
         bar_renderable = app.query_one(Bar).render()
@@ -28,7 +27,7 @@ async def test_progress_bar_animates_on_full() -> None:
 async def test_progress_bar_animates_on_basic() -> None:
     """An indeterminate progress bar is not fully highlighted when animating."""
     app = ProgressBarApp()
-    app.show_animations = AnimationsEnum.BASIC
+    app.animation_level = "basic"
 
     async with app.run_test():
         bar_renderable = app.query_one(Bar).render()
@@ -39,7 +38,7 @@ async def test_progress_bar_animates_on_basic() -> None:
 async def test_progress_bar_does_not_animate_on_none() -> None:
     """An indeterminate progress bar is fully highlighted when not animating."""
     app = ProgressBarApp()
-    app.show_animations = AnimationsEnum.NONE
+    app.animation_level = "none"
 
     async with app.run_test():
         bar_renderable = app.query_one(Bar).render()

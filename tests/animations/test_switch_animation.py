@@ -4,7 +4,6 @@ Tests for the switch toggle animation, which is considered a basic animation.
 """
 
 from textual.app import App, ComposeResult
-from textual.constants import AnimationsEnum
 from textual.widgets import Switch
 
 
@@ -15,13 +14,18 @@ class SwitchApp(App[None]):
 
 async def test_switch_animates_on_full() -> None:
     app = SwitchApp()
-    app.show_animations = AnimationsEnum.FULL
+    app.animation_level = "full"
 
-    async with app.run_test():
+    async with app.run_test() as pilot:
         switch = app.query_one(Switch)
-        switch.action_toggle()
         animator = app.animator
-        # Move to the next animation frame.
+        # Freeze time at 0 before triggering the animation.
+        animator._get_time = lambda *_: 0
+        switch.action_toggle()
+        await pilot.pause()
+        # Freeze time after the animation start and before animation end.
+        animator._get_time = lambda *_: 0.01
+        # Move to the next frame.
         await animator()
         # The animation should still be running.
         assert app.animator.is_being_animated(switch, "slider_pos")
@@ -29,13 +33,18 @@ async def test_switch_animates_on_full() -> None:
 
 async def test_switch_animates_on_basic() -> None:
     app = SwitchApp()
-    app.show_animations = AnimationsEnum.BASIC
+    app.animation_level = "basic"
 
-    async with app.run_test():
+    async with app.run_test() as pilot:
         switch = app.query_one(Switch)
-        switch.action_toggle()
         animator = app.animator
-        # Move to the next animation frame.
+        # Freeze time at 0 before triggering the animation.
+        animator._get_time = lambda *_: 0
+        switch.action_toggle()
+        await pilot.pause()
+        # Freeze time after the animation start and before animation end.
+        animator._get_time = lambda *_: 0.01
+        # Move to the next frame.
         await animator()
         # The animation should still be running.
         assert app.animator.is_being_animated(switch, "slider_pos")
@@ -43,13 +52,18 @@ async def test_switch_animates_on_basic() -> None:
 
 async def test_switch_does_not_animate_on_none() -> None:
     app = SwitchApp()
-    app.show_animations = AnimationsEnum.NONE
+    app.animation_level = "none"
 
-    async with app.run_test():
+    async with app.run_test() as pilot:
         switch = app.query_one(Switch)
-        switch.action_toggle()
         animator = app.animator
-        # Let the animator handle pending animations.
+        # Freeze time at 0 before triggering the animation.
+        animator._get_time = lambda *_: 0
+        switch.action_toggle()
+        await pilot.pause()
+        # Freeze time after the animation start and before animation end.
+        animator._get_time = lambda *_: 0.01
+        # Move to the next frame.
         await animator()
-        # The animation should be done.
+        # The animation should still be running.
         assert not app.animator.is_being_animated(switch, "slider_pos")

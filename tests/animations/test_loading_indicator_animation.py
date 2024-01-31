@@ -4,14 +4,13 @@ Tests for the loading indicator animation, which is considered a basic animation
 """
 
 from textual.app import App
-from textual.constants import AnimationsEnum
 from textual.widgets import LoadingIndicator
 
 
 async def test_loading_indicator_is_not_static_on_full() -> None:
     """The loading indicator doesn't fall back to the static render on FULL."""
     app = App()
-    app.show_animations = AnimationsEnum.FULL
+    app.animation_level = "full"
 
     async with app.run_test() as pilot:
         app.screen.loading = True
@@ -23,7 +22,7 @@ async def test_loading_indicator_is_not_static_on_full() -> None:
 async def test_loading_indicator_is_not_static_on_basic() -> None:
     """The loading indicator doesn't fall back to the static render on BASIC."""
     app = App()
-    app.show_animations = AnimationsEnum.BASIC
+    app.animation_level = "basic"
 
     async with app.run_test() as pilot:
         app.screen.loading = True
@@ -35,7 +34,7 @@ async def test_loading_indicator_is_not_static_on_basic() -> None:
 async def test_loading_indicator_is_static_on_none() -> None:
     """The loading indicator falls back to the static render on NONE."""
     app = App()
-    app.show_animations = AnimationsEnum.NONE
+    app.animation_level = "none"
 
     async with app.run_test() as pilot:
         app.screen.loading = True

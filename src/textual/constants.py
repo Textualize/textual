@@ -4,28 +4,15 @@ Constants that we might want to expose via the public API.
 
 from __future__ import annotations
 
-import enum
 import os
+from typing import Literal, get_args
 
-from typing_extensions import Final
+from typing_extensions import Final, TypeGuard
 
 get_environ = os.environ.get
 
 
-class AnimationsEnum(enum.Enum):
-    """Valid values for the environment variable `TEXTUAL_ANIMATIONS`.
-
-    - `NONE` disables all animations.
-    - `BASIC` will only display animations that don't delay content appearing
-    (e.g., scrolling).
-    - `FULL` displays all animations.
-
-    See also: [`App.show_animations`][textual.app.App.show_animations].
-    """
-
-    NONE = 0
-    BASIC = 1
-    FULL = 2
+AnimationLevel = Literal["none", "basic", "full"]
 
 
 def _get_environ_bool(name: str) -> bool:
@@ -61,18 +48,31 @@ def _get_environ_int(name: str, default: int) -> int:
         return default
 
 
-def _get_textual_animations() -> AnimationsEnum:
+def _is_valid_animation_level(value: str) -> TypeGuard[AnimationLevel]:
+    """Checks if a string is a valid animation level.
+
+    Args:
+        value: The string to check.
+
+    Returns:
+        Whether it's a valid level or not.
+    """
+    return value in get_args(AnimationLevel)
+
+
+def _get_textual_animations() -> AnimationLevel:
     """Get the value of the environment variable that controls textual animations.
 
-    The variable can be in any of the values defined by [`AnimationsEnum`][textual.constants.AnimationsEnum].
+    The variable can be in any of the values defined by [`AnimationLevel`][textual.constants.AnimationLevel].
 
     Returns:
         The value that the variable was set to. If the environment variable is set to an
             invalid value, we default to showing all animations.
     """
-    value: str = get_environ("TEXTUAL_ANIMATIONS", "FULL")
-    enum_value = AnimationsEnum.__members__.get(value, AnimationsEnum.FULL)
-    return enum_value
+    value: str = get_environ("TEXTUAL_ANIMATIONS", "FULL").lower()
+    if _is_valid_animation_level(value):
+        return value
+    return "full"
 
 
 DEBUG: Final[bool] = _get_environ_bool("TEXTUAL_DEBUG")
@@ -107,3 +107,6 @@ MAX_FPS: Final[int] = _get_environ_int("TEXTUAL_FPS", 60)
 
 COLOR_SYSTEM: Final[str | None] = get_environ("TEXTUAL_COLOR_SYSTEM", "auto")
 """Force color system override"""
+
+TEXTUAL_ANIMATIONS: AnimationLevel = _get_textual_animations()
+"""Determines whether animations run or not."""

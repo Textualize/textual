@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, ClassVar
 from rich.console import RenderableType
 
 from ..binding import Binding, BindingType
-from ..constants import AnimationsEnum
 from ..events import Click
 from ..geometry import Size
 from ..message import Message
@@ -135,7 +134,7 @@ class Switch(Widget, can_focus=True):
                 "slider_pos",
                 target_slider_pos,
                 duration=0.3,
-                animate_on_level=AnimationsEnum.BASIC,
+                level="basic",
             )
         else:
             self.slider_pos = target_slider_pos

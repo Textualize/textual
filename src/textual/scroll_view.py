@@ -8,7 +8,7 @@ from rich.console import RenderableType
 
 from ._animator import EasingFunction
 from ._types import CallbackType
-from .constants import AnimationsEnum
+from .constants import AnimationLevel
 from .containers import ScrollableContainer
 from .geometry import Region, Size
 
@@ -120,7 +120,7 @@ class ScrollView(ScrollableContainer):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
-        animate_on_level: AnimationsEnum = AnimationsEnum.BASIC,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -133,7 +133,7 @@ class ScrollView(ScrollableContainer):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
-            animate_on_level: Minimum level required for the animation to take place (inclusive).
+            level: Minimum level required for the animation to take place (inclusive).
         """
 
         self._scroll_to(
@@ -145,7 +145,7 @@ class ScrollView(ScrollableContainer):
             easing=easing,
             force=force,
             on_complete=on_complete,
-            animate_on_level=animate_on_level,
+            level=level,
         )
 
     def refresh_lines(self, y_start: int, line_count: int = 1) -> None:
