@@ -10,7 +10,6 @@ from rich.style import Style
 
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
-from ..containers import Horizontal
 from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
@@ -43,18 +42,19 @@ class Bar(Widget, can_focus=False):
     Bar {
         width: 32;
         height: 1;
-    }
-    Bar > .bar--bar {
-        color: $warning;
-        background: $foreground 10%;
-    }
-    Bar > .bar--indeterminate {
-        color: $error;
-        background: $foreground 10%;
-    }
-    Bar > .bar--complete {
-        color: $success;
-        background: $foreground 10%;
+
+        &> .bar--bar {
+            color: $warning;
+            background: $foreground 10%;
+        }
+        &> .bar--indeterminate {
+            color: $error;
+            background: $foreground 10%;
+        }
+        &> .bar--complete {
+            color: $success;
+            background: $foreground 10%;
+        }
     }
     """
 
@@ -263,13 +263,10 @@ class ProgressBar(Widget, can_focus=False):
     """A progress bar widget."""
 
     DEFAULT_CSS = """
-    ProgressBar > Horizontal {
-        width: auto;
-        height: auto;
-    }
     ProgressBar {
         width: auto;
         height: 1;
+        layout: horizontal;
     }
     """
 
@@ -343,7 +340,9 @@ class ProgressBar(Widget, can_focus=False):
         # We create a closure so that we can determine what are the sub-widgets
         # that are present and, therefore, will need to be notified about changes
         # to the percentage.
-        def update_percentage(widget: Widget) -> Callable[[float | None], None]:
+        def update_percentage(
+            widget: Bar | PercentageStatus | ETAStatus,
+        ) -> Callable[[float | None], None]:
             """Closure to allow updating the percentage of a given widget."""
 
             def updater(percentage: float | None) -> None:
@@ -352,37 +351,36 @@ class ProgressBar(Widget, can_focus=False):
 
             return updater
 
-        with Horizontal():
-            if self.show_bar:
-                bar = Bar(id="bar")
-                self.watch(self, "percentage", update_percentage(bar))
-                yield bar
-            if self.show_percentage:
-                percentage_status = PercentageStatus(id="percentage")
-                self.watch(self, "percentage", update_percentage(percentage_status))
-                yield percentage_status
-            if self.show_eta:
-                eta_status = ETAStatus(id="eta")
-                self.watch(self, "percentage", update_percentage(eta_status))
-                yield eta_status
+        if self.show_bar:
+            bar = Bar(id="bar")
+            self.watch(self, "percentage", update_percentage(bar))
+            yield bar
+        if self.show_percentage:
+            percentage_status = PercentageStatus(id="percentage")
+            self.watch(self, "percentage", update_percentage(percentage_status))
+            yield percentage_status
+        if self.show_eta:
+            eta_status = ETAStatus(id="eta")
+            self.watch(self, "percentage", update_percentage(eta_status))
+            yield eta_status
 
-    def validate_progress(self, progress: float) -> float:
+    def _validate_progress(self, progress: float) -> float:
         """Clamp the progress between 0 and the maximum total."""
         if self.total is not None:
             return clamp(progress, 0, self.total)
         return progress
 
-    def validate_total(self, total: float | None) -> float | None:
+    def _validate_total(self, total: float | None) -> float | None:
         """Ensure the total is not negative."""
         if total is None:
             return total
         return max(0, total)
 
-    def watch_total(self, total: float | None) -> None:
+    def _watch_total(self) -> None:
         """Re-validate progress."""
         self.progress = self.progress
 
-    def compute_percentage(self) -> float | None:
+    def _compute_percentage(self) -> float | None:
         """Keep the percentage of progress updated automatically.
 
         This will report a percentage of `1` if the total is zero.
