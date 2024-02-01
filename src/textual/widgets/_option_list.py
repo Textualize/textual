@@ -177,6 +177,7 @@ class OptionList(ScrollView, can_focus=True):
     DEFAULT_CSS = """
     OptionList {
         height: auto;
+        max-height: 100%;
         background: $boost;
         color: $text;
         overflow-x: hidden;

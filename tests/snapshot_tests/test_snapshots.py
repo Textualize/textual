@@ -296,6 +296,10 @@ def test_option_list_replace_prompt_from_two_lines_to_three_lines(snap_compare):
     )
 
 
+def test_option_list_scrolling_in_long_list(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list_long.py", press=["up"])
+
+
 def test_progress_bar_indeterminate(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["f"])
 
