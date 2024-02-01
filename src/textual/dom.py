@@ -194,14 +194,16 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
-        self._reactive_connect: dict[str, Reactive] | None = None
+        self._reactive_connect: (
+            dict[str, tuple[MessagePump, Reactive | object]] | None
+        ) = None
 
         super().__init__()
 
     def data_bind(
         self,
         *reactives: Reactive[Any],
-        **bind_vars: Reactive[Any],
+        **bind_vars: Reactive[Any] | object,
     ) -> Self:
         """Bind reactive data.
 
@@ -226,15 +228,19 @@ class DOMNode(MessagePump):
                 raise ReactiveError(
                     f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
-            if not isinstance(parent, reactive.owner):
-                raise ReactiveError(
-                    f"Reactive type {reactive.owner.__name__!r} must be defined on class {parent.__class__.__name__!r}"
-                )
-            self._reactive_connect[name] = reactive
-        self._initialize_data_bind(parent)
+            self._reactive_connect[name] = (parent, reactive)
+            # if isinstance(reactive, Reactive):
+            #     # if not isinstance(parent, reactive.owner):
+            #     #     raise ReactiveError(
+            #     #         f"Reactive type {reactive.owner.__name__!r} must be defined on class {parent.__class__.__name__!r}"
+            #     #     )
+            #     self._reactive_connect[name] = reactive
+            # else:
+            #     setattr(self, name, reactive)
+        self._initialize_data_bind()
         return self
 
-    def _initialize_data_bind(self, compose_parent: MessagePump) -> None:
+    def _initialize_data_bind(self) -> None:
         """initialize a data binding.
 
         Args:
@@ -242,7 +248,7 @@ class DOMNode(MessagePump):
         """
         if not self._reactive_connect:
             return
-        for variable_name, reactive in self._reactive_connect.items():
+        for variable_name, (compose_parent, reactive) in self._reactive_connect.items():
 
             def make_setter(variable_name: str) -> Callable[[object], None]:
                 def setter(value: object) -> None:
@@ -253,12 +259,18 @@ class DOMNode(MessagePump):
                 return setter
 
             assert isinstance(compose_parent, DOMNode)
-            self.watch(
-                compose_parent,
-                reactive.name,
-                make_setter(variable_name),
-                init=self._parent is not None,
-            )
+            setter = make_setter(variable_name)
+            if isinstance(reactive, Reactive):
+                self.watch(
+                    compose_parent,
+                    reactive.name,
+                    setter,
+                    init=self._parent is not None,
+                )
+            else:
+                from functools import partial
+
+                self.call_later(partial(setter, reactive))
         self._reactive_connect = None
 
     def compose_add_child(self, widget: Widget) -> None:

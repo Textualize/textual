@@ -180,6 +180,10 @@ class Reactive(Generic[ReactiveType]):
         if obj is None:
             # obj is None means we are invoking the descriptor via the class, and not the instance
             return self
+        if not hasattr(obj, "id"):
+            raise ReactiveError(
+                f"Reactive node {obj.__class__.__name__!r} is missing data; Do you need to call super().__init__(...) first?"
+            )
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)
