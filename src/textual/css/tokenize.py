@@ -212,7 +212,7 @@ class TokenizerState:
                 nest_level += 1
             elif name == "declaration_set_end":
                 nest_level -= 1
-                expect = expect_root_nested if nest_level else expect_root_scope
+                expect = expect_declaration if nest_level else expect_root_scope
                 yield token
                 continue
             expect = get_state(name, expect)

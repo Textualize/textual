@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import dataclasses
 import re
 from collections import defaultdict
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Iterable, Optional, Tuple
+from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Optional, Tuple
 
 from rich.style import Style
 from rich.text import Text
@@ -22,12 +23,14 @@ from textual.document._document import (
     Selection,
     _utf8_encode,
 )
+from textual.document._document_navigator import DocumentNavigator
 from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
     SyntaxAwareDocumentError,
 )
-from textual.expand_tabs import expand_tabs_inline
+from textual.document._wrapped_document import WrappedDocument
+from textual.expand_tabs import expand_tabs_inline, expand_text_tabs_from_widths
 
 if TYPE_CHECKING:
     from tree_sitter import Language
@@ -58,15 +61,11 @@ class ThemeDoesNotExist(Exception):
     This means a theme which is not builtin, or has not been registered.
     """
 
-    pass
-
 
 class LanguageDoesNotExist(Exception):
     """Raised when the user tries to use a language which does not exist.
     This means a language which is not builtin, or has not been registered.
     """
-
-    pass
 
 
 @dataclass
@@ -89,8 +88,69 @@ class TextArea(ScrollView, can_focus=True):
 TextArea {
     width: 1fr;
     height: 1fr;
+    border: tall $background;
+    padding: 0 1;
+    
+    &:focus {
+        border: tall $accent;
+    }
+}
+
+.text-area--cursor {
+    color: $text 90%;
+    background: $foreground 90%;
+}
+
+TextArea:light .text-area--cursor {
+    color: $text 90%;
+    background: $foreground 70%;
+}
+
+.text-area--gutter {
+    color: $text 40%;
+}
+
+.text-area--cursor-line {
+    background: $boost;
+}
+
+.text-area--cursor-gutter {
+    color: $text 60%;
+    background: $boost;
+    text-style: bold;
+}
+
+.text-area--selection {
+    background: $accent-lighten-1 40%;
+}
+
+.text-area--matching-bracket {
+    background: $foreground 30%;
 }
 """
+
+    COMPONENT_CLASSES: ClassVar[set[str]] = {
+        "text-area--cursor",
+        "text-area--gutter",
+        "text-area--cursor-gutter",
+        "text-area--cursor-line",
+        "text-area--selection",
+        "text-area--matching-bracket",
+    }
+    """
+    `TextArea` offers some component classes which can be used to style aspects of the widget.
+    
+    Note that any attributes provided in the chosen `TextAreaTheme` will take priority here.
+    
+    | Class | Description |
+    | :- | :- |
+    | `text-area--cursor` | Target the cursor. |
+    | `text-area--gutter` | Target the gutter (line number column). |
+    | `text-area--cursor-gutter` | Target the gutter area of the line the cursor is on. |
+    | `text-area--cursor-line` | Target the line the cursor is on. |
+    | `text-area--selection` | Target the current selection. |
+    | `text-area--matching-bracket` | Target matching brackets. |
+    """
 
     BINDINGS = [
         Binding("escape", "screen.focus_next", "Shift Focus", show=False),
@@ -203,7 +263,7 @@ TextArea {
     """
 
     selection: Reactive[Selection] = reactive(
-        Selection(), always_update=True, init=False
+        Selection(), init=False, always_update=True
     )
     """The selection start and end locations (zero-based line_index, offset).
 
@@ -216,25 +276,28 @@ TextArea {
     The text selected in the document is available via the `TextArea.selected_text` property.
     """
 
-    show_line_numbers: Reactive[bool] = reactive(True)
+    show_line_numbers: Reactive[bool] = reactive(False, init=False)
     """True to show the line number column on the left edge, otherwise False.
 
     Changing this value will immediately re-render the `TextArea`."""
 
-    indent_width: Reactive[int] = reactive(4)
+    indent_width: Reactive[int] = reactive(4, init=False)
     """The width of tabs or the multiple of spaces to align to on pressing the `tab` key.
 
     If the document currently open contains tabs that are currently visible on screen,
     altering this value will immediately change the display width of the visible tabs.
     """
 
-    match_cursor_bracket: Reactive[bool] = reactive(True)
+    match_cursor_bracket: Reactive[bool] = reactive(True, init=False)
     """If the cursor is at a bracket, highlight the matching bracket (if found)."""
 
-    cursor_blink: Reactive[bool] = reactive(True)
+    cursor_blink: Reactive[bool] = reactive(True, init=False)
     """True if the cursor should blink."""
 
-    _cursor_blink_visible: Reactive[bool] = reactive(True, repaint=False)
+    soft_wrap: Reactive[bool] = reactive(True, init=False)
+    """True if text should soft wrap."""
+
+    _cursor_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
 
@@ -275,6 +338,9 @@ TextArea {
         *,
         language: str | None = None,
         theme: str | None = None,
+        soft_wrap: bool = True,
+        tab_behaviour: Literal["focus", "indent"] = "focus",
+        show_line_numbers: bool = False,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -286,6 +352,9 @@ TextArea {
             text: The initial text to load into the TextArea.
             language: The language to use.
             theme: The theme to use.
+            soft_wrap: Enable soft wrapping.
+            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
@@ -305,11 +374,6 @@ TextArea {
 
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
-
-        self._last_intentional_cell_width: int = 0
-        """Tracks the last column (measured in terms of cell length, since we care here about where the cursor
-        visually moves rather than logical characters) the user explicitly navigated to so that we can reset to it
-        whenever possible."""
 
         self._undo_stack: list[Undoable] = []
         """A stack (the end of the list is the top of the stack) for tracking edits."""
@@ -331,6 +395,18 @@ TextArea {
         self.document: DocumentBase = Document(text)
         """The document this widget is currently editing."""
 
+        self.wrapped_document: WrappedDocument = WrappedDocument(self.document)
+        """The wrapped view of the document."""
+
+        self.navigator: DocumentNavigator = DocumentNavigator(self.wrapped_document)
+        """Queried to determine where the cursor should move given a navigation
+        action, accounting for wrapping etc."""
+
+        self._cursor_offset = (0, 0)
+        """The virtual offset of the cursor (not screen-space offset)."""
+
+        self._set_document(text, language)
+
         self._theme: TextAreaTheme | None = None
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
         reactive is set as a string, the watcher will update this attribute to the
@@ -339,6 +415,60 @@ TextArea {
         self.language = language
 
         self.theme = theme
+
+        self._reactive_soft_wrap = soft_wrap
+
+        self._reactive_show_line_numbers = show_line_numbers
+
+        self.tab_behaviour = tab_behaviour
+
+        # When `app.dark` is toggled, reset the theme (since it caches values).
+        self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+
+    @classmethod
+    def code_editor(
+        cls,
+        text: str = "",
+        *,
+        language: str | None = None,
+        theme: str | None = None,
+        soft_wrap: bool = False,
+        tab_behaviour: Literal["focus", "indent"] = "indent",
+        show_line_numbers: bool = True,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ) -> TextArea:
+        """Construct a new `TextArea` with sensible defaults for editing code.
+
+        This instantiates a `TextArea` with line numbers enabled, soft wrapping
+        disabled, and "indent" tab behaviour.
+
+        Args:
+            text: The initial text to load into the TextArea.
+            language: The language to use.
+            theme: The theme to use.
+            soft_wrap: Enable soft wrapping.
+            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            show_line_numbers: Show line numbers on the left edge.
+            name: The name of the `TextArea` widget.
+            id: The ID of the widget, used to refer to it from Textual CSS.
+            classes: One or more Textual CSS compatible class names separated by spaces.
+            disabled: True if the widget is disabled.
+        """
+        return TextArea(
+            text,
+            language=language,
+            theme=theme,
+            soft_wrap=soft_wrap,
+            tab_behaviour=tab_behaviour,
+            show_line_numbers=show_line_numbers,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
 
     @staticmethod
     def _get_builtin_highlight_query(language_name: str) -> str:
@@ -390,10 +520,19 @@ TextArea {
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
 
-    def _watch_selection(self, selection: Selection) -> None:
+    def watch_has_focus(self, value: bool) -> None:
+        self._cursor_visible = value
+        super().watch_has_focus(value)
+
+    def _watch_selection(
+        self, previous_selection: Selection, selection: Selection
+    ) -> None:
         """When the cursor moves, scroll it into view."""
-        self.scroll_cursor_visible()
+        # Find the visual offset of the cursor in the document
         cursor_location = selection.end
+
+        self.scroll_cursor_visible()
+
         cursor_row, cursor_column = cursor_location
 
         try:
@@ -405,12 +544,18 @@ TextArea {
         match_location = self.find_matching_bracket(character, cursor_location)
         self._matching_bracket_location = match_location
         if match_location is not None:
-            match_row, match_column = match_location
-            if match_row in range(*self._visible_line_indices):
-                self.refresh_lines(match_row)
+            _, offset_y = self._cursor_offset
+            self.refresh_lines(offset_y)
 
         self.app.cursor_position = self.cursor_screen_offset
-        self.post_message(self.SelectionChanged(selection, self))
+        if previous_selection != selection:
+            self.post_message(self.SelectionChanged(selection, self))
+
+    def _recompute_cursor_offset(self):
+        """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
+        self._cursor_offset = self.wrapped_document.location_to_offset(
+            self.cursor_location
+        )
 
     def find_matching_bracket(
         self, bracket: str, search_from: Location
@@ -484,16 +629,28 @@ TextArea {
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
-        self._refresh_size()
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
 
     def _watch_indent_width(self) -> None:
         """Changing width of tabs will change document display width."""
-        self._refresh_size()
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
+
+    def _watch_show_vertical_scrollbar(self) -> None:
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
 
     def _watch_theme(self, theme: str | None) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
         if padding is applied, the colours match."""
+        self._set_theme(theme)
 
+    def _app_dark_toggled(self):
+        self._set_theme(self._theme.name)
+
+    def _set_theme(self, theme: str | None):
+        theme_object: TextAreaTheme | None
         if theme is None:
             # If the theme is None, use the default.
             theme_object = TextAreaTheme.default()
@@ -511,7 +668,7 @@ TextArea {
                     f"then switch to that theme by setting the `TextArea.theme` attribute."
                 )
 
-        self._theme = theme_object
+        self._theme = dataclasses.replace(theme_object)
         if theme_object:
             base_style = theme_object.base_style
             if base_style:
@@ -653,7 +810,11 @@ TextArea {
             document = Document(text)
 
         self.document = document
+        self.wrapped_document = WrappedDocument(document, tab_width=self.indent_width)
+        self.navigator = DocumentNavigator(self.wrapped_document)
         self._build_highlight_map()
+        self.move_cursor((0, 0))
+        self._rewrap_and_refresh_virtual_size()
 
     @property
     def _visible_line_indices(self) -> tuple[int, int]:
@@ -680,17 +841,28 @@ TextArea {
             text: The text to load into the TextArea.
         """
         self._set_document(text, self.language)
-        self.move_cursor((0, 0))
-        self._refresh_size()
 
-    def load_document(self, document: DocumentBase) -> None:
-        """Load a document into the TextArea.
+    def _on_resize(self) -> None:
+        self._rewrap_and_refresh_virtual_size()
 
-        Args:
-            document: The document to load into the TextArea.
+    def _watch_soft_wrap(self) -> None:
+        self._rewrap_and_refresh_virtual_size()
+        self.call_after_refresh(self.scroll_cursor_visible, center=True)
+
+    @property
+    def wrap_width(self) -> int:
+        """The width which gets used when the document wraps.
+
+        Accounts for gutter, scrollbars, etc.
         """
-        self.document = document
-        self.move_cursor((0, 0))
+        width, _ = self.scrollable_content_region.size
+        cursor_width = 1
+        if self.soft_wrap:
+            return width - self.gutter_width - cursor_width
+        return 0
+
+    def _rewrap_and_refresh_virtual_size(self) -> None:
+        self.wrapped_document.wrap(self.wrap_width, tab_width=self.indent_width)
         self._refresh_size()
 
     @property
@@ -741,9 +913,12 @@ TextArea {
 
     def _refresh_size(self) -> None:
         """Update the virtual size of the TextArea."""
-        width, height = self.document.get_size(self.indent_width)
-        # +1 width to make space for the cursor resting at the end of the line
-        self.virtual_size = Size(width + self.gutter_width + 1, height)
+        if self.soft_wrap:
+            self.virtual_size = Size(0, self.wrapped_document.height)
+        else:
+            # +1 width to make space for the cursor resting at the end of the line
+            width, height = self.document.get_size(self.indent_width)
+            self.virtual_size = Size(width + self.gutter_width + 1, height)
 
     def render_line(self, widget_y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
@@ -754,18 +929,33 @@ TextArea {
         Returns:
             A rendered line.
         """
+        theme = self._theme
+        if theme:
+            theme.apply_css(self)
+
         document = self.document
+        wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
 
         # Account for how much the TextArea is scrolled.
-        line_index = widget_y + scroll_y
+        y_offset = widget_y + scroll_y
 
-        # Render the lines beyond the valid line numbers
-        out_of_bounds = line_index >= document.line_count
+        # If we're beyond the height of the document, render blank lines
+        out_of_bounds = y_offset >= wrapped_document.height
+
         if out_of_bounds:
             return Strip.blank(self.size.width)
 
-        theme = self._theme
+        # Get the line corresponding to this offset
+        try:
+            line_info = wrapped_document._offset_to_line_info[y_offset]
+        except IndexError:
+            line_info = None
+
+        if line_info is None:
+            return Strip.blank(self.size.width)
+
+        line_index, section_offset = line_info
 
         # Get the line from the Document.
         line_string = document.get_line(line_index)
@@ -773,12 +963,13 @@ TextArea {
 
         line_character_count = len(line)
         line.tab_size = self.indent_width
+        line.set_length(line_character_count + 1)  # space at end for cursor
         virtual_width, virtual_height = self.virtual_size
-        expanded_length = max(virtual_width, self.size.width)
-        line.set_length(expanded_length)
 
         selection = self.selection
         start, end = selection
+        cursor_row, cursor_column = end
+
         selection_top, selection_bottom = sorted(selection)
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
@@ -798,7 +989,6 @@ TextArea {
                         byte_to_codepoint.get(highlight_end) if highlight_end else None,
                     )
 
-        cursor_row, cursor_column = end
         cursor_line_style = theme.cursor_line_style if theme else None
         if cursor_line_style and cursor_row == line_index:
             line.stylize(cursor_line_style)
@@ -812,7 +1002,6 @@ TextArea {
                 if line_character_count == 0 and line_index != cursor_row:
                     # A simple highlight to show empty lines are included in the selection
                     line = Text("▌", end="", style=Style(color=selection_style.bgcolor))
-                    line.set_length(self.virtual_size.width)
                 else:
                     if line_index == selection_top_row == selection_bottom_row:
                         # Selection within a single line
@@ -843,7 +1032,7 @@ TextArea {
 
         if cursor_row == line_index:
             draw_cursor = not self.cursor_blink or (
-                self.cursor_blink and self._cursor_blink_visible
+                self.cursor_blink and self._cursor_visible
             )
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
@@ -877,44 +1066,76 @@ TextArea {
         gutter_width = self.gutter_width
         if self.show_line_numbers:
             if cursor_row == line_index:
-                gutter_style = theme.cursor_line_gutter_style if theme else None
+                gutter_style = theme.cursor_line_gutter_style
             else:
-                gutter_style = theme.gutter_style if theme else None
+                gutter_style = theme.gutter_style
 
             gutter_width_no_margin = gutter_width - 2
+            gutter_content = str(line_index + 1) if section_offset == 0 else ""
             gutter = Text(
-                f"{line_index + 1:>{gutter_width_no_margin}}  ",
+                f"{gutter_content:>{gutter_width_no_margin}}  ",
                 style=gutter_style or "",
                 end="",
             )
         else:
             gutter = Text("", end="")
 
-        # Render the gutter and the text of this line
+        # TODO: Lets not apply the division each time through render_line.
+        #  We should cache sections with the edit counts.
+        wrap_offsets = wrapped_document.get_offsets(line_index)
+        if wrap_offsets:
+            sections = line.divide(wrap_offsets)  # TODO cache result with edit count
+            line = sections[section_offset]
+            line_tab_widths = wrapped_document.get_tab_widths(line_index)
+            line.end = ""
+
+            # Get the widths of the tabs corresponding only to the section of the
+            # line that is currently being rendered. We don't care about tabs in
+            # other sections of the same line.
+
+            # Count the tabs before this section.
+            tabs_before = 0
+            for section_index in range(section_offset):
+                tabs_before += sections[section_index].plain.count("\t")
+
+            # Count the tabs in this section.
+            tabs_within = line.plain.count("\t")
+            section_tab_widths = line_tab_widths[
+                tabs_before : tabs_before + tabs_within
+            ]
+            line = expand_text_tabs_from_widths(line, section_tab_widths)
+        else:
+            line.expand_tabs(self.indent_width)
+
+        base_width = (
+            self.scrollable_content_region.size.width
+            if self.soft_wrap
+            else max(virtual_width, self.region.size.width)
+        )
+        target_width = base_width - self.gutter_width
         console = self.app.console
         gutter_segments = console.render(gutter)
-        text_segments = console.render(
-            line,
-            console.options.update_width(expanded_length),
+
+        text_segments = list(
+            console.render(line, console.options.update_width(target_width))
         )
 
-        # Crop the line to show only the visible part (some may be scrolled out of view)
         gutter_strip = Strip(gutter_segments, cell_length=gutter_width)
-        text_strip = Strip(text_segments).crop(
-            scroll_x, scroll_x + virtual_width - gutter_width
-        )
+        text_strip = Strip(text_segments)
+
+        # Crop the line to show only the visible part (some may be scrolled out of view)
+        if not self.soft_wrap:
+            text_strip = text_strip.crop(
+                scroll_x, scroll_x + virtual_width - gutter_width
+            )
 
         # Stylize the line the cursor is currently on.
         if cursor_row == line_index:
-            text_strip = text_strip.extend_cell_length(
-                expanded_length, cursor_line_style
-            )
+            line_style = cursor_line_style
         else:
-            text_strip = text_strip.extend_cell_length(
-                expanded_length, theme.base_style if theme else None
-            )
+            line_style = theme.base_style if theme else None
 
-        # Join and return the gutter and the visible portion of this line
+        text_strip = text_strip.extend_cell_length(target_width, line_style)
         strip = Strip.join([gutter_strip, text_strip]).simplify()
 
         return strip.apply_style(
@@ -956,7 +1177,7 @@ TextArea {
         start, end = sorted((start, end))
         return self.document.get_text_range(start, end)
 
-    def edit(self, edit: Edit) -> Any:
+    def edit(self, edit: Edit) -> EditResult:
         """Perform an Edit.
 
         Args:
@@ -966,7 +1187,19 @@ TextArea {
             Data relating to the edit that may be useful. The data returned
             may be different depending on the edit performed.
         """
+        old_gutter_width = self.gutter_width
         result = edit.do(self)
+        new_gutter_width = self.gutter_width
+
+        if old_gutter_width != new_gutter_width:
+            self.wrapped_document.wrap(self.wrap_width, self.indent_width)
+        else:
+            self.wrapped_document.wrap_range(
+                edit.from_location,
+                edit.to_location,
+                result.end_location,
+            )
+
         self._refresh_size()
         edit.after(self)
         self._build_highlight_map()
@@ -977,9 +1210,14 @@ TextArea {
         """Handle key presses which correspond to document inserts."""
         key = event.key
         insert_values = {
-            "tab": " " * self._find_columns_to_next_tab_stop(),
             "enter": "\n",
         }
+        if self.tab_behaviour == "indent":
+            if self.indent_type == "tabs":
+                insert_values["tab"] = "\t"
+            else:
+                insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
+
         self._restart_blink()
         if event.is_printable or key in insert_values:
             event.stop()
@@ -1023,16 +1261,10 @@ TextArea {
         """
         scroll_x, scroll_y = self.scroll_offset
         target_x = event.x - self.gutter_width + scroll_x - self.gutter.left
-        target_x = max(target_x, 0)
-        target_row = clamp(
-            event.y + scroll_y - self.gutter.top,
-            0,
-            self.document.line_count - 1,
-        )
-        target_column = self.cell_width_to_column_index(target_x, target_row)
-        return target_row, target_column
+        target_y = event.y + scroll_y - self.gutter.top
+        location = self.wrapped_document.offset_to_location(Offset(target_x, target_y))
+        return location
 
-    # --- Lower level event/key handling
     @property
     def gutter_width(self) -> int:
         """The width of the gutter (the left column containing line numbers).
@@ -1043,7 +1275,7 @@ TextArea {
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
         gutter_width = (
-            len(str(self.document.line_count + 1)) + gutter_margin
+            len(str(self.document.line_count)) + gutter_margin
             if self.show_line_numbers
             else 0
         )
@@ -1065,19 +1297,19 @@ TextArea {
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
-        self._cursor_blink_visible = not self._cursor_blink_visible
-        cursor_row, _ = self.cursor_location
-        self.refresh_lines(cursor_row)
+        self._cursor_visible = not self._cursor_visible
+        _, cursor_y = self._cursor_offset
+        self.refresh_lines(cursor_y)
 
     def _restart_blink(self) -> None:
         """Reset the cursor blink timer."""
         if self.cursor_blink:
-            self._cursor_blink_visible = True
+            self._cursor_visible = True
             self.blink_timer.reset()
 
     def _pause_blink(self, visible: bool = True) -> None:
         """Pause the cursor blinking but ensure it stays visible."""
-        self._cursor_blink_visible = visible
+        self._cursor_visible = visible
         self.blink_timer.pause()
 
     async def _on_mouse_down(self, event: events.MouseDown) -> None:
@@ -1156,11 +1388,11 @@ TextArea {
         Returns:
             The offset that was scrolled to bring the cursor into view.
         """
-        row, column = self.selection.end
-        text = self.document[row][:column]
-        column_offset = cell_len(expand_tabs_inline(text, self.indent_width))
+        self._recompute_cursor_offset()
+
+        x, y = self._cursor_offset
         scroll_offset = self.scroll_to_region(
-            Region(x=column_offset, y=row, width=3, height=1),
+            Region(x, y, width=3, height=1),
             spacing=Spacing(right=self.gutter_width),
             animate=animate,
             force=True,
@@ -1205,7 +1437,7 @@ TextArea {
         center: bool = False,
         record_width: bool = True,
     ) -> None:
-        """Move the cursor relative to its current location.
+        """Move the cursor relative to its current location in document-space.
 
         Args:
             rows: The number of rows to move down by (negative to move up)
@@ -1273,17 +1505,12 @@ TextArea {
     @property
     def cursor_screen_offset(self) -> Offset:
         """The offset of the cursor relative to the screen."""
-        cursor_row, cursor_column = self.cursor_location
+        cursor_x, cursor_y = self._cursor_offset
         scroll_x, scroll_y = self.scroll_offset
         region_x, region_y, _width, _height = self.content_region
 
-        offset_x = (
-            region_x
-            + self.get_column_width(cursor_row, cursor_column)
-            - scroll_x
-            + self.gutter_width
-        )
-        offset_y = region_y + cursor_row - scroll_y
+        offset_x = region_x + cursor_x - scroll_x + self.gutter_width
+        offset_y = region_y + cursor_y - scroll_y
 
         return Offset(offset_x, offset_y)
 
@@ -1330,8 +1557,8 @@ TextArea {
         Args:
             select: If True, select the text while moving.
         """
-        new_cursor_location = self.get_cursor_left_location()
-        self.move_cursor(new_cursor_location, select=select)
+        target = self.get_cursor_left_location()
+        self.move_cursor(target, select=select)
 
     def get_cursor_left_location(self) -> Location:
         """Get the location the cursor will move to if it moves left.
@@ -1339,13 +1566,7 @@ TextArea {
         Returns:
             The location of the cursor if it moves left.
         """
-        if self.cursor_at_start_of_text:
-            return 0, 0
-        cursor_row, cursor_column = self.selection.end
-        length_of_row_above = len(self.document[cursor_row - 1])
-        target_row = cursor_row if cursor_column != 0 else cursor_row - 1
-        target_column = cursor_column - 1 if cursor_column != 0 else length_of_row_above
-        return target_row, target_column
+        return self.navigator.get_location_left(self.cursor_location)
 
     def action_cursor_right(self, select: bool = False) -> None:
         """Move the cursor one location to the right.
@@ -1364,12 +1585,7 @@ TextArea {
         Returns:
             the location the cursor will move to if it moves right.
         """
-        if self.cursor_at_end_of_text:
-            return self.selection.end
-        cursor_row, cursor_column = self.selection.end
-        target_row = cursor_row + 1 if self.cursor_at_end_of_line else cursor_row
-        target_column = 0 if self.cursor_at_end_of_line else cursor_column + 1
-        return target_row, target_column
+        return self.navigator.get_location_right(self.cursor_location)
 
     def action_cursor_down(self, select: bool = False) -> None:
         """Move the cursor down one cell.
@@ -1386,17 +1602,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves down.
         """
-        cursor_row, cursor_column = self.selection.end
-        if self.cursor_at_last_line:
-            return cursor_row, len(self.document[cursor_row])
-
-        target_row = min(self.document.line_count - 1, cursor_row + 1)
-        # Attempt to snap last intentional cell length
-        target_column = self.cell_width_to_column_index(
-            self._last_intentional_cell_width, target_row
-        )
-        target_column = clamp(target_column, 0, len(self.document[target_row]))
-        return target_row, target_column
+        return self.navigator.get_location_below(self.cursor_location)
 
     def action_cursor_up(self, select: bool = False) -> None:
         """Move the cursor up one cell.
@@ -1413,16 +1619,7 @@ TextArea {
         Returns:
             The location the cursor will move to if it moves up.
         """
-        if self.cursor_at_first_line:
-            return 0, 0
-        cursor_row, cursor_column = self.selection.end
-        target_row = max(0, cursor_row - 1)
-        # Attempt to snap last intentional cell length
-        target_column = self.cell_width_to_column_index(
-            self._last_intentional_cell_width, target_row
-        )
-        target_column = clamp(target_column, 0, len(self.document[target_row]))
-        return target_row, target_column
+        return self.navigator.get_location_above(self.cursor_location)
 
     def action_cursor_line_end(self, select: bool = False) -> None:
         """Move the cursor to the end of the line."""
@@ -1435,39 +1632,27 @@ TextArea {
         Returns:
             The (row, column) location of the end of the cursors current line.
         """
-        start, end = self.selection
-        cursor_row, cursor_column = end
-        target_column = len(self.document[cursor_row])
-        return cursor_row, target_column
+        return self.navigator.get_location_end(self.cursor_location)
 
     def action_cursor_line_start(self, select: bool = False) -> None:
         """Move the cursor to the start of the line."""
+        target = self.get_cursor_line_start_location(smart_home=True)
+        self.move_cursor(target, select=select)
 
-        cursor_row, cursor_column = self.cursor_location
-        line = self.document[cursor_row]
-
-        first_non_whitespace = 0
-        for index, code_point in enumerate(line):
-            if not code_point.isspace():
-                first_non_whitespace = index
-                break
-
-        if cursor_column <= first_non_whitespace and cursor_column != 0:
-            target = self.get_cursor_line_start_location()
-            self.move_cursor(target, select=select)
-        else:
-            target = cursor_row, first_non_whitespace
-            self.move_cursor(target, select=select)
-
-    def get_cursor_line_start_location(self) -> Location:
+    def get_cursor_line_start_location(self, smart_home: bool = False) -> Location:
         """Get the location of the start of the current line.
+
+        Args:
+            smart_home: If True, use "smart home key" behavior - go to the first
+                non-whitespace character on the line, and if already there, go to
+                offset 0. Smart home only works when wrapping is disabled.
 
         Returns:
             The (row, column) location of the start of the cursors current line.
         """
-        _start, end = self.selection
-        cursor_row, _cursor_column = end
-        return cursor_row, 0
+        return self.navigator.get_location_home(
+            self.cursor_location, smart_home=smart_home
+        )
 
     def action_cursor_word_left(self, select: bool = False) -> None:
         """Move the cursor left by a single word, skipping trailing whitespace.
@@ -1537,8 +1722,10 @@ TextArea {
         """Move the cursor and scroll up one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
-        row, column = cursor_location
-        target = (row - height, column)
+        target = self.navigator.get_location_at_y_offset(
+            cursor_location,
+            -height,
+        )
         self.scroll_relative(y=-height, animate=False)
         self.move_cursor(target)
 
@@ -1546,8 +1733,10 @@ TextArea {
         """Move the cursor and scroll down one page."""
         height = self.content_size.height
         _, cursor_location = self.selection
-        row, column = cursor_location
-        target = (row + height, column)
+        target = self.navigator.get_location_at_y_offset(
+            cursor_location,
+            height,
+        )
         self.scroll_relative(y=height, animate=False)
         self.move_cursor(target)
 
@@ -1572,9 +1761,10 @@ TextArea {
         content, then we go down to another row, we want our cursor to
         jump back to the same offset that we were originally at.
         """
-        row, column = self.selection.end
-        column_cell_length = self.get_column_width(row, column)
-        self._last_intentional_cell_width = column_cell_length
+        cursor_x_offset, _ = self.wrapped_document.location_to_offset(
+            self.cursor_location
+        )
+        self.navigator.last_x_offset = cursor_x_offset
 
     # --- Editor operations
     def insert(
@@ -1697,19 +1887,18 @@ TextArea {
         to_location = (end_row + 1, 0)
 
         self.delete(from_location, to_location, maintain_selection_offset=False)
+        self.move_cursor_relative(columns=end_column, record_width=False)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
         from_location = self.selection.end
-        cursor_row, cursor_column = from_location
-        to_location = (cursor_row, 0)
+        to_location = self.get_cursor_line_start_location()
         self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
-        cursor_row, cursor_column = from_location
-        to_location = (cursor_row, len(self.document[cursor_row]))
+        to_location = self.get_cursor_line_end_location()
         self.delete(from_location, to_location, maintain_selection_offset=False)
 
     def action_delete_word_left(self) -> None:

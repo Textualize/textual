@@ -3,7 +3,7 @@ import pytest
 from textual.app import App, ComposeResult
 from textual.geometry import Offset
 from textual.widgets import TextArea
-from textual.widgets.text_area import Document, Selection
+from textual.widgets.text_area import Selection
 
 TEXT = """I must not fear.
 Fear is the mind-killer.
@@ -14,7 +14,7 @@ I will face my fear.
 
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea()
+        text_area = TextArea(show_line_numbers=True)
         text_area.load_text(TEXT)
         yield text_area
 
@@ -25,7 +25,7 @@ async def test_mouse_click():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         await pilot.click(TextArea, Offset(x=5, y=2))
-        assert text_area.selection == Selection.cursor((2, 2))
+        assert text_area.selection == Selection.cursor((1, 0))
 
 
 async def test_mouse_click_clamp_from_right():
@@ -44,7 +44,7 @@ async def test_mouse_click_gutter_clamp():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         await pilot.click(TextArea, Offset(x=0, y=3))
-        assert text_area.selection == Selection.cursor((3, 0))
+        assert text_area.selection == Selection.cursor((2, 0))
 
 
 async def test_cursor_movement_basic():
@@ -260,7 +260,10 @@ async def test_cursor_page_down():
         text_area.load_text("XXX\n" * 200)
         text_area.selection = Selection.cursor((0, 1))
         await pilot.press("pagedown")
-        assert text_area.selection == Selection.cursor((app.console.height - 1, 1))
+        margin = 2
+        assert text_area.selection == Selection.cursor(
+            (app.console.height - 1 - margin, 1)
+        )
 
 
 async def test_cursor_page_up():
@@ -271,8 +274,9 @@ async def test_cursor_page_up():
         text_area.load_text("XXX\n" * 200)
         text_area.selection = Selection.cursor((100, 1))
         await pilot.press("pageup")
+        margin = 2
         assert text_area.selection == Selection.cursor(
-            (100 - app.console.height + 1, 1)
+            (100 - app.console.height + 1 + margin, 1)
         )
 
 
@@ -282,7 +286,7 @@ async def test_cursor_vertical_movement_visual_alignment_snapping():
     app = TextAreaApp()
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
-        text_area.load_document(Document("こんにちは\n012345"))
+        text_area.text = "こんにちは\n012345"
         text_area.move_cursor((1, 3), record_width=True)
 
         # The '3' is aligned with ん at (0, 1)

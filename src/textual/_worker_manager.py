@@ -4,7 +4,6 @@ A class to manage [workers](/guide/workers) for an app.
 You access this object via [App.workers][textual.app.App.workers] or [Widget.workers][textual.dom.DOMNode.workers].
 """
 
-
 from __future__ import annotations
 
 import asyncio
