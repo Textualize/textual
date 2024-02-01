@@ -1189,6 +1189,7 @@ TextArea:light .text-area--cursor {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
+        self._undo_stack.append(edit)
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
@@ -1205,6 +1206,12 @@ TextArea:light .text-area--cursor {
         self._build_highlight_map()
         self.post_message(self.Changed(self))
         return result
+
+    def undo(self) -> EditResult | None:
+        """Undo the most recent edit."""
+        if self._undo_stack:
+            edit = self._undo_stack.pop()
+            return edit.undo(self)
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
@@ -1965,6 +1972,8 @@ class Edit:
     """If True, the selection will maintain its offset to the replacement range."""
     _updated_selection: Selection | None = field(init=False, default=None)
     """Where the selection should move to after the replace happens."""
+    _edit_result: EditResult | None = field(init=False, default=None)
+    """The result of doing the edit."""
 
     def do(self, text_area: TextArea) -> EditResult:
         """Perform the edit operation.
@@ -1993,12 +2002,10 @@ class Edit:
         selection_start_row, selection_start_column = selection_start
         selection_end_row, selection_end_column = selection_end
 
-        replace_result = text_area.document.replace_range(edit_from, edit_to, text)
+        edit_result = text_area.document.replace_range(edit_from, edit_to, text)
 
-        new_edit_to_row, new_edit_to_column = replace_result.end_location
+        new_edit_to_row, new_edit_to_column = edit_result.end_location
 
-        # TODO: We could maybe improve the situation where the selection
-        #  and the edit range overlap with each other.
         column_offset = new_edit_to_column - edit_bottom_column
         target_selection_start_column = (
             selection_start_column + column_offset
@@ -2023,9 +2030,10 @@ class Edit:
                 end=(target_selection_end_row, target_selection_end_column),
             )
         else:
-            self._updated_selection = Selection.cursor(replace_result.end_location)
+            self._updated_selection = Selection.cursor(edit_result.end_location)
 
-        return replace_result
+        self._edit_result = edit_result
+        return edit_result
 
     def undo(self, text_area: TextArea) -> EditResult:
         """Undo the edit operation.
