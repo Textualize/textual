@@ -13,12 +13,11 @@ class FooLabel(Label):
 
 
 class DataBindApp(App):
-    foo = reactive("Bar")
+    bar = reactive("Bar")
 
     def compose(self) -> ComposeResult:
-        yield FooLabel(id="label1").data_bind("foo")  # Bind similarly named
-        yield FooLabel(id="label2").data_bind(foo=DataBindApp.foo)  # Explicit bind
-        yield FooLabel(id="label3")  # Not bound
+        yield FooLabel(id="label1").data_bind(foo=DataBindApp.bar)  # Explicit bind
+        yield FooLabel(id="label2")  # Not bound
 
 
 async def test_data_binding():
@@ -26,90 +25,59 @@ async def test_data_binding():
     async with app.run_test():
 
         # Check default
-        assert app.foo == "Bar"
+        assert app.bar == "Bar"
 
         label1 = app.query_one("#label1", FooLabel)
         label2 = app.query_one("#label2", FooLabel)
-        label3 = app.query_one("#label3", FooLabel)
 
         # These are bound, so should have the same value as the App.foo
         assert label1.foo == "Bar"
-        assert label2.foo == "Bar"
         # Not yet bound, so should have its own default
-        assert label3.foo == "Foo"
+        assert label2.foo == "Foo"
 
         # Changing this reactive, should also change the bound widgets
-        app.foo = "Baz"
+        app.bar = "Baz"
 
         # Sanity check
-        assert app.foo == "Baz"
+        assert app.bar == "Baz"
 
         # Should also have updated bound labels
         assert label1.foo == "Baz"
-        assert label2.foo == "Baz"
-        assert label3.foo == "Foo"
+        assert label2.foo == "Foo"
+
+        with pytest.raises(ReactiveError):
+            # THis should be an error because FooLabel.foo is not defined on the app
+            label2.data_bind(app, foo=FooLabel.foo)
 
         # Bind data outside of compose
-        label3.data_bind(foo=DataBindApp.foo)
+        label2.data_bind(app, foo=DataBindApp.bar)
         # Confirm new binding has propagated
-        assert label3.foo == "Baz"
+        assert label2.foo == "Baz"
 
         # Set reactive and check propagation
-        app.foo = "Egg"
+        app.bar = "Egg"
         assert label1.foo == "Egg"
         assert label2.foo == "Egg"
-        assert label3.foo == "Egg"
 
         # Test nothing goes awry when removing widget with bound data
         await label1.remove()
 
         # Try one last time
-        app.foo = "Spam"
+        app.bar = "Spam"
 
         # Confirm remaining widgets still propagate
         assert label2.foo == "Spam"
-        assert label3.foo == "Spam"
 
 
-async def test_data_binding_positional_error():
-
-    class DataBindErrorApp(App):
-        foo = reactive("Bar")
-
-        def compose(self) -> ComposeResult:
-            yield FooLabel(id="label1").data_bind("bar")  # Missing reactive
-
-    app = DataBindErrorApp()
-    with pytest.raises(ReactiveError):
-        async with app.run_test():
-            pass
-
-
-async def test_data_binding_positional_repeated_error():
+async def test_data_binding_missing_reactive():
 
     class DataBindErrorApp(App):
         foo = reactive("Bar")
 
         def compose(self) -> ComposeResult:
             yield FooLabel(id="label1").data_bind(
-                "foo", foo=DataBindErrorApp.foo
-            )  # Duplicate name
-
-    app = DataBindErrorApp()
-    with pytest.raises(ReactiveError):
-        async with app.run_test():
-            pass
-
-
-async def test_data_binding_keyword_args_errors():
-
-    class DataBindErrorApp(App):
-        foo = reactive("Bar")
-
-        def compose(self) -> ComposeResult:
-            yield FooLabel(id="label1").data_bind(
-                bar=DataBindErrorApp.foo
-            )  # Missing reactive in keyword args
+                nofoo=DataBindErrorApp.foo
+            )  # Missing reactive
 
     app = DataBindErrorApp()
     with pytest.raises(ReactiveError):

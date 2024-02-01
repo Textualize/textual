@@ -162,17 +162,17 @@ class Reactive(Generic[ReactiveType]):
     @overload
     def __get__(
         self: Reactive[ReactiveType], obj: None, obj_type: type[Reactable]
-    ) -> Reactive[ReactiveType]: ...
+    ) -> tuple[type[ReactableType], Reactive[ReactiveType]]: ...
 
     def __get__(
         self: Reactive[ReactiveType],
         obj: Reactable | None,
         obj_type: type[ReactableType],
-    ) -> Reactive[ReactiveType] | ReactiveType:
+    ) -> tuple[type[ReactableType], Reactive[ReactiveType]] | ReactiveType:
         _rich_traceback_omit = True
         if obj is None:
             # obj is None means we are invoking the descriptor via the class, and not the instance
-            return self
+            return (obj_type, self)
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)

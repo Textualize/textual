@@ -194,14 +194,19 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
-        self._reactive_connect: dict[str, Reactive | None] | None = None
+        self._reactive_connect: dict[str, Reactive] | None = None
 
         super().__init__()
 
     def data_bind(
-        self, *reactive_names: str, **bind_vars: Reactive[object] | object
+        self,
+        parent: MessagePump | None = None,
+        **bind_vars: tuple[type[DOMNode], Reactive[Any]],
     ) -> Self:
         """Bind reactive data.
+
+        Args:
+            parent: The parent widget where the data should come from. Or `None` to auto-detect.
 
         Raises:
             ReactiveError: If the data wasn't bound.
@@ -211,29 +216,28 @@ class DOMNode(MessagePump):
         """
         _rich_traceback_omit = True
 
+        if parent is None:
+            parent = active_message_pump.get()
+
         if self._reactive_connect is None:
             self._reactive_connect = {}
-        for name in reactive_names:
+        for name, type_and_reactive in bind_vars.items():
             if name not in self._reactives:
                 raise ReactiveError(
                     f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
-            self._reactive_connect[name] = None
-        for name, reactive in bind_vars.items():
-            if name in reactive_names:
+            if not isinstance(type_and_reactive, tuple):
                 raise ReactiveError(
-                    f"Keyword argument {name!r} has already been used in positional arguments."
+                    "Expected a reactive type here, e.g MyWidget.my_reactive"
                 )
-            if name not in self._reactives:
+            node_type, reactive = type_and_reactive
+            if not isinstance(parent, node_type):
                 raise ReactiveError(
-                    f"Unable to bind non-reactive attribute {name!r} on {self}"
+                    f"Reactive type {node_type.__name__!r} must be defined on class {parent.__class__.__name__!r}"
                 )
-            if isinstance(reactive, Reactive):
-                self._reactive_connect[name] = reactive
-            else:
-                setattr(self, name, reactive)
-        if self._parent is not None:
-            self._initialize_data_bind(active_message_pump.get())
+
+            self._reactive_connect[name] = reactive
+        self._initialize_data_bind(parent)
         return self
 
     def _initialize_data_bind(self, compose_parent: MessagePump) -> None:
@@ -247,14 +251,14 @@ class DOMNode(MessagePump):
         for variable_name, reactive in self._reactive_connect.items():
 
             def setter(value: object) -> None:
-                """Set bound data,=,"""
+                """Set bound data."""
                 Reactive._initialize_object(self)
                 setattr(self, variable_name, value)
 
             assert isinstance(compose_parent, DOMNode)
             self.watch(
                 compose_parent,
-                variable_name if reactive is None else reactive.name,
+                reactive.name,
                 setter,
                 init=self._parent is not None,
             )
