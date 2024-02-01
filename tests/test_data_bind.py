@@ -47,10 +47,10 @@ async def test_data_binding():
 
         with pytest.raises(ReactiveError):
             # This should be an error because FooLabel.foo is not defined on the app
-            label2.data_bind(app, foo=FooLabel.foo)
+            label2.data_bind(foo=FooLabel.foo)
 
         # Bind data outside of compose
-        label2.data_bind(app, foo=DataBindApp.bar)
+        label2.data_bind(foo=DataBindApp.bar)
         # Confirm new binding has propagated
         assert label2.foo == "Baz"
 

@@ -200,7 +200,7 @@ class DOMNode(MessagePump):
 
     def data_bind(
         self,
-        parent: MessagePump | None = None,
+        *reactives: Reactive[Any],
         **bind_vars: Reactive[Any],
     ) -> Self:
         """Bind reactive data.
@@ -216,22 +216,20 @@ class DOMNode(MessagePump):
         """
         _rich_traceback_omit = True
 
-        if parent is None:
-            parent = active_message_pump.get()
+        parent = active_message_pump.get()
 
         if self._reactive_connect is None:
             self._reactive_connect = {}
+        bind_vars = {**{reactive.name: reactive for reactive in reactives}, **bind_vars}
         for name, reactive in bind_vars.items():
             if name not in self._reactives:
                 raise ReactiveError(
                     f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
-
             if not isinstance(parent, reactive.owner):
                 raise ReactiveError(
                     f"Reactive type {reactive.owner.__name__!r} must be defined on class {parent.__class__.__name__!r}"
                 )
-
             self._reactive_connect[name] = reactive
         self._initialize_data_bind(parent)
         return self
@@ -246,16 +244,19 @@ class DOMNode(MessagePump):
             return
         for variable_name, reactive in self._reactive_connect.items():
 
-            def setter(value: object) -> None:
-                """Set bound data."""
-                Reactive._initialize_object(self)
-                setattr(self, variable_name, value)
+            def make_setter(variable_name: str) -> Callable[[object], None]:
+                def setter(value: object) -> None:
+                    """Set bound data."""
+                    Reactive._initialize_object(self)
+                    setattr(self, variable_name, value)
+
+                return setter
 
             assert isinstance(compose_parent, DOMNode)
             self.watch(
                 compose_parent,
                 reactive.name,
-                setter,
+                make_setter(variable_name),
                 init=self._parent is not None,
             )
         self._reactive_connect = None
