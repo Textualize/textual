@@ -431,7 +431,7 @@ TextArea:light .text-area--cursor {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = None,
+        theme: str | None = "monokai",
         soft_wrap: bool = False,
         tab_behaviour: Literal["focus", "indent"] = "indent",
         show_line_numbers: bool = True,
