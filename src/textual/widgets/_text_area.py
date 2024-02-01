@@ -378,6 +378,9 @@ TextArea:light .text-area--cursor {
         self._undo_stack: list[Edit] = []
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
+        self._redo_stack: list[Edit] = []
+        """A stack for tracking edits that have been undone."""
+
         self._selecting = False
         """True if we're currently selecting text using the mouse, otherwise False."""
 
@@ -1230,7 +1233,13 @@ TextArea:light .text-area--cursor {
             original_edit.after(self)
             self._build_highlight_map()
             self.post_message(self.Changed(self))
+            self._redo_stack.append(original_edit)
             return undo_result
+
+    def redo(self) -> EditResult | None:
+        if self._redo_stack:
+            original_edit = self._redo_stack.pop()
+            return self.edit(original_edit)
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
