@@ -1,0 +1,7176 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://textual.textualize.io/how-to/package-with-hatch/">
+      
+      
+        <link rel="prev" href="../design-a-layout/">
+      
+      
+        <link rel="next" href="../render-and-compose/">
+      
+      
+        <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
+        <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
+    
+    
+      
+        <title>Package a Textual app with Hatch - Textual</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/fira_code.min.css" integrity="sha512-MbysAYimH1hH2xYzkkMHB6MqxBqfP0megxsCLknbYqHVwXTCg9IqHbk+ZP/vnhO8UEW6PaXAkKe2vQ+SWACxxA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- Fathom - beautiful, simple website analytics -->
+<script src="https://cdn.usefathom.com/script.js" data-site="TAUKXRLQ" defer></script>
+<!-- / Fathom -->
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@textualizeio">
+<meta name="twitter:creator" content="@willmcgugan">
+<meta property="og:title" content="Textual - Package a Textual app with Hatch">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://textual.textualize.io/how-to/package-with-hatch/">
+<meta property="og:site_name" content="Textual Documentation">
+<meta property="og:description" content="Textual is a TUI framework for Python, inspired by modern web development.">
+<meta property="og:image" content="https://raw.githubusercontent.com/Textualize/textual/main/imgs/textual.png">
+
+<style>
+
+    @font-face {
+        font-family: "Virgil";
+        src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Virgil.woff2");
+      }
+      @font-face {
+        font-family: "Cascadia";
+        src: url("https://unpkg.com/@excalidraw/excalidraw@0.12.0/dist/excalidraw-assets/Cascadia.woff2");
+      }
+
+</style>
+
+<script lang="js">
+window.onload = async (event) => {
+  const demos = document.querySelectorAll(".textual-web-demo");
+
+  if (demos.length){
+    await fetch("https://textual-web-demos.fly.dev/health-check/", {
+      method: 'GET',
+      mode: 'no-cors'
+    });
+    demos.forEach((element)=>{
+      const app = element.dataset.app;
+      const iframe_html = `<div class="textual-web-demo"><iframe width="100%" onload="this.parentElement.classList.add('-loaded');" src="https://textual-web.io/textualize/${app}?delay=y&fontsize=12&ping=https://textual-web-demos.fly.dev/health-check/"></iframe></div>`;
+      element.outerHTML = iframe_html;
+    });
+  }
+}
+
+</script>
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#package-a-textual-app-with-hatch" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Textual" class="md-header__button md-logo" aria-label="Textual" data-md-component="logo">
+      
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Textual
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Package a Textual app with Hatch
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="black" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var media,input,key,value,palette=__md_get("__palette");if(palette&&palette.color){"(prefers-color-scheme)"===palette.color.media&&(media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']"),palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent"));for([key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/textualize/textual/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting_started/" class="md-tabs__link">
+          
+  
+    
+  
+  Introduction
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../tutorial/" class="md-tabs__link">
+        
+  
+    
+  
+  Tutorial
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../guide/" class="md-tabs__link">
+          
+  
+    
+  
+  Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../widget_gallery/" class="md-tabs__link">
+        
+  
+    
+  
+  Widgets
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../reference/" class="md-tabs__link">
+          
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../api/" class="md-tabs__link">
+          
+  
+    
+  
+  API
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+    
+  
+  How To
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../FAQ/" class="md-tabs__link">
+        
+  
+    
+  
+  FAQ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../roadmap/" class="md-tabs__link">
+        
+  
+    
+  
+  Roadmap
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../blog/" class="md-tabs__link">
+          
+  
+    
+  
+  Blog
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Textual" class="md-nav__button md-logo" aria-label="Textual" data-md-component="logo">
+      
+  <img src="../../images/icons/logo light transparent.svg" alt="logo">
+
+    </a>
+    Textual
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/textualize/textual/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Introduction
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../help/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../tutorial/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tutorial
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../guide/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Guide
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/devtools/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Devtools
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    App Basics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/styles/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Styles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/CSS/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Textual CSS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/design/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design System
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/queries/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DOM Queries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/layout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Layout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Events and Messages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Actions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/reactivity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reactivity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/widgets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Widgets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/animation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Animation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/screens/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Screens
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/workers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Workers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/command_palette/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Command Palette
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/testing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widget_gallery/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Widgets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../reference/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../css_types/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    CSS Types
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_2" id="__nav_6_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            CSS Types
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/border/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;border&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;color&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/horizontal/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;horizontal&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/integer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;integer&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/keyline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;keyline&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/name/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;name&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/number/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;number&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/overflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;overflow&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/percentage/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;percentage&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/scalar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;scalar&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/text_align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;text-align&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/text_style/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;text-style&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../css_types/vertical/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    &lt;vertical&gt;
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_3" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../events/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Events
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_3" id="__nav_6_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Events
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/blur/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Blur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/descendant_blur/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DescendantBlur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/descendant_focus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DescendantFocus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/enter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Enter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/focus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Focus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/hide/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Hide
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/key/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Key
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/leave/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Leave
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/load/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Load
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mount/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mount
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_capture/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseCapture
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/click/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Click
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_down/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseDown
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_move/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseMove
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_release/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseRelease
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_scroll_down/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseScrollDown
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_scroll_up/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseScrollUp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/mouse_up/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MouseUp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/paste/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Paste
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/resize/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Resize
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/screen_resume/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ScreenResume
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/screen_suspend/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ScreenSuspend
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/show/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Show
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../styles/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Styles
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_4" id="__nav_6_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            Styles
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/background/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Background
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_subtitle_align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-subtitle-align
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_subtitle_background/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-subtitle-background
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_subtitle_color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-subtitle-color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_subtitle_style/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-subtitle-style
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_title_align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-title-align
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_title_background/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-title-background
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_title_color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-title-color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/border_title_style/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Border-title-style
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/box_sizing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Box-sizing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/content_align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Content-align
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/display/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Display
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/dock/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dock
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/keyline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Keyline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_19" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../styles/grid/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Grid
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_4_19" id="__nav_6_4_19_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_19_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4_19">
+            <span class="md-nav__icon md-icon"></span>
+            Grid
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/grid/column_span/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column-span
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/grid/grid_columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grid-columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/grid/grid_gutter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grid-gutter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/grid/grid_rows/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grid-rows
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/grid/grid_size/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grid-size
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/grid/row_span/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Row-span
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/height/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Height
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/layer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Layer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/layers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Layers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/layout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Layout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_24" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../styles/links/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Links
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_4_24" id="__nav_6_4_24_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_24_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4_24">
+            <span class="md-nav__icon md-icon"></span>
+            Links
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/links/link_background/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link-background
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/links/link_background_hover/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link-background-hover
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/links/link_color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link-color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/links/link_color_hover/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link-color-hover
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/links/link_style/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link-style
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/links/link_style_hover/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Link-style-hover
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/margin/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Margin
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/max_height/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Max-height
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/max_width/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Max-width
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/min_height/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Min-height
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/min_width/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Min-width
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/offset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Offset
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/opacity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Opacity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/outline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Outline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/overflow/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overflow
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/padding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Padding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_4_35" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../styles/scrollbar_colors/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Scrollbar colors
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_4_35" id="__nav_6_4_35_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_6_4_35_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_4_35">
+            <span class="md-nav__icon md-icon"></span>
+            Scrollbar colors
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_background/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-background
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_background_active/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-background-active
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_background_hover/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-background-hover
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_color_active/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-color-active
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_color_hover/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-color-hover
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_colors/scrollbar_corner_color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-corner-color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_gutter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-gutter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/scrollbar_size/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar-size
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/text_align/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text-align
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/text_opacity/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text-opacity
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/text_style/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Text-style
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/tint/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tint
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/visibility/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Visibility
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../styles/width/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Width
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../widgets/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Widgets
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6_5" id="__nav_6_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            Widgets
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/button/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Button
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/checkbox/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Checkbox
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/collapsible/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collapsible
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/content_switcher/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ContentSwitcher
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/data_table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataTable
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/digits/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Digits
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/directory_tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DirectoryTree
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/footer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Footer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/header/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Header
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/input/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Input
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/label/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Label
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/list_item/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ListItem
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/list_view/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ListView
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/loading_indicator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LoadingIndicator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/markdown_viewer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MarkdownViewer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/markdown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Markdown
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/option_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    OptionList
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/placeholder/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Placeholder
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/pretty/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pretty
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/progress_bar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ProgressBar
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/radiobutton/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RadioButton
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/radioset/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RadioSet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/rich_log/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    RichLog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/rule/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rule
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/select/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Select
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/selection_list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SelectionList
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/sparkline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sparkline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/static/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Static
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/switch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Switch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/tabbed_content/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TabbedContent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/tabs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tabs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/text_area/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TextArea
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/toast/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Toast
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../widgets/tree/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tree
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../api/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            API
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    App
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/await_complete/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Await complete
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/await_remove/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Await remove
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/binding/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Binding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cache/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cache
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/color/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Color
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/command/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Command
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/containers/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Containers
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/content_switcher/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Content switcher
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/coordinate/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Coordinate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/dom_node/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dom node
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/errors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Errors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/filter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/fuzzy_matcher/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Fuzzy matcher
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/lazy/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Lazy
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/logger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logger
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/logging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/map_geometry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Map geometry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/message_pump/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Message pump
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/message/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Message
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/on/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    On
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/pilot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pilot
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/query/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Query
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/reactive/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Reactive
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/renderables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Renderables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/screen/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Screen
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/scrollbar/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scrollbar
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/scroll_view/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scroll view
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/strip/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Strip
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/suggester/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Suggester
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/system_commands_source/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    System commands source
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/timer/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Timer
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/validation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Validation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/walk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Walk
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/widget/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Widget
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/work/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Work
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/worker/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Worker
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/worker_manager/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Worker manager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    How To
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_8" id="__nav_8_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            How To
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../center-things/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Center things
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../design-a-layout/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Design a Layout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Package a Textual app with Hatch
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Package a Textual app with Hatch
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#foreword" class="md-nav__link">
+    <span class="md-ellipsis">
+      Foreword
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example repository
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-example-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      The example app
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-hatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing Hatch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatch-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hatch new
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hatch new">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#more-on-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      More on naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#got-existing-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Got existing code?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding dependencies
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environments
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Environments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-the-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the app
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entry-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entry points
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Publishing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#managing-api-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Managing API Tokens
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publishing-new-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing new versions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-the-calculator" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing the calculator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing the calculator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipx" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipx
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../render-and-compose/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Render and compose
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../FAQ/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../roadmap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Roadmap
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../blog/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Blog
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_11" id="__nav_11_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Blog
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_2" id="__nav_11_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Archive
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_2">
+            <span class="md-nav__icon md-icon"></span>
+            Archive
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/archive/2023/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2023
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/archive/2022/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2022
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_11_3" id="__nav_11_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Categories
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_11_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11_3">
+            <span class="md-nav__icon md-icon"></span>
+            Categories
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/category/devlog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DevLog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/category/news/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    News
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/category/release/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Release
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#foreword" class="md-nav__link">
+    <span class="md-ellipsis">
+      Foreword
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#example-repository" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example repository
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-example-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      The example app
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-hatch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing Hatch
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hatch-new" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hatch new
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hatch new">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#more-on-naming" class="md-nav__link">
+    <span class="md-ellipsis">
+      More on naming
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#got-existing-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Got existing code?
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-code" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding code
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#adding-dependencies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Adding dependencies
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#environments" class="md-nav__link">
+    <span class="md-ellipsis">
+      Environments
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Environments">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#running-the-app" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running the app
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#entry-points" class="md-nav__link">
+    <span class="md-ellipsis">
+      Entry points
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#building" class="md-nav__link">
+    <span class="md-ellipsis">
+      Building
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publishing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Publishing">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#managing-api-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Managing API Tokens
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#publishing-new-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Publishing new versions
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-the-calculator" class="md-nav__link">
+    <span class="md-ellipsis">
+      Installing the calculator
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Installing the calculator">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipx" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pipx
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      Summary
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="package-a-textual-app-with-hatch">Package a Textual app with Hatch<a class="headerlink" href="#package-a-textual-app-with-hatch" title="Permanent link">&para;</a></h1>
+<p>Python apps may be distributed via <a href="https://pypi.org/">PyPI</a> so they can be installed via <code>pip</code>.
+This is known as <em>packaging</em>.
+The packaging process for Textual apps is much the same as any Python library, with the additional requirement that we can launch our app from the command line.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>An alternative to packaging your app is to turn it into a web application with <a href="https://github.com/Textualize/textual-web">textual-web</a>.</p>
+</div>
+<p>In this How To we will cover how to use <a href="https://github.com/pypa/hatch">Hatch</a> to package an example application.</p>
+<p>Hatch is a <em>build tool</em> (a command line app to assist with packaging).
+You could use any build tool to package a Textual app (such as <a href="https://python-poetry.org/">Poetry</a> for example), but Hatch is a good choice given its large feature set and ease of use.</p>
+<div class="admonition info inline end">
+<p class="admonition-title">Calculator example</p>
+<p><svg class="rich-terminal" viewBox="0 0 1238 1050.4" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-2531624297-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-2531624297-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-2531624297-r1 { fill: #e1e1e1 }
+.terminal-2531624297-r2 { fill: #c5c8c6 }
+.terminal-2531624297-r3 { fill: #e5ebf2;font-weight: bold }
+.terminal-2531624297-r4 { fill: #507bb3 }
+.terminal-2531624297-r5 { fill: #ffcf56 }
+.terminal-2531624297-r6 { fill: #004578;font-weight: bold }
+.terminal-2531624297-r7 { fill: #dde6ed;font-weight: bold }
+.terminal-2531624297-r8 { fill: #211505;font-weight: bold }
+.terminal-2531624297-r9 { fill: #001541 }
+.terminal-2531624297-r10 { fill: #b86b00 }
+.terminal-2531624297-r11 { fill: #454a50 }
+.terminal-2531624297-r12 { fill: #e2e3e3;font-weight: bold }
+.terminal-2531624297-r13 { fill: #000000 }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-2531624297-clip-terminal">
+      <rect x="0" y="0" width="1219.0" height="999.4" />
+    </clipPath>
+    <clipPath id="terminal-2531624297-line-0">
+    <rect x="0" y="1.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-1">
+    <rect x="0" y="25.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-2">
+    <rect x="0" y="50.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-3">
+    <rect x="0" y="74.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-4">
+    <rect x="0" y="99.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-5">
+    <rect x="0" y="123.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-6">
+    <rect x="0" y="147.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-7">
+    <rect x="0" y="172.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-8">
+    <rect x="0" y="196.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-9">
+    <rect x="0" y="221.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-10">
+    <rect x="0" y="245.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-11">
+    <rect x="0" y="269.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-12">
+    <rect x="0" y="294.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-13">
+    <rect x="0" y="318.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-14">
+    <rect x="0" y="343.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-15">
+    <rect x="0" y="367.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-16">
+    <rect x="0" y="391.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-17">
+    <rect x="0" y="416.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-18">
+    <rect x="0" y="440.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-19">
+    <rect x="0" y="465.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-20">
+    <rect x="0" y="489.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-21">
+    <rect x="0" y="513.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-22">
+    <rect x="0" y="538.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-23">
+    <rect x="0" y="562.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-24">
+    <rect x="0" y="587.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-25">
+    <rect x="0" y="611.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-26">
+    <rect x="0" y="635.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-27">
+    <rect x="0" y="660.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-28">
+    <rect x="0" y="684.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-29">
+    <rect x="0" y="709.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-30">
+    <rect x="0" y="733.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-31">
+    <rect x="0" y="757.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-32">
+    <rect x="0" y="782.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-33">
+    <rect x="0" y="806.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-34">
+    <rect x="0" y="831.1" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-35">
+    <rect x="0" y="855.5" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-36">
+    <rect x="0" y="879.9" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-37">
+    <rect x="0" y="904.3" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-38">
+    <rect x="0" y="928.7" width="1220" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2531624297-line-39">
+    <rect x="0" y="953.1" width="1220" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="1236" height="1048.4" rx="8"/><text class="terminal-2531624297-title" fill="#c5c8c6" text-anchor="middle" x="618" y="27">CalculatorApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2531624297-clip-terminal)">
+    <rect fill="#1e1e1e" x="0" y="1.5" width="1220" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="25.9" width="1146.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="50.3" width="1146.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="50.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="74.7" width="1146.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="74.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="99.1" width="915" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="951.6" y="99.1" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="99.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="123.5" width="915" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="951.6" y="123.5" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="147.9" width="915" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="951.6" y="147.9" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="147.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="172.3" width="1146.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="172.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="196.7" width="1146.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="196.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="196.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="24.4" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="36.6" y="221.1" width="1146.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3b689f" x="1183.4" y="221.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="221.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="245.5" width="1171.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="245.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="24.4" y="269.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="317.2" y="269.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="622.2" y="269.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="269.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="269.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="24.4" y="294.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="317.2" y="294.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="622.2" y="294.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="294.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="294.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="24.4" y="318.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#dde6ed" x="134.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#dde6ed" x="146.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#dde6ed" x="158.6" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="170.8" y="318.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="317.2" y="318.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="427" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="439.2" y="318.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="475.8" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="488" y="318.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="622.2" y="318.7" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="732" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="744.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="756.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="768.6" y="318.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="318.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1037" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1049.2" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1061.4" y="318.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1073.6" y="318.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="318.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="24.4" y="343.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="317.2" y="343.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="622.2" y="343.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="343.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="343.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="24.4" y="367.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="317.2" y="367.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#004578" x="622.2" y="367.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="367.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="367.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="391.9" width="1171.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="391.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="416.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="416.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="416.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="416.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="416.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="440.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="440.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="440.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="440.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="440.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="465.1" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="170.8" y="465.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="465.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="451.4" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="463.6" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="475.8" y="465.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="465.1" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="732" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="744.2" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="756.4" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="768.6" y="465.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="465.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1037" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1049.2" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1061.4" y="465.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1073.6" y="465.1" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="465.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="489.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="489.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="489.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="489.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="489.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="513.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="513.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="513.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="513.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="513.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="538.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="538.3" width="1171.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="538.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="562.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="562.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="562.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="562.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="562.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="587.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="587.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="587.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="587.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="587.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="587.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="587.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="587.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="587.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="611.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="611.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="170.8" y="611.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="611.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="611.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="451.4" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="463.6" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="475.8" y="611.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="611.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="611.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="732" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="744.2" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="756.4" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="768.6" y="611.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="611.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="611.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1037" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1049.2" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1061.4" y="611.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1073.6" y="611.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="611.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="635.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="635.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="635.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="635.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="635.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="635.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="635.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="635.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="635.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="660.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="660.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="660.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="660.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="660.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="660.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="660.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="660.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="660.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="684.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="684.7" width="1171.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="684.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="709.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="709.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="709.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="709.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="709.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="709.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="709.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="709.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="709.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="733.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="733.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="733.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="733.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="733.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="733.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="733.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="733.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="733.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="757.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="757.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="134.2" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="146.4" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="158.6" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="170.8" y="757.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="757.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="757.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="439.2" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="451.4" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="463.6" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="475.8" y="757.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="757.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="757.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="732" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="744.2" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="756.4" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="768.6" y="757.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="757.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="757.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1037" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1049.2" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1061.4" y="757.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1073.6" y="757.9" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="757.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="782.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="782.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="782.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="782.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="782.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="782.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="782.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="782.3" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="782.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="806.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="806.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="292.8" y="806.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="806.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="806.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="806.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="806.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="806.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="806.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="831.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="831.1" width="1171.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="831.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="855.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="855.5" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="855.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="855.5" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="855.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="855.5" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="855.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="879.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="879.9" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="879.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="879.9" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="879.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="879.9" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="879.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="904.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="904.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="292.8" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="305" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="317.2" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="329.4" y="904.3" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="904.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="904.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="732" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="744.2" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="756.4" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="768.6" y="904.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="904.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="904.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1037" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1049.2" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1061.4" y="904.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="1073.6" y="904.3" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="904.3" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="928.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="928.7" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="928.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="928.7" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="928.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="928.7" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="928.7" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="953.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="24.4" y="953.1" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="597.8" y="953.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#24292f" x="622.2" y="953.1" width="268.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="890.6" y="953.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#fea62b" x="915" y="953.1" width="280.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="1195.6" y="953.1" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="0" y="977.5" width="1220" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2531624297-matrix">
+    <text class="terminal-2531624297-r2" x="1220" y="20" textLength="12.2" clip-path="url(#terminal-2531624297-line-0)">
+</text><text class="terminal-2531624297-r2" x="1220" y="44.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-1)">
+</text><text class="terminal-2531624297-r2" x="1220" y="68.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-2)">
+</text><text class="terminal-2531624297-r2" x="1220" y="93.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-3)">
+</text><text class="terminal-2531624297-r3" x="951.6" y="117.6" textLength="231.8" clip-path="url(#terminal-2531624297-line-4)">╺━┓&#160;&#160;┓&#160;╻&#160;╻┏━╸┏━┓╺━┓</text><text class="terminal-2531624297-r2" x="1220" y="117.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-4)">
+</text><text class="terminal-2531624297-r3" x="951.6" y="142" textLength="231.8" clip-path="url(#terminal-2531624297-line-5)">&#160;━┫&#160;&#160;┃&#160;┗━┫┗━┓┗━┫┏━┛</text><text class="terminal-2531624297-r2" x="1220" y="142" textLength="12.2" clip-path="url(#terminal-2531624297-line-5)">
+</text><text class="terminal-2531624297-r3" x="951.6" y="166.4" textLength="231.8" clip-path="url(#terminal-2531624297-line-6)">╺━┛.╺┻╸&#160;&#160;╹╺━┛╺━┛┗━╸</text><text class="terminal-2531624297-r2" x="1220" y="166.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-6)">
+</text><text class="terminal-2531624297-r2" x="1220" y="190.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-7)">
+</text><text class="terminal-2531624297-r2" x="1220" y="215.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-8)">
+</text><text class="terminal-2531624297-r2" x="1220" y="239.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-9)">
+</text><text class="terminal-2531624297-r2" x="1220" y="264" textLength="12.2" clip-path="url(#terminal-2531624297-line-10)">
+</text><text class="terminal-2531624297-r4" x="24.4" y="288.4" textLength="268.4" clip-path="url(#terminal-2531624297-line-11)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r4" x="317.2" y="288.4" textLength="280.6" clip-path="url(#terminal-2531624297-line-11)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r4" x="622.2" y="288.4" textLength="268.4" clip-path="url(#terminal-2531624297-line-11)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r5" x="915" y="288.4" textLength="280.6" clip-path="url(#terminal-2531624297-line-11)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r2" x="1220" y="288.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-11)">
+</text><text class="terminal-2531624297-r2" x="1220" y="312.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-12)">
+</text><text class="terminal-2531624297-r6" x="146.4" y="337.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-13)">C</text><text class="terminal-2531624297-r7" x="439.2" y="337.2" textLength="36.6" clip-path="url(#terminal-2531624297-line-13)">+/-</text><text class="terminal-2531624297-r7" x="744.2" y="337.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-13)">%</text><text class="terminal-2531624297-r8" x="1049.2" y="337.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-13)">÷</text><text class="terminal-2531624297-r2" x="1220" y="337.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-13)">
+</text><text class="terminal-2531624297-r2" x="1220" y="361.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-14)">
+</text><text class="terminal-2531624297-r9" x="24.4" y="386" textLength="268.4" clip-path="url(#terminal-2531624297-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r9" x="317.2" y="386" textLength="280.6" clip-path="url(#terminal-2531624297-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r9" x="622.2" y="386" textLength="268.4" clip-path="url(#terminal-2531624297-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r10" x="915" y="386" textLength="280.6" clip-path="url(#terminal-2531624297-line-15)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r2" x="1220" y="386" textLength="12.2" clip-path="url(#terminal-2531624297-line-15)">
+</text><text class="terminal-2531624297-r2" x="1220" y="410.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-16)">
+</text><text class="terminal-2531624297-r11" x="24.4" y="434.8" textLength="268.4" clip-path="url(#terminal-2531624297-line-17)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="317.2" y="434.8" textLength="280.6" clip-path="url(#terminal-2531624297-line-17)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="622.2" y="434.8" textLength="268.4" clip-path="url(#terminal-2531624297-line-17)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r5" x="915" y="434.8" textLength="280.6" clip-path="url(#terminal-2531624297-line-17)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r2" x="1220" y="434.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-17)">
+</text><text class="terminal-2531624297-r2" x="1220" y="459.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-18)">
+</text><text class="terminal-2531624297-r12" x="146.4" y="483.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-19)">7</text><text class="terminal-2531624297-r12" x="451.4" y="483.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-19)">8</text><text class="terminal-2531624297-r12" x="744.2" y="483.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-19)">9</text><text class="terminal-2531624297-r8" x="1049.2" y="483.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-19)">×</text><text class="terminal-2531624297-r2" x="1220" y="483.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-19)">
+</text><text class="terminal-2531624297-r2" x="1220" y="508" textLength="12.2" clip-path="url(#terminal-2531624297-line-20)">
+</text><text class="terminal-2531624297-r13" x="24.4" y="532.4" textLength="268.4" clip-path="url(#terminal-2531624297-line-21)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="317.2" y="532.4" textLength="280.6" clip-path="url(#terminal-2531624297-line-21)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="622.2" y="532.4" textLength="268.4" clip-path="url(#terminal-2531624297-line-21)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r10" x="915" y="532.4" textLength="280.6" clip-path="url(#terminal-2531624297-line-21)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r2" x="1220" y="532.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-21)">
+</text><text class="terminal-2531624297-r2" x="1220" y="556.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-22)">
+</text><text class="terminal-2531624297-r11" x="24.4" y="581.2" textLength="268.4" clip-path="url(#terminal-2531624297-line-23)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="317.2" y="581.2" textLength="280.6" clip-path="url(#terminal-2531624297-line-23)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="622.2" y="581.2" textLength="268.4" clip-path="url(#terminal-2531624297-line-23)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r5" x="915" y="581.2" textLength="280.6" clip-path="url(#terminal-2531624297-line-23)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r2" x="1220" y="581.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-23)">
+</text><text class="terminal-2531624297-r2" x="1220" y="605.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-24)">
+</text><text class="terminal-2531624297-r12" x="146.4" y="630" textLength="12.2" clip-path="url(#terminal-2531624297-line-25)">4</text><text class="terminal-2531624297-r12" x="451.4" y="630" textLength="12.2" clip-path="url(#terminal-2531624297-line-25)">5</text><text class="terminal-2531624297-r12" x="744.2" y="630" textLength="12.2" clip-path="url(#terminal-2531624297-line-25)">6</text><text class="terminal-2531624297-r8" x="1049.2" y="630" textLength="12.2" clip-path="url(#terminal-2531624297-line-25)">-</text><text class="terminal-2531624297-r2" x="1220" y="630" textLength="12.2" clip-path="url(#terminal-2531624297-line-25)">
+</text><text class="terminal-2531624297-r2" x="1220" y="654.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-26)">
+</text><text class="terminal-2531624297-r13" x="24.4" y="678.8" textLength="268.4" clip-path="url(#terminal-2531624297-line-27)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="317.2" y="678.8" textLength="280.6" clip-path="url(#terminal-2531624297-line-27)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="622.2" y="678.8" textLength="268.4" clip-path="url(#terminal-2531624297-line-27)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r10" x="915" y="678.8" textLength="280.6" clip-path="url(#terminal-2531624297-line-27)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r2" x="1220" y="678.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-27)">
+</text><text class="terminal-2531624297-r2" x="1220" y="703.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-28)">
+</text><text class="terminal-2531624297-r11" x="24.4" y="727.6" textLength="268.4" clip-path="url(#terminal-2531624297-line-29)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="317.2" y="727.6" textLength="280.6" clip-path="url(#terminal-2531624297-line-29)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="622.2" y="727.6" textLength="268.4" clip-path="url(#terminal-2531624297-line-29)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r5" x="915" y="727.6" textLength="280.6" clip-path="url(#terminal-2531624297-line-29)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r2" x="1220" y="727.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-29)">
+</text><text class="terminal-2531624297-r2" x="1220" y="752" textLength="12.2" clip-path="url(#terminal-2531624297-line-30)">
+</text><text class="terminal-2531624297-r12" x="146.4" y="776.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-31)">1</text><text class="terminal-2531624297-r12" x="451.4" y="776.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-31)">2</text><text class="terminal-2531624297-r12" x="744.2" y="776.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-31)">3</text><text class="terminal-2531624297-r8" x="1049.2" y="776.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-31)">+</text><text class="terminal-2531624297-r2" x="1220" y="776.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-31)">
+</text><text class="terminal-2531624297-r2" x="1220" y="800.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-32)">
+</text><text class="terminal-2531624297-r13" x="24.4" y="825.2" textLength="268.4" clip-path="url(#terminal-2531624297-line-33)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="317.2" y="825.2" textLength="280.6" clip-path="url(#terminal-2531624297-line-33)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="622.2" y="825.2" textLength="268.4" clip-path="url(#terminal-2531624297-line-33)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r10" x="915" y="825.2" textLength="280.6" clip-path="url(#terminal-2531624297-line-33)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r2" x="1220" y="825.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-33)">
+</text><text class="terminal-2531624297-r2" x="1220" y="849.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-34)">
+</text><text class="terminal-2531624297-r11" x="24.4" y="874" textLength="573.4" clip-path="url(#terminal-2531624297-line-35)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r11" x="622.2" y="874" textLength="268.4" clip-path="url(#terminal-2531624297-line-35)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r5" x="915" y="874" textLength="280.6" clip-path="url(#terminal-2531624297-line-35)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2531624297-r2" x="1220" y="874" textLength="12.2" clip-path="url(#terminal-2531624297-line-35)">
+</text><text class="terminal-2531624297-r2" x="1220" y="898.4" textLength="12.2" clip-path="url(#terminal-2531624297-line-36)">
+</text><text class="terminal-2531624297-r12" x="305" y="922.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-37)">0</text><text class="terminal-2531624297-r12" x="744.2" y="922.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-37)">.</text><text class="terminal-2531624297-r8" x="1049.2" y="922.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-37)">=</text><text class="terminal-2531624297-r2" x="1220" y="922.8" textLength="12.2" clip-path="url(#terminal-2531624297-line-37)">
+</text><text class="terminal-2531624297-r2" x="1220" y="947.2" textLength="12.2" clip-path="url(#terminal-2531624297-line-38)">
+</text><text class="terminal-2531624297-r13" x="24.4" y="971.6" textLength="573.4" clip-path="url(#terminal-2531624297-line-39)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r13" x="622.2" y="971.6" textLength="268.4" clip-path="url(#terminal-2531624297-line-39)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r10" x="915" y="971.6" textLength="280.6" clip-path="url(#terminal-2531624297-line-39)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2531624297-r2" x="1220" y="971.6" textLength="12.2" clip-path="url(#terminal-2531624297-line-39)">
+</text>
+    </g>
+    </g>
+</svg>
+</p>
+<p>This example is <a href="https://github.com/Textualize/textual/blob/main/examples/calculator.py"><code>calculator.py</code></a> taken from the examples directory in the Textual repository.</p>
+</div>
+<h2 id="foreword">Foreword<a class="headerlink" href="#foreword" title="Permanent link">&para;</a></h2>
+<p>Packaging with Python can be a little intimidating if you haven't tackled it before.
+But it's not all that complicated. 
+When you have been through it once or twice, you should find it fairly straightforward.</p>
+<h2 id="example-repository">Example repository<a class="headerlink" href="#example-repository" title="Permanent link">&para;</a></h2>
+<p>See the <a href="https://github.com/Textualize/textual-calculator-hatch">textual-calculator-hatch</a> repository for the project created in this How To.</p>
+<h2 id="the-example-app">The example app<a class="headerlink" href="#the-example-app" title="Permanent link">&para;</a></h2>
+<p>To demonstrate packaging we are going to take the calculator example from the examples directory, and publish it to PyPI.
+The end goal is to allow a user to install it with pip:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>textual-calculator
+</code></pre></div>
+<p>Then launch the app from the command line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>calculator
+</code></pre></div>
+<h2 id="installing-hatch">Installing Hatch<a class="headerlink" href="#installing-hatch" title="Permanent link">&para;</a></h2>
+<p>There are a few ways to install Hatch.
+See the <a href="https://hatch.pypa.io/latest/install/">official docs on installation</a> for the best method for your operating system.</p>
+<p>Once installed, you should have the <code>hatch</code> command available on the command line.
+Run the following to check Hatch was installed correctly:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>hatch
+</code></pre></div>
+<h2 id="hatch-new">Hatch new<a class="headerlink" href="#hatch-new" title="Permanent link">&para;</a></h2>
+<p>Hatch can create an initial directory structure and files with the <code>new</code> <em>subcommand</em>.
+Enter <code>hatch new</code> followed by the name of your project.
+For the calculator example, the name will be "textual calculator":</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>hatch new <span class="s2">&quot;textual calculator&quot;</span>
+</code></pre></div>
+<p>This will create the following directory structure:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>textual-calculator
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>├── LICENSE.txt
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>├── README.md
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>├── pyproject.toml
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>├── src
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>│   └── textual_calculator
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>│       ├── __about__.py
+<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>│       └── __init__.py
+<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>└── tests
+<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>    └── __init__.py
+</code></pre></div>
+<p>This follows a well established convention when packaging Python code, and will create the following files:</p>
+<ul>
+<li><code>LICENSE.txt</code> contains the license you want to distribute your code under.</li>
+<li><code>README.md</code> is a markdown file containing information about your project, which will be displayed in PyPI and Github (if you use it). You can edit this with information about your app and how to use it.</li>
+<li><code>pyproject.toml</code> is a <a href="https://en.wikipedia.org/wiki/TOML">TOML</a> file which contains <em>metadata</em> (additional information) about your project and how to package it. This is a Python standard. This file may be edited manually or by a build tool (such as Hatch).</li>
+<li><code>src/textual_calculator/__about__.py</code> contains the version number of your app. You should update this when you release new versions.</li>
+<li><code>src/textual_calculator/__init__.py</code>  and <code>tests/__init__py</code> indicate the directory they are within contains Python code (these files are often empty).</li>
+</ul>
+<p>In the top level is a directory called <code>src</code>.
+This should contain a directory named after your project, and will be the name your code can be imported from.
+In our example, this directory is <code>textual_calculator</code> so we can do <code>import textual_calculator</code> in Python code.</p>
+<p>Additionally, there is a <code>tests</code> directory where you can add any <a href="../../guide/testing/">test</a> code.</p>
+<h3 id="more-on-naming">More on naming<a class="headerlink" href="#more-on-naming" title="Permanent link">&para;</a></h3>
+<p>Note how Hatch replaced the space in the project name with a hyphen (i.e. <code>textual-calculator</code>), but the directory in <code>src</code> with an underscore (i.e. <code>textual_calculator</code>). This is because the directory in <code>src</code> contains the Python module, and a hyphen is not legal in a Python import. The top-level directory doesn't have this restriction and uses a hyphen, which is more typical for a directory name.</p>
+<p>Bear this in mind if your project name contains spaces.</p>
+<h3 id="got-existing-code">Got existing code?<a class="headerlink" href="#got-existing-code" title="Permanent link">&para;</a></h3>
+<p>The <code>hatch new</code> command assumes you are starting from scratch.
+If you have existing code you would like to package, navigate to your directory and run the following command (replace <code>&lt;YOUR ROJECT NAME&gt;</code> with the name of your project):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>hatch new --init &lt;YOUR PROJECT NAME&gt;
+</code></pre></div>
+<p>This will generate a <code>pyproject.toml</code> in the current directory.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It will simplify things if your code follows the directory structure convention above. This may require that you move your files -- you only need to do this once!</p>
+</div>
+<h2 id="adding-code">Adding code<a class="headerlink" href="#adding-code" title="Permanent link">&para;</a></h2>
+<p>Your code should reside inside <code>src/&lt;PROJECT NAME&gt;</code>.
+For the calculator example we will copy <code>calculator.py</code> and <code>calculator.tcss</code> into the <code>src/textual_calculator</code> directory, so our directory will look like the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>textual-calculator
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>├── LICENSE.txt
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>├── README.md
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>├── pyproject.toml
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>├── src
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>│   └── textual_calculator
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>│       ├── __about__.py
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>│       ├── __init__.py
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>│       ├── calculator.py
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>│       └── calculator.tcss
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>└── tests
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    └── __init__.py
+</code></pre></div>
+<h2 id="adding-dependencies">Adding dependencies<a class="headerlink" href="#adding-dependencies" title="Permanent link">&para;</a></h2>
+<p>Your Textual app will likely depend on other Python libraries (at the very least Textual itself).
+We need to list these in <code>pyproject.toml</code> to ensure that these <em>dependencies</em> are installed alongside your app.</p>
+<p>In <code>pyproject.toml</code> there should be a section beginning with <code>[project]</code>, which will look something like the following:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">[project]</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;textual-calculator&quot;</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">dynamic</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="n">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;A example app&#39;</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="n">readme</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;README.md&quot;</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">requires-python</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&gt;=3.8&quot;</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">license</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;MIT&quot;</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">keywords</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">authors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;Will McGugan&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="s2">&quot;redacted@textualize.io&quot;</span><span class="w"> </span><span class="p">},</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="p">]</span>
+<a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="n">classifiers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a><span class="w">  </span><span class="s2">&quot;Development Status :: 4 - Beta&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: 3.8&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: 3.9&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: 3.10&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: 3.11&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: 3.12&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: Implementation :: CPython&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">  </span><span class="s2">&quot;Programming Language :: Python :: Implementation :: PyPy&quot;</span><span class="p">,</span>
+<a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="p">]</span>
+<a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[]</span>
+</code></pre></div>
+<p>We are interested in the <code>dependencies</code> value, which should list the app's dependencies.
+If you want a particular version of a project you can add <code>==</code> followed by the version.</p>
+<p>For the calculator, the only dependency is Textual.
+We can add Textual by modifying the following line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">dependencies</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;textual==0.47.1&quot;</span><span class="p">]</span>
+</code></pre></div>
+<p>At the time of writing, the latest Textual is <code>0.47.1</code>.
+The entry in <code>dependencies</code> will ensure we get that particular version, even when newer versions are released.</p>
+<p>See the Hatch docs for more information on specifying <a href="https://hatch.pypa.io/latest/config/dependency/">dependencies</a>.</p>
+<h2 id="environments">Environments<a class="headerlink" href="#environments" title="Permanent link">&para;</a></h2>
+<p>A common problem when working with Python code is managing multiple projects with different dependencies.
+For instance, if we had another app that used version <code>0.40.0</code> of Textual, it <em>may</em> break if we installed version <code>0.47.1</code>.</p>
+<p>The standard way of solving this is with <em>virtual environments</em> (or <em>venvs</em>), which allow each project to have its own set of dependencies.
+Hatch can create virtual environments for us, and makes working with them very easy.</p>
+<p>To create a new virtual environment, navigate to the directory with the <code>pyproject.toml</code> file and run the following command (this is only require once, as the virtual environment will persist):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>hatch<span class="w"> </span>env<span class="w"> </span>create
+</code></pre></div>
+<p>Then run the following command to activate the virtual environment:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>hatch<span class="w"> </span>shell
+</code></pre></div>
+<p>If you run <code>python</code> now, it will have our app and its dependencies available for import:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$ python
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>Python 3.11.1 (main, Jan  1 2023, 10:28:48) [Clang 14.0.0 (clang-1400.0.29.202)] on darwin
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>&gt;&gt;&gt; from textual_calculator import calculator
+</code></pre></div>
+<h3 id="running-the-app">Running the app<a class="headerlink" href="#running-the-app" title="Permanent link">&para;</a></h3>
+<p>You can launch the calculator from the command line with the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>python<span class="w"> </span>-m<span class="w"> </span>textual_calculator.calculator
+</code></pre></div>
+<p>The <code>-m</code> switch tells Python to import the module and run it.</p>
+<p>Although you can run your app this way (and it is fine for development), it's not ideal for sharing.
+It would be preferable to have a dedicated command to launch the app, so the user can easily run it from the command line.
+To do that, we will need to add an <em>entry point</em> to pyproject.toml</p>
+<h2 id="entry-points">Entry points<a class="headerlink" href="#entry-points" title="Permanent link">&para;</a></h2>
+<p>An entry point is a function in your project that can be run from the command line.
+For our calculator example, we first need to create a function that will run the app.
+Add the following file to the <code>src/textual_calculator</code> folder, and name it <code>entry_points.py</code>:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">from</span> <span class="nn">textual_calculator.calculator</span> <span class="kn">import</span> <span class="n">CalculatorApp</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a><span class="k">def</span> <span class="nf">calculator</span><span class="p">():</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">CalculatorApp</span><span class="p">()</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you already have a function that runs your app, you may not need an <code>entry_points.py</code> file.</p>
+</div>
+<p>Then edit <code>pyproject.toml</code> to add the following section:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="k">[project.scripts]</span>
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="n">calculator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;textual_calculator.entry_points:calculator&quot;</span>
+</code></pre></div>
+<p>Each entry in the <code>[project.scripts]</code> section (there can be more than one) maps a command on to an import and function name.
+In the second line above, before the <code>=</code> character, <code>calculator</code> is the name of the command.
+The string after the <code>=</code> character contains the name of the import (<code>textual_calculator.entry_points</code>), followed by a colon (<code>:</code>), and then the name of the function (also called <code>calculator</code>).</p>
+<p>Specifying an entry point like this is equivalent to doing the following from the Python REPL:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>&gt;&gt;&gt; import textual_calculator.entry_points
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>&gt;&gt;&gt; textual_calculator.entry_points.calculator()
+</code></pre></div>
+<p>To add the <code>calculator</code> command once you have edited <code>pyproject.toml</code>, run the following from the command line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</code></pre></div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>You will have no doubt used <code>pip</code> before, but perhaps not with <code>-e .</code>.
+The addition of <code>-e</code> installs the project in <em>editable</em> mode which means pip won't copy the <code>.py</code> files code anywhere, the dot (<code>.</code>) indicates were installing the project in the current directory. </p>
+</div>
+<p>Now you can launch the calculator from the command line as follows:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>calculator
+</code></pre></div>
+<h2 id="building">Building<a class="headerlink" href="#building" title="Permanent link">&para;</a></h2>
+<p>Building produces archive files that contain your code.
+When you install a package via pip or other tool, it will download one of these archives.</p>
+<p>To build your project with Hatch, change to the directory containing your <code>pyproject.toml</code> and run the <code>hatch build</code> subcommand:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>cd textual-calculator
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>hatch build
+</code></pre></div>
+<p>After a moment, you should find that Hatch has created a <code>dist</code> (distribution) folder, which contains the project archive files.
+You don't typically need to use these files directly, but feel free to have a look at the directory contents.</p>
+<div class="admonition note">
+<p class="admonition-title">Packaging TCSS and other files</p>
+<p>Hatch will typically include all the files needed by your project, i.e. the <code>.py</code> files.
+It will also include any Textual CSS (<code>.tcss</code>) files in the project directory.
+Not all build tools will include files other than <code>.py</code>; if you are using another build tool, you may have to consult the documentation for how to add the Textual CSS files.</p>
+</div>
+<h2 id="publishing">Publishing<a class="headerlink" href="#publishing" title="Permanent link">&para;</a></h2>
+<p>After your project has been successfully built you are ready to publish it to PyPI.</p>
+<p>If you don't have a PyPI account, you can <a href="https://pypi.org/account/register/">create one now</a>.
+Be sure to follow the instructions to validate your email and set up 2FA (Two Factor Authentication).</p>
+<p>Once you have an account, login to PyPI and go to the Account Settings tab.
+Scroll down and click the "Add API token" button.
+In the "Create API Token" form, create a token with name "Uploads" and select the "Entire project" scope, then click the "Create token" button.</p>
+<p>Copy this API token (long string of random looking characters) somewhere safe.
+This API token is how PyPI authenticates uploads are for your account, so you should never share your API token or upload it to the internet.</p>
+<p>Run the following command (replacing <code>&lt;YOUR API TOKEN&gt;</code> with the text generated in the previous step):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a>hatch<span class="w"> </span>publish<span class="w"> </span>-u<span class="w"> </span>__token__<span class="w"> </span>-a<span class="w"> </span>&lt;YOUR<span class="w"> </span>API<span class="w"> </span>TOKEN&gt;
+</code></pre></div>
+<p>Hatch will upload the distribution files, and you should see a PyPI URL in the terminal.</p>
+<h3 id="managing-api-tokens">Managing API Tokens<a class="headerlink" href="#managing-api-tokens" title="Permanent link">&para;</a></h3>
+<p>Creating an API token with the "all projects" permission is required for the first upload.
+You may want to generate a new API token with permissions to upload a single project when you upload a new version of your app (and delete the old one).
+This way if your token is leaked, it will only impact the one project.</p>
+<h3 id="publishing-new-versions">Publishing new versions<a class="headerlink" href="#publishing-new-versions" title="Permanent link">&para;</a></h3>
+<p>If you have made changes to your app, and you want to publish the updates, you will need to update the <code>version</code> value in the <code>__about__.py</code> file, then repeat the build and publish steps.</p>
+<div class="admonition tip">
+<p class="admonition-title">Managing version numbers</p>
+<p>See <a href="https://semver.org/">Semver</a> for a popular versioning system (used by Textual itself).</p>
+</div>
+<h2 id="installing-the-calculator">Installing the calculator<a class="headerlink" href="#installing-the-calculator" title="Permanent link">&para;</a></h2>
+<p>From the user's point of view, they only need run the following command to install the calculator:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>pip<span class="w"> </span>install<span class="w"> </span>textual_calculator
+</code></pre></div>
+<p>They will then be able to launch the calculator with the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a>calculator
+</code></pre></div>
+<h3 id="pipx">Pipx<a class="headerlink" href="#pipx" title="Permanent link">&para;</a></h3>
+<p>A downside of installing apps this way is that unless the user has created a <a href="https://docs.python.org/3/library/venv.html">virtual environment</a>, they may find it breaks other packages with conflicting dependencies.</p>
+<p>A good solution to this issue is <a href="https://github.com/pypa/pipx">pipx</a> which automatically creates virtual environments that won't conflict with any other Python commands.
+Once PipX is installed, you can advise users to install your app with the following command:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a>pipx<span class="w"> </span>install<span class="w"> </span>textual_calculator
+</code></pre></div>
+<p>This will install the calculator and the <code>textual</code> dependency as before, but without the potential of dependency conflicts.</p>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Use a build system, such as <a href="https://hatch.pypa.io/latest/">Hatch</a>.</li>
+<li>Initialize your project with <code>hatch new</code> (or equivalent).</li>
+<li>Write a function to run your app, if there isn't one already.</li>
+<li>Add your dependencies and entry points to <code>pyproject.toml</code>.</li>
+<li>Build your app with <code>hatch build</code>.</li>
+<li>Publish your app with <code>hatch publish</code>.</li>
+</ol>
+<hr />
+<p>If you have any problems packaging Textual apps, we are here to <a href="../../help/">help</a>!</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../design-a-layout/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Design a Layout">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Design a Layout
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../render-and-compose/" class="md-footer__link md-footer__link--next" aria-label="Next: Render and compose">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Render and compose
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Textualize, Inc
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://twitter.com/textualizeio" target="_blank" rel="noopener" title="textualizeio on Twitter" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/textualize/textual/" target="_blank" rel="noopener" title="Textual on Github" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://discord.gg/Enf6Z3qhVr" target="_blank" rel="noopener" title="Textual Discord server" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
+      
+    
+  </body>
+</html>

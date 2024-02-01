@@ -21,7 +21,7 @@
         <link rel="alternate" type="application/rss+xml" title="RSS feed of updated content" href="../../feed_rss_updated.xml">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.1">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.6">
     
     
       
@@ -29,7 +29,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.45e1311d.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -4811,6 +4811,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -4929,6 +4931,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Binding
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/cache/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Cache
   </span>
   
 
@@ -5720,6 +5743,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -5796,6 +5821,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Design a Layout
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/package-with-hatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Package a Textual app with Hatch
   </span>
   
 
@@ -6803,9 +6849,9 @@ This scheme allows the user to quickly get to a particular command with a minimu
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Static</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="k">class</span> <span class="nc">PythonFileCommands</span><span class="p">(</span><span class="n">Provider</span><span class="p">):</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A command provider to open a Python file in the current working directory.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="hll">
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="hll"><span class="k">class</span> <span class="nc">PythonFileCommands</span><span class="p">(</span><span class="n">Provider</span><span class="p">):</span>
+</span><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="hll"><span class="w">    </span><span class="sd">&quot;&quot;&quot;A command provider to open a Python file in the current working directory.&quot;&quot;&quot;</span>
+</span><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="hll">
 </span><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="hll">    <span class="k">def</span> <span class="nf">read_files</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
 </span><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="hll"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of Python files in the current working directory.&quot;&quot;&quot;</span>
 </span><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="hll">        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;./&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">))</span>
@@ -6832,13 +6878,13 @@ This scheme allows the user to quickly get to a particular command with a minimu
 </span><a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="hll">                    <span class="n">partial</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">open_file</span><span class="p">,</span> <span class="n">path</span><span class="p">),</span>
 </span><a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="hll">                    <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Open this file in the viewer&quot;</span><span class="p">,</span>
 </span><a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="hll">                <span class="p">)</span>
-</span><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="hll">
-</span><a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="hll">
-</span><a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="k">class</span> <span class="nc">ViewerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+</span><a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="k">class</span> <span class="nc">ViewerApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Demonstrate a command source.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a><span class="hll">
-</span><a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>    <span class="n">COMMANDS</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">COMMANDS</span> <span class="o">|</span> <span class="p">{</span><span class="n">PythonFileCommands</span><span class="p">}</span>  <span class="c1"># (6)!</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="hll">    <span class="n">COMMANDS</span> <span class="o">=</span> <span class="n">App</span><span class="o">.</span><span class="n">COMMANDS</span> <span class="o">|</span> <span class="p">{</span><span class="n">PythonFileCommands</span><span class="p">}</span>  <span class="c1"># (6)!</span>
+</span><a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>
 <a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
 <a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>        <span class="k">with</span> <span class="n">VerticalScroll</span><span class="p">():</span>
 <a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>            <span class="k">yield</span> <span class="n">Static</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -7024,10 +7070,10 @@ If you would prefer not to have the command palette, you can set <code>ENABLE_CO
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.indexes", "navigation.tabs.sticky", "navigation.footer", "content.code.annotate", "content.code.copy"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      <script src="../../assets/javascripts/bundle.e1c3ead8.min.js"></script>
       
     
   </body>
