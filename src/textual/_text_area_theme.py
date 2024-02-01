@@ -187,9 +187,9 @@ class TextAreaTheme:
         """Get the default syntax theme.
 
         Returns:
-            The default TextAreaTheme (probably "monokai").
+            The default TextAreaTheme (probably "css").
         """
-        return _MONOKAI
+        return _CSS_THEME
 
 
 _MONOKAI = TextAreaTheme(
