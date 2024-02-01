@@ -375,7 +375,7 @@ TextArea:light .text-area--cursor {
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-        self._undo_stack: list[Undoable] = []
+        self._undo_stack: list[Edit] = []
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
         self._selecting = False
@@ -1209,9 +1209,28 @@ TextArea:light .text-area--cursor {
 
     def undo(self) -> EditResult | None:
         """Undo the most recent edit."""
+
         if self._undo_stack:
-            edit = self._undo_stack.pop()
-            return edit.undo(self)
+            original_edit = self._undo_stack.pop()
+
+            old_gutter_width = self.gutter_width
+            undo_result = original_edit.undo(self)
+            new_gutter_width = self.gutter_width
+
+            if old_gutter_width != new_gutter_width:
+                self.wrapped_document.wrap(self.wrap_width, self.indent_width)
+            else:
+                self.wrapped_document.wrap_range(
+                    original_edit.from_location,
+                    original_edit._edit_result.end_location,
+                    original_edit.to_location,
+                )
+
+            self._refresh_size()
+            original_edit.after(self)
+            self._build_highlight_map()
+            self.post_message(self.Changed(self))
+            return undo_result
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
@@ -2038,13 +2057,36 @@ class Edit:
     def undo(self, text_area: TextArea) -> EditResult:
         """Undo the edit operation.
 
+        Looks at the data stored in the edit, and performs the inverse operation of `Edit.do`.
+
         Args:
             text_area: The `TextArea` to undo the insert operation on.
 
         Returns:
             An `EditResult` containing information about the replace operation.
         """
-        raise NotImplementedError()
+        # This is where the selection will be updated to after the content is restored.
+        target_from = self.from_location
+        target_to = self.to_location
+
+        target_top, target_bottom = sorted((target_to, target_from))
+
+        # The text that was there before and is no longer there - needs to be inserted again.
+        replaced_text = self._edit_result.replaced_text
+
+        # The bounds of the new content
+        # target_from -> edit_result.new_end
+        edit_end = self._edit_result.end_location
+
+        # Replace the span of the edit with the text that was originally there.
+        undo_edit_result = text_area.document.replace_range(
+            target_top, edit_end, replaced_text
+        )
+
+        # TODO - this should be a separate field
+        self._updated_selection = Selection(target_from, target_to)
+
+        return undo_edit_result
 
     def after(self, text_area: TextArea) -> None:
         """Possibly update the cursor location after the widget has been refreshed.
