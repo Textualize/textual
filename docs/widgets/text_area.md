@@ -18,7 +18,7 @@ and a variety of keybindings.
 
 By default, the `TextArea` widget is a standard multi-line input box with soft-wrapping enabled.
 
-If you're interested in editing code, you may wish to use the [`TextArea.code_editor`] convenience constructor.
+If you're interested in editing code, you may wish to use the [`TextArea.code_editor`][textual.widgets._text_area.TextArea.code_editor] convenience constructor.
 This is a method which, by default, returns a new `TextArea` with soft-wrapping disabled, line numbers enabled, and the tab key behavior configured to insert `\t`.
 
 ### Syntax highlighting dependencies
