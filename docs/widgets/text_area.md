@@ -1,16 +1,25 @@
 
 # TextArea
 
-!!! tip "Added in version 0.38.0"
+!!! tip 
+
+    Added in version 0.38.0. Soft wrapping added in version 0.48.0.
 
 A widget for editing text which may span multiple lines.
-Supports syntax highlighting for a selection of languages.
+Supports text selection, soft wrapping, optional syntax highlighting with tree-sitter
+and a variety of keybindings.
 
 - [x] Focusable
 - [ ] Container
 
-
 ## Guide
+
+### Code editing vs plain text editing
+
+By default, the `TextArea` widget is a standard multi-line input box with soft-wrapping enabled.
+
+If you're interested in editing code, you may wish to use the [`TextArea.code_editor`] convenience constructor.
+This is a method which, by default, returns a new `TextArea` with soft-wrapping disabled, line numbers enabled, and the tab key behavior configured to insert `\t`.
 
 ### Syntax highlighting dependencies
 
@@ -29,7 +38,8 @@ To enable syntax highlighting, you'll need to install the `syntax` extra depende
     ```
 
 This will install `tree-sitter` and `tree-sitter-languages`.
-These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not supported.
+These packages are distributed as binary wheels, so it may limit your applications ability to run in environments where these wheels are not available.
+After installing, you can set the [`language`][textual.widgets._text_area.TextArea.language] reactive attribute on the `TextArea` to enable highlighting.
 
 ### Loading text
 
@@ -46,8 +56,7 @@ In this example we load some initial text into the `TextArea`, and set the langu
     --8<-- "docs/examples/widgets/text_area_example.py"
     ```
 
-To load content into the `TextArea` after it has already been created,
-use the [`load_text`][textual.widgets._text_area.TextArea.load_text] method.
+To update the content programmatically, set the [`text`][textual.widgets._text_area.TextArea.text] property to a string value.
 
 To update the parser used for syntax highlighting, set the [`language`][textual.widgets._text_area.TextArea.language] reactive attribute:
 
@@ -82,7 +91,7 @@ Some other convenient methods are available, such as [`insert`][textual.widgets.
 #### Moving the cursor
 
 The cursor location is available via the [`cursor_location`][textual.widgets._text_area.TextArea.cursor_location] property, which represents
-the location of the cursor as a tuple `(row_index, column_index)`. These indices are zero-based.
+the location of the cursor as a tuple `(row_index, column_index)`. These indices are zero-based and represent the position of the cursor in the content.
 Writing a new value to `cursor_location` will immediately update the location of the cursor.
 
 ```python
@@ -164,6 +173,17 @@ There are some methods available which make common selections easier:
 Themes give you control over the look and feel, including syntax highlighting,
 the cursor, selection, gutter, and more.
 
+#### Default theme
+
+The default `TextArea` theme is called `css`.
+This a theme which takes values entirely from CSS.
+This means that the default appearance of the widget fits nicely into a standard Textual application,
+and looks right on both dark and light mode.
+
+More complex applications such as code editors will likely want to use pre-defined themes such as `monokai`.
+This involves using a `TextAreaTheme` object, which we cover in detail below.
+This allows full customization of the `TextArea`, including syntax highlighting, at the code level.
+
 #### Using builtin themes
 
 The initial theme of the `TextArea` is determined by the `theme` parameter.
@@ -223,6 +243,7 @@ my_theme = TextAreaTheme(
 
 Attributes like `cursor_style` and `cursor_line_style` apply general language-agnostic
 styling to the widget.
+If you choose not to supply a value for one of these attributes, it will be taken from the CSS component styles.
 
 The `syntax_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
 depends on the `language` currently in use.
@@ -261,6 +282,12 @@ This immediately updates the appearance of the `TextArea`:
 
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
+
+### Tab behaviour
+
+Pressing the ++tab++ key will shift focus to the next widget in your application by default.
+This matches how other widgets work in Textual.
+To have ++tab++ insert a `\t` character, set the `tab_behaviour` attribute to the string value `"indent"`.
 
 ### Indentation
 
@@ -315,7 +342,7 @@ Let's extend `TextArea` to add a feature which automatically closes parentheses 
 This intercepts the key handler when `"("` is pressed, and inserts `"()"` instead.
 It then moves the cursor so that it lands between the open and closing parentheses.
 
-Typing `def hello(` into the `TextArea` results in the bracket automatically being closed:
+Typing "`def hello(`" into the `TextArea` now results in the bracket automatically being closed:
 
 ```{.textual path="docs/examples/widgets/text_area_extended.py" columns="36" lines="4" press="d,e,f,space,h,e,l,l,o,left_parenthesis"}
 ```
@@ -430,17 +457,28 @@ If you notice some highlights are missing after registering a language, the issu
     The names assigned in tree-sitter highlight queries are often reused across multiple languages.
     For example, `@string` is used in many languages to highlight strings.
 
+
+#### Navigation and wrapping information
+
+If you're building functionality on top of `TextArea`, it may be useful to inspect the `navigator` and `wrapped_document` attributes.
+
+- `navigator` is a [`DocumentNavigator`][textual.widgets.text_area.DocumentNavigator] instance which can give us general information about the cursor's location within a document, as well as where the cursor will move to when certain actions are performed.
+- `wrapped_document` is a [`WrappedDocument`][textual.widgets.text_area.WrappedDocument] instance which can be used to convert document locations to visual locations, taking wrapping into account. It also offers a variety of other convenience methods and properties.
+
+A detailed view of these classes is out of scope, but do note that a lot of the functionality of `TextArea` exists within them, so inspecting them could be worthwhile.
+
 ## Reactive attributes
 
-| Name                   | Type                     | Default            | Description                                      |
-|------------------------|--------------------------|--------------------|--------------------------------------------------|
-| `language`             | `str | None`             | `None`               | The language to use for syntax highlighting.     |
-| `theme`                | `str | None`             | `TextAreaTheme.default()` | The theme to use for syntax highlighting.         |
-| `selection`            | `Selection`              | `Selection()`      | The current selection.                           |
-| `show_line_numbers`    | `bool`                   | `True`             | Show or hide line numbers.                       |
-| `indent_width`         | `int`                    | `4`                | The number of spaces to indent and width of tabs. |
-| `match_cursor_bracket` | `bool`                   | `True`            | Enable/disable highlighting matching brackets under cursor. |
-| `cursor_blink`         | `bool`                   | `True`            | Enable/disable blinking of the cursor when the widget has focus. |
+| Name                   | Type                     | Default       | Description                                                      |
+|------------------------|--------------------------|---------------|------------------------------------------------------------------|
+| `language`             | `str | None`         | `None`                                                           | The language to use for syntax highlighting.     |
+| `theme`                | `str | None`         | `TextAreaTheme.default()`                                        | The theme to use for syntax highlighting.         |
+| `selection`            | `Selection`              | `Selection()` | The current selection.                                           |
+| `show_line_numbers`    | `bool`                   | `False`       | Show or hide line numbers.                                       |
+| `indent_width`         | `int`                    | `4`           | The number of spaces to indent and width of tabs.                |
+| `match_cursor_bracket` | `bool`                   | `True`        | Enable/disable highlighting matching brackets under cursor.      |
+| `cursor_blink`         | `bool`                   | `True`        | Enable/disable blinking of the cursor when the widget has focus. |
+| `soft_wrap`            | `bool`                   | `True`        | Enable/disable soft wrapping.                                    |
 
 ## Messages
 
@@ -459,17 +497,28 @@ The `TextArea` widget defines the following bindings:
 
 ## Component classes
 
-The `TextArea` widget defines no component classes.
+The `TextArea` defines component classes that can style various aspects of the widget.
+Styles from the `theme` attribute take priority.
 
-Styling should be done exclusively via [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
+::: textual.widgets.TextArea.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See also
 
-- [`Input`][textual.widgets.Input] - for single-line text input.
-- [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme] - for theming the `TextArea`.
+- [`Input`][textual.widgets.Input] - single-line text input widget
+- [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme] - theming the `TextArea`
+- [`DocumentNavigator`][textual.widgets.text_area.DocumentNavigator] - guides cursor movement 
+- [`WrappedDocument`][textual.widgets.text_area.WrappedDocument] - manages wrapping the document 
 - The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
 - `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
+
+
+## Additional notes
+
+- To remove the outline effect when the `TextArea` is focused, you can set `border: none; padding: 0;` in your CSS.
 
 ---
 

@@ -6,7 +6,6 @@ If there is an active Textual app, then log messages will go via the app (and lo
 If there is *no* active app, then log messages will go to stderr or stdout, depending on configuration.
 """
 
-
 import sys
 from logging import Handler, LogRecord
 

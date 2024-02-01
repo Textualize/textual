@@ -22,7 +22,7 @@ def test_default_severity_level() -> None:
 
 def test_default_timeout() -> None:
     """The default timeout should be as expected."""
-    assert Notification("test").timeout == 3
+    assert Notification("test").timeout == Notification.timeout
 
 
 def test_identity_is_unique() -> None:

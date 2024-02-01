@@ -20,12 +20,10 @@ class ImmutableSequenceView(Generic[T]):
         self._wrap = wrap
 
     @overload
-    def __getitem__(self, index: int) -> T:
-        ...
+    def __getitem__(self, index: int) -> T: ...
 
     @overload
-    def __getitem__(self, index: slice) -> ImmutableSequenceView[T]:
-        ...
+    def __getitem__(self, index: slice) -> ImmutableSequenceView[T]: ...
 
     def __getitem__(self, index: int | slice) -> T | ImmutableSequenceView[T]:
         return (

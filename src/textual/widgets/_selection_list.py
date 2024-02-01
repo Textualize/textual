@@ -169,9 +169,9 @@ class SelectionList(Generic[SelectionType], OptionList):
             super().__init__()
             self.selection_list: SelectionList[MessageSelectionType] = selection_list
             """The selection list that sent the message."""
-            self.selection: Selection[
-                MessageSelectionType
-            ] = selection_list.get_option_at_index(index)
+            self.selection: Selection[MessageSelectionType] = (
+                selection_list.get_option_at_index(index)
+            )
             """The highlighted selection."""
             self.selection_index: int = index
             """The index of the selection that the message relates to."""
@@ -445,9 +445,11 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def _make_selection(
         self,
-        selection: Selection[SelectionType]
-        | tuple[TextType, SelectionType]
-        | tuple[TextType, SelectionType, bool],
+        selection: (
+            Selection[SelectionType]
+            | tuple[TextType, SelectionType]
+            | tuple[TextType, SelectionType, bool]
+        ),
     ) -> Selection[SelectionType]:
         """Turn incoming selection data into a `Selection` instance.
 
@@ -681,10 +683,12 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     def add_option(
         self,
-        item: NewOptionListContent
-        | Selection[SelectionType]
-        | tuple[TextType, SelectionType]
-        | tuple[TextType, SelectionType, bool] = None,
+        item: (
+            NewOptionListContent
+            | Selection
+            | tuple[TextType, SelectionType]
+            | tuple[TextType, SelectionType, bool]
+        ) = None,
     ) -> Self:
         """Add a new selection option to the end of the list.
 
