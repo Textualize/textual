@@ -2,7 +2,7 @@ from __future__ import annotations, unicode_literals
 
 import pytest
 
-from textual._cache import FIFOCache, LRUCache
+from textual.cache import FIFOCache, LRUCache
 
 
 def test_lru_cache():

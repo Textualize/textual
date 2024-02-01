@@ -18,7 +18,7 @@ border-subtitle-background: (<a href="../../css_types/color">&lt;color&gt;</a> |
 
 ## CSS
 
-```sass
+```css
 border-subtitle-background: blue;
 ```
 

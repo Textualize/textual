@@ -35,7 +35,7 @@ This example shows three labels, each with a different border subtitle alignment
 
 === "border_subtitle_align.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/border_subtitle_align.tcss"
     ```
 
@@ -47,7 +47,7 @@ This example shows three labels, each with a different border subtitle alignment
 
 ## CSS
 
-```sass
+```css
 border-subtitle-align: left;
 border-subtitle-align: center;
 border-subtitle-align: right;

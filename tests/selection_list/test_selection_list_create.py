@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import pytest
 from rich.text import Text
+
 from textual.app import App, ComposeResult
 from textual.widgets import SelectionList
 from textual.widgets.option_list import Option
@@ -98,9 +99,18 @@ async def test_add_non_selections() -> None:
         with pytest.raises(SelectionError):
             selections.add_option(("Nope", 0, False, 23))
 
+
 async def test_clear_options() -> None:
     """Clearing the options should also clear the selections."""
     async with SelectionListApp().run_test() as pilot:
         selections = pilot.app.query_one(SelectionList)
         selections.clear_options()
         assert selections.selected == []
+
+
+async def test_options_are_available_soon() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3903."""
+
+    selection = Selection("", 0, id="some_id")
+    selection_list = SelectionList[int](selection)
+    assert selection_list.get_option("some_id") is selection

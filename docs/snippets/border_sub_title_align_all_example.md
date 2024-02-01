@@ -26,7 +26,7 @@ Open the code tabs to see the details of the code examples.
 
 === "border_sub_title_align_all.tcss"
 
-    ```sass hl_lines="12 16 30 34 41 46"
+    ```css hl_lines="12 16 30 34 41 46"
     --8<-- "docs/examples/styles/border_sub_title_align_all.tcss"
     ```
 

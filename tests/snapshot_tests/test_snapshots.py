@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 
 import pytest
@@ -795,6 +794,7 @@ def test_nested_fr(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "nested_fr.py")
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize("language", BUILTIN_LANGUAGES)
 def test_text_area_language_rendering(language, snap_compare):
     # This test will fail if we're missing a snapshot test for a valid
@@ -811,7 +811,7 @@ def test_text_area_language_rendering(language, snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_language,
-        terminal_size=(80, snippet.count("\n") + 2),
+        terminal_size=(80, snippet.count("\n") + 4),
     )
 
 
@@ -842,10 +842,11 @@ I am the final line."""
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_selection,
-        terminal_size=(30, text.count("\n") + 1),
+        terminal_size=(30, text.count("\n") + 4),
     )
 
 
+@pytest.mark.syntax
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
 )
@@ -871,7 +872,15 @@ def hello(name):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_theme,
-        terminal_size=(48, text.count("\n") + 2),
+        terminal_size=(48, text.count("\n") + 4),
+    )
+
+
+@pytest.mark.syntax
+def test_text_area_wrapping_and_folding(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_wrapping.py",
+        terminal_size=(20, 26)
     )
 
 
@@ -960,3 +969,32 @@ def test_mount_style_fix(snap_compare):
     """Regression test for broken style update on mount."""
     # https://github.com/Textualize/textual/issues/3858
     assert snap_compare(SNAPSHOT_APPS_DIR / "mount_style_fix.py")
+
+
+def test_zero_scrollbar_size(snap_compare):
+    """Regression test for missing content with 0 sized scrollbars"""
+    # https://github.com/Textualize/textual/issues/3886
+    assert snap_compare(SNAPSHOT_APPS_DIR / "zero_scrollbar_size.py")
+
+
+def test_tree_clearing_and_expansion(snap_compare):
+    """Test the Tree.root.is_expanded state after a Tree.clear"""
+    # https://github.com/Textualize/textual/issues/3557
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tree_clearing.py")
+
+
+def test_nested_specificity(snap_compare):
+    """Test specificity of nested rules is working."""
+    # https://github.com/Textualize/textual/issues/3961
+    assert snap_compare(SNAPSHOT_APPS_DIR / "nested_specificity.py")
+
+
+def test_tab_rename(snap_compare):
+    """Test setting a new label for a tab amongst a TabbedContent."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")
+
+
+def test_input_percentage_width(snap_compare):
+    """Check percentage widths work correctly."""
+    # https://github.com/Textualize/textual/issues/3721
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")

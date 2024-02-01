@@ -106,7 +106,7 @@ The following example defines a custom widget with its own `set_background` acti
 
 === "actions05.tcss"
 
-    ```sass title="actions05.tcss"
+    ```css title="actions05.tcss"
     --8<-- "docs/examples/guide/actions/actions05.tcss"
     ```
 
@@ -139,5 +139,6 @@ Textual supports the following builtin actions which are defined on the app.
 - [action_remove_class][textual.app.App.action_remove_class]
 - [action_screenshot][textual.app.App.action_screenshot]
 - [action_switch_screen][textual.app.App.action_switch_screen]
+- [action_suspend_process][textual.app.App.action_suspend_process]
 - [action_toggle_class][textual.app.App.action_toggle_class]
 - [action_toggle_dark][textual.app.App.action_toggle_dark]

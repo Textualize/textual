@@ -43,7 +43,7 @@ When the `on_key` method returns, Textual will get the next event from the queue
 
 You may be familiar with Python's [super](https://docs.python.org/3/library/functions.html#super) function to call a function defined in a base class. You will not have to use this in event handlers as Textual will automatically call handler methods defined in a widget's base class(es).
 
-For instance, let's say we are building the classic game of Pong and we have written a `Paddle` widget which extends [Static][textual.widgets.Static]. When a [Key][textual.events.Key] event arrives, Textual calls `Paddle.on_key` (to respond to ++left++ and ++right++ keys), then `Static.on_key`, and finally `Widget.on_key`.
+For instance, let's say we are building the classic game of Pong and we have written a `Paddle` widget which extends [Static][textual.widgets.Static]. When a [Key][textual.events.Key] event arrives, Textual calls `Paddle.on_key` (to respond to ++up++ and ++down++ keys), then `Static.on_key`, and finally `Widget.on_key`.
 
 ### Preventing default behaviors
 

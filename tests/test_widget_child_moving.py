@@ -9,7 +9,7 @@ from textual.widget import Widget, WidgetError
 async def test_move_child_no_direction() -> None:
     """Test moving a widget in a child list."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(child)
@@ -18,7 +18,7 @@ async def test_move_child_no_direction() -> None:
 async def test_move_child_both_directions() -> None:
     """Test calling move_child with more than one direction."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(child, before=1, after=2)
@@ -27,7 +27,7 @@ async def test_move_child_both_directions() -> None:
 async def test_move_child_not_our_child() -> None:
     """Test attempting to move a child that isn't ours."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(Widget(), before=child)
@@ -36,28 +36,82 @@ async def test_move_child_not_our_child() -> None:
 async def test_move_child_to_outside() -> None:
     """Test attempting to move relative to a widget that isn't a child."""
     async with App().run_test() as pilot:
-        child = Widget(Widget())
+        child = Widget()
         await pilot.app.mount(child)
         with pytest.raises(WidgetError):
             pilot.app.screen.move_child(child, before=Widget())
 
 
-async def test_move_child_before_itself() -> None:
-    """Test moving a widget before itself."""
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "before",
+        "after",
+    ],
+)
+async def test_move_child_index_in_relation_to_itself_index(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
 
+    widget = Widget()
+    child = 0
+    kwargs = {reference: 0}
     async with App().run_test() as pilot:
-        child = Widget(Widget())
-        await pilot.app.mount(child)
-        pilot.app.screen.move_child(child, before=child)
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
 
 
-async def test_move_child_after_itself() -> None:
-    """Test moving a widget after itself."""
-    # Regression test for https://github.com/Textualize/textual/issues/1743
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "before",
+        "after",
+    ],
+)
+async def test_move_child_index_in_relation_to_itself_widget(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
+
+    widget = Widget()
+    child = 0
+    kwargs = {reference: widget}
     async with App().run_test() as pilot:
-        child = Widget(Widget())
-        await pilot.app.mount(child)
-        pilot.app.screen.move_child(child, after=child)
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "before",
+        "after",
+    ],
+)
+async def test_move_child_widget_in_relation_to_itself_index(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
+
+    widget = Widget()
+    child = widget
+    kwargs = {reference: 0}
+    async with App().run_test() as pilot:
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
+
+
+@pytest.mark.parametrize(
+    "reference",
+    [
+        "before",
+        "after",
+    ],
+)
+async def test_move_child_widget_in_relation_to_itself_widget(reference: str) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/1743"""
+
+    widget = Widget()
+    child = widget
+    kwargs = {reference: widget}
+    async with App().run_test() as pilot:
+        await pilot.app.screen.mount(widget)
+        pilot.app.screen.move_child(child, **kwargs)  # Shouldn't raise an error.
 
 
 async def test_move_past_end_of_child_list() -> None:

@@ -30,7 +30,7 @@ Notice that even though the content is scrolled, the sidebar remains fixed.
 
 === "dock_layout1_sidebar.tcss"
 
-    ```sass hl_lines="2"
+    ```css hl_lines="2"
     --8<-- "docs/examples/guide/layout/dock_layout1_sidebar.tcss"
     ```
 
@@ -52,13 +52,13 @@ The labels will remain in that position (docked) even if the container they are 
 
 === "dock_all.tcss"
 
-    ```sass hl_lines="2-5 8-11 14-17 20-23"
+    ```css hl_lines="2-5 8-11 14-17 20-23"
     --8<-- "docs/examples/styles/dock_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 dock: bottom;  /* Docks on the bottom edge of the parent container. */
 dock: left;    /* Docks on the   left edge of the parent container. */
 dock: right;   /* Docks on the  right edge of the parent container. */

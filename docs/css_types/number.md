@@ -10,7 +10,7 @@ A [`<number>`](./number.md) is an [`<integer>`](./integer.md), optionally follow
 
 ### CSS
 
-```sass
+```css
 Grid {
     grid-size: 3 6  /* Integers are numbers */
 }

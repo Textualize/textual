@@ -14,7 +14,7 @@ from rich.padding import Padding
 from rich.panel import Panel
 from rich.text import Text
 
-from .._cache import LRUCache
+from ..cache import LRUCache
 from ..dom import DOMNode
 from ..widget import Widget
 from .errors import StylesheetError
@@ -30,6 +30,8 @@ _DEFAULT_STYLES = Styles()
 
 
 class StylesheetParseError(StylesheetError):
+    """Raised when the stylesheet could not be parsed."""
+
     def __init__(self, errors: StylesheetErrors) -> None:
         self.errors = errors
 
@@ -38,6 +40,8 @@ class StylesheetParseError(StylesheetError):
 
 
 class StylesheetErrors:
+    """A renderable for stylesheet errors."""
+
     def __init__(self, rules: list[RuleSet]) -> None:
         self.rules = rules
         self.variables: dict[str, str] = {}
@@ -134,6 +138,8 @@ class CssSource(NamedTuple):
 
 @rich.repr.auto(angular=True)
 class Stylesheet:
+    """A Stylsheet generated from Textual CSS."""
+
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []
         self._rules_map: dict[str, list[RuleSet]] | None = None
@@ -183,6 +189,10 @@ class Stylesheet:
 
     @property
     def css(self) -> str:
+        """The equivalent TCSS for this stylesheet.
+
+        Note that this may not produce the same content as the file(s) used to generate the stylesheet.
+        """
         return "\n\n".join(rule_set.css for rule_set in self.rules)
 
     def copy(self) -> Stylesheet:
@@ -248,7 +258,7 @@ class Stylesheet:
         except TokenError:
             raise
         except Exception as error:
-            raise StylesheetError(f"failed to parse css; {error}")
+            raise StylesheetError(f"failed to parse css; {error}") from None
 
         self._parse_cache[cache_key] = rules
         return rules
@@ -407,9 +417,18 @@ class Stylesheet:
 
     @classmethod
     def _check_rule(
-        cls, rule: RuleSet, css_path_nodes: list[DOMNode]
+        cls, rule_set: RuleSet, css_path_nodes: list[DOMNode]
     ) -> Iterable[Specificity3]:
-        for selector_set in rule.selector_set:
+        """Check a rule set, return specificity of applicable rules.
+
+        Args:
+            rule_set: A rule set.
+            css_path_nodes: A list of the nodes from the App to the node being checked.
+
+        Yields:
+            Specificity of any matching selectors.
+        """
+        for selector_set in rule_set.selector_set:
             if _check_selectors(selector_set.selectors, css_path_nodes):
                 yield selector_set.specificity
 
@@ -418,6 +437,7 @@ class Stylesheet:
         node: DOMNode,
         *,
         animate: bool = False,
+        cache: dict[tuple, RulesMap] | None = None,
     ) -> None:
         """Apply the stylesheet to a DOM node.
 
@@ -428,6 +448,7 @@ class Stylesheet:
                 classes modifying the same CSS property), then only the most specific
                 rule will be applied.
             animate: Animate changed rules.
+            cache: An optional cache when applying a group of nodes.
         """
         # Dictionary of rule attribute names e.g. "text_background" to list of tuples.
         # The tuples contain the rule specificity, and the value for that rule.
@@ -436,9 +457,6 @@ class Stylesheet:
         # same attribute, then we can choose the most specific rule and use that.
         rule_attributes: defaultdict[str, list[tuple[Specificity6, object]]]
         rule_attributes = defaultdict(list)
-
-        _check_rule = self._check_rule
-        css_path_nodes = node.css_path_nodes
 
         rules_map = self.rules_map
 
@@ -450,11 +468,34 @@ class Stylesheet:
         }
         rules = list(filter(limit_rules.__contains__, reversed(self.rules)))
 
-        # Collect the rules defined in the stylesheet
         node._has_hover_style = any("hover" in rule.pseudo_classes for rule in rules)
         node._has_focus_within = any(
             "focus-within" in rule.pseudo_classes for rule in rules
         )
+
+        cache_key: tuple | None
+        if cache is not None:
+            cache_key = (
+                node._parent,
+                (
+                    None
+                    if node._id is None
+                    else (node._id if f"#{node._id}" in rules_map else None)
+                ),
+                node.classes,
+                node.pseudo_classes,
+                node._css_type_name,
+            )
+            cached_result: RulesMap | None = cache.get(cache_key)
+            if cached_result is not None:
+                self.replace_rules(node, cached_result, animate=animate)
+                self._process_component_classes(node)
+                return
+        else:
+            cache_key = None
+
+        _check_rule = self._check_rule
+        css_path_nodes = node.css_path_nodes
 
         # Rules that may be set to the special value `initial`
         initial: set[str] = set()
@@ -520,8 +561,18 @@ class Stylesheet:
                         rule_value = getattr(_DEFAULT_STYLES, initial_rule_name)
                     node_rules[initial_rule_name] = rule_value  # type: ignore[literal-required]
 
+            if cache is not None:
+                assert cache_key is not None
+                cache[cache_key] = node_rules
             self.replace_rules(node, node_rules, animate=animate)
+        self._process_component_classes(node)
 
+    def _process_component_classes(self, node: DOMNode) -> None:
+        """Process component classes for the given node.
+
+        Args:
+            node: A DOM Node.
+        """
         component_classes = node._get_component_classes()
         if component_classes:
             # Create virtual nodes that exist to extract styles
@@ -559,26 +610,18 @@ class Stylesheet:
         base_styles = styles.base
 
         # Styles currently used on new rules
-        modified_rule_keys = base_styles.get_rules().keys() | rules.keys()
-        # Current render rules (missing rules are filled with default)
-
-        current_render_rules = styles.get_render_rules()
-
-        # Calculate replacement rules (defaults + new rules)
-        new_styles = Styles(node, rules)
-        if new_styles == base_styles:
-            # Nothing to change, return early
-            return
-
-        # New render rules
-        new_render_rules = new_styles.get_render_rules()
-
-        # Some aliases
-        is_animatable = styles.is_animatable
-        get_current_render_rule = current_render_rules.get
-        get_new_render_rule = new_render_rules.get
+        modified_rule_keys = base_styles._rules.keys() | rules.keys()
 
         if animate:
+            new_styles = Styles(node, rules)
+            if new_styles == base_styles:
+                # Nothing to animate, return early
+                return
+            current_render_rules = styles.get_render_rules()
+            is_animatable = styles.is_animatable
+            get_current_render_rule = current_render_rules.get
+            new_render_rules = new_styles.get_render_rules()
+            get_new_render_rule = new_render_rules.get
             animator = node.app.animator
             base = node.styles.base
             for key in modified_rule_keys:
@@ -636,14 +679,15 @@ class Stylesheet:
             nodes: Nodes to update.
             animate: Enable CSS animation.
         """
+        cache: dict[tuple, RulesMap] = {}
         apply = self.apply
 
         for node in nodes:
-            apply(node, animate=animate)
+            apply(node, animate=animate, cache=cache)
             if isinstance(node, Widget) and node.is_scrollable:
                 if node.show_vertical_scrollbar:
-                    apply(node.vertical_scrollbar)
+                    apply(node.vertical_scrollbar, cache=cache)
                 if node.show_horizontal_scrollbar:
-                    apply(node.horizontal_scrollbar)
+                    apply(node.horizontal_scrollbar, cache=cache)
                 if node.show_horizontal_scrollbar and node.show_vertical_scrollbar:
-                    apply(node.scrollbar_corner)
+                    apply(node.scrollbar_corner, cache=cache)

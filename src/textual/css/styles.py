@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from functools import lru_cache
+from functools import lru_cache, partial
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
@@ -395,7 +395,11 @@ class StylesBase(ABC):
                 duration=duration,
                 speed=speed,
                 easing=easing,
-                on_complete=on_complete,
+                on_complete=(
+                    partial(self.node.app.call_later, on_complete)
+                    if on_complete is not None
+                    else None
+                ),
             )
         return None
 

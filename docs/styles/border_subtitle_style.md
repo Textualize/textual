@@ -17,7 +17,7 @@ border-subtitle-style: <a href="../../css_types/text_style">&lt;text-style&gt;</
 
 ## CSS
 
-```sass
+```css
 border-subtitle-style: bold underline;
 ```
 

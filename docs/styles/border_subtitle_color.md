@@ -17,7 +17,7 @@ border-subtitle-color: (<a href="../../css_types/color">&lt;color&gt;</a> | auto
 
 ## CSS
 
-```sass
+```css
 border-subtitle-color: red;
 ```
 

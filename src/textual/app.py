@@ -13,6 +13,7 @@ import inspect
 import io
 import os
 import platform
+import signal
 import sys
 import threading
 import warnings
@@ -38,6 +39,7 @@ from typing import (
     Generator,
     Generic,
     Iterable,
+    Iterator,
     List,
     Sequence,
     Type,
@@ -56,7 +58,17 @@ from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
 
-from . import Logger, LogGroup, LogVerbosity, actions, constants, events, log, messages
+from . import (
+    Logger,
+    LogGroup,
+    LogVerbosity,
+    actions,
+    constants,
+    events,
+    log,
+    messages,
+    on,
+)
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
 from ._callback import invoke
@@ -72,8 +84,9 @@ from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
+from .css.errors import StylesheetError
 from .css.query import NoMatches
-from .css.stylesheet import Stylesheet
+from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode
 from .driver import Driver
@@ -98,6 +111,7 @@ from .screen import (
     ScreenResultType,
     _SystemModalScreen,
 )
+from .signal import Signal
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -199,6 +213,14 @@ class UnknownModeError(ModeError):
 
 class ActiveModeError(ModeError):
     """Raised when attempting to remove the currently active mode."""
+
+
+class SuspendNotSupported(Exception):
+    """Raised if suspending the application is not supported.
+
+    This exception is raised if [`App.suspend`][textual.app.App.suspend] is called while
+    the application is running in an environment where this isn't supported.
+    """
 
 
 ReturnType = TypeVar("ReturnType")
@@ -310,7 +332,7 @@ class App(Generic[ReturnType], DOMNode):
             ...
         ```
     """
-    SCREENS: ClassVar[dict[str, Screen | Callable[[], Screen]]] = {}
+    SCREENS: ClassVar[dict[str, Screen[Any] | Callable[[], Screen[Any]]]] = {}
     """Screens associated with the app for the lifetime of the app."""
 
     AUTO_FOCUS: ClassVar[str | None] = "*"
@@ -371,7 +393,7 @@ class App(Generic[ReturnType], DOMNode):
     """Indicates if the app has focus.
 
     When run in the terminal, the app always has focus. When run in the web, the app will
-    get focus when the terminal widget has focus.        
+    get focus when the terminal widget has focus.
     """
 
     def __init__(
@@ -424,11 +446,12 @@ class App(Generic[ReturnType], DOMNode):
             _environ=environ,
             force_terminal=True,
             safe_box=False,
+            soft_wrap=False,
         )
         self._workers = WorkerManager(self)
         self.error_console = Console(markup=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
-        self._screen_stacks: dict[str, list[Screen]] = {"_default": []}
+        self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
         """A stack of screens per mode."""
         self._current_mode: str = "_default"
         """The current mode the app is in."""
@@ -559,9 +582,9 @@ class App(Generic[ReturnType], DOMNode):
         self._batch_count = 0
         self._notifications = Notifications()
 
-        self._capture_print: WeakKeyDictionary[
-            MessageTarget, tuple[bool, bool]
-        ] = WeakKeyDictionary()
+        self._capture_print: WeakKeyDictionary[MessageTarget, tuple[bool, bool]] = (
+            WeakKeyDictionary()
+        )
         """Registry of the MessageTargets which are capturing output at any given time."""
         self._capture_stdout = _PrintCapture(self, stderr=False)
         """File-like object capturing data written to stdout."""
@@ -571,6 +594,24 @@ class App(Generic[ReturnType], DOMNode):
         """The original stdout stream (before redirection etc)."""
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
+
+        self.app_suspend_signal = Signal(self, "app-suspend")
+        """The signal that is published when the app is suspended.
+
+        When [`App.suspend`][textual.app.App.suspend] is called this signal
+        will be [published][textual.signal.Signal.publish];
+        [subscribe][textual.signal.Signal.subscribe] to this signal to
+        perform work before the suspension takes place.
+        """
+        self.app_resume_signal = Signal(self, "app-resume")
+        """The signal that is published when the app is resumed after a suspend.
+
+        When the app is resumed after a
+        [`App.suspend`][textual.app.App.suspend] call this signal will be
+        [published][textual.signal.Signal.publish];
+        [subscribe][textual.signal.Signal.subscribe] to this signal to
+        perform work after the app has resumed.
+        """
 
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
@@ -722,7 +763,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_headless
 
     @property
-    def screen_stack(self) -> Sequence[Screen]:
+    def screen_stack(self) -> Sequence[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:
@@ -731,7 +772,7 @@ class App(Generic[ReturnType], DOMNode):
         return self._screen_stacks[self._current_mode].copy()
 
     @property
-    def _screen_stack(self) -> list[Screen]:
+    def _screen_stack(self) -> list[Screen[Any]]:
         """A reference to the current screen stack.
 
         Note:
@@ -1185,6 +1226,9 @@ class App(Generic[ReturnType], DOMNode):
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 await asyncio.sleep(float(wait_ms) / 1000)
+                await wait_for_idle(0)
+                await app._animator.wait_until_complete()
+                await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
@@ -1465,7 +1509,15 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 time = perf_counter()
                 stylesheet = self.stylesheet.copy()
-                stylesheet.read_all(css_paths)
+                try:
+                    stylesheet.read_all(css_paths)
+                except StylesheetError as error:
+                    # If one of the CSS paths is no longer available (or perhaps temporarily unavailable),
+                    #  we'll end up with partial CSS, which is probably confusing more than anything. We opt to do
+                    #  nothing here, knowing that we'll retry again very soon, on the next file monitor invocation.
+                    #  Related issue: https://github.com/Textualize/textual/issues/3996
+                    self.log.warning(str(error))
+                    return
                 stylesheet.parse()
                 elapsed = (perf_counter() - time) * 1000
                 if self._css_has_errors:
@@ -1491,7 +1543,8 @@ class App(Generic[ReturnType], DOMNode):
                 self._css_has_errors = False
                 self.stylesheet = stylesheet
                 self.stylesheet.update(self)
-                self.screen.refresh(layout=True)
+                for screen in self.screen_stack:
+                    self.stylesheet.update(screen)
 
     def render(self) -> RenderableType:
         return Blank(self.styles.background)
@@ -1499,12 +1552,10 @@ class App(Generic[ReturnType], DOMNode):
     ExpectType = TypeVar("ExpectType", bound=Widget)
 
     @overload
-    def get_child_by_id(self, id: str) -> Widget:
-        ...
+    def get_child_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1530,12 +1581,12 @@ class App(Generic[ReturnType], DOMNode):
         )
 
     @overload
-    def get_widget_by_id(self, id: str) -> Widget:
-        ...
+    def get_widget_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType]
+    ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1870,8 +1921,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: Literal[False] = False,
-    ) -> AwaitMount:
-        ...
+    ) -> AwaitMount: ...
 
     @overload
     def push_screen(
@@ -1879,8 +1929,7 @@ class App(Generic[ReturnType], DOMNode):
         screen: Screen[ScreenResultType] | str,
         callback: ScreenResultCallbackType[ScreenResultType] | None = None,
         wait_for_dismiss: Literal[True] = True,
-    ) -> asyncio.Future[ScreenResultType]:
-        ...
+    ) -> asyncio.Future[ScreenResultType]: ...
 
     def push_screen(
         self,
@@ -1942,6 +1991,29 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return await_mount
 
+    @overload
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType]
+    ) -> ScreenResultType: ...
+
+    @overload
+    async def push_screen_wait(self, screen: str) -> Any: ...
+
+    async def push_screen_wait(
+        self, screen: Screen[ScreenResultType] | str
+    ) -> ScreenResultType | Any:
+        """Push a screen and wait for the result (received from [`Screen.dismiss`][textual.screen.Screen.dismiss]).
+
+        Note that this method may only be called when running in a worker.
+
+        Args:
+            screen: A screen or the name of an installed screen.
+
+        Returns:
+            The screen's result.
+        """
+        return await self.push_screen(screen, wait_for_dismiss=True)
+
     def switch_screen(self, screen: Screen | str) -> AwaitMount:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
 
@@ -1988,7 +2060,7 @@ class App(Generic[ReturnType], DOMNode):
             raise ScreenError(f"Can't install screen; {name!r} is already installed")
         if screen in self._installed_screens.values():
             raise ScreenError(
-                "Can't install screen; {screen!r} has already been installed"
+                f"Can't install screen; {screen!r} has already been installed"
             )
         self._installed_screens[name] = screen
         self.log.system(f"{screen} INSTALLED name={name!r}")
@@ -2392,6 +2464,7 @@ class App(Generic[ReturnType], DOMNode):
         *widgets: Widget,
         before: int | None = None,
         after: int | None = None,
+        cache: dict[tuple, RulesMap] | None = None,
     ) -> list[Widget]:
         """Register widget(s) so they may receive events.
 
@@ -2400,6 +2473,7 @@ class App(Generic[ReturnType], DOMNode):
             *widgets: The widget(s) to register.
             before: A location to mount before.
             after: A location to mount after.
+            cache: Optional rules map cache.
 
         Returns:
             List of modified widgets.
@@ -2408,6 +2482,8 @@ class App(Generic[ReturnType], DOMNode):
         if not widgets:
             return []
 
+        if cache is None:
+            cache = {}
         widget_list: Iterable[Widget]
         if before is not None or after is not None:
             # There's a before or after, which means there's going to be an
@@ -2424,8 +2500,8 @@ class App(Generic[ReturnType], DOMNode):
             if widget not in self._registry:
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
-                    self._register(widget, *widget._nodes)
-                apply_stylesheet(widget)
+                    self._register(widget, *widget._nodes, cache=cache)
+                apply_stylesheet(widget, cache=cache)
 
         if not self._running:
             # If the app is not running, prevent awaiting of the widget tasks
@@ -3259,3 +3335,82 @@ class App(Generic[ReturnType], DOMNode):
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
             self.push_screen(CommandPalette(), callback=self.call_next)
+
+    def _suspend_signal(self) -> None:
+        """Signal that the application is being suspended."""
+        self.app_suspend_signal.publish()
+
+    @on(Driver.SignalResume)
+    def _resume_signal(self) -> None:
+        """Signal that the application is being resumed from a suspension."""
+        self.app_resume_signal.publish()
+
+    @contextmanager
+    def suspend(self) -> Iterator[None]:
+        """A context manager that temporarily suspends the app.
+
+        While inside the `with` block, the app will stop reading input and
+        emitting output. Other applications will have full control of the
+        terminal, configured as it was before the app started running. When
+        the `with` block ends, the application will start reading input and
+        emitting output again.
+
+        Example:
+            ```python
+            with self.suspend():
+                os.system("emacs -nw")
+            ```
+
+        Raises:
+            SuspendNotSupported: If the environment doesn't support suspending.
+
+        !!! note
+            Suspending the application is currently only supported on
+            Unix-like operating systems and Microsoft Windows. Suspending is
+            not supported in Textual Web.
+        """
+        if self._driver is None:
+            return
+        if self._driver.can_suspend:
+            # Publish a suspend signal *before* we suspend application mode.
+            self._suspend_signal()
+            self._driver.suspend_application_mode()
+            # We're going to handle the start of the driver again so mark
+            # this next part as such; the reason for this is that the code
+            # the developer may be running could be in this process, and on
+            # Unix-like systems the user may `action_suspend_process` the
+            # app, and we don't want to have the driver auto-restart
+            # application mode when the application comes back to the
+            # foreground, in this context.
+            with self._driver.no_automatic_restart(), redirect_stdout(
+                sys.__stdout__
+            ), redirect_stderr(sys.__stderr__):
+                yield
+            # We're done with the dev's code so resume application mode.
+            self._driver.resume_application_mode()
+            # ...and publish a resume signal.
+            self._resume_signal()
+        else:
+            raise SuspendNotSupported(
+                "App.suspend is not supported in this environment."
+            )
+
+    def action_suspend_process(self) -> None:
+        """Suspend the process into the background.
+
+        Note:
+            On Unix and Unix-like systems a `SIGTSTP` is sent to the
+            application's process. Currently on Windows and when running
+            under Textual Web this is a non-operation.
+        """
+        # Check if we're in an environment that permits this kind of
+        # suspend.
+        if not WINDOWS and self._driver is not None and self._driver.can_suspend:
+            # First, ensure that the suspend signal gets published while
+            # we're still in application mode.
+            self._suspend_signal()
+            # With that out of the way, send the SIGTSTP signal.
+            os.kill(os.getpid(), signal.SIGTSTP)
+            # NOTE: There is no call to publish the resume signal here, this
+            # will be handled by the driver posting a SignalResume event
+            # (see the event handler on App._resume_signal) above.

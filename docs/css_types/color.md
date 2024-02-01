@@ -106,7 +106,7 @@ For example, `hsla(128, 100%, 50%, 0.5)` is the color `hsl(128, 100%, 50%)` with
 
 ### CSS
 
-```sass
+```css
 Header {
     background: red;           /* Color name */
 }

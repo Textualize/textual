@@ -202,7 +202,7 @@ The following example shows mouse movements being used to _attach_ a widget to t
 
 === "mouse01.py"
 
-    ```python title="mouse01.py" hl_lines="11-13"
+    ```python title="mouse01.py" hl_lines="17-19"
     --8<-- "docs/examples/guide/input/mouse01.py"
     ```
 
