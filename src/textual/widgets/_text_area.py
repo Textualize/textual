@@ -24,6 +24,7 @@ from textual.document._document import (
     _utf8_encode,
 )
 from textual.document._document_navigator import DocumentNavigator
+from textual.document._history import UndoStack
 from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
@@ -375,10 +376,13 @@ TextArea:light .text-area--cursor {
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-        self._undo_stack: list[Edit] = []
+        self._undo_stack: UndoStack = UndoStack()
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
-        self._redo_stack: list[Edit] = []
+        # TODO - we should invalidate the redo/undo stack when the text of the document
+        #  is directly changed.
+
+        self._redo_stack: list[EditBatch] = []
         """A stack for tracking edits that have been undone."""
 
         self._selecting = False
@@ -446,7 +450,7 @@ TextArea:light .text-area--cursor {
         """Construct a new `TextArea` with sensible defaults for editing code.
 
         This instantiates a `TextArea` with line numbers enabled, soft wrapping
-        disabled, and "indent" tab behaviour.
+        disabled, "indent" tab behaviour, and the "monokai" theme.
 
         Args:
             text: The initial text to load into the TextArea.
