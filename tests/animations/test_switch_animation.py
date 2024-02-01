@@ -26,7 +26,7 @@ async def test_switch_animates_on_full() -> None:
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
         # Move to the next frame.
-        await animator()
+        animator()
         # The animation should still be running.
         assert app.animator.is_being_animated(switch, "slider_pos")
 
@@ -45,7 +45,7 @@ async def test_switch_animates_on_basic() -> None:
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
         # Move to the next frame.
-        await animator()
+        animator()
         # The animation should still be running.
         assert app.animator.is_being_animated(switch, "slider_pos")
 
@@ -64,6 +64,6 @@ async def test_switch_does_not_animate_on_none() -> None:
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
         # Move to the next frame.
-        await animator()
+        animator()
         # The animation should still be running.
         assert not app.animator.is_being_animated(switch, "slider_pos")

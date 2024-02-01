@@ -29,7 +29,7 @@ async def test_scrolling_animates_on_full() -> None:
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
         # Move to the next frame.
-        await animator()
+        animator()
         assert animator.is_being_animated(vertical_scroll, "scroll_y")
 
 
@@ -47,7 +47,7 @@ async def test_scrolling_animates_on_basic() -> None:
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
         # Move to the next frame.
-        await animator()
+        animator()
         assert animator.is_being_animated(vertical_scroll, "scroll_y")
 
 
@@ -65,5 +65,5 @@ async def test_scrolling_does_not_animate_on_none() -> None:
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
         # Move to the next frame.
-        await animator()
+        animator()
         assert not animator.is_being_animated(vertical_scroll, "scroll_y")
