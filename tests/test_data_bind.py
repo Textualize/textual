@@ -16,7 +16,7 @@ class DataBindApp(App):
     bar = reactive("Bar")
 
     def compose(self) -> ComposeResult:
-        yield FooLabel(id="label1").data_bind(foo=DataBindApp.bar)  # Explicit bind
+        yield FooLabel(id="label1").data_bind(foo=DataBindApp.bar)
         yield FooLabel(id="label2")  # Not bound
 
 
@@ -46,7 +46,7 @@ async def test_data_binding():
         assert label2.foo == "Foo"
 
         with pytest.raises(ReactiveError):
-            # THis should be an error because FooLabel.foo is not defined on the app
+            # This should be an error because FooLabel.foo is not defined on the app
             label2.data_bind(app, foo=FooLabel.foo)
 
         # Bind data outside of compose

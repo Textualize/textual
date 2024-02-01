@@ -73,6 +73,7 @@ class Reactive(Generic[ReactiveType]):
         self._init = init
         self._always_update = always_update
         self._run_compute = compute
+        self._owner: Type[MessageTarget] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -81,6 +82,11 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
+
+    @property
+    def owner(self) -> Type[MessageTarget]:
+        assert self._owner is not None
+        return self._owner
 
     def _initialize_reactive(self, obj: Reactable, name: str) -> None:
         """Initialized a reactive attribute on an object.
@@ -132,6 +138,7 @@ class Reactive(Generic[ReactiveType]):
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
         # Check for compute method
+        self._owner = owner
         public_compute = f"compute_{name}"
         private_compute = f"_compute_{name}"
         compute_name = (
@@ -162,17 +169,17 @@ class Reactive(Generic[ReactiveType]):
     @overload
     def __get__(
         self: Reactive[ReactiveType], obj: None, obj_type: type[Reactable]
-    ) -> tuple[type[ReactableType], Reactive[ReactiveType]]: ...
+    ) -> Reactive[ReactiveType]: ...
 
     def __get__(
         self: Reactive[ReactiveType],
         obj: Reactable | None,
         obj_type: type[ReactableType],
-    ) -> tuple[type[ReactableType], Reactive[ReactiveType]] | ReactiveType:
+    ) -> Reactive[ReactiveType] | ReactiveType:
         _rich_traceback_omit = True
         if obj is None:
             # obj is None means we are invoking the descriptor via the class, and not the instance
-            return (obj_type, self)
+            return self
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)

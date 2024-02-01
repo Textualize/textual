@@ -201,7 +201,7 @@ class DOMNode(MessagePump):
     def data_bind(
         self,
         parent: MessagePump | None = None,
-        **bind_vars: tuple[type[DOMNode], Reactive[Any]],
+        **bind_vars: Reactive[Any],
     ) -> Self:
         """Bind reactive data.
 
@@ -221,19 +221,15 @@ class DOMNode(MessagePump):
 
         if self._reactive_connect is None:
             self._reactive_connect = {}
-        for name, type_and_reactive in bind_vars.items():
+        for name, reactive in bind_vars.items():
             if name not in self._reactives:
                 raise ReactiveError(
                     f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
-            if not isinstance(type_and_reactive, tuple):
+
+            if not isinstance(parent, reactive.owner):
                 raise ReactiveError(
-                    "Expected a reactive type here, e.g MyWidget.my_reactive"
-                )
-            node_type, reactive = type_and_reactive
-            if not isinstance(parent, node_type):
-                raise ReactiveError(
-                    f"Reactive type {node_type.__name__!r} must be defined on class {parent.__class__.__name__!r}"
+                    f"Reactive type {reactive.owner.__name__!r} must be defined on class {parent.__class__.__name__!r}"
                 )
 
             self._reactive_connect[name] = reactive
