@@ -258,7 +258,7 @@ The following Textual app will launch [vim](https://www.vim.org/) (a text editor
 
 === "suspend.py"
 
-    ```python hl_lines="14-15"
+    ```python hl_lines="15-16"
     --8<-- "docs/examples/app/suspend.py"
     ```
 
