@@ -432,7 +432,11 @@ class Animator:
                 end_value=value,
                 final_value=final_value,
                 easing=easing_function,
-                on_complete=on_complete,
+                on_complete=(
+                    partial(self.app.call_later, on_complete)
+                    if on_complete is not None
+                    else None
+                ),
                 level=level,
             )
         assert animation is not None, "animation expected to be non-None"
@@ -507,7 +511,34 @@ class Animator:
         elif key in self._animations:
             await self._stop_running_animation(key, complete)
 
-    async def __call__(self) -> None:
+    def force_stop_animation(self, obj: object, attribute: str) -> None:
+        """Force stop an animation on an attribute. This will immediately stop the animation,
+        without running any associated callbacks, setting the attribute to its final value.
+
+        Args:
+            obj: The object containing the attribute.
+            attribute: The name of the attribute.
+
+        Note:
+            If there is no animation scheduled or running, this is a no-op.
+        """
+        from .css.scalar_animation import ScalarAnimation
+
+        animation_key = (id(obj), attribute)
+        try:
+            animation = self._animations.pop(animation_key)
+        except KeyError:
+            return
+
+        if isinstance(animation, SimpleAnimation):
+            setattr(obj, attribute, animation.end_value)
+        elif isinstance(animation, ScalarAnimation):
+            setattr(obj, attribute, animation.final_value)
+
+        if animation.on_complete is not None:
+            animation.on_complete()
+
+    def __call__(self) -> None:
         if not self._animations:
             self._timer.pause()
             self._idle_event.set()
@@ -522,7 +553,8 @@ class Animator:
                 animation_complete = animation(animation_time, app_animation_level)
                 if animation_complete:
                     del self._animations[animation_key]
-                    await animation.invoke_callback()
+                    if animation.on_complete is not None:
+                        animation.on_complete()
 
     def _get_time(self) -> float:
         """Get the current wall clock time, via the internal Timer.
@@ -531,7 +563,7 @@ class Animator:
             The wall clock time.
         """
         # N.B. We could remove this method and always call `self._timer.get_time()` internally,
-        # but it's handy to have in mocking situations
+        # but it's handy to have in mocking situations.
         return _time.get_time()
 
     async def wait_for_idle(self) -> None:
