@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
 
+## [0.48.1] - 2023-02-01
+
+### Fixed
+
+- `TextArea` uses CSS theme by default instead of `monokai` https://github.com/Textualize/textual/pull/4091
+
 ## [0.48.0] - 2023-02-01
 
 ### Changed
@@ -1627,6 +1633,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.48.1]: https://github.com/Textualize/textual/compare/v0.48.0...v0.48.1
 [0.48.0]: https://github.com/Textualize/textual/compare/v0.47.1...v0.48.0
 [0.47.1]: https://github.com/Textualize/textual/compare/v0.47.0...v0.47.1
 [0.47.0]: https://github.com/Textualize/textual/compare/v0.46.0...v0.47.0
