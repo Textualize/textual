@@ -168,7 +168,7 @@ class Reactive(Generic[ReactiveType]):
 
     @overload
     def __get__(
-        self: Reactive[ReactiveType], obj: None, obj_type: type[Reactable]
+        self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
     ) -> Reactive[ReactiveType]: ...
 
     def __get__(

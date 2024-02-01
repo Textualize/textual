@@ -444,3 +444,32 @@ class DOMQuery(Generic[QueryType]):
             if focused in nodes:
                 self._node.screen._reset_focus(focused, avoiding=nodes)
         return self
+
+    def set(
+        self,
+        display: bool | None = None,
+        visible: bool | None = None,
+        disabled: bool | None = None,
+        loading: bool | None = None,
+    ) -> DOMQuery[QueryType]:
+        """Sets common attributes on matched nodes.
+
+        Args:
+            display: Set `display` attribute on nodes, or `None` for no change.
+            visible: Set `visible` attribute on nodes, or `None` for no change.
+            disabled: Set `disabled` attribute on nodes, or `None` for no change.
+            loading: Set `loading` attribute on nodes, or `None` for no change.
+
+        Returns:
+            Query for chaining.
+        """
+        for node in self:
+            if display is not None:
+                node.display = display
+            if visible is not None:
+                node.visible = visible
+            if disabled is not None:
+                node.disabled = disabled
+            if loading is not None:
+                node.loading = loading
+        return self
