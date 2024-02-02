@@ -229,14 +229,6 @@ class DOMNode(MessagePump):
                     f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
             self._reactive_connect[name] = (parent, reactive)
-            # if isinstance(reactive, Reactive):
-            #     # if not isinstance(parent, reactive.owner):
-            #     #     raise ReactiveError(
-            #     #         f"Reactive type {reactive.owner.__name__!r} must be defined on class {parent.__class__.__name__!r}"
-            #     #     )
-            #     self._reactive_connect[name] = reactive
-            # else:
-            #     setattr(self, name, reactive)
         self._initialize_data_bind()
         return self
 
@@ -251,6 +243,15 @@ class DOMNode(MessagePump):
         for variable_name, (compose_parent, reactive) in self._reactive_connect.items():
 
             def make_setter(variable_name: str) -> Callable[[object], None]:
+                """Make a setter for the given variable name.
+
+                Args:
+                    variable_name: Name of variable being set.
+
+                Returns:
+                    A callable which takes the value to set.
+                """
+
                 def setter(value: object) -> None:
                     """Set bound data."""
                     Reactive._initialize_object(self)
