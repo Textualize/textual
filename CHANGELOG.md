@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.48.2]
+## [0.48.2] - 2024-02-02
 
 ### Fixed
 
@@ -16,13 +16,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
 
-## [0.48.1] - 2023-02-01
+## [0.48.1] - 2024-02-01
 
 ### Fixed
 
 - `TextArea` uses CSS theme by default instead of `monokai` https://github.com/Textualize/textual/pull/4091
 
-## [0.48.0] - 2023-02-01
+## [0.48.0] - 2024-02-01
 
 ### Changed
 
@@ -70,7 +70,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 - Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
 
-## [0.47.1] - 2023-01-05
+## [0.47.1] - 2024-01-05
 
 ### Fixed
 
