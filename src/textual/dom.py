@@ -228,6 +228,12 @@ class DOMNode(MessagePump):
                 raise ReactiveError(
                     f"Unable to bind non-reactive attribute {name!r} on {self}"
                 )
+            if isinstance(reactive, Reactive) and not isinstance(
+                parent, reactive.owner
+            ):
+                raise ReactiveError(
+                    f"Unable to bind data; {reactive.owner.__name__} is not defined on {parent.__class__.__name__}."
+                )
             self._reactive_connect[name] = (parent, reactive)
         self._initialize_data_bind()
         return self

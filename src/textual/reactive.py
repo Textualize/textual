@@ -228,8 +228,7 @@ class Reactive(Generic[ReactiveType]):
             setattr(obj, self.internal_name, value)
 
             # Check all watchers
-            if self._init or (not self._init and obj._is_mounted):
-                self._check_watchers(obj, name, current_value)
+            self._check_watchers(obj, name, current_value)
 
             if self._run_compute:
                 self._compute(obj)
