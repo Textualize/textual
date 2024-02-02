@@ -85,6 +85,7 @@ class DOMQuery(Generic[QueryType]):
         Raises:
             InvalidQueryFormat: If the format of the query is invalid.
         """
+        _rich_traceback_omit = True
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
@@ -153,16 +154,19 @@ class DOMQuery(Generic[QueryType]):
         return self.nodes[index]
 
     def __rich_repr__(self) -> rich.repr.Result:
-        if self._filters:
-            yield "query", " AND ".join(
-                ",".join(selector.css for selector in selectors)
-                for selectors in self._filters
-            )
-        if self._excludes:
-            yield "exclude", " OR ".join(
-                ",".join(selector.css for selector in selectors)
-                for selectors in self._excludes
-            )
+        try:
+            if self._filters:
+                yield "query", " AND ".join(
+                    ",".join(selector.css for selector in selectors)
+                    for selectors in self._filters
+                )
+            if self._excludes:
+                yield "exclude", " OR ".join(
+                    ",".join(selector.css for selector in selectors)
+                    for selectors in self._excludes
+                )
+        except AttributeError:
+            pass
 
     def filter(self, selector: str) -> DOMQuery[QueryType]:
         """Filter this set by the given CSS selector.

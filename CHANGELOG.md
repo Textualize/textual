@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added DOMQuery.set
 
+### Changed
+
+- Reactives with init=False will not call watchers until they are mounted
+
 ## [0.48.1] - 2023-02-01
 
 ### Fixed

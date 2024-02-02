@@ -182,7 +182,7 @@ class Reactive(Generic[ReactiveType]):
             return self
         if not hasattr(obj, "id"):
             raise ReactiveError(
-                f"Reactive node {obj.__class__.__name__!r} is missing data; Do you need to call super().__init__(...) first?"
+                f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before getting reactives."
             )
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
@@ -200,6 +200,11 @@ class Reactive(Generic[ReactiveType]):
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True
+
+        if not hasattr(obj, "_id"):
+            raise ReactiveError(
+                f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before setting reactives."
+            )
 
         self._initialize_reactive(obj, self.name)
 
@@ -223,7 +228,8 @@ class Reactive(Generic[ReactiveType]):
             setattr(obj, self.internal_name, value)
 
             # Check all watchers
-            self._check_watchers(obj, name, current_value)
+            if self._init or (not self._init and obj._is_mounted):
+                self._check_watchers(obj, name, current_value)
 
             if self._run_compute:
                 self._compute(obj)
