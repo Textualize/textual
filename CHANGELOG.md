@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added DOMQuery.set
+- Added DOMNode.set_reactive
 
 ### Changed
 

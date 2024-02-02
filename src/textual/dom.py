@@ -68,6 +68,9 @@ WalkMethod: TypeAlias = Literal["depth", "breadth"]
 """Valid walking methods for the [`DOMNode.walk_children` method][textual.dom.DOMNode.walk_children]."""
 
 
+ReactiveType = TypeVar("ReactiveType")
+
+
 class BadIdentifier(Exception):
     """Exception raised if you supply a `id` attribute or class name in the wrong format."""
 
@@ -199,6 +202,33 @@ class DOMNode(MessagePump):
         ) = None
 
         super().__init__()
+
+    def set_reactive(
+        self, reactive: Reactive[ReactiveType], value: ReactiveType
+    ) -> None:
+        """Sets a reactive value *without* invoking validators or watchers.
+
+        Example:
+            ```python
+            self.set_reactive(App.dark_mode, True)
+            ```
+
+        Args:
+            name: Name of reactive attribute.
+            value: New value of reactive.
+
+        Raises:
+            AttributeError: If the first argument is not a reactive.
+        """
+        if not isinstance(reactive, Reactive):
+            raise TypeError(
+                "A Reactive class is required; for example: MyApp.dark_mode"
+            )
+        if reactive.name not in self._reactives:
+            raise AttributeError(
+                "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
+            )
+        setattr(self, f"_reactive_{reactive.name}", value)
 
     def data_bind(
         self,
