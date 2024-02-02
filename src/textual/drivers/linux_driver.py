@@ -156,28 +156,33 @@ class LinuxDriver(Driver):
             """Signal handler that will put the application back to sleep."""
             os.kill(os.getpid(), signal.SIGSTOP)
 
-        # Set up handlers to ensure that, if there's a SIGTTOU or a SIGTTIN,
-        # we go back to sleep.
-        signal.signal(signal.SIGTTOU, _stop_again)
-        signal.signal(signal.SIGTTIN, _stop_again)
-        try:
-            # Here we perform a NOP tcsetattr. The reason for this is that,
-            # if we're suspended and the user has performed a `bg` in the
-            # shell, we'll SIGCONT *but* we won't be allowed to do terminal
-            # output; so rather than get into the business of spinning up
-            # application mode again and then finding out, we perform a
-            # no-consequence change and detect the problem right away.
-            termios.tcsetattr(
-                self.fileno, termios.TCSANOW, termios.tcgetattr(self.fileno)
-            )
-        except termios.error:
-            # There was an error doing the tcsetattr; there is no sense in
-            # carrying on because we'll be doing a SIGSTOP (see above).
-            return
-        finally:
-            # We don't need to be hooking SIGTTOU or SIGTTIN any more.
-            signal.signal(signal.SIGTTOU, signal.SIG_DFL)
-            signal.signal(signal.SIGTTIN, signal.SIG_DFL)
+        # If we're working with an actual tty...
+        # https://github.com/Textualize/textual/issues/4104
+        if os.isatty(self.fileno):
+            # Set up handlers to ensure that, if there's a SIGTTOU or a SIGTTIN,
+            # we go back to sleep.
+            signal.signal(signal.SIGTTOU, _stop_again)
+            signal.signal(signal.SIGTTIN, _stop_again)
+            try:
+                # Here we perform a NOP tcsetattr. The reason for this is
+                # that, if we're suspended and the user has performed a `bg`
+                # in the shell, we'll SIGCONT *but* we won't be allowed to
+                # do terminal output; so rather than get into the business
+                # of spinning up application mode again and then finding
+                # out, we perform a no-consequence change and detect the
+                # problem right away.
+                termios.tcsetattr(
+                    self.fileno, termios.TCSANOW, termios.tcgetattr(self.fileno)
+                )
+            except termios.error:
+                # There was an error doing the tcsetattr; there is no sense
+                # in carrying on because we'll be doing a SIGSTOP (see
+                # above).
+                return
+            finally:
+                # We don't need to be hooking SIGTTOU or SIGTTIN any more.
+                signal.signal(signal.SIGTTOU, signal.SIG_DFL)
+                signal.signal(signal.SIGTTIN, signal.SIG_DFL)
 
         loop = asyncio.get_running_loop()
 
