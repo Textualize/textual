@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed broken `OptionList` `Option.id` mappings https://github.com/Textualize/textual/issues/4101
+
 ### Changed
 
 - Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
