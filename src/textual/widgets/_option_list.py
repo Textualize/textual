@@ -573,15 +573,16 @@ class OptionList(ScrollView, can_focus=True):
             content = [self._make_content(item) for item in items]
             self._duplicate_id_check(content)
             self._contents.extend(content)
-            # Pull out the content that is genuine options. Add them to the
-            # list of options and map option IDs to their new indices.
+            # Pull out the content that is genuine options, create any new
+            # ID mappings required, then add the new options to the option
+            # list.
             new_options = [item for item in content if isinstance(item, Option)]
-            self._options.extend(new_options)
             for new_option_index, new_option in enumerate(
                 new_options, start=len(self._options)
             ):
                 if new_option.id:
                     self._option_ids[new_option.id] = new_option_index
+            self._options.extend(new_options)
 
             self._refresh_content_tracking(force=True)
             self.refresh()
