@@ -5,16 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed scrolling in long `OptionList` by adding max height of 100% https://github.com/Textualize/textual/issues/4021
+
 ## [0.48.2] - 2024-02-02
 
 ### Fixed
 
 - Fixed a hang in the Linux driver when connected to a pipe https://github.com/Textualize/textual/issues/4104
 - Fixed broken `OptionList` `Option.id` mappings https://github.com/Textualize/textual/issues/4101
-
-### Fixed
-
-- Fixed scrolling in long `OptionList` by adding max height of 100% https://github.com/Textualize/textual/issues/4021
 
 ### Changed
 
