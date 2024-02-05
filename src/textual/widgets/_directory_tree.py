@@ -192,17 +192,7 @@ class DirectoryTree(Tree[DirEntry]):
             The `Tree` instance.
         """
         self._clear_line_cache()
-        node_label = node._label
-        node_data = node.data
-        node_parent = node.parent
-        node = TreeNode(
-            self,
-            node_parent,
-            self._new_id(),
-            node_label,
-            node_data,
-            expanded=True,
-        )
+        node.remove_children()
         self._updates += 1
         self.refresh()
         return self

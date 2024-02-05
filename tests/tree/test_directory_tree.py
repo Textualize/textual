@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 from rich.text import Text
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.widgets import DirectoryTree
@@ -25,7 +28,22 @@ class DirectoryTreeApp(App[None]):
         self.messages.append(event.__class__.__name__)
 
 
-async def test_directory_tree_file_selected_message(tmp_path) -> None:
+class RecordExpandDirectoryTreeApp(App[None]):
+    def __init__(self, path: Path):
+        super().__init__()
+        self.path = path
+        self.expanded: list[str] = []
+
+    def compose(self) -> ComposeResult:
+        yield DirectoryTree(self.path)
+
+    @on(DirectoryTree.DirectorySelected)
+    def record(self, event: DirectoryTree.DirectorySelected) -> None:
+        assert event.node.data is not None
+        self.expanded.append(str(event.node.data.path.name))
+
+
+async def test_directory_tree_file_selected_message(tmp_path: Path) -> None:
     """Selecting a file should result in a file selected message being emitted."""
 
     FILE_NAME = "hello.txt"
@@ -48,7 +66,7 @@ async def test_directory_tree_file_selected_message(tmp_path) -> None:
         assert pilot.app.messages == ["FileSelected"]
 
 
-async def test_directory_tree_directory_selected_message(tmp_path) -> None:
+async def test_directory_tree_directory_selected_message(tmp_path: Path) -> None:
     """Selecting a directory should result in a directory selected message being emitted."""
 
     SUBDIR = "subdir"
@@ -79,7 +97,7 @@ async def test_directory_tree_directory_selected_message(tmp_path) -> None:
         assert pilot.app.messages == ["DirectorySelected", "DirectorySelected"]
 
 
-async def test_directory_tree_reload_node(tmp_path) -> None:
+async def test_directory_tree_reload_node(tmp_path: Path) -> None:
     """Reloading a node of a directory tree should display newly created file inside the directory."""
 
     RELOADED_DIRECTORY = "parentdir"
@@ -123,7 +141,7 @@ async def test_directory_tree_reload_node(tmp_path) -> None:
         ]
 
 
-async def test_directory_tree_reload_other_node(tmp_path) -> None:
+async def test_directory_tree_reload_other_node(tmp_path: Path) -> None:
     """Reloading a node of a directory tree should not reload content of other directory."""
 
     RELOADED_DIRECTORY = "parentdir"
@@ -172,3 +190,29 @@ async def test_directory_tree_reload_other_node(tmp_path) -> None:
         # After reloading one node, the new file under the other one does not show up
         assert len(unaffected_node.children) == 1
         assert unaffected_node.children[0].label == Text(NOT_RELOADED_FILE3_NAME)
+
+
+async def test_directory_tree_reloading_preserves_state(tmp_path: Path) -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/4122.
+
+    Ensures `clear_node` does clear the node specified.
+    """
+    ROOT = "root"
+    structure = [
+        ROOT,
+        "root/file1.txt",
+        "root/file2.txt",
+    ]
+
+    for path in structure:
+        if path.endswith(".txt"):
+            (tmp_path / path).touch()
+        else:
+            (tmp_path / path).mkdir()
+
+    app = DirectoryTreeApp(tmp_path / ROOT)
+    async with app.run_test() as pilot:
+        directory_tree = app.query_one(DirectoryTree)
+        directory_tree.clear_node(directory_tree.root)
+        await pilot.pause()
+        assert not directory_tree.root.children
