@@ -457,7 +457,7 @@ TextArea:light .text-area--cursor {
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
         """
-        return TextArea(
+        return cls(
             text,
             language=language,
             theme=theme,
