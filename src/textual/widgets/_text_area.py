@@ -1221,7 +1221,16 @@ TextArea:light .text-area--cursor {
         self._redo_batch(edits)
 
     def _undo_batch(self, edits: Sequence[Edit]) -> None:
-        """Undo a batch of Edits."""
+        """Undo a batch of Edits.
+
+        The sequence must be chronologically ordered by edit time.
+
+        There must be no edits missing from the sequence, or the resulting content
+        will be incorrect.
+
+        Args:
+            edits: The edits to undo, in the order they were originally performed.
+        """
         if not edits:
             return
 
@@ -1247,7 +1256,18 @@ TextArea:light .text-area--cursor {
         self.post_message(self.Changed(self))
 
     def _redo_batch(self, edits: Sequence[Edit]) -> None:
-        """Perform a batch of Edits."""
+        """Redo a batch of Edits in order.
+
+        The sequence must be chronologically ordered by edit time.
+
+        Edits are applied from the start of the sequence to the end.
+
+        There must be no edits missing from the sequence, or the resulting content
+        will be incorrect.
+
+        Args:
+            edits: The edits to redo.
+        """
         if not edits:
             return
 
