@@ -378,7 +378,7 @@ TextArea:light .text-area--cursor {
         """Compiled regular expression for what we consider to be a 'word'."""
 
         self._edit_history: EditHistory = EditHistory(
-            checkpoint_timer=2.0, checkpoint_max_characters=50
+            checkpoint_timer=2.0, checkpoint_max_characters=100
         )
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
