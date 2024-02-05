@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import deque
 from math import ceil
 from time import monotonic
 from typing import Callable, Optional
@@ -189,10 +190,6 @@ class ETAStatus(Label):
     """This is used as an auxiliary reactive to only refresh the label when needed."""
     _percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
-    _refresh_timer: Timer | None
-    """Timer to update ETA status even when progress stalls."""
-    _start_time: float | None
-    """The time when the widget started tracking progress."""
 
     def __init__(
         self,
@@ -202,10 +199,12 @@ class ETAStatus(Label):
         disabled: bool = False,
     ):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        self._refresh_timer: Timer | None = None
+        """Timer to update ETA status even when progress stalls."""
+        self._samples: deque[float] = deque(maxlen=20)
+        """A recent sample of update times to help work out the ETA."""
         self._percentage = None
         self._label_text = "--:--:--"
-        self._start_time = None
-        self._refresh_timer = None
 
     def on_mount(self) -> None:
         """Periodically refresh the countdown so that the ETA is always up to date."""
@@ -213,23 +212,28 @@ class ETAStatus(Label):
 
     def reset(self) -> None:
         """Reset the ETA calculation."""
-        self._start_time = None
+        self._samples.clear()
 
     def watch__percentage(self, percentage: float | None) -> None:
         if percentage is None:
             self._label_text = "--:--:--"
         else:
+            self._samples.append(monotonic())
             if self._refresh_timer is not None:
                 self._refresh_timer.reset()
             self.update_eta()
 
+    @property
+    def _recent_time_per_sample(self) -> float:
+        """The recent time per sample."""
+        return (monotonic() - self._samples[0]) / len(self._samples)
+
     def update_eta(self) -> None:
         """Update the ETA display."""
         percentage = self._percentage
-        delta = self._get_elapsed_time()
         # We display --:--:-- if we haven't started, if we are done,
         # or if we don't know when we started keeping track of time.
-        if not percentage or percentage >= 1 or not delta:
+        if not percentage or percentage >= 1 or not self._samples:
             self._label_text = "--:--:--"
             # If we are done, we can delete the timer that periodically refreshes
             # the countdown display.
@@ -237,7 +241,7 @@ class ETAStatus(Label):
                 self.auto_refresh = None
         # Render a countdown timer with hh:mm:ss, unless it's a LONG time.
         else:
-            left = ceil((delta / percentage) * (1 - percentage))
+            left = ceil(((1 - percentage) * 100) * self._recent_time_per_sample)
             minutes, seconds = divmod(left, 60)
             hours, minutes = divmod(minutes, 60)
             if hours > 999999:
@@ -246,17 +250,6 @@ class ETAStatus(Label):
                 self._label_text = f"{hours}h"
             else:
                 self._label_text = f"{hours:02}:{minutes:02}:{seconds:02}"
-
-    def _get_elapsed_time(self) -> float:
-        """Get time to estimate time to progress completion.
-
-        Returns:
-            The time elapsed since the bar started being animated.
-        """
-        if self._start_time is None:
-            self._start_time = monotonic()
-            return 0
-        return monotonic() - self._start_time
 
     def watch__label_text(self, label_text: str) -> None:
         """If the ETA label changed, update the renderable (which also refreshes)."""
