@@ -425,7 +425,7 @@ class ProgressBar(Widget, can_focus=False):
             advance: Advance the progress by this number of steps.
             reset_eta: Should the ETA be reset?
         """
-        if reset_eta and self.show_eta is not None:
+        if reset_eta and self.show_eta:
             self.query_one(ETAStatus).reset()
         if not isinstance(total, UnusedParameter):
             self.total = total
