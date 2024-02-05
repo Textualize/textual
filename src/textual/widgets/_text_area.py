@@ -24,7 +24,7 @@ from textual.document._document import (
     _utf8_encode,
 )
 from textual.document._document_navigator import DocumentNavigator
-from textual.document._history import UndoStack
+from textual.document._history import EditHistory
 from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
@@ -376,14 +376,10 @@ TextArea:light .text-area--cursor {
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-        self._undo_stack: UndoStack = UndoStack()
+        self._edit_history: EditHistory = EditHistory(
+            checkpoint_timer=2.0, checkpoint_max_characters=50
+        )
         """A stack (the end of the list is the top of the stack) for tracking edits."""
-
-        # TODO - we should invalidate the redo/undo stack when the text of the document
-        #  is directly changed.
-
-        self._redo_stack: list[EditBatch] = []
-        """A stack for tracking edits that have been undone."""
 
         self._selecting = False
         """True if we're currently selecting text using the mouse, otherwise False."""
@@ -1196,7 +1192,7 @@ TextArea:light .text-area--cursor {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
-        self._undo_stack.append(edit)
+        self._edit_history.record_edit(edit)
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
@@ -1217,8 +1213,8 @@ TextArea:light .text-area--cursor {
     def undo(self) -> EditResult | None:
         """Undo the most recent edit."""
 
-        if self._undo_stack:
-            original_edit = self._undo_stack.pop()
+        if self._edit_history:
+            original_edit = self._edit_history.pop()
 
             old_gutter_width = self.gutter_width
             undo_result = original_edit.undo(self)
