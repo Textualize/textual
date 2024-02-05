@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from typing import Iterable
 
+from rich import terminal_theme
 from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
 from ..color import Color
+from ..filter import ANSIToTruecolor
 
 
 class Tint:
@@ -43,13 +45,15 @@ class Tint:
         style_from_color = Style.from_color
         _Segment = Segment
 
+        ansi_filter = ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI)
+
         NULL_STYLE = Style()
         for segment in segments:
             text, style, control = segment
             if control:
                 yield segment
             else:
-                style = style or NULL_STYLE
+                style = ansi_filter.truecolor_style(style) or NULL_STYLE
                 yield _Segment(
                     text,
                     (

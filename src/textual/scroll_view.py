@@ -152,7 +152,7 @@ class ScrollView(ScrollableContainer):
         """
         width = self.virtual_size.width
         scroll_x, scroll_y = self.scroll_offset
-        self.refresh(Region(0, y - scroll_y, width, 1))
+        self.refresh(Region(0, y - scroll_y, max(width, self.size.width), 1))
 
     def refresh_lines(self, y_start: int, line_count: int = 1) -> None:
         """Refresh one or more lines.
@@ -164,5 +164,7 @@ class ScrollView(ScrollableContainer):
 
         width = self.virtual_size.width
         scroll_x, scroll_y = self.scroll_offset
-        refresh_region = Region(0, y_start - scroll_y, width, line_count)
+        refresh_region = Region(
+            0, y_start - scroll_y, max(width, self.size.width), line_count
+        )
         self.refresh(refresh_region)

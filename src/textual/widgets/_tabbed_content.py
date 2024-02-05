@@ -324,6 +324,9 @@ class TabbedContent(Widget):
     @property
     def active_pane(self) -> TabPane | None:
         """The currently active pane, or `None` if no pane is active."""
+        active = self.active
+        if not active:
+            return None
         return self.get_pane(self.active)
 
     def validate_active(self, active: str) -> str:

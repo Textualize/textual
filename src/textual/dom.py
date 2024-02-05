@@ -290,6 +290,7 @@ class DOMNode(MessagePump):
 
                 def setter(value: object) -> None:
                     """Set bound data."""
+                    _rich_traceback_omit = True
                     Reactive._initialize_object(self)
                     setattr(self, variable_name, value)
 
@@ -1405,6 +1406,13 @@ class DOMNode(MessagePump):
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self
 
-    async def action_toggle(self, value_name: str) -> None:
-        value = getattr(self, value_name)
-        setattr(self, value_name, not value)
+    async def action_toggle(self, attribute_name: str) -> None:
+        """Toggle an attribute on the node.
+
+        Assumes the attribute is a bool.
+
+        Args:
+            attribute_name: Name of the attribute.
+        """
+        value = getattr(self, attribute_name)
+        setattr(self, attribute_name, not value)

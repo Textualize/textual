@@ -223,7 +223,7 @@ class DOMQuery(Generic[QueryType]):
                     )
             return first
         else:
-            raise NoMatches(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r} on {self.node!r}")
 
     @overload
     def only_one(self) -> QueryType: ...
@@ -293,7 +293,7 @@ class DOMQuery(Generic[QueryType]):
             The matching Widget.
         """
         if not self.nodes:
-            raise NoMatches(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r} on dom{self.node!r}")
         last = self.nodes[-1]
         if expect_type is not None and not isinstance(last, expect_type):
             raise WrongType(
