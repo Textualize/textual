@@ -237,8 +237,13 @@ class ETAStatus(Label):
             self._label_text = "--:--:--"
             # If we are done, we can delete the timer that periodically refreshes
             # the countdown display.
-            if percentage is not None and percentage >= 1:
-                self.auto_refresh = None
+            if (
+                percentage is not None
+                and percentage >= 1
+                and self._refresh_timer is not None
+            ):
+                self._refresh_timer.stop()
+                self._refresh_timer = None
         # Render a countdown timer with hh:mm:ss, unless it's a LONG time.
         else:
             left = ceil(((1 - percentage) * 100) * self._recent_time_per_sample)
