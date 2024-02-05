@@ -283,11 +283,13 @@ This immediately updates the appearance of the `TextArea`:
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
 
-### Tab behaviour
+### Tab and Escape behaviour
 
 Pressing the ++tab++ key will shift focus to the next widget in your application by default.
 This matches how other widgets work in Textual.
+
 To have ++tab++ insert a `\t` character, set the `tab_behaviour` attribute to the string value `"indent"`.
+You can instead shift focus with the keyboard in this mode by pressing the ++escape++ key.
 
 ### Indentation
 
