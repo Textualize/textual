@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `DirectoryTree.clear_node` not clearing the node specified https://github.com/Textualize/textual/issues/4122
 
+### Added
+
+- `Tree` (and `DirectoryTree`) grew an attribute `lock` that can be used for synchronization across coroutines https://github.com/Textualize/textual/issues/4056
+
+### Changed
+
+- `DirectoryTree.reload` and `DirectoryTree.reload_node` now preserve state when reloading https://github.com/Textualize/textual/issues/4056
+
 ## [0.48.2] - 2024-02-02
 
 ### Fixed

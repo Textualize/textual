@@ -28,21 +28,6 @@ class DirectoryTreeApp(App[None]):
         self.messages.append(event.__class__.__name__)
 
 
-class RecordExpandDirectoryTreeApp(App[None]):
-    def __init__(self, path: Path):
-        super().__init__()
-        self.path = path
-        self.expanded: list[str] = []
-
-    def compose(self) -> ComposeResult:
-        yield DirectoryTree(self.path)
-
-    @on(DirectoryTree.DirectorySelected)
-    def record(self, event: DirectoryTree.DirectorySelected) -> None:
-        assert event.node.data is not None
-        self.expanded.append(str(event.node.data.path.name))
-
-
 async def test_directory_tree_file_selected_message(tmp_path: Path) -> None:
     """Selecting a file should result in a file selected message being emitted."""
 
