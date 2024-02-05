@@ -211,6 +211,10 @@ class ETAStatus(Label):
         """Periodically refresh the countdown so that the ETA is always up to date."""
         self._refresh_timer = self.set_interval(1 / 2, self.update_eta, pause=True)
 
+    def reset(self) -> None:
+        """Reset the ETA calculation."""
+        self._start_time = None
+
     def watch__percentage(self, percentage: float | None) -> None:
         if percentage is None:
             self._label_text = "--:--:--"
