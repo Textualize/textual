@@ -414,6 +414,7 @@ class ProgressBar(Widget, can_focus=False):
         total: None | float | UnusedParameter = UNUSED,
         progress: float | UnusedParameter = UNUSED,
         advance: float | UnusedParameter = UNUSED,
+        reset_eta: bool = False,
     ) -> None:
         """Update the progress bar with the given options.
 
@@ -429,7 +430,10 @@ class ProgressBar(Widget, can_focus=False):
             total: New total number of steps.
             progress: Set the progress to the given number of steps.
             advance: Advance the progress by this number of steps.
+            reset_eta: Should the ETA be reset?
         """
+        if reset_eta and self.show_eta is not None:
+            self.query_one(ETAStatus).reset()
         if not isinstance(total, UnusedParameter):
             self.total = total
         if not isinstance(progress, UnusedParameter):
