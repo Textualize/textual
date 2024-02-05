@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from dataclasses import dataclass, field
 
-from textual.widgets._text_area import Edit
+from textual.document._edit import Edit
 
 
 class HistoryException(Exception):
@@ -26,21 +26,18 @@ class EditHistory:
 
     _last_edit_time: float = field(init=False, default_factory=time.monotonic)
 
-    _character_count: int = 0
+    _character_count: int = field(init=False, default=0)
     """Track number of characters replaced + inserted since last batch creation."""
 
-    _force_end_batch: bool = False
+    _force_end_batch: bool = field(init=False, default=False)
     """Flag to force the creation of a new batch for the next recorded edit."""
 
     def record_edit(self, edit: Edit) -> None:
-        """Defines the rules for whether an Edit action should be included in
-        a prior batch or added to a new batch."""
+        """Record an Edit so that it may be undone and redone.
 
-        # Initial heuristics for adding to an edit batch are:
-        #  - a time window measured in seconds
-        #  - a number of characters replaced + inserted
-        #  - insertion or deletion of at least 1 newline character
-        #  - if text is replaced, it always forms a new batch
+        Args:
+            edit: The edit to record.
+        """
         if edit._edit_result is None:
             raise HistoryException(
                 "Cannot add an edit to history before it has been performed using `Edit.do`."
@@ -59,33 +56,51 @@ class EditHistory:
             or "\n" in edit.text
             or "\n" in edit._edit_result.replaced_text
         ):
+            # Create a new batch (creating a "checkpoint").
             undo_stack.append([edit])
             self._character_count = edit_characters  # TODO - check this
             self._last_edit_time = current_time
             self._force_end_batch = False
         else:
+            # Update the latest batch.
             undo_stack[-1].append(edit)
             self._character_count += edit_characters
             self._last_edit_time = current_time
 
-    def undo(self) -> list[Edit]:
-        """Remove the latest batch from the undo stack and return it.
+        self._redo_stack.clear()
+
+    def pop_undo(self) -> list[Edit] | None:
+        """Pop the latest batch from the undo stack and return it.
 
         This will also place it on the redo stack.
 
         Returns:
-            The batch of Edits from the top of the undo stack.
+            The batch of Edits from the top of the undo stack or None if it's empty.
         """
+        undo_stack = self._undo_stack
+        redo_stack = self._redo_stack
+        if undo_stack:
+            batch = undo_stack.pop()
+            redo_stack.append(batch)
+            return batch
 
-    def redo(self) -> list[Edit]:
+    def pop_redo(self) -> list[Edit] | None:
         """Redo the latest batch on the redo stack and return it.
 
         This will also place it on the undo stack (with a forced checkpoint to ensure
         this undo does not get batched with other edits).
 
         Returns:
-            The batch of Edits from the top of the redo stack.
+            The batch of Edits from the top of the redo stack or None if it's empty.
         """
+        undo_stack = self._undo_stack
+        redo_stack = self._redo_stack
+        if redo_stack:
+            batch = redo_stack.pop()
+            undo_stack.append(batch)
+            # Ensure edits which follow cannot be added to the redone batch.
+            self.force_end_batch()
+            return batch
 
     def reset(self) -> None:
         self._undo_stack.clear()
