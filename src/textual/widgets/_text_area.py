@@ -1254,7 +1254,7 @@ TextArea:light .text-area--cursor {
         old_gutter_width = self.gutter_width
         edit_results = []
         for edit in edits:
-            result = edit.do(self)
+            result = edit.do(self, record_selection=False)
             edit_results.append(result)
         new_gutter_width = self.gutter_width
 

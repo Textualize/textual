@@ -15,26 +15,39 @@ class Edit:
 
     text: str
     """The text to insert. An empty string is equivalent to deletion."""
+
     from_location: Location
     """The start location of the insert."""
+
     to_location: Location
     """The end location of the insert"""
+
     maintain_selection_offset: bool
     """If True, the selection will maintain its offset to the replacement range."""
+
+    _original_selection: Selection | None = field(init=False, default=None)
+    """The Selection when the edit was originally performed, to be restored on undo."""
+
     _updated_selection: Selection | None = field(init=False, default=None)
     """Where the selection should move to after the replace happens."""
+
     _edit_result: EditResult | None = field(init=False, default=None)
     """The result of doing the edit."""
 
-    def do(self, text_area: TextArea) -> EditResult:
+    def do(self, text_area: TextArea, record_selection: bool = True) -> EditResult:
         """Perform the edit operation.
 
         Args:
             text_area: The `TextArea` to perform the edit on.
+            record_selection: If True, record the current selection in the TextArea
+                so that it may be restored if this Edit is undone in the future.
 
         Returns:
             An `EditResult` containing information about the replace operation.
         """
+        if record_selection:
+            self._original_selection = text_area.selection
+
         text = self.text
 
         edit_from = self.from_location
@@ -115,8 +128,7 @@ class Edit:
             target_top, edit_end, replaced_text
         )
 
-        # TODO - this should be a separate field
-        self._updated_selection = Selection(target_from, target_to)
+        self._updated_selection = self._original_selection
 
         return undo_edit_result
 
