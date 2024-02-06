@@ -44,6 +44,8 @@ class EditHistory:
 
         Determines whether to batch the Edit with previous Edits, or create a new batch/checkpoint.
 
+        This method must be called exactly once per edit, in chronological order.
+
         A new batch/checkpoint is created when:
 
         - The undo stack is empty.
@@ -56,6 +58,7 @@ class EditHistory:
             - Blurring the TextArea should create a new batch.
         - The current edit involves a deletion/replacement and the previous edit did not.
         - The current edit is a pure insertion and the previous edit was not.
+        - The edit involves insertion or deletion of one or more newline characters.
 
         Args:
             edit: The edit to record.
@@ -70,7 +73,7 @@ class EditHistory:
         undo_stack = self._undo_stack
         current_time = time.monotonic()
         edit_characters = self._count_edit_characters(edit)
-        contains_newline = "\n" in edit.text
+        contains_newline = "\n" in edit.text or "\n" in edit_result.replaced_text
 
         # Determine whether to create a new batch, or add to the latest batch.
         if (
