@@ -31,7 +31,7 @@ class WorldClockApp(App):
     time: reactive[datetime] = reactive(datetime.now)
 
     def compose(self) -> ComposeResult:
-        yield WorldClock("Europe/London").data_bind(WorldClockApp.time)
+        yield WorldClock("Europe/London").data_bind(WorldClockApp.time)  # (1)!
         yield WorldClock("Europe/Paris").data_bind(WorldClockApp.time)
         yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
 

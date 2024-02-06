@@ -235,10 +235,7 @@ class DOMNode(MessagePump):
         *reactives: Reactive[Any],
         **bind_vars: Reactive[Any] | object,
     ) -> Self:
-        """Bind reactive data.
-
-        Args:
-            parent: The parent widget where the data should come from. Or `None` to auto-detect.
+        """Bind reactive data so that changes to a reactive automatically change the reactive on another widget.
 
         Raises:
             ReactiveError: If the data wasn't bound.
