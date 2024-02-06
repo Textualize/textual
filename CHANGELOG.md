@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed a hang in the Linux driver when connected to a pipe https://github.com/Textualize/textual/issues/4104
 - Fixed broken `OptionList` `Option.id` mappings https://github.com/Textualize/textual/issues/4101
 
+### Added
+
+- Added DOMQuery.set https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.set_reactive https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
+- Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
+
 ### Changed
 
 - Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
