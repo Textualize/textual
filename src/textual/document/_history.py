@@ -158,5 +158,7 @@ class EditHistory:
             The number of characters replaced + inserted in the Edit.
         """
         inserted_characters = len(edit.text)
-        replaced_characters = len(edit._edit_result.replaced_text)
-        return replaced_characters + inserted_characters
+        if edit._edit_result:
+            replaced_characters = len(edit._edit_result.replaced_text)
+            return replaced_characters + inserted_characters
+        return inserted_characters
