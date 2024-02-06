@@ -85,6 +85,7 @@ class Reactive(Generic[ReactiveType]):
 
     @property
     def owner(self) -> Type[MessageTarget]:
+        """The owner (class) where the reactive was declared."""
         assert self._owner is not None
         return self._owner
 
