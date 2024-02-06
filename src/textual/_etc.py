@@ -111,7 +111,7 @@ class TimeToCompletion:
         try:
             return self._elapsed / self._distance_covered
         except ZeroDivisionError:
-            return 0
+            return self._elapsed
 
     @property
     def _speed_now(self) -> float:
@@ -119,7 +119,7 @@ class TimeToCompletion:
         try:
             return self._elapsed_to_now / self._distance_covered
         except ZeroDivisionError:
-            return 0
+            return self._elapsed_to_now
 
     @property
     def estimated_time_to_complete(self) -> float:
