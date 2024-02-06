@@ -70,6 +70,7 @@ class EditHistory:
         undo_stack = self._undo_stack
         current_time = time.monotonic()
         edit_characters = self._count_edit_characters(edit)
+        contains_newline = "\n" in edit.text
 
         # Determine whether to create a new batch, or add to the latest batch.
         if (
@@ -78,7 +79,7 @@ class EditHistory:
             or is_replacement != self._previously_replaced
             or current_time - self._last_edit_time > self.checkpoint_timer
             or self._character_count + edit_characters > self.checkpoint_max_characters
-            or "\n" in edit.text
+            or contains_newline
         ):
             # Create a new batch (creating a "checkpoint").
             undo_stack.append([edit])
@@ -93,6 +94,10 @@ class EditHistory:
 
         self._previously_replaced = is_replacement
         self._redo_stack.clear()
+
+        # Force edits which contain newlines to be their own batch, not merged with any other batch.
+        if contains_newline:
+            self.force_end_batch()
 
     def pop_undo(self) -> list[Edit] | None:
         """Pop the latest batch from the undo stack and return it.
