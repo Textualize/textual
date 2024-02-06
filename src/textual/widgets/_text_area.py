@@ -960,7 +960,6 @@ TextArea:light .text-area--cursor {
         # Get the line from the Document.
         line_string = document.get_line(line_index)
         line = Text(line_string, end="")
-
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
@@ -1195,8 +1194,8 @@ TextArea:light .text-area--cursor {
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                edit.from_location,
-                edit.to_location,
+                edit.top,
+                edit.bottom,
                 result.end_location,
             )
 
@@ -1811,8 +1810,7 @@ TextArea:light .text-area--cursor {
         Returns:
             An `EditResult` containing information about the edit.
         """
-        top, bottom = sorted((start, end))
-        return self.edit(Edit("", top, bottom, maintain_selection_offset))
+        return self.edit(Edit("", start, end, maintain_selection_offset))
 
     def replace(
         self,
@@ -1986,14 +1984,13 @@ class Edit:
         # position in the document even if an insert happens before
         # their cursor position.
 
-        edit_top, edit_bottom = sorted((edit_from, edit_to))
-        edit_bottom_row, edit_bottom_column = edit_bottom
+        edit_bottom_row, edit_bottom_column = self.bottom
 
         selection_start, selection_end = text_area.selection
         selection_start_row, selection_start_column = selection_start
         selection_end_row, selection_end_column = selection_end
 
-        replace_result = text_area.document.replace_range(edit_from, edit_to, text)
+        replace_result = text_area.document.replace_range(self.top, self.bottom, text)
 
         new_edit_to_row, new_edit_to_column = replace_result.end_location
 
@@ -2047,6 +2044,14 @@ class Edit:
         if self._updated_selection is not None:
             text_area.selection = self._updated_selection
         text_area.record_cursor_width()
+
+    @property
+    def top(self) -> Location:
+        return min([self.from_location, self.to_location])
+
+    @property
+    def bottom(self) -> Location:
+        return max([self.from_location, self.to_location])
 
 
 @runtime_checkable
