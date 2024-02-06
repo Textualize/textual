@@ -237,6 +237,18 @@ class DOMNode(MessagePump):
     ) -> Self:
         """Bind reactive data so that changes to a reactive automatically change the reactive on another widget.
 
+        Reactives may be given as positional arguments or keyword arguments.
+        See the [guide on data binding](/guide/reactivity#data-binding).
+
+        Example:
+            ```python
+            def compose(self) -> ComposeResult:
+                yield WorldClock("Europe/London").data_bind(WorldClockApp.time)
+                yield WorldClock("Europe/Paris").data_bind(WorldClockApp.time)
+                yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
+            ```
+
+
         Raises:
             ReactiveError: If the data wasn't bound.
 

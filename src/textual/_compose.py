@@ -54,8 +54,6 @@ def compose(node: App | Widget) -> list[Widget]:
                 else:
                     raise mount_error from None
 
-            # child._initialize_data_bind(node)
-
             if composed:
                 nodes.extend(composed)
                 composed.clear()
