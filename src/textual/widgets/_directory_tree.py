@@ -256,10 +256,8 @@ class DirectoryTree(Tree[DirEntry]):
                 reopening = to_reopen.pop()
                 if not reopening.data:
                     continue
-                if (
-                    reopening.allow_expand
-                    and (reopening.data.path in currently_open or reopening == node)
-                    and reopening.data.path.exists()
+                if reopening.allow_expand and (
+                    reopening.data.path in currently_open or reopening == node
                 ):
                     try:
                         content = await self._load_directory(reopening).wait()
@@ -471,7 +469,7 @@ class DirectoryTree(Tree[DirEntry]):
         except PermissionError:
             pass
 
-    @work(thread=True)
+    @work(thread=True, exit_on_error=False)
     def _load_directory(self, node: TreeNode[DirEntry]) -> list[Path]:
         """Load the directory contents for a given node.
 
