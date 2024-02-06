@@ -5,13 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.48.1] - 2023-02-01
+## [0.48.2] - 2024-02-02
+
+### Fixed
+
+- Fixed a hang in the Linux driver when connected to a pipe https://github.com/Textualize/textual/issues/4104
+- Fixed broken `OptionList` `Option.id` mappings https://github.com/Textualize/textual/issues/4101
+
+### Added
+
+- Added DOMQuery.set https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.set_reactive https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
+- Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
+
+### Changed
+
+- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+
+## [0.48.1] - 2024-02-01
 
 ### Fixed
 
 - `TextArea` uses CSS theme by default instead of `monokai` https://github.com/Textualize/textual/pull/4091
 
-## [0.48.0] - 2023-02-01
+## [0.48.0] - 2024-02-01
 
 ### Changed
 
@@ -59,7 +78,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 - Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
 
-## [0.47.1] - 2023-01-05
+## [0.47.1] - 2024-01-05
 
 ### Fixed
 
@@ -1627,6 +1646,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.48.2]: https://github.com/Textualize/textual/compare/v0.48.1...v0.48.2
 [0.48.1]: https://github.com/Textualize/textual/compare/v0.48.0...v0.48.1
 [0.48.0]: https://github.com/Textualize/textual/compare/v0.47.1...v0.48.0
 [0.47.1]: https://github.com/Textualize/textual/compare/v0.47.0...v0.47.1

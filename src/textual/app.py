@@ -424,8 +424,9 @@ class App(Generic[ReturnType], DOMNode):
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
-            from .filter import Monochrome
+            from .filter import ANSIToTruecolor, Monochrome
 
+            self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
             self._filters.append(Monochrome())
 
         for filter_name in constants.FILTERS.split(","):

@@ -28,7 +28,7 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
-from ._context import NoActiveAppError
+from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
 from ._worker_manager import WorkerManager
@@ -41,7 +41,7 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive, _watch
+from .reactive import Reactive, ReactiveError, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
@@ -66,6 +66,9 @@ _re_identifier = re.compile(IDENTIFIER)
 
 WalkMethod: TypeAlias = Literal["depth", "breadth"]
 """Valid walking methods for the [`DOMNode.walk_children` method][textual.dom.DOMNode.walk_children]."""
+
+
+ReactiveType = TypeVar("ReactiveType")
 
 
 class BadIdentifier(Exception):
@@ -194,8 +197,126 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
+        self._reactive_connect: (
+            dict[str, tuple[MessagePump, Reactive | object]] | None
+        ) = None
 
         super().__init__()
+
+    def set_reactive(
+        self, reactive: Reactive[ReactiveType], value: ReactiveType
+    ) -> None:
+        """Sets a reactive value *without* invoking validators or watchers.
+
+        Example:
+            ```python
+            self.set_reactive(App.dark_mode, True)
+            ```
+
+        Args:
+            name: Name of reactive attribute.
+            value: New value of reactive.
+
+        Raises:
+            AttributeError: If the first argument is not a reactive.
+        """
+        if not isinstance(reactive, Reactive):
+            raise TypeError(
+                "A Reactive class is required; for example: MyApp.dark_mode"
+            )
+        if reactive.name not in self._reactives:
+            raise AttributeError(
+                "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
+            )
+        setattr(self, f"_reactive_{reactive.name}", value)
+
+    def data_bind(
+        self,
+        *reactives: Reactive[Any],
+        **bind_vars: Reactive[Any] | object,
+    ) -> Self:
+        """Bind reactive data so that changes to a reactive automatically change the reactive on another widget.
+
+        Reactives may be given as positional arguments or keyword arguments.
+        See the [guide on data binding](/guide/reactivity#data-binding).
+
+        Example:
+            ```python
+            def compose(self) -> ComposeResult:
+                yield WorldClock("Europe/London").data_bind(WorldClockApp.time)
+                yield WorldClock("Europe/Paris").data_bind(WorldClockApp.time)
+                yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
+            ```
+
+
+        Raises:
+            ReactiveError: If the data wasn't bound.
+
+        Returns:
+            Self.
+        """
+        _rich_traceback_omit = True
+
+        parent = active_message_pump.get()
+
+        if self._reactive_connect is None:
+            self._reactive_connect = {}
+        bind_vars = {**{reactive.name: reactive for reactive in reactives}, **bind_vars}
+        for name, reactive in bind_vars.items():
+            if name not in self._reactives:
+                raise ReactiveError(
+                    f"Unable to bind non-reactive attribute {name!r} on {self}"
+                )
+            if isinstance(reactive, Reactive) and not isinstance(
+                parent, reactive.owner
+            ):
+                raise ReactiveError(
+                    f"Unable to bind data; {reactive.owner.__name__} is not defined on {parent.__class__.__name__}."
+                )
+            self._reactive_connect[name] = (parent, reactive)
+        self._initialize_data_bind()
+        return self
+
+    def _initialize_data_bind(self) -> None:
+        """initialize a data binding.
+
+        Args:
+            compose_parent: The node doing the binding.
+        """
+        if not self._reactive_connect:
+            return
+        for variable_name, (compose_parent, reactive) in self._reactive_connect.items():
+
+            def make_setter(variable_name: str) -> Callable[[object], None]:
+                """Make a setter for the given variable name.
+
+                Args:
+                    variable_name: Name of variable being set.
+
+                Returns:
+                    A callable which takes the value to set.
+                """
+
+                def setter(value: object) -> None:
+                    """Set bound data."""
+                    _rich_traceback_omit = True
+                    Reactive._initialize_object(self)
+                    setattr(self, variable_name, value)
+
+                return setter
+
+            assert isinstance(compose_parent, DOMNode)
+            setter = make_setter(variable_name)
+            if isinstance(reactive, Reactive):
+                self.watch(
+                    compose_parent,
+                    reactive.name,
+                    setter,
+                    init=self._parent is not None,
+                )
+            else:
+                self.call_later(partial(setter, reactive))
+        self._reactive_connect = None
 
     def compose_add_child(self, widget: Widget) -> None:
         """Add a node to children.
@@ -1291,3 +1412,14 @@ class DOMNode(MessagePump):
 
     def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
         return self
+
+    async def action_toggle(self, attribute_name: str) -> None:
+        """Toggle an attribute on the node.
+
+        Assumes the attribute is a bool.
+
+        Args:
+            attribute_name: Name of the attribute.
+        """
+        value = getattr(self, attribute_name)
+        setattr(self, attribute_name, not value)

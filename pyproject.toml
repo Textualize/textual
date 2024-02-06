@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.48.1"
+version = "0.48.2"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"
@@ -72,9 +72,6 @@ pytest-textual-snapshot = ">=0.4.0"
 types-tree-sitter = "^0.20.1.4"
 types-tree-sitter-languages = "^1.7.0.1"
 griffe = "0.32.3"
-
-[tool.black]
-includes = "src"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
