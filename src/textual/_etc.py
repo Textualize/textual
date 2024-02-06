@@ -103,7 +103,7 @@ class TimeToCompletion:
     @property
     def _distance_remaining(self) -> float:
         """The distance remaining until the destination is reached."""
-        return self._destination - (self._samples[-2].value if self._samples else 0)
+        return self._destination - (self._samples[-2].value if len(self) > 1 else 0)
 
     @property
     def _speed(self) -> float:
