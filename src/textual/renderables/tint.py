@@ -53,7 +53,11 @@ class Tint:
             if control:
                 yield segment
             else:
-                style = ansi_filter.truecolor_style(style) or NULL_STYLE
+                style = (
+                    ansi_filter.truecolor_style(style)
+                    if style is not None
+                    else NULL_STYLE
+                )
                 yield _Segment(
                     text,
                     (
