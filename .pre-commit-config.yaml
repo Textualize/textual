@@ -37,5 +37,5 @@ repos:
     rev: 'v1.8.0'
     hooks:
       - id: mypy
-        args: ['--follow-imports=skip', '--no-warn-no-return']
+        args: ['--follow-imports=skip']
 exclude: ^tests/snapshot_tests

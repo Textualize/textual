@@ -108,6 +108,7 @@ class EditHistory:
             batch = undo_stack.pop()
             redo_stack.append(batch)
             return batch
+        return None
 
     def pop_redo(self) -> list[Edit] | None:
         """Redo the latest batch on the redo stack and return it.
@@ -126,6 +127,7 @@ class EditHistory:
             # Ensure edits which follow cannot be added to the redone batch.
             self.force_end_batch()
             return batch
+        return None
 
     def reset(self) -> None:
         self._undo_stack.clear()
