@@ -315,8 +315,6 @@ class DOMNode(MessagePump):
                     init=self._parent is not None,
                 )
             else:
-                from functools import partial
-
                 self.call_later(partial(setter, reactive))
         self._reactive_connect = None
 
