@@ -289,7 +289,7 @@ Pressing the ++tab++ key will shift focus to the next widget in your application
 This matches how other widgets work in Textual.
 
 To have ++tab++ insert a `\t` character, set the `tab_behaviour` attribute to the string value `"indent"`.
-You can instead shift focus with the keyboard in this mode by pressing the ++escape++ key.
+While in this mode, you can shift focus by pressing the ++escape++ key.
 
 ### Indentation
 
