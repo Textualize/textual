@@ -61,6 +61,7 @@ class Log(ScrollView, can_focus=True):
             classes: The CSS classes of the text log.
             disabled: Whether the text log is disabled or not.
         """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.highlight = highlight
         """Enable highlighting."""
         self.max_lines = max_lines
@@ -71,7 +72,6 @@ class Log(ScrollView, can_focus=True):
         self._render_line_cache: LRUCache[int, Strip] = LRUCache(1024)
         self.highlighter = ReprHighlighter()
         """The Rich Highlighter object to use, if `highlight=True`"""
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
     @property
     def lines(self) -> Sequence[str]:
