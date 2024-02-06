@@ -164,6 +164,7 @@ class Worker(Generic[ResultType]):
         self.description = description
         self.exit_on_error = exit_on_error
         self.cancelled_event: Event = Event()
+        """A threading event set when the worker is cancelled."""
         self._thread_worker = thread
         self._state = WorkerState.PENDING
         self.state = self._state

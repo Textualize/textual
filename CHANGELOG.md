@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added DOMNode.set_reactive https://github.com/Textualize/textual/pull/4075
 - Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
 - Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
+- Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
 
 ### Changed
 
