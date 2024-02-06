@@ -373,7 +373,7 @@ Note how the addition of the `data_bind` methods negates the need for the watche
 
 !!! note
 
-    Data bindings works in a single direction.
+    Data binding works in a single direction.
     Setting `time` on the app updates the clocks.
     But setting `time` on the clocks will *not* update `time` on the app.
 
