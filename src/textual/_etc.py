@@ -77,7 +77,7 @@ class TimeToCompletion:
         not from the first until now.
         """
         return (
-            self._samples[-1].moment - self._samples[0].moment
+            self._samples[-2].moment - self._samples[0].moment
             if len(self._samples) > 1
             else 0
         )
