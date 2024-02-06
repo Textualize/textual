@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from collections import deque
 from math import ceil
 from time import monotonic
 from typing import Callable, Optional
 
 from rich.style import Style
 
+from .._etc import TimeToCompletion
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
 from ..geometry import clamp
@@ -201,7 +201,7 @@ class ETAStatus(Label):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._refresh_timer: Timer | None = None
         """Timer to update ETA status even when progress stalls."""
-        self._samples: deque[float] = deque(maxlen=20)
+        self._samples = TimeToCompletion(1, window_size=20)
         """A recent sample of update times to help work out the ETA."""
         self._percentage = None
         self._label_text = "--:--:--"
@@ -212,21 +212,22 @@ class ETAStatus(Label):
 
     def reset(self) -> None:
         """Reset the ETA calculation."""
-        self._samples.clear()
+        self._samples.reset()
 
     def watch__percentage(self, percentage: float | None) -> None:
         if percentage is None:
+            self.reset()
             self._label_text = "--:--:--"
         else:
-            self._samples.append(monotonic())
+            try:
+                self._samples.record(percentage)
+            except ValueError:
+                # ValueError would indicate that we went backwards, reset
+                # the samples.
+                self.reset()
             if self._refresh_timer is not None:
                 self._refresh_timer.reset()
             self.update_eta()
-
-    @property
-    def _recent_time_per_sample(self) -> float:
-        """The recent time per sample."""
-        return (monotonic() - self._samples[0]) / len(self._samples)
 
     def update_eta(self) -> None:
         """Update the ETA display."""
@@ -234,6 +235,7 @@ class ETAStatus(Label):
         # We display --:--:-- if we haven't started, if we are done,
         # or if we don't know when we started keeping track of time.
         if not percentage or percentage >= 1 or not self._samples:
+            self.reset()
             self._label_text = "--:--:--"
             # If we are done, we can delete the timer that periodically refreshes
             # the countdown display.
@@ -246,7 +248,7 @@ class ETAStatus(Label):
                 self._refresh_timer = None
         # Render a countdown timer with hh:mm:ss, unless it's a LONG time.
         else:
-            left = ceil(((1 - percentage) * 100) * self._recent_time_per_sample)
+            left = ceil(self._samples.estimated_time_to_complete_as_of_now)
             minutes, seconds = divmod(left, 60)
             hours, minutes = divmod(minutes, 60)
             if hours > 999999:
