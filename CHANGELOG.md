@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed a crash in the TextArea when performing a backward replace https://github.com/Textualize/textual/pull/4126
+- Fixed selection not updating correctly when pasting while there's a non-zero selection https://github.com/Textualize/textual/pull/4126
+
 ## [0.48.2] - 2024-02-02
 
 ### Fixed
