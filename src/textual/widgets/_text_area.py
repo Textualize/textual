@@ -1337,7 +1337,8 @@ TextArea:light .text-area--cursor {
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
-        self.replace(event.text, *self.selection)
+        result = self.replace(event.text, *self.selection)
+        self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.
