@@ -100,7 +100,7 @@ class EditHistory:
 
         # Force edits which contain newlines to be their own batch, not merged with any other batch.
         if contains_newline:
-            self.force_end_batch()
+            self.checkpoint()
 
     def pop_undo(self) -> list[Edit] | None:
         """Pop the latest batch from the undo stack and return it.
@@ -133,7 +133,7 @@ class EditHistory:
             batch = redo_stack.pop()
             undo_stack.append(batch)
             # Ensure edits which follow cannot be added to the redone batch.
-            self.force_end_batch()
+            self.checkpoint()
             return batch
         return None
 
@@ -144,7 +144,7 @@ class EditHistory:
         self._force_end_batch = False
         self._previously_replaced = False
 
-    def force_end_batch(self) -> None:
+    def checkpoint(self) -> None:
         """Ensure the next recorded edit starts a new batch."""
         self._force_end_batch = True
 

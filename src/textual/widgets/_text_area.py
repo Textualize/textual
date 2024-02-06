@@ -377,7 +377,7 @@ TextArea:light .text-area--cursor {
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-        self._edit_history: EditHistory = EditHistory(
+        self.history: EditHistory = EditHistory(
             checkpoint_timer=2.0, checkpoint_max_characters=100
         )
         """A stack (the end of the list is the top of the stack) for tracking edits."""
@@ -1193,7 +1193,7 @@ TextArea:light .text-area--cursor {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
-        self._edit_history.record_edit(edit)
+        self.history.record_edit(edit)
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
@@ -1213,11 +1213,11 @@ TextArea:light .text-area--cursor {
 
     def undo(self) -> None:
         """Undo the edits since the last checkpoint (the most recent batch of edits)."""
-        edits = self._edit_history.pop_undo()
+        edits = self.history.pop_undo()
         self._undo_batch(edits)
 
     def redo(self) -> None:
-        edits = self._edit_history.pop_redo()
+        edits = self.history.pop_redo()
         self._redo_batch(edits)
 
     def _undo_batch(self, edits: Sequence[Edit]) -> None:
@@ -1235,18 +1235,27 @@ TextArea:light .text-area--cursor {
             return
 
         old_gutter_width = self.gutter_width
+        minimum_from = edits[-1].from_location
+        maximum_old_end = (0, 0)
+        maximum_new_end = (0, 0)
         for edit in reversed(edits):
             edit.undo(self)
-        new_gutter_width = self.gutter_width
+            end_location = (
+                edit._edit_result.end_location if edit._edit_result else (0, 0)
+            )
+            if edit.from_location < minimum_from:
+                minimum_from = edit.from_location
+            if end_location > maximum_old_end:
+                maximum_old_end = end_location
+            if edit.to_location > maximum_new_end:
+                maximum_new_end = edit.to_location
 
+        new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
-            # TODO - inefficient
             self.wrapped_document.wrap_range(
-                min(edit.from_location for edit in edits),
-                max(edit._edit_result.end_location for edit in edits),
-                max(edit.to_location for edit in edits),
+                minimum_from, maximum_old_end, maximum_new_end
             )
 
         self._refresh_size()
@@ -1272,20 +1281,29 @@ TextArea:light .text-area--cursor {
             return
 
         old_gutter_width = self.gutter_width
-        edit_results = []
+        minimum_from = edits[0].from_location
+        maximum_old_end = (0, 0)
+        maximum_new_end = (0, 0)
         for edit in edits:
-            result = edit.do(self, record_selection=False)
-            edit_results.append(result)
-        new_gutter_width = self.gutter_width
+            edit.do(self, record_selection=False)
+            end_location = (
+                edit._edit_result.end_location if edit._edit_result else (0, 0)
+            )
+            if edit.from_location < minimum_from:
+                minimum_from = edit.from_location
+            if end_location > maximum_new_end:
+                maximum_new_end = end_location
+            if edit.to_location > maximum_old_end:
+                maximum_old_end = edit.to_location
 
+        new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
-            # TODO - inefficient
             self.wrapped_document.wrap_range(
-                min(edit.from_location for edit in edits),
-                max(edit.to_location for edit in edits),
-                max(result.end_location for result in edit_results),
+                minimum_from,
+                maximum_old_end,
+                maximum_new_end,
             )
 
         self._refresh_size()
@@ -1382,6 +1400,7 @@ TextArea:light .text-area--cursor {
     def _on_focus(self, _: events.Focus) -> None:
         self._restart_blink()
         self.app.cursor_position = self.cursor_screen_offset
+        self.history.checkpoint()
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
@@ -1409,6 +1428,7 @@ TextArea:light .text-area--cursor {
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
         self._pause_blink(visible=True)
+        self.history.checkpoint()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
