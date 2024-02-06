@@ -91,7 +91,7 @@ class TimeToCompletion:
         return monotonic() - self._samples[0].moment if self._samples else 0
 
     @property
-    def _distance_covered(self) -> float:
+    def _distance_covered_in_window(self) -> float:
         """The distance covered by the samples.
 
         Note that this is just the distance covered by the samples in the
@@ -109,7 +109,7 @@ class TimeToCompletion:
     def _speed(self) -> float:
         """The speed based on the recorded samples."""
         try:
-            return self._elapsed / self._distance_covered
+            return self._elapsed / self._distance_covered_in_window
         except ZeroDivisionError:
             return self._elapsed
 
@@ -117,7 +117,7 @@ class TimeToCompletion:
     def _speed_now(self) -> float:
         """The speed as of right now, based on the recorded samples."""
         try:
-            return self._elapsed_to_now / self._distance_covered
+            return self._elapsed_to_now / self._distance_covered_in_window
         except ZeroDivisionError:
             return self._elapsed_to_now
 
