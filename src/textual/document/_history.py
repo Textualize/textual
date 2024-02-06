@@ -32,17 +32,41 @@ class EditHistory:
     _force_end_batch: bool = field(init=False, default=False)
     """Flag to force the creation of a new batch for the next recorded edit."""
 
+    _previously_replaced: bool = field(init=False, default=False)
+    """Records whether the most recent edit was a replacement or a pure insertion.
+    
+    If an edit removes any text from the document at all, it's considered a replacement.
+    Every other edit is considered a pure insertion.
+    """
+
     def record_edit(self, edit: Edit) -> None:
         """Record an Edit so that it may be undone and redone.
+
+        Determines whether to batch the Edit with previous Edits, or create a new batch/checkpoint.
+
+        A new batch/checkpoint is created when:
+
+        - The undo stack is empty.
+        - The checkpoint timer expires.
+        - The maximum number of characters permitted in a checkpoint is reached.
+        - A redo is performed (we should add new edits to a batch that has been redone).
+        - The programmer has requested a new batch via a call to `force_new_batch`.
+            - e.g. the TextArea widget may call this method in some circumstances.
+            - Clicking to move the cursor elsewhere in the document should create a new batch.
+            - Blurring the TextArea should create a new batch.
+        - The current edit involves a deletion/replacement and the previous edit did not.
+        - The current edit is a pure insertion and the previous edit was not.
 
         Args:
             edit: The edit to record.
         """
-        if edit._edit_result is None:
+        edit_result = edit._edit_result
+        if edit_result is None:
             raise HistoryException(
                 "Cannot add an edit to history before it has been performed using `Edit.do`."
             )
 
+        is_replacement = bool(edit_result.replaced_text)
         undo_stack = self._undo_stack
         current_time = time.monotonic()
         edit_characters = self._count_edit_characters(edit)
@@ -51,14 +75,14 @@ class EditHistory:
         if (
             not undo_stack
             or self._force_end_batch
+            or is_replacement != self._previously_replaced
             or current_time - self._last_edit_time > self.checkpoint_timer
             or self._character_count + edit_characters > self.checkpoint_max_characters
             or "\n" in edit.text
-            or "\n" in edit._edit_result.replaced_text
         ):
             # Create a new batch (creating a "checkpoint").
             undo_stack.append([edit])
-            self._character_count = edit_characters  # TODO - check this
+            self._character_count = edit_characters
             self._last_edit_time = current_time
             self._force_end_batch = False
         else:
@@ -67,6 +91,7 @@ class EditHistory:
             self._character_count += edit_characters
             self._last_edit_time = current_time
 
+        self._previously_replaced = is_replacement
         self._redo_stack.clear()
 
     def pop_undo(self) -> list[Edit] | None:
@@ -107,6 +132,7 @@ class EditHistory:
         self._redo_stack.clear()
         self._last_edit_time = time.monotonic()
         self._force_end_batch = False
+        self._previously_replaced = False
 
     def force_end_batch(self) -> None:
         """Ensure the next recorded edit starts a new batch."""
