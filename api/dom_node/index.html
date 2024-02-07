@@ -5268,9 +5268,27 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.action_toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_toggle()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.add_class" class="md-nav__link">
     <span class="md-ellipsis">
       add_class()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.data_bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      data_bind()
     </span>
   </a>
   
@@ -5388,6 +5406,15 @@ window.onload = async (event) => {
   <a href="#textual.dom.DOMNode.set_classes" class="md-nav__link">
     <span class="md-ellipsis">
       set_classes()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.set_reactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_reactive()
     </span>
   </a>
   
@@ -6875,9 +6902,27 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.action_toggle" class="md-nav__link">
+    <span class="md-ellipsis">
+      action_toggle()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.add_class" class="md-nav__link">
     <span class="md-ellipsis">
       add_class()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.data_bind" class="md-nav__link">
+    <span class="md-ellipsis">
+      data_bind()
     </span>
   </a>
   
@@ -6995,6 +7040,15 @@ window.onload = async (event) => {
   <a href="#textual.dom.DOMNode.set_classes" class="md-nav__link">
     <span class="md-ellipsis">
       set_classes()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.set_reactive" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_reactive()
     </span>
   </a>
   
@@ -8088,6 +8142,54 @@ The valid values include the valid values for the <code>visibility</code> rule a
 
 
 
+<h3 id="textual.dom.DOMNode.action_toggle" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">action_toggle</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.action_toggle" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Toggle an attribute on the node.</p>
+<p>Assumes the attribute is a bool.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>attribute_name</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>Name of the attribute.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="textual.dom.DOMNode.add_class" class="doc doc-heading">
         <span class="doc doc-object-name doc-function-name">add_class</span>
   
@@ -8134,6 +8236,75 @@ The valid values include the valid values for the <code>visibility</code> rule a
             <code>True</code>
           </td>
           <td><p>Also update styles.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><span title="typing_extensions.Self">Self</span></code>
+          </td>
+          <td><p>Self.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.dom.DOMNode.data_bind" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">data_bind</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.data_bind" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">data_bind</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">reactives</span><span class="p">,</span> <span class="o">**</span><span class="n">bind_vars</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Bind reactive data so that changes to a reactive automatically change the reactive on another widget.</p>
+<p>Reactives may be given as positional arguments or keyword arguments.
+See the <a href="/guide/reactivity#data-binding">guide on data binding</a>.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">yield</span> <span class="n">WorldClock</span><span class="p">(</span><span class="s2">&quot;Europe/London&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">data_bind</span><span class="p">(</span><span class="n">WorldClockApp</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">yield</span> <span class="n">WorldClock</span><span class="p">(</span><span class="s2">&quot;Europe/Paris&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">data_bind</span><span class="p">(</span><span class="n">WorldClockApp</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="k">yield</span> <span class="n">WorldClock</span><span class="p">(</span><span class="s2">&quot;Asia/Tokyo&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">data_bind</span><span class="p">(</span><span class="n">WorldClockApp</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+</code></pre></div>
+</details>
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.reactive.ReactiveError" href="../reactive/#textual.reactive.ReactiveError">ReactiveError</a></code>
+          </td>
+          <td><p>If the data wasn't bound.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9060,6 +9231,86 @@ iterable of class names.</p></td>
                 <code><span title="typing_extensions.Self">Self</span></code>
           </td>
           <td><p>Self.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.dom.DOMNode.set_reactive" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">set_reactive</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.set_reactive" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">set_reactive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reactive</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Sets a reactive value <em>without</em> invoking validators or watchers.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">set_reactive</span><span class="p">(</span><span class="n">App</span><span class="o">.</span><span class="n">dark_mode</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+</code></pre></div>
+</details>
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>name</code></strong>
+            <br>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>Name of reactive attribute.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>value</code></strong>
+            <br>
+                <code><span title="textual.dom.ReactiveType">ReactiveType</span></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>New value of reactive.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Raises</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/exceptions.html#AttributeError">AttributeError</a></code>
+          </td>
+          <td><p>If the first argument is not a reactive.</p></td>
         </tr>
     </tbody>
   </table>

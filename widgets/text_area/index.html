@@ -4773,9 +4773,9 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
-  <a href="#tab-behaviour" class="md-nav__link">
+  <a href="#tab-and-escape-behaviour" class="md-nav__link">
     <span class="md-ellipsis">
-      Tab behaviour
+      Tab and Escape behaviour
     </span>
   </a>
   
@@ -6162,6 +6162,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.Edit.bottom" class="md-nav__link">
+    <span class="md-ellipsis">
+      bottom
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._text_area.Edit.from_location" class="md-nav__link">
     <span class="md-ellipsis">
       from_location
@@ -6192,6 +6201,15 @@ window.onload = async (event) => {
   <a href="#textual.widgets._text_area.Edit.to_location" class="md-nav__link">
     <span class="md-ellipsis">
       to_location
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.Edit.top" class="md-nav__link">
+    <span class="md-ellipsis">
+      top
     </span>
   </a>
   
@@ -8431,9 +8449,9 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
-  <a href="#tab-behaviour" class="md-nav__link">
+  <a href="#tab-and-escape-behaviour" class="md-nav__link">
     <span class="md-ellipsis">
-      Tab behaviour
+      Tab and Escape behaviour
     </span>
   </a>
   
@@ -9820,6 +9838,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.Edit.bottom" class="md-nav__link">
+    <span class="md-ellipsis">
+      bottom
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._text_area.Edit.from_location" class="md-nav__link">
     <span class="md-ellipsis">
       from_location
@@ -9850,6 +9877,15 @@ window.onload = async (event) => {
   <a href="#textual.widgets._text_area.Edit.to_location" class="md-nav__link">
     <span class="md-ellipsis">
       to_location
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.Edit.top" class="md-nav__link">
+    <span class="md-ellipsis">
+      top
     </span>
   </a>
   
@@ -10346,7 +10382,7 @@ and a variety of keybindings.</p>
 <h2 id="guide">Guide<a class="headerlink" href="#guide" title="Permanent link">&para;</a></h2>
 <h3 id="code-editing-vs-plain-text-editing">Code editing vs plain text editing<a class="headerlink" href="#code-editing-vs-plain-text-editing" title="Permanent link">&para;</a></h3>
 <p>By default, the <code>TextArea</code> widget is a standard multi-line input box with soft-wrapping enabled.</p>
-<p>If you're interested in editing code, you may wish to use the [<code>TextArea.code_editor</code>] convenience constructor.
+<p>If you're interested in editing code, you may wish to use the <a class="autorefs autorefs-internal" href="#textual.widgets._text_area.TextArea.code_editor"><code>TextArea.code_editor</code></a> convenience constructor.
 This is a method which, by default, returns a new <code>TextArea</code> with soft-wrapping disabled, line numbers enabled, and the tab key behavior configured to insert <code>\t</code>.</p>
 <h3 id="syntax-highlighting-dependencies">Syntax highlighting dependencies<a class="headerlink" href="#syntax-highlighting-dependencies" title="Permanent link">&para;</a></h3>
 <p>To enable syntax highlighting, you'll need to install the <code>syntax</code> extra dependencies:</p>
@@ -10391,72 +10427,76 @@ After installing, you can set the <a class="autorefs autorefs-internal" href="#t
         font-weight: 700;
     }
 
-    .terminal-281079592-matrix {
+    .terminal-1461840910-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-281079592-title {
+    .terminal-1461840910-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-281079592-r1 { fill: #1e1e1e }
-.terminal-281079592-r2 { fill: #0178d4 }
-.terminal-281079592-r3 { fill: #c5c8c6 }
-.terminal-281079592-r4 { fill: #e1e1e1 }
-.terminal-281079592-r5 { fill: #151515 }
-.terminal-281079592-r6 { fill: #e2e2e2 }
+    .terminal-1461840910-r1 { fill: #1e1e1e }
+.terminal-1461840910-r2 { fill: #0178d4 }
+.terminal-1461840910-r3 { fill: #c5c8c6 }
+.terminal-1461840910-r4 { fill: #c2c2bf }
+.terminal-1461840910-r5 { fill: #272822 }
+.terminal-1461840910-r6 { fill: #f92672 }
+.terminal-1461840910-r7 { fill: #f8f8f2 }
+.terminal-1461840910-r8 { fill: #a6e22e }
+.terminal-1461840910-r9 { fill: #90908a }
+.terminal-1461840910-r10 { fill: #e6db74 }
     </style>
 
     <defs>
-    <clipPath id="terminal-281079592-clip-terminal">
+    <clipPath id="terminal-1461840910-clip-terminal">
       <rect x="0" y="0" width="511.4" height="194.2" />
     </clipPath>
-    <clipPath id="terminal-281079592-line-0">
+    <clipPath id="terminal-1461840910-line-0">
     <rect x="0" y="1.5" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-281079592-line-1">
+<clipPath id="terminal-1461840910-line-1">
     <rect x="0" y="25.9" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-281079592-line-2">
+<clipPath id="terminal-1461840910-line-2">
     <rect x="0" y="50.3" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-281079592-line-3">
+<clipPath id="terminal-1461840910-line-3">
     <rect x="0" y="74.7" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-281079592-line-4">
+<clipPath id="terminal-1461840910-line-4">
     <rect x="0" y="99.1" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-281079592-line-5">
+<clipPath id="terminal-1461840910-line-5">
     <rect x="0" y="123.5" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-281079592-line-6">
+<clipPath id="terminal-1461840910-line-6">
     <rect x="0" y="147.9" width="512.4" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="529" height="243.2" rx="8"/><text class="terminal-281079592-title" fill="#c5c8c6" text-anchor="middle" x="264" y="27">TextAreaExample</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="529" height="243.2" rx="8"/><text class="terminal-1461840910-title" fill="#c5c8c6" text-anchor="middle" x="264" y="27">TextAreaExample</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-281079592-clip-terminal)">
-    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="25.9" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#d8d8d8" x="24.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="36.6" y="25.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="50.3" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="341.6" y="50.3" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="74.7" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="99.1" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="256.2" y="99.1" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="123.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="123.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="147.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="172.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-281079592-matrix">
-    <text class="terminal-281079592-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-281079592-line-0)">▊</text><text class="terminal-281079592-r2" x="12.2" y="20" textLength="488" clip-path="url(#terminal-281079592-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-281079592-r2" x="500.2" y="20" textLength="12.2" clip-path="url(#terminal-281079592-line-0)">▎</text><text class="terminal-281079592-r3" x="512.4" y="20" textLength="12.2" clip-path="url(#terminal-281079592-line-0)">
-</text><text class="terminal-281079592-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-281079592-line-1)">▊</text><text class="terminal-281079592-r5" x="24.4" y="44.4" textLength="12.2" clip-path="url(#terminal-281079592-line-1)">d</text><text class="terminal-281079592-r6" x="36.6" y="44.4" textLength="451.4" clip-path="url(#terminal-281079592-line-1)">ef&#160;hello(name):&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-281079592-r2" x="500.2" y="44.4" textLength="12.2" clip-path="url(#terminal-281079592-line-1)">▎</text><text class="terminal-281079592-r3" x="512.4" y="44.4" textLength="12.2" clip-path="url(#terminal-281079592-line-1)">
-</text><text class="terminal-281079592-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-281079592-line-2)">▊</text><text class="terminal-281079592-r4" x="24.4" y="68.8" textLength="317.2" clip-path="url(#terminal-281079592-line-2)">&#160;&#160;&#160;&#160;print(&quot;hello&quot;&#160;+&#160;name)&#160;</text><text class="terminal-281079592-r2" x="500.2" y="68.8" textLength="12.2" clip-path="url(#terminal-281079592-line-2)">▎</text><text class="terminal-281079592-r3" x="512.4" y="68.8" textLength="12.2" clip-path="url(#terminal-281079592-line-2)">
-</text><text class="terminal-281079592-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-281079592-line-3)">▊</text><text class="terminal-281079592-r2" x="500.2" y="93.2" textLength="12.2" clip-path="url(#terminal-281079592-line-3)">▎</text><text class="terminal-281079592-r3" x="512.4" y="93.2" textLength="12.2" clip-path="url(#terminal-281079592-line-3)">
-</text><text class="terminal-281079592-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-281079592-line-4)">▊</text><text class="terminal-281079592-r4" x="24.4" y="117.6" textLength="231.8" clip-path="url(#terminal-281079592-line-4)">def&#160;goodbye(name):&#160;</text><text class="terminal-281079592-r2" x="500.2" y="117.6" textLength="12.2" clip-path="url(#terminal-281079592-line-4)">▎</text><text class="terminal-281079592-r3" x="512.4" y="117.6" textLength="12.2" clip-path="url(#terminal-281079592-line-4)">
-</text><text class="terminal-281079592-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-281079592-line-5)">▊</text><text class="terminal-281079592-r4" x="24.4" y="142" textLength="341.6" clip-path="url(#terminal-281079592-line-5)">&#160;&#160;&#160;&#160;print(&quot;goodbye&quot;&#160;+&#160;name)&#160;</text><text class="terminal-281079592-r2" x="500.2" y="142" textLength="12.2" clip-path="url(#terminal-281079592-line-5)">▎</text><text class="terminal-281079592-r3" x="512.4" y="142" textLength="12.2" clip-path="url(#terminal-281079592-line-5)">
-</text><text class="terminal-281079592-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-281079592-line-6)">▊</text><text class="terminal-281079592-r2" x="500.2" y="166.4" textLength="12.2" clip-path="url(#terminal-281079592-line-6)">▎</text><text class="terminal-281079592-r3" x="512.4" y="166.4" textLength="12.2" clip-path="url(#terminal-281079592-line-6)">
-</text><text class="terminal-281079592-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-281079592-line-7)">▊</text><text class="terminal-281079592-r2" x="12.2" y="190.8" textLength="488" clip-path="url(#terminal-281079592-line-7)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-281079592-r2" x="500.2" y="190.8" textLength="12.2" clip-path="url(#terminal-281079592-line-7)">▎</text>
+    <g transform="translate(9, 41)" clip-path="url(#terminal-1461840910-clip-terminal)">
+    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="1.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="24.4" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#f8f8f0" x="61" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="73.2" y="25.9" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="97.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="109.8" y="25.9" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="170.8" y="25.9" width="317.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="50.3" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="50.3" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="109.8" y="50.3" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="170.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="183" y="50.3" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="268.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="280.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="292.8" y="50.3" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="378.2" y="50.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="74.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="73.2" y="74.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="99.1" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="99.1" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="97.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="109.8" y="99.1" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="195.2" y="99.1" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="292.8" y="99.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="123.5" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="123.5" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="109.8" y="123.5" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="170.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="183" y="123.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="292.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="305" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="317.2" y="123.5" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="402.6" y="123.5" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="147.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="73.2" y="147.9" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="172.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-1461840910-matrix">
+    <text class="terminal-1461840910-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-1461840910-line-0)">▊</text><text class="terminal-1461840910-r2" x="12.2" y="20" textLength="488" clip-path="url(#terminal-1461840910-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-1461840910-r2" x="500.2" y="20" textLength="12.2" clip-path="url(#terminal-1461840910-line-0)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="20" textLength="12.2" clip-path="url(#terminal-1461840910-line-0)">
+</text><text class="terminal-1461840910-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-1)">▊</text><text class="terminal-1461840910-r4" x="24.4" y="44.4" textLength="36.6" clip-path="url(#terminal-1461840910-line-1)">1&#160;&#160;</text><text class="terminal-1461840910-r5" x="61" y="44.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-1)">d</text><text class="terminal-1461840910-r6" x="73.2" y="44.4" textLength="24.4" clip-path="url(#terminal-1461840910-line-1)">ef</text><text class="terminal-1461840910-r8" x="109.8" y="44.4" textLength="61" clip-path="url(#terminal-1461840910-line-1)">hello</text><text class="terminal-1461840910-r7" x="170.8" y="44.4" textLength="317.2" clip-path="url(#terminal-1461840910-line-1)">(name):&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-1461840910-r2" x="500.2" y="44.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-1)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="44.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-1)">
+</text><text class="terminal-1461840910-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-2)">▊</text><text class="terminal-1461840910-r9" x="24.4" y="68.8" textLength="36.6" clip-path="url(#terminal-1461840910-line-2)">2&#160;&#160;</text><text class="terminal-1461840910-r8" x="109.8" y="68.8" textLength="61" clip-path="url(#terminal-1461840910-line-2)">print</text><text class="terminal-1461840910-r7" x="170.8" y="68.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-2)">(</text><text class="terminal-1461840910-r10" x="183" y="68.8" textLength="85.4" clip-path="url(#terminal-1461840910-line-2)">&quot;hello&quot;</text><text class="terminal-1461840910-r6" x="280.6" y="68.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-2)">+</text><text class="terminal-1461840910-r7" x="292.8" y="68.8" textLength="85.4" clip-path="url(#terminal-1461840910-line-2)">&#160;name)&#160;</text><text class="terminal-1461840910-r2" x="500.2" y="68.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-2)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="68.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-2)">
+</text><text class="terminal-1461840910-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-1461840910-line-3)">▊</text><text class="terminal-1461840910-r9" x="24.4" y="93.2" textLength="36.6" clip-path="url(#terminal-1461840910-line-3)">3&#160;&#160;</text><text class="terminal-1461840910-r2" x="500.2" y="93.2" textLength="12.2" clip-path="url(#terminal-1461840910-line-3)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="93.2" textLength="12.2" clip-path="url(#terminal-1461840910-line-3)">
+</text><text class="terminal-1461840910-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-1461840910-line-4)">▊</text><text class="terminal-1461840910-r9" x="24.4" y="117.6" textLength="36.6" clip-path="url(#terminal-1461840910-line-4)">4&#160;&#160;</text><text class="terminal-1461840910-r6" x="61" y="117.6" textLength="36.6" clip-path="url(#terminal-1461840910-line-4)">def</text><text class="terminal-1461840910-r8" x="109.8" y="117.6" textLength="85.4" clip-path="url(#terminal-1461840910-line-4)">goodbye</text><text class="terminal-1461840910-r7" x="195.2" y="117.6" textLength="97.6" clip-path="url(#terminal-1461840910-line-4)">(name):&#160;</text><text class="terminal-1461840910-r2" x="500.2" y="117.6" textLength="12.2" clip-path="url(#terminal-1461840910-line-4)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="117.6" textLength="12.2" clip-path="url(#terminal-1461840910-line-4)">
+</text><text class="terminal-1461840910-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-1461840910-line-5)">▊</text><text class="terminal-1461840910-r9" x="24.4" y="142" textLength="36.6" clip-path="url(#terminal-1461840910-line-5)">5&#160;&#160;</text><text class="terminal-1461840910-r8" x="109.8" y="142" textLength="61" clip-path="url(#terminal-1461840910-line-5)">print</text><text class="terminal-1461840910-r7" x="170.8" y="142" textLength="12.2" clip-path="url(#terminal-1461840910-line-5)">(</text><text class="terminal-1461840910-r10" x="183" y="142" textLength="109.8" clip-path="url(#terminal-1461840910-line-5)">&quot;goodbye&quot;</text><text class="terminal-1461840910-r6" x="305" y="142" textLength="12.2" clip-path="url(#terminal-1461840910-line-5)">+</text><text class="terminal-1461840910-r7" x="317.2" y="142" textLength="85.4" clip-path="url(#terminal-1461840910-line-5)">&#160;name)&#160;</text><text class="terminal-1461840910-r2" x="500.2" y="142" textLength="12.2" clip-path="url(#terminal-1461840910-line-5)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="142" textLength="12.2" clip-path="url(#terminal-1461840910-line-5)">
+</text><text class="terminal-1461840910-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-6)">▊</text><text class="terminal-1461840910-r9" x="24.4" y="166.4" textLength="36.6" clip-path="url(#terminal-1461840910-line-6)">6&#160;&#160;</text><text class="terminal-1461840910-r2" x="500.2" y="166.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-6)">▎</text><text class="terminal-1461840910-r3" x="512.4" y="166.4" textLength="12.2" clip-path="url(#terminal-1461840910-line-6)">
+</text><text class="terminal-1461840910-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-7)">▊</text><text class="terminal-1461840910-r2" x="12.2" y="190.8" textLength="488" clip-path="url(#terminal-1461840910-line-7)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-1461840910-r2" x="500.2" y="190.8" textLength="12.2" clip-path="url(#terminal-1461840910-line-7)">▎</text>
     </g>
     </g>
 </svg>
@@ -10477,7 +10517,7 @@ After installing, you can set the <a class="autorefs autorefs-internal" href="#t
 <a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
 <a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="k">class</span> <span class="nc">TextAreaExample</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="k">yield</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>        <span class="k">yield</span> <span class="n">TextArea</span><span class="o">.</span><span class="n">code_editor</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 <a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>
 <a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>
 <a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaExample</span><span class="p">()</span>
@@ -10548,73 +10588,76 @@ Let's select the first two lines of text in a document by adding <code>text_area
         font-weight: 700;
     }
 
-    .terminal-615513839-matrix {
+    .terminal-2758703787-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-615513839-title {
+    .terminal-2758703787-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-615513839-r1 { fill: #1e1e1e }
-.terminal-615513839-r2 { fill: #0178d4 }
-.terminal-615513839-r3 { fill: #c5c8c6 }
-.terminal-615513839-r4 { fill: #e1e1e1 }
-.terminal-615513839-r5 { fill: #e2e7ec }
-.terminal-615513839-r6 { fill: #151515 }
-.terminal-615513839-r7 { fill: #e2e2e2 }
+    .terminal-2758703787-r1 { fill: #1e1e1e }
+.terminal-2758703787-r2 { fill: #0178d4 }
+.terminal-2758703787-r3 { fill: #c5c8c6 }
+.terminal-2758703787-r4 { fill: #90908a }
+.terminal-2758703787-r5 { fill: #f92672 }
+.terminal-2758703787-r6 { fill: #f8f8f2 }
+.terminal-2758703787-r7 { fill: #a6e22e }
+.terminal-2758703787-r8 { fill: #e6db74 }
+.terminal-2758703787-r9 { fill: #c2c2bf }
+.terminal-2758703787-r10 { fill: #272822 }
     </style>
 
     <defs>
-    <clipPath id="terminal-615513839-clip-terminal">
+    <clipPath id="terminal-2758703787-clip-terminal">
       <rect x="0" y="0" width="511.4" height="194.2" />
     </clipPath>
-    <clipPath id="terminal-615513839-line-0">
+    <clipPath id="terminal-2758703787-line-0">
     <rect x="0" y="1.5" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-615513839-line-1">
+<clipPath id="terminal-2758703787-line-1">
     <rect x="0" y="25.9" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-615513839-line-2">
+<clipPath id="terminal-2758703787-line-2">
     <rect x="0" y="50.3" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-615513839-line-3">
+<clipPath id="terminal-2758703787-line-3">
     <rect x="0" y="74.7" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-615513839-line-4">
+<clipPath id="terminal-2758703787-line-4">
     <rect x="0" y="99.1" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-615513839-line-5">
+<clipPath id="terminal-2758703787-line-5">
     <rect x="0" y="123.5" width="512.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-615513839-line-6">
+<clipPath id="terminal-2758703787-line-6">
     <rect x="0" y="147.9" width="512.4" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="529" height="243.2" rx="8"/><text class="terminal-615513839-title" fill="#c5c8c6" text-anchor="middle" x="264" y="27">TextAreaSelection</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="529" height="243.2" rx="8"/><text class="terminal-2758703787-title" fill="#c5c8c6" text-anchor="middle" x="264" y="27">TextAreaSelection</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-615513839-clip-terminal)">
-    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="25.9" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#27496f" x="24.4" y="25.9" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="219.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="231.8" y="25.9" width="256.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="50.3" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#27496f" x="24.4" y="50.3" width="305" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="329.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="341.6" y="50.3" width="146.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="74.7" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#d8d8d8" x="24.4" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="36.6" y="74.7" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="99.1" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="256.2" y="99.1" width="231.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="123.5" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="366" y="123.5" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="147.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="488" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="172.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-615513839-matrix">
-    <text class="terminal-615513839-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-615513839-line-0)">▊</text><text class="terminal-615513839-r2" x="12.2" y="20" textLength="488" clip-path="url(#terminal-615513839-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-615513839-r2" x="500.2" y="20" textLength="12.2" clip-path="url(#terminal-615513839-line-0)">▎</text><text class="terminal-615513839-r3" x="512.4" y="20" textLength="12.2" clip-path="url(#terminal-615513839-line-0)">
-</text><text class="terminal-615513839-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-615513839-line-1)">▊</text><text class="terminal-615513839-r5" x="24.4" y="44.4" textLength="195.2" clip-path="url(#terminal-615513839-line-1)">def&#160;hello(name):</text><text class="terminal-615513839-r2" x="500.2" y="44.4" textLength="12.2" clip-path="url(#terminal-615513839-line-1)">▎</text><text class="terminal-615513839-r3" x="512.4" y="44.4" textLength="12.2" clip-path="url(#terminal-615513839-line-1)">
-</text><text class="terminal-615513839-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-615513839-line-2)">▊</text><text class="terminal-615513839-r5" x="24.4" y="68.8" textLength="305" clip-path="url(#terminal-615513839-line-2)">&#160;&#160;&#160;&#160;print(&quot;hello&quot;&#160;+&#160;name)</text><text class="terminal-615513839-r2" x="500.2" y="68.8" textLength="12.2" clip-path="url(#terminal-615513839-line-2)">▎</text><text class="terminal-615513839-r3" x="512.4" y="68.8" textLength="12.2" clip-path="url(#terminal-615513839-line-2)">
-</text><text class="terminal-615513839-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-615513839-line-3)">▊</text><text class="terminal-615513839-r2" x="500.2" y="93.2" textLength="12.2" clip-path="url(#terminal-615513839-line-3)">▎</text><text class="terminal-615513839-r3" x="512.4" y="93.2" textLength="12.2" clip-path="url(#terminal-615513839-line-3)">
-</text><text class="terminal-615513839-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-615513839-line-4)">▊</text><text class="terminal-615513839-r4" x="24.4" y="117.6" textLength="231.8" clip-path="url(#terminal-615513839-line-4)">def&#160;goodbye(name):&#160;</text><text class="terminal-615513839-r2" x="500.2" y="117.6" textLength="12.2" clip-path="url(#terminal-615513839-line-4)">▎</text><text class="terminal-615513839-r3" x="512.4" y="117.6" textLength="12.2" clip-path="url(#terminal-615513839-line-4)">
-</text><text class="terminal-615513839-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-615513839-line-5)">▊</text><text class="terminal-615513839-r4" x="24.4" y="142" textLength="341.6" clip-path="url(#terminal-615513839-line-5)">&#160;&#160;&#160;&#160;print(&quot;goodbye&quot;&#160;+&#160;name)&#160;</text><text class="terminal-615513839-r2" x="500.2" y="142" textLength="12.2" clip-path="url(#terminal-615513839-line-5)">▎</text><text class="terminal-615513839-r3" x="512.4" y="142" textLength="12.2" clip-path="url(#terminal-615513839-line-5)">
-</text><text class="terminal-615513839-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-615513839-line-6)">▊</text><text class="terminal-615513839-r2" x="500.2" y="166.4" textLength="12.2" clip-path="url(#terminal-615513839-line-6)">▎</text><text class="terminal-615513839-r3" x="512.4" y="166.4" textLength="12.2" clip-path="url(#terminal-615513839-line-6)">
-</text><text class="terminal-615513839-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-615513839-line-7)">▊</text><text class="terminal-615513839-r2" x="12.2" y="190.8" textLength="488" clip-path="url(#terminal-615513839-line-7)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-615513839-r2" x="500.2" y="190.8" textLength="12.2" clip-path="url(#terminal-615513839-line-7)">▎</text>
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2758703787-clip-terminal)">
+    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="1.5" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="61" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="97.6" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="109.8" y="25.9" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="170.8" y="25.9" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="256.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="268.4" y="25.9" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="50.3" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="61" y="50.3" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="109.8" y="50.3" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="170.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="183" y="50.3" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="268.4" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="280.6" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#65686a" x="292.8" y="50.3" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="366" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="378.2" y="50.3" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="24.4" y="74.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#f8f8f0" x="61" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="73.2" y="74.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="99.1" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="99.1" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="97.6" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="109.8" y="99.1" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="195.2" y="99.1" width="97.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="292.8" y="99.1" width="195.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="123.5" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="123.5" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="109.8" y="123.5" width="61" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="170.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="183" y="123.5" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="292.8" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="305" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="317.2" y="123.5" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="402.6" y="123.5" width="85.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="147.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="73.2" y="147.9" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="488" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="172.3" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="500.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2758703787-matrix">
+    <text class="terminal-2758703787-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2758703787-line-0)">▊</text><text class="terminal-2758703787-r2" x="12.2" y="20" textLength="488" clip-path="url(#terminal-2758703787-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2758703787-r2" x="500.2" y="20" textLength="12.2" clip-path="url(#terminal-2758703787-line-0)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="20" textLength="12.2" clip-path="url(#terminal-2758703787-line-0)">
+</text><text class="terminal-2758703787-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2758703787-line-1)">▊</text><text class="terminal-2758703787-r4" x="24.4" y="44.4" textLength="36.6" clip-path="url(#terminal-2758703787-line-1)">1&#160;&#160;</text><text class="terminal-2758703787-r5" x="61" y="44.4" textLength="36.6" clip-path="url(#terminal-2758703787-line-1)">def</text><text class="terminal-2758703787-r7" x="109.8" y="44.4" textLength="61" clip-path="url(#terminal-2758703787-line-1)">hello</text><text class="terminal-2758703787-r6" x="170.8" y="44.4" textLength="85.4" clip-path="url(#terminal-2758703787-line-1)">(name):</text><text class="terminal-2758703787-r2" x="500.2" y="44.4" textLength="12.2" clip-path="url(#terminal-2758703787-line-1)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="44.4" textLength="12.2" clip-path="url(#terminal-2758703787-line-1)">
+</text><text class="terminal-2758703787-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-2)">▊</text><text class="terminal-2758703787-r4" x="24.4" y="68.8" textLength="36.6" clip-path="url(#terminal-2758703787-line-2)">2&#160;&#160;</text><text class="terminal-2758703787-r7" x="109.8" y="68.8" textLength="61" clip-path="url(#terminal-2758703787-line-2)">print</text><text class="terminal-2758703787-r6" x="170.8" y="68.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-2)">(</text><text class="terminal-2758703787-r8" x="183" y="68.8" textLength="85.4" clip-path="url(#terminal-2758703787-line-2)">&quot;hello&quot;</text><text class="terminal-2758703787-r5" x="280.6" y="68.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-2)">+</text><text class="terminal-2758703787-r6" x="292.8" y="68.8" textLength="73.2" clip-path="url(#terminal-2758703787-line-2)">&#160;name)</text><text class="terminal-2758703787-r2" x="500.2" y="68.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-2)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="68.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-2)">
+</text><text class="terminal-2758703787-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2758703787-line-3)">▊</text><text class="terminal-2758703787-r9" x="24.4" y="93.2" textLength="36.6" clip-path="url(#terminal-2758703787-line-3)">3&#160;&#160;</text><text class="terminal-2758703787-r2" x="500.2" y="93.2" textLength="12.2" clip-path="url(#terminal-2758703787-line-3)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="93.2" textLength="12.2" clip-path="url(#terminal-2758703787-line-3)">
+</text><text class="terminal-2758703787-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-2758703787-line-4)">▊</text><text class="terminal-2758703787-r4" x="24.4" y="117.6" textLength="36.6" clip-path="url(#terminal-2758703787-line-4)">4&#160;&#160;</text><text class="terminal-2758703787-r5" x="61" y="117.6" textLength="36.6" clip-path="url(#terminal-2758703787-line-4)">def</text><text class="terminal-2758703787-r7" x="109.8" y="117.6" textLength="85.4" clip-path="url(#terminal-2758703787-line-4)">goodbye</text><text class="terminal-2758703787-r6" x="195.2" y="117.6" textLength="97.6" clip-path="url(#terminal-2758703787-line-4)">(name):&#160;</text><text class="terminal-2758703787-r2" x="500.2" y="117.6" textLength="12.2" clip-path="url(#terminal-2758703787-line-4)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="117.6" textLength="12.2" clip-path="url(#terminal-2758703787-line-4)">
+</text><text class="terminal-2758703787-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-2758703787-line-5)">▊</text><text class="terminal-2758703787-r4" x="24.4" y="142" textLength="36.6" clip-path="url(#terminal-2758703787-line-5)">5&#160;&#160;</text><text class="terminal-2758703787-r7" x="109.8" y="142" textLength="61" clip-path="url(#terminal-2758703787-line-5)">print</text><text class="terminal-2758703787-r6" x="170.8" y="142" textLength="12.2" clip-path="url(#terminal-2758703787-line-5)">(</text><text class="terminal-2758703787-r8" x="183" y="142" textLength="109.8" clip-path="url(#terminal-2758703787-line-5)">&quot;goodbye&quot;</text><text class="terminal-2758703787-r5" x="305" y="142" textLength="12.2" clip-path="url(#terminal-2758703787-line-5)">+</text><text class="terminal-2758703787-r6" x="317.2" y="142" textLength="85.4" clip-path="url(#terminal-2758703787-line-5)">&#160;name)&#160;</text><text class="terminal-2758703787-r2" x="500.2" y="142" textLength="12.2" clip-path="url(#terminal-2758703787-line-5)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="142" textLength="12.2" clip-path="url(#terminal-2758703787-line-5)">
+</text><text class="terminal-2758703787-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-2758703787-line-6)">▊</text><text class="terminal-2758703787-r4" x="24.4" y="166.4" textLength="36.6" clip-path="url(#terminal-2758703787-line-6)">6&#160;&#160;</text><text class="terminal-2758703787-r2" x="500.2" y="166.4" textLength="12.2" clip-path="url(#terminal-2758703787-line-6)">▎</text><text class="terminal-2758703787-r3" x="512.4" y="166.4" textLength="12.2" clip-path="url(#terminal-2758703787-line-6)">
+</text><text class="terminal-2758703787-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-7)">▊</text><text class="terminal-2758703787-r2" x="12.2" y="190.8" textLength="488" clip-path="url(#terminal-2758703787-line-7)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2758703787-r2" x="500.2" y="190.8" textLength="12.2" clip-path="url(#terminal-2758703787-line-7)">▎</text>
     </g>
     </g>
 </svg>
@@ -10636,7 +10679,7 @@ Let's select the first two lines of text in a document by adding <code>text_area
 <a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
 <a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="k">class</span> <span class="nc">TextAreaSelection</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="o">.</span><span class="n">code_editor</span><span class="p">(</span><span class="n">TEXT</span><span class="p">,</span> <span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 <a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="hll">        <span class="n">text_area</span><span class="o">.</span><span class="n">selection</span> <span class="o">=</span> <span class="n">Selection</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>  <span class="c1"># (1)!</span>
 </span><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>        <span class="k">yield</span> <span class="n">text_area</span>
 <a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>
@@ -10850,10 +10893,11 @@ For more details, see <a href="#syntax-highlighting">syntax highlighting</a>.</p
     </g>
 </svg>
 </p>
-<h3 id="tab-behaviour">Tab behaviour<a class="headerlink" href="#tab-behaviour" title="Permanent link">&para;</a></h3>
+<h3 id="tab-and-escape-behaviour">Tab and Escape behaviour<a class="headerlink" href="#tab-and-escape-behaviour" title="Permanent link">&para;</a></h3>
 <p>Pressing the <span class="keys"><kbd class="key-tab">Tab</kbd></span> key will shift focus to the next widget in your application by default.
-This matches how other widgets work in Textual.
-To have <span class="keys"><kbd class="key-tab">Tab</kbd></span> insert a <code>\t</code> character, set the <code>tab_behaviour</code> attribute to the string value <code>"indent"</code>.</p>
+This matches how other widgets work in Textual.</p>
+<p>To have <span class="keys"><kbd class="key-tab">Tab</kbd></span> insert a <code>\t</code> character, set the <code>tab_behaviour</code> attribute to the string value <code>"indent"</code>.
+While in this mode, you can shift focus by pressing the <span class="keys"><kbd class="key-escape">Esc</kbd></span> key.</p>
 <h3 id="indentation">Indentation<a class="headerlink" href="#indentation" title="Permanent link">&para;</a></h3>
 <p>The character(s) inserted when you press tab is controlled by setting the <code>indent_type</code> attribute to either <code>tabs</code> or <code>spaces</code>.</p>
 <p>If <code>indent_type == "spaces"</code>, pressing <span class="keys"><kbd class="key-tab">Tab</kbd></span> will insert up to <code>indent_width</code> spaces in order to align with the next tab stop.</p>
@@ -10898,7 +10942,7 @@ This can be done by over-riding <code>_on_key</code> and adding the required fun
 <a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
 <a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="k">class</span> <span class="nc">TextAreaKeyPressHook</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>        <span class="k">yield</span> <span class="n">ExtendedTextArea</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>        <span class="k">yield</span> <span class="n">ExtendedTextArea</span><span class="o">.</span><span class="n">code_editor</span><span class="p">(</span><span class="n">language</span><span class="o">=</span><span class="s2">&quot;python&quot;</span><span class="p">)</span>
 <a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>
 <a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>
 <a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="n">app</span> <span class="o">=</span> <span class="n">TextAreaKeyPressHook</span><span class="p">()</span>
@@ -10929,57 +10973,58 @@ It then moves the cursor so that it lands between the open and closing parenthes
         font-weight: 700;
     }
 
-    .terminal-1677876736-matrix {
+    .terminal-2361632329-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-1677876736-title {
+    .terminal-2361632329-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-1677876736-r1 { fill: #1e1e1e }
-.terminal-1677876736-r2 { fill: #0178d4 }
-.terminal-1677876736-r3 { fill: #c5c8c6 }
-.terminal-1677876736-r4 { fill: #e1e1e1 }
-.terminal-1677876736-r5 { fill: #e2e2e2 }
-.terminal-1677876736-r6 { fill: #e9e9e9 }
-.terminal-1677876736-r7 { fill: #151515 }
+    .terminal-2361632329-r1 { fill: #1e1e1e }
+.terminal-2361632329-r2 { fill: #0178d4 }
+.terminal-2361632329-r3 { fill: #c5c8c6 }
+.terminal-2361632329-r4 { fill: #c2c2bf }
+.terminal-2361632329-r5 { fill: #f92672 }
+.terminal-2361632329-r6 { fill: #f8f8f2 }
+.terminal-2361632329-r7 { fill: #f8f8f2;font-weight: bold }
+.terminal-2361632329-r8 { fill: #272822;font-weight: bold }
     </style>
 
     <defs>
-    <clipPath id="terminal-1677876736-clip-terminal">
+    <clipPath id="terminal-2361632329-clip-terminal">
       <rect x="0" y="0" width="438.2" height="96.6" />
     </clipPath>
-    <clipPath id="terminal-1677876736-line-0">
+    <clipPath id="terminal-2361632329-line-0">
     <rect x="0" y="1.5" width="439.2" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1677876736-line-1">
+<clipPath id="terminal-2361632329-line-1">
     <rect x="0" y="25.9" width="439.2" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-1677876736-line-2">
+<clipPath id="terminal-2361632329-line-2">
     <rect x="0" y="50.3" width="439.2" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="456" height="145.6" rx="8"/><text class="terminal-1677876736-title" fill="#c5c8c6" text-anchor="middle" x="228" y="27">TextAreaKeyPressHook</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="456" height="145.6" rx="8"/><text class="terminal-2361632329-title" fill="#c5c8c6" text-anchor="middle" x="228" y="27">TextAreaKeyPressHook</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-1677876736-clip-terminal)">
-    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="25.9" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="24.4" y="25.9" width="109.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#5c5c5c" x="134.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#d8d8d8" x="146.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="158.6" y="25.9" width="256.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="414.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="50.3" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="414.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-1677876736-matrix">
-    <text class="terminal-1677876736-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-1677876736-line-0)">▊</text><text class="terminal-1677876736-r2" x="12.2" y="20" textLength="414.8" clip-path="url(#terminal-1677876736-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-1677876736-r2" x="427" y="20" textLength="12.2" clip-path="url(#terminal-1677876736-line-0)">▎</text><text class="terminal-1677876736-r3" x="439.2" y="20" textLength="12.2" clip-path="url(#terminal-1677876736-line-0)">
-</text><text class="terminal-1677876736-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-1677876736-line-1)">▊</text><text class="terminal-1677876736-r5" x="24.4" y="44.4" textLength="109.8" clip-path="url(#terminal-1677876736-line-1)">def&#160;hello</text><text class="terminal-1677876736-r6" x="134.2" y="44.4" textLength="12.2" clip-path="url(#terminal-1677876736-line-1)">(</text><text class="terminal-1677876736-r7" x="146.4" y="44.4" textLength="12.2" clip-path="url(#terminal-1677876736-line-1)">)</text><text class="terminal-1677876736-r2" x="427" y="44.4" textLength="12.2" clip-path="url(#terminal-1677876736-line-1)">▎</text><text class="terminal-1677876736-r3" x="439.2" y="44.4" textLength="12.2" clip-path="url(#terminal-1677876736-line-1)">
-</text><text class="terminal-1677876736-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-1677876736-line-2)">▊</text><text class="terminal-1677876736-r2" x="427" y="68.8" textLength="12.2" clip-path="url(#terminal-1677876736-line-2)">▎</text><text class="terminal-1677876736-r3" x="439.2" y="68.8" textLength="12.2" clip-path="url(#terminal-1677876736-line-2)">
-</text><text class="terminal-1677876736-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-1677876736-line-3)">▊</text><text class="terminal-1677876736-r2" x="12.2" y="93.2" textLength="414.8" clip-path="url(#terminal-1677876736-line-3)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-1677876736-r2" x="427" y="93.2" textLength="12.2" clip-path="url(#terminal-1677876736-line-3)">▎</text>
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2361632329-clip-terminal)">
+    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="1.5" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="24.4" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="61" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="97.6" y="25.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#838889" x="170.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#f8f8f0" x="183" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="195.2" y="25.9" width="219.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="414.8" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="50.3" width="390.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="414.8" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="74.7" width="414.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="427" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2361632329-matrix">
+    <text class="terminal-2361632329-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2361632329-line-0)">▊</text><text class="terminal-2361632329-r2" x="12.2" y="20" textLength="414.8" clip-path="url(#terminal-2361632329-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2361632329-r2" x="427" y="20" textLength="12.2" clip-path="url(#terminal-2361632329-line-0)">▎</text><text class="terminal-2361632329-r3" x="439.2" y="20" textLength="12.2" clip-path="url(#terminal-2361632329-line-0)">
+</text><text class="terminal-2361632329-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2361632329-line-1)">▊</text><text class="terminal-2361632329-r4" x="24.4" y="44.4" textLength="36.6" clip-path="url(#terminal-2361632329-line-1)">1&#160;&#160;</text><text class="terminal-2361632329-r5" x="61" y="44.4" textLength="36.6" clip-path="url(#terminal-2361632329-line-1)">def</text><text class="terminal-2361632329-r6" x="97.6" y="44.4" textLength="73.2" clip-path="url(#terminal-2361632329-line-1)">&#160;hello</text><text class="terminal-2361632329-r7" x="170.8" y="44.4" textLength="12.2" clip-path="url(#terminal-2361632329-line-1)">(</text><text class="terminal-2361632329-r8" x="183" y="44.4" textLength="12.2" clip-path="url(#terminal-2361632329-line-1)">)</text><text class="terminal-2361632329-r2" x="427" y="44.4" textLength="12.2" clip-path="url(#terminal-2361632329-line-1)">▎</text><text class="terminal-2361632329-r3" x="439.2" y="44.4" textLength="12.2" clip-path="url(#terminal-2361632329-line-1)">
+</text><text class="terminal-2361632329-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2361632329-line-2)">▊</text><text class="terminal-2361632329-r2" x="427" y="68.8" textLength="12.2" clip-path="url(#terminal-2361632329-line-2)">▎</text><text class="terminal-2361632329-r3" x="439.2" y="68.8" textLength="12.2" clip-path="url(#terminal-2361632329-line-2)">
+</text><text class="terminal-2361632329-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2361632329-line-3)">▊</text><text class="terminal-2361632329-r2" x="12.2" y="93.2" textLength="414.8" clip-path="url(#terminal-2361632329-line-3)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2361632329-r2" x="427" y="93.2" textLength="12.2" clip-path="url(#terminal-2361632329-line-3)">▎</text>
     </g>
     </g>
 </svg>
@@ -11071,7 +11116,7 @@ pay attention to the commit hash when visiting the repo via <code>repos.txt</cod
 <a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>
 <a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a><span class="k">class</span> <span class="nc">TextAreaCustomLanguage</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
 <a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
-<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">java_code</span><span class="p">)</span>
+<a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>        <span class="n">text_area</span> <span class="o">=</span> <span class="n">TextArea</span><span class="o">.</span><span class="n">code_editor</span><span class="p">(</span><span class="n">text</span><span class="o">=</span><span class="n">java_code</span><span class="p">)</span>
 <a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>        <span class="n">text_area</span><span class="o">.</span><span class="n">cursor_blink</span> <span class="o">=</span> <span class="kc">False</span>
 <a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a>
 <a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a>        <span class="c1"># Register the Java language and highlight query</span>
@@ -11109,72 +11154,75 @@ We can freely edit the text, and the syntax highlighting will update immediately
         font-weight: 700;
     }
 
-    .terminal-3136366550-matrix {
+    .terminal-2360392498-matrix {
         font-family: Fira Code, monospace;
         font-size: 20px;
         line-height: 24.4px;
         font-variant-east-asian: full-width;
     }
 
-    .terminal-3136366550-title {
+    .terminal-2360392498-title {
         font-size: 18px;
         font-weight: bold;
         font-family: arial;
     }
 
-    .terminal-3136366550-r1 { fill: #1e1e1e }
-.terminal-3136366550-r2 { fill: #0178d4 }
-.terminal-3136366550-r3 { fill: #c5c8c6 }
-.terminal-3136366550-r4 { fill: #e1e1e1 }
-.terminal-3136366550-r5 { fill: #151515 }
-.terminal-3136366550-r6 { fill: #e2e2e2 }
+    .terminal-2360392498-r1 { fill: #1e1e1e }
+.terminal-2360392498-r2 { fill: #0178d4 }
+.terminal-2360392498-r3 { fill: #c5c8c6 }
+.terminal-2360392498-r4 { fill: #c2c2bf }
+.terminal-2360392498-r5 { fill: #272822 }
+.terminal-2360392498-r6 { fill: #f92672 }
+.terminal-2360392498-r7 { fill: #f8f8f2 }
+.terminal-2360392498-r8 { fill: #90908a }
+.terminal-2360392498-r9 { fill: #e6db74 }
     </style>
 
     <defs>
-    <clipPath id="terminal-3136366550-clip-terminal">
+    <clipPath id="terminal-2360392498-clip-terminal">
       <rect x="0" y="0" width="633.4" height="194.2" />
     </clipPath>
-    <clipPath id="terminal-3136366550-line-0">
+    <clipPath id="terminal-2360392498-line-0">
     <rect x="0" y="1.5" width="634.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3136366550-line-1">
+<clipPath id="terminal-2360392498-line-1">
     <rect x="0" y="25.9" width="634.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3136366550-line-2">
+<clipPath id="terminal-2360392498-line-2">
     <rect x="0" y="50.3" width="634.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3136366550-line-3">
+<clipPath id="terminal-2360392498-line-3">
     <rect x="0" y="74.7" width="634.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3136366550-line-4">
+<clipPath id="terminal-2360392498-line-4">
     <rect x="0" y="99.1" width="634.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3136366550-line-5">
+<clipPath id="terminal-2360392498-line-5">
     <rect x="0" y="123.5" width="634.4" height="24.65"/>
             </clipPath>
-<clipPath id="terminal-3136366550-line-6">
+<clipPath id="terminal-2360392498-line-6">
     <rect x="0" y="147.9" width="634.4" height="24.65"/>
             </clipPath>
     </defs>
 
-    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="651" height="243.2" rx="8"/><text class="terminal-3136366550-title" fill="#c5c8c6" text-anchor="middle" x="325" y="27">TextAreaCustomLanguage</text>
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="651" height="243.2" rx="8"/><text class="terminal-2360392498-title" fill="#c5c8c6" text-anchor="middle" x="325" y="27">TextAreaCustomLanguage</text>
             <g transform="translate(26,22)">
             <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
             <circle cx="22" cy="0" r="7" fill="#febc2e"/>
             <circle cx="44" cy="0" r="7" fill="#28c840"/>
             </g>
         
-    <g transform="translate(9, 41)" clip-path="url(#terminal-3136366550-clip-terminal)">
-    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="1.5" width="610" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="25.9" width="0" height="24.65" shape-rendering="crispEdges"/><rect fill="#d8d8d8" x="24.4" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#262626" x="36.6" y="25.9" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="50.3" width="549" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="573.4" y="50.3" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="74.7" width="549" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="573.4" y="74.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="99.1" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="97.6" y="99.1" width="512.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="48.8" y="123.5" width="561.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="24.4" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="36.6" y="147.9" width="573.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="610" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="12.2" y="172.3" width="610" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/>
-    <g class="terminal-3136366550-matrix">
-    <text class="terminal-3136366550-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-3136366550-line-0)">▊</text><text class="terminal-3136366550-r2" x="12.2" y="20" textLength="610" clip-path="url(#terminal-3136366550-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-3136366550-r2" x="622.2" y="20" textLength="12.2" clip-path="url(#terminal-3136366550-line-0)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="20" textLength="12.2" clip-path="url(#terminal-3136366550-line-0)">
-</text><text class="terminal-3136366550-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-1)">▊</text><text class="terminal-3136366550-r5" x="24.4" y="44.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-1)">c</text><text class="terminal-3136366550-r6" x="36.6" y="44.4" textLength="573.4" clip-path="url(#terminal-3136366550-line-1)">lass&#160;HelloWorld&#160;{&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-3136366550-r2" x="622.2" y="44.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-1)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="44.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-1)">
-</text><text class="terminal-3136366550-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-3136366550-line-2)">▊</text><text class="terminal-3136366550-r4" x="24.4" y="68.8" textLength="549" clip-path="url(#terminal-3136366550-line-2)">&#160;&#160;&#160;&#160;public&#160;static&#160;void&#160;main(String[]&#160;args)&#160;{&#160;</text><text class="terminal-3136366550-r2" x="622.2" y="68.8" textLength="12.2" clip-path="url(#terminal-3136366550-line-2)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="68.8" textLength="12.2" clip-path="url(#terminal-3136366550-line-2)">
-</text><text class="terminal-3136366550-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-3136366550-line-3)">▊</text><text class="terminal-3136366550-r4" x="24.4" y="93.2" textLength="549" clip-path="url(#terminal-3136366550-line-3)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;System.out.println(&quot;Hello,&#160;World!&quot;);&#160;</text><text class="terminal-3136366550-r2" x="622.2" y="93.2" textLength="12.2" clip-path="url(#terminal-3136366550-line-3)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="93.2" textLength="12.2" clip-path="url(#terminal-3136366550-line-3)">
-</text><text class="terminal-3136366550-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-3136366550-line-4)">▊</text><text class="terminal-3136366550-r4" x="24.4" y="117.6" textLength="73.2" clip-path="url(#terminal-3136366550-line-4)">&#160;&#160;&#160;&#160;}&#160;</text><text class="terminal-3136366550-r2" x="622.2" y="117.6" textLength="12.2" clip-path="url(#terminal-3136366550-line-4)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="117.6" textLength="12.2" clip-path="url(#terminal-3136366550-line-4)">
-</text><text class="terminal-3136366550-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-3136366550-line-5)">▊</text><text class="terminal-3136366550-r4" x="24.4" y="142" textLength="24.4" clip-path="url(#terminal-3136366550-line-5)">}&#160;</text><text class="terminal-3136366550-r2" x="622.2" y="142" textLength="12.2" clip-path="url(#terminal-3136366550-line-5)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="142" textLength="12.2" clip-path="url(#terminal-3136366550-line-5)">
-</text><text class="terminal-3136366550-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-6)">▊</text><text class="terminal-3136366550-r2" x="622.2" y="166.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-6)">▎</text><text class="terminal-3136366550-r3" x="634.4" y="166.4" textLength="12.2" clip-path="url(#terminal-3136366550-line-6)">
-</text><text class="terminal-3136366550-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-3136366550-line-7)">▊</text><text class="terminal-3136366550-r2" x="12.2" y="190.8" textLength="610" clip-path="url(#terminal-3136366550-line-7)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-3136366550-r2" x="622.2" y="190.8" textLength="12.2" clip-path="url(#terminal-3136366550-line-7)">▎</text>
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2360392498-clip-terminal)">
+    <rect fill="#0178d4" x="0" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="1.5" width="610" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="1.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="24.4" y="25.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#f8f8f0" x="61" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="73.2" y="25.9" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#3e3d32" x="122" y="25.9" width="488" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="610" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="25.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="50.3" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="50.3" width="48.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="109.8" y="50.3" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="183" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="195.2" y="50.3" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="268.4" y="50.3" width="341.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="610" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="50.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="74.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="74.7" width="329.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="390.4" y="74.7" width="183" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="573.4" y="74.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="610" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="74.7" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="99.1" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="99.1" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="134.2" y="99.1" width="475.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="610" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="99.1" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="123.5" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="123.5" width="24.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="85.4" y="123.5" width="524.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="610" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="123.5" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="24.4" y="147.9" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="61" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="73.2" y="147.9" width="536.8" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="610" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="147.9" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="0" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#272822" x="12.2" y="172.3" width="610" height="24.65" shape-rendering="crispEdges"/><rect fill="#1e1e1e" x="622.2" y="172.3" width="12.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2360392498-matrix">
+    <text class="terminal-2360392498-r1" x="0" y="20" textLength="12.2" clip-path="url(#terminal-2360392498-line-0)">▊</text><text class="terminal-2360392498-r2" x="12.2" y="20" textLength="610" clip-path="url(#terminal-2360392498-line-0)">▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔</text><text class="terminal-2360392498-r2" x="622.2" y="20" textLength="12.2" clip-path="url(#terminal-2360392498-line-0)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="20" textLength="12.2" clip-path="url(#terminal-2360392498-line-0)">
+</text><text class="terminal-2360392498-r1" x="0" y="44.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-1)">▊</text><text class="terminal-2360392498-r4" x="24.4" y="44.4" textLength="36.6" clip-path="url(#terminal-2360392498-line-1)">1&#160;&#160;</text><text class="terminal-2360392498-r5" x="61" y="44.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-1)">c</text><text class="terminal-2360392498-r6" x="73.2" y="44.4" textLength="48.8" clip-path="url(#terminal-2360392498-line-1)">lass</text><text class="terminal-2360392498-r7" x="122" y="44.4" textLength="488" clip-path="url(#terminal-2360392498-line-1)">&#160;HelloWorld&#160;{&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</text><text class="terminal-2360392498-r2" x="622.2" y="44.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-1)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="44.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-1)">
+</text><text class="terminal-2360392498-r1" x="0" y="68.8" textLength="12.2" clip-path="url(#terminal-2360392498-line-2)">▊</text><text class="terminal-2360392498-r8" x="24.4" y="68.8" textLength="36.6" clip-path="url(#terminal-2360392498-line-2)">2&#160;&#160;</text><text class="terminal-2360392498-r6" x="109.8" y="68.8" textLength="73.2" clip-path="url(#terminal-2360392498-line-2)">public</text><text class="terminal-2360392498-r6" x="195.2" y="68.8" textLength="73.2" clip-path="url(#terminal-2360392498-line-2)">static</text><text class="terminal-2360392498-r7" x="268.4" y="68.8" textLength="341.6" clip-path="url(#terminal-2360392498-line-2)">&#160;void&#160;main(String[]&#160;args)&#160;{&#160;</text><text class="terminal-2360392498-r2" x="622.2" y="68.8" textLength="12.2" clip-path="url(#terminal-2360392498-line-2)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="68.8" textLength="12.2" clip-path="url(#terminal-2360392498-line-2)">
+</text><text class="terminal-2360392498-r1" x="0" y="93.2" textLength="12.2" clip-path="url(#terminal-2360392498-line-3)">▊</text><text class="terminal-2360392498-r8" x="24.4" y="93.2" textLength="36.6" clip-path="url(#terminal-2360392498-line-3)">3&#160;&#160;</text><text class="terminal-2360392498-r7" x="61" y="93.2" textLength="329.4" clip-path="url(#terminal-2360392498-line-3)">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;System.out.println(</text><text class="terminal-2360392498-r9" x="390.4" y="93.2" textLength="183" clip-path="url(#terminal-2360392498-line-3)">&quot;Hello,&#160;World!&quot;</text><text class="terminal-2360392498-r7" x="573.4" y="93.2" textLength="36.6" clip-path="url(#terminal-2360392498-line-3)">);&#160;</text><text class="terminal-2360392498-r2" x="622.2" y="93.2" textLength="12.2" clip-path="url(#terminal-2360392498-line-3)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="93.2" textLength="12.2" clip-path="url(#terminal-2360392498-line-3)">
+</text><text class="terminal-2360392498-r1" x="0" y="117.6" textLength="12.2" clip-path="url(#terminal-2360392498-line-4)">▊</text><text class="terminal-2360392498-r8" x="24.4" y="117.6" textLength="36.6" clip-path="url(#terminal-2360392498-line-4)">4&#160;&#160;</text><text class="terminal-2360392498-r7" x="61" y="117.6" textLength="73.2" clip-path="url(#terminal-2360392498-line-4)">&#160;&#160;&#160;&#160;}&#160;</text><text class="terminal-2360392498-r2" x="622.2" y="117.6" textLength="12.2" clip-path="url(#terminal-2360392498-line-4)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="117.6" textLength="12.2" clip-path="url(#terminal-2360392498-line-4)">
+</text><text class="terminal-2360392498-r1" x="0" y="142" textLength="12.2" clip-path="url(#terminal-2360392498-line-5)">▊</text><text class="terminal-2360392498-r8" x="24.4" y="142" textLength="36.6" clip-path="url(#terminal-2360392498-line-5)">5&#160;&#160;</text><text class="terminal-2360392498-r7" x="61" y="142" textLength="24.4" clip-path="url(#terminal-2360392498-line-5)">}&#160;</text><text class="terminal-2360392498-r2" x="622.2" y="142" textLength="12.2" clip-path="url(#terminal-2360392498-line-5)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="142" textLength="12.2" clip-path="url(#terminal-2360392498-line-5)">
+</text><text class="terminal-2360392498-r1" x="0" y="166.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-6)">▊</text><text class="terminal-2360392498-r8" x="24.4" y="166.4" textLength="36.6" clip-path="url(#terminal-2360392498-line-6)">6&#160;&#160;</text><text class="terminal-2360392498-r2" x="622.2" y="166.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-6)">▎</text><text class="terminal-2360392498-r3" x="634.4" y="166.4" textLength="12.2" clip-path="url(#terminal-2360392498-line-6)">
+</text><text class="terminal-2360392498-r1" x="0" y="190.8" textLength="12.2" clip-path="url(#terminal-2360392498-line-7)">▊</text><text class="terminal-2360392498-r2" x="12.2" y="190.8" textLength="610" clip-path="url(#terminal-2360392498-line-7)">▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁</text><text class="terminal-2360392498-r2" x="622.2" y="190.8" textLength="12.2" clip-path="url(#terminal-2360392498-line-7)">▎</text>
     </g>
     </g>
 </svg>
@@ -11281,10 +11329,6 @@ For example, <code>@string</code> is used in many languages to highlight strings
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align: left;">escape</td>
-<td style="text-align: left;">Focus on the next item.</td>
-</tr>
 <tr>
 <td style="text-align: left;">up</td>
 <td style="text-align: left;">Move the cursor up.</td>
@@ -11650,148 +11694,142 @@ Styles from the <code>theme</code> attribute take priority.</p>
 
 <a href="#textual.widgets._text_area.TextArea.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>        <span class="s2">&quot;escape&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">&quot;screen.focus_next&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="s2">&quot;Shift Focus&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="p">),</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;up&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_up&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor up&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;up&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_up&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor up&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_down&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor down&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">),</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>        <span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_left&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor left&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="p">),</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">&quot;down&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_down&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor down&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>        <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_right&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor right&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="p">),</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_left&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor left&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="p">),</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="s2">&quot;right&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor_right&quot;</span><span class="p">,</span> <span class="s2">&quot;cursor right&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>        <span class="s2">&quot;ctrl+left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>        <span class="s2">&quot;cursor_word_left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>        <span class="s2">&quot;cursor word left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>    <span class="p">),</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        <span class="s2">&quot;ctrl+left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="s2">&quot;cursor_word_left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="s2">&quot;cursor word left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>        <span class="s2">&quot;ctrl+right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>        <span class="s2">&quot;cursor_word_right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>        <span class="s2">&quot;cursor word right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>    <span class="p">),</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>        <span class="s2">&quot;ctrl+right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>        <span class="s2">&quot;cursor_word_right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="s2">&quot;cursor word right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a>        <span class="s2">&quot;home,ctrl+a&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a>        <span class="s2">&quot;cursor_line_start&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a>        <span class="s2">&quot;cursor line start&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>    <span class="p">),</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>        <span class="s2">&quot;home,ctrl+a&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>        <span class="s2">&quot;cursor_line_start&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>        <span class="s2">&quot;cursor line start&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a>        <span class="s2">&quot;end,ctrl+e&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a>        <span class="s2">&quot;cursor_line_end&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a>        <span class="s2">&quot;cursor line end&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a>    <span class="p">),</span>
 <a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>        <span class="s2">&quot;end,ctrl+e&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>        <span class="s2">&quot;cursor_line_end&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>        <span class="s2">&quot;cursor line end&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a>        <span class="s2">&quot;pageup&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a>        <span class="s2">&quot;cursor_page_up&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a>        <span class="s2">&quot;cursor page up&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a>    <span class="p">),</span>
 <a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>        <span class="s2">&quot;pageup&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>        <span class="s2">&quot;cursor_page_up&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>        <span class="s2">&quot;cursor page up&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a>        <span class="s2">&quot;pagedown&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a>        <span class="s2">&quot;cursor_page_down&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>        <span class="s2">&quot;cursor page down&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a>    <span class="p">),</span>
 <a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>        <span class="s2">&quot;pagedown&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>        <span class="s2">&quot;cursor_page_down&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>        <span class="s2">&quot;cursor page down&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-49" name="__codelineno-0-49" href="#__codelineno-0-49"></a>        <span class="s2">&quot;ctrl+shift+left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-50" name="__codelineno-0-50" href="#__codelineno-0-50"></a>        <span class="s2">&quot;cursor_word_left(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-51" name="__codelineno-0-51" href="#__codelineno-0-51"></a>        <span class="s2">&quot;cursor left word select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-52" name="__codelineno-0-52" href="#__codelineno-0-52"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-53" name="__codelineno-0-53" href="#__codelineno-0-53"></a>    <span class="p">),</span>
 <a id="__codelineno-0-54" name="__codelineno-0-54" href="#__codelineno-0-54"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>        <span class="s2">&quot;ctrl+shift+left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>        <span class="s2">&quot;cursor_word_left(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>        <span class="s2">&quot;cursor left word select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-55" name="__codelineno-0-55" href="#__codelineno-0-55"></a>        <span class="s2">&quot;ctrl+shift+right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-56" name="__codelineno-0-56" href="#__codelineno-0-56"></a>        <span class="s2">&quot;cursor_word_right(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57" href="#__codelineno-0-57"></a>        <span class="s2">&quot;cursor right word select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-58" name="__codelineno-0-58" href="#__codelineno-0-58"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-59" name="__codelineno-0-59" href="#__codelineno-0-59"></a>    <span class="p">),</span>
 <a id="__codelineno-0-60" name="__codelineno-0-60" href="#__codelineno-0-60"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>        <span class="s2">&quot;ctrl+shift+right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>        <span class="s2">&quot;cursor_word_right(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>        <span class="s2">&quot;cursor right word select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-61" name="__codelineno-0-61" href="#__codelineno-0-61"></a>        <span class="s2">&quot;shift+home&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-62" name="__codelineno-0-62" href="#__codelineno-0-62"></a>        <span class="s2">&quot;cursor_line_start(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-63" name="__codelineno-0-63" href="#__codelineno-0-63"></a>        <span class="s2">&quot;cursor line start select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-64" name="__codelineno-0-64" href="#__codelineno-0-64"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-65" name="__codelineno-0-65" href="#__codelineno-0-65"></a>    <span class="p">),</span>
 <a id="__codelineno-0-66" name="__codelineno-0-66" href="#__codelineno-0-66"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a>        <span class="s2">&quot;shift+home&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a>        <span class="s2">&quot;cursor_line_start(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a>        <span class="s2">&quot;cursor line start select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-67" name="__codelineno-0-67" href="#__codelineno-0-67"></a>        <span class="s2">&quot;shift+end&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68" href="#__codelineno-0-68"></a>        <span class="s2">&quot;cursor_line_end(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69" href="#__codelineno-0-69"></a>        <span class="s2">&quot;cursor line end select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-70" name="__codelineno-0-70" href="#__codelineno-0-70"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-71" name="__codelineno-0-71" href="#__codelineno-0-71"></a>    <span class="p">),</span>
 <a id="__codelineno-0-72" name="__codelineno-0-72" href="#__codelineno-0-72"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a>        <span class="s2">&quot;shift+end&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a>        <span class="s2">&quot;cursor_line_end(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a>        <span class="s2">&quot;cursor line end select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-73" name="__codelineno-0-73" href="#__codelineno-0-73"></a>        <span class="s2">&quot;shift+up&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74" href="#__codelineno-0-74"></a>        <span class="s2">&quot;cursor_up(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-75" name="__codelineno-0-75" href="#__codelineno-0-75"></a>        <span class="s2">&quot;cursor up select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-76" name="__codelineno-0-76" href="#__codelineno-0-76"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-77" name="__codelineno-0-77" href="#__codelineno-0-77"></a>    <span class="p">),</span>
 <a id="__codelineno-0-78" name="__codelineno-0-78" href="#__codelineno-0-78"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a>        <span class="s2">&quot;shift+up&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-80" name="__codelineno-0-80" href="#__codelineno-0-80"></a>        <span class="s2">&quot;cursor_up(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-81" name="__codelineno-0-81" href="#__codelineno-0-81"></a>        <span class="s2">&quot;cursor up select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-79" name="__codelineno-0-79" href="#__codelineno-0-79"></a>        <span class="s2">&quot;shift+down&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-80" name="__codelineno-0-80" href="#__codelineno-0-80"></a>        <span class="s2">&quot;cursor_down(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-81" name="__codelineno-0-81" href="#__codelineno-0-81"></a>        <span class="s2">&quot;cursor down select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-82" name="__codelineno-0-82" href="#__codelineno-0-82"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-83" name="__codelineno-0-83" href="#__codelineno-0-83"></a>    <span class="p">),</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84" href="#__codelineno-0-84"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>        <span class="s2">&quot;shift+down&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a>        <span class="s2">&quot;cursor_down(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a>        <span class="s2">&quot;cursor down select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-85" name="__codelineno-0-85" href="#__codelineno-0-85"></a>        <span class="s2">&quot;shift+left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-86" name="__codelineno-0-86" href="#__codelineno-0-86"></a>        <span class="s2">&quot;cursor_left(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-87" name="__codelineno-0-87" href="#__codelineno-0-87"></a>        <span class="s2">&quot;cursor left select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-88" name="__codelineno-0-88" href="#__codelineno-0-88"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-89" name="__codelineno-0-89" href="#__codelineno-0-89"></a>    <span class="p">),</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90" href="#__codelineno-0-90"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a>        <span class="s2">&quot;shift+left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92" href="#__codelineno-0-92"></a>        <span class="s2">&quot;cursor_left(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93" href="#__codelineno-0-93"></a>        <span class="s2">&quot;cursor left select&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-91" name="__codelineno-0-91" href="#__codelineno-0-91"></a>        <span class="s2">&quot;shift+right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-92" name="__codelineno-0-92" href="#__codelineno-0-92"></a>        <span class="s2">&quot;cursor_right(True)&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93" href="#__codelineno-0-93"></a>        <span class="s2">&quot;cursor right select&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94" href="#__codelineno-0-94"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95" href="#__codelineno-0-95"></a>    <span class="p">),</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96" href="#__codelineno-0-96"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a>        <span class="s2">&quot;shift+right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98" href="#__codelineno-0-98"></a>        <span class="s2">&quot;cursor_right(True)&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99" href="#__codelineno-0-99"></a>        <span class="s2">&quot;cursor right select&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100" href="#__codelineno-0-100"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101" href="#__codelineno-0-101"></a>    <span class="p">),</span>
-<a id="__codelineno-0-102" name="__codelineno-0-102" href="#__codelineno-0-102"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;f6&quot;</span><span class="p">,</span> <span class="s2">&quot;select_line&quot;</span><span class="p">,</span> <span class="s2">&quot;select line&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;f7&quot;</span><span class="p">,</span> <span class="s2">&quot;select_all&quot;</span><span class="p">,</span> <span class="s2">&quot;select all&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-96" name="__codelineno-0-96" href="#__codelineno-0-96"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;f6&quot;</span><span class="p">,</span> <span class="s2">&quot;select_line&quot;</span><span class="p">,</span> <span class="s2">&quot;select line&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-97" name="__codelineno-0-97" href="#__codelineno-0-97"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;f7&quot;</span><span class="p">,</span> <span class="s2">&quot;select_all&quot;</span><span class="p">,</span> <span class="s2">&quot;select all&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-98" name="__codelineno-0-98" href="#__codelineno-0-98"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99" href="#__codelineno-0-99"></a>        <span class="s2">&quot;backspace&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-100" name="__codelineno-0-100" href="#__codelineno-0-100"></a>        <span class="s2">&quot;delete_left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-101" name="__codelineno-0-101" href="#__codelineno-0-101"></a>        <span class="s2">&quot;delete left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-102" name="__codelineno-0-102" href="#__codelineno-0-102"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103" href="#__codelineno-0-103"></a>    <span class="p">),</span>
 <a id="__codelineno-0-104" name="__codelineno-0-104" href="#__codelineno-0-104"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105" href="#__codelineno-0-105"></a>        <span class="s2">&quot;backspace&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a>        <span class="s2">&quot;delete_left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107" href="#__codelineno-0-107"></a>        <span class="s2">&quot;delete left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105" href="#__codelineno-0-105"></a>        <span class="s2">&quot;ctrl+w&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106" href="#__codelineno-0-106"></a>        <span class="s2">&quot;delete_word_left&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107" href="#__codelineno-0-107"></a>        <span class="s2">&quot;delete left to start of word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-108" name="__codelineno-0-108" href="#__codelineno-0-108"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-109" name="__codelineno-0-109" href="#__codelineno-0-109"></a>    <span class="p">),</span>
 <a id="__codelineno-0-110" name="__codelineno-0-110" href="#__codelineno-0-110"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-111" name="__codelineno-0-111" href="#__codelineno-0-111"></a>        <span class="s2">&quot;ctrl+w&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-112" name="__codelineno-0-112" href="#__codelineno-0-112"></a>        <span class="s2">&quot;delete_word_left&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-113" name="__codelineno-0-113" href="#__codelineno-0-113"></a>        <span class="s2">&quot;delete left to start of word&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-111" name="__codelineno-0-111" href="#__codelineno-0-111"></a>        <span class="s2">&quot;delete,ctrl+d&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-112" name="__codelineno-0-112" href="#__codelineno-0-112"></a>        <span class="s2">&quot;delete_right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-113" name="__codelineno-0-113" href="#__codelineno-0-113"></a>        <span class="s2">&quot;delete right&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-114" name="__codelineno-0-114" href="#__codelineno-0-114"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-115" name="__codelineno-0-115" href="#__codelineno-0-115"></a>    <span class="p">),</span>
 <a id="__codelineno-0-116" name="__codelineno-0-116" href="#__codelineno-0-116"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-117" name="__codelineno-0-117" href="#__codelineno-0-117"></a>        <span class="s2">&quot;delete,ctrl+d&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-118" name="__codelineno-0-118" href="#__codelineno-0-118"></a>        <span class="s2">&quot;delete_right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-119" name="__codelineno-0-119" href="#__codelineno-0-119"></a>        <span class="s2">&quot;delete right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-117" name="__codelineno-0-117" href="#__codelineno-0-117"></a>        <span class="s2">&quot;ctrl+f&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-118" name="__codelineno-0-118" href="#__codelineno-0-118"></a>        <span class="s2">&quot;delete_word_right&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-119" name="__codelineno-0-119" href="#__codelineno-0-119"></a>        <span class="s2">&quot;delete right to start of word&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-120" name="__codelineno-0-120" href="#__codelineno-0-120"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-121" name="__codelineno-0-121" href="#__codelineno-0-121"></a>    <span class="p">),</span>
 <a id="__codelineno-0-122" name="__codelineno-0-122" href="#__codelineno-0-122"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-123" name="__codelineno-0-123" href="#__codelineno-0-123"></a>        <span class="s2">&quot;ctrl+f&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-124" name="__codelineno-0-124" href="#__codelineno-0-124"></a>        <span class="s2">&quot;delete_word_right&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-125" name="__codelineno-0-125" href="#__codelineno-0-125"></a>        <span class="s2">&quot;delete right to start of word&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-126" name="__codelineno-0-126" href="#__codelineno-0-126"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-127" name="__codelineno-0-127" href="#__codelineno-0-127"></a>    <span class="p">),</span>
-<a id="__codelineno-0-128" name="__codelineno-0-128" href="#__codelineno-0-128"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-129" name="__codelineno-0-129" href="#__codelineno-0-129"></a>        <span class="s2">&quot;ctrl+x&quot;</span><span class="p">,</span> <span class="s2">&quot;delete_line&quot;</span><span class="p">,</span> <span class="s2">&quot;delete line&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-123" name="__codelineno-0-123" href="#__codelineno-0-123"></a>        <span class="s2">&quot;ctrl+x&quot;</span><span class="p">,</span> <span class="s2">&quot;delete_line&quot;</span><span class="p">,</span> <span class="s2">&quot;delete line&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-124" name="__codelineno-0-124" href="#__codelineno-0-124"></a>    <span class="p">),</span>
+<a id="__codelineno-0-125" name="__codelineno-0-125" href="#__codelineno-0-125"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-126" name="__codelineno-0-126" href="#__codelineno-0-126"></a>        <span class="s2">&quot;ctrl+u&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-127" name="__codelineno-0-127" href="#__codelineno-0-127"></a>        <span class="s2">&quot;delete_to_start_of_line&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-128" name="__codelineno-0-128" href="#__codelineno-0-128"></a>        <span class="s2">&quot;delete to line start&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-129" name="__codelineno-0-129" href="#__codelineno-0-129"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-130" name="__codelineno-0-130" href="#__codelineno-0-130"></a>    <span class="p">),</span>
 <a id="__codelineno-0-131" name="__codelineno-0-131" href="#__codelineno-0-131"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-132" name="__codelineno-0-132" href="#__codelineno-0-132"></a>        <span class="s2">&quot;ctrl+u&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-133" name="__codelineno-0-133" href="#__codelineno-0-133"></a>        <span class="s2">&quot;delete_to_start_of_line&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-134" name="__codelineno-0-134" href="#__codelineno-0-134"></a>        <span class="s2">&quot;delete to line start&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-132" name="__codelineno-0-132" href="#__codelineno-0-132"></a>        <span class="s2">&quot;ctrl+k&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-133" name="__codelineno-0-133" href="#__codelineno-0-133"></a>        <span class="s2">&quot;delete_to_end_of_line&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-134" name="__codelineno-0-134" href="#__codelineno-0-134"></a>        <span class="s2">&quot;delete to line end&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-135" name="__codelineno-0-135" href="#__codelineno-0-135"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-136" name="__codelineno-0-136" href="#__codelineno-0-136"></a>    <span class="p">),</span>
-<a id="__codelineno-0-137" name="__codelineno-0-137" href="#__codelineno-0-137"></a>    <span class="n">Binding</span><span class="p">(</span>
-<a id="__codelineno-0-138" name="__codelineno-0-138" href="#__codelineno-0-138"></a>        <span class="s2">&quot;ctrl+k&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-139" name="__codelineno-0-139" href="#__codelineno-0-139"></a>        <span class="s2">&quot;delete_to_end_of_line&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-140" name="__codelineno-0-140" href="#__codelineno-0-140"></a>        <span class="s2">&quot;delete to line end&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-141" name="__codelineno-0-141" href="#__codelineno-0-141"></a>        <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-142" name="__codelineno-0-142" href="#__codelineno-0-142"></a>    <span class="p">),</span>
-<a id="__codelineno-0-143" name="__codelineno-0-143" href="#__codelineno-0-143"></a><span class="p">]</span>
+<a id="__codelineno-0-137" name="__codelineno-0-137" href="#__codelineno-0-137"></a><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -11804,10 +11842,6 @@ Styles from the <code>theme</code> attribute take priority.</p>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align: left;">escape</td>
-<td style="text-align: left;">Focus on the next item.</td>
-</tr>
 <tr>
 <td style="text-align: left;">up</td>
 <td style="text-align: left;">Move the cursor up.</td>
@@ -12400,8 +12434,8 @@ altering this value will immediately change the display width of the visible tab
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.language" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12608,8 +12642,8 @@ action, accounting for wrapping etc.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.theme" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -17818,6 +17852,29 @@ you would expect the cursor to move.</p>
 
 
 
+<h3 id="textual.widgets._text_area.Edit.bottom" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">bottom</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets._text_area.Edit.bottom" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bottom</span><span class="p">:</span> <span class="n">Location</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The Location impacted by this edit that is nearest the end of the document.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widgets._text_area.Edit.from_location" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">from_location</span>
 
@@ -17902,6 +17959,29 @@ you would expect the cursor to move.</p>
   <div class="doc doc-contents ">
   
       <p>The end location of the insert</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._text_area.Edit.top" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">top</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.widgets._text_area.Edit.top" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">top</span><span class="p">:</span> <span class="n">Location</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The Location impacted by this edit that is nearest the start of the document.</p>
   </div>
 
 </div>

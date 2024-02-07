@@ -5454,6 +5454,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.css.query.DOMQuery.set" class="md-nav__link">
+    <span class="md-ellipsis">
+      set()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery.set_class" class="md-nav__link">
     <span class="md-ellipsis">
       set_class()
@@ -6560,6 +6569,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.css.query.DOMQuery.set" class="md-nav__link">
+    <span class="md-ellipsis">
+      set()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.css.query.DOMQuery.set_class" class="md-nav__link">
     <span class="md-ellipsis">
       set_class()
@@ -7610,6 +7628,110 @@ or None for no filter.</p></td>
                 <code><a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a> | <a class="autorefs autorefs-internal" title="textual.css.query.ExpectType" href="#textual.css.query.ExpectType">ExpectType</a></code>
           </td>
           <td><p>Iterator[Widget | ExpectType]: An iterator of Widget instances.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.css.query.DOMQuery.set" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">set</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.css.query.DOMQuery.set" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">set</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">display</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">visible</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">loading</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Sets common attributes on matched nodes.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>display</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>Set <code>display</code> attribute on nodes, or <code>None</code> for no change.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>visible</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>Set <code>visible</code> attribute on nodes, or <code>None</code> for no change.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>disabled</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>Set <code>disabled</code> attribute on nodes, or <code>None</code> for no change.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>loading</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>Set <code>loading</code> attribute on nodes, or <code>None</code> for no change.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.css.query.DOMQuery" href="#textual.css.query.DOMQuery">DOMQuery</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="#textual.css.query.QueryType">QueryType</a>]</code>
+          </td>
+          <td><p>Query for chaining.</p></td>
         </tr>
     </tbody>
   </table>

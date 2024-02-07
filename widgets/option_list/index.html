@@ -7963,24 +7963,12 @@ tables</a>:</p>
 <td style="text-align: left;">Target the highlighted option.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>option-list--option-highlighted-disabled</code></td>
-<td style="text-align: left;">Target a disabled option that is also highlighted.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>option-list--option-hover</code></td>
 <td style="text-align: left;">Target an option that has the mouse over it.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>option-list--option-hover-disabled</code></td>
-<td style="text-align: left;">Target a disabled option that has the mouse over it.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>option-list--option-hover-highlighted</code></td>
 <td style="text-align: left;">Target a highlighted option that has the mouse over it.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>option-list--option-hover-highlighted-disabled</code></td>
-<td style="text-align: left;">Target a disabled highlighted option that has the mouse over it.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>option-list--separator</code></td>
@@ -8204,13 +8192,10 @@ tables</a>:</p>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="s2">&quot;option-list--option&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="s2">&quot;option-list--option-disabled&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="s2">&quot;option-list--option-highlighted&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">&quot;option-list--option-highlighted-disabled&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="s2">&quot;option-list--option-hover&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="s2">&quot;option-list--option-hover-disabled&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="s2">&quot;option-list--option-hover-highlighted&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="s2">&quot;option-list--option-hover-highlighted-disabled&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="s2">&quot;option-list--separator&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">}</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="s2">&quot;option-list--option-hover&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="s2">&quot;option-list--option-hover-highlighted&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="s2">&quot;option-list--separator&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">}</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8232,24 +8217,12 @@ tables</a>:</p>
 <td style="text-align: left;">Target the highlighted option.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>option-list--option-highlighted-disabled</code></td>
-<td style="text-align: left;">Target a disabled option that is also highlighted.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>option-list--option-hover</code></td>
 <td style="text-align: left;">Target an option that has the mouse over it.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>option-list--option-hover-disabled</code></td>
-<td style="text-align: left;">Target a disabled option that has the mouse over it.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>option-list--option-hover-highlighted</code></td>
 <td style="text-align: left;">Target a highlighted option that has the mouse over it.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>option-list--option-hover-highlighted-disabled</code></td>
-<td style="text-align: left;">Target a disabled highlighted option that has the mouse over it.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>option-list--separator</code></td>
@@ -8275,7 +8248,9 @@ tables</a>:</p>
   </span>
 
 <a href="#textual.widgets._option_list.OptionList.highlighted" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">highlighted</span><span class="p">:</span> <span class="n">reactive</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">highlighted</span><span class="p">:</span> <span class="n">reactive</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">[</span><span class="s2">&quot;int | None&quot;</span><span class="p">](</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="kc">None</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -8591,7 +8566,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
   
-      <p>Move the highlight down by one option.</p>
+      <p>Move the highlight down to the next enabled option.</p>
 
   </div>
 
@@ -8614,7 +8589,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
   
-      <p>Move the highlight up by one option.</p>
+      <p>Move the highlight up to the previous enabled option.</p>
 
   </div>
 
@@ -8637,7 +8612,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
   
-      <p>Move the highlight to the first option.</p>
+      <p>Move the highlight to the first enabled option.</p>
 
   </div>
 
@@ -8660,7 +8635,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
   
-      <p>Move the highlight to the last option.</p>
+      <p>Move the highlight to the last enabled option.</p>
 
   </div>
 
@@ -8683,7 +8658,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
   
-      <p>Move the highlight down one page.</p>
+      <p>Move the highlight down roughly by one page.</p>
 
   </div>
 
@@ -8706,7 +8681,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
   
-      <p>Move the highlight up one page.</p>
+      <p>Move the highlight up roughly by one page.</p>
 
   </div>
 

@@ -7844,24 +7844,12 @@ makes use of the following component classes:</p>
 <td style="text-align: left;">Target the highlighted option.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>option-list--option-highlighted-disabled</code></td>
-<td style="text-align: left;">Target a disabled option that is also highlighted.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>option-list--option-hover</code></td>
 <td style="text-align: left;">Target an option that has the mouse over it.</td>
 </tr>
 <tr>
-<td style="text-align: left;"><code>option-list--option-hover-disabled</code></td>
-<td style="text-align: left;">Target a disabled option that has the mouse over it.</td>
-</tr>
-<tr>
 <td style="text-align: left;"><code>option-list--option-hover-highlighted</code></td>
 <td style="text-align: left;">Target a highlighted option that has the mouse over it.</td>
-</tr>
-<tr>
-<td style="text-align: left;"><code>option-list--option-hover-highlighted-disabled</code></td>
-<td style="text-align: left;">Target a disabled highlighted option that has the mouse over it.</td>
 </tr>
 <tr>
 <td style="text-align: left;"><code>option-list--separator</code></td>
@@ -7921,7 +7909,7 @@ makes use of the following component classes:</p>
           <td>
             <strong><code>*selections</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]</code>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]</code>
           </td>
           <td>
             <code>()</code>
@@ -8217,7 +8205,7 @@ values takes place; either by user interaction or by API calls.</p>
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList.SelectionMessage" href="#textual.widgets._selection_list.SelectionList.SelectionMessage">SelectionMessage</a></code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList.SelectionMessage" href="#textual.widgets._selection_list.SelectionList.SelectionMessage">SelectionMessage</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.MessageSelectionType" href="#textual.widgets.selection_list.MessageSelectionType">MessageSelectionType</a>]</code></p>
 
   
       <p>Message sent when a selection is highlighted.</p>
@@ -8271,7 +8259,7 @@ values takes place; either by user interaction or by API calls.</p>
           <td>
             <strong><code>selection_list</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList" href="#textual.widgets.SelectionList">SelectionList</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList" href="#textual.widgets.SelectionList">SelectionList</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.MessageSelectionType" href="#textual.widgets.selection_list.MessageSelectionType">MessageSelectionType</a>]</code>
           </td>
           <td>
             <em>required</em>
@@ -8431,7 +8419,7 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
   <div class="doc doc-contents ">
       <p class="doc doc-class-bases">
-        Bases: <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList.SelectionMessage" href="#textual.widgets._selection_list.SelectionList.SelectionMessage">SelectionMessage</a></code></p>
+        Bases: <code><a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionList.SelectionMessage" href="#textual.widgets._selection_list.SelectionList.SelectionMessage">SelectionMessage</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.MessageSelectionType" href="#textual.widgets.selection_list.MessageSelectionType">MessageSelectionType</a>]</code></p>
 
   
       <p>Message sent when a selection is toggled.</p>
@@ -8576,7 +8564,7 @@ selected values.</p>
           <td>
             <strong><code>items</code></strong>
             <br>
-                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.widgets._option_list.NewOptionListContent" href="../../api/types/#textual.types.NewOptionListContent">NewOptionListContent</a> | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]]</code>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.widgets._option_list.NewOptionListContent" href="../../api/types/#textual.types.NewOptionListContent">NewOptionListContent</a> | <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.Selection" href="#textual.widgets.selection_list.Selection">Selection</a>[<a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>] | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<span title="rich.text.TextType">TextType</span>, <a class="autorefs autorefs-internal" title="textual.widgets._selection_list.SelectionType" href="#textual.widgets.selection_list.SelectionType">SelectionType</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a>]]</code>
           </td>
           <td>
             <em>required</em>
