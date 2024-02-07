@@ -2048,10 +2048,12 @@ class Edit:
 
     @property
     def top(self) -> Location:
+        """The Location impacted by this edit that is nearest the start of the document."""
         return min([self.from_location, self.to_location])
 
     @property
     def bottom(self) -> Location:
+        """The Location impacted by this edit that is nearest the end of the document."""
         return max([self.from_location, self.to_location])
 
 
