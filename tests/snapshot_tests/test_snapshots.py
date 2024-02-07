@@ -296,6 +296,10 @@ def test_option_list_replace_prompt_from_two_lines_to_three_lines(snap_compare):
     )
 
 
+def test_option_list_scrolling_in_long_list(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list_long.py", press=["up"])
+
+
 def test_progress_bar_indeterminate(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["f"])
 
@@ -401,6 +405,19 @@ def test_collapsible_nested(snap_compare):
 
 def test_collapsible_custom_symbol(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
+
+
+def test_directory_tree_reloading(snap_compare, tmp_path):
+    async def run_before(pilot):
+        await pilot.app.setup(tmp_path)
+        await pilot.press(
+            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+        )
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "directory_tree_reload.py",
+        run_before=run_before,
+    )
 
 
 # --- CSS properties ---
@@ -879,8 +896,7 @@ def hello(name):
 @pytest.mark.syntax
 def test_text_area_wrapping_and_folding(snap_compare):
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area_wrapping.py",
-        terminal_size=(20, 26)
+        SNAPSHOT_APPS_DIR / "text_area_wrapping.py", terminal_size=(20, 26)
     )
 
 

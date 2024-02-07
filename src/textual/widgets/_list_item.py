@@ -25,6 +25,9 @@ class ListItem(Widget, can_focus=False):
         background: $panel-lighten-1;
         overflow: hidden hidden;
     }
+    ListItem > :disabled {
+        background: $panel-darken-1;
+    }
     ListItem > Widget :hover {
         background: $boost;
     }

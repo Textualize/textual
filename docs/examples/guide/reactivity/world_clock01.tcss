@@ -1,0 +1,16 @@
+Screen {
+    align: center middle;
+}
+
+WorldClock {
+    width: auto;
+    height: auto;
+    padding: 1 2;
+    background: $panel;
+    border: wide $background;
+
+    & Digits {
+        width: auto;
+        color: $secondary;
+    }
+}

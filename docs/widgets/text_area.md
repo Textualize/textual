@@ -18,7 +18,7 @@ and a variety of keybindings.
 
 By default, the `TextArea` widget is a standard multi-line input box with soft-wrapping enabled.
 
-If you're interested in editing code, you may wish to use the [`TextArea.code_editor`] convenience constructor.
+If you're interested in editing code, you may wish to use the [`TextArea.code_editor`][textual.widgets._text_area.TextArea.code_editor] convenience constructor.
 This is a method which, by default, returns a new `TextArea` with soft-wrapping disabled, line numbers enabled, and the tab key behavior configured to insert `\t`.
 
 ### Syntax highlighting dependencies
@@ -283,11 +283,13 @@ This immediately updates the appearance of the `TextArea`:
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
 
-### Tab behaviour
+### Tab and Escape behaviour
 
 Pressing the ++tab++ key will shift focus to the next widget in your application by default.
 This matches how other widgets work in Textual.
+
 To have ++tab++ insert a `\t` character, set the `tab_behaviour` attribute to the string value `"indent"`.
+While in this mode, you can shift focus by pressing the ++escape++ key.
 
 ### Indentation
 
