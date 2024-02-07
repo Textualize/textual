@@ -1,7 +1,15 @@
+from textual._etc import TimeToCompletion
 from textual.app import App, ComposeResult
 from textual.containers import Center, Middle
 from textual.timer import Timer
 from textual.widgets import Footer, ProgressBar
+
+
+class MockETC(TimeToCompletion):
+
+    @property
+    def estimated_time_to_complete_as_of_now(self) -> float:
+        return 7.0
 
 
 class IndeterminateProgressBar(App[None]):
@@ -35,7 +43,7 @@ class IndeterminateProgressBar(App[None]):
 
     def key_t(self) -> None:
         # Freeze time to show always the same ETA.
-        self.query_one(ProgressBar).query_one("#eta")._get_elapsed_time = lambda: 3.9
+        self.query_one(ProgressBar).query_one("#eta")._samples = MockETC(1)
         self.query_one(ProgressBar).update(total=100, progress=39)
 
     def key_u(self) -> None:
