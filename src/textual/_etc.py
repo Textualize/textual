@@ -71,6 +71,9 @@ class Samples:
 
         Args:
             sample: The sample to add.
+
+        Returns:
+            Self.
         """
         self._samples.append(sample)
         self._prune()
@@ -131,6 +134,9 @@ class TimeToCompletion:
         Args:
             value: The value to record.
             at_time: The time point at which to make the record.
+
+        Returns:
+            Self.
         """
         # If the last sample is higher in value than the new one...
         if self._samples and self._samples[-1].value > value:
