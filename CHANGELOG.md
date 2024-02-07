@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
 - Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
 
-## [0.49.0] - 2024-03-07
+## [0.49.0] - 2024-02-07
 
 ### Fixed
 
