@@ -210,6 +210,12 @@ class TimeToCompletion:
         """The estimated time to completion as of now."""
         return self._distance_remaining * self._speed_now
 
+    def __rich_repr__(self) -> Result:
+        yield "destination", self._destination
+        yield "estimated_time_to_complete", self.estimated_time_to_complete
+        yield "estimated_time_to_complete_as_of_now", self.estimated_time_to_complete_as_of_now
+        yield self._samples
+
 
 if __name__ == "__main__":
     from time import sleep
