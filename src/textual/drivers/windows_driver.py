@@ -37,6 +37,11 @@ class WindowsDriver(Driver):
         self._restore_console: Callable[[], None] | None = None
         self._writer_thread: WriterThread | None = None
 
+    @property
+    def can_suspend(self) -> bool:
+        """Can this driver be suspended?"""
+        return True
+
     def write(self, data: str) -> None:
         """Write data to the output device.
 

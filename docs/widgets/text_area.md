@@ -18,7 +18,7 @@ and a variety of keybindings.
 
 By default, the `TextArea` widget is a standard multi-line input box with soft-wrapping enabled.
 
-If you're interested in editing code, you may wish to use the [`TextArea.code_editor`] convenience constructor.
+If you're interested in editing code, you may wish to use the [`TextArea.code_editor`][textual.widgets._text_area.TextArea.code_editor] convenience constructor.
 This is a method which, by default, returns a new `TextArea` with soft-wrapping disabled, line numbers enabled, and the tab key behavior configured to insert `\t`.
 
 ### Syntax highlighting dependencies
@@ -173,6 +173,17 @@ There are some methods available which make common selections easier:
 Themes give you control over the look and feel, including syntax highlighting,
 the cursor, selection, gutter, and more.
 
+#### Default theme
+
+The default `TextArea` theme is called `css`.
+This a theme which takes values entirely from CSS.
+This means that the default appearance of the widget fits nicely into a standard Textual application,
+and looks right on both dark and light mode.
+
+More complex applications such as code editors will likely want to use pre-defined themes such as `monokai`.
+This involves using a `TextAreaTheme` object, which we cover in detail below.
+This allows full customization of the `TextArea`, including syntax highlighting, at the code level.
+
 #### Using builtin themes
 
 The initial theme of the `TextArea` is determined by the `theme` parameter.
@@ -232,6 +243,7 @@ my_theme = TextAreaTheme(
 
 Attributes like `cursor_style` and `cursor_line_style` apply general language-agnostic
 styling to the widget.
+If you choose not to supply a value for one of these attributes, it will be taken from the CSS component styles.
 
 The `syntax_styles` attribute of `TextAreaTheme` is used for syntax highlighting and
 depends on the `language` currently in use.
@@ -271,11 +283,13 @@ This immediately updates the appearance of the `TextArea`:
 ```{.textual path="docs/examples/widgets/text_area_custom_theme.py" columns="42" lines="8"}
 ```
 
-### Tab behaviour
+### Tab and Escape behaviour
 
 Pressing the ++tab++ key will shift focus to the next widget in your application by default.
 This matches how other widgets work in Textual.
+
 To have ++tab++ insert a `\t` character, set the `tab_behaviour` attribute to the string value `"indent"`.
+While in this mode, you can shift focus by pressing the ++escape++ key.
 
 ### Indentation
 
@@ -485,9 +499,13 @@ The `TextArea` widget defines the following bindings:
 
 ## Component classes
 
-The `TextArea` widget defines no component classes.
+The `TextArea` defines component classes that can style various aspects of the widget.
+Styles from the `theme` attribute take priority.
 
-Styling should be done exclusively via [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
+::: textual.widgets.TextArea.COMPONENT_CLASSES
+    options:
+      show_root_heading: false
+      show_root_toc_entry: false
 
 ## See also
 
@@ -498,6 +516,11 @@ Styling should be done exclusively via [`TextAreaTheme`][textual.widgets.text_ar
 - The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
 - `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
+
+
+## Additional notes
+
+- To remove the outline effect when the `TextArea` is focused, you can set `border: none; padding: 0;` in your CSS.
 
 ---
 
