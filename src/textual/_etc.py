@@ -77,7 +77,7 @@ class TimeToCompletion:
         not from the first until now.
         """
         return (
-            self._samples[-2].moment - self._samples[0].moment
+            self._samples[-1].moment - self._samples[0].moment
             if len(self._samples) > 1
             else 0
         )
@@ -98,12 +98,12 @@ class TimeToCompletion:
         current window; not the distance covered by every sample that has
         been recorded.
         """
-        return self._samples[-2].value - self._samples[0].value if len(self) > 1 else 0
+        return self._samples[-1].value - self._samples[0].value if len(self) > 1 else 0
 
     @property
     def _distance_remaining(self) -> float:
         """The distance remaining until the destination is reached."""
-        return self._destination - (self._samples[-2].value if len(self) > 1 else 0)
+        return self._destination - (self._samples[-1].value if len(self) > 1 else 0)
 
     @property
     def _speed(self) -> float:
