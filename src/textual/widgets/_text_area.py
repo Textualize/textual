@@ -1540,6 +1540,8 @@ TextArea:light .text-area--cursor {
         if center:
             self.scroll_cursor_visible(center)
 
+        self.history.checkpoint()
+
     def move_cursor_relative(
         self,
         rows: int = 0,
