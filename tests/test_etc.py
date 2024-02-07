@@ -30,14 +30,22 @@ def test_sample_no_max() -> None:
     assert len(samples) == 20
 
 
+def test_max_sample_and_time() -> None:
+    """A large max sample that isn't reached should max to the time."""
+    samples = Samples(1_000, 30)
+    assert len(samples) == 0
+    for n in range(60):
+        samples.append(Sample(n, n))
+    assert len(samples) == 30
+
+
 def test_out_of_time_samples_should_keep_a_sample():
     """If we run out of time on samples, we should keep the latest sample."""
     samples = Samples(10, 1)
     assert len(samples) == 0
     for n in range(20):
         samples.append(Sample(n, n + 100))
-    assert len(samples) == 1
-    assert samples[0].moment == 119
+    assert len(samples) == 10
 
 
 def test_size() -> None:

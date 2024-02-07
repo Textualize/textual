@@ -44,13 +44,19 @@ class Samples:
 
         Args:
             samples: The samples to get the recent samples from.
+
+        Returns:
+            The recent samples, or all available samples if none fall within
+            the time window.
         """
         if not samples or self._time_window_size is None:
             return samples
         oldest_time = samples[-1].moment - self._time_window_size
-        for position, sample in enumerate(samples):
+        for position, sample in enumerate(samples[:-1]):
             if sample.moment > oldest_time:
                 return samples[position:]
+        # Seems there are no samples from recent times; so rather than fail
+        # to return anything, we fall back on everything we've got.
         return samples
 
     def _prune(self) -> None:
