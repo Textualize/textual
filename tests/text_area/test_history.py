@@ -26,13 +26,21 @@ async def pilot():
         yield pilot
 
 
-async def test_simple_undo(pilot):
+async def test_simple_undo_redo(pilot):
     text_area: TextArea = pilot.app.text_area
 
     text_area.insert("123", (0, 0))
 
     assert text_area.text == "123" + SIMPLE_TEXT
-
     text_area.undo()
-
     assert text_area.text == SIMPLE_TEXT
+    text_area.redo()
+    assert text_area.text == "123" + SIMPLE_TEXT
+
+
+async def test_undo_selection_retained(pilot):
+    text_area: TextArea = pilot.app.text_area
+    text_area.delete((0, 0), (2, 3))
+    assert text_area.text == "NO\nPQRST\nUVWXY\nZ\n"
+    text_area.undo()
+    # assert text_area.selection ==
