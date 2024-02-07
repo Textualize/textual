@@ -337,9 +337,9 @@ class Widget(DOMNode):
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache: FIFOCache[
-            tuple[Size, int], DockArrangeResult
-        ] = FIFOCache(4)
+        self._arrangement_cache: FIFOCache[tuple[Size, int], DockArrangeResult] = (
+            FIFOCache(4)
+        )
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
@@ -602,12 +602,10 @@ class Widget(DOMNode):
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
     @overload
-    def get_child_by_id(self, id: str) -> Widget:
-        ...
+    def get_child_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -638,12 +636,12 @@ class Widget(DOMNode):
         return child
 
     @overload
-    def get_widget_by_id(self, id: str) -> Widget:
-        ...
+    def get_widget_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType]
+    ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -930,8 +928,7 @@ class Widget(DOMNode):
         *,
         before: int | Widget,
         after: None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     @overload
     def move_child(
@@ -940,8 +937,7 @@ class Widget(DOMNode):
         *,
         after: int | Widget,
         before: None = None,
-    ) -> None:
-        ...
+    ) -> None: ...
 
     def move_child(
         self,
@@ -1075,8 +1071,6 @@ class Widget(DOMNode):
 
         # Container minus padding and border
         content_container = container - gutter.totals
-        # The container including the content
-        sizing_container = content_container if is_border_box else container
 
         if styles.width is None:
             # No width specified, fill available space
@@ -1084,9 +1078,7 @@ class Widget(DOMNode):
         elif is_auto_width:
             # When width is auto, we want enough space to always fit the content
             content_width = Fraction(
-                self.get_content_width(
-                    content_container - styles.margin.totals, viewport
-                )
+                self.get_content_width(content_container - margin.totals, viewport)
             )
             if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
                 content_width += styles.scrollbar_size_vertical
@@ -1099,15 +1091,15 @@ class Widget(DOMNode):
             # An explicit width
             styles_width = styles.width
             content_width = styles_width.resolve(
-                sizing_container - styles.margin.totals, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
-            if is_border_box and styles_width.excludes_border:
+            if is_border_box:
                 content_width -= gutter.width
 
         if styles.min_width is not None:
             # Restrict to minimum width, if set
             min_width = styles.min_width.resolve(
-                content_container, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
             if is_border_box:
                 min_width -= gutter.width
@@ -1116,7 +1108,7 @@ class Widget(DOMNode):
         if styles.max_width is not None:
             # Restrict to maximum width, if set
             max_width = styles.max_width.resolve(
-                content_container, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
             if is_border_box:
                 max_width -= gutter.width
@@ -1143,15 +1135,15 @@ class Widget(DOMNode):
             styles_height = styles.height
             # Explicit height set
             content_height = styles_height.resolve(
-                sizing_container - styles.margin.totals, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
-            if is_border_box and styles_height.excludes_border:
+            if is_border_box:
                 content_height -= gutter.height
 
         if styles.min_height is not None:
             # Restrict to minimum height, if set
             min_height = styles.min_height.resolve(
-                content_container, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
             if is_border_box:
                 min_height -= gutter.height
@@ -1160,7 +1152,7 @@ class Widget(DOMNode):
         if styles.max_height is not None:
             # Restrict maximum height, if set
             max_height = styles.max_height.resolve(
-                content_container, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
             if is_border_box:
                 max_height -= gutter.height
@@ -1919,6 +1911,11 @@ class Widget(DOMNode):
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
+
+        animator = self.app.animator
+        animator.force_stop_animation(self, "scroll_x")
+        animator.force_stop_animation(self, "scroll_y")
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -2787,9 +2784,12 @@ class Widget(DOMNode):
             )
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "id", self.id, None
-        if self.name:
-            yield "name", self.name
+        try:
+            yield "id", self.id, None
+            if self.name:
+                yield "name", self.name
+        except AttributeError:
+            pass
 
     def _get_scrollable_region(self, region: Region) -> Region:
         """Adjusts the Widget region to accommodate scrollbars.
@@ -2806,10 +2806,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = (
+        show_vertical_scrollbar: bool = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = (
+        show_horizontal_scrollbar: bool = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -2843,10 +2843,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = (
+        show_vertical_scrollbar: bool = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = (
+        show_horizontal_scrollbar: bool = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -3433,6 +3433,7 @@ class Widget(DOMNode):
         return await self.dispatch_key(event)
 
     async def _on_compose(self, event: events.Compose) -> None:
+        _rich_traceback_omit = True
         event.prevent_default()
         try:
             widgets = [*self._pending_children, *compose(self)]

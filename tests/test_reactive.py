@@ -577,6 +577,29 @@ async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
         assert from_app
 
 
+async def test_set_reactive():
+    """Test set_reactive doesn't call watchers."""
+
+    class MyWidget(Widget):
+        foo = reactive("")
+
+        def __init__(self, foo: str) -> None:
+            super().__init__()
+            self.set_reactive(MyWidget.foo, foo)
+
+        def watch_foo(self) -> None:
+            # Should never get here
+            1 / 0
+
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            yield MyWidget("foobar")
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.query_one(MyWidget).foo == "foobar"
+
+
 async def test_no_duplicate_external_watchers() -> None:
     """Make sure we skip duplicated watchers."""
 

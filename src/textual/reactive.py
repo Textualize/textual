@@ -17,6 +17,7 @@ from typing import (
     Type,
     TypeVar,
     cast,
+    overload,
 )
 
 import rich.repr
@@ -37,9 +38,14 @@ if TYPE_CHECKING:
     Reactable = DOMNode
 
 ReactiveType = TypeVar("ReactiveType")
+ReactableType = TypeVar("ReactableType", bound="DOMNode")
 
 
-class TooManyComputesError(Exception):
+class ReactiveError(Exception):
+    """Base class for reactive errors."""
+
+
+class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
 
 
@@ -111,6 +117,7 @@ class Reactive(Generic[ReactiveType]):
         self._init = init
         self._always_update = always_update
         self._run_compute = compute
+        self._owner: Type[MessageTarget] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -119,6 +126,12 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
+
+    @property
+    def owner(self) -> Type[MessageTarget]:
+        """The owner (class) where the reactive was declared."""
+        assert self._owner is not None
+        return self._owner
 
     def _initialize_reactive(self, obj: Reactable, name: str) -> None:
         """Initialized a reactive attribute on an object.
@@ -170,6 +183,7 @@ class Reactive(Generic[ReactiveType]):
 
     def __set_name__(self, owner: Type[MessageTarget], name: str) -> None:
         # Check for compute method
+        self._owner = owner
         public_compute = f"compute_{name}"
         private_compute = f"_compute_{name}"
         compute_name = (
@@ -192,7 +206,29 @@ class Reactive(Generic[ReactiveType]):
         default = self._default
         setattr(owner, f"_default_{name}", default)
 
-    def __get__(self, obj: Reactable, obj_type: type[object]) -> ReactiveType:
+    @overload
+    def __get__(
+        self: Reactive[ReactiveType], obj: ReactableType, obj_type: type[ReactableType]
+    ) -> ReactiveType: ...
+
+    @overload
+    def __get__(
+        self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
+    ) -> Reactive[ReactiveType]: ...
+
+    def __get__(
+        self: Reactive[ReactiveType],
+        obj: Reactable | None,
+        obj_type: type[ReactableType],
+    ) -> Reactive[ReactiveType] | ReactiveType:
+        _rich_traceback_omit = True
+        if obj is None:
+            # obj is None means we are invoking the descriptor via the class, and not the instance
+            return self
+        if not hasattr(obj, "id"):
+            raise ReactiveError(
+                f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before getting reactives."
+            )
         internal_name = self.internal_name
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)
@@ -200,7 +236,6 @@ class Reactive(Generic[ReactiveType]):
         if hasattr(obj, self.compute_name):
             value: ReactiveType
             old_value = getattr(obj, internal_name)
-            _rich_traceback_omit = True
             value = getattr(obj, self.compute_name)()
             setattr(obj, internal_name, value)
             self._check_watchers(obj, self.name, old_value)
@@ -210,6 +245,11 @@ class Reactive(Generic[ReactiveType]):
 
     def __set__(self, obj: Reactable, value: ReactiveType) -> None:
         _rich_traceback_omit = True
+
+        if not hasattr(obj, "_id"):
+            raise ReactiveError(
+                f"Node is missing data; Check you are calling super().__init__(...) in the {obj.__class__.__name__}() constructor, before setting reactives."
+            )
 
         self._initialize_reactive(obj, self.name)
 
@@ -272,7 +312,7 @@ class Reactive(Generic[ReactiveType]):
             watchers[:] = [
                 (reactable, callback)
                 for reactable, callback in watchers
-                if reactable.is_attached and not reactable._closing
+                if not reactable._closing
             ]
             for reactable, callback in watchers:
                 with reactable.prevent(*obj._prevent_message_types_stack[-1]):
@@ -367,6 +407,7 @@ def _watch(
     """Watch a reactive variable on an object.
 
     Args:
+        node: The node that created the watcher.
         obj: The parent object.
         attribute_name: The attribute to watch.
         callback: A callable to call when the attribute changes.

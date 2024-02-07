@@ -296,6 +296,10 @@ def test_option_list_replace_prompt_from_two_lines_to_three_lines(snap_compare):
     )
 
 
+def test_option_list_scrolling_in_long_list(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list_long.py", press=["up"])
+
+
 def test_progress_bar_indeterminate(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "progress_bar_isolated_.py", press=["f"])
 
@@ -401,6 +405,19 @@ def test_collapsible_nested(snap_compare):
 
 def test_collapsible_custom_symbol(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
+
+
+def test_directory_tree_reloading(snap_compare, tmp_path):
+    async def run_before(pilot):
+        await pilot.app.setup(tmp_path)
+        await pilot.press(
+            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+        )
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "directory_tree_reload.py",
+        run_before=run_before,
+    )
 
 
 # --- CSS properties ---
@@ -811,7 +828,7 @@ def test_text_area_language_rendering(language, snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_language,
-        terminal_size=(80, snippet.count("\n") + 2),
+        terminal_size=(80, snippet.count("\n") + 4),
     )
 
 
@@ -842,7 +859,7 @@ I am the final line."""
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_selection,
-        terminal_size=(30, text.count("\n") + 1),
+        terminal_size=(30, text.count("\n") + 4),
     )
 
 
@@ -872,7 +889,14 @@ def hello(name):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_theme,
-        terminal_size=(48, text.count("\n") + 2),
+        terminal_size=(48, text.count("\n") + 4),
+    )
+
+
+@pytest.mark.syntax
+def test_text_area_wrapping_and_folding(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_wrapping.py", terminal_size=(20, 26)
     )
 
 
@@ -984,3 +1008,9 @@ def test_nested_specificity(snap_compare):
 def test_tab_rename(snap_compare):
     """Test setting a new label for a tab amongst a TabbedContent."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "tab_rename.py")
+
+
+def test_input_percentage_width(snap_compare):
+    """Check percentage widths work correctly."""
+    # https://github.com/Textualize/textual/issues/3721
+    assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
