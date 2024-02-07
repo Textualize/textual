@@ -421,7 +421,7 @@ def _watch(
     watcher_list = watchers.setdefault(attribute_name, [])
     if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return
-    watcher_list.append((node, callback))
     if init:
         current_value = getattr(obj, attribute_name, None)
         invoke_watcher(obj, callback, current_value, current_value)
+    watcher_list.append((node, callback))

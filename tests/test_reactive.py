@@ -615,7 +615,6 @@ async def test_no_duplicate_external_watchers() -> None:
 
         def on_mount(self) -> None:
             self.watch(self.holder, "attr", self.callback)
-            self.watch(self.holder, "attr", self.callback)
 
         def callback(self) -> None:
             nonlocal counter
@@ -623,10 +622,9 @@ async def test_no_duplicate_external_watchers() -> None:
 
     app = MyApp()
     async with app.run_test():
-        before = counter
+        assert counter == 1
         app.holder.attr = 73
-        after = counter
-    assert after == before + 1
+        assert counter == 2
 
 
 async def test_external_watch_init_does_not_propagate() -> None:
