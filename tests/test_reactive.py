@@ -580,32 +580,38 @@ async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
 async def test_no_duplicate_external_watchers() -> None:
     """Make sure we skip duplicated watchers."""
 
+    counter = 0
+
     class Holder(Widget):
         attr = var(None)
 
     class MyApp(App[None]):
-        def __init__(self):
+        def __init__(self) -> None:
             super().__init__()
             self.holder = Holder()
 
-        def on_mount(self):
+        def on_mount(self) -> None:
             self.watch(self.holder, "attr", self.callback)
             self.watch(self.holder, "attr", self.callback)
 
         def callback(self) -> None:
-            return
+            nonlocal counter
+            counter += 1
 
     app = MyApp()
     async with app.run_test():
-        pass
-    assert len(app.holder.__watchers["attr"]) == 1
+        before = counter
+        app.holder.attr = 73
+        after = counter
+    assert after == before + 1
 
 
 async def test_external_watch_init_does_not_propagate() -> None:
     """Regression test for https://github.com/Textualize/textual/issues/3878.
 
     Make sure that when setting an extra watcher programmatically and `init` is set,
-    we init only the new watcher and not the other ones.
+    we init only the new watcher and not the other ones, but at the same
+    time make sure both watchers work in regular circumstances.
     """
 
     logs: list[str] = []
@@ -625,13 +631,14 @@ async def test_external_watch_init_does_not_propagate() -> None:
             yield SomeWidget()
 
         def on_mount(self) -> None:
-            def nop() -> None:
-                return
+            def watch_test_2_extra() -> None:
+                logs.append("test_2_extra")
 
-            self.watch(self.query_one(SomeWidget), "test_2", nop)
+            self.watch(self.query_one(SomeWidget), "test_2", watch_test_2_extra)
 
     app = InitOverrideApp()
     async with app.run_test():
-        pass
-
-    assert logs == ["test_1"]
+        assert logs == ["test_1", "test_2_extra"]
+        app.query_one(SomeWidget).test_2 = 73
+        assert logs.count("test_2_extra") == 2
+        assert "test_2" in logs
