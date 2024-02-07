@@ -50,23 +50,19 @@ class Edit:
 
         text = self.text
 
-        edit_from = self.from_location
-        edit_to = self.to_location
-
         # This code is mostly handling how we adjust TextArea.selection
         # when an edit is made to the document programmatically.
         # We want a user who is typing away to maintain their relative
         # position in the document even if an insert happens before
         # their cursor position.
 
-        edit_top, edit_bottom = sorted((edit_from, edit_to))
-        edit_bottom_row, edit_bottom_column = edit_bottom
+        edit_bottom_row, edit_bottom_column = self.bottom
 
         selection_start, selection_end = text_area.selection
         selection_start_row, selection_start_column = selection_start
         selection_end_row, selection_end_column = selection_end
 
-        edit_result = text_area.document.replace_range(edit_from, edit_to, text)
+        edit_result = text_area.document.replace_range(self.top, self.bottom, text)
 
         new_edit_to_row, new_edit_to_column = edit_result.end_location
 
@@ -110,26 +106,14 @@ class Edit:
         Returns:
             An `EditResult` containing information about the replace operation.
         """
-        # This is where the selection will be updated to after the content is restored.
-        target_from = self.from_location
-        target_to = self.to_location
-
         target_top, target_bottom = sorted((target_to, target_from))
-
-        # The text that was there before and is no longer there - needs to be inserted again.
         replaced_text = self._edit_result.replaced_text
-
-        # The bounds of the new content
-        # target_from -> edit_result.new_end
         edit_end = self._edit_result.end_location
-
         # Replace the span of the edit with the text that was originally there.
         undo_edit_result = text_area.document.replace_range(
-            target_top, edit_end, replaced_text
+            self.top, self.bottom, replaced_text
         )
-
         self._updated_selection = self._original_selection
-
         return undo_edit_result
 
     def after(self, text_area: TextArea) -> None:
@@ -141,3 +125,13 @@ class Edit:
         if self._updated_selection is not None:
             text_area.selection = self._updated_selection
         text_area.record_cursor_width()
+
+    @property
+    def top(self) -> Location:
+        """The Location impacted by this edit that is nearest the start of the document."""
+        return min([self.from_location, self.to_location])
+
+    @property
+    def bottom(self) -> Location:
+        """The Location impacted by this edit that is nearest the end of the document."""
+        return max([self.from_location, self.to_location])

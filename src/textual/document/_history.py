@@ -51,11 +51,12 @@ class EditHistory:
         - The undo stack is empty.
         - The checkpoint timer expires.
         - The maximum number of characters permitted in a checkpoint is reached.
-        - A redo is performed (we should add new edits to a batch that has been redone).
+        - A redo is performed (we should not add new edits to a batch that has been redone).
         - The programmer has requested a new batch via a call to `force_new_batch`.
             - e.g. the TextArea widget may call this method in some circumstances.
             - Clicking to move the cursor elsewhere in the document should create a new batch.
-            - Blurring the TextArea should create a new batch.
+            - Movement of the cursor via a keyboard action that is NOT an edit.
+            - Blurring the TextArea creates a new checkpoint.
         - The current edit involves a deletion/replacement and the previous edit did not.
         - The current edit is a pure insertion and the previous edit was not.
         - The edit involves insertion or deletion of one or more newline characters.
