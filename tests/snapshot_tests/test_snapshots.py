@@ -403,6 +403,19 @@ def test_collapsible_custom_symbol(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
 
 
+def test_directory_tree_reloading(snap_compare, tmp_path):
+    async def run_before(pilot):
+        await pilot.app.setup(tmp_path)
+        await pilot.press(
+            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+        )
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "directory_tree_reload.py",
+        run_before=run_before,
+    )
+
+
 # --- CSS properties ---
 # We have a canonical example for each CSS property that is shown in their docs.
 # If any of these change, something has likely broken, so snapshot each of them.

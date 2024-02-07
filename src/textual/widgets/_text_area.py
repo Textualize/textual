@@ -297,7 +297,7 @@ TextArea:light .text-area--cursor {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
-    _cursor_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
+    _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
 
@@ -522,9 +522,14 @@ TextArea:light .text-area--cursor {
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
 
-    def watch_has_focus(self, value: bool) -> None:
-        self._cursor_visible = value
-        super().watch_has_focus(value)
+    def _watch_has_focus(self, focus: bool) -> None:
+        self._cursor_visible = focus
+        if focus:
+            self._restart_blink()
+            self.app.cursor_position = self.cursor_screen_offset
+            self.history.checkpoint()
+        else:
+            self._pause_blink(visible=False)
 
     def _watch_selection(
         self, previous_selection: Selection, selection: Selection
@@ -552,6 +557,14 @@ TextArea:light .text-area--cursor {
         self.app.cursor_position = self.cursor_screen_offset
         if previous_selection != selection:
             self.post_message(self.SelectionChanged(selection, self))
+
+    def _watch_cursor_blink(self, blink: bool) -> None:
+        if not self.is_mounted:
+            return None
+        if blink and self.has_focus:
+            self._restart_blink()
+        else:
+            self._pause_blink(visible=self.has_focus)
 
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
@@ -1032,8 +1045,10 @@ TextArea:light .text-area--cursor {
         )
 
         if cursor_row == line_index:
-            draw_cursor = not self.cursor_blink or (
-                self.cursor_blink and self._cursor_visible
+            draw_cursor = (
+                self.has_focus
+                and not self.cursor_blink
+                or (self.cursor_blink and self._cursor_visible)
             )
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
@@ -1395,14 +1410,6 @@ TextArea:light .text-area--cursor {
             self._toggle_cursor_blink_visible,
             pause=not (self.cursor_blink and self.has_focus),
         )
-
-    def _on_blur(self, _: events.Blur) -> None:
-        self._pause_blink(visible=True)
-
-    def _on_focus(self, _: events.Focus) -> None:
-        self._restart_blink()
-        self.app.cursor_position = self.cursor_screen_offset
-        self.history.checkpoint()
 
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
