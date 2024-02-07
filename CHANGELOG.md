@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed a crash in the TextArea when performing a backward replace https://github.com/Textualize/textual/pull/4126
+- Fixed selection not updating correctly when pasting while there's a non-zero selection https://github.com/Textualize/textual/pull/4126
+- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behaviour` is the default https://github.com/Textualize/textual/issues/4110
+
 ### Added
 
 - Added DOMQuery.set https://github.com/Textualize/textual/pull/4075
@@ -14,10 +20,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
 - Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
 - Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
-
-### Fixed
-
-- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behaviour` is the default https://github.com/Textualize/textual/issues/4110
 
 ## [0.48.2] - 2024-02-02
 
