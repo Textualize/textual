@@ -664,4 +664,4 @@ async def test_external_watch_init_does_not_propagate() -> None:
         assert logs == ["test_1", "test_2_extra"]
         app.query_one(SomeWidget).test_2 = 73
         assert logs.count("test_2_extra") == 2
-        assert "test_2" in logs
+        assert logs.count("test_2") == 1
