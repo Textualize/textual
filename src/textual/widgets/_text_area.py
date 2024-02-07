@@ -553,6 +553,14 @@ TextArea:light .text-area--cursor {
         if previous_selection != selection:
             self.post_message(self.SelectionChanged(selection, self))
 
+    def _watch_cursor_blink(self, blink: bool) -> None:
+        if not self.is_mounted:
+            return None
+        if blink and self.has_focus:
+            self._restart_blink()
+        else:
+            self._pause_blink(visible=self.has_focus)
+
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
         self._cursor_offset = self.wrapped_document.location_to_offset(
@@ -1033,8 +1041,10 @@ TextArea:light .text-area--cursor {
         )
 
         if cursor_row == line_index:
-            draw_cursor = not self.cursor_blink or (
-                self.cursor_blink and self._cursor_visible
+            draw_cursor = (
+                self.has_focus
+                and not self.cursor_blink
+                or (self.cursor_blink and self._cursor_visible)
             )
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
