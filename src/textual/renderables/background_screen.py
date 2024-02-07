@@ -2,11 +2,13 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable
 
+from rich import terminal_theme
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
 
 from ..color import Color
+from ..filter import ANSIToTruecolor
 
 if TYPE_CHECKING:
     from ..screen import Screen
@@ -49,12 +51,17 @@ class BackgroundScreen:
         _Segment = Segment
 
         NULL_STYLE = Style()
+        truecolor_style = ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI).truecolor_style
         for segment in segments:
             text, style, control = segment
             if control:
                 yield segment
             else:
-                style = NULL_STYLE if style is None else style.clear_meta_and_links()
+                style = (
+                    NULL_STYLE
+                    if style is None
+                    else truecolor_style(style.clear_meta_and_links())
+                )
                 yield _Segment(
                     text,
                     (
