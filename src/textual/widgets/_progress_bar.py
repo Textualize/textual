@@ -201,7 +201,7 @@ class ETAStatus(Label):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._refresh_timer: Timer | None = None
         """Timer to update ETA status even when progress stalls."""
-        self._samples = TimeToCompletion(1, window_size=20)
+        self._samples = TimeToCompletion(1, sample_window_size=20)
         """A recent sample of update times to help work out the ETA."""
         self._percentage = None
         self._label_text = "--:--:--"

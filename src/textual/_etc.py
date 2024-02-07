@@ -28,16 +28,18 @@ class TimeToCompletion:
     be >= 0.
     """
 
-    def __init__(self, destination: float, window_size: int | None = 100) -> None:
+    def __init__(
+        self, destination: float, *, sample_window_size: int | None = 100
+    ) -> None:
         """Initialise the time to completion object.
 
         Args:
             destination: The destination value.
-            window_size: The size of the window to work off.
+            sample_window_size: The size of the window to work off.
         """
         self._destination = destination
         """The destination value."""
-        self._samples: deque[Sample] = deque(maxlen=window_size)
+        self._samples: deque[Sample] = deque(maxlen=sample_window_size)
         """The samples taken."""
 
     def __len__(self) -> int:

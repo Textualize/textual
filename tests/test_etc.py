@@ -5,7 +5,7 @@ from textual._etc import TimeToCompletion
 
 def test_size() -> None:
     """The number of samples should respect the window size."""
-    time_to_completion = TimeToCompletion(20, window_size=10)
+    time_to_completion = TimeToCompletion(20, sample_window_size=10)
     for n in range(20):
         assert len(time_to_completion) == min(n, 10)
         time_to_completion.record(n, n)
@@ -36,7 +36,7 @@ def test_estimate() -> None:
 
 def test_estimate_small_window() -> None:
     """Test the time to completion calculation."""
-    time_to_completion = TimeToCompletion(100, window_size=5)
+    time_to_completion = TimeToCompletion(100, sample_window_size=5)
     for n in range(10):
         time_to_completion.record(n, n)
     assert time_to_completion.estimated_time_to_complete == 91
