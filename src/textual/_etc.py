@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from collections import deque
 from dataclasses import dataclass
 from time import monotonic
 
+from rich.repr import Result
 from typing_extensions import Self
 
 
@@ -20,6 +20,76 @@ class Sample:
     """The moment when the sample was taken."""
 
 
+class Samples:
+    """A deque-ish-like object that holds samples."""
+
+    def __init__(
+        self, sample_window_size: int | None, time_window_size: float | None
+    ) -> None:
+        """Initialise the samples object.
+
+        Args:
+            sample_window_size: The maximum number of samples to keep.
+            time_window_size: The maximum amount of time to keep samples.
+        """
+        self._sample_window_size = sample_window_size
+        """The maximum number of samples to keep."""
+        self._time_window_size = time_window_size
+        """The maximum amount of time to keep the samples for."""
+        self._samples: list[Sample] = []
+        """The samples."""
+
+    def _recent(self, samples: list[Sample]) -> list[Sample]:
+        """Extract the recent samples from the given list of samples.
+
+        Args:
+            samples: The samples to get the recent samples from.
+        """
+        if not samples or self._time_window_size is None:
+            return samples
+        oldest_time = samples[-1].moment - self._time_window_size
+        for position, sample in enumerate(samples):
+            if sample.moment > oldest_time:
+                return samples[position:]
+        return samples
+
+    def _prune(self) -> None:
+        """Prune the samples.
+
+        Note:
+            While there is a sample limit *and* a time limit, we only prune
+            by one or the other, and sample size always trumps time, to help
+            ensure we have *some* samples to work off.
+        """
+        if self._sample_window_size is not None:
+            self._samples = self._samples[-self._sample_window_size :]
+        elif self._time_window_size is not None:
+            self._samples = self._recent(self._samples)
+
+    def append(self, sample: Sample) -> Self:
+        """Add a sample to the samples.
+
+        Args:
+            sample: The sample to add.
+        """
+        self._samples.append(sample)
+        self._prune()
+        return self
+
+    def clear(self) -> None:
+        """Clear the samples."""
+        self._samples.clear()
+
+    def __getitem__(self, index: int) -> Sample:
+        return self._recent(self._samples)[index]
+
+    def __len__(self) -> int:
+        return len(self._recent(self._samples))
+
+    def __rich_repr__(self) -> Result:
+        yield self._recent(self._samples)
+
+
 class TimeToCompletion:
     """A class for calculating the time to completion of something.
 
@@ -29,7 +99,11 @@ class TimeToCompletion:
     """
 
     def __init__(
-        self, destination: float, *, sample_window_size: int | None = 100
+        self,
+        destination: float,
+        *,
+        sample_window_size: int | None = 1_000,
+        time_window_size: float | None = 30,
     ) -> None:
         """Initialise the time to completion object.
 
@@ -39,7 +113,7 @@ class TimeToCompletion:
         """
         self._destination = destination
         """The destination value."""
-        self._samples: deque[Sample] = deque(maxlen=sample_window_size)
+        self._samples = Samples(sample_window_size, time_window_size)
         """The samples taken."""
 
     def __len__(self) -> int:

@@ -1,6 +1,43 @@
 import pytest
 
-from textual._etc import TimeToCompletion
+from textual._etc import Sample, Samples, TimeToCompletion
+
+
+def test_sample_max_size_only() -> None:
+    """Adding samples to the Samples class with no time window should restrict to count."""
+    samples = Samples(10, None)
+    assert len(samples) == 0
+    for n in range(20):
+        samples.append(Sample(n, n))
+    assert len(samples) == 10
+
+
+def test_sample_max_time_only() -> None:
+    """Adding samples to the Samples class with only a time window should restrict by time."""
+    samples = Samples(None, 10)
+    assert len(samples) == 0
+    for n in range(20):
+        samples.append(Sample(n, n))
+    assert len(samples) == 10
+
+
+def test_sample_no_max() -> None:
+    """Adding samples to the Samples class with no constraints should keep going."""
+    samples = Samples(None, None)
+    assert len(samples) == 0
+    for n in range(20):
+        samples.append(Sample(n, n))
+    assert len(samples) == 20
+
+
+def test_out_of_time_samples_should_keep_a_sample():
+    """If we run out of time on samples, we should keep the latest sample."""
+    samples = Samples(10, 1)
+    assert len(samples) == 0
+    for n in range(20):
+        samples.append(Sample(n, n + 100))
+    assert len(samples) == 1
+    assert samples[0].moment == 119
 
 
 def test_size() -> None:
