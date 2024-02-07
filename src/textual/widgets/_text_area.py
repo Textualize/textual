@@ -1205,7 +1205,7 @@ TextArea:light .text-area--cursor {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
-        self.history.record_edit(edit)
+        self.history.record(edit)
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:

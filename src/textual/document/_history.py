@@ -39,7 +39,7 @@ class EditHistory:
     Every other edit is considered a pure insertion.
     """
 
-    def record_edit(self, edit: Edit) -> None:
+    def record(self, edit: Edit) -> None:
         """Record an Edit so that it may be undone and redone.
 
         Determines whether to batch the Edit with previous Edits, or create a new batch/checkpoint.

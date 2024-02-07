@@ -106,14 +106,15 @@ class Edit:
         Returns:
             An `EditResult` containing information about the replace operation.
         """
-        target_top, target_bottom = sorted((target_to, target_from))
         replaced_text = self._edit_result.replaced_text
         edit_end = self._edit_result.end_location
+
         # Replace the span of the edit with the text that was originally there.
         undo_edit_result = text_area.document.replace_range(
-            self.top, self.bottom, replaced_text
+            self.top, edit_end, replaced_text
         )
         self._updated_selection = self._original_selection
+
         return undo_edit_result
 
     def after(self, text_area: TextArea) -> None:
