@@ -153,7 +153,6 @@ TextArea:light .text-area--cursor {
     """
 
     BINDINGS = [
-        Binding("escape", "screen.focus_next", "Shift Focus", show=False),
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
@@ -213,7 +212,6 @@ TextArea:light .text-area--cursor {
     """
     | Key(s)                 | Description                                  |
     | :-                     | :-                                           |
-    | escape                 | Focus on the next item.                      |
     | up                     | Move the cursor up.                          |
     | down                   | Move the cursor down.                        |
     | left                   | Move the cursor left.                        |
@@ -1213,6 +1211,11 @@ TextArea:light .text-area--cursor {
             "enter": "\n",
         }
         if self.tab_behaviour == "indent":
+            if key == "escape":
+                event.stop()
+                event.prevent_default()
+                self.screen.focus_next()
+                return
             if self.indent_type == "tabs":
                 insert_values["tab"] = "\t"
             else:
