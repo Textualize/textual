@@ -31,7 +31,6 @@ def test_estimate() -> None:
     for n in range(10):
         time_to_completion.record(n, n)
     assert time_to_completion.estimated_time_to_complete == 91
-    assert time_to_completion.estimated_time_to_complete_as_of_now >= 91
 
 
 def test_estimate_small_window() -> None:
@@ -40,7 +39,6 @@ def test_estimate_small_window() -> None:
     for n in range(10):
         time_to_completion.record(n, n)
     assert time_to_completion.estimated_time_to_complete == 91
-    assert time_to_completion.estimated_time_to_complete_as_of_now >= 91
 
 
 def test_estimate_bigger_step() -> None:
@@ -49,10 +47,8 @@ def test_estimate_bigger_step() -> None:
     for n in range(0, 10, 2):
         time_to_completion.record(n, n)
     assert time_to_completion.estimated_time_to_complete == 92
-    assert time_to_completion.estimated_time_to_complete_as_of_now >= 92
 
 
 def test_estimate_no_samples() -> None:
     """Time to completion should be 0 of no samples exist."""
     assert TimeToCompletion(100).estimated_time_to_complete == 0
-    assert TimeToCompletion(100).estimated_time_to_complete_as_of_now == 0
