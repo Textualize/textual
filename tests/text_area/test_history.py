@@ -252,6 +252,7 @@ async def test_paste_is_an_isolated_batch(pilot: Pilot, text_area: TextArea):
 async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
     await pilot.press(*"123")
     text_area.blur()
+    await pilot.pause()
     text_area.focus()
     await pilot.pause()
     await pilot.press(*"456")
