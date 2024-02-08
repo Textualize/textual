@@ -253,6 +253,7 @@ async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
     await pilot.press(*"123")
     text_area.blur()
     text_area.focus()
+    await pilot.pause()
     await pilot.press(*"456")
 
     # Since we re-focused, a checkpoint exists between 123 and 456,
