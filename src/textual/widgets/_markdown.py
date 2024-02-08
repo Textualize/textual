@@ -529,8 +529,7 @@ class MarkdownFence(MarkdownBlock):
             if self.app.dark
             else self._markdown.code_light_theme
         )
-        code_block = self.query_one(Static)
-        code_block.update(self._block())
+        self.get_child_by_type(Static).update(self._block())
 
     def compose(self) -> ComposeResult:
         yield Static(
