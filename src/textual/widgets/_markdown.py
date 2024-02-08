@@ -584,8 +584,11 @@ class Markdown(Widget):
 
     BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
 
-    light_theme: Reactive[str] = reactive("material-light")
     dark_theme: reactive[str] = reactive("material")
+    """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
+
+    light_theme: reactive[str] = reactive("material-light")
+    """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
 
     def __init__(
         self,
