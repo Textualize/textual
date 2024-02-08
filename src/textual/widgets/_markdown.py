@@ -503,7 +503,7 @@ class MarkdownFence(MarkdownBlock):
         self.code = code
         self.lexer = lexer
         self.theme = (
-            self._markdown.dark_theme if self.app.dark else self._markdown.light_theme
+            self._markdown.code_dark_theme if self.app.dark else self._markdown.code_light_theme
         )
 
     def _block(self) -> Syntax:
@@ -523,7 +523,7 @@ class MarkdownFence(MarkdownBlock):
     def _retheme(self) -> None:
         """Rerender when the theme changes."""
         self.theme = (
-            self._markdown.dark_theme if self.app.dark else self._markdown.light_theme
+            self._markdown.code_dark_theme if self.app.dark else self._markdown.code_light_theme
         )
         code_block = self.query_one(Static)
         code_block.update(self._block())
@@ -584,10 +584,10 @@ class Markdown(Widget):
 
     BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
 
-    dark_theme: reactive[str] = reactive("material")
+    code_dark_theme: reactive[str] = reactive("material")
     """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
 
-    light_theme: reactive[str] = reactive("material-light")
+    code_light_theme: reactive[str] = reactive("material-light")
     """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
 
     def __init__(
@@ -676,12 +676,14 @@ class Markdown(Widget):
         if self._markdown is not None:
             self.update(self._markdown)
 
-    def watch_dark_theme(self, dark_theme: str) -> None:
+    def _watch_code_dark_theme(self) -> None:
+        """React to the dark theme being changed."""
         if self.app.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()
 
-    def watch_light_theme(self, light_theme: str) -> None:
+    def _watch_code_light_theme(self) -> None:
+        """React to the light theme being changed."""
         if not self.app.dark:
             for block in self.query(MarkdownFence):
                 block._retheme()

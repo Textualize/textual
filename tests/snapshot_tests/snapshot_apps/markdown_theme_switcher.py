@@ -19,11 +19,11 @@ class MarkdownThemeSwitchertApp(App[None]):
 
     def action_switch_dark(self) -> None:
         md = self.query_one(Markdown)
-        md.dark_theme = "solarized-dark"
+        md.code_dark_theme = "solarized-dark"
 
     def action_switch_light(self) -> None:
         md = self.query_one(Markdown)
-        md.light_theme = "solarized-light"
+        md.code_light_theme = "solarized-light"
 
     def compose(self) -> ComposeResult:
         yield Markdown(TEST_CODE_MARKDOWN)
