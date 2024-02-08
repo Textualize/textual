@@ -60,6 +60,7 @@ class EditHistory:
         - The current edit involves a deletion/replacement and the previous edit did not.
         - The current edit is a pure insertion and the previous edit was not.
         - The edit involves insertion or deletion of one or more newline characters.
+        - An edit which inserts more than a single character (a paste) gets an isolated batch.
 
         Args:
             edit: The edit to record.
@@ -70,20 +71,24 @@ class EditHistory:
                 "Cannot add an edit to history before it has been performed using `Edit.do`."
             )
 
+        if edit.text == "" and edit_result.replaced_text == "":
+            return None
+
         is_replacement = bool(edit_result.replaced_text)
         undo_stack = self._undo_stack
         current_time = time.monotonic()
-        edit_characters = self._count_edit_characters(edit)
+        edit_characters = len(edit.text)
         contains_newline = "\n" in edit.text or "\n" in edit_result.replaced_text
 
         # Determine whether to create a new batch, or add to the latest batch.
         if (
             not undo_stack
             or self._force_end_batch
+            or edit_characters > 1
+            or contains_newline
             or is_replacement != self._previously_replaced
             or current_time - self._last_edit_time > self.checkpoint_timer
             or self._character_count + edit_characters > self.checkpoint_max_characters
-            or contains_newline
         ):
             # Create a new batch (creating a "checkpoint").
             undo_stack.append([edit])
@@ -99,8 +104,9 @@ class EditHistory:
         self._previously_replaced = is_replacement
         self._redo_stack.clear()
 
-        # Force edits which contain newlines to be their own batch, not merged with any other batch.
-        if contains_newline:
+        # For some edits, we want to ensure the NEXT edit cannot be added to its batch,
+        # so enforce a checkpoint now.
+        if contains_newline or edit_characters > 1:
             self.checkpoint()
 
     def pop_undo(self) -> list[Edit] | None:
@@ -148,18 +154,3 @@ class EditHistory:
     def checkpoint(self) -> None:
         """Ensure the next recorded edit starts a new batch."""
         self._force_end_batch = True
-
-    def _count_edit_characters(self, edit: Edit) -> int:
-        """Return the number of characters contained in an Edit.
-
-        Args:
-            edit: The edit to count characters in.
-
-        Returns:
-            The number of characters replaced + inserted in the Edit.
-        """
-        inserted_characters = len(edit.text)
-        if edit._edit_result:
-            replaced_characters = len(edit._edit_result.replaced_text)
-            return replaced_characters + inserted_characters
-        return inserted_characters
