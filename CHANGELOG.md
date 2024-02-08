@@ -5,18 +5,77 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+### Unreleased
+
+### Added
+
+- Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
+
+## [0.49.1] - 2023-02-08
+
+### Fixed
+
+- Fixed issue with ANSI colors not being converted to truecolor https://github.com/Textualize/textual/pull/4138
+- Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
+- Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
+
+## [0.49.0] - 2024-02-07
+
+### Fixed
+
+- Fixed scrolling in long `OptionList` by adding max height of 100% https://github.com/Textualize/textual/issues/4021
+- Fixed `DirectoryTree.clear_node` not clearing the node specified https://github.com/Textualize/textual/issues/4122
+
+### Changed
+
+- `DirectoryTree.reload` and `DirectoryTree.reload_node` now preserve state when reloading https://github.com/Textualize/textual/issues/4056
+- Fixed a crash in the TextArea when performing a backward replace https://github.com/Textualize/textual/pull/4126
+- Fixed selection not updating correctly when pasting while there's a non-zero selection https://github.com/Textualize/textual/pull/4126
+- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behaviour` is the default https://github.com/Textualize/textual/issues/4110
+- `TextArea` cursor will now be invisible before first focus https://github.com/Textualize/textual/pull/4128
+- Fix toggling `TextArea.cursor_blink` reactive when widget does not have focus https://github.com/Textualize/textual/pull/4128
+
+### Added
+
+- Added DOMQuery.set https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.set_reactive https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
+- Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
+- `Tree` (and `DirectoryTree`) grew an attribute `lock` that can be used for synchronization across coroutines https://github.com/Textualize/textual/issues/4056
+
+
+## [0.48.2] - 2024-02-02
+
+### Fixed
+
+- Fixed a hang in the Linux driver when connected to a pipe https://github.com/Textualize/textual/issues/4104
+- Fixed broken `OptionList` `Option.id` mappings https://github.com/Textualize/textual/issues/4101
+
+### Changed
+
+- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+
+## [0.48.1] - 2024-02-01
+
+### Fixed
+
+- `TextArea` uses CSS theme by default instead of `monokai` https://github.com/Textualize/textual/pull/4091
+
+## [0.48.0] - 2024-02-01
 
 ### Changed
 
 - Breaking change: Significant changes to `TextArea.__init__` default values/behaviour https://github.com/Textualize/textual/pull/3933
   - `soft_wrap=True` - soft wrapping is now enabled by default.
   - `show_line_numbers=False` - line numbers are now disabled by default.
-  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default. 
+  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default.
+- Breaking change: `TextArea` default theme changed to CSS, and default styling changed https://github.com/Textualize/textual/pull/4074
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
 - `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
 - Changed the default notification timeout from 3 to 5 seconds https://github.com/Textualize/textual/pull/4059
+- Prior scroll animations are now cancelled on new scrolls https://github.com/Textualize/textual/pull/4081
 
 ### Added
 
@@ -27,9 +86,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
 - Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
 - Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
+- Added component classes allowing `TextArea` to be styled using CSS https://github.com/Textualize/textual/pull/4074
 - Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
 - Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
 - Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
+- Added `App.suspend` https://github.com/Textualize/textual/pull/4064
+- Added `App.action_suspend_process` https://github.com/Textualize/textual/pull/4064
 
 ### Fixed
 
@@ -39,13 +101,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
 - Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
 - Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
+- Fix for percentage dimensions https://github.com/Textualize/textual/pull/4037
 - Fixed a crash if the `TextArea` language was set but tree-sitter language binaries were not installed https://github.com/Textualize/textual/issues/4045
 - Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
 - Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
 - ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
-- Fixed `MarkdownFence` not adapting to app theme changes https://github.com/Textualize/textual/issues/3997
+- Fixed CSS watcher crash if file becomes unreadable (even temporarily) https://github.com/Textualize/textual/pull/4079
+- Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
+- Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
 
-## [0.47.1] - 2023-01-05
+## [0.47.1] - 2024-01-05
 
 ### Fixed
 
@@ -437,7 +502,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
 
 ## [0.33.0] - 2023-08-15
-
 
 ### Fixed
 
@@ -1614,6 +1678,11 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1
+[0.49.0]: https://github.com/Textualize/textual/compare/v0.48.2...v0.49.0
+[0.48.2]: https://github.com/Textualize/textual/compare/v0.48.1...v0.48.2
+[0.48.1]: https://github.com/Textualize/textual/compare/v0.48.0...v0.48.1
+[0.48.0]: https://github.com/Textualize/textual/compare/v0.47.1...v0.48.0
 [0.47.1]: https://github.com/Textualize/textual/compare/v0.47.0...v0.47.1
 [0.47.0]: https://github.com/Textualize/textual/compare/v0.46.0...v0.47.0
 [0.46.0]: https://github.com/Textualize/textual/compare/v0.45.1...v0.46.0
