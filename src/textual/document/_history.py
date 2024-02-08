@@ -7,7 +7,10 @@ from textual.document._edit import Edit
 
 
 class HistoryException(Exception):
-    pass
+    """Indicates misuse of the EditHistory API.
+
+    For example, trying to undo() an Edit that has yet to be done.
+    """
 
 
 @dataclass
