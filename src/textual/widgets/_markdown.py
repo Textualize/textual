@@ -7,6 +7,7 @@ from markdown_it import MarkdownIt
 from markdown_it.token import Token
 from rich import box
 from rich.style import Style
+from rich.syntax import Syntax
 from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
@@ -498,22 +499,41 @@ class MarkdownFence(MarkdownBlock):
     """
 
     def __init__(self, markdown: Markdown, code: str, lexer: str) -> None:
+        super().__init__(markdown)
         self.code = code
         self.lexer = lexer
-        super().__init__(markdown)
+        self.theme = (
+            self._markdown.code_dark_theme
+            if self.app.dark
+            else self._markdown.code_light_theme
+        )
+
+    def _block(self) -> Syntax:
+        return Syntax(
+            self.code,
+            lexer=self.lexer,
+            word_wrap=False,
+            indent_guides=True,
+            padding=(1, 2),
+            theme=self.theme,
+        )
+
+    def _on_mount(self, _: Mount) -> None:
+        """Watch app theme switching."""
+        self.watch(self.app, "dark", self._retheme)
+
+    def _retheme(self) -> None:
+        """Rerender when the theme changes."""
+        self.theme = (
+            self._markdown.code_dark_theme
+            if self.app.dark
+            else self._markdown.code_light_theme
+        )
+        self.get_child_by_type(Static).update(self._block())
 
     def compose(self) -> ComposeResult:
-        from rich.syntax import Syntax
-
         yield Static(
-            Syntax(
-                self.code,
-                lexer=self.lexer,
-                word_wrap=False,
-                indent_guides=True,
-                padding=(1, 2),
-                theme="material",
-            ),
+            self._block(),
             expand=True,
             shrink=False,
         )
@@ -566,6 +586,12 @@ class Markdown(Widget):
     """
 
     BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
+
+    code_dark_theme: reactive[str] = reactive("material")
+    """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
+
+    code_light_theme: reactive[str] = reactive("material-light")
+    """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
 
     def __init__(
         self,
@@ -652,6 +678,18 @@ class Markdown(Widget):
     def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
             self.update(self._markdown)
+
+    def _watch_code_dark_theme(self) -> None:
+        """React to the dark theme being changed."""
+        if self.app.dark:
+            for block in self.query(MarkdownFence):
+                block._retheme()
+
+    def _watch_code_light_theme(self) -> None:
+        """React to the light theme being changed."""
+        if not self.app.dark:
+            for block in self.query(MarkdownFence):
+                block._retheme()
 
     @staticmethod
     def sanitize_location(location: str) -> tuple[Path, str]:
@@ -858,11 +896,7 @@ class Markdown(Widget):
                 stack[-1].set_content(content)
             elif token.type in ("fence", "code_block"):
                 (stack[-1]._blocks if stack else output).append(
-                    MarkdownFence(
-                        self,
-                        token.content.rstrip(),
-                        token.info,
-                    )
+                    MarkdownFence(self, token.content.rstrip(), token.info)
                 )
             else:
                 external = self.unhandled_token(token)

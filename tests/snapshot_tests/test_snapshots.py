@@ -229,6 +229,22 @@ def test_markdown_viewer_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown_viewer.py")
 
 
+def test_markdown_theme_switching(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["t"])
+
+
+def test_markdown_dark_theme_override(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["d", "wait:100"]
+    )
+
+
+def test_markdown_light_theme_override(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["l", "t", "wait:100"]
+    )
+
+
 def test_checkbox_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "checkbox.py")
 
