@@ -9,7 +9,6 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from .. import events
-from .._types import AnimationLevel
 from ..binding import Binding
 from ..css._error_tools import friendly_list
 from ..message import Message
@@ -240,7 +239,7 @@ class Button(Widget, can_focus=True):
         event.stop()
         self.press()
 
-    def press(self, *, level: AnimationLevel = "basic") -> Self:
+    def press(self) -> Self:
         """Respond to a button press.
 
         Args:
@@ -251,18 +250,18 @@ class Button(Widget, can_focus=True):
         if self.disabled or not self.display:
             return self
         # Manage the "active" effect:
-        self._start_active_affect(level=level)
+        self._start_active_affect()
         # ...and let other components know that we've just been clicked:
         self.post_message(Button.Pressed(self))
         return self
 
-    def _start_active_affect(self, *, level: AnimationLevel = "basic") -> None:
+    def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked.
 
         Args:
             level: Minimum level required for the animation to take place (inclusive).
         """
-        if self.active_effect_duration > 0 and self.app.animation_level != "none":
+        if self.active_effect_duration > 0:
             self.add_class("-active")
             self.set_timer(
                 self.active_effect_duration, partial(self.remove_class, "-active")
