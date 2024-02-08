@@ -82,7 +82,6 @@ class EditHistory:
         edit_characters = len(edit.text)
         contains_newline = "\n" in edit.text or "\n" in edit_result.replaced_text
 
-        print(f"current_time = {current_time}")
         # Determine whether to create a new batch, or add to the latest batch.
         if (
             not undo_stack
@@ -94,14 +93,12 @@ class EditHistory:
             or self._character_count + edit_characters > self.checkpoint_max_characters
         ):
             # Create a new batch (creating a "checkpoint").
-            print(f"new batch for {edit}")
             undo_stack.append([edit])
             self._character_count = edit_characters
             self._last_edit_time = current_time
             self._force_end_batch = False
         else:
             # Update the latest batch.
-            print(f"updating last batch with {edit}")
             undo_stack[-1].append(edit)
             self._character_count += edit_characters
             self._last_edit_time = current_time

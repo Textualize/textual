@@ -33,8 +33,8 @@ class TimeMockableEditHistory(EditHistory):
 
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea(SIMPLE_TEXT)
-        # Use the
+        text_area = TextArea()
+        # Update the history object to a version that supports mocking the time.
         text_area.history = TimeMockableEditHistory(
             checkpoint_timer=2.0, checkpoint_max_characters=100
         )
@@ -57,15 +57,16 @@ async def text_area(pilot):
 async def test_simple_undo_redo(pilot, text_area: TextArea):
     text_area.insert("123", (0, 0))
 
-    assert text_area.text == "123" + SIMPLE_TEXT
+    assert text_area.text == "123"
     text_area.undo()
-    assert text_area.text == SIMPLE_TEXT
+    assert text_area.text == ""
     text_area.redo()
-    assert text_area.text == "123" + SIMPLE_TEXT
+    assert text_area.text == "123"
 
 
 async def test_undo_selection_retained(pilot: Pilot, text_area: TextArea):
     # Select a range of text and press backspace.
+    text_area.text = SIMPLE_TEXT
     text_area.selection = Selection((0, 0), (2, 3))
     await pilot.press("backspace")
     assert text_area.text == "NO\nPQRST\nUVWXY\nZ\n"
@@ -85,6 +86,7 @@ async def test_undo_selection_retained(pilot: Pilot, text_area: TextArea):
 async def test_undo_checkpoint_created_on_cursor_move(
     pilot: Pilot, text_area: TextArea
 ):
+    text_area.text = SIMPLE_TEXT
     # Characters are inserted on line 0 and 1.
     checkpoint_one = text_area.text
     checkpoint_one_selection = text_area.selection
@@ -122,9 +124,19 @@ async def test_undo_checkpoint_created_on_cursor_move(
     assert text_area.selection == checkpoint_three_selection
 
 
-async def test_edits_batched_by_time(pilot: Pilot, text_area: TextArea):
-    text_area.text = ""
+async def test_setting_text_property_resets_history(pilot: Pilot, text_area: TextArea):
+    await pilot.press("1")
 
+    # Programmatically setting text, which should invalidate the history
+    text = "Hello, world!"
+    text_area.text = text
+
+    # The undo doesn't do anything, since we set the `text` property.
+    text_area.undo()
+    assert text_area.text == text
+
+
+async def test_edits_batched_by_time(pilot: Pilot, text_area: TextArea):
     # The first "12" is batched since they happen within 2 seconds.
     text_area.history.mock_time = 0
     await pilot.press("1")
@@ -148,8 +160,6 @@ async def test_edits_batched_by_time(pilot: Pilot, text_area: TextArea):
 async def test_undo_checkpoint_character_limit_reached(
     pilot: Pilot, text_area: TextArea
 ):
-    text_area.text = ""
-
     await pilot.press("1")
     # Since the insertion below is > 100 characters it goes to a new batch.
     text_area.insert("2" * 120)
@@ -161,11 +171,13 @@ async def test_undo_checkpoint_character_limit_reached(
 
 
 async def test_redo_with_no_undo_is_noop(text_area: TextArea):
+    text_area.text = SIMPLE_TEXT
     text_area.redo()
     assert text_area.text == SIMPLE_TEXT
 
 
 async def test_undo_with_empty_undo_stack_is_noop(text_area: TextArea):
+    text_area.text = SIMPLE_TEXT
     text_area.undo()
     assert text_area.text == SIMPLE_TEXT
 
@@ -199,8 +211,6 @@ async def test_redo_stack_cleared_on_edit(pilot: Pilot, text_area: TextArea):
 
 
 async def test_inserts_not_batched_with_deletes(pilot: Pilot, text_area: TextArea):
-    text_area.text = ""
-
     # 3 batches here: __1___  ___________2____________  __3__
     await pilot.press(*"123", "backspace", "backspace", *"23")
 
@@ -220,8 +230,6 @@ async def test_inserts_not_batched_with_deletes(pilot: Pilot, text_area: TextAre
 
 
 async def test_paste_is_an_isolated_batch(pilot: Pilot, text_area: TextArea):
-    text_area.text = ""
-
     pilot.app.post_message(Paste("hello "))
     pilot.app.post_message(Paste("world"))
     await pilot.pause()
@@ -242,8 +250,6 @@ async def test_paste_is_an_isolated_batch(pilot: Pilot, text_area: TextArea):
 
 
 async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
-    text_area.text = ""
-
     await pilot.press(*"123")
     text_area.blur()
     text_area.focus()
@@ -256,6 +262,7 @@ async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
 
 
 async def test_undo_redo_deletions_batched(pilot: Pilot, text_area: TextArea):
+    text_area.text = SIMPLE_TEXT
     text_area.selection = Selection((0, 2), (1, 2))
 
     # Perform a single delete of some selected text. It'll live in it's own
