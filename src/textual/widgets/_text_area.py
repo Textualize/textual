@@ -850,7 +850,7 @@ TextArea:light .text-area--cursor {
     def load_text(self, text: str) -> None:
         """Load text into the TextArea.
 
-        This will replace the text currently in the TextArea.
+        This will replace the text currently in the TextArea, and clear the edit history.
 
         Args:
             text: The text to load into the TextArea.
@@ -1169,6 +1169,8 @@ TextArea:light .text-area--cursor {
     @text.setter
     def text(self, value: str) -> None:
         """Replace the text currently in the TextArea. This is an alias of `load_text`.
+
+        Setting this value will clear the edit history.
 
         Args:
             value: The text to load into the TextArea.
