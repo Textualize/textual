@@ -243,7 +243,16 @@ async def test_paste_is_an_isolated_batch(pilot: Pilot, text_area: TextArea):
 
 async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
     text_area.text = ""
-    # TODO
+
+    await pilot.press(*"123")
+    text_area.blur()
+    text_area.focus()
+    await pilot.press(*"456")
+
+    # Since we re-focused, a checkpoint exists between 123 and 456,
+    # so when we use undo, only the 456 is removed.
+    text_area.undo()
+    assert text_area.text == "123"
 
 
 async def test_undo_redo_deletions_batched(pilot: Pilot, text_area: TextArea):
