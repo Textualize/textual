@@ -503,7 +503,9 @@ class MarkdownFence(MarkdownBlock):
         self.code = code
         self.lexer = lexer
         self.theme = (
-            self._markdown.code_dark_theme if self.app.dark else self._markdown.code_light_theme
+            self._markdown.code_dark_theme
+            if self.app.dark
+            else self._markdown.code_light_theme
         )
 
     def _block(self) -> Syntax:
@@ -523,7 +525,9 @@ class MarkdownFence(MarkdownBlock):
     def _retheme(self) -> None:
         """Rerender when the theme changes."""
         self.theme = (
-            self._markdown.code_dark_theme if self.app.dark else self._markdown.code_light_theme
+            self._markdown.code_dark_theme
+            if self.app.dark
+            else self._markdown.code_light_theme
         )
         code_block = self.query_one(Static)
         code_block.update(self._block())
