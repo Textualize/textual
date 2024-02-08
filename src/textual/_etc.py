@@ -171,6 +171,10 @@ class TimeToCompletion:
         current window; not the distance covered by every sample that has
         been recorded.
         """
+        # If we've only got the one value, take that to be the distance.
+        if len(self) == 1:
+            return self._samples[0].value
+        # Otherwise actually go with the distance in the window.
         return self._samples[-1].value - self._samples[0].value if len(self) else 0
 
     @property
