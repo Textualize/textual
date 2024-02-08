@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
+- Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
+
 ## [0.49.0] - 2024-02-07
 
 ### Fixed
