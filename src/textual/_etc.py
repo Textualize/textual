@@ -23,43 +23,21 @@ class Sample:
 class Samples:
     """A deque-ish-like object that holds samples."""
 
-    def __init__(
-        self, sample_window_size: int | None, time_window_size: float | None
-    ) -> None:
+    def __init__(self, time_window_size: float, max_samples: int) -> None:
         """Initialise the samples object.
 
         Args:
-            sample_window_size: The maximum number of samples to keep.
-            time_window_size: The maximum amount of time to keep samples.
+            time_window_size: The window of time to keep samples for.
+            max_samples: The maximum number of samples to keep.
         """
-        self._sample_window_size = sample_window_size
-        """The maximum number of samples to keep."""
         self._time_window_size = time_window_size
         """The maximum amount of time to keep the samples for."""
+        self._max_samples = max_samples
+        """The maximum number of samples to keep."""
         self._samples: list[Sample] = []
         """The samples."""
 
-    def _recent(self, samples: list[Sample]) -> list[Sample]:
-        """Extract the recent samples from the given list of samples.
-
-        Args:
-            samples: The samples to get the recent samples from.
-
-        Returns:
-            The recent samples, or all available samples if none fall within
-            the time window.
-        """
-        if not samples or self._time_window_size is None:
-            return samples
-        oldest_time = samples[-1].moment - self._time_window_size
-        for position, sample in enumerate(samples[:-1]):
-            if sample.moment > oldest_time:
-                return samples[position:]
-        # Seems there are no samples from recent times; so rather than fail
-        # to return anything, we fall back on everything we've got.
-        return samples
-
-    def _prune(self) -> None:
+    def _prune(self) -> Self:
         """Prune the samples.
 
         Note:
@@ -67,10 +45,16 @@ class Samples:
             by one or the other, and sample size always trumps time, to help
             ensure we have *some* samples to work off.
         """
-        if self._sample_window_size is not None:
-            self._samples = self._samples[-self._sample_window_size :]
-        elif self._time_window_size is not None:
-            self._samples = self._recent(self._samples)
+        if samples := self._samples:
+            # Trim off any "too old" samples.
+            oldest_time = samples[-1].moment - self._time_window_size
+            for position, sample in enumerate(samples):
+                if sample.moment > oldest_time:
+                    self._samples = samples[position:]
+                    break
+            # Ensure that we don't run up too many samples.
+            self._samples = self._samples[-self._max_samples :]
+        return self
 
     def append(self, sample: Sample) -> Self:
         """Add a sample to the samples.
@@ -82,21 +66,21 @@ class Samples:
             Self.
         """
         self._samples.append(sample)
-        self._prune()
-        return self
+        return self._prune()
 
-    def clear(self) -> None:
+    def clear(self) -> Self:
         """Clear the samples."""
         self._samples.clear()
+        return self
 
     def __getitem__(self, index: int) -> Sample:
-        return self._recent(self._samples)[index]
+        return self._samples[index]
 
     def __len__(self) -> int:
-        return len(self._recent(self._samples))
+        return len(self._samples)
 
     def __rich_repr__(self) -> Result:
-        yield self._recent(self._samples)
+        yield self._samples
 
 
 class TimeToCompletion:
@@ -111,18 +95,19 @@ class TimeToCompletion:
         self,
         destination: float,
         *,
-        sample_window_size: int | None = 1_000,
-        time_window_size: float | None = 30,
+        time_window_size: float = 30,
+        max_samples: int = 1_000,
     ) -> None:
         """Initialise the time to completion object.
 
         Args:
             destination: The destination value.
-            sample_window_size: The size of the window to work off.
+            time_window_size: The size of the time window to work off.
+            max_samples: The maximum number of samples to retain.
         """
         self._destination = destination
         """The destination value."""
-        self._samples = Samples(sample_window_size, time_window_size)
+        self._samples = Samples(time_window_size, max_samples)
         """The samples taken."""
 
     def __len__(self) -> int:
@@ -166,7 +151,7 @@ class TimeToCompletion:
         """
         return (
             self._samples[-1].moment - self._samples[0].moment
-            if len(self._samples) > 1
+            if len(self._samples)
             else 0
         )
 
@@ -186,12 +171,12 @@ class TimeToCompletion:
         current window; not the distance covered by every sample that has
         been recorded.
         """
-        return self._samples[-1].value - self._samples[0].value if len(self) > 1 else 0
+        return self._samples[-1].value - self._samples[0].value if len(self) else 0
 
     @property
     def _distance_remaining(self) -> float:
         """The distance remaining until the destination is reached."""
-        return self._destination - (self._samples[-1].value if len(self) > 1 else 0)
+        return self._destination - (self._samples[-1].value if len(self) else 0)
 
     @property
     def _speed(self) -> float:

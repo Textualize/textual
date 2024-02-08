@@ -201,9 +201,7 @@ class ETAStatus(Label):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._refresh_timer: Timer | None = None
         """Timer to update ETA status even when progress stalls."""
-        self._samples = TimeToCompletion(
-            1, time_window_size=30, sample_window_size=1_000
-        )
+        self._samples = TimeToCompletion(100)
         """A recent sample of update times to help work out the ETA."""
         self._percentage = None
         self._label_text = "--:--:--"
@@ -222,7 +220,7 @@ class ETAStatus(Label):
             self._label_text = "--:--:--"
         else:
             try:
-                self._samples.record(percentage)
+                self._samples.record(percentage * 100)
             except ValueError:
                 # ValueError would indicate that we went backwards, reset
                 # the samples.
