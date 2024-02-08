@@ -11,8 +11,7 @@ from typing_extensions import Protocol, runtime_checkable
 from . import _time
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
-from ._types import CallbackType
-from .constants import AnimationLevel
+from ._types import AnimationLevel, CallbackType
 from .timer import Timer
 
 if TYPE_CHECKING:

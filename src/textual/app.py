@@ -78,13 +78,13 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
+from ._types import AnimationLevel
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
-from .constants import AnimationLevel
 from .css.errors import StylesheetError
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet

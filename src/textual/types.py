@@ -6,6 +6,7 @@ from ._animator import Animatable, EasingFunction
 from ._context import NoActiveAppError
 from ._path import CSSPathError, CSSPathType
 from ._types import (
+    AnimationLevel,
     CallbackType,
     IgnoreReturnCallbackType,
     MessageTarget,
@@ -28,6 +29,7 @@ from .widgets._select import NoSelection, SelectType
 __all__ = [
     "ActionParseResult",
     "Animatable",
+    "AnimationLevel",
     "CallbackType",
     "CSSPathError",
     "CSSPathType",

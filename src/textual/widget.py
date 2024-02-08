@@ -48,11 +48,11 @@ from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
+from ._types import AnimationLevel
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
-from .constants import AnimationLevel
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen

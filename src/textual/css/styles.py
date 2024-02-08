@@ -11,9 +11,8 @@ from rich.style import Style
 from typing_extensions import TypedDict
 
 from .._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
-from .._types import CallbackType
+from .._types import AnimationLevel, CallbackType
 from ..color import Color
-from ..constants import AnimationLevel
 from ..geometry import Offset, Spacing
 from ._style_properties import (
     AlignProperty,

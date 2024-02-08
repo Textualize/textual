@@ -3,8 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._animator import Animation, EasingFunction
-from .._types import CallbackType
-from ..constants import AnimationLevel
+from .._types import AnimationLevel, CallbackType
 from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:

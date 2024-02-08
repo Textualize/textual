@@ -7,8 +7,7 @@ from __future__ import annotations
 from rich.console import RenderableType
 
 from ._animator import EasingFunction
-from ._types import CallbackType
-from .constants import AnimationLevel
+from ._types import AnimationLevel, CallbackType
 from .containers import ScrollableContainer
 from .geometry import Region, Size
 

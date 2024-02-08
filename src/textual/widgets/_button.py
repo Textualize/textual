@@ -9,8 +9,8 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from .. import events
+from .._types import AnimationLevel
 from ..binding import Binding
-from ..constants import AnimationLevel
 from ..css._error_tools import friendly_list
 from ..message import Message
 from ..pad import HorizontalPad

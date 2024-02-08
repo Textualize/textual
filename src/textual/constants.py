@@ -5,14 +5,13 @@ Constants that we might want to expose via the public API.
 from __future__ import annotations
 
 import os
-from typing import Literal, get_args
+from typing import get_args
 
 from typing_extensions import Final, TypeGuard
 
+from ._types import AnimationLevel
+
 get_environ = os.environ.get
-
-
-AnimationLevel = Literal["none", "basic", "full"]
 
 
 def _get_environ_bool(name: str) -> bool:
