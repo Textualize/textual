@@ -256,6 +256,8 @@ async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
     text_area.focus()
     await pilot.pause()
     await pilot.press(*"456")
+    assert text_area.text == "123456"
+    await pilot.pause()
 
     # Since we re-focused, a checkpoint exists between 123 and 456,
     # so when we use undo, only the 456 is removed.
