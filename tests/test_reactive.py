@@ -664,3 +664,44 @@ async def test_external_watch_init_does_not_propagate() -> None:
         app.query_one(SomeWidget).test_2 = 73
         assert logs.count("test_2_extra") == 2
         assert logs.count("test_2") == 1
+
+
+async def test_external_watch_init_does_not_propagate_to_externals() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3878.
+
+    Make sure that when setting an extra watcher programmatically and `init` is set,
+    we init only the new watcher and not the other ones (even if they were
+    added dynamically with `watch`), but at the same time make sure all watchers
+    work in regular circumstances.
+    """
+
+    logs: list[str] = []
+
+    class SomeWidget(Widget):
+        test_var: var[int] = var(0)
+
+    class MyApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield SomeWidget()
+
+        def add_first_watcher(self) -> None:
+            def first_callback() -> None:
+                logs.append("first")
+
+            self.watch(self.query_one(SomeWidget), "test_var", first_callback)
+
+        def add_second_watcher(self) -> None:
+            def second_callback() -> None:
+                logs.append("second")
+
+            self.watch(self.query_one(SomeWidget), "test_var", second_callback)
+
+    app = MyApp()
+    async with app.run_test():
+        assert logs == []
+        app.add_first_watcher()
+        assert logs == ["first"]
+        app.add_second_watcher()
+        assert logs == ["first", "second"]
+        app.query_one(SomeWidget).test_var = 73
+        assert logs == ["first", "second", "first", "second"]
