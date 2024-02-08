@@ -18,7 +18,7 @@ from ..await_complete import AwaitComplete
 from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
 from ..message import Message
-from ..reactive import Reactive, reactive, var
+from ..reactive import reactive, var
 from ..widget import Widget
 from ..widgets import Static, Tree
 
