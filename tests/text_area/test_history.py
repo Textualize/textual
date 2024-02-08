@@ -1,9 +1,14 @@
+from __future__ import annotations
+
+import dataclasses
+
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.events import Paste
 from textual.pilot import Pilot
 from textual.widgets import TextArea
-from textual.widgets.text_area import Selection
+from textual.widgets.text_area import EditHistory, Selection
 
 SIMPLE_TEXT = """\
 ABCDE
@@ -15,10 +20,26 @@ Z
 """
 
 
+@dataclasses.dataclass
+class TimeMockableEditHistory(EditHistory):
+    mock_time: float | None = dataclasses.field(default=None, init=False)
+
+    def _get_time(self) -> float:
+        """Return the mocked time if it is set, otherwise use default behaviour."""
+        if self.mock_time is None:
+            return super()._get_time()
+        return self.mock_time
+
+
 class TextAreaApp(App):
     def compose(self) -> ComposeResult:
-        self.text_area = TextArea(SIMPLE_TEXT)
-        yield self.text_area
+        text_area = TextArea(SIMPLE_TEXT)
+        # Use the
+        text_area.history = TimeMockableEditHistory(
+            checkpoint_timer=2.0, checkpoint_max_characters=100
+        )
+        self.text_area = text_area
+        yield text_area
 
 
 @pytest.fixture
@@ -101,22 +122,128 @@ async def test_undo_checkpoint_created_on_cursor_move(
     assert text_area.selection == checkpoint_three_selection
 
 
+async def test_edits_batched_by_time(pilot: Pilot, text_area: TextArea):
+    text_area.text = ""
+
+    # The first "12" is batched since they happen within 2 seconds.
+    text_area.history.mock_time = 0
+    await pilot.press("1")
+
+    text_area.history.mock_time = 1.0
+    await pilot.press("2")
+
+    # Since "3" appears 10 seconds later, it's in a separate batch.
+    text_area.history.mock_time += 10.0
+    await pilot.press("3")
+
+    assert text_area.text == "123"
+
+    text_area.undo()
+    assert text_area.text == "12"
+
+    text_area.undo()
+    assert text_area.text == ""
+
+
 async def test_undo_checkpoint_character_limit_reached(
     pilot: Pilot, text_area: TextArea
 ):
-    pass  # TODO
+    text_area.text = ""
+
+    await pilot.press("1")
+    # Since the insertion below is > 100 characters it goes to a new batch.
+    text_area.insert("2" * 120)
+
+    text_area.undo()
+    assert text_area.text == "1"
+    text_area.undo()
+    assert text_area.text == ""
+
+
+async def test_redo_with_no_undo_is_noop(text_area: TextArea):
+    text_area.redo()
+    assert text_area.text == SIMPLE_TEXT
+
+
+async def test_undo_with_empty_undo_stack_is_noop(text_area: TextArea):
+    text_area.undo()
+    assert text_area.text == SIMPLE_TEXT
 
 
 async def test_redo_stack_cleared_on_edit(pilot: Pilot, text_area: TextArea):
-    pass  # TODO:
+    text_area.text = ""
+    await pilot.press("1")
+    text_area.history.checkpoint()
+    await pilot.press("2")
+    text_area.history.checkpoint()
+    await pilot.press("3")
+
+    text_area.undo()
+    text_area.undo()
+    text_area.undo()
+    assert text_area.text == ""
+    assert text_area.selection == Selection.cursor((0, 0))
+
+    # Redo stack has 3 edits in it now.
+    await pilot.press("f")
+    assert text_area.text == "f"
+    assert text_area.selection == Selection.cursor((0, 1))
+
+    # Redo stack is cleared because of the edit, so redo has no effect.
+    text_area.redo()
+    assert text_area.text == "f"
+    assert text_area.selection == Selection.cursor((0, 1))
+    text_area.redo()
+    assert text_area.text == "f"
+    assert text_area.selection == Selection.cursor((0, 1))
 
 
 async def test_inserts_not_batched_with_deletes(pilot: Pilot, text_area: TextArea):
-    pass  # TODO
+    text_area.text = ""
+
+    # 3 batches here: __1___  ___________2____________  __3__
+    await pilot.press(*"123", "backspace", "backspace", *"23")
+
+    assert text_area.text == "123"
+
+    # Undo batch 1: the "23" insertion.
+    text_area.undo()
+    assert text_area.text == "1"
+
+    # Undo batch 2: the double backspace.
+    text_area.undo()
+    assert text_area.text == "123"
+
+    # Undo batch 3: the "123" insertion.
+    text_area.undo()
+    assert text_area.text == ""
 
 
 async def test_paste_is_an_isolated_batch(pilot: Pilot, text_area: TextArea):
-    pass  # TODO
+    text_area.text = ""
+
+    pilot.app.post_message(Paste("hello "))
+    pilot.app.post_message(Paste("world"))
+    await pilot.pause()
+
+    assert text_area.text == "hello world"
+
+    await pilot.press("!")
+
+    # The insertion of "!" does not get batched with the paste of "world".
+    text_area.undo()
+    assert text_area.text == "hello world"
+
+    text_area.undo()
+    assert text_area.text == "hello "
+
+    text_area.undo()
+    assert text_area.text == ""
+
+
+async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
+    text_area.text = ""
+    # TODO
 
 
 async def test_undo_redo_deletions_batched(pilot: Pilot, text_area: TextArea):

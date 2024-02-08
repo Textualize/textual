@@ -12,6 +12,8 @@ class HistoryException(Exception):
 
 @dataclass
 class EditHistory:
+    """Manages batching/checkpointing of Edits into groups that can be undone/redone in the TextArea."""
+
     checkpoint_timer: float
     """Maximum number of seconds since last edit until a new batch is created."""
 
@@ -76,10 +78,11 @@ class EditHistory:
 
         is_replacement = bool(edit_result.replaced_text)
         undo_stack = self._undo_stack
-        current_time = time.monotonic()
+        current_time = self._get_time()
         edit_characters = len(edit.text)
         contains_newline = "\n" in edit.text or "\n" in edit_result.replaced_text
 
+        print(f"current_time = {current_time}")
         # Determine whether to create a new batch, or add to the latest batch.
         if (
             not undo_stack
@@ -91,12 +94,14 @@ class EditHistory:
             or self._character_count + edit_characters > self.checkpoint_max_characters
         ):
             # Create a new batch (creating a "checkpoint").
+            print(f"new batch for {edit}")
             undo_stack.append([edit])
             self._character_count = edit_characters
             self._last_edit_time = current_time
             self._force_end_batch = False
         else:
             # Update the latest batch.
+            print(f"updating last batch with {edit}")
             undo_stack[-1].append(edit)
             self._character_count += edit_characters
             self._last_edit_time = current_time
@@ -145,6 +150,7 @@ class EditHistory:
         return None
 
     def reset(self) -> None:
+        """Completely reset the history."""
         self._undo_stack.clear()
         self._redo_stack.clear()
         self._last_edit_time = time.monotonic()
@@ -154,3 +160,7 @@ class EditHistory:
     def checkpoint(self) -> None:
         """Ensure the next recorded edit starts a new batch."""
         self._force_end_batch = True
+
+    def _get_time(self) -> float:
+        """Get the time from the monotonic clock."""
+        return time.monotonic()
