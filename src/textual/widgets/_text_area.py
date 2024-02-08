@@ -855,7 +855,7 @@ TextArea:light .text-area--cursor {
         Args:
             text: The text to load into the TextArea.
         """
-        self.history.reset()
+        self.history.clear()
         self._set_document(text, self.language)
 
     def _on_resize(self) -> None:

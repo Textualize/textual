@@ -146,8 +146,8 @@ class EditHistory:
             return batch
         return None
 
-    def reset(self) -> None:
-        """Completely reset the history."""
+    def clear(self) -> None:
+        """Completely clear the history."""
         self._undo_stack.clear()
         self._redo_stack.clear()
         self._last_edit_time = time.monotonic()
@@ -159,5 +159,9 @@ class EditHistory:
         self._force_end_batch = True
 
     def _get_time(self) -> float:
-        """Get the time from the monotonic clock."""
+        """Get the time from the monotonic clock.
+
+        Returns:
+            The result of `time.monotonic()` as a float.
+        """
         return time.monotonic()
