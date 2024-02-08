@@ -11,6 +11,9 @@ on:
       - "**.lock"
       - "Makefile"
 
+env:
+  PYTEST_ADDOPTS: "--color=yes"
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
@@ -38,14 +41,10 @@ jobs:
         if: ${{ matrix.python-version == '3.12' }}
       - name: Test with pytest
         run: |
-          # Colored pytest output on CI despite not having a tty
-          echo "FORCE_COLOR=1" >> $GITHUB_ENV
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
         if: ${{ matrix.python-version != '3.12' }}
       - name: Test with pytest for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: |
-          # Colored pytest output on CI despite not having a tty
-          echo "FORCE_COLOR=1" >> $GITHUB_ENV
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax'
         if: ${{ matrix.python-version == '3.12' }}
       - name: Upload snapshot report
