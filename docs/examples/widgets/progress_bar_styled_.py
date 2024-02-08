@@ -44,7 +44,7 @@ class StyledProgressBar(App[None]):
 
     def key_t(self) -> None:
         # Freeze time to show always the same ETA.
-        self.query_one(ProgressBar).query_one("#eta")._samples = MockETC(1)
+        self.query_one(ProgressBar).query_one("#eta")._samples = MockETC(100)
         self.query_one(ProgressBar).update(total=100, progress=39)
 
     def key_u(self) -> None:
