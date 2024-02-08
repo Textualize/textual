@@ -584,8 +584,8 @@ class Markdown(Widget):
 
     BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
 
-    dark_theme: Reactive[str] = reactive("material", layout=True, repaint=True)
     light_theme: Reactive[str] = reactive("material-light")
+    dark_theme: reactive[str] = reactive("material")
 
     def __init__(
         self,
