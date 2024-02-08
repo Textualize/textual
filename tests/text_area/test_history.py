@@ -251,13 +251,10 @@ async def test_paste_is_an_isolated_batch(pilot: Pilot, text_area: TextArea):
 
 async def test_focus_creates_checkpoint(pilot: Pilot, text_area: TextArea):
     await pilot.press(*"123")
-    text_area.blur()
-    await pilot.pause()
-    text_area.focus()
-    await pilot.pause()
+    text_area.has_focus = False
+    text_area.has_focus = True
     await pilot.press(*"456")
     assert text_area.text == "123456"
-    await pilot.pause()
 
     # Since we re-focused, a checkpoint exists between 123 and 456,
     # so when we use undo, only the 456 is removed.
