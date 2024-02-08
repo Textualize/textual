@@ -5,10 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.49.1] - 2023-02-08
 
 ### Fixed
 
+- Fixed issue with ANSI colors not being converted to truecolor https://github.com/Textualize/textual/pull/4138
 - Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
 - Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
 
@@ -1671,6 +1672,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1
 [0.49.0]: https://github.com/Textualize/textual/compare/v0.48.2...v0.49.0
 [0.48.2]: https://github.com/Textualize/textual/compare/v0.48.1...v0.48.2
 [0.48.1]: https://github.com/Textualize/textual/compare/v0.48.0...v0.48.1
