@@ -5,19 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-### Unreleased
 
-### Added
-
-- Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
-
-## [0.49.1] - 2023-02-08
+## [0.50.0] - 2023-02-08
 
 ### Fixed
 
 - Fixed issue with ANSI colors not being converted to truecolor https://github.com/Textualize/textual/pull/4138
 - Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
 - Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
+
+### Added 
+
+- Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
 
 ## [0.49.0] - 2024-02-07
 
