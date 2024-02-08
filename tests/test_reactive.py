@@ -615,6 +615,7 @@ async def test_no_duplicate_external_watchers() -> None:
 
         def on_mount(self) -> None:
             self.watch(self.holder, "attr", self.callback)
+            self.watch(self.holder, "attr", self.callback)
 
         def callback(self) -> None:
             nonlocal counter
