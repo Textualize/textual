@@ -169,7 +169,7 @@ class TimeToCompletion:
             # We have multiple samples, so return the oldest.
             return self._samples[0]
         elif samples == 1 and (last_dropped := self._samples.last_dropped) is not None:
-            # We only have the one sample, but we do have a reference the
+            # We only have the one sample, but we do have a reference to the
             # the last-dropped sample, so as a fallback use that.
             return last_dropped
         # We don't have any samples to go off.
