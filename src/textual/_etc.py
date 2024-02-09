@@ -76,6 +76,7 @@ class Samples:
     def clear(self) -> Self:
         """Clear the samples."""
         self._samples.clear()
+        self._last_dropped = None
         return self
 
     @property
