@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed tint applied to ANSI colors
+- Fixed tint applied to ANSI colors https://github.com/Textualize/textual/pull/4142
 
 ## [0.50.0] - 2023-02-08
 
