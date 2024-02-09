@@ -36,6 +36,8 @@ class Samples:
         """The maximum number of samples to keep."""
         self._samples: list[Sample] = []
         """The samples."""
+        self._last_dropped: Sample | None = None
+        """Keep track of the last-dropped sample."""
 
     def _prune(self) -> Self:
         """Prune the samples.
@@ -50,6 +52,9 @@ class Samples:
             oldest_time = samples[-1].moment - self._time_window_size
             for position, sample in enumerate(samples):
                 if sample.moment > oldest_time:
+                    # We keep the "last dropped" sample around for any sort
+                    # of fallback position.
+                    self._last_dropped = samples[position - 1]
                     self._samples = samples[position:]
                     break
             # Ensure that we don't run up too many samples.
@@ -72,6 +77,14 @@ class Samples:
         """Clear the samples."""
         self._samples.clear()
         return self
+
+    @property
+    def last_dropped(self) -> Sample | None:
+        """The last sample to be dropped out of the time window.
+
+        If none has been dropped yet then `None`.
+        """
+        return self._last_dropped
 
     def __getitem__(self, index: int) -> Sample:
         return self._samples[index]
@@ -143,17 +156,34 @@ class TimeToCompletion:
         return self
 
     @property
+    def _oldest_sample(self) -> Sample | None:
+        """The oldest sample we have, if there is one.
+
+        For cases where all sample but the most recent one have expired out
+        of the window, the oldest sample will be the last-dropped sample.
+        This will help give a best guess as to hold long what's left may
+        take.
+        """
+        if (samples := len(self._samples)) > 1:
+            # We have multiple samples, so return the oldest.
+            return self._samples[0]
+        elif samples == 1 and (last_dropped := self._samples.last_dropped) is not None:
+            # We only have the one sample, but we do have a reference the
+            # the last-dropped sample, so as a fallback use that.
+            return last_dropped
+        # We don't have any samples to go off.
+        return None
+
+    @property
     def _elapsed(self) -> float:
         """The time elapsed over the course of the samples.
 
         Note that this is the time elapsed over all of the recorded samples,
         not from the first until now.
         """
-        return (
-            self._samples[-1].moment - self._samples[0].moment
-            if len(self._samples)
-            else 0
-        )
+        if (oldest := self._oldest_sample) is not None:
+            return self._samples[-1].moment - oldest.moment
+        return 0
 
     @property
     def _elapsed_to_now(self) -> float:
@@ -161,7 +191,9 @@ class TimeToCompletion:
 
         This will always be 0 if no samples have been recorded yet.
         """
-        return monotonic() - self._samples[0].moment if self._samples else 0
+        if (oldest := self._oldest_sample) is not None:
+            return monotonic() - oldest.moment
+        return 0
 
     @property
     def _distance_covered_in_window(self) -> float:
@@ -171,11 +203,9 @@ class TimeToCompletion:
         current window; not the distance covered by every sample that has
         been recorded.
         """
-        # If we've only got the one value, take that to be the distance.
-        if len(self) == 1:
-            return self._samples[0].value
-        # Otherwise actually go with the distance in the window.
-        return self._samples[-1].value - self._samples[0].value if len(self) else 0
+        if (oldest := self._oldest_sample) is not None:
+            return self._samples[-1].value - oldest.value
+        return 0
 
     @property
     def _distance_remaining(self) -> float:
