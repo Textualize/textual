@@ -52,3 +52,13 @@ def test_estimate_bigger_step() -> None:
 def test_estimate_no_samples() -> None:
     """Time to completion should be 0 of no samples exist."""
     assert TimeToCompletion(100).estimated_time_to_complete == 0
+
+
+def test_window_got_very_narrow() -> None:
+    """If the window got very narrow a best-estimate should still happen."""
+    time_to_completion = TimeToCompletion(100, time_window_size=5)
+    for n in range(5):
+        time_to_completion.record(n, n)
+    time_to_completion.record(50, 50)
+    assert len(time_to_completion) == 1
+    assert time_to_completion.estimated_time_to_complete == 50
