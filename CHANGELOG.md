@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## [0.51.1] - 2023-02-09
+
+### Fixed
+
+- Fixed tint applied to ANSI colors
+
 ## [0.50.0] - 2023-02-08
 
 ### Fixed
@@ -1677,6 +1683,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0
 [0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1
 [0.49.0]: https://github.com/Textualize/textual/compare/v0.48.2...v0.49.0
