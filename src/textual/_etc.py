@@ -42,10 +42,8 @@ class Samples:
     def _prune(self) -> Self:
         """Prune the samples.
 
-        Note:
-            While there is a sample limit *and* a time limit, we only prune
-            by one or the other, and sample size always trumps time, to help
-            ensure we have *some* samples to work off.
+        Returns:
+            Self.
         """
         if samples := self._samples:
             # Trim off any "too old" samples.
@@ -74,7 +72,11 @@ class Samples:
         return self._prune()
 
     def clear(self) -> Self:
-        """Clear the samples."""
+        """Clear the samples.
+
+        Returns:
+            Self.
+        """
         self._samples.clear()
         self._last_dropped = None
         return self
@@ -83,7 +85,7 @@ class Samples:
     def last_dropped(self) -> Sample | None:
         """The last sample to be dropped out of the time window.
 
-        If none has been dropped yet then `None`.
+        If none have been dropped yet then `None`.
         """
         return self._last_dropped
 
@@ -129,7 +131,11 @@ class TimeToCompletion:
         return len(self._samples)
 
     def reset(self) -> Self:
-        """Reset the samples."""
+        """Reset the samples.
+
+        Returns:
+            Self.
+        """
         self._samples.clear()
         return self
 
