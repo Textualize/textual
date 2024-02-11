@@ -379,7 +379,7 @@ _GITHUB_LIGHT = TextAreaTheme(
     },
 )
 
-_CSS_THEME = TextAreaTheme(name="css")
+_CSS_THEME = TextAreaTheme(name="css", syntax_styles=_DARK_VS.syntax_styles)
 
 _BUILTIN_THEMES = {
     "css": _CSS_THEME,

@@ -983,21 +983,6 @@ TextArea:light .text-area--cursor {
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
 
-        highlights = self._highlights
-        if highlights and theme:
-            line_bytes = _utf8_encode(line_string)
-            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-            get_highlight_from_theme = theme.syntax_styles.get
-            line_highlights = highlights[line_index]
-            for highlight_start, highlight_end, highlight_name in line_highlights:
-                node_style = get_highlight_from_theme(highlight_name)
-                if node_style is not None:
-                    line.stylize(
-                        node_style,
-                        byte_to_codepoint.get(highlight_start, 0),
-                        byte_to_codepoint.get(highlight_end) if highlight_end else None,
-                    )
-
         cursor_line_style = theme.cursor_line_style if theme else None
         if cursor_line_style and cursor_row == line_index:
             line.stylize(cursor_line_style)
@@ -1031,6 +1016,21 @@ TextArea:light .text-area--cursor {
                             line.stylize(selection_style, end=selection_bottom_column)
                         else:
                             line.stylize(selection_style, end=line_character_count)
+
+        highlights = self._highlights
+        if highlights and theme:
+            line_bytes = _utf8_encode(line_string)
+            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+            get_highlight_from_theme = theme.syntax_styles.get
+            line_highlights = highlights[line_index]
+            for highlight_start, highlight_end, highlight_name in line_highlights:
+                node_style = get_highlight_from_theme(highlight_name)
+                if node_style is not None:
+                    line.stylize(
+                        node_style,
+                        byte_to_codepoint.get(highlight_start, 0),
+                        byte_to_codepoint.get(highlight_end) if highlight_end else None,
+                    )
 
         # Highlight the cursor
         matching_bracket = self._matching_bracket_location
