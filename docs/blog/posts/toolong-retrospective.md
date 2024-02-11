@@ -127,7 +127,7 @@ See [watcher.py](https://github.com/Textualize/toolong/blob/main/src/toolong/wat
 ## Textual learnings
 
 This project was a chance for me to "dogfood" Textual.
-Other Textual devs have build some cool projects ([Trogon](https://github.com/Textualize/trogon) and [Frogmouth](https://github.com/Textualize/frogmouth)), but before Toolong I had only every written example apps for docs.
+Other Textual devs have build some cool projects ([Trogon](https://github.com/Textualize/trogon) and [Frogmouth](https://github.com/Textualize/frogmouth)), but before Toolong I had only ever written example apps for docs.
 
 I paid particular attention to Textual error messages when working on Toolong, and improved many of them in Textual.
 Much of what I improved were general programming errors, and not Textual errors per se.
