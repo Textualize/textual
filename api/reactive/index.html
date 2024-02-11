@@ -5380,6 +5380,24 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#textual.reactive.await_watcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      await_watcher()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.invoke_watcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      invoke_watcher()
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -5979,6 +5997,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -6008,6 +6028,29 @@ window.onload = async (event) => {
             Archive
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blog/archive/2024/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    2024
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
             
               
                 
@@ -6280,6 +6323,24 @@ window.onload = async (event) => {
   <a href="#textual.reactive.var" class="md-nav__link">
     <span class="md-ellipsis">
       var
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.await_watcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      await_watcher()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.reactive.invoke_watcher" class="md-nav__link">
+    <span class="md-ellipsis">
+      invoke_watcher()
     </span>
   </a>
   
@@ -6758,6 +6819,111 @@ window.onload = async (event) => {
 
 </div>
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.reactive.await_watcher" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">await_watcher</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.reactive.await_watcher" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">await_watcher</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">awaitable</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Coroutine to await an awaitable returned from a watcher</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h2 id="textual.reactive.invoke_watcher" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">invoke_watcher</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-function"><code>function</code></small>
+  </span>
+
+<a href="#textual.reactive.invoke_watcher" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">invoke_watcher</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">watcher_object</span><span class="p">,</span> <span class="n">watch_function</span><span class="p">,</span> <span class="n">old_value</span><span class="p">,</span> <span class="n">value</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Invoke a watch function.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>watcher_object</code></strong>
+            <br>
+                <code><span title="textual.reactive.Reactable">Reactable</span></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The object watching for the changes.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>watch_function</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.WatchCallbackType" href="../types/#textual.types.WatchCallbackType">WatchCallbackType</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>A watch function, which may be sync or async.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>old_value</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The old value of the attribute.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>value</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#object">object</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The new value of the attribute.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 
 
