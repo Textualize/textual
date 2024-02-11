@@ -6,13 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## [0.51.1] - 2023-02-09
+## [0.51.1] - 2024-02-09
 
 ### Fixed
 
 - Fixed tint applied to ANSI colors https://github.com/Textualize/textual/pull/4142
 
-## [0.50.0] - 2023-02-08
+## [0.50.0] - 2024-02-08
 
 ### Fixed
 
