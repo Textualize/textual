@@ -197,8 +197,10 @@ class TimeToCompletion:
     def _elapsed(self) -> float:
         """The time elapsed over the course of the samples.
 
-        Note that this is the time elapsed over all of the recorded samples,
-        not from the first until now.
+        Note that this is the time elapsed over all of the samples in the
+        current time/max-count window, or between the last-dropped sample
+        and the one remaining one in the window if the window is
+        near-exhausted.
         """
         if (oldest := self._oldest_sample) is not None:
             return self._samples[-1].moment - oldest.moment
@@ -207,6 +209,10 @@ class TimeToCompletion:
     @property
     def _elapsed_to_now(self) -> float:
         """The time elapsed over the course of the samples until now.
+
+        Note that this is the time elapsed from the earliest sample in the
+        current time/max-count window, or from the last-dropped sample
+        window is near-exhausted (if there's only one sample left in it).
 
         This will always be 0 if no samples have been recorded yet.
         """
