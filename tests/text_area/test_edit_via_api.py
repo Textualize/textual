@@ -5,6 +5,7 @@ than going via bindings.
 
 Note that more extensive testing for editing is done at the Document level.
 """
+
 import pytest
 
 from textual.app import App, ComposeResult
@@ -520,6 +521,7 @@ async def test_replace_fully_within_selection():
             end_location=(0, 4),
         )
         assert text_area.selected_text == "XX56"
+
 
 async def test_text_setter():
     app = TextAreaApp()

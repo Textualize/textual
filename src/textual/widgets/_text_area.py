@@ -1950,8 +1950,9 @@ TextArea {
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
 
-        self._delete_via_keyboard(from_location, to_location)
-        self.move_cursor_relative(columns=end_column, record_width=False)
+        deletion = self._delete_via_keyboard(from_location, to_location)
+        if deletion is not None:
+            self.move_cursor_relative(columns=end_column, record_width=False)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""

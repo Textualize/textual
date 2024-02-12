@@ -421,6 +421,37 @@ async def test_delete_word_right_at_end_of_line():
 
 
 @pytest.mark.parametrize(
+    "binding",
+    [
+        "enter",
+        "backspace",
+        "ctrl+u",
+        "ctrl+f",
+        "ctrl+w",
+        "ctrl+k",
+        "ctrl+x",
+        "space",
+        "1",
+        "tab",
+    ],
+)
+async def test_edit_read_only_mode_does_nothing(binding):
+    """Try out various key-presses and bindings and ensure they don't alter
+    the document when read_only=True."""
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.read_only = True
+        selection = Selection.cursor((0, 2))
+        text_area.selection = selection
+
+        await pilot.press(binding)
+
+        assert text_area.text == TEXT
+        assert text_area.selection == selection
+
+
+@pytest.mark.parametrize(
     "selection",
     [
         Selection(start=(1, 0), end=(3, 0)),
