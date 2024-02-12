@@ -469,3 +469,10 @@ UVWXY
 Z"""
         assert text_area.text == expected_text
         assert text_area.selection == Selection.cursor((1, 1))
+
+
+async def test_paste_read_only_does_nothing():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        text_area.read_only = True

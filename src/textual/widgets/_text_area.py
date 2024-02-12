@@ -1337,6 +1337,11 @@ TextArea {
         _, cursor_y = self._cursor_offset
         self.refresh_lines(cursor_y)
 
+    def _watch__cursor_visible(self) -> None:
+        """When the cursor visibility is toggled, ensure the row is refreshed."""
+        _, cursor_y = self._cursor_offset
+        self.refresh_lines(cursor_y)
+
     def _restart_blink(self) -> None:
         """Reset the cursor blink timer."""
         if self.cursor_blink:
