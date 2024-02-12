@@ -290,7 +290,7 @@ async def test_undo_redo_deletions_batched(pilot: Pilot, text_area: TextArea):
     assert text_area.text == SIMPLE_TEXT
     assert text_area.selection == Selection((0, 2), (1, 2))
 
-    # At this point, the undo stack contains two items, so we can undo twice.
+    # At this point, the undo stack contains two items, so we can redo twice.
 
     # Redo to go back to checkpoint one.
     text_area.redo()
