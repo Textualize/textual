@@ -110,7 +110,6 @@ TextArea {
        background: $boost;
     }
     
-    
     & .text-area--selection {
         background: $accent-lighten-1 40%;
     }
@@ -123,7 +122,16 @@ TextArea {
         border: tall $accent;
     }
     
+    &:dark {
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
+        }
+    }
+    
     &:light {
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
+        }
         .text-area--cursor {
             color: $text 90%;
             background: $foreground 70%;   
@@ -134,7 +142,6 @@ TextArea {
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "text-area--cursor",
-        "text-area--cursor-read-only",
         "text-area--gutter",
         "text-area--cursor-gutter",
         "text-area--cursor-line",
@@ -149,7 +156,6 @@ TextArea {
     | Class | Description |
     | :- | :- |
     | `text-area--cursor` | Target the cursor. |
-    | `text-area--cursor-read-only` | Target the cursor when `read_only=True`. |
     | `text-area--gutter` | Target the gutter (line number column). |
     | `text-area--cursor-gutter` | Target the gutter area of the line the cursor is on. |
     | `text-area--cursor-line` | Target the line the cursor is on. |
@@ -300,7 +306,7 @@ TextArea {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
-    read_only: Reactive[bool] = reactive(False, init=False)
+    read_only: Reactive[bool] = reactive(False)
     """True if the that content is read-only.
     
     Read-only means end users cannot insert, delete or replace content.
@@ -573,6 +579,9 @@ TextArea {
             self._restart_blink()
         else:
             self._pause_blink(visible=self.has_focus)
+
+    def _watch_read_only(self, read_only: bool) -> None:
+        self.set_class(read_only, "-read-only")
 
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""

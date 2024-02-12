@@ -100,17 +100,16 @@ class TextAreaTheme:
                 self.gutter_style = self.base_style.copy()
 
         background_color = Color.from_rich_color(self.base_style.bgcolor)
-        if self.cursor_style is None:
-            # If the theme doesn't contain a cursor style, fallback to component styles.
-            cursor_style = get_style("text-area--cursor")
-            if cursor_style:
-                self.cursor_style = cursor_style
-            else:
-                # There's no component style either, fallback to a default.
-                self.cursor_style = Style(
-                    color=background_color.rich_color,
-                    bgcolor=background_color.inverse.rich_color,
-                )
+        # If the theme doesn't contain a cursor style, fallback to component styles.
+        cursor_style = get_style("text-area--cursor")
+        if cursor_style:
+            self.cursor_style = cursor_style
+        else:
+            # There's no component style either, fallback to a default.
+            self.cursor_style = Style(
+                color=background_color.rich_color,
+                bgcolor=background_color.inverse.rich_color,
+            )
 
         # Apply fallbacks for the styles of the active line and active line gutter.
         if self.cursor_line_style is None:
