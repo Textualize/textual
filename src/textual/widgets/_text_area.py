@@ -91,11 +91,6 @@ TextArea {
     border: tall $background;
     padding: 0 1;
     
-    & .text-area--cursor {
-        color: $text 90%;
-        background: $foreground 90%;
-    }
-    
     & .text-area--gutter {
         color: $text 40%;
     }
@@ -123,18 +118,22 @@ TextArea {
     }
     
     &:dark {
+        .text-area--cursor {
+           color: $text 90%;
+            background: $foreground 90%;
+        }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
         }
     }
     
     &:light {
-        &.-read-only .text-area--cursor {
-            background: $warning-darken-1;
-        }
         .text-area--cursor {
             color: $text 90%;
             background: $foreground 70%;   
+        }
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
         }
     }
 }
@@ -356,6 +355,7 @@ TextArea {
         language: str | None = None,
         theme: str | None = None,
         soft_wrap: bool = True,
+        read_only: bool = False,
         tab_behaviour: Literal["focus", "indent"] = "focus",
         show_line_numbers: bool = False,
         name: str | None = None,
@@ -370,7 +370,9 @@ TextArea {
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            read_only: Enable read-only mode. This prevents edits using the keyboard.
+            tab_behaviour: If 'focus', pressing tab will switch focus.
+                If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
@@ -433,9 +435,9 @@ TextArea {
 
         self.theme = theme
 
-        self._reactive_soft_wrap = soft_wrap
-
-        self._reactive_show_line_numbers = show_line_numbers
+        self.set_reactive(TextArea.soft_wrap, soft_wrap)
+        self.set_reactive(TextArea.read_only, read_only)
+        self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
 
         self.tab_behaviour = tab_behaviour
 
@@ -1268,7 +1270,7 @@ TextArea {
             # None because we've checked that it's printable.
             assert insert is not None
             start, end = self.selection
-            self.replace(insert, start, end, maintain_selection_offset=False)
+            self._replace_via_keyboard(insert, start, end)
 
     def _find_columns_to_next_tab_stop(self) -> int:
         """Get the location of the next tab stop after the cursors position on the current line.
@@ -1374,7 +1376,7 @@ TextArea {
         """When a paste occurs, insert the text from the paste event into the document."""
         if self.read_only:
             return
-        result = self.replace(event.text, *self.selection)
+        result = self._replace_via_keyboard(event.text, *self.selection)
         self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
@@ -1874,12 +1876,33 @@ TextArea {
         """
         return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
-    def clear(self) -> None:
+    def clear(self) -> EditResult:
         """Delete all text from the document."""
         document = self.document
         last_line = document[-1]
         document_end = (document.line_count, len(last_line))
-        self.delete((0, 0), document_end, maintain_selection_offset=False)
+        return self.delete((0, 0), document_end, maintain_selection_offset=False)
+
+    def _delete_via_keyboard(
+        self,
+        start: Location,
+        end: Location,
+    ) -> EditResult | None:
+        """Handle a deletion performed using a keyboard (as opposed to the API)."""
+        if self.read_only:
+            return None
+        return self.delete(start, end, maintain_selection_offset=False)
+
+    def _replace_via_keyboard(
+        self,
+        insert: str,
+        start: Location,
+        end: Location,
+    ) -> EditResult | None:
+        """Handle a replacement performed using a keyboard (as opposed to the API)."""
+        if self.read_only:
+            return None
+        return self.replace(insert, start, end, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location.
@@ -1892,7 +1915,7 @@ TextArea {
         if selection.is_empty:
             end = self.get_cursor_left_location()
 
-        self.delete(start, end, maintain_selection_offset=False)
+        self._delete_via_keyboard(start, end)
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
@@ -1905,7 +1928,7 @@ TextArea {
         if selection.is_empty:
             end = self.get_cursor_right_location()
 
-        self.delete(start, end, maintain_selection_offset=False)
+        self._delete_via_keyboard(start, end)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
@@ -1922,20 +1945,20 @@ TextArea {
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
 
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
         self.move_cursor_relative(columns=end_column, record_width=False)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
         from_location = self.selection.end
         to_location = self.get_cursor_line_start_location()
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
         to_location = self.get_cursor_line_end_location()
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""
@@ -1946,11 +1969,11 @@ TextArea {
         # deletes the characters within the selection range, ignoring word boundaries.
         start, end = self.selection
         if start != end:
-            self.delete(start, end, maintain_selection_offset=False)
+            self._delete_via_keyboard(start, end)
             return
 
         to_location = self.get_cursor_word_left_location()
-        self.delete(self.selection.end, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(self.selection.end, to_location)
 
     def action_delete_word_right(self) -> None:
         """Deletes the word to the right of the cursor and keeps the cursor at the same location.
@@ -1964,7 +1987,7 @@ TextArea {
 
         start, end = self.selection
         if start != end:
-            self.delete(start, end, maintain_selection_offset=False)
+            self._delete_via_keyboard(start, end)
             return
 
         cursor_row, cursor_column = end
@@ -1984,7 +2007,7 @@ TextArea {
         else:
             to_location = (cursor_row, current_row_length)
 
-        self.delete(end, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(end, to_location)
 
 
 @dataclass
