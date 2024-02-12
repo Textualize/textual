@@ -11,8 +11,8 @@ def test_size() -> None:
         time_to_completion.record(n, n)
 
 
-def test_no_go_backwards() -> None:
-    """It should not be possible to go backwards in time."""
+def test_value_can_not_go_backwards() -> None:
+    """It should not be possible to go backwards with the value."""
     time_to_completion = TimeToCompletion(10)
     time_to_completion.record(2)
     with pytest.raises(ValueError):
