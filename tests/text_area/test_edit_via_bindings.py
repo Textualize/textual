@@ -476,3 +476,8 @@ async def test_paste_read_only_does_nothing():
     async with app.run_test() as pilot:
         text_area = app.query_one(TextArea)
         text_area.read_only = True
+
+        app.post_message(Paste("hello"))
+        await pilot.pause()
+
+        assert text_area.text == TEXT  # No change
