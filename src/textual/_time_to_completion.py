@@ -157,8 +157,9 @@ class TimeToCompletion:
         Returns:
             Self.
         """
+        samples = self._samples
         # If the last sample is higher in value than the new one...
-        if self._samples and self._samples[-1].value > value:
+        if samples and samples[-1].value > value:
             # ...treat that as an error.
             raise ValueError(f"{value} is less than the previously-recorded value")
         # If the sample is higher than the destination...
@@ -167,7 +168,7 @@ class TimeToCompletion:
                 f"{value} is greater than the destination of {self._destination}"
             )
         # Record the new sample.
-        self._samples.append(Sample(value, monotonic() if at_time is None else at_time))
+        samples.append(Sample(value, monotonic() if at_time is None else at_time))
         return self
 
     @property
