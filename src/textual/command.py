@@ -794,7 +794,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             else None
         )
         command_list.clear_options().add_options(sorted(commands, reverse=True))
-        if highlighted is not None:
+        if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
         self._list_visible = bool(command_list.option_count)
 
