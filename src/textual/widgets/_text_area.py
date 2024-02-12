@@ -1241,6 +1241,10 @@ TextArea {
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
+        self._restart_blink()
+        if self.read_only:
+            return
+
         key = event.key
         insert_values = {
             "enter": "\n",
@@ -1256,7 +1260,6 @@ TextArea {
             else:
                 insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
 
-        self._restart_blink()
         if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
@@ -1369,6 +1372,8 @@ TextArea {
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
+        if self.read_only:
+            return
         result = self.replace(event.text, *self.selection)
         self.move_cursor(result.end_location)
 
