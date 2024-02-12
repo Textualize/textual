@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.51.1] - 2024-02-09
+
+### Fixed
+
+- Fixed tint applied to ANSI colors https://github.com/Textualize/textual/pull/4142
+
+## [0.50.0] - 2024-02-08
+
+### Fixed
+
+- Fixed issue with ANSI colors not being converted to truecolor https://github.com/Textualize/textual/pull/4138
+- Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
+- Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
+
+### Added 
+
+- Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
+
+## [0.49.0] - 2024-02-07
+
+### Fixed
+
+- Fixed scrolling in long `OptionList` by adding max height of 100% https://github.com/Textualize/textual/issues/4021
+- Fixed `DirectoryTree.clear_node` not clearing the node specified https://github.com/Textualize/textual/issues/4122
+
+### Changed
+
+- `DirectoryTree.reload` and `DirectoryTree.reload_node` now preserve state when reloading https://github.com/Textualize/textual/issues/4056
+- Fixed a crash in the TextArea when performing a backward replace https://github.com/Textualize/textual/pull/4126
+- Fixed selection not updating correctly when pasting while there's a non-zero selection https://github.com/Textualize/textual/pull/4126
+- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behaviour` is the default https://github.com/Textualize/textual/issues/4110
+- `TextArea` cursor will now be invisible before first focus https://github.com/Textualize/textual/pull/4128
+- Fix toggling `TextArea.cursor_blink` reactive when widget does not have focus https://github.com/Textualize/textual/pull/4128
+
+### Added
+
+- Added DOMQuery.set https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.set_reactive https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
+- Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
+- `Tree` (and `DirectoryTree`) grew an attribute `lock` that can be used for synchronization across coroutines https://github.com/Textualize/textual/issues/4056
+
+
 ## [0.48.2] - 2024-02-02
 
 ### Fixed
@@ -1638,6 +1683,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
+[0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0
+[0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1
+[0.49.0]: https://github.com/Textualize/textual/compare/v0.48.2...v0.49.0
 [0.48.2]: https://github.com/Textualize/textual/compare/v0.48.1...v0.48.2
 [0.48.1]: https://github.com/Textualize/textual/compare/v0.48.0...v0.48.1
 [0.48.0]: https://github.com/Textualize/textual/compare/v0.47.1...v0.48.0

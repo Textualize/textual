@@ -153,7 +153,6 @@ TextArea:light .text-area--cursor {
     """
 
     BINDINGS = [
-        Binding("escape", "screen.focus_next", "Shift Focus", show=False),
         # Cursor movement
         Binding("up", "cursor_up", "cursor up", show=False),
         Binding("down", "cursor_down", "cursor down", show=False),
@@ -213,7 +212,6 @@ TextArea:light .text-area--cursor {
     """
     | Key(s)                 | Description                                  |
     | :-                     | :-                                           |
-    | escape                 | Focus on the next item.                      |
     | up                     | Move the cursor up.                          |
     | down                   | Move the cursor down.                        |
     | left                   | Move the cursor left.                        |
@@ -297,7 +295,7 @@ TextArea:light .text-area--cursor {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
-    _cursor_visible: Reactive[bool] = reactive(True, repaint=False, init=False)
+    _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
 
@@ -457,7 +455,7 @@ TextArea:light .text-area--cursor {
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
         """
-        return TextArea(
+        return cls(
             text,
             language=language,
             theme=theme,
@@ -520,9 +518,13 @@ TextArea:light .text-area--cursor {
                 # Add the last line of the node range
                 highlights[node_end_row].append((0, node_end_column, highlight_name))
 
-    def watch_has_focus(self, value: bool) -> None:
-        self._cursor_visible = value
-        super().watch_has_focus(value)
+    def _watch_has_focus(self, focus: bool) -> None:
+        self._cursor_visible = focus
+        if focus:
+            self._restart_blink()
+            self.app.cursor_position = self.cursor_screen_offset
+        else:
+            self._pause_blink(visible=False)
 
     def _watch_selection(
         self, previous_selection: Selection, selection: Selection
@@ -550,6 +552,14 @@ TextArea:light .text-area--cursor {
         self.app.cursor_position = self.cursor_screen_offset
         if previous_selection != selection:
             self.post_message(self.SelectionChanged(selection, self))
+
+    def _watch_cursor_blink(self, blink: bool) -> None:
+        if not self.is_mounted:
+            return None
+        if blink and self.has_focus:
+            self._restart_blink()
+        else:
+            self._pause_blink(visible=self.has_focus)
 
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
@@ -960,7 +970,6 @@ TextArea:light .text-area--cursor {
         # Get the line from the Document.
         line_string = document.get_line(line_index)
         line = Text(line_string, end="")
-
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
@@ -1031,8 +1040,10 @@ TextArea:light .text-area--cursor {
         )
 
         if cursor_row == line_index:
-            draw_cursor = not self.cursor_blink or (
-                self.cursor_blink and self._cursor_visible
+            draw_cursor = (
+                self.has_focus
+                and not self.cursor_blink
+                or (self.cursor_blink and self._cursor_visible)
             )
             if draw_matched_brackets:
                 matching_bracket_style = theme.bracket_matching_style if theme else None
@@ -1195,8 +1206,8 @@ TextArea:light .text-area--cursor {
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                edit.from_location,
-                edit.to_location,
+                edit.top,
+                edit.bottom,
                 result.end_location,
             )
 
@@ -1213,6 +1224,11 @@ TextArea:light .text-area--cursor {
             "enter": "\n",
         }
         if self.tab_behaviour == "indent":
+            if key == "escape":
+                event.stop()
+                event.prevent_default()
+                self.screen.focus_next()
+                return
             if self.indent_type == "tabs":
                 insert_values["tab"] = "\t"
             else:
@@ -1288,13 +1304,6 @@ TextArea:light .text-area--cursor {
             pause=not (self.cursor_blink and self.has_focus),
         )
 
-    def _on_blur(self, _: events.Blur) -> None:
-        self._pause_blink(visible=True)
-
-    def _on_focus(self, _: events.Focus) -> None:
-        self._restart_blink()
-        self.app.cursor_position = self.cursor_screen_offset
-
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
         self._cursor_visible = not self._cursor_visible
@@ -1338,7 +1347,8 @@ TextArea:light .text-area--cursor {
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
-        self.replace(event.text, *self.selection)
+        result = self.replace(event.text, *self.selection)
+        self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.
@@ -1811,8 +1821,7 @@ TextArea:light .text-area--cursor {
         Returns:
             An `EditResult` containing information about the edit.
         """
-        top, bottom = sorted((start, end))
-        return self.edit(Edit("", top, bottom, maintain_selection_offset))
+        return self.edit(Edit("", start, end, maintain_selection_offset))
 
     def replace(
         self,
@@ -1986,14 +1995,13 @@ class Edit:
         # position in the document even if an insert happens before
         # their cursor position.
 
-        edit_top, edit_bottom = sorted((edit_from, edit_to))
-        edit_bottom_row, edit_bottom_column = edit_bottom
+        edit_bottom_row, edit_bottom_column = self.bottom
 
         selection_start, selection_end = text_area.selection
         selection_start_row, selection_start_column = selection_start
         selection_end_row, selection_end_column = selection_end
 
-        replace_result = text_area.document.replace_range(edit_from, edit_to, text)
+        replace_result = text_area.document.replace_range(self.top, self.bottom, text)
 
         new_edit_to_row, new_edit_to_column = replace_result.end_location
 
@@ -2047,6 +2055,16 @@ class Edit:
         if self._updated_selection is not None:
             text_area.selection = self._updated_selection
         text_area.record_cursor_width()
+
+    @property
+    def top(self) -> Location:
+        """The Location impacted by this edit that is nearest the start of the document."""
+        return min([self.from_location, self.to_location])
+
+    @property
+    def bottom(self) -> Location:
+        """The Location impacted by this edit that is nearest the end of the document."""
+        return max([self.from_location, self.to_location])
 
 
 @runtime_checkable
