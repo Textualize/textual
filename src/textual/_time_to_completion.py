@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from time import monotonic
+from typing import NamedTuple
 
 from rich.repr import Result
 from typing_extensions import Self
 
 
-@dataclass
-class Sample:
+class Sample(NamedTuple):
     """A sample."""
 
     value: float
