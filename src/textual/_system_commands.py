@@ -4,7 +4,7 @@ This is a simple command provider that makes the most obvious application
 actions available via the [command palette][textual.command.CommandPalette].
 """
 
-from .command import Hit, Hits, Provider
+from .command import DiscoveryHit, Hit, Hits, Provider
 
 
 class SystemCommands(Provider):
@@ -53,3 +53,33 @@ class SystemCommands(Provider):
                     runnable,
                     help=help_text,
                 )
+
+    async def discover(self) -> Hits:
+        """Handle a request for the discovery commands for this provider.
+
+        Yields:
+            Commands that can be discovered.
+        """
+        # TODO: Dedupe these from the above.
+        for name, runnable, help_text in (
+            (
+                "Toggle light/dark mode",
+                self.app.action_toggle_dark,
+                "Toggle the application between light and dark mode",
+            ),
+            (
+                "Quit the application",
+                self.app.action_quit,
+                "Quit the application as soon as possible",
+            ),
+            (
+                "Ring the bell",
+                self.app.action_bell,
+                "Ring the terminal's 'bell'",
+            ),
+        ):
+            yield DiscoveryHit(
+                name,
+                runnable,
+                help=help_text,
+            )

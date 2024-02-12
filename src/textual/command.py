@@ -49,6 +49,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "CommandPalette",
+    "DiscoveryHit",
     "Hit",
     "Hits",
     "Matcher",
@@ -105,7 +106,52 @@ class Hit:
                 )
 
 
-Hits: TypeAlias = AsyncIterator[Hit]
+@dataclass
+class DiscoveryHit:
+    """Holds the details of a single command search hit."""
+
+    match_display: RenderableType
+    """A string or Rich renderable representation of the hit."""
+
+    command: IgnoreReturnCallbackType
+    """The function to call when the command is chosen."""
+
+    text: str | None = None
+    """The command text associated with the hit, as plain text.
+
+    If `match_display` is not simple text, this attribute should be provided by the
+    [Provider][textual.command.Provider] object.
+    """
+
+    help: str | None = None
+    """Optional help text for the command."""
+
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, DiscoveryHit):
+            assert self.text is not None
+            assert other.text is not None
+            return self.text < other.text
+        return NotImplemented
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Hit):
+            return self.text == other.text
+        return NotImplemented
+
+    def __post_init__(self) -> None:
+        """Ensure 'text' is populated."""
+        if self.text is None:
+            if isinstance(self.match_display, str):
+                self.text = self.match_display
+            elif isinstance(self.match_display, Text):
+                self.text = self.match_display.plain
+            else:
+                raise ValueError(
+                    "A value for 'text' is required if 'match_display' is not a str or Text"
+                )
+
+
+Hits: TypeAlias = AsyncIterator[DiscoveryHit | Hit]
 """Return type for the command provider's `search` method."""
 
 
@@ -199,9 +245,10 @@ class Provider(ABC):
         """
         await self._wait_init()
         if self._init_success:
-            hits = self.search(query)
+            hits = self.search(query) if query else self.discover()
             async for hit in hits:
-                yield hit
+                if hit is not NotImplemented:
+                    yield hit
 
     @abstractmethod
     async def search(self, query: str) -> Hits:
@@ -212,6 +259,22 @@ class Provider(ABC):
 
         Yields:
             Instances of [`Hit`][textual.command.Hit].
+        """
+        yield NotImplemented
+
+    async def discover(self) -> Hits:
+        """A default collection of hits for the provider.
+
+        Yields:
+            Instances of [`Hit`][textual.command.Hit].
+
+        Note:
+            This is different from
+            [`search`][textual.command.Provider.search] in that it should
+            yield [`Hit`s][textual.command.Hit] that should be shown by
+            default; before user input.
+
+            It is permitted to *not* implement this method.
         """
         yield NotImplemented
 
@@ -561,6 +624,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         ]
         for provider in self._providers:
             provider._post_init()
+        self._gather_commands("")
 
     async def _on_unmount(self) -> None:
         """Shutdown providers when command palette is closed."""
