@@ -156,6 +156,9 @@ class TimeToCompletion:
 
         Returns:
             Self.
+
+        Raises:
+            ValueError: If the recorded value is out of order or out of bounds.
         """
         samples = self._samples
         # If the last sample is higher in value than the new one...
