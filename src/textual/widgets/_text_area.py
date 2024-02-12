@@ -306,7 +306,7 @@ TextArea {
     """True if text should soft wrap."""
 
     read_only: Reactive[bool] = reactive(False)
-    """True if the that content is read-only.
+    """True if the content is read-only.
     
     Read-only means end users cannot insert, delete or replace content.
     
