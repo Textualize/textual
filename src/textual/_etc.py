@@ -21,7 +21,15 @@ class Sample:
 
 
 class Samples:
-    """A deque-ish-like object that holds samples."""
+    """A deque-ish-like object that holds samples.
+
+    The window for the samples is based on time, with a maximum sample cap
+    within that window to ensure memory use doesn't run away. Also, for
+    times when the sample window starts to run dry (drops to just the one
+    available sample in the window) the [last-dropped
+    sample][textual._etc.Samples.last_dropped] is held on to and made
+    available.
+    """
 
     def __init__(self, time_window_size: float, max_samples: int) -> None:
         """Initialise the samples object.
