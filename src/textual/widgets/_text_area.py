@@ -91,46 +91,50 @@ TextArea {
     border: tall $background;
     padding: 0 1;
     
+    & .text-area--cursor {
+        color: $text 90%;
+        background: $foreground 90%;
+    }
+    
+    & .text-area--gutter {
+        color: $text 40%;
+    }
+    
+    & .text-area--cursor-gutter {
+        color: $text 60%;
+        background: $boost;
+        text-style: bold;
+    }
+    
+    & .text-area--cursor-line {
+       background: $boost;
+    }
+    
+    
+    & .text-area--selection {
+        background: $accent-lighten-1 40%;
+    }
+    
+    & .text-area--matching-bracket {
+        background: $foreground 30%;
+    }
+    
     &:focus {
         border: tall $accent;
     }
-}
-
-.text-area--cursor {
-    color: $text 90%;
-    background: $foreground 90%;
-}
-
-TextArea:light .text-area--cursor {
-    color: $text 90%;
-    background: $foreground 70%;
-}
-
-.text-area--gutter {
-    color: $text 40%;
-}
-
-.text-area--cursor-line {
-    background: $boost;
-}
-
-.text-area--cursor-gutter {
-    color: $text 60%;
-    background: $boost;
-    text-style: bold;
-}
-
-.text-area--selection {
-    background: $accent-lighten-1 40%;
-}
-
-.text-area--matching-bracket {
-    background: $foreground 30%;
+    
+    &:light {
+        .text-area--cursor {
+            color: $text 90%;
+            background: $foreground 70%;   
+        }
+    }
 }
 """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "text-area--cursor",
+        "text-area--cursor-read-only",
         "text-area--gutter",
         "text-area--cursor-gutter",
         "text-area--cursor-line",
@@ -145,6 +149,7 @@ TextArea:light .text-area--cursor {
     | Class | Description |
     | :- | :- |
     | `text-area--cursor` | Target the cursor. |
+    | `text-area--cursor-read-only` | Target the cursor when `read_only=True`. |
     | `text-area--gutter` | Target the gutter (line number column). |
     | `text-area--cursor-gutter` | Target the gutter area of the line the cursor is on. |
     | `text-area--cursor-line` | Target the line the cursor is on. |
