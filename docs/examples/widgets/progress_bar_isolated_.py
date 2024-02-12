@@ -1,4 +1,4 @@
-from textual._etc import TimeToCompletion
+from textual._time_to_completion import TimeToCompletion
 from textual.app import App, ComposeResult
 from textual.containers import Center, Middle
 from textual.timer import Timer

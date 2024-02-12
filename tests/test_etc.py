@@ -1,6 +1,6 @@
 import pytest
 
-from textual._etc import TimeToCompletion
+from textual._time_to_completion import TimeToCompletion
 
 
 def test_size() -> None:

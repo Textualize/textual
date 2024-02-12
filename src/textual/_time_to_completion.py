@@ -27,8 +27,8 @@ class Samples:
     within that window to ensure memory use doesn't run away. Also, for
     times when the sample window starts to run dry (drops to just the one
     available sample in the window) the [last-dropped
-    sample][textual._etc.Samples.last_dropped] is held on to and made
-    available.
+    sample][textual._time_to_completion.Samples.last_dropped] is held on to
+    and made available.
     """
 
     def __init__(self, time_window_size: float, max_samples: int) -> None:

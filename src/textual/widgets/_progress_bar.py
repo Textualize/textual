@@ -8,7 +8,7 @@ from typing import Callable, Optional
 
 from rich.style import Style
 
-from .._etc import TimeToCompletion
+from .._time_to_completion import TimeToCompletion
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
 from ..geometry import clamp
