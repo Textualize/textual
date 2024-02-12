@@ -295,6 +295,14 @@ TextArea:light .text-area--cursor {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
+    read_only: Reactive[bool] = reactive(False, init=False)
+    """True if the that content is read-only.
+    
+    Read-only means end users cannot insert, delete or replace content.
+    
+    The document can still be edited programmatically via the API.
+    """
+
     _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
