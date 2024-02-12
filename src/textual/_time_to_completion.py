@@ -161,6 +161,7 @@ class TimeToCompletion:
             ValueError: If the recorded value is out of order or out of bounds.
         """
         samples = self._samples
+
         # If the last sample is higher in value than the new one...
         if samples and samples[-1].value > value:
             # ...treat that as an error.
@@ -170,8 +171,18 @@ class TimeToCompletion:
             raise ValueError(
                 f"{value} is greater than the destination of {self._destination}"
             )
+
+        # Default to "now" if we didn't get handed a time.
+        at_time = monotonic() if at_time is None else at_time
+
+        # If we seem to be going backwards in time...
+        if samples and samples[-1].moment > at_time:
+            # ...treat that as an error.
+            raise ValueError(f"{at_time} is earlier than the previously-recorded time")
+
         # Record the new sample.
-        samples.append(Sample(value, monotonic() if at_time is None else at_time))
+        samples.append(Sample(value, at_time))
+
         return self
 
     @property
