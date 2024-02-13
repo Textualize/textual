@@ -140,7 +140,7 @@ class DiscoveryHit:
         if isinstance(other, DiscoveryHit):
             assert self.text is not None
             assert other.text is not None
-            return self.text < other.text
+            return other.text < self.text
         return NotImplemented
 
     def __eq__(self, other: object) -> bool:
