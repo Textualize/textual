@@ -672,23 +672,36 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     _NO_MATCHES_COUNTDOWN: Final[float] = 0.5
     """How many seconds to wait before showing 'No matches found'."""
 
-    def _start_no_matches_countdown(self) -> None:
+    def _start_no_matches_countdown(self, search_value: str) -> None:
         """Start a countdown to showing that there are no matches for the query.
 
-        Adds a 'No matches found' option to the command list after `_NO_MATCHES_COUNTDOWN` seconds.
+        Args:
+            search_value: The value being searched for.
+
+        Adds a 'No matches found' option to the command list after
+        `_NO_MATCHES_COUNTDOWN` seconds.
         """
         self._stop_no_matches_countdown()
 
         def _show_no_matches() -> None:
-            command_list = self.query_one(CommandList)
-            command_list.add_option(
-                Option(
-                    Align.center(Text("No matches found")),
-                    disabled=True,
-                    id=self._NO_MATCHES,
+            # If we were actually searching for something, show that we
+            # found no matches.
+            if search_value:
+                command_list = self.query_one(CommandList)
+                command_list.add_option(
+                    Option(
+                        Align.center(Text("No matches found")),
+                        disabled=True,
+                        id=self._NO_MATCHES,
+                    )
                 )
-            )
-            self._list_visible = True
+                self._list_visible = True
+            else:
+                # The search value was empty, which means we were in
+                # discover mode; in that case it makes no sense to show that
+                # no matches were found. Lack of commands that can be
+                # discovered is a situation we don't need to highlight.
+                self._list_visible = False
 
         self._no_matches_timer = self.set_timer(
             self._NO_MATCHES_COUNTDOWN,
@@ -1002,7 +1015,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
-            self._start_no_matches_countdown()
+            self._start_no_matches_countdown(search_value)
 
     def _cancel_gather_commands(self) -> None:
         """Cancel any operation that is gather commands."""
@@ -1018,13 +1031,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         event.stop()
         self._cancel_gather_commands()
         self._stop_no_matches_countdown()
-
-        search_value = event.value.strip()
-        if search_value:
-            self._gather_commands(search_value)
-        else:
-            self._list_visible = False
-            self.query_one(CommandList).clear_options()
+        self._gather_commands(event.value.strip())
 
     @on(OptionList.OptionSelected)
     def _select_command(self, event: OptionList.OptionSelected) -> None:
