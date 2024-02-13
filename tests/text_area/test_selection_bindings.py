@@ -22,18 +22,11 @@ class TextAreaApp(App):
 
 
 @pytest.fixture(params=[True, False])
-async def read_only_mode(request):
-    """This parametrised fixture is injected into the app fixture.
-    It means every test that uses the app fixture will run twice - once
-    for read_only=True and once for read_only=False.
+async def app(request):
+    """Each test that receives an `app` will execute twice.
+    Once with read_only=True, and once with read_only=False.
     """
-    return request.param
-
-
-@pytest.fixture
-async def app(read_only_mode: bool):
-    text_area_app = TextAreaApp(read_only_mode)
-    yield text_area_app
+    return TextAreaApp(read_only=request.param)
 
 
 async def test_mouse_click(app: TextAreaApp):
