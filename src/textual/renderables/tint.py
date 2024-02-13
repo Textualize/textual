@@ -45,7 +45,7 @@ class Tint:
         style_from_color = Style.from_color
         _Segment = Segment
 
-        ansi_filter = ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI)
+        truecolor_style = ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI).truecolor_style
 
         NULL_STYLE = Style()
         for segment in segments:
@@ -53,11 +53,7 @@ class Tint:
             if control:
                 yield segment
             else:
-                style = (
-                    ansi_filter.truecolor_style(style)
-                    if style is not None
-                    else NULL_STYLE
-                )
+                style = truecolor_style(style) if style is not None else NULL_STYLE
                 yield _Segment(
                     text,
                     (
