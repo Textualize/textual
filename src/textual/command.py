@@ -83,6 +83,11 @@ class Hit:
     help: str | None = None
     """Optional help text for the command."""
 
+    @property
+    def prompt(self) -> RenderableType:
+        """The prompt to use when displaying the hit in the command palette."""
+        return self.match_display
+
     def __lt__(self, other: object) -> bool:
         if isinstance(other, Hit):
             return self.score < other.score
@@ -110,7 +115,7 @@ class Hit:
 class DiscoveryHit:
     """Holds the details of a single command search hit."""
 
-    match_display: RenderableType
+    display: RenderableType
     """A string or Rich renderable representation of the hit."""
 
     command: IgnoreReturnCallbackType
@@ -119,12 +124,17 @@ class DiscoveryHit:
     text: str | None = None
     """The command text associated with the hit, as plain text.
 
-    If `match_display` is not simple text, this attribute should be provided by the
-    [Provider][textual.command.Provider] object.
+    If `display` is not simple text, this attribute should be provided by
+    the [Provider][textual.command.Provider] object.
     """
 
     help: str | None = None
     """Optional help text for the command."""
+
+    @property
+    def prompt(self) -> RenderableType:
+        """The prompt to use when displaying the discovery hit in the command palette."""
+        return self.display
 
     def __lt__(self, other: object) -> bool:
         if isinstance(other, DiscoveryHit):
@@ -141,17 +151,17 @@ class DiscoveryHit:
     def __post_init__(self) -> None:
         """Ensure 'text' is populated."""
         if self.text is None:
-            if isinstance(self.match_display, str):
-                self.text = self.match_display
-            elif isinstance(self.match_display, Text):
-                self.text = self.match_display.plain
+            if isinstance(self.display, str):
+                self.text = self.display
+            elif isinstance(self.display, Text):
+                self.text = self.display.plain
             else:
                 raise ValueError(
-                    "A value for 'text' is required if 'match_display' is not a str or Text"
+                    "A value for 'text' is required if 'display' is not a str or Text"
                 )
 
 
-Hits: TypeAlias = AsyncIterator[DiscoveryHit | Hit]
+Hits: TypeAlias = AsyncIterator["DiscoveryHit | Hit"]
 """Return type for the command provider's `search` method."""
 
 
@@ -941,7 +951,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         while hit:
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
-            prompt = hit.match_display
+            prompt = hit.prompt
             if hit.help:
                 prompt = Group(prompt, Text(hit.help, style=help_style))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
