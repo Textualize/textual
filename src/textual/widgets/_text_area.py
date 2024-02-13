@@ -584,6 +584,7 @@ TextArea {
 
     def _watch_read_only(self, read_only: bool) -> None:
         self.set_class(read_only, "-read-only")
+        self._set_theme(self._theme.name)
 
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
@@ -680,10 +681,10 @@ TextArea {
         if padding is applied, the colours match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self):
+    def _app_dark_toggled(self) -> None:
         self._set_theme(self._theme.name)
 
-    def _set_theme(self, theme: str | None):
+    def _set_theme(self, theme: str | None) -> None:
         theme_object: TextAreaTheme | None
         if theme is None:
             # If the theme is None, use the default.
