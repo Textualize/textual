@@ -5163,6 +5163,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.read_only" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_only
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._text_area.TextArea.selected_text" class="md-nav__link">
     <span class="md-ellipsis">
       selected_text
@@ -8864,6 +8873,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.read_only" class="md-nav__link">
+    <span class="md-ellipsis">
+      read_only
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._text_area.TextArea.selected_text" class="md-nav__link">
     <span class="md-ellipsis">
       selected_text
@@ -11555,13 +11573,14 @@ Styles from the <code>theme</code> attribute take priority.</p>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">language</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">theme</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">soft_wrap</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">tab_behaviour</span><span class="o">=</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">show_line_numbers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">):</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">read_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">tab_behaviour</span><span class="o">=</span><span class="s2">&quot;focus&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">show_line_numbers</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">disabled</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -11627,6 +11646,17 @@ Styles from the <code>theme</code> attribute take priority.</p>
         </tr>
         <tr>
           <td>
+            <strong><code>read_only</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Enable read-only mode. This prevents edits using the keyboard.</p></td>
+        </tr>
+        <tr>
+          <td>
             <strong><code>tab_behaviour</code></strong>
             <br>
                 <code><span title="typing_extensions.Literal">Literal</span>[&#39;focus&#39;, &#39;indent&#39;]</code>
@@ -11634,7 +11664,8 @@ Styles from the <code>theme</code> attribute take priority.</p>
           <td>
             <code>&#39;focus&#39;</code>
           </td>
-          <td><p>If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.</p></td>
+          <td><p>If 'focus', pressing tab will switch focus.
+If 'indent', pressing tab will insert a tab.</p></td>
         </tr>
         <tr>
           <td>
@@ -12276,8 +12307,8 @@ the strings from this list into <code>TextAreaTheme.get_by_name(theme_name: str)
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.cursor_location" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -12535,6 +12566,32 @@ action, accounting for wrapping etc.</p>
 
 
 
+<h3 id="textual.widgets._text_area.TextArea.read_only" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">read_only</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._text_area.TextArea.read_only" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">read_only</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>True if the content is read-only.</p>
+<p>Read-only means end users cannot insert, delete or replace content.</p>
+<p>The document can still be edited programmatically via the API.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widgets._text_area.TextArea.selected_text" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">selected_text</span>
 
@@ -12644,8 +12701,8 @@ action, accounting for wrapping etc.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.text" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -13647,6 +13704,24 @@ This action does not skip leading whitespace, whereas cursor movement does.</p>
   <div class="doc doc-contents ">
   
       <p>Delete all text from the document.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.document._document.EditResult" href="#textual.widgets.text_area.EditResult">EditResult</a></code>
+          </td>
+          <td><p>An EditResult relating to the deletion of all content.</p></td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 
@@ -17264,6 +17339,9 @@ you would expect the cursor to move.</p>
   <div class="doc doc-contents ">
   
       <p>True if the location is at the end of a line in the document.</p>
+<p>Note that the "end" of a line is equal to its length (one greater
+than the final index), since there is a space at the end of the line
+for the cursor to rest.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -17302,7 +17380,7 @@ you would expect the cursor to move.</p>
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
-          <td><p>True if and only if the document is on the last line of the document.</p></td>
+          <td><p>True if and only if the document is at the end of a line in the document.</p></td>
         </tr>
     </tbody>
   </table>

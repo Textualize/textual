@@ -6302,7 +6302,7 @@ There were some interesting technical challenges in building Toolong that I'd li
 <p>This isn't specifically <a href="https://github.com/textualize/textual/">Textual</a> related. These techniques could be employed in any Python project.</p>
 </div>
 <p>These techniques aren't difficult, and shouldn't be beyond anyone with an intermediate understanding of Python.
-They are the kind of "if you know it you kow it" knowledge that you may not need often, but can make a massive difference when you do!</p>
+They are the kind of "if you know it you know it" knowledge that you may not need often, but can make a massive difference when you do!</p>
 <h2 id="opening-large-files">Opening large files<a class="headerlink" href="#opening-large-files" title="Permanent link">&para;</a></h2>
 <p>If you were to open a very large text file (multiple gigabyte in size) in an editor, you will almost certainly find that it takes a while. You may also find that it doesn't load at all because you don't have enough memory, or it disables features like syntax highlighting.</p>
 <p>This is because most app will do something analogous to this:</p>
@@ -6326,7 +6326,7 @@ And that would likely have worked just fine, but there is a bit of magic in the 
 <p>The <a href="https://docs.python.org/3/library/mmap.html">mmap</a> module is a real gem for this kind of thing.
 A <em>memory mapped file</em> is an OS-level construct that <em>appears</em> to load a file instantaneously.
 In Python you get an object which behaves like a <code>bytearray</code>, but loads data from disk when it is accessed.
-The beauty of this module is that you can work with files in much the same way as if you had read the entire file in to memory, while leaving the actually reading of the file to the OS.</p>
+The beauty of this module is that you can work with files in much the same way as if you had read the entire file in to memory, while leaving the actual reading of the file to the OS.</p>
 <p>Here's the method that Toolong uses to scan for line breaks.
 Forgive the micro-optimizations, I was going for raw execution speed here.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>    <span class="k">def</span> <span class="nf">scan_line_breaks</span><span class="p">(</span>
