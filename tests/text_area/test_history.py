@@ -10,6 +10,7 @@ from textual.pilot import Pilot
 from textual.widgets import TextArea
 from textual.widgets.text_area import EditHistory, Selection
 
+MAX_CHECKPOINTS = 5
 SIMPLE_TEXT = """\
 ABCDE
 FGHIJ
@@ -36,7 +37,9 @@ class TextAreaApp(App):
         text_area = TextArea()
         # Update the history object to a version that supports mocking the time.
         text_area.history = TimeMockableEditHistory(
-            checkpoint_timer=2.0, checkpoint_max_characters=100
+            max_checkpoints=MAX_CHECKPOINTS,
+            checkpoint_timer=2.0,
+            checkpoint_max_characters=100,
         )
         self.text_area = text_area
         yield text_area
@@ -306,3 +309,35 @@ async def test_undo_redo_deletions_batched(pilot: Pilot, text_area: TextArea):
     text_area.redo()
     assert text_area.text == checkpoint_two
     assert text_area.selection == Selection.cursor((0, 0))
+
+
+async def test_max_checkpoints(pilot: Pilot, text_area: TextArea):
+    assert len(text_area.history.undo_stack) == 0
+    for index in range(MAX_CHECKPOINTS):
+        # Press enter since that will ensure a checkpoint is created.
+        await pilot.press("enter")
+
+    assert len(text_area.history.undo_stack) == MAX_CHECKPOINTS
+    await pilot.press("enter")
+    # Ensure we don't go over the limit.
+    assert len(text_area.history.undo_stack) == MAX_CHECKPOINTS
+
+
+async def test_redo_stack(pilot: Pilot, text_area: TextArea):
+    assert len(text_area.history.redo_stack) == 0
+    await pilot.press("enter")
+    await pilot.press(*"123")
+    assert len(text_area.history.undo_stack) == 2
+    assert len(text_area.history.redo_stack) == 0
+    text_area.undo()
+    assert len(text_area.history.undo_stack) == 1
+    assert len(text_area.history.redo_stack) == 1
+    text_area.undo()
+    assert len(text_area.history.undo_stack) == 0
+    assert len(text_area.history.redo_stack) == 2
+    text_area.redo()
+    assert len(text_area.history.undo_stack) == 1
+    assert len(text_area.history.redo_stack) == 1
+    text_area.redo()
+    assert len(text_area.history.undo_stack) == 2
+    assert len(text_area.history.redo_stack) == 0

@@ -341,6 +341,7 @@ TextArea:light .text-area--cursor {
         soft_wrap: bool = True,
         tab_behaviour: Literal["focus", "indent"] = "focus",
         show_line_numbers: bool = False,
+        max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -355,6 +356,7 @@ TextArea:light .text-area--cursor {
             soft_wrap: Enable soft wrapping.
             tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
+            max_checkpoints: The maximum number of undo history checkpoints to retain.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
@@ -376,7 +378,9 @@ TextArea:light .text-area--cursor {
         """Compiled regular expression for what we consider to be a 'word'."""
 
         self.history: EditHistory = EditHistory(
-            checkpoint_timer=2.0, checkpoint_max_characters=100
+            max_checkpoints=max_checkpoints,
+            checkpoint_timer=2.0,
+            checkpoint_max_characters=100,
         )
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
@@ -1228,11 +1232,11 @@ TextArea:light .text-area--cursor {
 
     def undo(self) -> None:
         """Undo the edits since the last checkpoint (the most recent batch of edits)."""
-        edits = self.history.pop_undo()
+        edits = self.history._pop_undo()
         self._undo_batch(edits)
 
     def redo(self) -> None:
-        edits = self.history.pop_redo()
+        edits = self.history._pop_redo()
         self._redo_batch(edits)
 
     def _undo_batch(self, edits: Sequence[Edit]) -> None:

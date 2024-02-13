@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import time
+from collections import deque
 from dataclasses import dataclass, field
 
 from textual.document._edit import Edit
@@ -17,17 +18,13 @@ class HistoryException(Exception):
 class EditHistory:
     """Manages batching/checkpointing of Edits into groups that can be undone/redone in the TextArea."""
 
+    max_checkpoints: int
+
     checkpoint_timer: float
     """Maximum number of seconds since last edit until a new batch is created."""
 
     checkpoint_max_characters: int
     """Maximum number of characters that can appear in a batch before a new batch is formed."""
-
-    _undo_stack: list[list[Edit]] = field(init=False, default_factory=list)
-    """Batching Edit operations together (edits are simply grouped together in lists)."""
-
-    _redo_stack: list[list[Edit]] = field(init=False, default_factory=list)
-    """Stores batches that have been undone, allowing them to be redone."""
 
     _last_edit_time: float = field(init=False, default_factory=time.monotonic)
 
@@ -43,6 +40,12 @@ class EditHistory:
     If an edit removes any text from the document at all, it's considered a replacement.
     Every other edit is considered a pure insertion.
     """
+
+    def __post_init__(self) -> None:
+        self._undo_stack: deque[list[Edit]] = deque(maxlen=self.max_checkpoints)
+        """Batching Edit operations together (edits are simply grouped together in lists)."""
+        self._redo_stack: deque[list[Edit]] = deque()
+        """Stores batches that have been undone, allowing them to be redone."""
 
     def record(self, edit: Edit) -> None:
         """Record an Edit so that it may be undone and redone.
@@ -114,7 +117,7 @@ class EditHistory:
         if contains_newline or edit_characters > 1:
             self.checkpoint()
 
-    def pop_undo(self) -> list[Edit] | None:
+    def _pop_undo(self) -> list[Edit] | None:
         """Pop the latest batch from the undo stack and return it.
 
         This will also place it on the redo stack.
@@ -130,7 +133,7 @@ class EditHistory:
             return batch
         return None
 
-    def pop_redo(self) -> list[Edit] | None:
+    def _pop_redo(self) -> list[Edit] | None:
         """Redo the latest batch on the redo stack and return it.
 
         This will also place it on the undo stack (with a forced checkpoint to ensure
@@ -160,6 +163,16 @@ class EditHistory:
     def checkpoint(self) -> None:
         """Ensure the next recorded edit starts a new batch."""
         self._force_end_batch = True
+
+    @property
+    def undo_stack(self) -> list[list[Edit]]:
+        """A copy of the undo stack, with references to the original Edits."""
+        return list(self._undo_stack)
+
+    @property
+    def redo_stack(self) -> list[list[Edit]]:
+        """A copy of the redo stack, with references to the original Edits."""
+        return list(self._redo_stack)
 
     def _get_time(self) -> float:
         """Get the time from the monotonic clock.
