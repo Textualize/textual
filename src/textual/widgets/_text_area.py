@@ -1901,8 +1901,8 @@ TextArea {
         """Handle a deletion performed using a keyboard (as opposed to the API).
 
         Args:
-            start: The start location of the text to delete (inclusive).
-            end: The end location of the text to delete (inclusive).
+            start: The start location of the text to delete.
+            end: The end location of the text to delete.
 
         Returns:
             An EditResult or None if no edit was performed (e.g. on read-only mode).
@@ -1921,8 +1921,8 @@ TextArea {
 
         Args:
             insert: The text to insert into the document.
-            start: The start location of the text to replace (inclusive).
-            end: The end location of the text to replace (inclusive).
+            start: The start location of the text to replace.
+            end: The end location of the text to replace.
 
         Returns:
             An EditResult or None if no edit was performed (e.g. on read-only mode).
