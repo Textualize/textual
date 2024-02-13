@@ -1883,7 +1883,11 @@ TextArea {
         return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
     def clear(self) -> EditResult:
-        """Delete all text from the document."""
+        """Delete all text from the document.
+
+        Returns:
+            An EditResult relating to the deletion of all content.
+        """
         document = self.document
         last_line = document[-1]
         document_end = (document.line_count, len(last_line))
@@ -1894,7 +1898,15 @@ TextArea {
         start: Location,
         end: Location,
     ) -> EditResult | None:
-        """Handle a deletion performed using a keyboard (as opposed to the API)."""
+        """Handle a deletion performed using a keyboard (as opposed to the API).
+
+        Args:
+            start: The start location of the text to delete (inclusive).
+            end: The end location of the text to delete (inclusive).
+
+        Returns:
+            An EditResult or None if no edit was performed (e.g. on read-only mode).
+        """
         if self.read_only:
             return None
         return self.delete(start, end, maintain_selection_offset=False)
@@ -1905,7 +1917,16 @@ TextArea {
         start: Location,
         end: Location,
     ) -> EditResult | None:
-        """Handle a replacement performed using a keyboard (as opposed to the API)."""
+        """Handle a replacement performed using a keyboard (as opposed to the API).
+
+        Args:
+            insert: The text to insert into the document.
+            start: The start location of the text to replace (inclusive).
+            end: The end location of the text to replace (inclusive).
+
+        Returns:
+            An EditResult or None if no edit was performed (e.g. on read-only mode).
+        """
         if self.read_only:
             return None
         return self.replace(insert, start, end, maintain_selection_offset=False)
