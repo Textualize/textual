@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
+- Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
 
 ## [0.51.1] - 2024-02-09
 
