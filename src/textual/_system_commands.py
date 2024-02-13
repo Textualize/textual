@@ -66,8 +66,7 @@ class SystemCommands(Provider):
         # Loop over all applicable commands, find those that match and offer
         # them up to the command palette.
         for name, runnable, help_text in self._system_commands:
-            match = matcher.match(name)
-            if match > 0:
+            if (match := matcher.match(name)) > 0:
                 yield Hit(
                     match,
                     matcher.highlight(name),
