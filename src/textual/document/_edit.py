@@ -118,7 +118,12 @@ class Edit:
         return undo_edit_result
 
     def after(self, text_area: TextArea) -> None:
-        """Possibly update the cursor location after the widget has been refreshed.
+        """Hook for running code after an Edit has been performed via `Edit.do` *and*
+        side effects such as re-wrapping the document and refreshing the display
+        have completed.
+
+        For example, we can't record cursor visual offset until we know where the cursor will
+        land *after* wrapping has been performed, so we must wait until here to do it.
 
         Args:
             text_area: The `TextArea` this operation was performed on.
