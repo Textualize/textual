@@ -91,41 +91,51 @@ TextArea {
     border: tall $background;
     padding: 0 1;
     
+    & .text-area--gutter {
+        color: $text 40%;
+    }
+    
+    & .text-area--cursor-gutter {
+        color: $text 60%;
+        background: $boost;
+        text-style: bold;
+    }
+    
+    & .text-area--cursor-line {
+       background: $boost;
+    }
+    
+    & .text-area--selection {
+        background: $accent-lighten-1 40%;
+    }
+    
+    & .text-area--matching-bracket {
+        background: $foreground 30%;
+    }
+    
     &:focus {
         border: tall $accent;
     }
-}
-
-.text-area--cursor {
-    color: $text 90%;
-    background: $foreground 90%;
-}
-
-TextArea:light .text-area--cursor {
-    color: $text 90%;
-    background: $foreground 70%;
-}
-
-.text-area--gutter {
-    color: $text 40%;
-}
-
-.text-area--cursor-line {
-    background: $boost;
-}
-
-.text-area--cursor-gutter {
-    color: $text 60%;
-    background: $boost;
-    text-style: bold;
-}
-
-.text-area--selection {
-    background: $accent-lighten-1 40%;
-}
-
-.text-area--matching-bracket {
-    background: $foreground 30%;
+    
+    &:dark {
+        .text-area--cursor {
+           color: $text 90%;
+            background: $foreground 90%;
+        }
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
+        }
+    }
+    
+    &:light {
+        .text-area--cursor {
+            color: $text 90%;
+            background: $foreground 70%;   
+        }
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
+        }
+    }
 }
 """
 
@@ -295,6 +305,14 @@ TextArea:light .text-area--cursor {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
+    read_only: Reactive[bool] = reactive(False)
+    """True if the content is read-only.
+    
+    Read-only means end users cannot insert, delete or replace content.
+    
+    The document can still be edited programmatically via the API.
+    """
+
     _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
@@ -337,6 +355,7 @@ TextArea:light .text-area--cursor {
         language: str | None = None,
         theme: str | None = None,
         soft_wrap: bool = True,
+        read_only: bool = False,
         tab_behaviour: Literal["focus", "indent"] = "focus",
         show_line_numbers: bool = False,
         name: str | None = None,
@@ -351,7 +370,9 @@ TextArea:light .text-area--cursor {
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            read_only: Enable read-only mode. This prevents edits using the keyboard.
+            tab_behaviour: If 'focus', pressing tab will switch focus.
+                If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
@@ -414,9 +435,9 @@ TextArea:light .text-area--cursor {
 
         self.theme = theme
 
-        self._reactive_soft_wrap = soft_wrap
-
-        self._reactive_show_line_numbers = show_line_numbers
+        self.set_reactive(TextArea.soft_wrap, soft_wrap)
+        self.set_reactive(TextArea.read_only, read_only)
+        self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
 
         self.tab_behaviour = tab_behaviour
 
@@ -561,6 +582,10 @@ TextArea:light .text-area--cursor {
         else:
             self._pause_blink(visible=self.has_focus)
 
+    def _watch_read_only(self, read_only: bool) -> None:
+        self.set_class(read_only, "-read-only")
+        self._set_theme(self._theme.name)
+
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
         self._cursor_offset = self.wrapped_document.location_to_offset(
@@ -656,10 +681,10 @@ TextArea:light .text-area--cursor {
         if padding is applied, the colours match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self):
+    def _app_dark_toggled(self) -> None:
         self._set_theme(self._theme.name)
 
-    def _set_theme(self, theme: str | None):
+    def _set_theme(self, theme: str | None) -> None:
         theme_object: TextAreaTheme | None
         if theme is None:
             # If the theme is None, use the default.
@@ -1219,6 +1244,10 @@ TextArea:light .text-area--cursor {
 
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
+        self._restart_blink()
+        if self.read_only:
+            return
+
         key = event.key
         insert_values = {
             "enter": "\n",
@@ -1234,7 +1263,6 @@ TextArea:light .text-area--cursor {
             else:
                 insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
 
-        self._restart_blink()
         if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
@@ -1243,7 +1271,7 @@ TextArea:light .text-area--cursor {
             # None because we've checked that it's printable.
             assert insert is not None
             start, end = self.selection
-            self.replace(insert, start, end, maintain_selection_offset=False)
+            self._replace_via_keyboard(insert, start, end)
 
     def _find_columns_to_next_tab_stop(self) -> int:
         """Get the location of the next tab stop after the cursors position on the current line.
@@ -1310,6 +1338,11 @@ TextArea:light .text-area--cursor {
         _, cursor_y = self._cursor_offset
         self.refresh_lines(cursor_y)
 
+    def _watch__cursor_visible(self) -> None:
+        """When the cursor visibility is toggled, ensure the row is refreshed."""
+        _, cursor_y = self._cursor_offset
+        self.refresh_lines(cursor_y)
+
     def _restart_blink(self) -> None:
         """Reset the cursor blink timer."""
         if self.cursor_blink:
@@ -1347,7 +1380,9 @@ TextArea:light .text-area--cursor {
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
-        result = self.replace(event.text, *self.selection)
+        if self.read_only:
+            return
+        result = self._replace_via_keyboard(event.text, *self.selection)
         self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
@@ -1847,12 +1882,54 @@ TextArea:light .text-area--cursor {
         """
         return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
-    def clear(self) -> None:
-        """Delete all text from the document."""
+    def clear(self) -> EditResult:
+        """Delete all text from the document.
+
+        Returns:
+            An EditResult relating to the deletion of all content.
+        """
         document = self.document
         last_line = document[-1]
         document_end = (document.line_count, len(last_line))
-        self.delete((0, 0), document_end, maintain_selection_offset=False)
+        return self.delete((0, 0), document_end, maintain_selection_offset=False)
+
+    def _delete_via_keyboard(
+        self,
+        start: Location,
+        end: Location,
+    ) -> EditResult | None:
+        """Handle a deletion performed using a keyboard (as opposed to the API).
+
+        Args:
+            start: The start location of the text to delete.
+            end: The end location of the text to delete.
+
+        Returns:
+            An EditResult or None if no edit was performed (e.g. on read-only mode).
+        """
+        if self.read_only:
+            return None
+        return self.delete(start, end, maintain_selection_offset=False)
+
+    def _replace_via_keyboard(
+        self,
+        insert: str,
+        start: Location,
+        end: Location,
+    ) -> EditResult | None:
+        """Handle a replacement performed using a keyboard (as opposed to the API).
+
+        Args:
+            insert: The text to insert into the document.
+            start: The start location of the text to replace.
+            end: The end location of the text to replace.
+
+        Returns:
+            An EditResult or None if no edit was performed (e.g. on read-only mode).
+        """
+        if self.read_only:
+            return None
+        return self.replace(insert, start, end, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location.
@@ -1865,7 +1942,7 @@ TextArea:light .text-area--cursor {
         if selection.is_empty:
             end = self.get_cursor_left_location()
 
-        self.delete(start, end, maintain_selection_offset=False)
+        self._delete_via_keyboard(start, end)
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
@@ -1878,7 +1955,7 @@ TextArea:light .text-area--cursor {
         if selection.is_empty:
             end = self.get_cursor_right_location()
 
-        self.delete(start, end, maintain_selection_offset=False)
+        self._delete_via_keyboard(start, end)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
@@ -1895,20 +1972,21 @@ TextArea:light .text-area--cursor {
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
 
-        self.delete(from_location, to_location, maintain_selection_offset=False)
-        self.move_cursor_relative(columns=end_column, record_width=False)
+        deletion = self._delete_via_keyboard(from_location, to_location)
+        if deletion is not None:
+            self.move_cursor_relative(columns=end_column, record_width=False)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
         from_location = self.selection.end
         to_location = self.get_cursor_line_start_location()
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
         to_location = self.get_cursor_line_end_location()
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""
@@ -1919,11 +1997,11 @@ TextArea:light .text-area--cursor {
         # deletes the characters within the selection range, ignoring word boundaries.
         start, end = self.selection
         if start != end:
-            self.delete(start, end, maintain_selection_offset=False)
+            self._delete_via_keyboard(start, end)
             return
 
         to_location = self.get_cursor_word_left_location()
-        self.delete(self.selection.end, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(self.selection.end, to_location)
 
     def action_delete_word_right(self) -> None:
         """Deletes the word to the right of the cursor and keeps the cursor at the same location.
@@ -1937,7 +2015,7 @@ TextArea:light .text-area--cursor {
 
         start, end = self.selection
         if start != end:
-            self.delete(start, end, maintain_selection_offset=False)
+            self._delete_via_keyboard(start, end)
             return
 
         cursor_row, cursor_column = end
@@ -1957,7 +2035,7 @@ TextArea:light .text-area--cursor {
         else:
             to_location = (cursor_row, current_row_length)
 
-        self.delete(end, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(end, to_location)
 
 
 @dataclass

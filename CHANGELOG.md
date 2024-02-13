@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- TextArea now has `read_only` mode https://github.com/Textualize/textual/pull/4151
 - Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
 
 ## [0.51.1] - 2024-02-09
