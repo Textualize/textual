@@ -109,7 +109,7 @@ class DocumentNavigator:
             location: The location to examine.
 
         Returns:
-            True if and only if the document is on the last line of the document.
+            True if and only if the document is at the end of a line in the document.
         """
         row, column = location
         row_length = len(self._document[row])
