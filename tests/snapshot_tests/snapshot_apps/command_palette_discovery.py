@@ -18,7 +18,7 @@ class TestSource(Provider):
     async def search(self, query: str) -> Hits:
         matcher = self.matcher(query)
         for n in range(10):
-            command = f"This is a test of this code {n}"
+            command = f"This should not appear {n}"
             yield Hit(
                 n / 10,
                 matcher.highlight(command),
