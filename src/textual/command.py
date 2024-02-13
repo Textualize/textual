@@ -313,7 +313,7 @@ class Command(Option):
     def __init__(
         self,
         prompt: RenderableType,
-        command: Hit,
+        command: DiscoveryHit | Hit,
         id: str | None = None,
         disabled: bool = False,
     ) -> None:
@@ -538,7 +538,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     def __init__(self) -> None:
         """Initialise the command palette."""
         super().__init__(id=self._PALETTE_ID)
-        self._selected_command: Hit | None = None
+        self._selected_command: DiscoveryHit | Hit | None = None
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
@@ -714,7 +714,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         self.query_one(CommandList).set_class(self._show_busy, "--populating")
 
     @staticmethod
-    async def _consume(hits: Hits, commands: Queue[Hit]) -> None:
+    async def _consume(hits: Hits, commands: Queue[DiscoveryHit | Hit]) -> None:
         """Consume a source of matching commands, feeding the given command queue.
 
         Args:
@@ -724,7 +724,9 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         async for hit in hits:
             await commands.put(hit)
 
-    async def _search_for(self, search_value: str) -> AsyncGenerator[Hit, bool]:
+    async def _search_for(
+        self, search_value: str
+    ) -> AsyncGenerator[DiscoveryHit | Hit, bool]:
         """Search for a given search value amongst all of the command providers.
 
         Args:
@@ -735,7 +737,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         """
 
         # Set up a queue to stream in the command hits from all the providers.
-        commands: Queue[Hit] = Queue()
+        commands: Queue[DiscoveryHit | Hit] = Queue()
 
         # Fire up an instance of each command provider, inside a task, and
         # have them go start looking for matches.
