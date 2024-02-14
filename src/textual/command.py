@@ -255,6 +255,8 @@ class Provider(ABC):
         """
         await self._wait_init()
         if self._init_success:
+            # An empty search string is a discovery search, anything else is
+            # a conventional search.
             hits = self.search(query) if query else self.discover()
             async for hit in hits:
                 if hit is not NotImplemented:
