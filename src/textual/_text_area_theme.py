@@ -107,7 +107,7 @@ class TextAreaTheme:
                 self.cursor_style = cursor_style
             else:
                 # There's no component style either, fallback to a default.
-                self.cursor_style = Style(
+                self.cursor_style = Style.from_color(
                     color=background_color.rich_color,
                     bgcolor=background_color.inverse.rich_color,
                 )
