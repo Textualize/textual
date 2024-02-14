@@ -104,6 +104,11 @@ In the example above, the callback is a lambda which calls the `open_file` metho
 The [`discover`][textual.command.Provider.discover] method is responsible for providing results (or *hits*) that should be shown to the user when the command palette input is empty;
 this is to aid in command discoverability.
 
+!!! note
+
+    Because `discover` hits are shown the moment the command palette is opened, these should ideally be quick to generate;
+    commands that might take time to generate are best left for `search` -- use `discover` to help the user easily find the most important commands.
+
 `discover` is similar to `search` but with the difference that no search value is passed to it, and it should *yield* instances of [`DiscoveryHit`][textual.command.DiscoveryHit].
 There is no matching and no match score is needed.
 The [`DiscoveryHit`][textual.command.DiscoveryHit] contains information about how the hit should be displayed, and an optional help string;
