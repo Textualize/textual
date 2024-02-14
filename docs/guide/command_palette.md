@@ -101,7 +101,7 @@ In the example above, the callback is a lambda which calls the `open_file` metho
 
 ### discover method
 
-The [`discover`][textual.command.Provider.discover] method is responsible for providing results (or *hits*) that should be shown to the user when the command palette input is empty;
+The [`discover`][textual.command.Provider.discover] method is responsible for providing results (or *discovery hits*) that should be shown to the user when the command palette input is empty;
 this is to aid in command discoverability.
 
 !!! note
