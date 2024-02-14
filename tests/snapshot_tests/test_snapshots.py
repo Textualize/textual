@@ -887,6 +887,20 @@ I am the final line."""
     )
 
 
+def test_text_area_read_only_cursor_rendering(snap_compare):
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.theme = "css"
+        text_area.text = "Hello, world!"
+        text_area.read_only = True
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, 5),
+    )
+
+
 @pytest.mark.syntax
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
