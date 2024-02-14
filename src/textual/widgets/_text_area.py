@@ -408,7 +408,7 @@ TextArea {
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of highlights for that line."""
 
-        self._highlight_query: "Query" | None = None
+        self._highlight_query: "Query | None" = None
         """The query that's currently being used for highlighting."""
 
         self.document: DocumentBase = Document(text)
@@ -681,8 +681,9 @@ TextArea {
         if padding is applied, the colours match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self) -> None:
-        self._set_theme(self._theme.name)
+    def _app_dark_toggled(self):
+        if self._theme:
+            self._set_theme(self._theme.name)
 
     def _set_theme(self, theme: str | None) -> None:
         theme_object: TextAreaTheme | None
@@ -760,7 +761,7 @@ TextArea {
 
     def register_language(
         self,
-        language: str | "Language",
+        language: "str | Language",
         highlight_query: str,
     ) -> None:
         """Register a language and corresponding highlight query.
@@ -817,7 +818,7 @@ TextArea {
         if TREE_SITTER and language:
             # Attempt to get the override language.
             text_area_language = self._languages.get(language, None)
-            document_language: str | "Language"
+            document_language: "str | Language"
             if text_area_language:
                 document_language = text_area_language.language
                 highlight_query = text_area_language.highlight_query
@@ -955,11 +956,11 @@ TextArea {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
-    def render_line(self, widget_y: int) -> Strip:
+    def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
         Args:
-            widget_y: Y Coordinate of line relative to the widget region.
+            y: Y Coordinate of line relative to the widget region.
 
         Returns:
             A rendered line.
@@ -973,7 +974,7 @@ TextArea {
         scroll_x, scroll_y = self.scroll_offset
 
         # Account for how much the TextArea is scrolled.
-        y_offset = widget_y + scroll_y
+        y_offset = y + scroll_y
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
