@@ -264,7 +264,7 @@ TextArea {
     it first using  [`TextArea.register_language`][textual.widgets._text_area.TextArea.register_language].
     """
 
-    theme: Reactive[str | None] = reactive(None, always_update=True, init=False)
+    theme: Reactive[str] = reactive("css", always_update=True, init=False)
     """The name of the theme to use.
 
     Themes must be registered using  [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme] before they can be used.
@@ -355,7 +355,7 @@ TextArea {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = None,
+        theme: str = "css",
         soft_wrap: bool = True,
         tab_behavior: Literal["focus", "indent"] = "focus",
         read_only: bool = False,
@@ -433,14 +433,13 @@ TextArea {
 
         self._set_document(text, language)
 
-        self._theme: TextAreaTheme | None = None
+        self.language = language
+        self.theme = theme
+
+        self._theme: TextAreaTheme
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
-
-        self.language = language
-
-        self.theme = theme
 
         self.set_reactive(TextArea.soft_wrap, soft_wrap)
         self.set_reactive(TextArea.read_only, read_only)
@@ -457,7 +456,7 @@ TextArea {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = "monokai",
+        theme: str = "monokai",
         soft_wrap: bool = False,
         tab_behavior: Literal["focus", "indent"] = "indent",
         show_line_numbers: bool = True,
@@ -684,27 +683,22 @@ TextArea {
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
-    def _watch_theme(self, theme: str | None) -> None:
+    def _watch_theme(self, theme: str) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
-        if padding is applied, the colours match."""
+        if padding is applied, the colors match."""
         self._set_theme(theme)
 
     def _app_dark_toggled(self):
-        if self._theme:
-            self._set_theme(self._theme.name)
+        self._set_theme(self._theme.name)
 
-    def _set_theme(self, theme: str | None) -> None:
+    def _set_theme(self, theme: str) -> None:
         theme_object: TextAreaTheme | None
-        if theme is None:
-            # If the theme is None, use the default.
-            theme_object = TextAreaTheme.default()
-        else:
-            # If the user supplied a string theme name, find it and apply it.
-            try:
-                theme_object = self._themes[theme]
-            except KeyError:
-                theme_object = TextAreaTheme.get_builtin_theme(theme)
 
+        # If the user supplied a string theme name, find it and apply it.
+        try:
+            theme_object = self._themes[theme]
+        except KeyError:
+            theme_object = TextAreaTheme.get_builtin_theme(theme)
             if theme_object is None:
                 raise ThemeDoesNotExist(
                     f"{theme!r} is not a builtin theme, or it has not been registered. "
@@ -1257,13 +1251,13 @@ TextArea {
 
     def undo(self) -> None:
         """Undo the edits since the last checkpoint (the most recent batch of edits)."""
-        edits = self.history._pop_undo()
-        self._undo_batch(edits)
+        if edits := self.history._pop_undo():
+            self._undo_batch(edits)
 
     def redo(self) -> None:
         """Redo the most recently undone batch of edits."""
-        edits = self.history._pop_redo()
-        self._redo_batch(edits)
+        if edits := self.history._pop_redo():
+            self._redo_batch(edits)
 
     def _undo_batch(self, edits: Sequence[Edit]) -> None:
         """Undo a batch of Edits.
@@ -1440,7 +1434,7 @@ TextArea {
         )
         return gutter_width
 
-    def _on_mount(self, _: events.Mount) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         self.blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor_blink_visible,
@@ -1488,7 +1482,7 @@ TextArea {
             self.selection = Selection(selection_start, target)
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        """Finalise the selection that has been made using the mouse."""
+        """Finalize the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
@@ -1498,8 +1492,8 @@ TextArea {
         """When a paste occurs, insert the text from the paste event into the document."""
         if self.read_only:
             return
-        result = self._replace_via_keyboard(event.text, *self.selection)
-        self.move_cursor(result.end_location)
+        if result := self._replace_via_keyboard(event.text, *self.selection):
+            self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.
