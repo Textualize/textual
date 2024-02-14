@@ -1,91 +1,64 @@
-[
- "@media"
- "@charset"
- "@namespace"
- "@supports"
- "@keyframes"
- (at_keyword)
- (to)
- (from)
- ] @keyword
+(comment) @comment
 
-"@import" @include
+(tag_name) @tag
+(nesting_selector) @tag
+(universal_selector) @tag
 
-(comment) @comment @spell
+"~" @operator
+">" @operator
+"+" @operator
+"-" @operator
+"*" @operator
+"/" @operator
+"=" @operator
+"^=" @operator
+"|=" @operator
+"~=" @operator
+"$=" @operator
+"*=" @operator
 
-[
- (tag_name)
- (nesting_selector)
- (universal_selector)
- ] @type
+"and" @operator
+"or" @operator
+"not" @operator
+"only" @operator
+
+(attribute_selector (plain_value) @string)
+(pseudo_element_selector (tag_name) @attribute)
+(pseudo_class_selector (class_name) @attribute)
+
+(class_name) @property
+(id_name) @property
+(namespace_name) @property
+(property_name) @property
+(feature_name) @property
+
+(attribute_name) @attribute
 
 (function_name) @function
 
-[
- "~"
- ">"
- "+"
- "-"
- "*"
- "/"
- "="
- "^="
- "|="
- "~="
- "$="
- "*="
- "and"
- "or"
- "not"
- "only"
- ] @operator
+((property_name) @variable
+ (#match? @variable "^--"))
+((plain_value) @variable
+ (#match? @variable "^--"))
 
-(important) @type.qualifier
+"@media" @keyword
+"@import" @keyword
+"@charset" @keyword
+"@namespace" @keyword
+"@supports" @keyword
+"@keyframes" @keyword
+(at_keyword) @keyword
+(to) @keyword
+(from) @keyword
+(important) @keyword
 
-(attribute_selector (plain_value) @string)
-(pseudo_element_selector "::" (tag_name) @property)
-(pseudo_class_selector (class_name) @property)
+(string_value) @string
+(color_value) @string.special
 
-[
- (class_name)
- (id_name)
- (property_name)
- (feature_name)
- (attribute_name)
- ] @property
+(integer_value) @number
+(float_value) @number
+(unit) @type
 
-(namespace_name) @namespace
-
-((property_name) @type.definition
-  (#lua-match? @type.definition "^[-][-]"))
-((plain_value) @type
-  (#lua-match? @type "^[-][-]"))
-
-[
- (string_value)
- (color_value)
- (unit)
- ] @string
-
-[
- (integer_value)
- (float_value)
- ] @number
-
-[
- "#"
- ","
- "."
- ":"
- "::"
- ";"
- ] @punctuation.delimiter
-
-[
- "{"
- ")"
- "("
- "}"
- ] @punctuation.bracket
-
-(ERROR) @error
+"#" @punctuation.delimiter
+"," @punctuation.delimiter
+":" @punctuation.delimiter
