@@ -85,7 +85,7 @@ class TextAreaLanguage:
     highlight_query: str
 
 
-class TextArea(ScrollView, can_focus=True):
+class TextArea(ScrollView):
     DEFAULT_CSS = """\
 TextArea {
     width: 1fr;

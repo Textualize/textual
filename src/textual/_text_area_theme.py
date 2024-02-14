@@ -182,15 +182,6 @@ class TextAreaTheme:
         """
         return list(_BUILTIN_THEMES.values())
 
-    @classmethod
-    def default(cls) -> TextAreaTheme:
-        """Get the default syntax theme.
-
-        Returns:
-            The default TextAreaTheme (probably "css").
-        """
-        return _CSS_THEME
-
 
 _MONOKAI = TextAreaTheme(
     name="monokai",
@@ -388,6 +379,3 @@ _BUILTIN_THEMES = {
     "vscode_dark": _DARK_VS,
     "github_light": _GITHUB_LIGHT,
 }
-
-DEFAULT_THEME = TextAreaTheme.get_builtin_theme("basic")
-"""The default TextAreaTheme used by Textual."""

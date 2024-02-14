@@ -473,14 +473,15 @@ A detailed view of these classes is out of scope, but do note that a lot of the 
 
 | Name                   | Type                     | Default       | Description                                                      |
 |------------------------|--------------------------|---------------|------------------------------------------------------------------|
-| `language`             | `str | None`         | `None`                                                           | The language to use for syntax highlighting.     |
-| `theme`                | `str | None`         | `TextAreaTheme.default()`                                        | The theme to use for syntax highlighting.         |
+| `language`             | `str | None`             | `None`        | The language to use for syntax highlighting.                     |
+| `theme`                | `str`                    | `"css"`       | The theme to use.                                                |
 | `selection`            | `Selection`              | `Selection()` | The current selection.                                           |
 | `show_line_numbers`    | `bool`                   | `False`       | Show or hide line numbers.                                       |
 | `indent_width`         | `int`                    | `4`           | The number of spaces to indent and width of tabs.                |
 | `match_cursor_bracket` | `bool`                   | `True`        | Enable/disable highlighting matching brackets under cursor.      |
 | `cursor_blink`         | `bool`                   | `True`        | Enable/disable blinking of the cursor when the widget has focus. |
 | `soft_wrap`            | `bool`                   | `True`        | Enable/disable soft wrapping.                                    |
+| `read_only`            | `bool`                   | `False`       | Enable/disable read-only mode.                                   |
 
 ## Messages
 
