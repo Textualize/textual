@@ -278,13 +278,13 @@ class Provider(ABC):
         """A default collection of hits for the provider.
 
         Yields:
-            Instances of [`Hit`][textual.command.Hit].
+            Instances of [`DiscoveryHit`][textual.command.DiscoveryHit].
 
         Note:
             This is different from
             [`search`][textual.command.Provider.search] in that it should
-            yield [`Hit`s][textual.command.Hit] that should be shown by
-            default; before user input.
+            yield [`DiscoveryHit`s][textual.command.DiscoveryHit] that
+            should be shown by default; before user input.
 
             It is permitted to *not* implement this method.
         """
