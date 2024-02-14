@@ -8,7 +8,7 @@ class TextAreaDialog(ModalScreen):
 
     def compose(self) -> ComposeResult:
         yield TextArea(
-            tab_behaviour="focus",  # the default
+            tab_behavior="focus",  # the default
         )
         yield Button("Submit")
 
@@ -18,10 +18,10 @@ class TextAreaDialogApp(App):
         self.push_screen(TextAreaDialog())
 
 
-async def test_escape_key_when_tab_behaviour_is_focus():
+async def test_escape_key_when_tab_behavior_is_focus():
     """Regression test for https://github.com/Textualize/textual/issues/4110
 
-    When the `tab_behaviour` of TextArea is the default to shift focus,
+    When the `tab_behavior` of TextArea is the default to shift focus,
     pressing <Escape> should not shift focus but instead skip and allow any
     parent bindings to run.
     """
@@ -37,8 +37,8 @@ async def test_escape_key_when_tab_behaviour_is_focus():
         assert not isinstance(pilot.app.screen, TextAreaDialog)
 
 
-async def test_escape_key_when_tab_behaviour_is_indent():
-    """When the `tab_behaviour` of TextArea is indent rather than switch focus,
+async def test_escape_key_when_tab_behavior_is_indent():
+    """When the `tab_behavior` of TextArea is indent rather than switch focus,
     pressing <Escape> should instead shift focus.
     """
 

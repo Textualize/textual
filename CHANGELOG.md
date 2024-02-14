@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `DirectoryTree.reload` and `DirectoryTree.reload_node` now preserve state when reloading https://github.com/Textualize/textual/issues/4056
 - Fixed a crash in the TextArea when performing a backward replace https://github.com/Textualize/textual/pull/4126
 - Fixed selection not updating correctly when pasting while there's a non-zero selection https://github.com/Textualize/textual/pull/4126
-- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behaviour` is the default https://github.com/Textualize/textual/issues/4110
+- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behavior` is the default https://github.com/Textualize/textual/issues/4110
 - `TextArea` cursor will now be invisible before first focus https://github.com/Textualize/textual/pull/4128
 - Fix toggling `TextArea.cursor_blink` reactive when widget does not have focus https://github.com/Textualize/textual/pull/4128
 
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Significant changes to `TextArea.__init__` default values/behaviour https://github.com/Textualize/textual/pull/3933
   - `soft_wrap=True` - soft wrapping is now enabled by default.
   - `show_line_numbers=False` - line numbers are now disabled by default.
-  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default.
+  - `tab_behavior="focus"` - pressing the tab key now switches focus instead of indenting by default.
 - Breaking change: `TextArea` default theme changed to CSS, and default styling changed https://github.com/Textualize/textual/pull/4074
 - Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
 - Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
@@ -93,7 +93,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
 - Added `Widget.allow_focus` and `Widget.allow_focus_children` https://github.com/Textualize/textual/pull/3989
 - Added `TextArea.soft_wrap` reactive attribute added https://github.com/Textualize/textual/pull/3933
-- Added `TextArea.tab_behaviour` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.tab_behavior` reactive attribute added https://github.com/Textualize/textual/pull/3933
 - Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
 - Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
 - Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
