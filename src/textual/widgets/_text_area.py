@@ -339,7 +339,7 @@ TextArea:light .text-area--cursor {
         language: str | None = None,
         theme: str | None = None,
         soft_wrap: bool = True,
-        tab_behaviour: Literal["focus", "indent"] = "focus",
+        tab_behavior: Literal["focus", "indent"] = "focus",
         show_line_numbers: bool = False,
         max_checkpoints: int = 50,
         name: str | None = None,
@@ -354,7 +354,7 @@ TextArea:light .text-area--cursor {
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
             max_checkpoints: The maximum number of undo history checkpoints to retain.
             name: The name of the `TextArea` widget.
@@ -426,7 +426,7 @@ TextArea:light .text-area--cursor {
 
         self._reactive_show_line_numbers = show_line_numbers
 
-        self.tab_behaviour = tab_behaviour
+        self.tab_behavior = tab_behavior
 
         # When `app.dark` is toggled, reset the theme (since it caches values).
         self.watch(self.app, "dark", self._app_dark_toggled, init=False)
@@ -1236,6 +1236,7 @@ TextArea:light .text-area--cursor {
         self._undo_batch(edits)
 
     def redo(self) -> None:
+        """Redo the most recently undone batch of edits."""
         edits = self.history._pop_redo()
         self._redo_batch(edits)
 
@@ -1337,7 +1338,7 @@ TextArea:light .text-area--cursor {
         insert_values = {
             "enter": "\n",
         }
-        if self.tab_behaviour == "indent":
+        if self.tab_behavior == "indent":
             if key == "escape":
                 event.stop()
                 event.prevent_default()
