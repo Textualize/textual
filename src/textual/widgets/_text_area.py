@@ -1249,10 +1249,18 @@ TextArea {
         if edits := self.history._pop_undo():
             self._undo_batch(edits)
 
+    def action_undo(self) -> None:
+        """Undo the edits since the last checkpoint (the most recent batch of edits)."""
+        self.undo()
+
     def redo(self) -> None:
         """Redo the most recently undone batch of edits."""
         if edits := self.history._pop_redo():
             self._redo_batch(edits)
+
+    def action_redo(self) -> None:
+        """Redo the most recently undone batch of edits."""
+        self.redo()
 
     def _undo_batch(self, edits: Sequence[Edit]) -> None:
         """Undo a batch of Edits.
