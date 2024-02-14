@@ -99,7 +99,7 @@ In the example above, the callback is a lambda which calls the `open_file` metho
     This is a deliberate design decision taken to prevent a single broken `Provider` class from making the command palette unusable.
     Errors in command providers will be logged to the [console](./devtools.md).
 
-### Shutdown method
+### shutdown method
 
 The [`shutdown`][textual.command.Provider.shutdown] method is called when the command palette is closed.
 You can use this as a hook to gracefully close any objects you created in [`startup`][textual.command.Provider.startup].
