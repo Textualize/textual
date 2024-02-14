@@ -6,7 +6,7 @@ from textual.widgets import TextArea
 from textual.widgets._text_area import ThemeDoesNotExist
 
 
-class TextAreaApp(App):
+class TextAreaApp(App[None]):
     def compose(self) -> ComposeResult:
         yield TextArea("print('hello')", language="python")
 
@@ -20,7 +20,7 @@ async def test_default_theme():
 
 
 async def test_setting_builtin_themes():
-    class MyTextAreaApp(App):
+    class MyTextAreaApp(App[None]):
         def compose(self) -> ComposeResult:
             yield TextArea("print('hello')", language="python", theme="vscode_dark")
 

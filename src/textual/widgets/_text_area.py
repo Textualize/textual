@@ -383,7 +383,6 @@ TextArea {
             disabled: True if the widget is disabled.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._initial_text = text
 
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to TextAreaLanguage."""
@@ -523,7 +522,7 @@ TextArea {
         if not self._highlight_query:
             return
 
-        captures = self.document.query_syntax_tree(self._highlight_query)
+        captures = self.document.query_syntax_tree(highlight_query)
         for capture in captures:
             node, highlight_name = capture
             node_start_row, node_start_column = node.start_point
@@ -613,7 +612,7 @@ TextArea {
             If the character is not available for bracket matching, `None` is returned.
         """
         match_location = None
-        bracket_stack = []
+        bracket_stack: list[str] = []
         if bracket in _OPENING_BRACKETS:
             for candidate, candidate_location in self._yield_character_locations(
                 search_from
@@ -663,11 +662,7 @@ TextArea {
                 f"then switch to it by setting the `TextArea.language` attribute."
             )
 
-        self._set_document(
-            self.document.text if self.document is not None else self._initial_text,
-            language,
-        )
-        self._initial_text = ""
+        self._set_document(self.document.text, language)
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -1002,7 +997,7 @@ TextArea {
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
-        virtual_width, virtual_height = self.virtual_size
+        virtual_width, _virtual_height = self.virtual_size
 
         selection = self.selection
         start, end = selection
@@ -1573,7 +1568,7 @@ TextArea {
                 that is wide enough.
         """
         if select:
-            start, end = self.selection
+            start, _end = self.selection
             self.selection = Selection(start, location)
         else:
             self.selection = Selection.cursor(location)
@@ -1606,7 +1601,7 @@ TextArea {
                 that is wide enough.
         """
         clamp_visitable = self.clamp_visitable
-        start, end = self.selection
+        _start, end = self.selection
         current_row, current_column = end
         target = clamp_visitable((current_row + rows, current_column + columns))
         self.move_cursor(target, select, center, record_width)
@@ -2073,7 +2068,7 @@ TextArea {
         """Deletes the lines which intersect with the selection."""
         start, end = self.selection
         start, end = sorted((start, end))
-        start_row, start_column = start
+        start_row, _start_column = start
         end_row, end_column = end
 
         # Generally editors will only delete line the end line of the
@@ -2160,7 +2155,7 @@ def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
     Returns:
         A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
     """
-    byte_to_codepoint = {}
+    byte_to_codepoint: dict[int, int] = {}
     current_byte_offset = 0
     code_point_offset = 0
 
