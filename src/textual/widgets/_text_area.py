@@ -3,14 +3,14 @@ from __future__ import annotations
 import dataclasses
 import re
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Optional, Tuple
+from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
 
 from rich.style import Style
 from rich.text import Text
-from typing_extensions import Literal, Protocol, runtime_checkable
+from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER
@@ -24,6 +24,8 @@ from textual.document._document import (
     _utf8_encode,
 )
 from textual.document._document_navigator import DocumentNavigator
+from textual.document._edit import Edit
+from textual.document._history import EditHistory
 from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
@@ -355,9 +357,10 @@ TextArea {
         language: str | None = None,
         theme: str | None = None,
         soft_wrap: bool = True,
+        tab_behavior: Literal["focus", "indent"] = "focus",
         read_only: bool = False,
-        tab_behaviour: Literal["focus", "indent"] = "focus",
         show_line_numbers: bool = False,
+        max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -370,10 +373,10 @@ TextArea {
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
+            tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             read_only: Enable read-only mode. This prevents edits using the keyboard.
-            tab_behaviour: If 'focus', pressing tab will switch focus.
-                If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
+            max_checkpoints: The maximum number of undo history checkpoints to retain.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
@@ -394,7 +397,11 @@ TextArea {
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-        self._undo_stack: list[Undoable] = []
+        self.history: EditHistory = EditHistory(
+            max_checkpoints=max_checkpoints,
+            checkpoint_timer=2.0,
+            checkpoint_max_characters=100,
+        )
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
         self._selecting = False
@@ -439,7 +446,7 @@ TextArea {
         self.set_reactive(TextArea.read_only, read_only)
         self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
 
-        self.tab_behaviour = tab_behaviour
+        self.tab_behavior = tab_behavior
 
         # When `app.dark` is toggled, reset the theme (since it caches values).
         self.watch(self.app, "dark", self._app_dark_toggled, init=False)
@@ -452,7 +459,7 @@ TextArea {
         language: str | None = None,
         theme: str | None = "monokai",
         soft_wrap: bool = False,
-        tab_behaviour: Literal["focus", "indent"] = "indent",
+        tab_behavior: Literal["focus", "indent"] = "indent",
         show_line_numbers: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -462,14 +469,14 @@ TextArea {
         """Construct a new `TextArea` with sensible defaults for editing code.
 
         This instantiates a `TextArea` with line numbers enabled, soft wrapping
-        disabled, and "indent" tab behaviour.
+        disabled, "indent" tab behavior, and the "monokai" theme.
 
         Args:
             text: The initial text to load into the TextArea.
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
@@ -481,7 +488,7 @@ TextArea {
             language=language,
             theme=theme,
             soft_wrap=soft_wrap,
-            tab_behaviour=tab_behaviour,
+            tab_behavior=tab_behavior,
             show_line_numbers=show_line_numbers,
             name=name,
             id=id,
@@ -544,6 +551,7 @@ TextArea {
         if focus:
             self._restart_blink()
             self.app.cursor_position = self.cursor_screen_offset
+            self.history.checkpoint()
         else:
             self._pause_blink(visible=False)
 
@@ -871,11 +879,12 @@ TextArea {
     def load_text(self, text: str) -> None:
         """Load text into the TextArea.
 
-        This will replace the text currently in the TextArea.
+        This will replace the text currently in the TextArea and clear the edit history.
 
         Args:
             text: The text to load into the TextArea.
         """
+        self.history.clear()
         self._set_document(text, self.language)
 
     def _on_resize(self) -> None:
@@ -1190,6 +1199,8 @@ TextArea {
     def text(self, value: str) -> None:
         """Replace the text currently in the TextArea. This is an alias of `load_text`.
 
+        Setting this value will clear the edit history.
+
         Args:
             value: The text to load into the TextArea.
         """
@@ -1226,6 +1237,7 @@ TextArea {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
+        self.history.record(edit)
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
@@ -1243,6 +1255,108 @@ TextArea {
         self.post_message(self.Changed(self))
         return result
 
+    def undo(self) -> None:
+        """Undo the edits since the last checkpoint (the most recent batch of edits)."""
+        edits = self.history._pop_undo()
+        self._undo_batch(edits)
+
+    def redo(self) -> None:
+        """Redo the most recently undone batch of edits."""
+        edits = self.history._pop_redo()
+        self._redo_batch(edits)
+
+    def _undo_batch(self, edits: Sequence[Edit]) -> None:
+        """Undo a batch of Edits.
+
+        The sequence must be chronologically ordered by edit time.
+
+        There must be no edits missing from the sequence, or the resulting content
+        will be incorrect.
+
+        Args:
+            edits: The edits to undo, in the order they were originally performed.
+        """
+        if not edits:
+            return
+
+        old_gutter_width = self.gutter_width
+        minimum_from = edits[-1].from_location
+        maximum_old_end = (0, 0)
+        maximum_new_end = (0, 0)
+        for edit in reversed(edits):
+            edit.undo(self)
+            end_location = (
+                edit._edit_result.end_location if edit._edit_result else (0, 0)
+            )
+            if edit.from_location < minimum_from:
+                minimum_from = edit.from_location
+            if end_location > maximum_old_end:
+                maximum_old_end = end_location
+            if edit.to_location > maximum_new_end:
+                maximum_new_end = edit.to_location
+
+        new_gutter_width = self.gutter_width
+        if old_gutter_width != new_gutter_width:
+            self.wrapped_document.wrap(self.wrap_width, self.indent_width)
+        else:
+            self.wrapped_document.wrap_range(
+                minimum_from, maximum_old_end, maximum_new_end
+            )
+
+        self._refresh_size()
+        for edit in reversed(edits):
+            edit.after(self)
+        self._build_highlight_map()
+        self.post_message(self.Changed(self))
+
+    def _redo_batch(self, edits: Sequence[Edit]) -> None:
+        """Redo a batch of Edits in order.
+
+        The sequence must be chronologically ordered by edit time.
+
+        Edits are applied from the start of the sequence to the end.
+
+        There must be no edits missing from the sequence, or the resulting content
+        will be incorrect.
+
+        Args:
+            edits: The edits to redo.
+        """
+        if not edits:
+            return
+
+        old_gutter_width = self.gutter_width
+        minimum_from = edits[0].from_location
+        maximum_old_end = (0, 0)
+        maximum_new_end = (0, 0)
+        for edit in edits:
+            edit.do(self, record_selection=False)
+            end_location = (
+                edit._edit_result.end_location if edit._edit_result else (0, 0)
+            )
+            if edit.from_location < minimum_from:
+                minimum_from = edit.from_location
+            if end_location > maximum_new_end:
+                maximum_new_end = end_location
+            if edit.to_location > maximum_old_end:
+                maximum_old_end = edit.to_location
+
+        new_gutter_width = self.gutter_width
+        if old_gutter_width != new_gutter_width:
+            self.wrapped_document.wrap(self.wrap_width, self.indent_width)
+        else:
+            self.wrapped_document.wrap_range(
+                minimum_from,
+                maximum_old_end,
+                maximum_new_end,
+            )
+
+        self._refresh_size()
+        for edit in edits:
+            edit.after(self)
+        self._build_highlight_map()
+        self.post_message(self.Changed(self))
+
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
         self._restart_blink()
@@ -1253,7 +1367,7 @@ TextArea {
         insert_values = {
             "enter": "\n",
         }
-        if self.tab_behaviour == "indent":
+        if self.tab_behavior == "indent":
             if key == "escape":
                 event.stop()
                 event.prevent_default()
@@ -1364,6 +1478,7 @@ TextArea {
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
         self._pause_blink(visible=True)
+        self.history.checkpoint()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
@@ -1474,6 +1589,8 @@ TextArea {
 
         if center:
             self.scroll_cursor_visible(center)
+
+        self.history.checkpoint()
 
     def move_cursor_relative(
         self,
@@ -2037,143 +2154,6 @@ TextArea {
             to_location = (cursor_row, current_row_length)
 
         self._delete_via_keyboard(end, to_location)
-
-
-@dataclass
-class Edit:
-    """Implements the Undoable protocol to replace text at some range within a document."""
-
-    text: str
-    """The text to insert. An empty string is equivalent to deletion."""
-    from_location: Location
-    """The start location of the insert."""
-    to_location: Location
-    """The end location of the insert"""
-    maintain_selection_offset: bool
-    """If True, the selection will maintain its offset to the replacement range."""
-    _updated_selection: Selection | None = field(init=False, default=None)
-    """Where the selection should move to after the replace happens."""
-
-    def do(self, text_area: TextArea) -> EditResult:
-        """Perform the edit operation.
-
-        Args:
-            text_area: The `TextArea` to perform the edit on.
-
-        Returns:
-            An `EditResult` containing information about the replace operation.
-        """
-        text = self.text
-
-        edit_from = self.from_location
-        edit_to = self.to_location
-
-        # This code is mostly handling how we adjust TextArea.selection
-        # when an edit is made to the document programmatically.
-        # We want a user who is typing away to maintain their relative
-        # position in the document even if an insert happens before
-        # their cursor position.
-
-        edit_bottom_row, edit_bottom_column = self.bottom
-
-        selection_start, selection_end = text_area.selection
-        selection_start_row, selection_start_column = selection_start
-        selection_end_row, selection_end_column = selection_end
-
-        replace_result = text_area.document.replace_range(self.top, self.bottom, text)
-
-        new_edit_to_row, new_edit_to_column = replace_result.end_location
-
-        # TODO: We could maybe improve the situation where the selection
-        #  and the edit range overlap with each other.
-        column_offset = new_edit_to_column - edit_bottom_column
-        target_selection_start_column = (
-            selection_start_column + column_offset
-            if edit_bottom_row == selection_start_row
-            and edit_bottom_column <= selection_start_column
-            else selection_start_column
-        )
-        target_selection_end_column = (
-            selection_end_column + column_offset
-            if edit_bottom_row == selection_end_row
-            and edit_bottom_column <= selection_end_column
-            else selection_end_column
-        )
-
-        row_offset = new_edit_to_row - edit_bottom_row
-        target_selection_start_row = selection_start_row + row_offset
-        target_selection_end_row = selection_end_row + row_offset
-
-        if self.maintain_selection_offset:
-            self._updated_selection = Selection(
-                start=(target_selection_start_row, target_selection_start_column),
-                end=(target_selection_end_row, target_selection_end_column),
-            )
-        else:
-            self._updated_selection = Selection.cursor(replace_result.end_location)
-
-        return replace_result
-
-    def undo(self, text_area: TextArea) -> EditResult:
-        """Undo the edit operation.
-
-        Args:
-            text_area: The `TextArea` to undo the insert operation on.
-
-        Returns:
-            An `EditResult` containing information about the replace operation.
-        """
-        raise NotImplementedError()
-
-    def after(self, text_area: TextArea) -> None:
-        """Possibly update the cursor location after the widget has been refreshed.
-
-        Args:
-            text_area: The `TextArea` this operation was performed on.
-        """
-        if self._updated_selection is not None:
-            text_area.selection = self._updated_selection
-        text_area.record_cursor_width()
-
-    @property
-    def top(self) -> Location:
-        """The Location impacted by this edit that is nearest the start of the document."""
-        return min([self.from_location, self.to_location])
-
-    @property
-    def bottom(self) -> Location:
-        """The Location impacted by this edit that is nearest the end of the document."""
-        return max([self.from_location, self.to_location])
-
-
-@runtime_checkable
-class Undoable(Protocol):
-    """Protocol for actions performed in the text editor which can be done and undone.
-
-    These are typically actions which affect the document (e.g. inserting and deleting
-    text), but they can really be anything.
-
-    To perform an edit operation, pass the Edit to `TextArea.edit()`"""
-
-    def do(self, text_area: TextArea) -> Any:
-        """Do the action.
-
-        Args:
-            The `TextArea` to perform the action on.
-
-        Returns:
-            Anything. This protocol doesn't prescribe what is returned.
-        """
-
-    def undo(self, text_area: TextArea) -> Any:
-        """Undo the action.
-
-        Args:
-            The `TextArea` to perform the action on.
-
-        Returns:
-            Anything. This protocol doesn't prescribe what is returned.
-        """
 
 
 @lru_cache(maxsize=128)
