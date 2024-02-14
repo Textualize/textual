@@ -439,7 +439,7 @@ TextArea:light .text-area--cursor {
         language: str | None = None,
         theme: str | None = "monokai",
         soft_wrap: bool = False,
-        tab_behaviour: Literal["focus", "indent"] = "indent",
+        tab_behavior: Literal["focus", "indent"] = "indent",
         show_line_numbers: bool = True,
         name: str | None = None,
         id: str | None = None,
@@ -449,14 +449,14 @@ TextArea:light .text-area--cursor {
         """Construct a new `TextArea` with sensible defaults for editing code.
 
         This instantiates a `TextArea` with line numbers enabled, soft wrapping
-        disabled, "indent" tab behaviour, and the "monokai" theme.
+        disabled, "indent" tab behavior, and the "monokai" theme.
 
         Args:
             text: The initial text to load into the TextArea.
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
@@ -468,7 +468,7 @@ TextArea:light .text-area--cursor {
             language=language,
             theme=theme,
             soft_wrap=soft_wrap,
-            tab_behaviour=tab_behaviour,
+            tab_behavior=tab_behavior,
             show_line_numbers=show_line_numbers,
             name=name,
             id=id,
