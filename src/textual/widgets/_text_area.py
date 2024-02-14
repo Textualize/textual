@@ -522,7 +522,7 @@ TextArea {
         if not self._highlight_query:
             return
 
-        captures = self.document.query_syntax_tree(highlight_query)
+        captures = self.document.query_syntax_tree(self._highlight_query)
         for capture in captures:
             node, highlight_name = capture
             node_start_row, node_start_column = node.start_point
