@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - TextArea now has `read_only` mode https://github.com/Textualize/textual/pull/4151
 - Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
 - Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
+- Added support for command palette command discoverability https://github.com/Textualize/textual/pull/4154
 
 ### Changed
 
@@ -31,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
 - Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
 
-### Added 
+### Added
 
 - Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
 
