@@ -11,6 +11,9 @@ on:
       - "**.lock"
       - "Makefile"
 
+env:
+  PYTEST_ADDOPTS: "--color=yes"
+
 jobs:
   build:
     runs-on: ${{ matrix.os }}
