@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
 - Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
 
+### Fixed
+
+- Fixed out-of-view `Tab` not being scrolled into view when `Tabs.active` is assigned https://github.com/Textualize/textual/issues/4150
+- Fixed `TabbedContent.TabActivate` not being posted when `TabbedContent.active` is assigned https://github.com/Textualize/textual/issues/4150
+
 ### Changed
 
 - Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
@@ -31,7 +36,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
 - Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
 
-### Added 
+### Added
 
 - Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
 
