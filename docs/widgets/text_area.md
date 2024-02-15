@@ -305,6 +305,7 @@ If `indent_type == "spaces"`, pressing ++tab++ will insert up to `indent_width` 
 ### Undo and redo
 
 `TextArea` offers `undo` and `redo` methods.
+By default, `undo` is bound to <kbd>Ctrl</kbd>+<kbd>Z</kbd> and `redo` to <kbd>Ctrl</kbd>+<kbd>Y</kbd>.
 
 The `TextArea` uses a heuristic to place _checkpoints_ after certain types of edit.
 When you call `undo`, all of the edits between now and the most recent checkpoint are reverted.
