@@ -44,6 +44,54 @@ async def test_nest_app():
         assert app.query_one("#foo .paul").styles.background == Color.parse("blue")
 
 
+class ListOfNestedSelectorsApp(App[None]):
+    CSS = """
+    Label {
+        &.foo, &.bar {
+            background: red;
+        }
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Label("one", classes="foo")
+        yield Label("two", classes="bar")
+        yield Label("three", classes="heh")
+
+
+async def test_lists_of_selectors_in_nested_css() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3969."""
+    app = ListOfNestedSelectorsApp()
+    red = Color.parse("red")
+    async with app.run_test():
+        assert app.query_one(".foo").styles.background == red
+        assert app.query_one(".bar").styles.background == red
+        assert app.query_one(".heh").styles.background != red
+
+
+class DeclarationAfterNestedApp(App[None]):
+    # css = "Screen{Label{background:red;}background:green;}"
+    CSS = """
+    Screen {
+        Label {
+            background: red;
+        }
+        background: green;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Label("one")
+
+
+async def test_rule_declaration_after_nested() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3999."""
+    app = DeclarationAfterNestedApp()
+    async with app.run_test():
+        assert app.screen.styles.background == Color.parse("green")
+        assert app.query_one(Label).styles.background == Color.parse("red")
+
+
 @pytest.mark.parametrize(
     ("css", "exception"),
     [
