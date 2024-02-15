@@ -699,7 +699,7 @@ TextArea {
                     f"{theme!r} is not a builtin theme, or it has not been registered. "
                     f"To use a custom theme, register it first using `register_theme`, "
                     f"then switch to that theme by setting the `TextArea.theme` attribute."
-                )
+                ) from None
 
         self._theme = dataclasses.replace(theme_object)
         if theme_object:

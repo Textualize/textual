@@ -1,7 +1,6 @@
-
 # TextArea
 
-!!! tip 
+!!! tip
 
     Added in version 0.38.0. Soft wrapping added in version 0.48.0.
 
@@ -67,7 +66,6 @@ text_area.language = "markdown"
 
 !!! note
     More built-in languages will be added in the future. For now, you can [add your own](#adding-support-for-custom-languages).
-
 
 ### Reading content from `TextArea`
 
@@ -136,7 +134,7 @@ There are a number of additional utility methods available for interacting with 
 
 ##### Location information
 
-A number of properties exist on `TextArea` which give information about the current cursor location.
+Many properties exist on `TextArea` which give information about the current cursor location.
 These properties begin with `cursor_at_`, and return booleans.
 For example, [`cursor_at_start_of_line`][textual.widgets._text_area.TextArea.cursor_at_start_of_line] tells us if the cursor is at a start of line.
 
@@ -175,12 +173,11 @@ the cursor, selection, gutter, and more.
 
 #### Default theme
 
-The default `TextArea` theme is called `css`.
-This a theme which takes values entirely from CSS.
+The default `TextArea` theme is called `css`, which takes it's values entirely from CSS.
 This means that the default appearance of the widget fits nicely into a standard Textual application,
 and looks right on both dark and light mode.
 
-When using the `css` theme, you can make use of component classes to style elements of the `TextArea`.
+When using the `css` theme, you can make use of [component classes][textual.widgets.TextArea.COMPONENT_CLASSES] to style elements of the `TextArea`.
 For example, the CSS code `TextArea .text-area--cursor { background: green; }` will make the cursor `green`.
 
 More complex applications such as code editors may want to use pre-defined themes such as `monokai`.
@@ -218,7 +215,7 @@ On setting this attribute the `TextArea` will immediately refresh to display the
 !!! note
 
     Custom themes are only relevant for people who are looking to customize syntax highlighting.
-    If you're only editing plain text, and wish to recolor aspects of the `TextArea`, you should use the provided component classes.
+    If you're only editing plain text, and wish to recolor aspects of the `TextArea`, you should use the [provided component classes][textual.widgets.TextArea.COMPONENT_CLASSES].
 
 Using custom (non-builtin) themes is a two-step process:
 
@@ -309,8 +306,9 @@ If `indent_type == "spaces"`, pressing ++tab++ will insert up to `indent_width` 
 
 `TextArea` offers `undo` and `redo` methods.
 
-The `TextArea` uses a heuristic to place *checkpoints* after certain types of edit.
+The `TextArea` uses a heuristic to place _checkpoints_ after certain types of edit.
 When you call `undo`, all of the edits between now and the most recent checkpoint are reverted.
+You can manually add a checkpoint by calling the [`TextArea.history.checkpoint()`][textual.widgets.text_area.EditHistory.checkpoint] instance method.
 
 The undo and redo history uses a stack-based system, where a single item on the stack represents a single checkpoint.
 In memory-constrained environments, you may wish to reduce the maximum number of checkpoints that can exist.
@@ -486,7 +484,6 @@ If you notice some highlights are missing after registering a language, the issu
     The names assigned in tree-sitter highlight queries are often reused across multiple languages.
     For example, `@string` is used in many languages to highlight strings.
 
-
 #### Navigation and wrapping information
 
 If you're building functionality on top of `TextArea`, it may be useful to inspect the `navigator` and `wrapped_document` attributes.
@@ -524,7 +521,6 @@ The `TextArea` widget defines the following bindings:
       show_root_heading: false
       show_root_toc_entry: false
 
-
 ## Component classes
 
 The `TextArea` defines component classes that can style various aspects of the widget.
@@ -545,7 +541,6 @@ Styles from the `theme` attribute take priority.
 - The tree-sitter documentation [website](https://tree-sitter.github.io/tree-sitter/).
 - The tree-sitter Python bindings [repository](https://github.com/tree-sitter/py-tree-sitter).
 - `py-tree-sitter-languages` [repository](https://github.com/grantjenks/py-tree-sitter-languages) (provides binary wheels for a large variety of tree-sitter languages).
-
 
 ## Additional notes
 
