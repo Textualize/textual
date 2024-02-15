@@ -220,6 +220,8 @@ TextArea {
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
+        Binding("ctrl+z", "undo", "Undo", show=False),
+        Binding("ctrl+y", "redo", "Redo", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -251,6 +253,8 @@ TextArea {
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
     | f7                     | Select all text in the document.             |
+    | ctrl+z                 | Undo.                                        |
+    | ctrl+y                 | Redo.                                        |
     """
 
     language: Reactive[str | None] = reactive(None, always_update=True, init=False)
