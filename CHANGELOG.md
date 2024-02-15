@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
 - Added support for command palette command discoverability https://github.com/Textualize/textual/pull/4154
 
+### Fixed
+
+- Fixed out-of-view `Tab` not being scrolled into view when `Tabs.active` is assigned https://github.com/Textualize/textual/issues/4150
+- Fixed `TabbedContent.TabActivate` not being posted when `TabbedContent.active` is assigned https://github.com/Textualize/textual/issues/4150
+
 ### Changed
 
 - Breaking change: Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
