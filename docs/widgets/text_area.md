@@ -288,7 +288,7 @@ This immediately updates the appearance of the `TextArea`:
 Pressing the ++tab++ key will shift focus to the next widget in your application by default.
 This matches how other widgets work in Textual.
 
-To have ++tab++ insert a `\t` character, set the `tab_behaviour` attribute to the string value `"indent"`.
+To have ++tab++ insert a `\t` character, set the `tab_behavior` attribute to the string value `"indent"`.
 While in this mode, you can shift focus by pressing the ++escape++ key.
 
 ### Indentation

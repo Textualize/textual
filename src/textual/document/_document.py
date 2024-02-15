@@ -52,7 +52,7 @@ def _detect_newline_style(text: str) -> Newline:
         text: The text to inspect.
 
     Returns:
-        The NewlineStyle used in the file.
+        The Newline used in the file.
     """
     if "\r\n" in text:  # Windows newline
         return "\r\n"

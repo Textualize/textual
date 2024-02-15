@@ -11,7 +11,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - TextArea now has `read_only` mode https://github.com/Textualize/textual/pull/4151
 - Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
+- Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
 - Added support for command palette command discoverability https://github.com/Textualize/textual/pull/4154
+
+### Changed
+
+- Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
 
 ## [0.51.1] - 2024-02-09
 
