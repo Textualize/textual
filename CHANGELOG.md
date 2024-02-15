@@ -19,6 +19,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Breaking change: Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
 - `TextArea.theme` now defaults to `"css"` instead of None, and is no longer optional https://github.com/Textualize/textual/pull/4157
 
+### Fixed
+
+- Improve support for selector lists in nested TCSS https://github.com/Textualize/textual/issues/3969
+- Improve support for rule declarations after nested TCSS rule sets https://github.com/Textualize/textual/issues/3999
+
 ## [0.50.1] - 2024-02-09
 
 ### Fixed

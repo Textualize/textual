@@ -64,6 +64,7 @@ expect_root_nested = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
+    declaration_name=r"[a-zA-Z_\-]+\:",
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
@@ -105,6 +106,7 @@ expect_selector_continue = Expect(
     new_selector=r",",
     declaration_set_start=r"\{",
     declaration_set_end=r"\}",
+    nested=r"\&",
 ).expect_eof(True)
 
 # A rule declaration e.g. "text: red;"
