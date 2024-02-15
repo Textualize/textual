@@ -511,13 +511,16 @@ class TabbedContent(Widget):
         if self._is_associated_tabs(event.tabs):
             # The message is relevant, so consume it and update state accordingly.
             event.stop()
+            assert event.tab.id is not None
             switcher = self.get_child_by_type(ContentSwitcher)
             switcher.current = ContentTab.sans_prefix(event.tab.id)
             self.active = ContentTab.sans_prefix(event.tab.id)
             self.post_message(
                 TabbedContent.TabActivated(
                     tabbed_content=self,
-                    tab=event.tab,
+                    tab=self.get_child_by_type(ContentTabs).get_content_tab(
+                        self.active
+                    ),
                 )
             )
 
