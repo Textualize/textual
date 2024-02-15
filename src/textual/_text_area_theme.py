@@ -107,7 +107,7 @@ class TextAreaTheme:
                 self.cursor_style = cursor_style
             else:
                 # There's no component style either, fallback to a default.
-                self.cursor_style = Style(
+                self.cursor_style = Style.from_color(
                     color=background_color.rich_color,
                     bgcolor=background_color.inverse.rich_color,
                 )
@@ -379,7 +379,7 @@ _GITHUB_LIGHT = TextAreaTheme(
     },
 )
 
-_CSS_THEME = TextAreaTheme(name="css")
+_CSS_THEME = TextAreaTheme(name="css", syntax_styles=_DARK_VS.syntax_styles)
 
 _BUILTIN_THEMES = {
     "css": _CSS_THEME,

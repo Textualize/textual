@@ -229,6 +229,22 @@ def test_markdown_viewer_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown_viewer.py")
 
 
+def test_markdown_theme_switching(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["t"])
+
+
+def test_markdown_dark_theme_override(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["d", "wait:100"]
+    )
+
+
+def test_markdown_light_theme_override(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["l", "t", "wait:100"]
+    )
+
+
 def test_checkbox_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "checkbox.py")
 
@@ -741,6 +757,14 @@ def test_command_palette(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
 
 
+def test_command_palette_discovery(snap_compare) -> None:
+    async def run_before(pilot) -> None:
+        pilot.app.screen.query_one(Input).cursor_blink = False
+        await pilot.app.screen.workers.wait_for_complete()
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before)
+
+
 # --- textual-dev library preview tests ---
 
 
@@ -860,6 +884,20 @@ I am the final line."""
         SNAPSHOT_APPS_DIR / "text_area.py",
         run_before=setup_selection,
         terminal_size=(30, text.count("\n") + 4),
+    )
+
+
+def test_text_area_read_only_cursor_rendering(snap_compare):
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.theme = "css"
+        text_area.text = "Hello, world!"
+        text_area.read_only = True
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, 5),
     )
 
 
