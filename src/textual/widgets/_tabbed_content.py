@@ -514,7 +514,13 @@ class TabbedContent(Widget):
             assert event.tab.id is not None
             switcher = self.get_child_by_type(ContentSwitcher)
             switcher.current = ContentTab.sans_prefix(event.tab.id)
-            self.active = ContentTab.sans_prefix(event.tab.id)
+            with self.prevent(self.TabActivated):
+                # We prevent TabbedContent.TabActivated because it is also
+                # posted from the watcher for active, we're also about to
+                # post it below too, which is valid as here we're reacting
+                # to what the Tabs are doing. This ensures we don't get
+                # doubled-up messages.
+                self.active = ContentTab.sans_prefix(event.tab.id)
             self.post_message(
                 TabbedContent.TabActivated(
                     tabbed_content=self,
@@ -552,6 +558,12 @@ class TabbedContent(Widget):
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
             self.get_child_by_type(ContentSwitcher).current = active
+            self.post_message(
+                TabbedContent.TabActivated(
+                    tabbed_content=self,
+                    tab=self.get_child_by_type(ContentTabs).get_content_tab(active),
+                )
+            )
 
     @property
     def tab_count(self) -> int:
