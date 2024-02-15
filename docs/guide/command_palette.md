@@ -110,9 +110,11 @@ this is to aid in command discoverability.
     commands that might take time to generate are best left for `search` -- use `discover` to help the user easily find the most important commands.
 
 `discover` is similar to `search` but with these differences:
- - `discover` accepts no parameters (instead of the search value);
- - `discover` yields instances of [`DiscoveryHit`][textual.command.DiscoveryHit]` (instead of instances of xxx);
- - discovery hits are sorted in ascending alphabetical order because there is no matching and no match score is generated.
+
+- `discover` accepts no parameters (instead of the search value)
+- `discover` yields instances of [`DiscoveryHit`][textual.command.DiscoveryHit] (instead of instances of [`Hit`][textual.command.Hit])
+- discovery hits are sorted in ascending alphabetical order because there is no matching and no match score is generated
+
 Instances of [`DiscoveryHit`][textual.command.DiscoveryHit] contain information about how the hit should be displayed, an optional help string, and a callback which will be run if the user selects that command.
 
 ### shutdown method
