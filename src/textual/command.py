@@ -284,7 +284,7 @@ class Provider(ABC):
             This is different from
             [`search`][textual.command.Provider.search] in that it should
             yield [`DiscoveryHit`s][textual.command.DiscoveryHit] that
-            should be shown by default; before user input.
+            should be shown by default (before user input).
 
             It is permitted to *not* implement this method.
         """
