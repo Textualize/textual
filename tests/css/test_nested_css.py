@@ -7,7 +7,7 @@ from textual.color import Color
 from textual.containers import Vertical
 from textual.css.parse import parse
 from textual.css.tokenizer import EOFError, TokenError
-from textual.widgets import Label
+from textual.widgets import Button, Label
 
 
 class NestedApp(App):
@@ -111,3 +111,32 @@ def test_parse_errors(css: str, exception: type[Exception]) -> None:
     """Check some CSS which should fail."""
     with pytest.raises(exception):
         list(parse("", css, ("foo", "")))
+
+
+class PseudoClassesNestedCSSApp(App[None]):
+    CSS = """
+    Screen {
+        Button {
+            background: green;
+            &.foo:focus {
+                background: red;
+            }
+        }
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        yield Button("This is class foo", classes="foo")
+        yield Button("This is class bar", classes="bar")
+
+
+async def test_pseudo_classes_work_in_nested_css() -> None:
+    """Test that the tokenizer manages to find pseudo-classes in nested TCSS.
+
+    Regression test for https://github.com/Textualize/textual/issues/4039.
+    """
+    app = PseudoClassesNestedCSSApp()
+    async with app.run_test():
+        assert app.query_one(".foo").has_focus  # Sanity check.
+        assert app.query_one(".foo").styles.background == Color.parse("red")
+        assert app.query_one(".bar").styles.background == Color.parse("green")

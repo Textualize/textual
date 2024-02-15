@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Improve support for selector lists in nested TCSS https://github.com/Textualize/textual/issues/3969
 - Improve support for rule declarations after nested TCSS rule sets https://github.com/Textualize/textual/issues/3999
+- Recognise pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
 
 ## [0.50.1] - 2024-02-09
 

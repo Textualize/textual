@@ -3,6 +3,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Iterable
 
+from .constants import VALID_PSEUDO_CLASSES
 from .tokenizer import Expect, Token, Tokenizer
 
 if TYPE_CHECKING:
@@ -117,7 +118,10 @@ expect_declaration = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
-    declaration_name=r"[a-zA-Z_\-]+\:",
+    # If we have a pseudo-class after the declaration name, then it's probably a
+    # selector followed by a pseudo-class in nested TCSS.
+    # See https://github.com/Textualize/textual/issues/4039.
+    declaration_name=r"[a-zA-Z_\-]+\:(?!" + r"|".join(VALID_PSEUDO_CLASSES) + r")",
     declaration_set_end=r"\}",
     #
     selector_start_id=r"\#" + IDENTIFIER,
