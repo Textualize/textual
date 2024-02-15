@@ -683,7 +683,7 @@ TextArea {
         if padding is applied, the colors match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self):
+    def _app_dark_toggled(self) -> None:
         self._set_theme(self._theme.name)
 
     def _set_theme(self, theme: str) -> None:
