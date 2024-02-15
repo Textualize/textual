@@ -558,12 +558,13 @@ class TabbedContent(Widget):
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
             self.get_child_by_type(ContentSwitcher).current = active
-            self.post_message(
-                TabbedContent.TabActivated(
-                    tabbed_content=self,
-                    tab=self.get_child_by_type(ContentTabs).get_content_tab(active),
+            if active:
+                self.post_message(
+                    TabbedContent.TabActivated(
+                        tabbed_content=self,
+                        tab=self.get_child_by_type(ContentTabs).get_content_tab(active),
+                    )
                 )
-            )
 
     @property
     def tab_count(self) -> int:
