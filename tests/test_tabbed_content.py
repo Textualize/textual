@@ -137,13 +137,12 @@ async def test_tabbed_content_initial():
 
 async def test_tabbed_content_messages():
     class TabbedApp(App):
-        message = None
+        activation_history: list[Tab] = []
 
         def compose(self) -> ComposeResult:
-            with TabbedContent(initial="bar"):
+            with TabbedContent():
                 with TabPane("foo", id="foo"):
                     yield Label("Foo", id="foo-label")
-
                 with TabPane("bar", id="bar"):
                     yield Label("Bar", id="bar-label")
                 with TabPane("baz", id="baz"):
@@ -152,15 +151,19 @@ async def test_tabbed_content_messages():
         def on_tabbed_content_tab_activated(
             self, event: TabbedContent.TabActivated
         ) -> None:
-            self.message = event
+            self.activation_history.append(event.tab)
 
     app = TabbedApp()
     async with app.run_test() as pilot:
         tabbed_content = app.query_one(TabbedContent)
         tabbed_content.active = "bar"
         await pilot.pause()
-        assert isinstance(app.message, TabbedContent.TabActivated)
-        assert app.message.tab.label.plain == "bar"
+        assert app.activation_history == [
+            # foo was originally activated.
+            app.query_one(TabbedContent).get_tab("foo"),
+            # then we did bar "by hand"
+            app.query_one(TabbedContent).get_tab("bar"),
+        ]
 
 
 async def test_tabbed_content_add_later_from_empty():
