@@ -85,7 +85,7 @@ class TextAreaLanguage:
     highlight_query: str
 
 
-class TextArea(ScrollView, can_focus=True):
+class TextArea(ScrollView):
     DEFAULT_CSS = """\
 TextArea {
     width: 1fr;
@@ -220,6 +220,8 @@ TextArea {
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
         Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
+        Binding("ctrl+z", "undo", "Undo", show=False),
+        Binding("ctrl+y", "redo", "Redo", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -251,6 +253,8 @@ TextArea {
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
     | f7                     | Select all text in the document.             |
+    | ctrl+z                 | Undo.                                        |
+    | ctrl+y                 | Redo.                                        |
     """
 
     language: Reactive[str | None] = reactive(None, always_update=True, init=False)
@@ -264,7 +268,7 @@ TextArea {
     it first using  [`TextArea.register_language`][textual.widgets._text_area.TextArea.register_language].
     """
 
-    theme: Reactive[str | None] = reactive(None, always_update=True, init=False)
+    theme: Reactive[str] = reactive("css", always_update=True, init=False)
     """The name of the theme to use.
 
     Themes must be registered using  [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme] before they can be used.
@@ -355,7 +359,7 @@ TextArea {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = None,
+        theme: str = "css",
         soft_wrap: bool = True,
         tab_behavior: Literal["focus", "indent"] = "focus",
         read_only: bool = False,
@@ -383,7 +387,6 @@ TextArea {
             disabled: True if the widget is disabled.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._initial_text = text
 
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to TextAreaLanguage."""
@@ -415,7 +418,7 @@ TextArea {
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of highlights for that line."""
 
-        self._highlight_query: "Query" | None = None
+        self._highlight_query: "Query | None" = None
         """The query that's currently being used for highlighting."""
 
         self.document: DocumentBase = Document(text)
@@ -433,14 +436,13 @@ TextArea {
 
         self._set_document(text, language)
 
-        self._theme: TextAreaTheme | None = None
+        self.language = language
+        self.theme = theme
+
+        self._theme: TextAreaTheme
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
-
-        self.language = language
-
-        self.theme = theme
 
         self.set_reactive(TextArea.soft_wrap, soft_wrap)
         self.set_reactive(TextArea.read_only, read_only)
@@ -457,7 +459,7 @@ TextArea {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = "monokai",
+        theme: str = "monokai",
         soft_wrap: bool = False,
         tab_behavior: Literal["focus", "indent"] = "indent",
         show_line_numbers: bool = True,
@@ -614,7 +616,7 @@ TextArea {
             If the character is not available for bracket matching, `None` is returned.
         """
         match_location = None
-        bracket_stack = []
+        bracket_stack: list[str] = []
         if bracket in _OPENING_BRACKETS:
             for candidate, candidate_location in self._yield_character_locations(
                 search_from
@@ -664,11 +666,7 @@ TextArea {
                 f"then switch to it by setting the `TextArea.language` attribute."
             )
 
-        self._set_document(
-            self.document.text if self.document is not None else self._initial_text,
-            language,
-        )
-        self._initial_text = ""
+        self._set_document(self.document.text, language)
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -684,32 +682,28 @@ TextArea {
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
-    def _watch_theme(self, theme: str | None) -> None:
+    def _watch_theme(self, theme: str) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
-        if padding is applied, the colours match."""
+        if padding is applied, the colors match."""
         self._set_theme(theme)
 
     def _app_dark_toggled(self) -> None:
         self._set_theme(self._theme.name)
 
-    def _set_theme(self, theme: str | None) -> None:
+    def _set_theme(self, theme: str) -> None:
         theme_object: TextAreaTheme | None
-        if theme is None:
-            # If the theme is None, use the default.
-            theme_object = TextAreaTheme.default()
-        else:
-            # If the user supplied a string theme name, find it and apply it.
-            try:
-                theme_object = self._themes[theme]
-            except KeyError:
-                theme_object = TextAreaTheme.get_builtin_theme(theme)
 
+        # If the user supplied a string theme name, find it and apply it.
+        try:
+            theme_object = self._themes[theme]
+        except KeyError:
+            theme_object = TextAreaTheme.get_builtin_theme(theme)
             if theme_object is None:
                 raise ThemeDoesNotExist(
                     f"{theme!r} is not a builtin theme, or it has not been registered. "
                     f"To use a custom theme, register it first using `register_theme`, "
                     f"then switch to that theme by setting the `TextArea.theme` attribute."
-                )
+                ) from None
 
         self._theme = dataclasses.replace(theme_object)
         if theme_object:
@@ -768,7 +762,7 @@ TextArea {
 
     def register_language(
         self,
-        language: str | "Language",
+        language: "str | Language",
         highlight_query: str,
     ) -> None:
         """Register a language and corresponding highlight query.
@@ -825,7 +819,7 @@ TextArea {
         if TREE_SITTER and language:
             # Attempt to get the override language.
             text_area_language = self._languages.get(language, None)
-            document_language: str | "Language"
+            document_language: "str | Language"
             if text_area_language:
                 document_language = text_area_language.language
                 highlight_query = text_area_language.highlight_query
@@ -964,11 +958,11 @@ TextArea {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
-    def render_line(self, widget_y: int) -> Strip:
+    def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
         Args:
-            widget_y: Y Coordinate of line relative to the widget region.
+            y: Y Coordinate of line relative to the widget region.
 
         Returns:
             A rendered line.
@@ -982,7 +976,7 @@ TextArea {
         scroll_x, scroll_y = self.scroll_offset
 
         # Account for how much the TextArea is scrolled.
-        y_offset = widget_y + scroll_y
+        y_offset = y + scroll_y
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
@@ -1007,7 +1001,7 @@ TextArea {
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
-        virtual_width, virtual_height = self.virtual_size
+        virtual_width, _virtual_height = self.virtual_size
 
         selection = self.selection
         start, end = selection
@@ -1256,13 +1250,21 @@ TextArea {
 
     def undo(self) -> None:
         """Undo the edits since the last checkpoint (the most recent batch of edits)."""
-        edits = self.history._pop_undo()
-        self._undo_batch(edits)
+        if edits := self.history._pop_undo():
+            self._undo_batch(edits)
+
+    def action_undo(self) -> None:
+        """Undo the edits since the last checkpoint (the most recent batch of edits)."""
+        self.undo()
 
     def redo(self) -> None:
         """Redo the most recently undone batch of edits."""
-        edits = self.history._pop_redo()
-        self._redo_batch(edits)
+        if edits := self.history._pop_redo():
+            self._redo_batch(edits)
+
+    def action_redo(self) -> None:
+        """Redo the most recently undone batch of edits."""
+        self.redo()
 
     def _undo_batch(self, edits: Sequence[Edit]) -> None:
         """Undo a batch of Edits.
@@ -1439,7 +1441,7 @@ TextArea {
         )
         return gutter_width
 
-    def _on_mount(self, _: events.Mount) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         self.blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor_blink_visible,
@@ -1487,7 +1489,7 @@ TextArea {
             self.selection = Selection(selection_start, target)
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        """Finalise the selection that has been made using the mouse."""
+        """Finalize the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
@@ -1497,8 +1499,8 @@ TextArea {
         """When a paste occurs, insert the text from the paste event into the document."""
         if self.read_only:
             return
-        result = self._replace_via_keyboard(event.text, *self.selection)
-        self.move_cursor(result.end_location)
+        if result := self._replace_via_keyboard(event.text, *self.selection):
+            self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.
@@ -1578,7 +1580,7 @@ TextArea {
                 that is wide enough.
         """
         if select:
-            start, end = self.selection
+            start, _end = self.selection
             self.selection = Selection(start, location)
         else:
             self.selection = Selection.cursor(location)
@@ -1611,7 +1613,7 @@ TextArea {
                 that is wide enough.
         """
         clamp_visitable = self.clamp_visitable
-        start, end = self.selection
+        _start, end = self.selection
         current_row, current_column = end
         target = clamp_visitable((current_row + rows, current_column + columns))
         self.move_cursor(target, select, center, record_width)
@@ -2078,7 +2080,7 @@ TextArea {
         """Deletes the lines which intersect with the selection."""
         start, end = self.selection
         start, end = sorted((start, end))
-        start_row, start_column = start
+        start_row, _start_column = start
         end_row, end_column = end
 
         # Generally editors will only delete line the end line of the
@@ -2165,7 +2167,7 @@ def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
     Returns:
         A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
     """
-    byte_to_codepoint = {}
+    byte_to_codepoint: dict[int, int] = {}
     current_byte_offset = 0
     code_point_offset = 0
 
