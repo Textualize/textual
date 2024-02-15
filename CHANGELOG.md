@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
 
-## [0.51.1] - 2024-02-09
+## [0.50.1] - 2024-02-09
 
 ### Fixed
 
