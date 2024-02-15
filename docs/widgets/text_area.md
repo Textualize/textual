@@ -220,7 +220,7 @@ On setting this attribute the `TextArea` will immediately refresh to display the
     Custom themes are only relevant for people who are looking to customize syntax highlighting.
     If you're only editing plain text, and wish to recolor aspects of the `TextArea`, you should use the provided component classes.
 
-Using custom (non-builtin) themes is two-step process:
+Using custom (non-builtin) themes is a two-step process:
 
 1. Create an instance of [`TextAreaTheme`][textual.widgets.text_area.TextAreaTheme].
 2. Register it using [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme].
