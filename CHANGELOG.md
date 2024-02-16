@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
+
 ## [0.51.0] - 2024-02-15
 
 ### Added
