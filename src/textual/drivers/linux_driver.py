@@ -259,6 +259,16 @@ class LinuxDriver(Driver):
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
+        """Patch termios lflag.
+
+        Args:
+            attributes: New set attributes.
+
+        Returns:
+            New lflag.
+
+        """
+        # if TEXTUAL_ALLOW_SIGNALS env var is set, then allow Ctrl+C to send signals
         ISIG = 0 if os.environ.get("TEXTUAL_ALLOW_SIGNALS") else termios.ISIG
 
         return attrs & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | ISIG)
