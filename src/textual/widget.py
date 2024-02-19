@@ -48,6 +48,7 @@ from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
+from ._types import AnimationLevel
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
@@ -1728,6 +1729,7 @@ class Widget(DOMNode):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -1740,6 +1742,7 @@ class Widget(DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
@@ -1753,6 +1756,7 @@ class Widget(DOMNode):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
+            level=level,
         )
 
     async def stop_animation(self, attribute: str, complete: bool = True) -> None:
@@ -1899,6 +1903,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -1911,6 +1916,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if the scroll position changed, otherwise `False`.
@@ -1943,6 +1949,7 @@ class Widget(DOMNode):
                         duration=duration,
                         easing=easing,
                         on_complete=on_complete,
+                        level=level,
                     )
                     scrolled_x = True
             if maybe_scroll_y:
@@ -1956,6 +1963,7 @@ class Widget(DOMNode):
                         duration=duration,
                         easing=easing,
                         on_complete=on_complete,
+                        level=level,
                     )
                     scrolled_y = True
 
@@ -1987,6 +1995,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -1999,6 +2008,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Note:
             The call to scroll is made after the next refresh.
@@ -2013,6 +2023,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_relative(
@@ -2026,6 +2037,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll relative to current position.
 
@@ -2038,6 +2050,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             None if x is None else (self.scroll_x + x),
@@ -2048,6 +2061,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_home(
@@ -2059,6 +2073,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to home position.
 
@@ -2069,6 +2084,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -2081,6 +2097,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_end(
@@ -2092,6 +2109,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to the end of the container.
 
@@ -2102,6 +2120,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -2123,6 +2142,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
                 on_complete=on_complete,
+                level=level,
             )
 
         self.call_after_refresh(_lazily_scroll_end)
@@ -2136,6 +2156,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one cell left.
 
@@ -2146,6 +2167,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             x=self.scroll_target_x - 1,
@@ -2155,6 +2177,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_left_for_pointer(
@@ -2166,6 +2189,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll left one position, taking scroll sensitivity into account.
 
@@ -2176,6 +2200,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2192,6 +2217,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_right(
@@ -2203,6 +2229,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one cell right.
 
@@ -2213,6 +2240,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             x=self.scroll_target_x + 1,
@@ -2222,6 +2250,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_right_for_pointer(
@@ -2233,6 +2262,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll right one position, taking scroll sensitivity into account.
 
@@ -2243,6 +2273,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2259,6 +2290,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_down(
@@ -2270,6 +2302,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one line down.
 
@@ -2280,6 +2313,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_target_y + 1,
@@ -2289,6 +2323,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_down_for_pointer(
@@ -2300,6 +2335,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll down one position, taking scroll sensitivity into account.
 
@@ -2310,6 +2346,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2326,6 +2363,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_up(
@@ -2337,6 +2375,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one line up.
 
@@ -2347,6 +2386,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_target_y - 1,
@@ -2356,6 +2396,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_up_for_pointer(
@@ -2367,6 +2408,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll up one position, taking scroll sensitivity into account.
 
@@ -2377,6 +2419,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2393,6 +2436,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_up(
@@ -2404,6 +2448,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page up.
 
@@ -2414,6 +2459,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_y - self.container_size.height,
@@ -2423,6 +2469,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_down(
@@ -2434,6 +2481,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page down.
 
@@ -2444,6 +2492,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_y + self.container_size.height,
@@ -2453,6 +2502,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_left(
@@ -2464,6 +2514,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page left.
 
@@ -2474,6 +2525,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 0.3
@@ -2485,6 +2537,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_right(
@@ -2496,6 +2549,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page right.
 
@@ -2506,6 +2560,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 0.3
@@ -2517,6 +2572,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_to_widget(
@@ -2532,6 +2588,7 @@ class Widget(DOMNode):
         origin_visible: bool = True,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
 
@@ -2545,6 +2602,7 @@ class Widget(DOMNode):
             origin_visible: Ensure that the top left of the widget is within the window.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling has occurred in any descendant, otherwise `False`.
@@ -2571,6 +2629,7 @@ class Widget(DOMNode):
                     origin_visible=origin_visible,
                     force=force,
                     on_complete=on_complete,
+                    level=level,
                 )
                 if scroll_offset:
                     scrolled = True
@@ -2605,6 +2664,7 @@ class Widget(DOMNode):
         origin_visible: bool = True,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -2622,6 +2682,7 @@ class Widget(DOMNode):
             origin_visible: Ensure that the top left of the widget is within the window.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             The distance that was scrolled.
@@ -2668,6 +2729,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
                 on_complete=on_complete,
+                level=level,
             )
         return delta
 
@@ -2681,6 +2743,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll the container to make this widget visible.
 
@@ -2692,6 +2755,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         parent = self.parent
         if isinstance(parent, Widget):
@@ -2705,6 +2769,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
                 on_complete=on_complete,
+                level=level,
             )
 
     def scroll_to_center(
@@ -2718,6 +2783,7 @@ class Widget(DOMNode):
         force: bool = False,
         origin_visible: bool = True,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll this widget to the center of self.
 
@@ -2732,6 +2798,7 @@ class Widget(DOMNode):
             force: Force scrolling even when prohibited by overflow styling.
             origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
 
         self.call_after_refresh(
@@ -2745,6 +2812,7 @@ class Widget(DOMNode):
             center=True,
             origin_visible=origin_visible,
             on_complete=on_complete,
+            level=level,
         )
 
     def can_view(self, widget: Widget) -> bool:

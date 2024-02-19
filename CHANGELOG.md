@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Textual now writes to stderr rather than stdout
+
 ### Added
 
 - Added an `asyncio` lock attribute `Widget.lock` to be used to synchronize widget state https://github.com/Textualize/textual/issues/4134
+- Added support for environment variable `TEXTUAL_ANIMATIONS` to control what animations Textual displays https://github.com/Textualize/textual/pull/4062
+- Add attribute `App.animation_level` to control whether animations on that app run or not https://github.com/Textualize/textual/pull/4062
 
 ## [0.51.0] - 2024-02-15
 
@@ -126,6 +132,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
 - Added `App.suspend` https://github.com/Textualize/textual/pull/4064
 - Added `App.action_suspend_process` https://github.com/Textualize/textual/pull/4064
+
 
 ### Fixed
 
