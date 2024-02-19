@@ -5,7 +5,6 @@ Constants that we might want to expose via the public API.
 from __future__ import annotations
 
 import os
-import pathlib
 
 from typing_extensions import Final
 
@@ -66,9 +65,7 @@ DEVTOOLS_PORT: Final[int] = get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
 SCREENSHOT_DELAY: Final[int] = get_environ_int("TEXTUAL_SCREENSHOT", -1)
 """Seconds delay before taking screenshot."""
 
-SCREENSHOT_LOCATION: Final[pathlib.Path | None] = pathlib.Path(
-    get_environ("TEXTUAL_SCREENSHOT_LOCATION", ".")
-)
+SCREENSHOT_LOCATION: Final[str | None] = get_environ("TEXTUAL_SCREENSHOT_LOCATION")
 """The location where screenshots should be written."""
 
 PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
