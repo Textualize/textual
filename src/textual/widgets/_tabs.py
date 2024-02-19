@@ -699,7 +699,6 @@ class Tabs(Widget, can_focus=True):
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
-        self._scroll_active_tab()
 
     def _on_tab_disabled(self, event: Tab.Disabled) -> None:
         """Re-post the disabled message."""
