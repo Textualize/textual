@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import create_task, wait
+from asyncio import Lock, create_task, wait
 from collections import Counter
 from fractions import Fraction
 from itertools import islice
@@ -372,6 +372,14 @@ class Widget(DOMNode):
             self.border_title = self.BORDER_TITLE
         if self.BORDER_SUBTITLE:
             self.border_subtitle = self.BORDER_SUBTITLE
+
+        self.lock = Lock()
+        """`asyncio` lock to be used to synchronize the state of the widget.
+
+        Two different tasks might call methods on a widget at the same time, which
+        might result in a race condition.
+        This can be fixed by adding `async with widget.lock:` around the method calls.
+        """
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""

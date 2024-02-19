@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from asyncio import Lock
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, NewType, TypeVar, cast
 
@@ -618,8 +617,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine[TreeDataType]] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
-        self.lock = Lock()
-        """Used to synchronise stateful directory tree operations."""
 
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
