@@ -9,17 +9,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- TextArea now has `read_only` mode https://github.com/Textualize/textual/pull/4151
-- Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
-- Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
 - Added support for a `TEXTUAL_SCREENSHOT_LOCATION` environment variable to specify the location of an automated screenshot
 - Added support for a `TEXTUAL_SCREENSHOT_FILENAME` environment variable to specify the filename of an automated screenshot
 
+## [0.51.0] - 2024-02-15
+
+### Added
+
+- TextArea now has `read_only` mode https://github.com/Textualize/textual/pull/4151
+- Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
+- Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
+- Added support for command palette command discoverability https://github.com/Textualize/textual/pull/4154
+
+### Fixed
+
+- Fixed out-of-view `Tab` not being scrolled into view when `Tabs.active` is assigned https://github.com/Textualize/textual/issues/4150
+- Fixed `TabbedContent.TabActivate` not being posted when `TabbedContent.active` is assigned https://github.com/Textualize/textual/issues/4150
+
 ### Changed
 
-- Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
+- Breaking change: Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
+- `TextArea.theme` now defaults to `"css"` instead of None, and is no longer optional https://github.com/Textualize/textual/pull/4157
 
-## [0.51.1] - 2024-02-09
+### Fixed
+
+- Improve support for selector lists in nested TCSS https://github.com/Textualize/textual/issues/3969
+- Improve support for rule declarations after nested TCSS rule sets https://github.com/Textualize/textual/issues/3999
+
+## [0.50.1] - 2024-02-09
 
 ### Fixed
 
@@ -1696,6 +1713,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.51.0]: https://github.com/Textualize/textual/compare/v0.50.1...v0.51.0
 [0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0
 [0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1

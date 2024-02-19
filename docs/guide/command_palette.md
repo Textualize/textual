@@ -68,7 +68,7 @@ The following example will display a blank screen initially, but if you bring up
   5. Highlights matching letters in the search.
   6. Adds our custom command provider and the default command provider.
 
-There are three methods you can override in a command provider: [`startup`][textual.command.Provider.startup], [`search`][textual.command.Provider.search], and [`shutdown`][textual.command.Provider.shutdown].
+There are four methods you can override in a command provider: [`startup`][textual.command.Provider.startup], [`search`][textual.command.Provider.search], [`discover`][textual.command.Provider.discover] and [`shutdown`][textual.command.Provider.shutdown].
 All of these methods should be coroutines (`async def`). Only `search` is required, the other methods are optional.
 Let's explore those methods in detail.
 
@@ -99,7 +99,25 @@ In the example above, the callback is a lambda which calls the `open_file` metho
     This is a deliberate design decision taken to prevent a single broken `Provider` class from making the command palette unusable.
     Errors in command providers will be logged to the [console](./devtools.md).
 
-### Shutdown method
+### discover method
+
+The [`discover`][textual.command.Provider.discover] method is responsible for providing results (or *discovery hits*) that should be shown to the user when the command palette input is empty;
+this is to aid in command discoverability.
+
+!!! note
+
+    Because `discover` hits are shown the moment the command palette is opened, these should ideally be quick to generate;
+    commands that might take time to generate are best left for `search` -- use `discover` to help the user easily find the most important commands.
+
+`discover` is similar to `search` but with these differences:
+
+- `discover` accepts no parameters (instead of the search value)
+- `discover` yields instances of [`DiscoveryHit`][textual.command.DiscoveryHit] (instead of instances of [`Hit`][textual.command.Hit])
+- discovery hits are sorted in ascending alphabetical order because there is no matching and no match score is generated
+
+Instances of [`DiscoveryHit`][textual.command.DiscoveryHit] contain information about how the hit should be displayed, an optional help string, and a callback which will be run if the user selects that command.
+
+### shutdown method
 
 The [`shutdown`][textual.command.Provider.shutdown] method is called when the command palette is closed.
 You can use this as a hook to gracefully close any objects you created in [`startup`][textual.command.Provider.startup].

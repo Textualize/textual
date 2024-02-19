@@ -119,9 +119,6 @@ class TextAreaTheme:
         if self.cursor_line_gutter_style is None:
             self.cursor_line_gutter_style = get_style("text-area--cursor-gutter")
 
-        if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
-            self.cursor_line_gutter_style = self.cursor_line_style.copy()
-
         if self.bracket_matching_style is None:
             matching_bracket_style = get_style("text-area--matching-bracket")
             if matching_bracket_style:
@@ -181,15 +178,6 @@ class TextAreaTheme:
             A list of all builtin TextAreaThemes.
         """
         return list(_BUILTIN_THEMES.values())
-
-    @classmethod
-    def default(cls) -> TextAreaTheme:
-        """Get the default syntax theme.
-
-        Returns:
-            The default TextAreaTheme (probably "css").
-        """
-        return _CSS_THEME
 
 
 _MONOKAI = TextAreaTheme(
@@ -388,6 +376,3 @@ _BUILTIN_THEMES = {
     "vscode_dark": _DARK_VS,
     "github_light": _GITHUB_LIGHT,
 }
-
-DEFAULT_THEME = TextAreaTheme.get_builtin_theme("basic")
-"""The default TextAreaTheme used by Textual."""
