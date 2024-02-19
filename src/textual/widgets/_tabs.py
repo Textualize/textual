@@ -644,7 +644,6 @@ class Tabs(Widget, can_focus=True):
         self.query("#tabs-list Tab.-active").remove_class("-active")
         tab.add_class("-active")
         self.active = tab.id or ""
-        self.query_one("#tabs-scroll").scroll_to_center(tab, force=True)
 
     def _on_underline_clicked(self, event: Underline.Clicked) -> None:
         """The underline was clicked.
