@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added an `asyncio` lock attribute `Widget.lock` to be used to synchronize widget state https://github.com/Textualize/textual/issues/4134
+- `Widget.remove_children` now accepts a CSS selector to specify which children to remove https://github.com/Textualize/textual/issues/4133
 
 ## [0.51.0] - 2024-02-15
 

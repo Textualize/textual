@@ -77,6 +77,7 @@ from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
+    from .css.query import QueryType
     from .message_pump import MessagePump
     from .scrollbar import (
         ScrollBar,
@@ -3223,13 +3224,22 @@ class Widget(DOMNode):
         await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
-    def remove_children(self) -> AwaitRemove:
-        """Remove all children of this Widget from the DOM.
+    def remove_children(
+        self, selector: str | type[QueryType] | None = None
+    ) -> AwaitRemove:
+        """Remove the children of this Widget from the DOM.
+
+        Args:
+            selector: A CSS selector to specify which children to remove.
 
         Returns:
             An awaitable object that waits for the children to be removed.
         """
-        await_remove = self.app._remove_nodes(list(self.children), self)
+        if isinstance(selector, str) or selector is None:
+            children_to_remove = self.query(selector)
+        else:
+            children_to_remove = self.query(selector.__name__)
+        await_remove = self.app._remove_nodes(list(children_to_remove), self)
         return await_remove
 
     def render(self) -> RenderableType:
