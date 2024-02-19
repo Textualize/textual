@@ -1158,8 +1158,8 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Filename of screenshot.
         """
-        path = "./" if path is None else path
-        if filename is None:
+        path = path or "./"
+        if not filename:
             if time_format is None:
                 dt = datetime.now().isoformat()
             else:
