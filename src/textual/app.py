@@ -1143,7 +1143,7 @@ class App(Generic[ReturnType], DOMNode):
     def save_screenshot(
         self,
         filename: str | None = None,
-        path: str = "./",
+        path: str | None = None,
         time_format: str | None = None,
     ) -> str:
         """Save an SVG screenshot of the current screen.
@@ -1158,6 +1158,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Filename of screenshot.
         """
+        path = "./" if path is None else path
         if filename is None:
             if time_format is None:
                 dt = datetime.now().isoformat()
