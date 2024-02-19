@@ -658,7 +658,6 @@ class Tabs(Widget, can_focus=True):
         self.query("#tabs-list Tab.-active").remove_class("-active")
         tab.add_class("-active")
         self.active = tab.id or ""
-        self.query_one("#tabs-scroll").scroll_to_center(tab, force=True)
 
     def _on_underline_clicked(self, event: Underline.Clicked) -> None:
         """The underline was clicked.
@@ -714,7 +713,6 @@ class Tabs(Widget, can_focus=True):
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
-        self._scroll_active_tab()
 
     def _on_tab_disabled(self, event: Tab.Disabled) -> None:
         """Re-post the disabled message."""

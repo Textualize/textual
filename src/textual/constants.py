@@ -95,6 +95,12 @@ DEVTOOLS_PORT: Final[int] = _get_environ_int("TEXTUAL_DEVTOOLS_PORT", 8081)
 SCREENSHOT_DELAY: Final[int] = _get_environ_int("TEXTUAL_SCREENSHOT", -1)
 """Seconds delay before taking screenshot."""
 
+SCREENSHOT_LOCATION: Final[str | None] = get_environ("TEXTUAL_SCREENSHOT_LOCATION")
+"""The location where screenshots should be written."""
+
+SCREENSHOT_FILENAME: Final[str | None] = get_environ("TEXTUAL_SCREENSHOT_FILENAME")
+"""The filename to use for the screenshot."""
+
 PRESS: Final[str] = get_environ("TEXTUAL_PRESS", "")
 """Keys to automatically press."""
 
