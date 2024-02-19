@@ -6,11 +6,13 @@ from __future__ import annotations
 
 from asyncio import Lock, create_task, wait
 from collections import Counter
+from contextlib import asynccontextmanager
 from fractions import Fraction
 from itertools import islice
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    AsyncGenerator,
     Awaitable,
     ClassVar,
     Collection,
@@ -53,6 +55,8 @@ from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
+from .css.match import match
+from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -78,6 +82,7 @@ from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
+    from .css.query import QueryType
     from .message_pump import MessagePump
     from .scrollbar import (
         ScrollBar,
@@ -3291,14 +3296,41 @@ class Widget(DOMNode):
         await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
-    def remove_children(self) -> AwaitRemove:
-        """Remove all children of this Widget from the DOM.
+    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+        """Remove the immediate children of this Widget from the DOM.
+
+        Args:
+            selector: A CSS selector to specify which direct children to remove.
 
         Returns:
-            An awaitable object that waits for the children to be removed.
+            An awaitable object that waits for the direct children to be removed.
         """
-        await_remove = self.app._remove_nodes(list(self.children), self)
+        if not isinstance(selector, str):
+            selector = selector.__name__
+        parsed_selectors = parse_selectors(selector)
+        children_to_remove = [
+            child for child in self.children if match(parsed_selectors, child)
+        ]
+        await_remove = self.app._remove_nodes(children_to_remove, self)
         return await_remove
+
+    @asynccontextmanager
+    async def batch(self) -> AsyncGenerator[None, None]:
+        """Async context manager that combines widget locking and update batching.
+
+        Use this async context manager whenever you want to acquire the widget lock and
+        batch app updates at the same time.
+
+        Example:
+            ```py
+            async with container.batch():
+                await container.remove_children(Button)
+                await container.mount(Label("All buttons are gone."))
+            ```
+        """
+        async with self.lock:
+            with self.app.batch_update():
+                yield
 
     def render(self) -> RenderableType:
         """Get text or Rich renderable for this widget.
