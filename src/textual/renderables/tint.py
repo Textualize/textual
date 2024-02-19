@@ -45,6 +45,7 @@ class Tint:
         style_from_color = Style.from_color
         _Segment = Segment
 
+        # TODO - needs to be updated to use the correct terminal theme
         truecolor_style = ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI).truecolor_style
 
         NULL_STYLE = Style()

@@ -57,6 +57,7 @@ from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
+from rich.terminal_theme import TerminalTheme
 
 from . import (
     Logger,
@@ -397,6 +398,12 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
+    ansi_theme_dark = Reactive(terminal_theme.MONOKAI, init=False)
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
+
+    ansi_theme_light = Reactive(terminal_theme.MONOKAI, init=False)
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -421,9 +428,10 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._filters: list[LineFilter] = [
-            ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI)
-        ]
+        ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        self._truecolor_filter = ANSIToTruecolor(ansi_theme)
+        self._filters: list[LineFilter] = [self._truecolor_filter]
+
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
@@ -870,7 +878,20 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
+        self._truecolor_filter.theme = (
+            self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        )
         self.call_later(self.refresh_css)
+
+    def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
+        if self.dark:
+            self._truecolor_filter.theme = theme
+            self.call_later(self.refresh_css)
+
+    def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
+        if not self.dark:
+            self._truecolor_filter.theme = theme
+            self.call_later(self.refresh_css)
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.

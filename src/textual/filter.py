@@ -21,6 +21,8 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.terminal_theme import TerminalTheme
 
+from textual.cache import LRUCache
+
 from .color import Color
 
 
@@ -188,9 +190,18 @@ class ANSIToTruecolor(LineFilter):
         Args:
             terminal_theme: A rich terminal theme.
         """
-        self.terminal_theme = terminal_theme
+        self._terminal_theme = terminal_theme
+        self._truecolor_cache: LRUCache[Style, Style] = LRUCache(maxsize=1024)
 
-    @lru_cache(1024)
+    @property
+    def theme(self) -> TerminalTheme:
+        return self._terminal_theme
+
+    @theme.setter
+    def theme(self, theme: TerminalTheme) -> None:
+        self._truecolor_cache.clear()
+        self._terminal_theme = theme
+
     def truecolor_style(self, style: Style) -> Style:
         """Replace system colors with truecolor equivalent.
 
@@ -200,7 +211,11 @@ class ANSIToTruecolor(LineFilter):
         Returns:
             New style.
         """
-        terminal_theme = self.terminal_theme
+        cache = self._truecolor_cache
+        if style in cache:
+            return cache[style]
+
+        terminal_theme = self._terminal_theme
         color = style.color
         if color is not None and color.is_system_defined:
             color = RichColor.from_rgb(
@@ -211,7 +226,10 @@ class ANSIToTruecolor(LineFilter):
             bgcolor = RichColor.from_rgb(
                 *bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
-        return style + Style.from_color(color, bgcolor)
+
+        truecolor_style = style + Style.from_color(color, bgcolor)
+        cache[style] = truecolor_style
+        return truecolor_style
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:
         """Transform a list of segments.
