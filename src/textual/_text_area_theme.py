@@ -107,7 +107,7 @@ class TextAreaTheme:
                 self.cursor_style = cursor_style
             else:
                 # There's no component style either, fallback to a default.
-                self.cursor_style = Style(
+                self.cursor_style = Style.from_color(
                     color=background_color.rich_color,
                     bgcolor=background_color.inverse.rich_color,
                 )
@@ -118,9 +118,6 @@ class TextAreaTheme:
 
         if self.cursor_line_gutter_style is None:
             self.cursor_line_gutter_style = get_style("text-area--cursor-gutter")
-
-        if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
-            self.cursor_line_gutter_style = self.cursor_line_style.copy()
 
         if self.bracket_matching_style is None:
             matching_bracket_style = get_style("text-area--matching-bracket")
@@ -181,15 +178,6 @@ class TextAreaTheme:
             A list of all builtin TextAreaThemes.
         """
         return list(_BUILTIN_THEMES.values())
-
-    @classmethod
-    def default(cls) -> TextAreaTheme:
-        """Get the default syntax theme.
-
-        Returns:
-            The default TextAreaTheme (probably "monokai").
-        """
-        return _MONOKAI
 
 
 _MONOKAI = TextAreaTheme(
@@ -379,7 +367,7 @@ _GITHUB_LIGHT = TextAreaTheme(
     },
 )
 
-_CSS_THEME = TextAreaTheme(name="css")
+_CSS_THEME = TextAreaTheme(name="css", syntax_styles=_DARK_VS.syntax_styles)
 
 _BUILTIN_THEMES = {
     "css": _CSS_THEME,
@@ -388,6 +376,3 @@ _BUILTIN_THEMES = {
     "vscode_dark": _DARK_VS,
     "github_light": _GITHUB_LIGHT,
 }
-
-DEFAULT_THEME = TextAreaTheme.get_builtin_theme("basic")
-"""The default TextAreaTheme used by Textual."""

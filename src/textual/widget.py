@@ -2852,9 +2852,12 @@ class Widget(DOMNode):
             )
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "id", self.id, None
-        if self.name:
-            yield "name", self.name
+        try:
+            yield "id", self.id, None
+            if self.name:
+                yield "name", self.name
+        except AttributeError:
+            pass
 
     def _get_scrollable_region(self, region: Region) -> Region:
         """Adjusts the Widget region to accommodate scrollbars.
@@ -3498,6 +3501,7 @@ class Widget(DOMNode):
         return await self.dispatch_key(event)
 
     async def _on_compose(self, event: events.Compose) -> None:
+        _rich_traceback_omit = True
         event.prevent_default()
         try:
             widgets = [*self._pending_children, *compose(self)]

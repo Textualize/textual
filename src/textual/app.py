@@ -95,6 +95,7 @@ from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
+from .filter import ANSIToTruecolor, DimFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -421,20 +422,17 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._filters: list[LineFilter] = []
+        self._filters: list[LineFilter] = [
+            ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI)
+        ]
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
-            from .filter import Monochrome
-
             self._filters.append(Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
             if filter == "dim":
-                from .filter import ANSIToTruecolor, DimFilter
-
-                self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
                 self._filters.append(DimFilter())
 
         self.console = Console(

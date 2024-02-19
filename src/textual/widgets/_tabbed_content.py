@@ -324,6 +324,9 @@ class TabbedContent(Widget):
     @property
     def active_pane(self) -> TabPane | None:
         """The currently active pane, or `None` if no pane is active."""
+        active = self.active
+        if not active:
+            return None
         return self.get_pane(self.active)
 
     def validate_active(self, active: str) -> str:
@@ -508,13 +511,22 @@ class TabbedContent(Widget):
         if self._is_associated_tabs(event.tabs):
             # The message is relevant, so consume it and update state accordingly.
             event.stop()
+            assert event.tab.id is not None
             switcher = self.get_child_by_type(ContentSwitcher)
             switcher.current = ContentTab.sans_prefix(event.tab.id)
-            self.active = ContentTab.sans_prefix(event.tab.id)
+            with self.prevent(self.TabActivated):
+                # We prevent TabbedContent.TabActivated because it is also
+                # posted from the watcher for active, we're also about to
+                # post it below too, which is valid as here we're reacting
+                # to what the Tabs are doing. This ensures we don't get
+                # doubled-up messages.
+                self.active = ContentTab.sans_prefix(event.tab.id)
             self.post_message(
                 TabbedContent.TabActivated(
                     tabbed_content=self,
-                    tab=event.tab,
+                    tab=self.get_child_by_type(ContentTabs).get_content_tab(
+                        self.active
+                    ),
                 )
             )
 
@@ -545,7 +557,14 @@ class TabbedContent(Widget):
         """Switch tabs when the active attributes changes."""
         with self.prevent(Tabs.TabActivated):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
-            self.get_child_by_type(ContentSwitcher).current = active
+        self.get_child_by_type(ContentSwitcher).current = active
+        if active:
+            self.post_message(
+                TabbedContent.TabActivated(
+                    tabbed_content=self,
+                    tab=self.get_child_by_type(ContentTabs).get_content_tab(active),
+                )
+            )
 
     @property
     def tab_count(self) -> int:

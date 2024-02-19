@@ -229,6 +229,22 @@ def test_markdown_viewer_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "markdown_viewer.py")
 
 
+def test_markdown_theme_switching(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["t"])
+
+
+def test_markdown_dark_theme_override(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["d", "wait:100"]
+    )
+
+
+def test_markdown_light_theme_override(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_theme_switcher.py", press=["l", "t", "wait:100"]
+    )
+
+
 def test_checkbox_example(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "checkbox.py")
 
@@ -294,6 +310,10 @@ def test_option_list_replace_prompt_from_two_lines_to_three_lines(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "option_list_multiline_options.py", press=["3"]
     )
+
+
+def test_option_list_scrolling_in_long_list(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "option_list_long.py", press=["up"])
 
 
 def test_progress_bar_indeterminate(snap_compare):
@@ -401,6 +421,19 @@ def test_collapsible_nested(snap_compare):
 
 def test_collapsible_custom_symbol(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "collapsible_custom_symbol.py")
+
+
+def test_directory_tree_reloading(snap_compare, tmp_path):
+    async def run_before(pilot):
+        await pilot.app.setup(tmp_path)
+        await pilot.press(
+            "e", "e", "down", "down", "down", "down", "e", "down", "d", "r"
+        )
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "directory_tree_reload.py",
+        run_before=run_before,
+    )
 
 
 # --- CSS properties ---
@@ -724,6 +757,14 @@ def test_command_palette(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette.py", run_before=run_before)
 
 
+def test_command_palette_discovery(snap_compare) -> None:
+    async def run_before(pilot) -> None:
+        pilot.app.screen.query_one(Input).cursor_blink = False
+        await pilot.app.screen.workers.wait_for_complete()
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before)
+
+
 # --- textual-dev library preview tests ---
 
 
@@ -846,6 +887,20 @@ I am the final line."""
     )
 
 
+def test_text_area_read_only_cursor_rendering(snap_compare):
+    def setup_selection(pilot):
+        text_area = pilot.app.query_one(TextArea)
+        text_area.theme = "css"
+        text_area.text = "Hello, world!"
+        text_area.read_only = True
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area.py",
+        run_before=setup_selection,
+        terminal_size=(30, 5),
+    )
+
+
 @pytest.mark.syntax
 @pytest.mark.parametrize(
     "theme_name", [theme.name for theme in TextAreaTheme.builtin_themes()]
@@ -879,8 +934,7 @@ def hello(name):
 @pytest.mark.syntax
 def test_text_area_wrapping_and_folding(snap_compare):
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "text_area_wrapping.py",
-        terminal_size=(20, 26)
+        SNAPSHOT_APPS_DIR / "text_area_wrapping.py", terminal_size=(20, 26)
     )
 
 
