@@ -2388,7 +2388,10 @@ class App(Generic[ReturnType], DOMNode):
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
-            self.save_screenshot()
+            self.save_screenshot(
+                path=constants.SCREENSHOT_LOCATION,
+                filename=constants.SCREENSHOT_FILENAME,
+            )
             self.exit()
 
         if constants.SCREENSHOT_DELAY >= 0:
