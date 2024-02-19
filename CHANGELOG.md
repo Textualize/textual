@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added support for a `TEXTUAL_SCREENSHOT_LOCATION` environment variable to specify the location of an automated screenshot
-- Added support for a `TEXTUAL_SCREENSHOT_FILENAME` environment variable to specify the filename of an automated screenshot
+- Added support for a `TEXTUAL_SCREENSHOT_LOCATION` environment variable to specify the location of an automated screenshot https://github.com/Textualize/textual/pull/4181/
+- Added support for a `TEXTUAL_SCREENSHOT_FILENAME` environment variable to specify the filename of an automated screenshot https://github.com/Textualize/textual/pull/4181/
 
 ## [0.51.0] - 2024-02-15
 
