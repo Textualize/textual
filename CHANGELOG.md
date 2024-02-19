@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+
+### Changed
+
+- Textual now writes to stderr rather than stdout
+
 ### Added
 
 - Added support for environment variable `TEXTUAL_ANIMATIONS` to control what animations Textual displays https://github.com/Textualize/textual/pull/4062
 - Add attribute `App.animation_level` to control whether animations on that app run or not https://github.com/Textualize/textual/pull/4062
+
 
 ## [0.51.0] - 2024-02-15
 
