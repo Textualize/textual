@@ -6,11 +6,13 @@ from __future__ import annotations
 
 from asyncio import Lock, create_task, wait
 from collections import Counter
+from contextlib import asynccontextmanager
 from fractions import Fraction
 from itertools import islice
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    AsyncGenerator,
     Awaitable,
     ClassVar,
     Collection,
@@ -3241,6 +3243,24 @@ class Widget(DOMNode):
             children_to_remove = self.query(selector.__name__)
         await_remove = self.app._remove_nodes(list(children_to_remove), self)
         return await_remove
+
+    @asynccontextmanager
+    async def batch(self) -> AsyncGenerator[None, None]:
+        """Async context manager that combines widget locking and update batching.
+
+        Use this async context manager whenever you want to acquire the widget lock and
+        batch app updates at the same time.
+
+        Example:
+            ```py
+            async with container.batch():
+                await container.remove_children(Button)
+                await container.mount(Label("All buttons are gone."))
+            ```
+        """
+        async with self.lock:
+            with self.app.batch_update():
+                yield
 
     def render(self) -> RenderableType:
         """Get text or Rich renderable for this widget.
