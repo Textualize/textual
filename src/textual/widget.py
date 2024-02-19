@@ -55,6 +55,8 @@ from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
+from .css.match import match
+from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
@@ -3294,22 +3296,22 @@ class Widget(DOMNode):
         await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
-    def remove_children(
-        self, selector: str | type[QueryType] | None = None
-    ) -> AwaitRemove:
-        """Remove the children of this Widget from the DOM.
+    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+        """Remove the immediate children of this Widget from the DOM.
 
         Args:
-            selector: A CSS selector to specify which children to remove.
+            selector: A CSS selector to specify which direct children to remove.
 
         Returns:
-            An awaitable object that waits for the children to be removed.
+            An awaitable object that waits for the direct children to be removed.
         """
-        if isinstance(selector, str) or selector is None:
-            children_to_remove = self.query(selector)
-        else:
-            children_to_remove = self.query(selector.__name__)
-        await_remove = self.app._remove_nodes(list(children_to_remove), self)
+        if not isinstance(selector, str):
+            selector = selector.__name__
+        parsed_selectors = parse_selectors(selector)
+        children_to_remove = [
+            child for child in self.children if match(parsed_selectors, child)
+        ]
+        await_remove = self.app._remove_nodes(children_to_remove, self)
         return await_remove
 
     @asynccontextmanager
