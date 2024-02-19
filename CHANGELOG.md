@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.51.0] - 2024-02-15
 
 ### Added
 
@@ -14,9 +14,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
 - Added support for command palette command discoverability https://github.com/Textualize/textual/pull/4154
 
+### Fixed
+
+- Fixed out-of-view `Tab` not being scrolled into view when `Tabs.active` is assigned https://github.com/Textualize/textual/issues/4150
+- Fixed `TabbedContent.TabActivate` not being posted when `TabbedContent.active` is assigned https://github.com/Textualize/textual/issues/4150
+
 ### Changed
 
-- Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
+- Breaking change: Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
+- `TextArea.theme` now defaults to `"css"` instead of None, and is no longer optional https://github.com/Textualize/textual/pull/4157
 
 ### Fixed
 
@@ -1701,6 +1707,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.51.0]: https://github.com/Textualize/textual/compare/v0.50.1...v0.51.0
 [0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0
 [0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1

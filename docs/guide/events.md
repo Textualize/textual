@@ -210,6 +210,12 @@ In the following example we have three buttons, each of which does something dif
 
     1. The message handler is called when any button is pressed
 
+=== "on_decorator.tcss"
+
+    ```python title="on_decorator.tcss"
+    --8<-- "docs/examples/events/on_decorator.tcss"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/events/on_decorator01.py"}
@@ -232,6 +238,12 @@ The following example uses the decorator approach to write individual message ha
     1. Matches the button with an id of "bell" (note the `#` to match the id)
     2. Matches the button with class names "toggle" *and* "dark"
     3. Matches the button with an id of "quit"
+
+=== "on_decorator.tcss"
+
+    ```python title="on_decorator.tcss"
+    --8<-- "docs/examples/events/on_decorator.tcss"
+    ```
 
 === "Output"
 
