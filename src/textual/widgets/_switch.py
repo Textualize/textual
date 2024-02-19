@@ -130,7 +130,12 @@ class Switch(Widget, can_focus=True):
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
         if self._should_animate:
-            self.animate("slider_pos", target_slider_pos, duration=0.3)
+            self.animate(
+                "slider_pos",
+                target_slider_pos,
+                duration=0.3,
+                level="basic",
+            )
         else:
             self.slider_pos = target_slider_pos
         self.post_message(self.Changed(self, self.value))

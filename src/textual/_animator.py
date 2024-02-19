@@ -11,7 +11,7 @@ from typing_extensions import Protocol, runtime_checkable
 from . import _time
 from ._callback import invoke
 from ._easing import DEFAULT_EASING, EASING
-from ._types import CallbackType
+from ._types import AnimationLevel, CallbackType
 from .timer import Timer
 
 if TYPE_CHECKING:
@@ -53,7 +53,11 @@ class Animation(ABC):
     """Callback to run after animation completes"""
 
     @abstractmethod
-    def __call__(self, time: float) -> bool:  # pragma: no cover
+    def __call__(
+        self,
+        time: float,
+        app_animation_level: AnimationLevel = "full",
+    ) -> bool:  # pragma: no cover
         """Call the animation, return a boolean indicating whether animation is in-progress or complete.
 
         Args:
@@ -93,9 +97,18 @@ class SimpleAnimation(Animation):
     final_value: object
     easing: EasingFunction
     on_complete: CallbackType | None = None
+    level: AnimationLevel = "full"
+    """Minimum level required for the animation to take place (inclusive)."""
 
-    def __call__(self, time: float) -> bool:
-        if self.duration == 0:
+    def __call__(
+        self, time: float, app_animation_level: AnimationLevel = "full"
+    ) -> bool:
+        if (
+            self.duration == 0
+            or app_animation_level == "none"
+            or app_animation_level == "basic"
+            and self.level == "full"
+        ):
             setattr(self.obj, self.attribute, self.final_value)
             return True
 
@@ -170,6 +183,7 @@ class BoundAnimator:
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -182,6 +196,7 @@ class BoundAnimator:
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         start_value = getattr(self._obj, attribute)
         if isinstance(value, str) and hasattr(start_value, "parse"):
@@ -200,6 +215,7 @@ class BoundAnimator:
             delay=delay,
             easing=easing_function,
             on_complete=on_complete,
+            level=level,
         )
 
 
@@ -284,6 +300,7 @@ class Animator:
         easing: EasingFunction | str = DEFAULT_EASING,
         delay: float = 0.0,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute to a new value.
 
@@ -297,6 +314,7 @@ class Animator:
             easing: An easing function.
             delay: Number of seconds to delay the start of the animation by.
             on_complete: Callback to run after the animation completes.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         animate_callback = partial(
             self._animate,
@@ -308,6 +326,7 @@ class Animator:
             speed=speed,
             easing=easing,
             on_complete=on_complete,
+            level=level,
         )
         if delay:
             self._complete_event.clear()
@@ -328,7 +347,8 @@ class Animator:
         speed: float | None = None,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
-    ):
+        level: AnimationLevel = "full",
+    ) -> None:
         """Animate an attribute to a new value.
 
         Args:
@@ -340,6 +360,7 @@ class Animator:
             speed: The speed of the animation.
             easing: An easing function.
             on_complete: Callback to run after the animation completes.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if not hasattr(obj, attribute):
             raise AttributeError(
@@ -373,6 +394,7 @@ class Animator:
                 speed=speed,
                 easing=easing_function,
                 on_complete=on_complete,
+                level=level,
             )
 
         if animation is None:
@@ -414,6 +436,7 @@ class Animator:
                     if on_complete is not None
                     else None
                 ),
+                level=level,
             )
         assert animation is not None, "animation expected to be non-None"
 
@@ -521,11 +544,12 @@ class Animator:
             if not self._scheduled:
                 self._complete_event.set()
         else:
+            app_animation_level = self.app.animation_level
             animation_time = self._get_time()
             animation_keys = list(self._animations.keys())
             for animation_key in animation_keys:
                 animation = self._animations[animation_key]
-                animation_complete = animation(animation_time)
+                animation_complete = animation(animation_time, app_animation_level)
                 if animation_complete:
                     del self._animations[animation_key]
                     if animation.on_complete is not None:
