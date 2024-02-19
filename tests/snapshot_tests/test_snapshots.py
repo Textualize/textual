@@ -638,6 +638,27 @@ def test_datatable_hot_reloading(snap_compare, monkeypatch):
     )
 
 
+def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
+    """Tests all markdown component classes reload correctly.
+
+    See https://github.com/Textualize/textual/issues/3464."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_component_classes_reloading.py",
+        run_before=run_before,
+    )
+
+
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
     assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
@@ -762,7 +783,9 @@ def test_command_palette_discovery(snap_compare) -> None:
         pilot.app.screen.query_one(Input).cursor_blink = False
         await pilot.app.screen.workers.wait_for_complete()
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before)
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before
+    )
 
 
 # --- textual-dev library preview tests ---
