@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- Added support for environment variable `TEXTUAL_ANIMATIONS` to control what animations Textual displays https://github.com/Textualize/textual/pull/4062
+- Add attribute `App.animation_level` to control whether animations on that app run or not https://github.com/Textualize/textual/pull/4062
 - Added support for a `TEXTUAL_SCREENSHOT_LOCATION` environment variable to specify the location of an automated screenshot https://github.com/Textualize/textual/pull/4181/
 - Added support for a `TEXTUAL_SCREENSHOT_FILENAME` environment variable to specify the filename of an automated screenshot https://github.com/Textualize/textual/pull/4181/
 
@@ -127,6 +129,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
 - Added `App.suspend` https://github.com/Textualize/textual/pull/4064
 - Added `App.action_suspend_process` https://github.com/Textualize/textual/pull/4064
+
 
 ### Fixed
 
