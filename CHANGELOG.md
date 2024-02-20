@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed the check for animation level in `LoadingIndicator` https://github.com/Textualize/textual/issues/4188
+
 ## [0.52.0] - 2023-02-19
 
 ### Changed
