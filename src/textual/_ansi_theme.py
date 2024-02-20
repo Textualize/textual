@@ -1,6 +1,6 @@
 from rich.terminal_theme import TerminalTheme
 
-MONOKAI_DARK = TerminalTheme(
+MONOKAI = TerminalTheme(
     (12, 12, 12),
     (217, 217, 217),
     [
@@ -50,4 +50,4 @@ ALABASTER = TerminalTheme(
     ],
 )
 
-DEFAULT_TERMINAL_THEME = MONOKAI_DARK
+DEFAULT_TERMINAL_THEME = MONOKAI

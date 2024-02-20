@@ -71,7 +71,7 @@ from . import (
 )
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
-from ._ansi_theme import ALABASTER, MONOKAI_DARK
+from ._ansi_theme import ALABASTER, MONOKAI
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -399,7 +399,7 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
-    ansi_theme_dark = Reactive(MONOKAI_DARK, init=False)
+    ansi_theme_dark = Reactive(MONOKAI, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
 
     ansi_theme_light = Reactive(ALABASTER, init=False)
