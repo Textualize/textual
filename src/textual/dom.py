@@ -1234,10 +1234,10 @@ class DOMNode(MessagePump):
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
     ) -> QueryType | Widget:
-        """Get a single widget from this widget's children that matches a selector or widget type.
+        """Get a widget from this widget's children that matches a selector or widget type.
 
         Args:
-            selector: A selector.
+            selector: A selector or widget type.
             expect_type: Require the object be of the supplied type, or None for any type.
 
         Raises:
