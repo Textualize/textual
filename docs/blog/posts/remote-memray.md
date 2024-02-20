@@ -19,7 +19,7 @@ They recently added a [Textual](https://github.com/textualize/textual/) interfac
 <!-- more -->
 
 You would typically run this locally, or over a ssh session, but it is also possible to serve the interface over the web with the help of [textual-web](https://github.com/Textualize/textual-web).
-I'm not sure if event the Memray devs themselves are aware of this, but here's how.
+I'm not sure if even the Memray devs themselves are aware of this, but here's how.
 
 First install Textual web (ideally with pipx) alongside Memray:
 
