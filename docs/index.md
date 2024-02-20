@@ -122,10 +122,35 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 ---
 
-```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
-```
+
+=== "Pride example"
+
+    ```{.textual path="examples/pride.py"}
+    ```
+
+=== "pride.py"
+
+    ```py
+    --8<-- "examples/pride.py"
+    ```
+
+
 
 ---
 
-```{.textual path="examples/pride.py"}
-```
+=== "Calculator example"
+
+    ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
+    ```
+
+=== "calculator.py"
+
+    ```python
+    --8<-- "examples/calculator.py"
+    ```
+
+=== "calculator.tcss"
+
+    ```css
+    --8<-- "examples/calculator.tcss"
+    ```
