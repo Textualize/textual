@@ -7545,8 +7545,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.classes" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8739,7 +8739,7 @@ See the <a href="/guide/reactivity#data-binding">guide on data binding</a>.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get a DOM query matching a selector.</p>
+      <p>Query the DOM for children that match a selector or widget type.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8760,7 +8760,7 @@ See the <a href="/guide/reactivity#data-binding">guide on data binding</a>.</p>
           <td>
             <code>None</code>
           </td>
-          <td><p>A CSS selector or <code>None</code> for all nodes.</p></td>
+          <td><p>A CSS selector, widget type, or <code>None</code> for all nodes.</p></td>
         </tr>
     </tbody>
   </table>
@@ -8804,7 +8804,7 @@ See the <a href="/guide/reactivity#data-binding">guide on data binding</a>.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Get a single Widget matching the given selector or selector type.</p>
+      <p>Get a widget from this widget's children that matches a selector or widget type.</p>
 
   <h5>Parameters</h5>
   <table>
@@ -8825,7 +8825,7 @@ See the <a href="/guide/reactivity#data-binding">guide on data binding</a>.</p>
           <td>
             <em>required</em>
           </td>
-          <td><p>A selector.</p></td>
+          <td><p>A selector or widget type.</p></td>
         </tr>
         <tr>
           <td>
