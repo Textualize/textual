@@ -110,14 +110,7 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 </a>
 </div>
 
----
 
-<a href="https://github.com/darrenburns/elia">
-
-![Elia](https://private-user-images.githubusercontent.com/49741340/256117145-80453ed8-ec94-4095-b721-89d32d9fc327.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDg0MzkxNTMsIm5iZiI6MTcwODQzODg1MywicGF0aCI6Ii80OTc0MTM0MC8yNTYxMTcxNDUtODA0NTNlZDgtZWM5NC00MDk1LWI3MjEtODlkMzJkOWZjMzI3LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAyMjAlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMjIwVDE0MjA1M1omWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTAxYmZkMjBmYjViMmZmYjBkM2QzNjI3NGJlZmQ1ODQwODJhZDg5N2E2NDZkZjU4NDI2ZTJmNjQ5NzE0M2Q1MzgmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.QyjiBTcjQ2Ajh1BKtMr50ErTQzAtYVd-14U3-OEB_18)
-
-</a>
- 
 ---
 
 ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
