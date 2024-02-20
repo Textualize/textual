@@ -52,7 +52,6 @@ from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
-from rich import terminal_theme
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
@@ -72,6 +71,7 @@ from . import (
 )
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._ansi_theme import ALABASTER, MONOKAI_DARK
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -399,10 +399,10 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
-    ansi_theme_dark = Reactive(terminal_theme.MONOKAI, init=False)
+    ansi_theme_dark = Reactive(MONOKAI_DARK, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
 
-    ansi_theme_light = Reactive(terminal_theme.MONOKAI, init=False)
+    ansi_theme_light = Reactive(ALABASTER, init=False)
     """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
 
     def __init__(
