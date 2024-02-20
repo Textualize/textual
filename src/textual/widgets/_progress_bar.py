@@ -105,14 +105,18 @@ class Bar(Widget, can_focus=False):
         # Width used to enable the visual effect of the bar going into the corners.
         total_imaginary_width = width + highlighted_bar_width
 
-        speed = 30  # Cells per second.
-        # Compute the position of the bar.
-        start = (speed * self._get_elapsed_time()) % (2 * total_imaginary_width)
-        if start > total_imaginary_width:
-            # If the bar is to the right of its width, wrap it back from right to left.
-            start = 2 * total_imaginary_width - start  # = (tiw - (start - tiw))
-        start -= highlighted_bar_width
-        end = start + highlighted_bar_width
+        if self.app.animation_level == "none":
+            start = 0
+            end = width
+        else:
+            speed = 30  # Cells per second.
+            # Compute the position of the bar.
+            start = (speed * self._get_elapsed_time()) % (2 * total_imaginary_width)
+            if start > total_imaginary_width:
+                # If the bar is to the right of its width, wrap it back from right to left.
+                start = 2 * total_imaginary_width - start  # = (tiw - (start - tiw))
+            start -= highlighted_bar_width
+            end = start + highlighted_bar_width
 
         bar_style = self.get_component_rich_style("bar--indeterminate")
         return BarRenderable(

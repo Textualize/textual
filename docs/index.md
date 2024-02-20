@@ -77,20 +77,55 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 </div>
 
+---
 
+<div>
+<a href="https://github.com/Textualize/toolong">
+--8<-- "docs/images/screenshots/toolong.svg"
+</a>
+</div>
+
+---
+
+<div>
+<a href="https://github.com/textualize/frogmouth">
+--8<-- "docs/images/screenshots/frogmouth.svg"
+</a>
+</div>
+
+---
+
+<div>
+<a href="https://github.com/bloomberg/memray">
+--8<-- "docs/images/screenshots/memray.svg"
+</a>
+</div>
+
+---
+
+
+<a href="https://github.com/charles-001/dolphie">
+
+![Dolphie](https://www.textualize.io/static/img/dolphie.png)
+
+</a>
+
+
+---
+
+<div>
+<a href="https://harlequin.sh">
+--8<-- "docs/images/screenshots/harlequin.svg"
+</a>
+</div>
+
+
+---
 
 ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
 ```
 
+---
+
 ```{.textual path="examples/pride.py"}
-```
-
-```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter"}
-```
-
-
-```{.textual path="docs/examples/guide/layout/combining_layouts.py" columns="100", lines="30"}
-```
-
-```{.textual path="docs/examples/app/widgets01.py"}
 ```
