@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
-from rich.terminal_theme import DEFAULT_TERMINAL_THEME
 from rich.text import Text
 
 from . import log
+from ._ansi_theme import DEFAULT_TERMINAL_THEME
 from ._border import get_box, render_border_label, render_row
 from ._context import active_app
 from ._opacity import _apply_opacity
