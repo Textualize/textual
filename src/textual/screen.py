@@ -869,6 +869,8 @@ class Screen(Generic[ScreenResultType], Widget):
                     tooltip = self.get_child_by_type(Tooltip)
                 except NoMatches:
                     return
+                if self._tooltip_timer is not None:
+                    self._tooltip_timer.stop()
                 tooltip.display = False
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
