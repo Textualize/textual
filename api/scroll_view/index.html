@@ -4695,6 +4695,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -4876,6 +4878,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Command
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constants
   </span>
   
 
@@ -6520,8 +6543,9 @@ on the compositor to render children).</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -6625,6 +6649,17 @@ on the compositor to render children).</p>
             <code>None</code>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
         </tr>
     </tbody>
   </table>

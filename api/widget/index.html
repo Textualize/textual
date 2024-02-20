@@ -4695,6 +4695,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -4876,6 +4878,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Command
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constants
   </span>
   
 
@@ -5958,6 +5981,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.lock" class="md-nav__link">
+    <span class="md-ellipsis">
+      lock
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.max_scroll_x" class="md-nav__link">
     <span class="md-ellipsis">
       max_scroll_x
@@ -6240,6 +6272,15 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.animate" class="md-nav__link">
     <span class="md-ellipsis">
       animate()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      batch()
     </span>
   </a>
   
@@ -7767,6 +7808,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widget.Widget.lock" class="md-nav__link">
+    <span class="md-ellipsis">
+      lock
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widget.Widget.max_scroll_x" class="md-nav__link">
     <span class="md-ellipsis">
       max_scroll_x
@@ -8049,6 +8099,15 @@ window.onload = async (event) => {
   <a href="#textual.widget.Widget.animate" class="md-nav__link">
     <span class="md-ellipsis">
       animate()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widget.Widget.batch" class="md-nav__link">
+    <span class="md-ellipsis">
+      batch()
     </span>
   </a>
   
@@ -9965,6 +10024,32 @@ cache-key.</p>
 
 
 
+<h3 id="textual.widget.Widget.lock" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">lock</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.lock" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p><code>asyncio</code> lock to be used to synchronize the state of the widget.</p>
+<p>Two different tasks might call methods on a widget at the same time, which
+might result in a race condition.
+This can be fixed by adding <code>async with widget.lock:</code> around the method calls.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.widget.Widget.max_scroll_x" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">max_scroll_x</span>
 
@@ -10040,8 +10125,8 @@ cache-key.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widget.Widget.offset" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10735,8 +10820,8 @@ cache-key.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-property"><code>property</code></small>
       <small class="doc doc-label doc-label-writable"><code>writable</code></small>
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
   </span>
 
 <a href="#textual.widget.Widget.tooltip" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -11097,8 +11182,9 @@ This method maybe overridden if additional logic is required.</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">easing</span><span class="o">=</span><span class="n">DEFAULT_EASING</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;full&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -11203,9 +11289,52 @@ This method maybe overridden if additional logic is required.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;full&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widget.Widget.batch" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">batch</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-async"><code>async</code></small>
+  </span>
+
+<a href="#textual.widget.Widget.batch" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">batch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Async context manager that combines widget locking and update batching.</p>
+<p>Use this async context manager whenever you want to acquire the widget lock and
+batch app updates at the same time.</p>
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">container</span><span class="o">.</span><span class="n">batch</span><span class="p">():</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">await</span> <span class="n">container</span><span class="o">.</span><span class="n">remove_children</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">await</span> <span class="n">container</span><span class="o">.</span><span class="n">mount</span><span class="p">(</span><span class="n">Label</span><span class="p">(</span><span class="s2">&quot;All buttons are gone.&quot;</span><span class="p">))</span>
+</code></pre></div>
+</details>
   </div>
 
 </div>
@@ -13129,12 +13258,36 @@ do this automatically.</p>
   </span>
 
 <a href="#textual.widget.Widget.remove_children" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">remove_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">remove_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selector</span><span class="o">=</span><span class="s1">&#39;*&#39;</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
-      <p>Remove all children of this Widget from the DOM.</p>
+      <p>Remove the immediate children of this Widget from the DOM.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>selector</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#type">type</a>[<a class="autorefs autorefs-internal" title="textual.css.query.QueryType" href="../query/#textual.css.query.QueryType">QueryType</a>]</code>
+          </td>
+          <td>
+            <code>&#39;*&#39;</code>
+          </td>
+          <td><p>A CSS selector to specify which direct children to remove.</p></td>
+        </tr>
+    </tbody>
+  </table>
 
   <h5>Returns</h5>
   <table>
@@ -13149,7 +13302,7 @@ do this automatically.</p>
           <td>
                 <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
           </td>
-          <td><p>An awaitable object that waits for the children to be removed.</p></td>
+          <td><p>An awaitable object that waits for the direct children to be removed.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13473,8 +13626,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13557,6 +13711,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -13584,8 +13749,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13668,6 +13834,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -13695,8 +13872,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13779,6 +13957,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -13806,8 +13995,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13890,6 +14080,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -13917,8 +14118,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14001,6 +14203,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14028,8 +14241,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14112,6 +14326,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14139,8 +14364,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14223,6 +14449,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14250,8 +14487,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14334,6 +14572,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14363,8 +14612,9 @@ do this automatically.</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14469,6 +14719,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14496,8 +14757,9 @@ do this automatically.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14580,6 +14842,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14609,8 +14882,9 @@ do this automatically.</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14715,6 +14989,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14748,8 +15033,9 @@ do this automatically.</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -14855,6 +15141,17 @@ do this automatically.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -14887,8 +15184,9 @@ do this automatically.</p>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">):</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15017,6 +15315,17 @@ the scrollable area.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -15066,8 +15375,9 @@ the scrollable area.</p>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">origin_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="p">):</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15183,6 +15493,17 @@ the scrollable area.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -15228,8 +15549,9 @@ the scrollable area.</p>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15312,6 +15634,17 @@ the scrollable area.</p>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -15340,8 +15673,9 @@ the scrollable area.</p>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">top</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">easing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="p">):</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;basic&quot;</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -15434,6 +15768,17 @@ the scrollable area.</p>
             <code>None</code>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;basic&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
         </tr>
     </tbody>
   </table>

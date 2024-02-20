@@ -4695,6 +4695,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -4917,6 +4919,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.TITLE" class="md-nav__link">
     <span class="md-ellipsis">
       TITLE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.animation_level" class="md-nav__link">
+    <span class="md-ellipsis">
+      animation_level
     </span>
   </a>
   
@@ -5953,6 +5964,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Command
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constants
   </span>
   
 
@@ -7344,6 +7376,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.TITLE" class="md-nav__link">
     <span class="md-ellipsis">
       TITLE
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.animation_level" class="md-nav__link">
+    <span class="md-ellipsis">
+      animation_level
     </span>
   </a>
   
@@ -8754,6 +8795,32 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
       <p>A class variable to set the <em>default</em> title for the application.</p>
 <p>To update the title while the app is running, you can set the <a class="autorefs autorefs-internal" href="#textual.app.App.title">title</a> attribute.
 See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.Screen.TITLE">the <code>Screen.TITLE</code> attribute</a>.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.animation_level" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">animation_level</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.app.App.animation_level" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">animation_level</span><span class="p">:</span> <span class="n">AnimationLevel</span> <span class="o">=</span> <span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">constants</span><span class="o">.</span><span class="n">TEXTUAL_ANIMATIONS</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Determines what type of animations the app will display.</p>
+<p>See <a class="autorefs autorefs-internal" href="../constants/#textual.constants.TEXTUAL_ANIMATIONS"><code>textual.constants.TEXTUAL_ANIMATIONS</code></a>.</p>
   </div>
 
 </div>
@@ -10278,8 +10345,9 @@ under Textual Web this is a non-operation.</p>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">easing</span><span class="o">=</span><span class="n">DEFAULT_EASING</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;full&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -10384,6 +10452,17 @@ under Textual Web this is a non-operation.</p>
             <code>None</code>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="../types/#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;full&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
         </tr>
     </tbody>
   </table>
@@ -13069,7 +13148,7 @@ message pump in the app.</p></td>
 
 <a href="#textual.app.App.save_screenshot" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">save_screenshot</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">):</span>
 </code></pre></div>
 
@@ -13103,10 +13182,10 @@ a filename with the date and time.</p></td>
           <td>
             <strong><code>path</code></strong>
             <br>
-                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
           </td>
           <td>
-            <code>&#39;./&#39;</code>
+            <code>None</code>
           </td>
           <td><p>Path to directory for output. Defaults to current working directory.</p></td>
         </tr>

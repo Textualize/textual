@@ -4695,6 +4695,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
     
@@ -4876,6 +4878,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Command
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constants/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Constants
   </span>
   
 
@@ -5513,6 +5536,15 @@ window.onload = async (event) => {
   <a href="#textual.types.ActionParseResult" class="md-nav__link">
     <span class="md-ellipsis">
       ActionParseResult
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#textual.types.AnimationLevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      AnimationLevel
     </span>
   </a>
   
@@ -6527,6 +6559,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#textual.types.AnimationLevel" class="md-nav__link">
+    <span class="md-ellipsis">
+      AnimationLevel
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#textual.types.CSSPathType" class="md-nav__link">
     <span class="md-ellipsis">
       CSSPathType
@@ -6901,6 +6942,29 @@ window.onload = async (event) => {
   <div class="doc doc-contents ">
   
       <p>An action is its name and the arbitrary tuple of its arguments.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.types.AnimationLevel" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">AnimationLevel</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+<a href="#textual.types.AnimationLevel" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">AnimationLevel</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="s1">&#39;basic&#39;</span><span class="p">,</span> <span class="s1">&#39;full&#39;</span><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The levels that the <a class="autorefs autorefs-internal" href="../constants/#textual.constants.TEXTUAL_ANIMATIONS"><code>TEXTUAL_ANIMATIONS</code></a> env var can be set to.</p>
   </div>
 
 </div>
@@ -7721,8 +7785,9 @@ because the class <a class="autorefs autorefs-internal" href="../color/#textual.
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">speed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">delay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>    <span class="n">easing</span><span class="o">=</span><span class="n">DEFAULT_EASING</span><span class="p">,</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p">):</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>    <span class="n">on_complete</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>    <span class="n">level</span><span class="o">=</span><span class="s2">&quot;full&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7826,6 +7891,17 @@ because the class <a class="autorefs autorefs-internal" href="../color/#textual.
             <code>None</code>
           </td>
           <td><p>A callable to invoke when the animation is finished.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>level</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual._types.AnimationLevel" href="#textual.types.AnimationLevel">AnimationLevel</a></code>
+          </td>
+          <td>
+            <code>&#39;full&#39;</code>
+          </td>
+          <td><p>Minimum level required for the animation to take place (inclusive).</p></td>
         </tr>
     </tbody>
   </table>
