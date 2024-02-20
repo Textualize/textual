@@ -1056,6 +1056,11 @@ def test_input_percentage_width(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
 
 
-def test_ansi_color_mapping(snap_compare):
+@pytest.mark.parametrize("dark", [True, False])
+def test_ansi_color_mapping(snap_compare, dark):
     """Test how ANSI colors in Rich renderables are mapped to hex colors."""
-    assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py")
+
+    def setup(pilot):
+        pilot.app.dark = dark
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
