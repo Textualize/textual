@@ -1204,7 +1204,7 @@ class DOMNode(MessagePump):
     def query(
         self, selector: str | type[QueryType] | None = None
     ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
-        """Get a DOM query matching a selector.
+        """Query the DOM for children that match a selector or selector type.
 
         Args:
             selector: A CSS selector or `None` for all nodes.
@@ -1234,7 +1234,7 @@ class DOMNode(MessagePump):
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
     ) -> QueryType | Widget:
-        """Get a single Widget matching the given selector or selector type.
+        """Get a single widget from this widget's children that matches a selector or selector type.
 
         Args:
             selector: A selector.
