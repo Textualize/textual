@@ -7,10 +7,12 @@ from typing import TYPE_CHECKING, Callable, Iterable, Sequence
 from rich.console import Console
 from rich.segment import Segment
 from rich.style import Style
+from rich.terminal_theme import DEFAULT_TERMINAL_THEME
 from rich.text import Text
 
 from . import log
 from ._border import get_box, render_border_label, render_row
+from ._context import active_app
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color
@@ -318,8 +320,14 @@ class StylesCache:
             Returns:
                 New list of segments
             """
+            try:
+                app = active_app.get()
+                ansi_theme = app.ansi_theme
+            except LookupError:
+                ansi_theme = DEFAULT_TERMINAL_THEME
+
             if styles.tint.a:
-                segments = Tint.process_segments(segments, styles.tint)
+                segments = Tint.process_segments(segments, styles.tint, ansi_theme)
             if opacity != 1.0:
                 segments = _apply_opacity(segments, base_background, opacity)
             return segments

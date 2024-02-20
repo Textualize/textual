@@ -878,9 +878,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
-        self._truecolor_filter.theme = (
-            self.ansi_theme_dark if self.dark else self.ansi_theme_light
-        )
+        self._truecolor_filter.theme = self.ansi_theme
         self.call_later(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
@@ -892,6 +890,15 @@ class App(Generic[ReturnType], DOMNode):
         if not self.dark:
             self._truecolor_filter.theme = theme
             self.call_later(self.refresh_css)
+
+    @property
+    def ansi_theme(self) -> TerminalTheme:
+        """The ANSI TerminalTheme currently being used.
+
+        Defines how colors defined as ANSI (e.g. `magenta`) inside Rich renderables
+        are mapped to hex codes.
+        """
+        return self.ansi_theme_dark if self.dark else self.ansi_theme_light
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
