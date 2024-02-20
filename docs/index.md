@@ -120,6 +120,28 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 </div>
 
 
+
+---
+
+
+=== "Stopwatch tutorial"
+
+    <div class="textual-web-demo" data-app="tutorial"></div>
+
+
+=== "stopwatch.py"
+
+    ```python 
+    --8<-- "docs/examples/tutorial/stopwatch.py"
+    ```
+
+=== "stopwatch.tcss"
+
+    ```css
+    --8<-- "examples/calculator.tcss"
+    ```
+
+
 ---
 
 
