@@ -786,6 +786,8 @@ class Screen(Generic[ScreenResultType], Widget):
         if not self.app._dom_ready:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
+        else:
+            self._maybe_clear_tooltip()
 
     async def _on_update(self, message: messages.Update) -> None:
         message.stop()
@@ -850,6 +852,24 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             if tooltip.display and self._tooltip_widget is widget:
                 self._handle_tooltip_timer(widget)
+
+    def _maybe_clear_tooltip(self) -> None:
+        """Check if the widget under the tooltip still pertains to the tooltip.
+
+        If they differ, the tooltip will be removed.
+        """
+        # If there's a widget associated with the tooltip at all...
+        if self._tooltip_widget is not None:
+            # ...look at what's currently under the mouse.
+            under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
+            # If it's not the same widget...
+            if under_mouse is not self._tooltip_widget:
+                # ...clear the tooltip.
+                try:
+                    tooltip = self.get_child_by_type(Tooltip)
+                except NoMatches:
+                    return
+                tooltip.display = False
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
         """Called by a timer from _handle_mouse_move to update the tooltip.
