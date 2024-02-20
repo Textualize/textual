@@ -1,1 +1,1 @@
-::: textuals.constants
+::: textual.constants
