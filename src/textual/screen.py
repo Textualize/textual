@@ -783,11 +783,11 @@ class Screen(Generic[ScreenResultType], Widget):
         if self.is_current:
             self._compositor_refresh()
 
-        if not self.app._dom_ready:
+        if self.app._dom_ready:
+            self._maybe_clear_tooltip()
+        else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
-        else:
-            self._maybe_clear_tooltip()
 
     async def _on_update(self, message: messages.Update) -> None:
         message.stop()
