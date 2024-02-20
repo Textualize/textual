@@ -835,6 +835,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
         self.app._set_mouse_over(None)
+        self._clear_tooltip()
         self.stack_updates += 1
 
     async def _on_resize(self, event: events.Resize) -> None:
@@ -853,6 +854,17 @@ class Screen(Generic[ScreenResultType], Widget):
             if tooltip.display and self._tooltip_widget is widget:
                 self._handle_tooltip_timer(widget)
 
+    def _clear_tooltip(self) -> None:
+        """Unconditionally clear any existing tooltip."""
+        try:
+            tooltip = self.get_child_by_type(Tooltip)
+        except NoMatches:
+            return
+        if tooltip.display:
+            if self._tooltip_timer is not None:
+                self._tooltip_timer.stop()
+            tooltip.display = False
+
     def _maybe_clear_tooltip(self) -> None:
         """Check if the widget under the mouse cursor still pertains to the tooltip.
 
@@ -865,13 +877,7 @@ class Screen(Generic[ScreenResultType], Widget):
             # If it's not the same widget...
             if under_mouse is not self._tooltip_widget:
                 # ...clear the tooltip.
-                try:
-                    tooltip = self.get_child_by_type(Tooltip)
-                except NoMatches:
-                    return
-                if self._tooltip_timer is not None:
-                    self._tooltip_timer.stop()
-                tooltip.display = False
+                self._clear_tooltip()
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
         """Called by a timer from _handle_mouse_move to update the tooltip.
