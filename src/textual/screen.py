@@ -854,7 +854,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._handle_tooltip_timer(widget)
 
     def _maybe_clear_tooltip(self) -> None:
-        """Check if the widget under the tooltip still pertains to the tooltip.
+        """Check if the widget under the mouse cursor still pertains to the tooltip.
 
         If they differ, the tooltip will be removed.
         """
