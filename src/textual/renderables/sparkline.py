@@ -38,7 +38,7 @@ class Sparkline(Generic[T]):
         max_color: Color = Color.from_rgb(255, 0, 0),
         summary_function: SummaryFunction[T] = max,
     ) -> None:
-        self.data: Sequence[T] = data
+        self.data: Sequence[T] = list(data)
         self.width = width
         self.min_color = Style.from_color(min_color)
         self.max_color = Style.from_color(max_color)
