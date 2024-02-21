@@ -212,7 +212,7 @@ In the following example we have three buttons, each of which does something dif
 
 === "on_decorator.tcss"
 
-    ```python title="on_decorator.tcss"
+    ```css title="on_decorator.tcss"
     --8<-- "docs/examples/events/on_decorator.tcss"
     ```
 
@@ -241,7 +241,7 @@ The following example uses the decorator approach to write individual message ha
 
 === "on_decorator.tcss"
 
-    ```python title="on_decorator.tcss"
+    ```css title="on_decorator.tcss"
     --8<-- "docs/examples/events/on_decorator.tcss"
     ```
 
@@ -325,7 +325,7 @@ Let's look at an example which looks up word definitions from an [api](https://d
     ```
 === "dictionary.tcss"
 
-    ```python title="dictionary.tcss"
+    ```css title="dictionary.tcss"
     --8<-- "docs/examples/events/dictionary.tcss"
     ```
 
