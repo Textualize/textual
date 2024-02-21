@@ -218,6 +218,7 @@ def test_mouse_click(parser, sequence, event_type, shift, meta):
         ("\x1b[<35;15;38M", False, False, 0),  # Basic cursor movement
         ("\x1b[<39;15;38M", True, False, 0),  # Shift held down
         ("\x1b[<43;15;38M", False, True, 0),  # Meta held down
+        ("\x1b[<3;15;38M", False, False, 0),
     ],
 )
 def test_mouse_move(parser, sequence, shift, meta, button):

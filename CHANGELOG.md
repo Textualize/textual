@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
 - Fixed `Sparkline` not working with data in a `deque` https://github.com/Textualize/textual/issues/3899
+- Fixed erroneous mouse 'ButtonDown' reporting for mouse movement when any-event mode is enabled in xterm. https://github.com/Textualize/textual/pull/3647
 
 ## [0.52.1] - 2024-02-20
 
