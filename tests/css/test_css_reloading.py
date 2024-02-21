@@ -1,7 +1,4 @@
-"""
-Regression test for https://github.com/Textualize/textual/issues/3931
-"""
-
+import os
 from pathlib import Path
 
 from textual.app import App, ComposeResult
@@ -34,7 +31,7 @@ class MyApp(App[None]):
 
 
 async def test_css_reloading_applies_to_non_top_screen(monkeypatch) -> None:  # type: ignore
-    """Regression test for https://github.com/Textualize/textual/issues/2063."""
+    """Regression test for https://github.com/Textualize/textual/issues/3931"""
 
     monkeypatch.setenv(
         "TEXTUAL", "debug"
@@ -65,3 +62,25 @@ Label {
         # Height should fall back to 1.
         assert first_label.styles.height is not None
         assert first_label.styles.height.value == 1
+
+
+async def test_css_reloading_file_not_found(monkeypatch, tmp_path):
+    """Regression test for https://github.com/Textualize/textual/issues/3996
+
+    Files can become temporarily unavailable during saving on certain environments.
+    """
+    monkeypatch.setenv("TEXTUAL", "debug")
+
+    css_path = tmp_path / "test_css_reloading_file_not_found.tcss"
+    with open(css_path, "w") as css_file:
+        css_file.write("#a {color: red;}")
+
+    class TextualApp(App):
+        CSS_PATH = css_path
+
+    app = TextualApp()
+    async with app.run_test() as pilot:
+        await pilot.app._on_css_change()
+        os.remove(css_path)
+        assert not css_path.exists()
+        await pilot.app._on_css_change()

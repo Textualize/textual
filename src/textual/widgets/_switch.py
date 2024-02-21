@@ -74,7 +74,7 @@ class Switch(Widget, can_focus=True):
     }
     """
 
-    value = reactive(False, init=False)
+    value: reactive[bool] = reactive(False, init=False)
     """The value of the switch; `True` for on and `False` for off."""
 
     slider_pos = reactive(0.0)
@@ -124,13 +124,18 @@ class Switch(Widget, can_focus=True):
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if value:
             self.slider_pos = 1.0
-            self._reactive_value = value
+            self.set_reactive(Switch.value, value)
         self._should_animate = animate
 
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
         if self._should_animate:
-            self.animate("slider_pos", target_slider_pos, duration=0.3)
+            self.animate(
+                "slider_pos",
+                target_slider_pos,
+                duration=0.3,
+                level="basic",
+            )
         else:
             self.slider_pos = target_slider_pos
         self.post_message(self.Changed(self, self.value))

@@ -161,8 +161,8 @@ def enable_application_mode() -> Callable[[], None]:
         A callable that will restore terminal to previous state.
     """
 
-    terminal_in = sys.stdin
-    terminal_out = sys.stdout
+    terminal_in = sys.__stdin__
+    terminal_out = sys.__stdout__
 
     current_console_mode_in = get_console_mode(terminal_in)
     current_console_mode_out = get_console_mode(terminal_out)
@@ -264,7 +264,7 @@ class EventMonitor(threading.Thread):
                         # Key event, store unicode char in keys list
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
-                        if key_event.bKeyDown or key == "\x1b":
+                        if key_event.bKeyDown:
                             if (
                                 key_event.dwControlKeyState
                                 and key_event.wVirtualKeyCode == 0

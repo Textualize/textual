@@ -26,7 +26,9 @@ class HorizontalLayout(Layout):
         add_placement = placements.append
 
         child_styles = [child.styles for child in children]
-        box_margins: list[Spacing] = [styles.margin for styles in child_styles]
+        box_margins: list[Spacing] = [
+            styles.margin for styles in child_styles if styles.overlay != "screen"
+        ]
         if box_margins:
             resolve_margin = Size(
                 sum(
@@ -36,7 +38,7 @@ class HorizontalLayout(Layout):
                     ]
                 )
                 + (box_margins[0].left + box_margins[-1].right),
-                max(
+                min(
                     [
                         margin_top + margin_bottom
                         for margin_top, _, margin_bottom, _ in box_margins

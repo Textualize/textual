@@ -160,5 +160,4 @@ def _arrange_dock_widgets(
             _WidgetPlacement(dock_region, null_spacing, dock_widget, top_z, True)
         )
     dock_spacing = Spacing(top, right, bottom, left)
-
     return (placements, dock_spacing)

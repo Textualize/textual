@@ -15,7 +15,7 @@ class ExtendedTextArea(TextArea):
 
 class TextAreaKeyPressHook(App):
     def compose(self) -> ComposeResult:
-        yield ExtendedTextArea(language="python")
+        yield ExtendedTextArea.code_editor(language="python")
 
 
 app = TextAreaKeyPressHook()

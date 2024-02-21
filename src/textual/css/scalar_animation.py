@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from .._animator import Animation, EasingFunction
-from .._types import CallbackType
+from .._types import AnimationLevel, CallbackType
 from .scalar import Scalar, ScalarOffset
 
 if TYPE_CHECKING:
@@ -23,6 +23,7 @@ class ScalarAnimation(Animation):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ):
         assert (
             speed is not None or duration is not None
@@ -34,6 +35,7 @@ class ScalarAnimation(Animation):
         self.final_value = value
         self.easing = easing
         self.on_complete = on_complete
+        self.level = level
 
         size = widget.outer_size
         viewport = widget.app.size
@@ -48,11 +50,18 @@ class ScalarAnimation(Animation):
             assert duration is not None, "Duration expected to be non-None"
             self.duration = duration
 
-    def __call__(self, time: float) -> bool:
+    def __call__(
+        self, time: float, app_animation_level: AnimationLevel = "full"
+    ) -> bool:
         factor = min(1.0, (time - self.start_time) / self.duration)
         eased_factor = self.easing(factor)
 
-        if eased_factor >= 1:
+        if (
+            eased_factor >= 1
+            or app_animation_level == "none"
+            or app_animation_level == "basic"
+            and self.level == "full"
+        ):
             setattr(self.styles, self.attribute, self.final_value)
             return True
 

@@ -606,7 +606,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Initialises a widget to display tabular data.
+        """Initializes a widget to display tabular data.
 
         Args:
             show_header: Whether the table header should be visible or not.
@@ -662,7 +662,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
         """For each row (a row can have a height of multiple lines), we maintain a
-        cache of the fixed and scrollable lines within that row to minimise how often
+        cache of the fixed and scrollable lines within that row to minimize how often
         we need to re-render it. """
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""

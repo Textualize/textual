@@ -583,6 +583,7 @@ class Tabs(Widget, can_focus=True):
             self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
             self._highlight_active(animate=previously_active != "")
+            self._scroll_active_tab()
             self.post_message(self.TabActivated(self, active_tab))
         else:
             underline = self.query_one(Underline)
@@ -590,7 +591,10 @@ class Tabs(Widget, can_focus=True):
             underline.highlight_end = 0
             self.post_message(self.Cleared(self))
 
-    def _highlight_active(self, animate: bool = True) -> None:
+    def _highlight_active(
+        self,
+        animate: bool = True,
+    ) -> None:
         """Move the underline bar to under the active tab.
 
         Args:
@@ -607,7 +611,8 @@ class Tabs(Widget, can_focus=True):
             underline.show_highlight = True
             tab_region = active_tab.virtual_region.shrink(active_tab.styles.gutter)
             start, end = tab_region.column_span
-            if animate:
+            # This is a basic animation, so we only disable it if we want no animations.
+            if animate and self.app.animation_level != "none":
 
                 def animate_underline() -> None:
                     """Animate the underline."""
@@ -620,8 +625,18 @@ class Tabs(Widget, can_focus=True):
                             active_tab.styles.gutter
                         )
                         start, end = tab_region.column_span
-                        underline.animate("highlight_start", start, duration=0.3)
-                        underline.animate("highlight_end", end, duration=0.3)
+                        underline.animate(
+                            "highlight_start",
+                            start,
+                            duration=0.3,
+                            level="basic",
+                        )
+                        underline.animate(
+                            "highlight_end",
+                            end,
+                            duration=0.3,
+                            level="basic",
+                        )
 
                 self.set_timer(0.02, lambda: self.call_after_refresh(animate_underline))
             else:
@@ -643,7 +658,6 @@ class Tabs(Widget, can_focus=True):
         self.query("#tabs-list Tab.-active").remove_class("-active")
         tab.add_class("-active")
         self.active = tab.id or ""
-        self.query_one("#tabs-scroll").scroll_to_center(tab, force=True)
 
     def _on_underline_clicked(self, event: Underline.Clicked) -> None:
         """The underline was clicked.
@@ -699,7 +713,6 @@ class Tabs(Widget, can_focus=True):
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
         self.active = tabs[new_tab_index].id or ""
-        self._scroll_active_tab()
 
     def _on_tab_disabled(self, event: Tab.Disabled) -> None:
         """Re-post the disabled message."""

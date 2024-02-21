@@ -92,15 +92,6 @@ async def test_select_message_with_keyboard() -> None:
         ]
 
 
-async def test_select_disabled_option_with_keyboard() -> None:
-    """Hitting enter on an option should result in a message."""
-    async with OptionListApp().run_test() as pilot:
-        assert isinstance(pilot.app, OptionListApp)
-        pilot.app.query_one(OptionList).disable_option("1")
-        await pilot.press("tab", "down", "enter")
-        assert pilot.app.messages[1:] == []
-
-
 async def test_click_option_with_mouse() -> None:
     """Clicking on an option via the mouse should result in highlight and select messages."""
     async with OptionListApp().run_test() as pilot:

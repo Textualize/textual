@@ -307,15 +307,15 @@ async def test_cursor_screen_offset_and_terminal_cursor_position_update():
     async with app.run_test():
         text_area = app.query_one(TextArea)
 
-        assert app.cursor_position == (3, 0)
+        assert app.cursor_position == (5, 1)
 
         text_area.cursor_location = (1, 1)
 
-        assert text_area.cursor_screen_offset == (4, 1)
+        assert text_area.cursor_screen_offset == (6, 2)
 
         # Also ensure that this update has been reported back to the app
         # for the benefit of IME/emoji popups.
-        assert app.cursor_position == (4, 1)
+        assert app.cursor_position == (6, 2)
 
 
 async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
@@ -327,10 +327,10 @@ async def test_cursor_screen_offset_and_terminal_cursor_position_scrolling():
     async with app.run_test(size=(80, 2)) as pilot:
         text_area = app.query_one(TextArea)
 
-        assert app.cursor_position == (3, 0)
+        assert app.cursor_position == (5, 1)
 
         text_area.cursor_location = (5, 0)
         await pilot.pause()
 
-        assert text_area.cursor_screen_offset == (3, 1)
-        assert app.cursor_position == (3, 1)
+        assert text_area.cursor_screen_offset == (5, 1)
+        assert app.cursor_position == (5, 1)

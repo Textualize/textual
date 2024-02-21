@@ -7,7 +7,7 @@ from __future__ import annotations
 from rich.console import RenderableType
 
 from ._animator import EasingFunction
-from ._types import CallbackType
+from ._types import AnimationLevel, CallbackType
 from .containers import ScrollableContainer
 from .geometry import Region, Size
 
@@ -119,6 +119,7 @@ class ScrollView(ScrollableContainer):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -131,6 +132,7 @@ class ScrollView(ScrollableContainer):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
 
         self._scroll_to(
@@ -142,6 +144,22 @@ class ScrollView(ScrollableContainer):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
+        )
+
+    def refresh_line(self, y: int) -> None:
+        """Refresh a single line.
+
+        Args:
+            y: Coordinate of line.
+        """
+        self.refresh(
+            Region(
+                0,
+                y - self.scroll_offset.y,
+                max(self.virtual_size.width, self.size.width),
+                1,
+            )
         )
 
     def refresh_lines(self, y_start: int, line_count: int = 1) -> None:
@@ -152,7 +170,10 @@ class ScrollView(ScrollableContainer):
             line_count: Total number of lines to refresh.
         """
 
-        width = self.size.width
-        scroll_x, scroll_y = self.scroll_offset
-        refresh_region = Region(scroll_x, y_start - scroll_y, width, line_count)
+        refresh_region = Region(
+            0,
+            y_start - self.scroll_offset.y,
+            max(self.virtual_size.width, self.size.width),
+            line_count,
+        )
         self.refresh(refresh_region)

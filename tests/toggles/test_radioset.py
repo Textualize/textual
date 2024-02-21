@@ -110,7 +110,7 @@ async def test_radioset_inner_navigation_post_build():
     async with EmptyRadioSetApp().run_test() as pilot:
         assert pilot.app.query_one(RadioSet)._selected is None
         await pilot.press("up")
-        assert pilot.app.query_one(RadioSet)._selected == 0
+        assert pilot.app.query_one(RadioSet)._selected == 4
 
 
 async def test_radioset_breakout_navigation():

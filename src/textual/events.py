@@ -475,7 +475,7 @@ class MouseUp(MouseEvent, bubble=True, verbose=True):
 
 
 @rich.repr.auto
-class MouseScrollDown(MouseEvent, bubble=True):
+class MouseScrollDown(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *down*.
 
     - [X] Bubbles
@@ -484,7 +484,7 @@ class MouseScrollDown(MouseEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseScrollUp(MouseEvent, bubble=True):
+class MouseScrollUp(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *up*.
 
     - [X] Bubbles

@@ -37,8 +37,6 @@ class Unit(Enum):
     AUTO = 8
 
 
-UNIT_EXCLUDES_BORDER = {Unit.CELLS, Unit.FRACTION, Unit.VIEW_WIDTH, Unit.VIEW_HEIGHT}
-
 UNIT_SYMBOL = {
     Unit.CELLS: "",
     Unit.FRACTION: "fr",
@@ -205,10 +203,6 @@ class Scalar(NamedTuple):
     def is_fraction(self) -> bool:
         """Check if the unit is a fraction."""
         return self.unit == Unit.FRACTION
-
-    @property
-    def excludes_border(self) -> bool:
-        return self.unit in UNIT_EXCLUDES_BORDER
 
     @property
     def cells(self) -> int | None:

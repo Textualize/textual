@@ -161,10 +161,12 @@ for widget in self.query("Button"):
 
 Here are the other loop-free methods on query objects:
 
-- [set_class][textual.css.query.DOMQuery.set_class] Sets a CSS class (or classes) on matched widgets.
 - [add_class][textual.css.query.DOMQuery.add_class] Adds a CSS class (or classes) to matched widgets.
-- [remove_class][textual.css.query.DOMQuery.remove_class] Removes a CSS class (or classes) from matched widgets.
-- [toggle_class][textual.css.query.DOMQuery.toggle_class] Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.
-- [remove][textual.css.query.DOMQuery.remove] Removes matched widgets from the DOM.
+- [blur][textual.css.query.DOMQuery.focus] Blurs (removes focus) from matching widgets.
+- [focus][textual.css.query.DOMQuery.focus] Focuses the first matching widgets.
 - [refresh][textual.css.query.DOMQuery.refresh] Refreshes matched widgets.
-
+- [remove_class][textual.css.query.DOMQuery.remove_class] Removes a CSS class (or classes) from matched widgets.
+- [remove][textual.css.query.DOMQuery.remove] Removes matched widgets from the DOM.
+- [set_class][textual.css.query.DOMQuery.set_class] Sets a CSS class (or classes) on matched widgets.
+- [set][textual.css.query.DOMQuery.set] Sets common attributes on a widget.
+- [toggle_class][textual.css.query.DOMQuery.toggle_class] Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.

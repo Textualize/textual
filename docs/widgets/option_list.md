@@ -27,7 +27,7 @@ options:
 
 === "option_list.tcss"
 
-    ~~~python
+    ~~~css
     --8<-- "docs/examples/widgets/option_list.tcss"
     ~~~
 
@@ -50,7 +50,7 @@ class can be used to add separator lines between options.
 
 === "option_list.tcss"
 
-    ~~~python
+    ~~~css
     --8<-- "docs/examples/widgets/option_list.tcss"
     ~~~
 
@@ -75,7 +75,7 @@ tables](https://rich.readthedocs.io/en/latest/tables.html):
 
 === "option_list.tcss"
 
-    ~~~python
+    ~~~css
     --8<-- "docs/examples/widgets/option_list.tcss"
     ~~~
 

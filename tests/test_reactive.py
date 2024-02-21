@@ -575,3 +575,133 @@ async def test_sync_reactive_watch_callbacks_go_on_the_watcher():
         await pilot.pause()
         assert from_holder
         assert from_app
+
+
+async def test_set_reactive():
+    """Test set_reactive doesn't call watchers."""
+
+    class MyWidget(Widget):
+        foo = reactive("")
+
+        def __init__(self, foo: str) -> None:
+            super().__init__()
+            self.set_reactive(MyWidget.foo, foo)
+
+        def watch_foo(self) -> None:
+            # Should never get here
+            1 / 0
+
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            yield MyWidget("foobar")
+
+    app = MyApp()
+    async with app.run_test():
+        assert app.query_one(MyWidget).foo == "foobar"
+
+
+async def test_no_duplicate_external_watchers() -> None:
+    """Make sure we skip duplicated watchers."""
+
+    counter = 0
+
+    class Holder(Widget):
+        attr = var(None)
+
+    class MyApp(App[None]):
+        def __init__(self) -> None:
+            super().__init__()
+            self.holder = Holder()
+
+        def on_mount(self) -> None:
+            self.watch(self.holder, "attr", self.callback)
+            self.watch(self.holder, "attr", self.callback)
+
+        def callback(self) -> None:
+            nonlocal counter
+            counter += 1
+
+    app = MyApp()
+    async with app.run_test():
+        assert counter == 1
+        app.holder.attr = 73
+        assert counter == 2
+
+
+async def test_external_watch_init_does_not_propagate() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3878.
+
+    Make sure that when setting an extra watcher programmatically and `init` is set,
+    we init only the new watcher and not the other ones, but at the same
+    time make sure both watchers work in regular circumstances.
+    """
+
+    logs: list[str] = []
+
+    class SomeWidget(Widget):
+        test_1: var[int] = var(0)
+        test_2: var[int] = var(0, init=False)
+
+        def watch_test_1(self) -> None:
+            logs.append("test_1")
+
+        def watch_test_2(self) -> None:
+            logs.append("test_2")
+
+    class InitOverrideApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield SomeWidget()
+
+        def on_mount(self) -> None:
+            def watch_test_2_extra() -> None:
+                logs.append("test_2_extra")
+
+            self.watch(self.query_one(SomeWidget), "test_2", watch_test_2_extra)
+
+    app = InitOverrideApp()
+    async with app.run_test():
+        assert logs == ["test_1", "test_2_extra"]
+        app.query_one(SomeWidget).test_2 = 73
+        assert logs.count("test_2_extra") == 2
+        assert logs.count("test_2") == 1
+
+
+async def test_external_watch_init_does_not_propagate_to_externals() -> None:
+    """Regression test for https://github.com/Textualize/textual/issues/3878.
+
+    Make sure that when setting an extra watcher programmatically and `init` is set,
+    we init only the new watcher and not the other ones (even if they were
+    added dynamically with `watch`), but at the same time make sure all watchers
+    work in regular circumstances.
+    """
+
+    logs: list[str] = []
+
+    class SomeWidget(Widget):
+        test_var: var[int] = var(0)
+
+    class MyApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield SomeWidget()
+
+        def add_first_watcher(self) -> None:
+            def first_callback() -> None:
+                logs.append("first")
+
+            self.watch(self.query_one(SomeWidget), "test_var", first_callback)
+
+        def add_second_watcher(self) -> None:
+            def second_callback() -> None:
+                logs.append("second")
+
+            self.watch(self.query_one(SomeWidget), "test_var", second_callback)
+
+    app = MyApp()
+    async with app.run_test():
+        assert logs == []
+        app.add_first_watcher()
+        assert logs == ["first"]
+        app.add_second_watcher()
+        assert logs == ["first", "second"]
+        app.query_one(SomeWidget).test_var = 73
+        assert logs == ["first", "second", "first", "second"]

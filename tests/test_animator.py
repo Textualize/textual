@@ -203,11 +203,11 @@ async def test_animator():
     assert animator._animations[(id(animate_test), "foo")] == expected
     assert not animator._on_animation_frame_called
 
-    await animator()
+    animator()
     assert animate_test.foo == 0
 
     animator._time = 5
-    await animator()
+    animator()
     assert animate_test.foo == 50
 
     # New animation in the middle of an existing one
@@ -215,7 +215,7 @@ async def test_animator():
     assert animate_test.foo == 50
 
     animator._time = 6
-    await animator()
+    animator()
     assert animate_test.foo == 200
 
 
@@ -251,7 +251,7 @@ async def test_animator_on_complete_callback_not_fired_before_duration_ends():
     animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
 
     animator._time = 9
-    await animator()
+    animator()
 
     assert not callback.called
 
@@ -259,11 +259,34 @@ async def test_animator_on_complete_callback_not_fired_before_duration_ends():
 async def test_animator_on_complete_callback_fired_at_duration():
     callback = Mock()
     animate_test = AnimateTest()
-    animator = MockAnimator(Mock())
+    mock_app = Mock()
+    animator = MockAnimator(mock_app)
 
     animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
 
     animator._time = 10
-    await animator()
+    animator()
 
-    callback.assert_called_once_with()
+    # Ensure that the callback is scheduled to run after the duration is up.
+    mock_app.call_later.assert_called_once_with(callback)
+
+
+def test_force_stop_animation():
+    callback = Mock()
+    animate_test = AnimateTest()
+    mock_app = Mock()
+    animator = MockAnimator(mock_app)
+
+    animator.animate(animate_test, "foo", 200, duration=10, on_complete=callback)
+
+    assert animator.is_being_animated(animate_test, "foo")
+    assert animate_test.foo != 200
+
+    animator.force_stop_animation(animate_test, "foo")
+
+    # The animation of the attribute was force cancelled.
+    assert not animator.is_being_animated(animate_test, "foo")
+    assert animate_test.foo == 200
+
+    # The on_complete callback was scheduled.
+    mock_app.call_later.assert_called_once_with(callback)

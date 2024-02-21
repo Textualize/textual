@@ -49,6 +49,7 @@ class BackgroundScreen:
         _Segment = Segment
 
         NULL_STYLE = Style()
+
         for segment in segments:
             text, style, control = segment
             if control:
