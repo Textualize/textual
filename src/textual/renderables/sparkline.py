@@ -38,14 +38,14 @@ class Sparkline(Generic[T]):
         max_color: Color = Color.from_rgb(255, 0, 0),
         summary_function: SummaryFunction[T] = max,
     ) -> None:
-        self.data: Sequence[T] = list(data)
+        self.data: Sequence[T] = data
         self.width = width
         self.min_color = Style.from_color(min_color)
         self.max_color = Style.from_color(max_color)
         self.summary_function: SummaryFunction[T] = summary_function
 
     @classmethod
-    def _buckets(cls, data: Sequence[T], num_buckets: int) -> Iterable[Sequence[T]]:
+    def _buckets(cls, data: list[T], num_buckets: int) -> Iterable[Sequence[T]]:
         """Partition ``data`` into ``num_buckets`` buckets. For example, the data
         [1, 2, 3, 4] partitioned into 2 buckets is [[1, 2], [3, 4]].
 
@@ -76,7 +76,7 @@ class Sparkline(Generic[T]):
         minimum, maximum = min(self.data), max(self.data)
         extent = maximum - minimum or 1
 
-        buckets = tuple(self._buckets(self.data, num_buckets=width))
+        buckets = tuple(self._buckets(list(self.data), num_buckets=width))
 
         bucket_index = 0.0
         bars_rendered = 0
