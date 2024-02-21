@@ -42,6 +42,7 @@ from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
+from .signal import Signal
 from .timer import Timer
 from .widget import Widget
 from .widgets import Tooltip
@@ -212,6 +213,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         self.title = self.TITLE
         self.sub_title = self.SUB_TITLE
+
+        self.screen_layout_refresh_signal = Signal(self, "layout-refresh")
+        """The signal that is published when the screen's layout is refreshed."""
 
     @property
     def is_modal(self) -> bool:
@@ -611,6 +615,10 @@ class Screen(Generic[ScreenResultType], Widget):
         if not self.app._disable_notifications:
             widgets.insert(0, ToastRack(id="textual-toastrack"))
 
+    def _on_mount(self, event: events.Mount) -> None:
+        """Set up the tooltip-clearing signal when we mount."""
+        self.screen_layout_refresh_signal.subscribe(self, self._maybe_clear_tooltip)
+
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
@@ -784,7 +792,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self._compositor_refresh()
 
         if self.app._dom_ready:
-            self._maybe_clear_tooltip()
+            self.screen_layout_refresh_signal.publish()
         else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
