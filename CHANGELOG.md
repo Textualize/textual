@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
 - Tooltips are now cleared when the related widget is no longer under them https://github.com/Textualize/textual/issues/3045
 
 ## [0.52.1] - 2024-02-20
