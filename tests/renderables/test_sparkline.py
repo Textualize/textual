@@ -1,3 +1,8 @@
+from collections import deque
+from typing import Sequence
+
+import pytest
+
 from tests.utilities.render import render
 from textual.renderables.sparkline import Sparkline
 
@@ -44,5 +49,20 @@ def test_sparkline_shrink_data_to_width():
 def test_sparkline_color_blend():
     assert (
         render(Sparkline([1, 2, 3], width=3))
+        == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
+    )
+
+
+@pytest.mark.parametrize(
+    "data",
+    [
+        [1, 2, 3],
+        (1, 2, 3),
+        deque([1, 2, 3]),
+    ],
+)
+def test_sparkline_sequence_types(data: Sequence[int]):
+    assert (
+        render(Sparkline(data, width=3))
         == f"{GREEN}▁{STOP}{BLENDED}▄{STOP}{RED}█{STOP}"
     )
