@@ -33,7 +33,7 @@ Now you can serve Memray with the following command (replace the text in quotes 
 textual-web -r "memray run --live -m http.server"
 ```
 
-This will return a URL, where you can access the Memray app from anywhere.
+This will return a URL you can use to access the Memray app from anywhere.
 Here's a quick video of that in action:
 
 <iframe style="aspect-ratio: 16 /10" width="100%" src="https://www.youtube.com/embed/7lpoUBdxzus" title="Serving Memray with Textual web" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
