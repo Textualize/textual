@@ -120,12 +120,59 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 </div>
 
 
----
-
-```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
-```
 
 ---
 
-```{.textual path="examples/pride.py"}
-```
+
+=== "Stopwatch tutorial"
+
+    <div class="textual-web-demo" data-app="tutorial"></div>
+
+
+=== "stopwatch.py"
+
+    ```python 
+    --8<-- "docs/examples/tutorial/stopwatch.py"
+    ```
+
+=== "stopwatch.tcss"
+
+    ```css
+    --8<-- "examples/calculator.tcss"
+    ```
+
+
+---
+
+
+=== "Pride example"
+
+    ```{.textual path="examples/pride.py"}
+    ```
+
+=== "pride.py"
+
+    ```py
+    --8<-- "examples/pride.py"
+    ```
+
+
+
+---
+
+=== "Calculator example"
+
+    ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
+    ```
+
+=== "calculator.py"
+
+    ```python
+    --8<-- "examples/calculator.py"
+    ```
+
+=== "calculator.tcss"
+
+    ```css
+    --8<-- "examples/calculator.tcss"
+    ```
