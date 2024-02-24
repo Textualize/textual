@@ -1410,7 +1410,9 @@ class DOMNode(MessagePump):
         """
         return class_names.issubset(self.get_pseudo_classes())
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False, compose: bool = False
+    ) -> Self:
         return self
 
     async def action_toggle(self, attribute_name: str) -> None:

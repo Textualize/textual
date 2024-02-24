@@ -547,6 +547,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
+        self._compose_required = False
 
         self.devtools: DevtoolsClient | None = None
         self._devtools_redirector: StdoutRedirector | None = None
@@ -2420,8 +2421,20 @@ class App(Generic[ReturnType], DOMNode):
 
         await self.mount_all(widgets)
 
-    def _on_idle(self) -> None:
+    async def _on_idle(self) -> None:
         """Perform actions when there are no messages in the queue."""
+        if self._compose_required:
+            self._compose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
+        """Recompose the widget.
+
+        Recomposing will remove children and call `self.compose` again to remount.
+        """
+        with self.app.batch_update():
+            await self.screen.query("*").remove()
+            await self.screen.mount_all(compose(self))
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
@@ -2612,9 +2625,12 @@ class App(Generic[ReturnType], DOMNode):
         self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False, compose: bool = False
+    ) -> None:
         if self._screen_stack:
             self.screen.refresh(repaint=repaint, layout=layout)
+        self._compose_required = compose
         self.check_idle()
 
     def refresh_css(self, animate: bool = True) -> None:
