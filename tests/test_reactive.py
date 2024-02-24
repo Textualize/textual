@@ -705,3 +705,41 @@ async def test_external_watch_init_does_not_propagate_to_externals() -> None:
         assert logs == ["first", "second"]
         app.query_one(SomeWidget).test_var = 73
         assert logs == ["first", "second", "first", "second"]
+
+
+async def test_watch_decorator():
+    """Test watchers defined via a decorator."""
+
+    class WatchApp(App):
+        count = reactive(0, init=False)
+
+        watcher_call_count = 0
+
+        @count.watch
+        def _(self, value: int) -> None:
+            self.watcher_call_count = value
+
+    app = WatchApp()
+    async with app.run_test():
+        app.count += 1
+        assert app.watcher_call_count == 1
+        app.count += 1
+        assert app.watcher_call_count == 2
+        app.count -= 1
+        assert app.watcher_call_count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 0
+
+
+async def test_reactive_compute_decorator_first_time_set():
+    class ReactiveComputeFirstTimeSet(App):
+        number = reactive(1)
+        double_number = reactive(None)
+
+        @double_number.compute
+        def _double_number(self):
+            return self.number * 2
+
+    app = ReactiveComputeFirstTimeSet()
+    async with app.run_test():
+        assert app.double_number == 2

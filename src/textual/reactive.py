@@ -39,6 +39,8 @@ if TYPE_CHECKING:
 
 ReactiveType = TypeVar("ReactiveType")
 ReactableType = TypeVar("ReactableType", bound="DOMNode")
+WatchMethodType = TypeVar("WatchMethodType")
+ComputeMethodType = TypeVar("ComputeMethodType")
 
 
 class ReactiveError(Exception):
@@ -47,6 +49,54 @@ class ReactiveError(Exception):
 
 class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
+
+
+class WatchDecorator(Generic[WatchMethodType]):
+    """Watch decorator."""
+
+    def __init__(
+        self, watches: list[tuple[WatchMethodType, bool]] | None = None
+    ) -> None:
+        self._watches = watches
+
+    @overload
+    def __call__(self, *, init: bool = True) -> WatchDecorator[WatchMethodType]: ...
+
+    @overload
+    def __call__(self, method: WatchMethodType) -> WatchMethodType: ...
+
+    def __call__(
+        self, method: WatchMethodType | None = None, *, init: bool = True
+    ) -> WatchMethodType | WatchDecorator[WatchMethodType]:
+        if method is None:
+            return self
+        assert hasattr(method, "__name__")
+        if not method.__name__.startswith("watch_"):
+            if self._watches is not None:
+                self._watches.append((method, init))
+        return method
+
+
+class ComputeDecorator(Generic[WatchMethodType]):
+    """Watch decorator."""
+
+    def __init__(self, reactive: Reactive | None = None) -> None:
+        self._reactive = reactive
+
+    @overload
+    def __call__(self, *, init: bool = True) -> ComputeDecorator[WatchMethodType]: ...
+
+    @overload
+    def __call__(self, method: WatchMethodType) -> WatchMethodType: ...
+
+    def __call__(
+        self, method: WatchMethodType | None = None, *, init: bool = True
+    ) -> WatchMethodType | ComputeDecorator[WatchMethodType]:
+        if method is None:
+            return self
+        if not method.__name__.startswith("compute_"):
+            self._reactive._compute_method = method
+        return method
 
 
 async def await_watcher(obj: Reactable, awaitable: Awaitable[object]) -> None:
@@ -118,6 +168,8 @@ class Reactive(Generic[ReactiveType]):
         self._always_update = always_update
         self._run_compute = compute
         self._owner: Type[MessageTarget] | None = None
+        self._watches: list[tuple[Callable, bool]] = []
+        self._compute_method: Callable | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -170,6 +222,8 @@ class Reactive(Generic[ReactiveType]):
         _rich_traceback_omit = True
         for name, reactive in obj._reactives.items():
             reactive._initialize_reactive(obj, name)
+            for watch_method, init in reactive._watches:
+                obj.watch(obj, name, watch_method.__get__(obj), init=init)
 
     @classmethod
     def _reset_object(cls, obj: object) -> None:
@@ -233,8 +287,14 @@ class Reactive(Generic[ReactiveType]):
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)
 
-        if hasattr(obj, self.compute_name):
-            value: ReactiveType
+        value: ReactiveType
+        if self._compute_method is not None:
+            old_value = getattr(obj, internal_name)
+            value = self._compute_method.__get__(obj)()
+            setattr(obj, internal_name, value)
+            self._check_watchers(obj, self.name, old_value)
+            return value
+        elif hasattr(obj, self.compute_name):
             old_value = getattr(obj, internal_name)
             value = getattr(obj, self.compute_name)()
             setattr(obj, internal_name, value)
@@ -326,21 +386,35 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable object.
         """
         _rich_traceback_guard = True
-        for compute in obj._reactives.keys():
-            try:
-                compute_method = getattr(obj, f"compute_{compute}")
-            except AttributeError:
+        for name, reactive in obj._reactives.items():
+            print(name, reactive)
+            if reactive._compute_method is not None:
+                compute_method = reactive._compute_method.__get__(obj)
+            else:
                 try:
-                    compute_method = getattr(obj, f"_compute_{compute}")
+                    compute_method = getattr(obj, f"compute_{name}")
                 except AttributeError:
-                    continue
+                    try:
+                        compute_method = getattr(obj, f"_compute_{name}")
+                    except AttributeError:
+                        continue
             current_value = getattr(
-                obj, f"_reactive_{compute}", getattr(obj, f"_default_{compute}", None)
+                obj, f"_reactive_{name}", getattr(obj, f"_default_{name}", None)
             )
             value = compute_method()
-            setattr(obj, f"_reactive_{compute}", value)
+            setattr(obj, f"_reactive_{name}", value)
             if value != current_value:
-                cls._check_watchers(obj, compute, current_value)
+                cls._check_watchers(obj, name, current_value)
+
+    @property
+    def watch(self) -> WatchDecorator:
+        """A decorator to make a method a watch method."""
+        return WatchDecorator(self._watches)
+
+    @property
+    def compute(self) -> ComputeDecorator:
+        """A decorator to make a method a compute method."""
+        return ComputeDecorator(self)
 
 
 class reactive(Reactive[ReactiveType]):
