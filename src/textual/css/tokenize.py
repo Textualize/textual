@@ -24,12 +24,12 @@ SCALAR = rf"{DECIMAL}(?:fr|%|w|h|vw|vh)"
 DURATION = r"\d+\.?\d*(?:ms|s)"
 NUMBER = r"\-?\d+\.?\d*"
 COLOR = rf"{HEX_COLOR}|{RGB_COLOR}|{HSL_COLOR}"
-KEY_VALUE = r"[a-zA-Z_-][a-zA-Z0-9_-]*=[0-9a-zA-Z_\-\/]+"
-TOKEN = "[a-zA-Z_][a-zA-Z0-9_-]*"
+KEY_VALUE = r"[a-zA-Z_-][\w-]*=[\w\-\/]+"
+TOKEN = "[a-zA-Z_][\w-]*"
 STRING = r"\".*?\""
-VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
+VARIABLE_REF = r"\$[\w\-]+"
 
-IDENTIFIER = r"[a-zA-Z_\-][a-zA-Z0-9_\-]*"
+IDENTIFIER = r"[a-zA-Z_\-][\w\-]*"
 
 # Values permitted in variable and rule declarations.
 DECLARATION_VALUES = {
@@ -98,8 +98,8 @@ expect_selector_continue = Expect(
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
     pseudo_class=r"\:[a-zA-Z_-]+",
-    selector_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
-    selector_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
+    selector_id=r"\#[a-zA-Z_\-][\w\-]*",
+    selector_class=r"\.[a-zA-Z_\-][\w\-]*",
     selector_universal=r"\*",
     selector=IDENTIFIER,
     combinator_child=">",
