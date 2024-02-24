@@ -47,8 +47,7 @@ class CalculatorApp(App):
         """Compute switch to show AC or C button"""
         return self.value in ("", "0") and self.numbers == "0"
 
-    @show_ac.watch
-    def _show_ac(self, show_ac: bool) -> None:
+    def watch_show_ac(self, show_ac: bool) -> None:
         """Called when show_ac changes."""
         self.query_one("#c").display = not show_ac
         self.query_one("#ac").display = show_ac
