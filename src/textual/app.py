@@ -2433,7 +2433,7 @@ class App(Generic[ReturnType], DOMNode):
         Recomposing will remove children and call `self.compose` again to remount.
         """
         with self.app.batch_update():
-            await self.screen.query("*").remove()
+            await self.screen.query("*").exclude("-textual-system").remove()
             await self.screen.mount_all(compose(self))
 
     def _register_child(
@@ -2630,21 +2630,21 @@ class App(Generic[ReturnType], DOMNode):
         *,
         repaint: bool = True,
         layout: bool = False,
-        compose: bool = False,
+        recompose: bool = False,
     ) -> Self:
         """Refresh the entire screen.
 
         Args:
             repaint: Repaint the widget (will call render() again).
             layout: Also layout widgets in the view.
-            compose: Re-compose the widget (will remove and re-mount children).
+            recompose: Re-compose the widget (will remove and re-mount children).
 
         Returns:
             The `App` instance.
         """
         if self._screen_stack:
-            self.screen.refresh(repaint=repaint, layout=layout)
-        self._compose_required = compose
+            self.screen.refresh(repaint=repaint and not recompose, layout=layout)
+        self._compose_required = recompose
         self.check_idle()
         return self
 

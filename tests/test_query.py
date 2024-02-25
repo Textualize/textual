@@ -301,7 +301,7 @@ async def test_query_refresh(args):
     refreshes = []
 
     class MyWidget(Widget):
-        def refresh(self, *, repaint=None, layout=None, compose=None):
+        def refresh(self, *, repaint=None, layout=None, recompose=None):
             super().refresh(repaint=repaint, layout=layout)
             refreshes.append((repaint, layout))
 

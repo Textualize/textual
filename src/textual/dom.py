@@ -1411,7 +1411,7 @@ class DOMNode(MessagePump):
         return class_names.issubset(self.get_pseudo_classes())
 
     def refresh(
-        self, *, repaint: bool = True, layout: bool = False, compose: bool = False
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
     ) -> Self:
         return self
 
