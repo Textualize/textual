@@ -1026,7 +1026,10 @@ class Widget(DOMNode):
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
 
-        Extend this to build a UI.
+        This method is called when a widget is mounted or by setting `recompose=True` when
+        calling [`refresh()`][textual.widget.Widget.refresh].
+
+        Note that you don't typically need to explicitly call this method.
 
         Example:
             ```python
@@ -1039,7 +1042,7 @@ class Widget(DOMNode):
         """
         yield from ()
 
-    async def recompose(self) -> None:
+    async def _recompose(self) -> None:
         """Recompose the widget.
 
         Recomposing will remove children and call `self.compose` again to remount.
@@ -3444,7 +3447,7 @@ class Widget(DOMNode):
                     screen.post_message(messages.Layout())
                 if self._recompose_required:
                     self._recompose_required = False
-                    screen.call_later(self.recompose)
+                    screen.call_later(self._recompose)
 
     def focus(self, scroll_visible: bool = True) -> Self:
         """Give focus to this widget.

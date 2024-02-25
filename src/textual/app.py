@@ -2425,16 +2425,17 @@ class App(Generic[ReturnType], DOMNode):
         """Perform actions when there are no messages in the queue."""
         if self._compose_required:
             self._compose_required = False
-            await self.recompose()
+            await self._recompose()
 
-    async def recompose(self) -> None:
+    async def _recompose(self) -> None:
         """Recompose the widget.
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
         with self.app.batch_update():
-            await self.screen.query("*").exclude("-textual-system").remove()
-            await self.screen.mount_all(compose(self))
+            async with self.screen.lock:
+                await self.screen.query("*").exclude(".-textual-system").remove()
+                await self.screen.mount_all(compose(self))
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
