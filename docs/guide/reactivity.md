@@ -254,9 +254,9 @@ The following example uses recompose:
     ```{.textual path="docs/examples/guide/reactivity/refresh03.py" press="P,a,u,l"}
     ```
 
-While the end-result is quite similar, this code works quite differently from previous example.
-The main difference between a simple refresh and a recompose is that a recompose will create an entirely new set of child widgets.
-So when the `who` attribute changes, the `Name` widget will replace it's `Label` with a new instance (with updated content).
+While the end-result is identical to `refresh02.py`, this code works quite differently.
+The main difference is that recomposing creates an entirely new set of child widgets rather than updating existing widgets.
+So when the `who` attribute changes, the `Name` widget will replace it's `Label` with a new instance (containing updated content).
 
 !!! warning 
 
@@ -286,9 +286,9 @@ First a version *without* recompose:
     ```{.textual path="docs/examples/guide/reactivity/recompose01.py" }
     ```
 
-This display a clock, which updates once a second.
-The code is quite straightforward, but note how we format the time in two places; in `compose()` *and* `watch_time()`.
-We can simplify by recomposing rather than updating:
+This displays a clock, which updates once a second.
+The code is quite straightforward, but note how we format the time in two places: `compose()` *and* `watch_time()`.
+We can simplify this by recomposing rather than refreshing:
 
 === "recompose02.py"
 
