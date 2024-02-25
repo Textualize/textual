@@ -97,6 +97,7 @@ class Reactive(Generic[ReactiveType]):
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
         compute: Run compute methods when attribute is changed.
+        compose: Compose the widget again when the attribute changes.
     """
 
     _reactives: ClassVar[dict[str, object]] = {}

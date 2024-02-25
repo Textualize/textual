@@ -3274,6 +3274,7 @@ class Widget(DOMNode):
             *regions: Additional screen regions to mark as dirty.
             repaint: Repaint the widget (will call render() again).
             layout: Also layout widgets in the view.
+            compose: Re-compose the widget (will remove and re-mount children).
 
         Returns:
             The `Widget` instance.
@@ -3288,15 +3289,14 @@ class Widget(DOMNode):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if repaint:
+        if compose:
+            self._recompose_required = True
+        elif repaint:
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
             self._content_height_cache = (None, 0)
             self._rich_style_cache.clear()
             self._repaint_required = True
-
-        if compose:
-            self._recompose_required = True
 
         self.check_idle()
         return self

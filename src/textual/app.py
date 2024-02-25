@@ -120,7 +120,7 @@ from .worker import NoActiveWorker, get_current_worker
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
-    from typing_extensions import Coroutine, Literal, TypeAlias
+    from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
     from ._system_commands import SystemCommands
     from ._types import MessageTarget
@@ -2626,12 +2626,27 @@ class App(Generic[ReturnType], DOMNode):
         await self._message_queue.put(None)
 
     def refresh(
-        self, *, repaint: bool = True, layout: bool = False, compose: bool = False
-    ) -> None:
+        self,
+        *,
+        repaint: bool = True,
+        layout: bool = False,
+        compose: bool = False,
+    ) -> Self:
+        """Refresh the entire screen.
+
+        Args:
+            repaint: Repaint the widget (will call render() again).
+            layout: Also layout widgets in the view.
+            compose: Re-compose the widget (will remove and re-mount children).
+
+        Returns:
+            The `App` instance.
+        """
         if self._screen_stack:
             self.screen.refresh(repaint=repaint, layout=layout)
         self._compose_required = compose
         self.check_idle()
+        return self
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
