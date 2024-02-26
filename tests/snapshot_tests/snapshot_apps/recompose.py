@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
@@ -8,7 +10,7 @@ class Numbers(Vertical):
 
     DEFAULT_CSS = """
     Digits {
-            border: red;
+        border: red;
     }
     """
 
