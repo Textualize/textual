@@ -41,6 +41,7 @@ ReactiveType = TypeVar("ReactiveType")
 ReactableType = TypeVar("ReactableType", bound="DOMNode")
 WatchMethodType = TypeVar("WatchMethodType")
 ComputeMethodType = TypeVar("ComputeMethodType")
+ValidateMethodType = TypeVar("ValidateMethodType")
 
 
 class ReactiveError(Exception):
@@ -95,7 +96,39 @@ class ComputeDecorator(Generic[WatchMethodType]):
         if method is None:
             return self
         if not method.__name__.startswith("compute_"):
+            if self._reactive._compute_method is not None:
+                raise RuntimeError(
+                    "Only a single method may be decorated with compute."
+                )
             self._reactive._compute_method = method
+        return method
+
+
+class ValidateDecorator(Generic[ValidateMethodType]):
+    """Watch decorator."""
+
+    def __init__(self, reactive: Reactive | None = None) -> None:
+        self._reactive = reactive
+
+    @overload
+    def __call__(
+        self, *, init: bool = True
+    ) -> ValidateDecorator[ValidateMethodType]: ...
+
+    @overload
+    def __call__(self, method: ValidateMethodType) -> ValidateMethodType: ...
+
+    def __call__(
+        self, method: ValidateMethodType | None = None, *, init: bool = True
+    ) -> ValidateMethodType | ValidateDecorator[ValidateMethodType]:
+        if method is None:
+            return self
+        if not method.__name__.startswith("validate_"):
+            if self._reactive._validate_method is not None:
+                raise RuntimeError(
+                    "Only a single method may be decorated with validate."
+                )
+            self._reactive._validate_method = method
         return method
 
 
@@ -170,6 +203,7 @@ class Reactive(Generic[ReactiveType]):
         self._owner: Type[MessageTarget] | None = None
         self._watches: list[tuple[Callable, bool]] = []
         self._compute_method: Callable | None = None
+        self._validate_method: Callable | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -327,6 +361,8 @@ class Reactive(Generic[ReactiveType]):
         public_validate_function = getattr(obj, f"validate_{name}", None)
         if callable(public_validate_function):
             value = public_validate_function(value)
+        if self._validate_method:
+            value = self._validate_method.__get__(self)(value)
         # If the value has changed, or this is the first time setting the value
         if current_value != value or self._always_update:
             # Store the internal value
@@ -415,6 +451,11 @@ class Reactive(Generic[ReactiveType]):
     def compute(self) -> ComputeDecorator:
         """A decorator to make a method a compute method."""
         return ComputeDecorator(self)
+
+    @property
+    def validate(self) -> ValidateDecorator:
+        """A decorator to make a method a validate method."""
+        return ValidateDecorator(self)
 
 
 class reactive(Reactive[ReactiveType]):
