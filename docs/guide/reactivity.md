@@ -286,7 +286,7 @@ First a version *without* recompose:
     ```{.textual path="docs/examples/guide/reactivity/recompose01.py" }
     ```
 
-This displays a clock, which updates once a second.
+This displays a clock which updates once a second.
 The code is quite straightforward, but note how we format the time in two places: `compose()` *and* `watch_time()`.
 We can simplify this by recomposing rather than refreshing:
 
