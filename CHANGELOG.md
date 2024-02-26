@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Simplified tree-sitter highlight queries for HTML, which also seems to fix segfault issue https://github.com/Textualize/textual/pull/4195
 - Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
 - Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
+- Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
 
 ### Added
 

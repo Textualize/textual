@@ -1066,3 +1066,10 @@ def test_input_percentage_width(snap_compare):
     """Check percentage widths work correctly."""
     # https://github.com/Textualize/textual/issues/3721
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
+
+
+def test_pretty_grid_gutter_interaction(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/pull/4219."""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "pretty_grid_gutter_interaction.py", terminal_size=(81, 7)
+    )
