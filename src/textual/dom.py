@@ -312,7 +312,7 @@ class DOMNode(MessagePump):
                     compose_parent,
                     reactive.name,
                     setter,
-                    init=self._parent is not None,
+                    init=True,
                 )
             else:
                 self.call_later(partial(setter, reactive))
