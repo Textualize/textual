@@ -267,7 +267,7 @@ It is important to note that any child widgets will have their state reset after
 For simple content, that doesn't matter much.
 But widgets with an internal state (such as [`DataTable`](../widgets/data_table.md), [`Input`](../widgets/input.md), or [`TextArea`](../widgets/text_area.md)) would not be particularly useful if recomposed.
 
-Recomposing is slightly less efficient that a simple refresh, and best avoided if you need to update rapidly or you have many child widgets.
+Recomposing is slightly less efficient than a simple refresh, and best avoided if you need to update rapidly or you have many child widgets.
 That said, it can often simplify your code.
 Let's look at a practical example.
 First a version *without* recompose:
