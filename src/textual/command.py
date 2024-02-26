@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, 
 import rich.repr
 from rich.align import Align
 from rich.console import Group, RenderableType
-from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -391,7 +390,7 @@ class SearchIcon(Static, inherit_css=False):
     }
     """
 
-    icon: var[str] = var(Emoji.replace("🔎"))
+    icon: var[str] = var("🔎")
     """The icon to display."""
 
     def render(self) -> RenderableType:
