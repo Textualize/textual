@@ -211,7 +211,7 @@ class GridLayout(Layout):
                             widget.get_content_height(
                                 size,
                                 viewport,
-                                column_width - parent.styles.grid_gutter_vertical,
+                                column_width,
                             )
                             + widget.styles.gutter.height,
                         )

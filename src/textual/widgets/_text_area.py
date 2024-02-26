@@ -678,7 +678,7 @@ TextArea {
         self.scroll_cursor_visible()
 
     def _watch_indent_width(self) -> None:
-        """Changing width of tabs will change document display width."""
+        """Changing width of tabs will change the document display width."""
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
