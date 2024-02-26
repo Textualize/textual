@@ -2649,7 +2649,7 @@ class App(Generic[ReturnType], DOMNode):
             return self
 
         if self._screen_stack:
-            self.screen.refresh(repaint=repaint and not recompose, layout=layout)
+            self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
         return self
 
