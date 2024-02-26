@@ -2432,8 +2432,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        with self.app.batch_update():
-            async with self.screen.lock:
+        async with self.screen.batch():
                 await self.screen.query("*").exclude(".-textual-system").remove()
                 await self.screen.mount_all(compose(self))
 
