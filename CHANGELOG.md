@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Sparkline` not working with data in a `deque` https://github.com/Textualize/textual/issues/3899
 - Tooltips are now cleared when the related widget is no longer under them https://github.com/Textualize/textual/issues/3045
 - Simplified tree-sitter highlight queries for HTML, which also seems to fix segfault issue https://github.com/Textualize/textual/pull/4195
+- Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
 
 ## [0.52.1] - 2024-02-20
 
