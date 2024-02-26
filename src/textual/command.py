@@ -384,6 +384,7 @@ class SearchIcon(Static, inherit_css=False):
 
     DEFAULT_CSS = """
     SearchIcon {
+        color: #000;
         margin-left: 1;
         margin-top: 1;
         width: 2;
