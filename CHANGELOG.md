@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
 - Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
 - Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
+- Fixed `TextArea` styling issue on alternate screens https://github.com/Textualize/textual/pull/4220
 
 ### Added
 
