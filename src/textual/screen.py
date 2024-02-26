@@ -675,7 +675,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
             if self._recompose_required:
                 self._recompose_required = False
-                self.call_next(self._recompose)
+                self.call_next(self.recompose)
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)

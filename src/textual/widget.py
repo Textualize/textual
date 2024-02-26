@@ -320,8 +320,8 @@ class Widget(DOMNode):
         self._container_size = _null_size
         self._layout_required = False
         self._repaint_required = False
-        self._recompose_required = False
         self._scroll_required = False
+        self._recompose_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self.highlight_style: Style | None = None
@@ -1042,15 +1042,21 @@ class Widget(DOMNode):
         """
         yield from ()
 
-    async def _recompose(self) -> None:
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
         """Recompose the widget.
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
         if self._parent is not None:
-            with self.app.batch_update():
-                await self.query("*").remove()
-                await self._compose()
+            async with self.batch():
+                await self.query("*").exclude(".-textual-system").remove()
+                await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -3294,6 +3300,9 @@ class Widget(DOMNode):
 
         if recompose:
             self._recompose_required = True
+            self.call_next(self._check_recompose)
+            return self
+
         elif repaint:
             self._set_dirty(*regions)
             self._content_width_cache = (None, 0)
@@ -3445,9 +3454,6 @@ class Widget(DOMNode):
                 if self._layout_required:
                     self._layout_required = False
                     screen.post_message(messages.Layout())
-                if self._recompose_required:
-                    self._recompose_required = False
-                    screen.call_later(self._recompose)
 
     def focus(self, scroll_visible: bool = True) -> Self:
         """Give focus to this widget.

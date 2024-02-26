@@ -547,7 +547,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
-        self._compose_required = False
+        self._recompose_required = False
 
         self.devtools: DevtoolsClient | None = None
         self._devtools_redirector: StdoutRedirector | None = None
@@ -2421,10 +2421,10 @@ class App(Generic[ReturnType], DOMNode):
 
         await self.mount_all(widgets)
 
-    async def _on_idle(self) -> None:
-        """Perform actions when there are no messages in the queue."""
-        if self._compose_required:
-            self._compose_required = False
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
             await self._recompose()
 
     async def _recompose(self) -> None:
@@ -2643,9 +2643,13 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The `App` instance.
         """
+        if recompose:
+            self._recompose_required = recompose
+            self.call_next(self._check_recompose)
+            return self
+
         if self._screen_stack:
             self.screen.refresh(repaint=repaint and not recompose, layout=layout)
-        self._compose_required = recompose
         self.check_idle()
         return self
 
