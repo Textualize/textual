@@ -9,9 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
+- Fixed `Sparkline` not working with data in a `deque` https://github.com/Textualize/textual/issues/3899
+- Tooltips are now cleared when the related widget is no longer under them https://github.com/Textualize/textual/issues/3045
+- Simplified tree-sitter highlight queries for HTML, which also seems to fix segfault issue https://github.com/Textualize/textual/pull/4195
+- Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
+- Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
 
-## [0.52.0] - 2023-02-19
+## [0.52.1] - 2024-02-20
+
+### Fixed
+
+- Fixed the check for animation level in `LoadingIndicator` https://github.com/Textualize/textual/issues/4188
+
+## [0.52.0] - 2024-02-19
 
 ### Changed
 

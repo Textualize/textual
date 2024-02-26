@@ -577,6 +577,19 @@ class Widget(DOMNode):
         else:
             self.app._composed[-1].append(composed)
 
+    def clear_cached_dimensions(self) -> None:
+        """Clear cached results of `get_content_width` and `get_content_height`.
+
+        Call if the widget's renderable changes size after the widget has been created.
+
+        !!! note
+
+            This is not required if you are extending [`Static`][textual.widgets.Static].
+
+        """
+        self._content_width_cache = (None, 0)
+        self._content_height_cache = (None, 0)
+
     def get_loading_widget(self) -> Widget:
         """Get a widget to display a loading indicator.
 
@@ -3278,8 +3291,7 @@ class Widget(DOMNode):
 
         if repaint:
             self._set_dirty(*regions)
-            self._content_width_cache = (None, 0)
-            self._content_height_cache = (None, 0)
+            self.clear_cached_dimensions()
             self._rich_style_cache.clear()
             self._repaint_required = True
 
