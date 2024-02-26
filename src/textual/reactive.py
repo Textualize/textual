@@ -95,6 +95,8 @@ class ComputeDecorator(Generic[WatchMethodType]):
     ) -> WatchMethodType | ComputeDecorator[WatchMethodType]:
         if method is None:
             return self
+        assert self._reactive is not None
+        assert hasattr(method, "__name__")
         if not method.__name__.startswith("compute_"):
             if self._reactive._compute_method is not None:
                 raise RuntimeError(
@@ -123,6 +125,8 @@ class ValidateDecorator(Generic[ValidateMethodType]):
     ) -> ValidateMethodType | ValidateDecorator[ValidateMethodType]:
         if method is None:
             return self
+        assert self._reactive is not None
+        assert hasattr(method, "__name__")
         if not method.__name__.startswith("validate_"):
             if self._reactive._validate_method is not None:
                 raise RuntimeError(
@@ -423,7 +427,6 @@ class Reactive(Generic[ReactiveType]):
         """
         _rich_traceback_guard = True
         for name, reactive in obj._reactives.items():
-            print(name, reactive)
             if reactive._compute_method is not None:
                 compute_method = reactive._compute_method.__get__(obj)
             else:
