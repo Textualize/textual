@@ -256,7 +256,7 @@ The following example uses recompose:
 
 While the end-result is identical to `refresh02.py`, this code works quite differently.
 The main difference is that recomposing creates an entirely new set of child widgets rather than updating existing widgets.
-So when the `who` attribute changes, the `Name` widget will replace it's `Label` with a new instance (containing updated content).
+So when the `who` attribute changes, the `Name` widget will replace its `Label` with a new instance (containing updated content).
 
 !!! warning 
 
