@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
 - Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
 
+### Added
+
+- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
+
 ## [0.52.1] - 2024-02-20
 
 ### Fixed

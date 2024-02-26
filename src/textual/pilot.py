@@ -15,8 +15,9 @@ import rich.repr
 
 from ._wait import wait_for_idle
 from .app import App, ReturnType
-from .events import Click, MouseDown, MouseEvent, MouseMove, MouseUp
-from .geometry import Offset
+from .drivers.headless_driver import HeadlessDriver
+from .events import Click, MouseDown, MouseEvent, MouseMove, MouseUp, Resize
+from .geometry import Offset, Size
 from .widget import Widget
 
 
@@ -80,6 +81,20 @@ class Pilot(Generic[ReturnType]):
         if keys:
             await self._app._press_keys(keys)
             await self._wait_for_screen()
+
+    async def resize_terminal(self, width: int, height: int) -> None:
+        """Resize the terminal to the given dimensions.
+
+        Args:
+            width: The new width of the terminal.
+            height: The new height of the terminal.
+        """
+        size = Size(width, height)
+        # If we're running with the headless driver, update the inherent app size.
+        if isinstance(self.app._driver, HeadlessDriver):
+            self.app._driver._size = size
+        self.app.post_message(Resize(size, size))
+        await self.pause()
 
     async def mouse_down(
         self,

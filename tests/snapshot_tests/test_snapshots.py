@@ -583,6 +583,18 @@ def test_scrollbar_thumb_height(snap_compare):
     )
 
 
+def test_pilot_resize_terminal(snap_compare):
+    async def run_before(pilot):
+        await pilot.resize_terminal(35, 20)
+        await pilot.resize_terminal(20, 10)
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "pilot_resize_terminal.py",
+        run_before=run_before,
+        terminal_size=(80, 25),
+    )
+
+
 def test_css_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/2063."""
 
@@ -762,7 +774,9 @@ def test_command_palette_discovery(snap_compare) -> None:
         pilot.app.screen.query_one(Input).cursor_blink = False
         await pilot.app.screen.workers.wait_for_complete()
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before)
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before
+    )
 
 
 # --- textual-dev library preview tests ---
