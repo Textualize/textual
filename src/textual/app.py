@@ -430,8 +430,7 @@ class App(Generic[ReturnType], DOMNode):
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
         ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
-        self._truecolor_filter = ANSIToTruecolor(ansi_theme)
-        self._filters: list[LineFilter] = [self._truecolor_filter]
+        self._filters: list[LineFilter] = [ANSIToTruecolor(ansi_theme)]
 
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
@@ -888,17 +887,17 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
-        self._truecolor_filter.theme = self.ansi_theme
+        self._refresh_truecolor_filter(self.ansi_theme)
         self.call_later(self.refresh_css)
 
     def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
         if self.dark:
-            self._truecolor_filter.theme = theme
+            self._refresh_truecolor_filter(theme)
             self.call_later(self.refresh_css)
 
     def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
         if not self.dark:
-            self._truecolor_filter.theme = theme
+            self._refresh_truecolor_filter(theme)
             self.call_later(self.refresh_css)
 
     @property
@@ -909,6 +908,24 @@ class App(Generic[ReturnType], DOMNode):
         are mapped to hex codes.
         """
         return self.ansi_theme_dark if self.dark else self.ansi_theme_light
+
+    def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
+        """Update the ANSI to Truecolor filter, if available, with a new theme mapping.
+
+        Args:
+            theme: The new terminal theme to use for mapping ANSI to truecolor.
+        """
+        filters = self._filters
+        target_index = -1
+        for index, filter in enumerate(filters):
+            if isinstance(filter, ANSIToTruecolor):
+                target_index = index
+                break
+
+        if target_index == -1:
+            return
+
+        filters[target_index] = ANSIToTruecolor(theme)
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
