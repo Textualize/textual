@@ -3278,8 +3278,8 @@ class Widget(DOMNode):
 
         if repaint:
             self._set_dirty(*regions)
-            self._content_width_cache = (None, 0)
-            self._content_height_cache = (None, 0)
+            # self._content_width_cache = (None, 0)
+            # self._content_height_cache = (None, 0)
             self._rich_style_cache.clear()
             self._repaint_required = True
 

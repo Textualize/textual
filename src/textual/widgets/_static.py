@@ -78,6 +78,8 @@ class Static(Widget, inherit_bindings=False):
                 self._renderable = Text(renderable)
         else:
             self._renderable = renderable
+        self._content_width_cache = (None, 0)
+        self._content_height_cache = (None, 0)
 
     def render(self) -> RenderableType:
         """Get a rich renderable for the widget's content.
