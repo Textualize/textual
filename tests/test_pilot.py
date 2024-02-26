@@ -6,7 +6,6 @@ from textual import events
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
-from textual.events import MouseDown, MouseUp
 from textual.pilot import OutOfBounds
 from textual.widgets import Button, Label
 
@@ -352,3 +351,15 @@ async def test_pilot_target_screen_always_true(method, offset):
     async with app.run_test(size=(80, 24)) as pilot:
         pilot_method = getattr(pilot, method)
         assert (await pilot_method(offset=offset)) is True
+
+
+async def test_pilot_resize_terminal():
+    app = App()
+    async with app.run_test(size=(80, 24)) as pilot:
+        # Sanity checks.
+        assert app.size == (80, 24)
+        assert app.screen.size == (80, 24)
+        await pilot.resize_terminal(27, 15)
+        await pilot.pause()
+        assert app.size == (27, 15)
+        assert app.screen.size == (27, 15)
