@@ -583,6 +583,18 @@ def test_scrollbar_thumb_height(snap_compare):
     )
 
 
+def test_pilot_resize_terminal(snap_compare):
+    async def run_before(pilot):
+        await pilot.resize_terminal(35, 20)
+        await pilot.resize_terminal(20, 10)
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "pilot_resize_terminal.py",
+        run_before=run_before,
+        terminal_size=(80, 25),
+    )
+
+
 def test_css_hot_reloading(snap_compare, monkeypatch):
     """Regression test for https://github.com/Textualize/textual/issues/2063."""
 
@@ -1055,8 +1067,14 @@ def test_input_percentage_width(snap_compare):
     # https://github.com/Textualize/textual/issues/3721
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
 
-
 def test_recompose(snap_compare):
     """Check recompose works."""
     # https://github.com/Textualize/textual/pull/4206
     assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
+
+def test_pretty_grid_gutter_interaction(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/pull/4219."""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "pretty_grid_gutter_interaction.py", terminal_size=(81, 7)
+    )
+
