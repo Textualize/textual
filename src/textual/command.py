@@ -390,7 +390,7 @@ class SearchIcon(Static, inherit_css=False):
     }
     """
 
-    icon: var[str] = var(Emoji.replace(":magnifying_glass_tilted_right:"))
+    icon: var[str] = var(Emoji.replace("🔎"))
     """The icon to display."""
 
     def render(self) -> RenderableType:
