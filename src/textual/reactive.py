@@ -129,7 +129,7 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
-        yield "compose", self._recompose
+        yield "recompose", self._recompose
 
     @property
     def owner(self) -> Type[MessageTarget]:
