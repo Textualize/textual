@@ -2425,9 +2425,9 @@ class App(Generic[ReturnType], DOMNode):
         """Check if a recompose is required."""
         if self._recompose_required:
             self._recompose_required = False
-            await self._recompose()
+            await self.recompose()
 
-    async def _recompose(self) -> None:
+    async def recompose(self) -> None:
         """Recompose the widget.
 
         Recomposing will remove children and call `self.compose` again to remount.
