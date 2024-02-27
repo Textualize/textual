@@ -94,6 +94,9 @@ class RichLog(ScrollView, can_focus=True):
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
+    def on_resize(self) -> None:
+        self._last_container_width = self.scrollable_content_region.width
+
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.
 
@@ -165,7 +168,6 @@ class RichLog(ScrollView, can_focus=True):
         container_width = (
             container_width if container_width else self._last_container_width
         )
-        self._last_container_width = container_width
 
         if expand and render_width < container_width:
             render_width = container_width
