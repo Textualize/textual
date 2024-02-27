@@ -471,17 +471,54 @@ class Reactive(Generic[ReactiveType]):
 
     @property
     def watch(self) -> WatchDecorator:
-        """A decorator to make a method a watch method."""
+        """A decorator to make a method a watch method.
+
+        Example:
+            ```python
+            class MyWidget(Widget):
+                count = reactive(0)
+                @count.watch
+                def _count_changed(self, count:int) -> None:
+                    # Called when count changes
+                    ...
+            ```
+
+        """
         return WatchDecorator(self)
 
     @property
     def compute(self) -> ComputeDecorator:
-        """A decorator to make a method a compute method."""
+        """A decorator to make a method a compute method.
+
+        Example:
+            ```python
+            class MyWidget(Widget):
+                count = reactive(0)
+                double = reactive(0)
+
+                @double.compute
+                def _compute_double(self) -> int:
+                    # Return double of count
+                    return self.count * 2
+            ```
+        """
         return ComputeDecorator(self)
 
     @property
     def validate(self) -> ValidateDecorator:
-        """A decorator to make a method a validate method."""
+        """A decorator to make a method a validate method.
+
+        Example:
+            ```python
+            class MyWidget(Widget):
+                count = reactive(0)
+
+                @count.validate
+                def _positive(self, value:int) -> int:
+                    # Don't allow count to go below zero
+                    return max(0, value)
+            ```
+        """
         return ValidateDecorator(self)
 
 
