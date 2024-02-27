@@ -271,6 +271,26 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             """The Select that sent the message."""
             return self.select
 
+    class SelectionHighlighted(Message):
+        """Posted when the highlighted option changes.
+
+        This message can be handled using a `on_select_selection_highlighted` method.
+        """
+
+        def __init__(
+            self, select: Select[SelectType], value: SelectType | NoSelection
+        ) -> None:
+            super().__init__()
+            self.select = select
+            """The select widget."""
+            self.value = value
+            """The value of the highlighted option."""
+
+        @property
+        def control(self) -> Select[SelectType]:
+            """The Select that sent the message."""
+            return self.select
+
     def __init__(
         self,
         options: Iterable[tuple[RenderableType, SelectType]],
@@ -517,6 +537,14 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             self.expanded = False
 
         self.call_after_refresh(update_focus)  # Prevents a little flicker
+
+    @on(SelectOverlay.OptionHighlighted)
+    def _on_select_overlay_option_highlighted(
+        self, event: SelectOverlay.OptionHighlighted
+    ) -> None:
+        event.stop()
+        value = self._options[event.option_index][1]
+        self.post_message(self.SelectionHighlighted(self, value))
 
     def action_show_overlay(self) -> None:
         """Show the overlay."""
