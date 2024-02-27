@@ -59,10 +59,8 @@ class WatchDecorator(Generic[WatchMethodType]):
 
     """
 
-    def __init__(
-        self, watches: list[tuple[WatchMethodType, bool]] | None = None
-    ) -> None:
-        self._watches = watches
+    def __init__(self, reactive: Reactive | None = None) -> None:
+        self._reactive = reactive
 
     @overload
     def __call__(self, *, init: bool = True) -> WatchDecorator[WatchMethodType]: ...
@@ -73,12 +71,18 @@ class WatchDecorator(Generic[WatchMethodType]):
     def __call__(
         self, method: WatchMethodType | None = None, *, init: bool = True
     ) -> WatchMethodType | WatchDecorator[WatchMethodType]:
+        _rich_traceback_omit = True
         if method is None:
             return self
+        assert self._reactive is not None
         assert hasattr(method, "__name__")
         if not method.__name__.startswith("watch_"):
-            if self._watches is not None:
-                self._watches.append((method, init))
+            if self._reactive._watch_method is not None:
+                raise RuntimeError(
+                    "Only a single method may be decorator with watch (per-reactive)."
+                )
+            self._reactive._watch_method = method
+            self._reactive._watch_method_init = init
         return method
 
 
@@ -101,6 +105,7 @@ class ComputeDecorator(Generic[ComputeMethodType]):
     def __call__(
         self, method: ComputeMethodType | None = None, *, init: bool = True
     ) -> ComputeMethodType | ComputeDecorator[ComputeMethodType]:
+        _rich_traceback_omit = True
         if method is None:
             return self
         assert self._reactive is not None
@@ -108,7 +113,7 @@ class ComputeDecorator(Generic[ComputeMethodType]):
         if not method.__name__.startswith("compute_"):
             if self._reactive._compute_method is not None:
                 raise RuntimeError(
-                    "Only a single method may be decorated with compute."
+                    "Only a single method may be decorated with compute (per-reactive)."
                 )
             self._reactive._compute_method = method
         return method
@@ -135,6 +140,7 @@ class ValidateDecorator(Generic[ValidateMethodType]):
     def __call__(
         self, method: ValidateMethodType | None = None, *, init: bool = True
     ) -> ValidateMethodType | ValidateDecorator[ValidateMethodType]:
+        _rich_traceback_omit = True
         if method is None:
             return self
         assert self._reactive is not None
@@ -142,7 +148,7 @@ class ValidateDecorator(Generic[ValidateMethodType]):
         if not method.__name__.startswith("validate_"):
             if self._reactive._validate_method is not None:
                 raise RuntimeError(
-                    "Only a single method may be decorated with validate."
+                    "Only a single method may be decorated with validate (per-reactive)."
                 )
             self._reactive._validate_method = method
         return method
@@ -218,6 +224,8 @@ class Reactive(Generic[ReactiveType]):
         self._run_compute = compute
         self._owner: Type[MessageTarget] | None = None
         self._watches: list[tuple[Callable, bool]] = []
+        self._watch_method: Callable | None = None
+        self._watch_method_init: bool = False
         self._compute_method: Callable | None = None
         self._validate_method: Callable | None = None
 
@@ -272,8 +280,13 @@ class Reactive(Generic[ReactiveType]):
         _rich_traceback_omit = True
         for name, reactive in obj._reactives.items():
             reactive._initialize_reactive(obj, name)
-            for watch_method, init in reactive._watches:
-                obj.watch(obj, name, watch_method.__get__(obj), init=init)
+            if reactive._watch_method is not None:
+                obj.watch(
+                    obj,
+                    name,
+                    reactive._watch_method.__get__(obj),
+                    init=reactive._watch_method_init,
+                )
 
     @classmethod
     def _reset_object(cls, obj: object) -> None:
@@ -460,7 +473,7 @@ class Reactive(Generic[ReactiveType]):
     @property
     def watch(self) -> WatchDecorator:
         """A decorator to make a method a watch method."""
-        return WatchDecorator(self._watches)
+        return WatchDecorator(self)
 
     @property
     def compute(self) -> ComputeDecorator:
@@ -545,9 +558,8 @@ def _watch(
     """
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = getattr(
-        obj, "__watchers"
-    )
+    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]]
+    watchers = getattr(obj, "__watchers")
     watcher_list = watchers.setdefault(attribute_name, [])
     if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return

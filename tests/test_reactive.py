@@ -731,6 +731,46 @@ async def test_watch_decorator():
         assert app.watcher_call_count == 0
 
 
+async def test_watch_decorator_multiple() -> None:
+    """Check multiple decorators on the same method."""
+
+    class WatchApp(App):
+        foo = reactive(0, init=False)
+        bar = reactive(0, init=False)
+
+        watcher_call_count = 0
+
+        @foo.watch
+        @bar.watch
+        def _(self, value: int) -> None:
+            self.watcher_call_count = value
+
+    app = WatchApp()
+    async with app.run_test():
+        assert app.watcher_call_count == 0
+        app.foo += 1
+        assert app.watcher_call_count == 1
+        app.bar = 2
+        assert app.watcher_call_count == 2
+
+
+async def test_watch_decorator_multiple_duplicate() -> None:
+    """Check error is raised with duplicate watchers."""
+
+    with pytest.raises(RuntimeError):
+
+        class WatchApp(App):
+            foo = reactive(0, init=False)
+
+            @foo.watch
+            def _one(self, value: int) -> None:
+                self.watcher_call_count = value
+
+            @foo.watch
+            def _two(self, value: int) -> None:
+                self.watcher_call_count = value
+
+
 async def test_compute_decorator() -> None:
     """Check compute decorator"""
 
@@ -766,6 +806,18 @@ async def test_compute_decorator_error() -> None:
             @double_count.compute
             def _square_count(self) -> int:
                 return self.count**2
+
+    # Check two decorators on one method fails
+    with pytest.raises(RuntimeError):
+
+        class ComputeApp(App):
+            count = reactive(0, init=False)
+            double_count = reactive(0)
+
+            @double_count.compute
+            @double_count.compute
+            def _double_count(self) -> int:
+                return self.count * 2
 
 
 async def test_reactive_compute_decorator_first_time_set():
