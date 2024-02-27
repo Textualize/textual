@@ -5,6 +5,8 @@ import asyncio
 import pytest
 
 from textual.app import App, ComposeResult
+from textual.message import Message
+from textual.message_pump import MessagePump
 from textual.reactive import Reactive, TooManyComputesError, reactive, var
 from textual.widget import Widget
 
@@ -705,3 +707,40 @@ async def test_external_watch_init_does_not_propagate_to_externals() -> None:
         assert logs == ["first", "second"]
         app.query_one(SomeWidget).test_var = 73
         assert logs == ["first", "second", "first", "second"]
+
+
+async def test_message_sender_from_reactive() -> None:
+    """Test that the sender of a message comes from the reacting widget."""
+
+    message_senders: list[MessagePump | None] = []
+
+    class TestWidget(Widget):
+        test_var: var[int] = var(0, init=False)
+
+        class TestMessage(Message):
+            pass
+
+        def watch_test_var(self) -> None:
+            self.post_message(self.TestMessage())
+
+        def make_reaction(self) -> None:
+            self.test_var += 1
+
+    class TestContainer(Widget):
+        def compose(self) -> ComposeResult:
+            yield TestWidget()
+
+        def on_test_widget_test_message(self, event: TestWidget.TestMessage) -> None:
+            nonlocal message_senders
+            message_senders.append(event._sender)
+
+    class TestApp(App[None]):
+
+        def compose(self) -> ComposeResult:
+            yield TestContainer()
+
+    async with TestApp().run_test() as pilot:
+        assert message_senders == []
+        pilot.app.query_one(TestWidget).make_reaction()
+        await pilot.pause()
+        assert message_senders == [pilot.app.query_one(TestWidget)]

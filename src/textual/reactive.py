@@ -24,6 +24,7 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
+from ._context import active_message_pump
 from ._types import (
     MessageTarget,
     WatchCallbackBothValuesType,
@@ -73,17 +74,23 @@ def invoke_watcher(
     """
     _rich_traceback_omit = True
     param_count = count_parameters(watch_function)
-    if param_count == 2:
-        watch_result = cast(WatchCallbackBothValuesType, watch_function)(
-            old_value, value
-        )
-    elif param_count == 1:
-        watch_result = cast(WatchCallbackNewValueType, watch_function)(value)
-    else:
-        watch_result = cast(WatchCallbackNoArgsType, watch_function)()
-    if isawaitable(watch_result):
-        # Result is awaitable, so we need to await it within an async context
-        watcher_object.call_next(partial(await_watcher, watcher_object, watch_result))
+    reset_token = active_message_pump.set(watcher_object)
+    try:
+        if param_count == 2:
+            watch_result = cast(WatchCallbackBothValuesType, watch_function)(
+                old_value, value
+            )
+        elif param_count == 1:
+            watch_result = cast(WatchCallbackNewValueType, watch_function)(value)
+        else:
+            watch_result = cast(WatchCallbackNoArgsType, watch_function)()
+        if isawaitable(watch_result):
+            # Result is awaitable, so we need to await it within an async context
+            watcher_object.call_next(
+                partial(await_watcher, watcher_object, watch_result)
+            )
+    finally:
+        active_message_pump.reset(reset_token)
 
 
 @rich.repr.auto
