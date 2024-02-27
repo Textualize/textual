@@ -628,6 +628,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._layout_required
                 or self._scroll_required
                 or self._repaint_required
+                or self._recompose_required
                 or self._dirty_widgets
             ):
                 self._update_timer.resume()
@@ -671,6 +672,10 @@ class Screen(Generic[ScreenResultType], Widget):
             if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
                 self._compositor_refresh()
+
+            if self._recompose_required:
+                self._recompose_required = False
+                self.call_next(self.recompose)
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)
