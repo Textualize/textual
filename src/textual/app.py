@@ -52,11 +52,11 @@ from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
-from rich import terminal_theme
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
+from rich.terminal_theme import TerminalTheme
 
 from . import (
     Logger,
@@ -71,6 +71,7 @@ from . import (
 )
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._ansi_theme import ALABASTER, MONOKAI
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -398,6 +399,12 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
+    ansi_theme_dark = Reactive(MONOKAI, init=False)
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
+
+    ansi_theme_light = Reactive(ALABASTER, init=False)
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -422,9 +429,9 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._filters: list[LineFilter] = [
-            ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI)
-        ]
+        ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        self._filters: list[LineFilter] = [ANSIToTruecolor(ansi_theme)]
+
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
@@ -881,7 +888,39 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
+        self._refresh_truecolor_filter(self.ansi_theme)
         self.call_later(self.refresh_css)
+
+    def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
+        if self.dark:
+            self._refresh_truecolor_filter(theme)
+            self.call_later(self.refresh_css)
+
+    def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
+        if not self.dark:
+            self._refresh_truecolor_filter(theme)
+            self.call_later(self.refresh_css)
+
+    @property
+    def ansi_theme(self) -> TerminalTheme:
+        """The ANSI TerminalTheme currently being used.
+
+        Defines how colors defined as ANSI (e.g. `magenta`) inside Rich renderables
+        are mapped to hex codes.
+        """
+        return self.ansi_theme_dark if self.dark else self.ansi_theme_light
+
+    def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
+        """Update the ANSI to Truecolor filter, if available, with a new theme mapping.
+
+        Args:
+            theme: The new terminal theme to use for mapping ANSI to truecolor.
+        """
+        filters = self._filters
+        for index, filter in enumerate(filters):
+            if isinstance(filter, ANSIToTruecolor):
+                filters[index] = ANSIToTruecolor(theme)
+                return
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
