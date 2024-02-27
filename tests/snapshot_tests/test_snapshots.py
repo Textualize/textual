@@ -945,6 +945,11 @@ def hello(name):
     )
 
 
+def test_text_area_alternate_screen(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_alternate_screen.py", terminal_size=(48, 10)
+    )
+
 @pytest.mark.syntax
 def test_text_area_wrapping_and_folding(snap_compare):
     assert snap_compare(
