@@ -242,9 +242,6 @@ class Button(Widget, can_focus=True):
     def press(self) -> Self:
         """Respond to a button press.
 
-        Args:
-            level: Minimum level required for the animation to take place (inclusive).
-
         Returns:
             The button instance."""
         if self.disabled or not self.display:
@@ -256,11 +253,7 @@ class Button(Widget, can_focus=True):
         return self
 
     def _start_active_affect(self) -> None:
-        """Start a small animation to show the button was clicked.
-
-        Args:
-            level: Minimum level required for the animation to take place (inclusive).
-        """
+        """Start a small animation to show the button was clicked."""
         if self.active_effect_duration > 0:
             self.add_class("-active")
             self.set_timer(
