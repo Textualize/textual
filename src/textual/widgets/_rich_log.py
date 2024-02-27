@@ -88,6 +88,9 @@ class RichLog(ScrollView, can_focus=True):
         """Automatically scroll to the end on write."""
         self.highlighter = ReprHighlighter()
 
+        self._last_container_width: int = min_width
+        """Record the last width we rendered content at."""
+
     def notify_style_update(self) -> None:
         self._line_cache.clear()
 
@@ -153,14 +156,23 @@ class RichLog(ScrollView, can_focus=True):
         render_width = measure_renderables(
             console, render_options, [renderable]
         ).maximum
+
         container_width = (
             self.scrollable_content_region.width if width is None else width
         )
-        if container_width:
-            if expand and render_width < container_width:
-                render_width = container_width
-            if shrink and render_width > container_width:
-                render_width = container_width
+
+        # Use the container_width if it's available, otherwise use the last available width.
+        container_width = (
+            container_width if container_width else self._last_container_width
+        )
+        self._last_container_width = container_width
+
+        if expand and render_width < container_width:
+            render_width = container_width
+        if shrink and render_width > container_width:
+            render_width = container_width
+
+        render_width = max(render_width, self.min_width)
 
         segments = self.app.console.render(
             renderable, render_options.update_width(render_width)
