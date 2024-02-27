@@ -849,6 +849,8 @@ async def test_validate_decorator() -> None:
         assert app.number == 2
         app.number = 10
         assert app.number == 10
+        app.number = 11
+        assert app.number == 10
 
 
 async def test_validate_decorator_error() -> None:
