@@ -916,16 +916,10 @@ class App(Generic[ReturnType], DOMNode):
             theme: The new terminal theme to use for mapping ANSI to truecolor.
         """
         filters = self._filters
-        target_index = -1
         for index, filter in enumerate(filters):
             if isinstance(filter, ANSIToTruecolor):
-                target_index = index
-                break
-
-        if target_index == -1:
-            return
-
-        filters[target_index] = ANSIToTruecolor(theme)
+                filters[index] = ANSIToTruecolor(theme)
+                return
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
