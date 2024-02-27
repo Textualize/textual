@@ -105,7 +105,7 @@ textual console -v
 
 ### Decreasing verbosity
 
-Log messages are classififed in to groups, and the `-x` flag can be used to **exclude** all message from a group. The groups are: `EVENT`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `PRINT`, `SYSTEM`, and `LOGGING`. The group a message belongs to is printed after its timestamp.
+Log messages are classififed in to groups, and the `-x` flag can be used to **exclude** all message from a group. The groups are: `EVENT`, `DEBUG`, `INFO`, `WARNING`, `ERROR`, `PRINT`, `SYSTEM`, `LOGGING` and `WORKER`. The group a message belongs to is printed after its timestamp.
 
 Multiple groups may be excluded, for example to exclude everything except warning, errors, and `print` statements:
 
