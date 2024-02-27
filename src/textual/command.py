@@ -383,7 +383,7 @@ class SearchIcon(Static, inherit_css=False):
 
     DEFAULT_CSS = """
     SearchIcon {
-        color: #000;
+        color: #000;  /* required for snapshot tests */
         margin-left: 1;
         margin-top: 1;
         width: 2;

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
+
 ### Fixed
 
 - Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
@@ -14,6 +18,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Tooltips are now cleared when the related widget is no longer under them https://github.com/Textualize/textual/issues/3045
 - Simplified tree-sitter highlight queries for HTML, which also seems to fix segfault issue https://github.com/Textualize/textual/pull/4195
 - Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
+- Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
+- Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
+- Fixed `TextArea` styling issue on alternate screens https://github.com/Textualize/textual/pull/4220
+
+### Added
+
+- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
 
 ## [0.52.1] - 2024-02-20
 
