@@ -25,7 +25,6 @@ from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, 
 import rich.repr
 from rich.align import Align
 from rich.console import Group, RenderableType
-from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Final, TypeAlias
@@ -384,13 +383,14 @@ class SearchIcon(Static, inherit_css=False):
 
     DEFAULT_CSS = """
     SearchIcon {
+        color: #000;  /* required for snapshot tests */
         margin-left: 1;
         margin-top: 1;
         width: 2;
     }
     """
 
-    icon: var[str] = var(Emoji.replace(":magnifying_glass_tilted_right:"))
+    icon: var[str] = var("🔎")
     """The icon to display."""
 
     def render(self) -> RenderableType:
