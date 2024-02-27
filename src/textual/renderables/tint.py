@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from rich import terminal_theme
-from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.console import RenderableType
 from rich.segment import Segment
 from rich.style import Style
+from rich.terminal_theme import TerminalTheme
 
 from ..color import Color
 from ..filter import ANSIToTruecolor
@@ -30,13 +30,14 @@ class Tint:
 
     @classmethod
     def process_segments(
-        cls, segments: Iterable[Segment], color: Color
+        cls, segments: Iterable[Segment], color: Color, ansi_theme: TerminalTheme
     ) -> Iterable[Segment]:
         """Apply tint to segments.
 
         Args:
             segments: Incoming segments.
             color: Color of tint.
+            ansi_theme: The TerminalTheme defining how to map ansi colors to hex.
 
         Returns:
             Segments with applied tint.
@@ -45,7 +46,7 @@ class Tint:
         style_from_color = Style.from_color
         _Segment = Segment
 
-        truecolor_style = ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI).truecolor_style
+        truecolor_style = ANSIToTruecolor(ansi_theme).truecolor_style
 
         NULL_STYLE = Style()
         for segment in segments:
@@ -73,10 +74,3 @@ class Tint:
                     ),
                     control,
                 )
-
-    def __rich_console__(
-        self, console: Console, options: ConsoleOptions
-    ) -> RenderResult:
-        segments = console.render(self.renderable, options)
-        color = self.color
-        return self.process_segments(segments, color)

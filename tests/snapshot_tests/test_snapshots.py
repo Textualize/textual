@@ -1073,6 +1073,16 @@ def test_input_percentage_width(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
 
 
+@pytest.mark.parametrize("dark", [True, False])
+def test_ansi_color_mapping(snap_compare, dark):
+    """Test how ANSI colors in Rich renderables are mapped to hex colors."""
+
+    def setup(pilot):
+        pilot.app.dark = dark
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
+
+
 def test_pretty_grid_gutter_interaction(snap_compare):
     """Regression test for https://github.com/Textualize/textual/pull/4219."""
     assert snap_compare(
