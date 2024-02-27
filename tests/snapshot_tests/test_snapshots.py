@@ -585,7 +585,7 @@ def test_richlog_width(snap_compare):
         rich_log.display = False
         rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
         rich_log.display = True
-        
+
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py",
                         run_before=setup)
 
