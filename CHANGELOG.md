@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
 - Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
 - Fixed `TextArea` styling issue on alternate screens https://github.com/Textualize/textual/pull/4220
+- Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
+- Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
 
 ### Added
 
