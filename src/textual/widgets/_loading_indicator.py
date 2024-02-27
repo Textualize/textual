@@ -54,6 +54,9 @@ class LoadingIndicator(Widget):
         self.auto_refresh = 1 / 16
 
     def render(self) -> RenderableType:
+        if self.app.animation_level == "none":
+            return Text("Loading...")
+
         elapsed = time() - self._start_time
         speed = 0.8
         dot = "\u25cf"

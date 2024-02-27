@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
 from typing import TYPE_CHECKING
 
 from rich.style import Style
@@ -67,6 +67,15 @@ class TextAreaTheme:
     syntax_styles: dict[str, Style] = field(default_factory=dict)
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
+    _theme_configured_attributes: set[str] = field(init=False, default_factory=set)
+    """Records which attributes were set via the theme object (as opposed to CSS components)."""
+
+    def __post_init__(self) -> None:
+        theme_fields = fields(self)
+        for field in theme_fields:
+            if getattr(self, field.name) is not None:
+                self._theme_configured_attributes.add(field.name)
+
     def apply_css(self, text_area: TextArea) -> None:
         """Apply CSS rules from a TextArea to be used for fallback styling.
 
@@ -88,11 +97,13 @@ class TextAreaTheme:
                 color=self.base_style.color, bgcolor=DEFAULT_DARK_SURFACE
             )
 
+        configured = self._theme_configured_attributes.__contains__
+
         assert self.base_style is not None
         assert self.base_style.color is not None
         assert self.base_style.bgcolor is not None
 
-        if self.gutter_style is None:
+        if not configured("gutter_style"):
             gutter_style = get_style("text-area--gutter")
             if gutter_style:
                 self.gutter_style = gutter_style
@@ -100,7 +111,7 @@ class TextAreaTheme:
                 self.gutter_style = self.base_style.copy()
 
         background_color = Color.from_rich_color(self.base_style.bgcolor)
-        if self.cursor_style is None:
+        if not configured("cursor_style"):
             # If the theme doesn't contain a cursor style, fallback to component styles.
             cursor_style = get_style("text-area--cursor")
             if cursor_style:
@@ -113,16 +124,13 @@ class TextAreaTheme:
                 )
 
         # Apply fallbacks for the styles of the active line and active line gutter.
-        if self.cursor_line_style is None:
+        if not configured("cursor_line_style"):
             self.cursor_line_style = get_style("text-area--cursor-line")
 
-        if self.cursor_line_gutter_style is None:
+        if not configured("cursor_line_gutter_style"):
             self.cursor_line_gutter_style = get_style("text-area--cursor-gutter")
 
-        if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
-            self.cursor_line_gutter_style = self.cursor_line_style.copy()
-
-        if self.bracket_matching_style is None:
+        if not configured("bracket_matching_style"):
             matching_bracket_style = get_style("text-area--matching-bracket")
             if matching_bracket_style:
                 self.bracket_matching_style = matching_bracket_style
@@ -134,7 +142,7 @@ class TextAreaTheme:
                     bgcolor=bracket_matching_background.rich_color
                 )
 
-        if self.selection_style is None:
+        if not configured("selection_style"):
             selection_style = get_style("text-area--selection")
             if selection_style:
                 self.selection_style = selection_style
@@ -181,15 +189,6 @@ class TextAreaTheme:
             A list of all builtin TextAreaThemes.
         """
         return list(_BUILTIN_THEMES.values())
-
-    @classmethod
-    def default(cls) -> TextAreaTheme:
-        """Get the default syntax theme.
-
-        Returns:
-            The default TextAreaTheme (probably "css").
-        """
-        return _CSS_THEME
 
 
 _MONOKAI = TextAreaTheme(
@@ -388,6 +387,3 @@ _BUILTIN_THEMES = {
     "vscode_dark": _DARK_VS,
     "github_light": _GITHUB_LIGHT,
 }
-
-DEFAULT_THEME = TextAreaTheme.get_builtin_theme("basic")
-"""The default TextAreaTheme used by Textual."""
