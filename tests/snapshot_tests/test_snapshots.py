@@ -4,7 +4,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea, Input, Button
+from textual.widgets import RichLog, TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -558,6 +558,26 @@ def test_table_markup(snap_compare):
 
 def test_richlog_scroll(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
+
+
+def test_richlog_width(snap_compare):
+    """Check that min_width applies in RichLog and that we can write
+    to the RichLog when it's not visible, and it still renders as expected
+    when made visible again."""
+    async def setup(pilot):
+        from rich.text import Text
+        rich_log: RichLog = pilot.app.query_one(RichLog)
+        rich_log.write(Text("hello1", style="on red", justify="right"), expand=True)
+        rich_log.visible = False
+        rich_log.write(Text("world2", style="on green", justify="right"), expand=True)
+        rich_log.visible = True
+        rich_log.write(Text("hello3", style="on blue", justify="right"), expand=True)
+        rich_log.display = False
+        rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
+        rich_log.display = True
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py",
+                        run_before=setup)
 
 
 def test_tabs_invalidate(snap_compare):
