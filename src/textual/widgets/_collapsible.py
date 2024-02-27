@@ -34,7 +34,9 @@ class CollapsibleTitle(Static, can_focus=True):
     }
     """
 
-    BINDINGS = [Binding("enter", "toggle", "Toggle collapsible", show=False)]
+    BINDINGS = [
+        Binding("enter", "toggle_collapsible", "Toggle collapsible", show=False)
+    ]
     """
     | Key(s) | Description |
     | :- | :- |
@@ -68,7 +70,7 @@ class CollapsibleTitle(Static, can_focus=True):
         event.stop()
         self.post_message(self.Toggle())
 
-    def action_toggle(self) -> None:
+    def action_toggle_collapsible(self) -> None:
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
