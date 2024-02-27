@@ -21,6 +21,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
 - Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
 - Fixed `TextArea` styling issue on alternate screens https://github.com/Textualize/textual/pull/4220
+- Fixed writing to invisible `RichLog` https://github.com/Textualize/textual/pull/4223
+- Fixed `RichLog.min_width` not being used https://github.com/Textualize/textual/pull/4223
 
 ### Added
 
