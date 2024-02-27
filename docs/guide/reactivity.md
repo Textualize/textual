@@ -165,7 +165,7 @@ If you click the buttons in the above example it will show the current count. Wh
 
 ### Validate decorator
 
-In addition to the the naming convention, you can also define a validate method via decorator.
+In addition to the the naming convention, you can also define a validate method via a decorator.
 When in the class scope, reactives have a `validate` attribute which you can use to decorate any method and turn it into a validator.
 The following example replaces the naming convention with an equivalent decorator: 
 
