@@ -289,6 +289,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Returns:
             Widget and screen region.
+
+        Raises:
+            NoWidget: If there is no widget under the screen coordinate.
         """
         return self._compositor.get_widget_at(x, y)
 
