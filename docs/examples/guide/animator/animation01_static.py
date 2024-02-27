@@ -14,13 +14,13 @@ class AnimationApp(App):
         yield self.box
 
     def key_1(self):
-        self.box.styles.opacity = ease(0.75)
+        self.box.styles.opacity = 1 - ease(0.25)
 
     def key_2(self):
-        self.box.styles.opacity = ease(0.5)
+        self.box.styles.opacity = 1 - ease(0.5)
 
     def key_3(self):
-        self.box.styles.opacity = ease(0.25)
+        self.box.styles.opacity = 1 - ease(0.75)
 
 
 if __name__ == "__main__":
