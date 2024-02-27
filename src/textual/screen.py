@@ -886,11 +886,15 @@ class Screen(Generic[ScreenResultType], Widget):
         # If there's a widget associated with the tooltip at all...
         if self._tooltip_widget is not None:
             # ...look at what's currently under the mouse.
-            under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
-            # If it's not the same widget...
-            if under_mouse is not self._tooltip_widget:
-                # ...clear the tooltip.
-                self._clear_tooltip()
+            try:
+                under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                # If it's not the same widget...
+                if under_mouse is not self._tooltip_widget:
+                    # ...clear the tooltip.
+                    self._clear_tooltip()
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
         """Called by a timer from _handle_mouse_move to update the tooltip.
