@@ -223,7 +223,6 @@ class Reactive(Generic[ReactiveType]):
         self._always_update = always_update
         self._run_compute = compute
         self._owner: Type[MessageTarget] | None = None
-        self._watches: list[tuple[Callable, bool]] = []
         self._watch_method: Callable | None = None
         self._watch_method_init: bool = False
         self._compute_method: Callable | None = None
