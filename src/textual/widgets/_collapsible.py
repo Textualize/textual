@@ -68,7 +68,7 @@ class CollapsibleTitle(Static, can_focus=True):
         event.stop()
         self.post_message(self.Toggle())
 
-    def action_toggle(self) -> None:
+    def _action_toggle(self) -> None:
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
