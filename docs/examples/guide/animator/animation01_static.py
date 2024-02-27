@@ -1,5 +1,8 @@
+from textual._easing import DEFAULT_EASING, EASING
 from textual.app import App, ComposeResult
 from textual.widgets import Static
+
+ease = EASING[DEFAULT_EASING]
 
 
 class AnimationApp(App):
@@ -9,6 +12,15 @@ class AnimationApp(App):
         self.box.styles.color = "black"
         self.box.styles.padding = (1, 2)
         yield self.box
+
+    def key_1(self):
+        self.box.styles.opacity = ease(0.75)
+
+    def key_2(self):
+        self.box.styles.opacity = ease(0.5)
+
+    def key_3(self):
+        self.box.styles.opacity = ease(0.25)
 
 
 if __name__ == "__main__":

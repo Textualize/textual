@@ -1274,9 +1274,7 @@ class App(Generic[ReturnType], DOMNode):
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 await asyncio.sleep(float(wait_ms) / 1000)
-                await wait_for_idle(0)
                 await app._animator.wait_until_complete()
-                await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
