@@ -121,7 +121,7 @@ from .worker import NoActiveWorker, get_current_worker
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
-    from typing_extensions import Coroutine, Literal, TypeAlias
+    from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
     from ._system_commands import SystemCommands
     from ._types import MessageTarget
@@ -554,6 +554,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
+        self._recompose_required = False
 
         self.devtools: DevtoolsClient | None = None
         self._devtools_redirector: StdoutRedirector | None = None
@@ -2459,8 +2460,20 @@ class App(Generic[ReturnType], DOMNode):
 
         await self.mount_all(widgets)
 
-    def _on_idle(self) -> None:
-        """Perform actions when there are no messages in the queue."""
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
+        """Recompose the widget.
+
+        Recomposing will remove children and call `self.compose` again to remount.
+        """
+        async with self.screen.batch():
+            await self.screen.query("*").exclude(".-textual-system").remove()
+            await self.screen.mount_all(compose(self))
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
@@ -2651,10 +2664,32 @@ class App(Generic[ReturnType], DOMNode):
         self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(
+        self,
+        *,
+        repaint: bool = True,
+        layout: bool = False,
+        recompose: bool = False,
+    ) -> Self:
+        """Refresh the entire screen.
+
+        Args:
+            repaint: Repaint the widget (will call render() again).
+            layout: Also layout widgets in the view.
+            recompose: Re-compose the widget (will remove and re-mount children).
+
+        Returns:
+            The `App` instance.
+        """
+        if recompose:
+            self._recompose_required = recompose
+            self.call_next(self._check_recompose)
+            return self
+
         if self._screen_stack:
             self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
+        return self
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.

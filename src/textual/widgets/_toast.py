@@ -93,6 +93,8 @@ class Toast(Static, inherit_css=False):
     | `toast--title` | Targets the title of the toast. |
     """
 
+    DEFAULT_CLASSES = "-textual-system"
+
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
 
@@ -158,6 +160,7 @@ class ToastRack(Container, inherit_css=False):
         margin-right: 1;
     }
     """
+    DEFAULT_CLASSES = "-textual-system"
 
     @staticmethod
     def _toast_id(notification: Notification) -> str:

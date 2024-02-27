@@ -321,6 +321,7 @@ class Widget(DOMNode):
         self._layout_required = False
         self._repaint_required = False
         self._scroll_required = False
+        self._recompose_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
         self.highlight_style: Style | None = None
@@ -1038,7 +1039,10 @@ class Widget(DOMNode):
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
 
-        Extend this to build a UI.
+        This method is called when a widget is mounted or by setting `recompose=True` when
+        calling [`refresh()`][textual.widget.Widget.refresh].
+
+        Note that you don't typically need to explicitly call this method.
 
         Example:
             ```python
@@ -1050,6 +1054,22 @@ class Widget(DOMNode):
             ```
         """
         yield from ()
+
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
+        """Recompose the widget.
+
+        Recomposing will remove children and call `self.compose` again to remount.
+        """
+        if self._parent is not None:
+            async with self.batch():
+                await self.query("*").exclude(".-textual-system").remove()
+                await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -3257,6 +3277,7 @@ class Widget(DOMNode):
         *regions: Region,
         repaint: bool = True,
         layout: bool = False,
+        recompose: bool = False,
     ) -> Self:
         """Initiate a refresh of the widget.
 
@@ -3275,6 +3296,7 @@ class Widget(DOMNode):
             *regions: Additional screen regions to mark as dirty.
             repaint: Repaint the widget (will call render() again).
             layout: Also layout widgets in the view.
+            recompose: Re-compose the widget (will remove and re-mount children).
 
         Returns:
             The `Widget` instance.
@@ -3289,7 +3311,12 @@ class Widget(DOMNode):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if repaint:
+        if recompose:
+            self._recompose_required = True
+            self.call_next(self._check_recompose)
+            return self
+
+        elif repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()
             self._rich_style_cache.clear()
@@ -3555,6 +3582,9 @@ class Widget(DOMNode):
     async def _on_compose(self, event: events.Compose) -> None:
         _rich_traceback_omit = True
         event.prevent_default()
+        await self._compose()
+
+    async def _compose(self) -> None:
         try:
             widgets = [*self._pending_children, *compose(self)]
             self._pending_children.clear()

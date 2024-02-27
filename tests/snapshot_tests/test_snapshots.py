@@ -670,6 +670,27 @@ def test_datatable_hot_reloading(snap_compare, monkeypatch):
     )
 
 
+def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
+    """Tests all markdown component classes reload correctly.
+
+    See https://github.com/Textualize/textual/issues/3464."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_component_classes_reloading.py",
+        run_before=run_before,
+    )
+
+
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
     assert snap_compare(SNAPSHOT_APPS_DIR / "layer_fix.py", press=["d"])
@@ -1092,6 +1113,10 @@ def test_input_percentage_width(snap_compare):
     # https://github.com/Textualize/textual/issues/3721
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
 
+def test_recompose(snap_compare):
+    """Check recompose works."""
+    # https://github.com/Textualize/textual/pull/4206
+    assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
 
 @pytest.mark.parametrize("dark", [True, False])
 def test_ansi_color_mapping(snap_compare, dark):
@@ -1108,3 +1133,4 @@ def test_pretty_grid_gutter_interaction(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "pretty_grid_gutter_interaction.py", terminal_size=(81, 7)
     )
+

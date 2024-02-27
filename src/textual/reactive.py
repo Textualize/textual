@@ -24,6 +24,7 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
+from ._context import active_message_pump
 from ._types import (
     MessageTarget,
     WatchCallbackBothValuesType,
@@ -73,17 +74,23 @@ def invoke_watcher(
     """
     _rich_traceback_omit = True
     param_count = count_parameters(watch_function)
-    if param_count == 2:
-        watch_result = cast(WatchCallbackBothValuesType, watch_function)(
-            old_value, value
-        )
-    elif param_count == 1:
-        watch_result = cast(WatchCallbackNewValueType, watch_function)(value)
-    else:
-        watch_result = cast(WatchCallbackNoArgsType, watch_function)()
-    if isawaitable(watch_result):
-        # Result is awaitable, so we need to await it within an async context
-        watcher_object.call_next(partial(await_watcher, watcher_object, watch_result))
+    reset_token = active_message_pump.set(watcher_object)
+    try:
+        if param_count == 2:
+            watch_result = cast(WatchCallbackBothValuesType, watch_function)(
+                old_value, value
+            )
+        elif param_count == 1:
+            watch_result = cast(WatchCallbackNewValueType, watch_function)(value)
+        else:
+            watch_result = cast(WatchCallbackNoArgsType, watch_function)()
+        if isawaitable(watch_result):
+            # Result is awaitable, so we need to await it within an async context
+            watcher_object.call_next(
+                partial(await_watcher, watcher_object, watch_result)
+            )
+    finally:
+        active_message_pump.reset(reset_token)
 
 
 @rich.repr.auto
@@ -97,6 +104,7 @@ class Reactive(Generic[ReactiveType]):
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
         compute: Run compute methods when attribute is changed.
+        recompose: Compose the widget again when the attribute changes.
     """
 
     _reactives: ClassVar[dict[str, object]] = {}
@@ -110,6 +118,7 @@ class Reactive(Generic[ReactiveType]):
         init: bool = False,
         always_update: bool = False,
         compute: bool = True,
+        recompose: bool = False,
     ) -> None:
         self._default = default
         self._layout = layout
@@ -117,6 +126,7 @@ class Reactive(Generic[ReactiveType]):
         self._init = init
         self._always_update = always_update
         self._run_compute = compute
+        self._recompose = recompose
         self._owner: Type[MessageTarget] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -126,6 +136,7 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
+        yield "recompose", self._recompose
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -279,8 +290,12 @@ class Reactive(Generic[ReactiveType]):
                 self._compute(obj)
 
             # Refresh according to descriptor flags
-            if self._layout or self._repaint:
-                obj.refresh(repaint=self._repaint, layout=self._layout)
+            if self._layout or self._repaint or self._recompose:
+                obj.refresh(
+                    repaint=self._repaint,
+                    layout=self._layout,
+                    recompose=self._recompose,
+                )
 
     @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
@@ -362,6 +377,7 @@ class reactive(Reactive[ReactiveType]):
         repaint: bool = True,
         init: bool = True,
         always_update: bool = False,
+        recompose: bool = False,
     ) -> None:
         super().__init__(
             default,
@@ -369,6 +385,7 @@ class reactive(Reactive[ReactiveType]):
             repaint=repaint,
             init=init,
             always_update=always_update,
+            recompose=recompose,
         )
 
 

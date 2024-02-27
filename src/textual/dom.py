@@ -248,7 +248,6 @@ class DOMNode(MessagePump):
                 yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
             ```
 
-
         Raises:
             ReactiveError: If the data wasn't bound.
 
@@ -312,7 +311,7 @@ class DOMNode(MessagePump):
                     compose_parent,
                     reactive.name,
                     setter,
-                    init=self._parent is not None,
+                    init=True,
                 )
             else:
                 self.call_later(partial(setter, reactive))
@@ -1410,7 +1409,9 @@ class DOMNode(MessagePump):
         """
         return class_names.issubset(self.get_pseudo_classes())
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
+    ) -> Self:
         return self
 
     async def action_toggle(self, attribute_name: str) -> None:

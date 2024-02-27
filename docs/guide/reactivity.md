@@ -226,6 +226,84 @@ The app that uses `Counter` uses the method `watch` to keep its progress bar syn
     ```{.textual path="docs/examples/guide/reactivity/dynamic_watch.py" press="enter,enter,enter"}
     ```
 
+## Recompose
+
+An alternative to a refresh is *recompose*.
+If you set `recompose=True` on a reactive, then Textual will remove all the child widgets and call [`compose()`][textual.widget.Widget.compose] again, when the reactive attribute changes.
+The process of removing and mounting new widgets occurs in a single update, so it will appear as though the content has simply updated.
+
+The following example uses recompose:
+
+=== "refresh03.py"
+
+    ```python hl_lines="10 12-13"
+    --8<-- "docs/examples/guide/reactivity/refresh03.py"
+    ```
+
+    1. Setting `recompose=True` will cause all child widgets to be removed and `compose` called again to add new widgets.
+    2. This `compose()` method will be called when `who` is changed.
+
+=== "refresh03.tcss"
+
+    ```css
+    --8<-- "docs/examples/guide/reactivity/refresh03.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/refresh03.py" press="P,a,u,l"}
+    ```
+
+While the end-result is identical to `refresh02.py`, this code works quite differently.
+The main difference is that recomposing creates an entirely new set of child widgets rather than updating existing widgets.
+So when the `who` attribute changes, the `Name` widget will replace its `Label` with a new instance (containing updated content).
+
+!!! warning 
+
+    You should avoid storing a reference to child widgets when using recompose.
+    Better to [query](../guide/queries.md) for a child widget when you need them.
+
+It is important to note that any child widgets will have their state reset after a recompose.
+For simple content, that doesn't matter much.
+But widgets with an internal state (such as [`DataTable`](../widgets/data_table.md), [`Input`](../widgets/input.md), or [`TextArea`](../widgets/text_area.md)) would not be particularly useful if recomposed.
+
+Recomposing is slightly less efficient than a simple refresh, and best avoided if you need to update rapidly or you have many child widgets.
+That said, it can often simplify your code.
+Let's look at a practical example.
+First a version *without* recompose:
+
+=== "recompose01.py"
+
+    ```python hl_lines="20 26-27"
+    --8<-- "docs/examples/guide/reactivity/recompose01.py"
+    ```
+
+    1. Called when the `time` attribute changes.
+    2. Update the time once a second.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/recompose01.py" }
+    ```
+
+This displays a clock which updates once a second.
+The code is straightforward, but note how we format the time in two places: `compose()` *and* `watch_time()`.
+We can simplify this by recomposing rather than refreshing:
+
+=== "recompose02.py"
+
+    ```python hl_lines="15"
+    --8<-- "docs/examples/guide/reactivity/recompose02.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/recompose02.py" }
+    ```
+
+In this version, the app is recomposed when the `time` attribute changes, which replaces the `Digits` widget with a new instance and updated time.
+There's no need for the `watch_time` method, because the new `Digits` instance will already show the current time.
+
 
 ## Compute methods
 
