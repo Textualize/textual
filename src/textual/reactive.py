@@ -53,7 +53,11 @@ class TooManyComputesError(ReactiveError):
 
 
 class WatchDecorator(Generic[WatchMethodType]):
-    """Watch decorator."""
+    """Watch decorator.
+
+    Decorate a method to make it a watcher.
+
+    """
 
     def __init__(
         self, watches: list[tuple[WatchMethodType, bool]] | None = None
@@ -78,21 +82,25 @@ class WatchDecorator(Generic[WatchMethodType]):
         return method
 
 
-class ComputeDecorator(Generic[WatchMethodType]):
-    """Watch decorator."""
+class ComputeDecorator(Generic[ComputeMethodType]):
+    """Watch decorator.
+
+    Decorate a widget method to make it a compute method.
+
+    """
 
     def __init__(self, reactive: Reactive | None = None) -> None:
         self._reactive = reactive
 
     @overload
-    def __call__(self, *, init: bool = True) -> ComputeDecorator[WatchMethodType]: ...
+    def __call__(self, *, init: bool = True) -> ComputeDecorator[ComputeMethodType]: ...
 
     @overload
-    def __call__(self, method: WatchMethodType) -> WatchMethodType: ...
+    def __call__(self, method: ComputeMethodType) -> ComputeMethodType: ...
 
     def __call__(
-        self, method: WatchMethodType | None = None, *, init: bool = True
-    ) -> WatchMethodType | ComputeDecorator[WatchMethodType]:
+        self, method: ComputeMethodType | None = None, *, init: bool = True
+    ) -> ComputeMethodType | ComputeDecorator[ComputeMethodType]:
         if method is None:
             return self
         assert self._reactive is not None
@@ -107,7 +115,11 @@ class ComputeDecorator(Generic[WatchMethodType]):
 
 
 class ValidateDecorator(Generic[ValidateMethodType]):
-    """Watch decorator."""
+    """Validate decorator.
+
+    Decorate a Widget method to make it a validator for the attribute/
+
+    """
 
     def __init__(self, reactive: Reactive | None = None) -> None:
         self._reactive = reactive
