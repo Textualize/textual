@@ -1286,7 +1286,7 @@ class App(Generic[ReturnType], DOMNode):
                 except KeyError:
                     char = key if len(key) == 1 else None
                 key_event = events.Key(key, char)
-                key_event._set_sender(app)
+                key_event.set_sender(app)
                 driver.send_event(key_event)
                 await wait_for_idle(0)
                 await app._animator.wait_until_complete()
