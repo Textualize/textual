@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from textual import on
 from textual.app import App
 from textual.widgets import OptionList, Select
