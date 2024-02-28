@@ -29,9 +29,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Clicking a non focusable widget focus ancestors
-
-
+- Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
 
 ## [0.52.1] - 2024-02-20
 
