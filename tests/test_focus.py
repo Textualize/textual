@@ -412,18 +412,38 @@ async def test_focus_pseudo_class():
 
 
 async def test_get_focusable_widget_at() -> None:
-    """Check that clicking a non-focusable widget will check DOM ancestors."""
+    """Check that clicking a non-focusable widget will focus any (focusable) ancestors."""
 
     class FocusApp(App):
         AUTO_FOCUS = None
 
         def compose(self) -> ComposeResult:
-            with ScrollableContainer(id="container"):
-                yield Label("Foo", id="foo")
+            with ScrollableContainer(id="focusable"):
+                with Container():
+                    yield Label("Foo", id="foo")
+                    yield Label("Bar", id="bar")
+            yield Label("Egg", id="egg")
 
     app = FocusApp()
     async with app.run_test() as pilot:
+        # Nothing focused
         assert app.screen.focused is None
+        # Click foo
         await pilot.click("#foo")
+        # Confirm container is focused
         assert app.screen.focused is not None
-        assert app.screen.focused.id == "container"
+        assert app.screen.focused.id == "focusable"
+        # Reset focus
+        app.screen.set_focus(None)
+        assert app.screen.focused is None
+        # Click bar
+        await pilot.click("#bar")
+        # Confirm container is focused
+        assert app.screen.focused is not None
+        assert app.screen.focused.id == "focusable"
+        # Reset focus
+        app.screen.set_focus(None)
+        assert app.screen.focused is None
+        # Click egg (outside of focusable widget)
+        await pilot.click("#egg")
+        # Confirm nothing focused
