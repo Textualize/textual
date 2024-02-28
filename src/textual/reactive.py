@@ -121,8 +121,7 @@ class ComputeDecorator(Generic[ComputeMethodType]):
 class ValidateDecorator(Generic[ValidateMethodType]):
     """Validate decorator.
 
-    Decorate a Widget method to make it a validator for the attribute/
-
+    Decorate a Widget method to make it a validator for the attribute.
     """
 
     def __init__(self, reactive: Reactive | None = None) -> None:
