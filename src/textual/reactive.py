@@ -490,7 +490,6 @@ class Reactive(Generic[ReactiveType]):
                     # Called when count changes
                     ...
             ```
-
         """
         return WatchDecorator(self)
 
