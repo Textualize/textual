@@ -87,7 +87,7 @@ class WatchDecorator(Generic[WatchMethodType]):
 
 
 class ComputeDecorator(Generic[ComputeMethodType]):
-    """Watch decorator.
+    """Compute decorator.
 
     Decorate a widget method to make it a compute method.
     """
