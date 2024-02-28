@@ -719,18 +719,79 @@ async def test_watch_decorator():
 
         @count.watch
         def _(self, value: int) -> None:
-            self.watcher_call_count = value
+            self.watcher_call_count += 1
 
     app = WatchApp()
     async with app.run_test():
         app.count += 1
         assert app.watcher_call_count == 1
+        assert app.count == 1
         app.count += 1
         assert app.watcher_call_count == 2
+        assert app.count == 2
         app.count -= 1
+        assert app.watcher_call_count == 3
+        assert app.count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 4
+        assert app.count == 0
+
+
+async def test_watch_decorator_call():
+    """Test watchers defined via a decorator, that is called."""
+
+    class WatchApp(App):
+        count = reactive(0, init=False)
+
+        watcher_call_count = 0
+
+        @count.watch()
+        def _(self, value: int) -> None:
+            self.watcher_call_count += 1
+
+    app = WatchApp()
+    async with app.run_test():
+        app.count += 1
         assert app.watcher_call_count == 1
+        assert app.count == 1
+        app.count += 1
+        assert app.watcher_call_count == 2
+        assert app.count == 2
         app.count -= 1
-        assert app.watcher_call_count == 0
+        assert app.watcher_call_count == 3
+        assert app.count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 4
+        assert app.count == 0
+
+
+async def test_watch_decorator_init_true():
+    """Test watchers defined via a decorator, that is called."""
+
+    class WatchApp(App):
+        count = reactive(0, init=True)
+
+        watcher_call_count = 0
+
+        @count.watch
+        def _(self, value: int) -> None:
+            self.watcher_call_count += 1
+
+    app = WatchApp()
+    async with app.run_test():
+        assert app.watcher_call_count == 1
+        app.count += 1
+        assert app.watcher_call_count == 2
+        assert app.count == 1
+        app.count += 1
+        assert app.watcher_call_count == 3
+        assert app.count == 2
+        app.count -= 1
+        assert app.watcher_call_count == 4
+        assert app.count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 5
+        assert app.count == 0
 
 
 async def test_watch_decorator_multiple() -> None:
@@ -743,7 +804,7 @@ async def test_watch_decorator_multiple() -> None:
         watcher_call_count = 0
 
         @foo.watch
-        @bar.watch
+        @bar.watch()
         def _(self, value: int) -> None:
             self.watcher_call_count = value
 
@@ -781,6 +842,25 @@ async def test_compute_decorator() -> None:
         double_count = reactive(0)
 
         @double_count.compute
+        def _double_count(self) -> int:
+            return self.count * 2
+
+    app = ComputeApp()
+    async with app.run_test():
+        app.count = 1
+        assert app.double_count == 2
+        app.count = 2
+        assert app.double_count == 4
+
+
+async def test_compute_decorator_call() -> None:
+    """Check compute decorator when called"""
+
+    class ComputeApp(App):
+        count = reactive(0, init=False)
+        double_count = reactive(0)
+
+        @double_count.compute()
         def _double_count(self) -> int:
             return self.count * 2
 
@@ -855,6 +935,25 @@ async def test_validate_decorator() -> None:
         assert app.number == 10
 
 
+async def test_validate_decorator_called() -> None:
+
+    class ValidateApp(App):
+        number = reactive(1)
+
+        @number.validate()
+        def max_ten(self, value: int) -> int:
+            return min(value, 10)
+
+    app = ValidateApp()
+    async with app.run_test():
+        app.number = 2
+        assert app.number == 2
+        app.number = 10
+        assert app.number == 10
+        app.number = 11
+        assert app.number == 10
+
+
 async def test_validate_decorator_error() -> None:
     """Two validate decorators results in a RuntimeError."""
 
@@ -870,6 +969,7 @@ async def test_validate_decorator_error() -> None:
             @number.validate
             def max_twenty(self, value: int) -> int:
                 return min(value, 20)
+
 
 async def test_message_sender_from_reactive() -> None:
     """Test that the sender of a message comes from the reacting widget."""
@@ -906,4 +1006,3 @@ async def test_message_sender_from_reactive() -> None:
         pilot.app.query_one(TestWidget).make_reaction()
         await pilot.pause()
         assert message_senders == [pilot.app.query_one(TestWidget)]
-

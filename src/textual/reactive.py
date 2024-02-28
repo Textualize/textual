@@ -63,13 +63,13 @@ class WatchDecorator(Generic[WatchMethodType]):
         self._reactive = reactive
 
     @overload
-    def __call__(self, *, init: bool = True) -> WatchDecorator[WatchMethodType]: ...
+    def __call__(self) -> WatchDecorator[WatchMethodType]: ...
 
     @overload
     def __call__(self, method: WatchMethodType) -> WatchMethodType: ...
 
     def __call__(
-        self, method: WatchMethodType | None = None, *, init: bool = True
+        self, method: WatchMethodType | None = None
     ) -> WatchMethodType | WatchDecorator[WatchMethodType]:
         _rich_traceback_omit = True
         if method is None:
@@ -82,7 +82,6 @@ class WatchDecorator(Generic[WatchMethodType]):
                     "Only a single method may be decorated with watch (per-reactive)."
                 )
             self._reactive._watch_method = method
-            self._reactive._watch_method_init = init
         return method
 
 
@@ -96,13 +95,13 @@ class ComputeDecorator(Generic[ComputeMethodType]):
         self._reactive = reactive
 
     @overload
-    def __call__(self, *, init: bool = True) -> ComputeDecorator[ComputeMethodType]: ...
+    def __call__(self) -> ComputeDecorator[ComputeMethodType]: ...
 
     @overload
     def __call__(self, method: ComputeMethodType) -> ComputeMethodType: ...
 
     def __call__(
-        self, method: ComputeMethodType | None = None, *, init: bool = True
+        self, method: ComputeMethodType | None = None
     ) -> ComputeMethodType | ComputeDecorator[ComputeMethodType]:
         _rich_traceback_omit = True
         if method is None:
@@ -128,15 +127,13 @@ class ValidateDecorator(Generic[ValidateMethodType]):
         self._reactive = reactive
 
     @overload
-    def __call__(
-        self, *, init: bool = True
-    ) -> ValidateDecorator[ValidateMethodType]: ...
+    def __call__(self) -> ValidateDecorator[ValidateMethodType]: ...
 
     @overload
     def __call__(self, method: ValidateMethodType) -> ValidateMethodType: ...
 
     def __call__(
-        self, method: ValidateMethodType | None = None, *, init: bool = True
+        self, method: ValidateMethodType | None = None
     ) -> ValidateMethodType | ValidateDecorator[ValidateMethodType]:
         _rich_traceback_omit = True
         if method is None:
@@ -231,7 +228,6 @@ class Reactive(Generic[ReactiveType]):
         self._recompose = recompose
         self._owner: Type[MessageTarget] | None = None
         self._watch_method: Callable | None = None
-        self._watch_method_init: bool = False
         self._compute_method: Callable | None = None
         self._validate_method: Callable | None = None
 
@@ -292,7 +288,7 @@ class Reactive(Generic[ReactiveType]):
                     obj,
                     name,
                     reactive._watch_method.__get__(obj),
-                    init=reactive._watch_method_init,
+                    init=reactive._init,
                 )
 
     @classmethod
