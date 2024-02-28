@@ -755,7 +755,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y-coordinate, we can index into this list to find which row that y-coordinate
         lands on, and the y-offset *within* that row. The length of the returned list
         is therefore the total height of all rows within the DataTable."""
-        y_offsets = []
+        y_offsets: list[tuple[RowKey, int]] = []
         if self._update_count in self._offset_cache:
             y_offsets = self._offset_cache[self._update_count]
         else:
