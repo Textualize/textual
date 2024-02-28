@@ -163,6 +163,31 @@ A common use for this is to restrict numbers to a given range. The following exa
 
 If you click the buttons in the above example it will show the current count. When `self.count` is modified in the button handler, Textual runs `validate_count` which performs the validation to limit the value of count.
 
+### Validate decorator
+
+In addition to the the naming convention, you can also define a validate method via a decorator.
+When in the class scope, reactives have a `validate` attribute which you can use to decorate any method and turn it into a validator.
+The following example replaces the naming convention with an equivalent decorator: 
+
+=== "validate02.py"
+
+    ```python hl_lines="12-13"
+    --8<-- "docs/examples/guide/reactivity/validate02.py"
+    ```
+
+    1. This makes the following method a validator for the `count` reactive.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/validate02.py"}
+    ```
+
+Note that when you use the decorator approach, the name of the method is not important.
+In the example above we use an underscore to indicate the method doesn't need to be referenced outside of Textual's reactivity system.
+
+A benefit of the decorator is that it is refactor friendly.
+If you were to use your IDE to change the name of the reactive attribute, it will also update the decorator.
+
 ## Watch methods
 
 Watch methods are another superpower.
@@ -171,7 +196,7 @@ Watch method names begin with `watch_` followed by the name of the attribute, an
 If the method accepts a single argument, it will be called with the new assigned value.
 If the method accepts *two* positional arguments, it will be called with both the *old* value and the *new* value.
 
-The following app will display any color you type in to the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44"`.
+The following app will display any color you type into the input. Try it with a valid color in Textual CSS. For example `"darkorchid"` or `"#52de44"`.
 
 === "watch01.py"
 
@@ -195,6 +220,24 @@ The following app will display any color you type in to the input. Try it with a
     ```
 
 The color is parsed in `on_input_submitted` and assigned to `self.color`. Because `color` is reactive, Textual also calls `watch_color` with the old and new values.
+
+### Watch decorator
+
+Like validate methods, watch methods may also be defined via a decorator.
+The following examples replaces the naming convention (i.e. `watch_color`) with the equivalent decorator:
+
+=== "watch02.py"
+
+    ```python hl_lines="17 18"
+    --8<-- "docs/examples/guide/reactivity/watch02.py"
+    ```
+
+    1. The decorator defines a watch method for the `color` reactive attribute.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/watch02.py" press="d,a,r,k,o,r,c,h,i,d"}
+    ```
 
 ### When are watch methods called?
 
@@ -311,7 +354,7 @@ Compute methods are the final superpower offered by the `reactive` descriptor. T
 
 You could be forgiven in thinking this sounds a lot like Python's property decorator. The difference is that Textual will cache the value of compute methods, and update them when any other reactive attribute changes.
 
-The following example uses a computed attribute. It displays three inputs for each color component (red, green, and blue). If you enter numbers in to these inputs, the background color of another widget changes.
+The following example uses a computed attribute. It displays three inputs for each color component (red, green, and blue). If you enter numbers into these inputs, the background color of another widget changes.
 
 === "computed01.py"
 
@@ -319,7 +362,7 @@ The following example uses a computed attribute. It displays three inputs for ea
     --8<-- "docs/examples/guide/reactivity/computed01.py"
     ```
 
-    1. Combines color components in to a Color object.
+    1. Combines color components into a Color object.
     2. The watch method is called when the _result_ of `compute_color` changes.
 
 === "computed01.tcss"
@@ -344,6 +387,25 @@ When the result of `compute_color` changes, Textual will also call `watch_color`
 !!! note
 
     It is best to avoid doing anything slow or CPU-intensive in a compute method. Textual calls compute methods on an object when _any_ reactive attribute changes.
+
+### Compute decorator
+
+Compute methods may also be defined by the `compute` decorator on reactives.
+The following examples replaces the naming convention with an equivalent decorator:
+
+=== "computed02.py"
+
+    ```python hl_lines="25-26 29-30"
+    --8<-- "docs/examples/guide/reactivity/computed02.py"
+    ```
+
+    1. Defines a compute method for `color`.
+    2. Defines a watch method for `color`.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/computed02.py"}
+    ```
 
 ## Setting reactives without superpowers 
 

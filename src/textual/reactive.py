@@ -40,6 +40,9 @@ if TYPE_CHECKING:
 
 ReactiveType = TypeVar("ReactiveType")
 ReactableType = TypeVar("ReactableType", bound="DOMNode")
+WatchMethodType = TypeVar("WatchMethodType")
+ComputeMethodType = TypeVar("ComputeMethodType")
+ValidateMethodType = TypeVar("ValidateMethodType")
 
 
 class ReactiveError(Exception):
@@ -48,6 +51,102 @@ class ReactiveError(Exception):
 
 class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
+
+
+class WatchDecorator(Generic[WatchMethodType]):
+    """Watch decorator.
+
+    Decorate a method to make it a watcher.
+    """
+
+    def __init__(self, reactive: Reactive | None = None) -> None:
+        self._reactive = reactive
+
+    @overload
+    def __call__(self) -> WatchDecorator[WatchMethodType]: ...
+
+    @overload
+    def __call__(self, method: WatchMethodType) -> WatchMethodType: ...
+
+    def __call__(
+        self, method: WatchMethodType | None = None
+    ) -> WatchMethodType | WatchDecorator[WatchMethodType]:
+        _rich_traceback_omit = True
+        if method is None:
+            return self
+        assert self._reactive is not None
+        assert hasattr(method, "__name__")
+        if not method.__name__.startswith("watch_"):
+            if self._reactive._watch_method is not None:
+                raise RuntimeError(
+                    "Only a single method may be decorated with watch (per-reactive)."
+                )
+            self._reactive._watch_method = method
+        return method
+
+
+class ComputeDecorator(Generic[ComputeMethodType]):
+    """Compute decorator.
+
+    Decorate a widget method to make it a compute method.
+    """
+
+    def __init__(self, reactive: Reactive | None = None) -> None:
+        self._reactive = reactive
+
+    @overload
+    def __call__(self) -> ComputeDecorator[ComputeMethodType]: ...
+
+    @overload
+    def __call__(self, method: ComputeMethodType) -> ComputeMethodType: ...
+
+    def __call__(
+        self, method: ComputeMethodType | None = None
+    ) -> ComputeMethodType | ComputeDecorator[ComputeMethodType]:
+        _rich_traceback_omit = True
+        if method is None:
+            return self
+        assert self._reactive is not None
+        assert hasattr(method, "__name__")
+        if not method.__name__.startswith("compute_"):
+            if self._reactive._compute_method is not None:
+                raise RuntimeError(
+                    "Only a single method may be decorated with compute (per-reactive)."
+                )
+            self._reactive._compute_method = method
+        return method
+
+
+class ValidateDecorator(Generic[ValidateMethodType]):
+    """Validate decorator.
+
+    Decorate a Widget method to make it a validator for the attribute.
+    """
+
+    def __init__(self, reactive: Reactive | None = None) -> None:
+        self._reactive = reactive
+
+    @overload
+    def __call__(self) -> ValidateDecorator[ValidateMethodType]: ...
+
+    @overload
+    def __call__(self, method: ValidateMethodType) -> ValidateMethodType: ...
+
+    def __call__(
+        self, method: ValidateMethodType | None = None
+    ) -> ValidateMethodType | ValidateDecorator[ValidateMethodType]:
+        _rich_traceback_omit = True
+        if method is None:
+            return self
+        assert self._reactive is not None
+        assert hasattr(method, "__name__")
+        if not method.__name__.startswith("validate_"):
+            if self._reactive._validate_method is not None:
+                raise RuntimeError(
+                    "Only a single method may be decorated with validate (per-reactive)."
+                )
+            self._reactive._validate_method = method
+        return method
 
 
 async def await_watcher(obj: Reactable, awaitable: Awaitable[object]) -> None:
@@ -128,6 +227,9 @@ class Reactive(Generic[ReactiveType]):
         self._run_compute = compute
         self._recompose = recompose
         self._owner: Type[MessageTarget] | None = None
+        self._watch_method: Callable | None = None
+        self._compute_method: Callable | None = None
+        self._validate_method: Callable | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -181,6 +283,13 @@ class Reactive(Generic[ReactiveType]):
         _rich_traceback_omit = True
         for name, reactive in obj._reactives.items():
             reactive._initialize_reactive(obj, name)
+            if reactive._watch_method is not None:
+                obj.watch(
+                    obj,
+                    name,
+                    reactive._watch_method.__get__(obj),
+                    init=reactive._init,
+                )
 
     @classmethod
     def _reset_object(cls, obj: object) -> None:
@@ -244,8 +353,14 @@ class Reactive(Generic[ReactiveType]):
         if not hasattr(obj, internal_name):
             self._initialize_reactive(obj, self.name)
 
-        if hasattr(obj, self.compute_name):
-            value: ReactiveType
+        value: ReactiveType
+        if self._compute_method is not None:
+            old_value = getattr(obj, internal_name)
+            value = self._compute_method.__get__(obj)()
+            setattr(obj, internal_name, value)
+            self._check_watchers(obj, self.name, old_value)
+            return value
+        elif hasattr(obj, self.compute_name):
             old_value = getattr(obj, internal_name)
             value = getattr(obj, self.compute_name)()
             setattr(obj, internal_name, value)
@@ -278,6 +393,8 @@ class Reactive(Generic[ReactiveType]):
         public_validate_function = getattr(obj, f"validate_{name}", None)
         if callable(public_validate_function):
             value = public_validate_function(value)
+        if self._validate_method:
+            value = self._validate_method.__get__(self)(value)
         # If the value has changed, or this is the first time setting the value
         if current_value != value or self._always_update:
             # Store the internal value
@@ -341,21 +458,75 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable object.
         """
         _rich_traceback_guard = True
-        for compute in obj._reactives.keys():
-            try:
-                compute_method = getattr(obj, f"compute_{compute}")
-            except AttributeError:
+        for name, reactive in obj._reactives.items():
+            if reactive._compute_method is not None:
+                compute_method = reactive._compute_method.__get__(obj)
+            else:
                 try:
-                    compute_method = getattr(obj, f"_compute_{compute}")
+                    compute_method = getattr(obj, f"compute_{name}")
                 except AttributeError:
-                    continue
+                    try:
+                        compute_method = getattr(obj, f"_compute_{name}")
+                    except AttributeError:
+                        continue
             current_value = getattr(
-                obj, f"_reactive_{compute}", getattr(obj, f"_default_{compute}", None)
+                obj, f"_reactive_{name}", getattr(obj, f"_default_{name}", None)
             )
             value = compute_method()
-            setattr(obj, f"_reactive_{compute}", value)
+            setattr(obj, f"_reactive_{name}", value)
             if value != current_value:
-                cls._check_watchers(obj, compute, current_value)
+                cls._check_watchers(obj, name, current_value)
+
+    @property
+    def watch(self) -> WatchDecorator:
+        """A decorator to make a method a watch method.
+
+        Example:
+            ```python
+            class MyWidget(Widget):
+                count = reactive(0)
+                @count.watch
+                def _count_changed(self, count:int) -> None:
+                    # Called when count changes
+                    ...
+            ```
+        """
+        return WatchDecorator(self)
+
+    @property
+    def compute(self) -> ComputeDecorator:
+        """A decorator to make a method a compute method.
+
+        Example:
+            ```python
+            class MyWidget(Widget):
+                count = reactive(0)
+                double = reactive(0)
+
+                @double.compute
+                def _compute_double(self) -> int:
+                    # Return double of count
+                    return self.count * 2
+            ```
+        """
+        return ComputeDecorator(self)
+
+    @property
+    def validate(self) -> ValidateDecorator:
+        """A decorator to make a method a validate method.
+
+        Example:
+            ```python
+            class MyWidget(Widget):
+                count = reactive(0)
+
+                @count.validate
+                def _positive(self, value:int) -> int:
+                    # Don't allow count to go below zero
+                    return max(0, value)
+            ```
+        """
+        return ValidateDecorator(self)
 
 
 class reactive(Reactive[ReactiveType]):
@@ -432,9 +603,8 @@ def _watch(
     """
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = getattr(
-        obj, "__watchers"
-    )
+    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]]
+    watchers = getattr(obj, "__watchers")
     watcher_list = watchers.setdefault(attribute_name, [])
     if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
+- Added reactive decorators: `validate`, `watch`, and `compute` https://github.com/Textualize/textual/pull/4205
 
 ### Fixed
 

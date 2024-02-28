@@ -709,6 +709,268 @@ async def test_external_watch_init_does_not_propagate_to_externals() -> None:
         assert logs == ["first", "second", "first", "second"]
 
 
+async def test_watch_decorator():
+    """Test watchers defined via a decorator."""
+
+    class WatchApp(App):
+        count = reactive(0, init=False)
+
+        watcher_call_count = 0
+
+        @count.watch
+        def _(self, value: int) -> None:
+            self.watcher_call_count += 1
+
+    app = WatchApp()
+    async with app.run_test():
+        app.count += 1
+        assert app.watcher_call_count == 1
+        assert app.count == 1
+        app.count += 1
+        assert app.watcher_call_count == 2
+        assert app.count == 2
+        app.count -= 1
+        assert app.watcher_call_count == 3
+        assert app.count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 4
+        assert app.count == 0
+
+
+async def test_watch_decorator_call():
+    """Test watchers defined via a decorator, that is called."""
+
+    class WatchApp(App):
+        count = reactive(0, init=False)
+
+        watcher_call_count = 0
+
+        @count.watch()
+        def _(self, value: int) -> None:
+            self.watcher_call_count += 1
+
+    app = WatchApp()
+    async with app.run_test():
+        app.count += 1
+        assert app.watcher_call_count == 1
+        assert app.count == 1
+        app.count += 1
+        assert app.watcher_call_count == 2
+        assert app.count == 2
+        app.count -= 1
+        assert app.watcher_call_count == 3
+        assert app.count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 4
+        assert app.count == 0
+
+
+async def test_watch_decorator_init_true():
+    """Test watchers defined via a decorator, that is called."""
+
+    class WatchApp(App):
+        count = reactive(0, init=True)
+
+        watcher_call_count = 0
+
+        @count.watch
+        def _(self, value: int) -> None:
+            self.watcher_call_count += 1
+
+    app = WatchApp()
+    async with app.run_test():
+        assert app.watcher_call_count == 1
+        app.count += 1
+        assert app.watcher_call_count == 2
+        assert app.count == 1
+        app.count += 1
+        assert app.watcher_call_count == 3
+        assert app.count == 2
+        app.count -= 1
+        assert app.watcher_call_count == 4
+        assert app.count == 1
+        app.count -= 1
+        assert app.watcher_call_count == 5
+        assert app.count == 0
+
+
+async def test_watch_decorator_multiple() -> None:
+    """Check multiple decorators on the same method."""
+
+    class WatchApp(App):
+        foo = reactive(0, init=False)
+        bar = reactive(0, init=False)
+
+        watcher_call_count = 0
+
+        @foo.watch
+        @bar.watch()
+        def _(self, value: int) -> None:
+            self.watcher_call_count = value
+
+    app = WatchApp()
+    async with app.run_test():
+        assert app.watcher_call_count == 0
+        app.foo += 1
+        assert app.watcher_call_count == 1
+        app.bar = 2
+        assert app.watcher_call_count == 2
+
+
+async def test_watch_decorator_multiple_duplicate() -> None:
+    """Check error is raised with duplicate watchers."""
+
+    with pytest.raises(RuntimeError):
+
+        class WatchApp(App):
+            foo = reactive(0, init=False)
+
+            @foo.watch
+            def _one(self, value: int) -> None:
+                self.watcher_call_count = value
+
+            @foo.watch
+            def _two(self, value: int) -> None:
+                self.watcher_call_count = value
+
+
+async def test_compute_decorator() -> None:
+    """Check compute decorator"""
+
+    class ComputeApp(App):
+        count = reactive(0, init=False)
+        double_count = reactive(0)
+
+        @double_count.compute
+        def _double_count(self) -> int:
+            return self.count * 2
+
+    app = ComputeApp()
+    async with app.run_test():
+        app.count = 1
+        assert app.double_count == 2
+        app.count = 2
+        assert app.double_count == 4
+
+
+async def test_compute_decorator_call() -> None:
+    """Check compute decorator when called"""
+
+    class ComputeApp(App):
+        count = reactive(0, init=False)
+        double_count = reactive(0)
+
+        @double_count.compute()
+        def _double_count(self) -> int:
+            return self.count * 2
+
+    app = ComputeApp()
+    async with app.run_test():
+        app.count = 1
+        assert app.double_count == 2
+        app.count = 2
+        assert app.double_count == 4
+
+
+async def test_compute_decorator_error() -> None:
+    """Two compute decorators should result in an error."""
+
+    with pytest.raises(RuntimeError):
+
+        class ComputeApp(App):
+            count = reactive(0, init=False)
+            double_count = reactive(0)
+
+            @double_count.compute
+            def _double_count(self) -> int:
+                return self.count * 2
+
+            @double_count.compute
+            def _square_count(self) -> int:
+                return self.count**2
+
+    # Check two decorators on one method fails
+    with pytest.raises(RuntimeError):
+
+        class ComputeApp(App):
+            count = reactive(0, init=False)
+            double_count = reactive(0)
+
+            @double_count.compute
+            @double_count.compute
+            def _double_count(self) -> int:
+                return self.count * 2
+
+
+async def test_reactive_compute_decorator_first_time_set():
+    class ReactiveComputeFirstTimeSet(App):
+        number = reactive(1)
+        double_number = reactive(None)
+
+        @double_number.compute
+        def _double_number(self):
+            return self.number * 2
+
+    app = ReactiveComputeFirstTimeSet()
+    async with app.run_test():
+        assert app.double_number == 2
+
+
+async def test_validate_decorator() -> None:
+
+    class ValidateApp(App):
+        number = reactive(1)
+
+        @number.validate
+        def max_ten(self, value: int) -> int:
+            return min(value, 10)
+
+    app = ValidateApp()
+    async with app.run_test():
+        app.number = 2
+        assert app.number == 2
+        app.number = 10
+        assert app.number == 10
+        app.number = 11
+        assert app.number == 10
+
+
+async def test_validate_decorator_called() -> None:
+
+    class ValidateApp(App):
+        number = reactive(1)
+
+        @number.validate()
+        def max_ten(self, value: int) -> int:
+            return min(value, 10)
+
+    app = ValidateApp()
+    async with app.run_test():
+        app.number = 2
+        assert app.number == 2
+        app.number = 10
+        assert app.number == 10
+        app.number = 11
+        assert app.number == 10
+
+
+async def test_validate_decorator_error() -> None:
+    """Two validate decorators results in a RuntimeError."""
+
+    with pytest.raises(RuntimeError):
+
+        class ValidateApp(App):
+            number = reactive(1)
+
+            @number.validate
+            def max_ten(self, value: int) -> int:
+                return min(value, 10)
+
+            @number.validate
+            def max_twenty(self, value: int) -> int:
+                return min(value, 20)
+
+
 async def test_message_sender_from_reactive() -> None:
     """Test that the sender of a message comes from the reacting widget."""
 

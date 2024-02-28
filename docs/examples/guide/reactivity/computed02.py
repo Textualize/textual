@@ -22,10 +22,12 @@ class ComputedApp(App):
         )
         yield Static(id="color")
 
-    def compute_color(self) -> Color:  # (1)!
+    @color.compute  # (1)!
+    def _(self) -> Color:
         return Color(self.red, self.green, self.blue).clamped
 
-    def watch_color(self, color: Color) -> None:  # (2)!
+    @color.watch  # (2)!
+    def _(self, color: Color) -> None:
         self.query_one("#color").styles.background = color
 
     def on_input_changed(self, event: Input.Changed) -> None:
