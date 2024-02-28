@@ -92,10 +92,16 @@ class Message:
         self._forwarded = True
 
     def set_sender(self, sender: MessagePump) -> Self:
-        """Set the sender.
+        """Set the sender of the message.
 
         Args:
             sender: The sender.
+
+        Note:
+            When creating a message the sender is automatically set;
+            normally there will be no need for this method to be called.
+            This method will be used when strict control is required over
+            the sender of a message.
 
         Returns:
             Self.
