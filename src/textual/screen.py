@@ -310,6 +310,9 @@ class Screen(Generic[ScreenResultType], Widget):
     def get_focusable_widget_at(self, x: int, y: int) -> Widget | None:
         """Get the focusable widget under a given coordinate.
 
+        If the widget directly under the given coordinate, then this method will check if any of the ancestors
+        are focusable. If no ancestors are focusable, then `None` will be returned.
+
         Args:
             x: X coordinate.
             y: Y coordinate.
@@ -317,9 +320,14 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             A `Widget`, or `None` if there is no focusable widget underneath the coordinate.
         """
-        for widget, _region in self.get_widgets_at(x, y):
-            if widget.focusable:
-                return widget
+        try:
+            widget, _region = self.get_widget_at(x, y)
+        except NoWidget:
+            return None
+
+        for node in widget.ancestors_with_self:
+            if isinstance(node, Widget) and node.focusable:
+                return node
         return None
 
     def get_style_at(self, x: int, y: int) -> Style:
