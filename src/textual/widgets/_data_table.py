@@ -105,10 +105,13 @@ class StringKey:
         else:
             return NotImplemented
 
-    def __lt__(self, other):
+    def __lt__(self, other: object) -> bool:
+        if other is None or self.value is None:
+            return NotImplemented
+
         if isinstance(other, str):
             return self.value < other
-        elif isinstance(other, StringKey):
+        elif isinstance(other, StringKey) and other.value is not None:
             return self.value < other.value
         else:
             return NotImplemented
