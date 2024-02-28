@@ -90,7 +90,6 @@ class ComputeDecorator(Generic[ComputeMethodType]):
     """Watch decorator.
 
     Decorate a widget method to make it a compute method.
-
     """
 
     def __init__(self, reactive: Reactive | None = None) -> None:
