@@ -57,7 +57,6 @@ class WatchDecorator(Generic[WatchMethodType]):
     """Watch decorator.
 
     Decorate a method to make it a watcher.
-
     """
 
     def __init__(self, reactive: Reactive | None = None) -> None:
