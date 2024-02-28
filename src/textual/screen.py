@@ -310,8 +310,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def get_focusable_widget_at(self, x: int, y: int) -> Widget | None:
         """Get the focusable widget under a given coordinate.
 
-        If the widget directly under the given coordinate, then this method will check if any of the ancestors
-        are focusable. If no ancestors are focusable, then `None` will be returned.
+        If the widget directly under the given coordinate is not focusable, then this method will check
+        if any of the ancestors are focusable. If no ancestors are focusable, then `None` will be returned.
 
         Args:
             x: X coordinate.
