@@ -42,7 +42,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.8"
 markdown-it-py = { extras = ["plugins", "linkify"], version = ">=2.1.0" }
-rich = ">=13.3.3"
+rich = ">=13.7.1"
 #rich = {path="../rich", develop=true}
 typing-extensions = "^4.4.0"
 tree-sitter = { version = "^0.20.1", optional = true }
