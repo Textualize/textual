@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
+- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
 
 ### Fixed
 
@@ -25,10 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `RichLog.min_width` not being used https://github.com/Textualize/textual/pull/4223
 - Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
-
-### Added
-
-- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
+- Recognise pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
 
 ## [0.52.1] - 2024-02-20
 
@@ -76,7 +74,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Improve support for selector lists in nested TCSS https://github.com/Textualize/textual/issues/3969
 - Improve support for rule declarations after nested TCSS rule sets https://github.com/Textualize/textual/issues/3999
-- Recognise pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
 
 ## [0.50.1] - 2024-02-09
 
