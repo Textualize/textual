@@ -80,7 +80,7 @@ class WatchDecorator(Generic[WatchMethodType]):
         if not method.__name__.startswith("watch_"):
             if self._reactive._watch_method is not None:
                 raise RuntimeError(
-                    "Only a single method may be decorator with watch (per-reactive)."
+                    "Only a single method may be decorated with watch (per-reactive)."
                 )
             self._reactive._watch_method = method
             self._reactive._watch_method_init = init
