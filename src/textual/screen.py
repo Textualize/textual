@@ -42,6 +42,7 @@ from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
+from .signal import Signal
 from .timer import Timer
 from .widget import Widget
 from .widgets import Tooltip
@@ -213,6 +214,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self.title = self.TITLE
         self.sub_title = self.SUB_TITLE
 
+        self.screen_layout_refresh_signal = Signal(self, "layout-refresh")
+        """The signal that is published when the screen's layout is refreshed."""
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -285,6 +289,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Returns:
             Widget and screen region.
+
+        Raises:
+            NoWidget: If there is no widget under the screen coordinate.
         """
         return self._compositor.get_widget_at(x, y)
 
@@ -611,6 +618,10 @@ class Screen(Generic[ScreenResultType], Widget):
         if not self.app._disable_notifications:
             widgets.insert(0, ToastRack(id="textual-toastrack"))
 
+    def _on_mount(self, event: events.Mount) -> None:
+        """Set up the tooltip-clearing signal when we mount."""
+        self.screen_layout_refresh_signal.subscribe(self, self._maybe_clear_tooltip)
+
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
@@ -620,6 +631,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._layout_required
                 or self._scroll_required
                 or self._repaint_required
+                or self._recompose_required
                 or self._dirty_widgets
             ):
                 self._update_timer.resume()
@@ -663,6 +675,10 @@ class Screen(Generic[ScreenResultType], Widget):
             if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
                 self._compositor_refresh()
+
+            if self._recompose_required:
+                self._recompose_required = False
+                self.call_next(self.recompose)
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)
@@ -783,7 +799,9 @@ class Screen(Generic[ScreenResultType], Widget):
         if self.is_current:
             self._compositor_refresh()
 
-        if not self.app._dom_ready:
+        if self.app._dom_ready:
+            self.screen_layout_refresh_signal.publish()
+        else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
 
@@ -833,6 +851,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
         self.app._set_mouse_over(None)
+        self._clear_tooltip()
         self.stack_updates += 1
 
     async def _on_resize(self, event: events.Resize) -> None:
@@ -850,6 +869,35 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             if tooltip.display and self._tooltip_widget is widget:
                 self._handle_tooltip_timer(widget)
+
+    def _clear_tooltip(self) -> None:
+        """Unconditionally clear any existing tooltip."""
+        try:
+            tooltip = self.get_child_by_type(Tooltip)
+        except NoMatches:
+            return
+        if tooltip.display:
+            if self._tooltip_timer is not None:
+                self._tooltip_timer.stop()
+            tooltip.display = False
+
+    def _maybe_clear_tooltip(self) -> None:
+        """Check if the widget under the mouse cursor still pertains to the tooltip.
+
+        If they differ, the tooltip will be removed.
+        """
+        # If there's a widget associated with the tooltip at all...
+        if self._tooltip_widget is not None:
+            # ...look at what's currently under the mouse.
+            try:
+                under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                # If it's not the same widget...
+                if under_mouse is not self._tooltip_widget:
+                    # ...clear the tooltip.
+                    self._clear_tooltip()
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
         """Called by a timer from _handle_mouse_move to update the tooltip.

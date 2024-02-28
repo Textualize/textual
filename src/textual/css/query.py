@@ -409,19 +409,20 @@ class DOMQuery(Generic[QueryType]):
         return self
 
     def refresh(
-        self, *, repaint: bool = True, layout: bool = False
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
     ) -> DOMQuery[QueryType]:
         """Refresh matched nodes.
 
         Args:
             repaint: Repaint node(s).
             layout: Layout node(s).
+            recompose: Recompose node(s).
 
         Returns:
             Query for chaining.
         """
         for node in self:
-            node.refresh(repaint=repaint, layout=layout)
+            node.refresh(repaint=repaint, layout=layout, recompose=recompose)
         return self
 
     def focus(self) -> DOMQuery[QueryType]:

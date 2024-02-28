@@ -248,7 +248,6 @@ class DOMNode(MessagePump):
                 yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
             ```
 
-
         Raises:
             ReactiveError: If the data wasn't bound.
 
@@ -312,7 +311,7 @@ class DOMNode(MessagePump):
                     compose_parent,
                     reactive.name,
                     setter,
-                    init=self._parent is not None,
+                    init=True,
                 )
             else:
                 self.call_later(partial(setter, reactive))
@@ -1204,10 +1203,10 @@ class DOMNode(MessagePump):
     def query(
         self, selector: str | type[QueryType] | None = None
     ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
-        """Get a DOM query matching a selector.
+        """Query the DOM for children that match a selector or widget type.
 
         Args:
-            selector: A CSS selector or `None` for all nodes.
+            selector: A CSS selector, widget type, or `None` for all nodes.
 
         Returns:
             A query object.
@@ -1234,10 +1233,10 @@ class DOMNode(MessagePump):
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
     ) -> QueryType | Widget:
-        """Get a single Widget matching the given selector or selector type.
+        """Get a widget from this widget's children that matches a selector or widget type.
 
         Args:
-            selector: A selector.
+            selector: A selector or widget type.
             expect_type: Require the object be of the supplied type, or None for any type.
 
         Raises:
@@ -1410,7 +1409,9 @@ class DOMNode(MessagePump):
         """
         return class_names.issubset(self.get_pseudo_classes())
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
+    ) -> Self:
         return self
 
     async def action_toggle(self, attribute_name: str) -> None:

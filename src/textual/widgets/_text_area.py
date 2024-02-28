@@ -462,7 +462,9 @@ TextArea {
         theme: str = "monokai",
         soft_wrap: bool = False,
         tab_behavior: Literal["focus", "indent"] = "indent",
+        read_only: bool = False,
         show_line_numbers: bool = True,
+        max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -491,7 +493,9 @@ TextArea {
             theme=theme,
             soft_wrap=soft_wrap,
             tab_behavior=tab_behavior,
+            read_only=read_only,
             show_line_numbers=show_line_numbers,
+            max_checkpoints=max_checkpoints,
             name=name,
             id=id,
             classes=classes,
@@ -674,7 +678,7 @@ TextArea {
         self.scroll_cursor_visible()
 
     def _watch_indent_width(self) -> None:
-        """Changing width of tabs will change document display width."""
+        """Changing width of tabs will change the document display width."""
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 

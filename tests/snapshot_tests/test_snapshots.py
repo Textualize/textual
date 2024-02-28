@@ -4,7 +4,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea, Input, Button
+from textual.widgets import RichLog, TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -498,7 +498,6 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 # --- Other ---
 
-
 def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
@@ -509,15 +508,6 @@ def test_demo(snap_compare):
         Path("../../src/textual/demo.py"),
         terminal_size=(100, 30),
     )
-
-
-# def test_demo_with_keys(snap_compare):
-#     """Test the demo app (python -m textual)"""
-#     assert snap_compare(
-#         Path("../../src/textual/demo.py"),
-#         press=["down", "down", "down", "wait:500"],
-#         terminal_size=(100, 30),
-#     )
 
 
 def test_label_widths(snap_compare):
@@ -570,6 +560,26 @@ def test_richlog_scroll(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
 
 
+def test_richlog_width(snap_compare):
+    """Check that min_width applies in RichLog and that we can write
+    to the RichLog when it's not visible, and it still renders as expected
+    when made visible again."""
+    async def setup(pilot):
+        from rich.text import Text
+        rich_log: RichLog = pilot.app.query_one(RichLog)
+        rich_log.write(Text("hello1", style="on red", justify="right"), expand=True)
+        rich_log.visible = False
+        rich_log.write(Text("world2", style="on green", justify="right"), expand=True)
+        rich_log.visible = True
+        rich_log.write(Text("hello3", style="on blue", justify="right"), expand=True)
+        rich_log.display = False
+        rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
+        rich_log.display = True
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py",
+                        run_before=setup)
+
+
 def test_tabs_invalidate(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "tabs_invalidate.py",
@@ -580,6 +590,18 @@ def test_tabs_invalidate(snap_compare):
 def test_scrollbar_thumb_height(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "scrollbar_thumb_height.py",
+    )
+
+
+def test_pilot_resize_terminal(snap_compare):
+    async def run_before(pilot):
+        await pilot.resize_terminal(35, 20)
+        await pilot.resize_terminal(20, 10)
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "pilot_resize_terminal.py",
+        run_before=run_before,
+        terminal_size=(80, 25),
     )
 
 
@@ -635,6 +657,27 @@ def test_datatable_hot_reloading(snap_compare, monkeypatch):
 
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "datatable_hot_reloading.py", run_before=run_before
+    )
+
+
+def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
+    """Tests all markdown component classes reload correctly.
+
+    See https://github.com/Textualize/textual/issues/3464."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_component_classes_reloading.py",
+        run_before=run_before,
     )
 
 
@@ -762,7 +805,9 @@ def test_command_palette_discovery(snap_compare) -> None:
         pilot.app.screen.query_one(Input).cursor_blink = False
         await pilot.app.screen.workers.wait_for_complete()
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before)
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "command_palette_discovery.py", run_before=run_before
+    )
 
 
 # --- textual-dev library preview tests ---
@@ -931,6 +976,11 @@ def hello(name):
     )
 
 
+def test_text_area_alternate_screen(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_alternate_screen.py", terminal_size=(48, 10)
+    )
+
 @pytest.mark.syntax
 def test_text_area_wrapping_and_folding(snap_compare):
     assert snap_compare(
@@ -1052,3 +1102,25 @@ def test_input_percentage_width(snap_compare):
     """Check percentage widths work correctly."""
     # https://github.com/Textualize/textual/issues/3721
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
+
+def test_recompose(snap_compare):
+    """Check recompose works."""
+    # https://github.com/Textualize/textual/pull/4206
+    assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
+
+@pytest.mark.parametrize("dark", [True, False])
+def test_ansi_color_mapping(snap_compare, dark):
+    """Test how ANSI colors in Rich renderables are mapped to hex colors."""
+
+    def setup(pilot):
+        pilot.app.dark = dark
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "ansi_mapping.py", run_before=setup)
+
+
+def test_pretty_grid_gutter_interaction(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/pull/4219."""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "pretty_grid_gutter_interaction.py", terminal_size=(81, 7)
+    )
+

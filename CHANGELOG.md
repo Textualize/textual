@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
+
+### Fixed
+
+- Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
+- Fixed `Sparkline` not working with data in a `deque` https://github.com/Textualize/textual/issues/3899
+- Tooltips are now cleared when the related widget is no longer under them https://github.com/Textualize/textual/issues/3045
+- Simplified tree-sitter highlight queries for HTML, which also seems to fix segfault issue https://github.com/Textualize/textual/pull/4195
+- Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
+- Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
+- Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
+- Fixed `TextArea` styling issue on alternate screens https://github.com/Textualize/textual/pull/4220
+- Fixed writing to invisible `RichLog` https://github.com/Textualize/textual/pull/4223
+- Fixed `RichLog.min_width` not being used https://github.com/Textualize/textual/pull/4223
+- Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
+- Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
+
+### Added
+
+- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
+
+## [0.52.1] - 2024-02-20
+
+### Fixed
+
+- Fixed the check for animation level in `LoadingIndicator` https://github.com/Textualize/textual/issues/4188
+
+## [0.52.0] - 2024-02-19
+
+### Changed
+
+- Textual now writes to stderr rather than stdout https://github.com/Textualize/textual/pull/4177
+
+### Added
+
+- Added an `asyncio` lock attribute `Widget.lock` to be used to synchronize widget state https://github.com/Textualize/textual/issues/4134
+- Added support for environment variable `TEXTUAL_ANIMATIONS` to control what animations Textual displays https://github.com/Textualize/textual/pull/4062
+- Add attribute `App.animation_level` to control whether animations on that app run or not https://github.com/Textualize/textual/pull/4062
+- Added support for a `TEXTUAL_SCREENSHOT_LOCATION` environment variable to specify the location of an automated screenshot https://github.com/Textualize/textual/pull/4181/
+- Added support for a `TEXTUAL_SCREENSHOT_FILENAME` environment variable to specify the filename of an automated screenshot https://github.com/Textualize/textual/pull/4181/
+- Added an `asyncio` lock attribute `Widget.lock` to be used to synchronize widget state https://github.com/Textualize/textual/issues/4134
+- `Widget.remove_children` now accepts a CSS selector to specify which children to remove https://github.com/Textualize/textual/pull/4183
+- `Widget.batch` combines widget locking and app update batching https://github.com/Textualize/textual/pull/4183
+
 ## [0.51.0] - 2024-02-15
 
 ### Added
@@ -121,6 +169,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
 - Added `App.suspend` https://github.com/Textualize/textual/pull/4064
 - Added `App.action_suspend_process` https://github.com/Textualize/textual/pull/4064
+
 
 ### Fixed
 

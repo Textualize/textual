@@ -17,3 +17,4 @@ class Tooltip(Static, inherit_css=False):
         display: none;
     }
     """
+    DEFAULT_CLASSES = "-textual-system"
