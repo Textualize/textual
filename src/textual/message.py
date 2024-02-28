@@ -98,8 +98,8 @@ class Message:
             sender: The sender.
 
         Note:
-            When creating a message the sender is automatically set;
-            normally there will be no need for this method to be called.
+            When creating a message the sender is automatically set.
+            Normally there will be no need for this method to be called.
             This method will be used when strict control is required over
             the sender of a message.
 
