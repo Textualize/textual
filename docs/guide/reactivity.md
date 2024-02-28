@@ -186,7 +186,7 @@ Note that when you use the decorator approach, the name of the method is not imp
 In the example above we use an underscore to indicate the method doesn't need to be referenced outside of Textual's reactivity system.
 
 A benefit of the decorator is that it is refactor friendly.
-If you were to use your IDEA to change the name of the decorator, it will also update the decorator.
+If you were to use your IDE to change the name of the reactive attribute, it will also update the decorator.
 
 ## Watch methods
 
