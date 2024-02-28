@@ -447,3 +447,4 @@ async def test_get_focusable_widget_at() -> None:
         # Click egg (outside of focusable widget)
         await pilot.click("#egg")
         # Confirm nothing focused
+        assert app.screen.focused is None
