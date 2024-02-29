@@ -457,7 +457,7 @@ def test_variable_declaration_invalid_value():
 
 
 def test_variables_declarations_amongst_rulesets():
-    css = "$x:1; .thing{text:red;} $y:2;"
+    css = "$x:1; .thing{tint:red;} $y:2;"
     tokens = list(tokenize(css, ("", "")))
     assert tokens == [
         Token(
@@ -510,7 +510,7 @@ def test_variables_declarations_amongst_rulesets():
         ),
         Token(
             name="declaration_name",
-            value="text:",
+            value="tint:",
             read_from=("", ""),
             code=css,
             location=(0, 13),
@@ -576,7 +576,7 @@ def test_variables_declarations_amongst_rulesets():
 
 
 def test_variables_reference_in_rule_declaration_value():
-    css = ".warn{text: $warning;}"
+    css = ".warn{tint: $warning;}"
     assert list(tokenize(css, ("", ""))) == [
         Token(
             name="selector_start_class",
@@ -596,7 +596,7 @@ def test_variables_reference_in_rule_declaration_value():
         ),
         Token(
             name="declaration_name",
-            value="text:",
+            value="tint:",
             read_from=("", ""),
             code=css,
             location=(0, 6),
@@ -898,3 +898,103 @@ def test_allow_new_lines():
         ),
     ]
     assert list(tokenize(css, ("", ""))) == expected
+
+
+@pytest.mark.parametrize(
+    "css_property_name,expected_property_name_suggestion",
+    [
+        ["backgroundu", "background"],
+        ["bckgroundu", "background"],
+        ["ofset-x", "offset-x"],
+        ["ofst_y", "offset-y"],
+        ["colr", "color"],
+        ["colour", "color"],
+        ["wdth", "width"],
+        ["wth", "width"],
+    ],
+)
+def test_did_you_mean_for_css_property_names(
+    css_property_name: str, expected_property_name_suggestion: str
+) -> None:
+    """Test that we get the correct property name suggestions for typos."""
+
+    css = """
+    * {
+      border: blue;
+      ${PROPERTY}: red;
+    }
+    """.replace(
+        "${PROPERTY}", css_property_name
+    )
+
+    with pytest.raises(TokenError) as err:
+        list(tokenize(css, ("", "")))
+
+    expected_summary = f"invalid CSS property {css_property_name!r}"
+    assert expected_summary in str(err.value)
+    if expected_property_name_suggestion:
+        assert f"did you mean '{expected_property_name_suggestion}'?" in str(err.value)
+
+
+@pytest.mark.parametrize(
+    ["left", "right"],
+    [
+        ["wh", "textual"],
+        ["xkcd", "bananas"],
+    ],
+)
+def test_invalid_css_ambiguous_rule_pseudo_class(left: str, right: str) -> None:
+    """Test the error message for when we can't decide whether something is a rule
+    declaration or a selector with a pseudo-class.
+    Related to https://github.com/Textualize/textual/issues/4039.
+    """
+
+    rule = f"{left}: {right}"
+    css = """
+    * {
+      border: blue;
+      ${RULE};
+    }
+    """.replace(
+        "${RULE}", rule
+    )
+
+    with pytest.raises(TokenError) as err:
+        list(tokenize(css, ("", "")))
+
+    assert f"invalid CSS {rule!r}" in str(err.value)
+
+
+@pytest.mark.parametrize(
+    ["pseudo_class", "expected"],
+    [
+        ("blue", "blur"),
+        ("br", "blur"),
+        ("canfocus", "can-focus"),
+        ("can_focus", "can-focus"),
+        ("can-foc", "can-focus"),
+        ("drk", "dark"),
+        ("ark", "dark"),
+        ("disssabled", "disabled"),
+        ("enalbed", "enabled"),
+        ("focoswithin", "focus-within"),
+        ("focus_whitin", "focus-within"),
+        ("fcus", "focus"),
+        ("huver", "hover"),
+        ("LIght", "light"),
+    ],
+)
+def test_did_you_mean_pseudo_classes(pseudo_class: str, expected: str) -> None:
+    """Make sure we get the correct suggestion for pseudo-classes with typos."""
+
+    css = f"""
+    Button:{pseudo_class} {{
+        background: red;
+    }}
+    """
+
+    with pytest.raises(TokenError) as err:
+        list(tokenize(css, ("", "")))
+
+    assert f"unknown pseudo-class {pseudo_class!r}" in str(err.value)
+    assert f"did you mean {expected!r}" in str(err.value)

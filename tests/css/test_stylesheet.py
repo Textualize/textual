@@ -168,46 +168,6 @@ def test_color_property_parsing(css_value, expectation, expected_color):
 
 
 @pytest.mark.parametrize(
-    "css_property_name,expected_property_name_suggestion",
-    [
-        ["backgroundu", "background"],
-        ["bckgroundu", "background"],
-        ["ofset-x", "offset-x"],
-        ["ofst_y", "offset-y"],
-        ["colr", "color"],
-        ["colour", "color"],
-        ["wdth", "width"],
-        ["wth", "width"],
-        ["wh", None],
-        ["xkcd", None],
-    ],
-)
-def test_did_you_mean_for_css_property_names(
-    css_property_name: str, expected_property_name_suggestion
-):
-    stylesheet = Stylesheet()
-    css = """
-    * {
-      border: blue;
-      ${PROPERTY}: red;
-    }
-    """.replace(
-        "${PROPERTY}", css_property_name
-    )
-
-    stylesheet.add_source(css)
-    with pytest.raises(StylesheetParseError) as err:
-        stylesheet.parse()
-
-    _, help_text = err.value.errors.rules[0].errors[0]  # type: Any, HelpText
-    displayed_css_property_name = css_property_name.replace("_", "-")
-    expected_summary = f"Invalid CSS property {displayed_css_property_name!r}"
-    if expected_property_name_suggestion:
-        expected_summary += f". Did you mean '{expected_property_name_suggestion}'?"
-    assert help_text.summary == expected_summary
-
-
-@pytest.mark.parametrize(
     "css_property_name,css_property_value,expected_color_suggestion",
     [
         ["color", "blu", "blue"],
