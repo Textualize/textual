@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING, Iterable
 
-from .constants import VALID_PSEUDO_CLASSES
+from .constants import VALID_PSEUDO_CLASSES, VALID_RULE_NAMES
 from .tokenizer import Expect, Token, Tokenizer
 
 if TYPE_CHECKING:
@@ -118,16 +118,26 @@ expect_declaration = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
-    # If we have a pseudo-class after the declaration name, then it's probably a
-    # selector followed by a pseudo-class in nested TCSS.
-    # See https://github.com/Textualize/textual/issues/4039.
-    declaration_name=r"[a-zA-Z_\-]+\:(?!" + r"|".join(VALID_PSEUDO_CLASSES) + r")",
+    declaration_name=r"(?:" + "|".join(VALID_RULE_NAMES) + r"):",
     declaration_set_end=r"\}",
     #
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
-    selector_start=IDENTIFIER,
+    selector_start=(  # A selector is
+        IDENTIFIER  # an identifier
+        + r"(?=\b(?!-)(?<!-))"  # up to a word boundary not around a hyphen
+        + r"(?=\s*)"  # potentially followed by some whitespace
+        + r"(?="  # which is then either
+        + r":(?="  # followed by a colon
+        + "|".join(VALID_PSEUDO_CLASSES)  # and a valid pseudo-class
+        + r")|"  # OR
+        + r"(?!:))"  # not followed by a colon at all.
+    ),
+    # This bottom rule catches situations where rule names or pseudo-classes in nested
+    # selectors have typos. If this matches, we'll do our best to guess what the user
+    # was trying to do and provide the appropriate error message.
+    maybe_rule_maybe_pseudo_class=r"(?P<maybe_rule>[a-zA-Z_\-][a-zA-Z0-9_\-]*)\s*:\s*(?P<maybe_pseudo>[a-zA-Z_-]+)",
 )
 
 expect_declaration_solo = Expect(

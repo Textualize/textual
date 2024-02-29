@@ -12,7 +12,7 @@ from rich.text import Text
 
 from ..suggestions import get_suggestion
 from ._error_tools import friendly_list
-from .constants import VALID_PSEUDO_CLASSES
+from .constants import VALID_PSEUDO_CLASSES, VALID_RULE_NAMES
 
 if TYPE_CHECKING:
     from .types import CSSLocation
@@ -298,6 +298,26 @@ class Tokenizer:
                     (line_no + 1, col_no + 1),
                     f"unknown pseudo-class {pseudo_class!r}; {all_valid}",
                 )
+
+        if token.name == "maybe_rule_maybe_pseudo_class":
+            maybe_rule, maybe_pseudo_class = iter_groups
+            rule_suggestion = get_suggestion(maybe_rule, list(VALID_RULE_NAMES))
+            pseudo_class_suggestion = get_suggestion(
+                maybe_pseudo_class, list(VALID_PSEUDO_CLASSES)
+            )
+            if rule_suggestion is not None and pseudo_class_suggestion is None:
+                error_message = f"invalid CSS property {maybe_rule!r}; did you mean {rule_suggestion!r}?"
+            elif pseudo_class_suggestion is not None and rule_suggestion is None:
+                all_valid = f"must be one of {friendly_list(VALID_PSEUDO_CLASSES)}"
+                error_message = f"unknown pseudo-class {maybe_pseudo_class!r}; did you mean {pseudo_class_suggestion!r}?; {all_valid}"
+            else:
+                error_message = f"invalid CSS {token.value!r}"
+            raise TokenError(
+                self.read_from,
+                self.code,
+                (line_no + 1, col_no + 1),
+                error_message,
+            )
 
         col_no += len(value)
         if col_no >= len(line):
