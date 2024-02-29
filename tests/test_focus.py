@@ -1,10 +1,10 @@
 import pytest
 
 from textual.app import App, ComposeResult
-from textual.containers import Container
+from textual.containers import Container, ScrollableContainer
 from textual.screen import Screen
 from textual.widget import Widget
-from textual.widgets import Button
+from textual.widgets import Button, Label
 
 
 class Focusable(Widget, can_focus=True):
@@ -409,3 +409,42 @@ async def test_focus_pseudo_class():
         classes = list(button.get_pseudo_classes())
         assert "blur" not in classes
         assert "focus" in classes
+
+
+async def test_get_focusable_widget_at() -> None:
+    """Check that clicking a non-focusable widget will focus any (focusable) ancestors."""
+
+    class FocusApp(App):
+        AUTO_FOCUS = None
+
+        def compose(self) -> ComposeResult:
+            with ScrollableContainer(id="focusable"):
+                with Container():
+                    yield Label("Foo", id="foo")
+                    yield Label("Bar", id="bar")
+            yield Label("Egg", id="egg")
+
+    app = FocusApp()
+    async with app.run_test() as pilot:
+        # Nothing focused
+        assert app.screen.focused is None
+        # Click foo
+        await pilot.click("#foo")
+        # Confirm container is focused
+        assert app.screen.focused is not None
+        assert app.screen.focused.id == "focusable"
+        # Reset focus
+        app.screen.set_focus(None)
+        assert app.screen.focused is None
+        # Click bar
+        await pilot.click("#bar")
+        # Confirm container is focused
+        assert app.screen.focused is not None
+        assert app.screen.focused.id == "focusable"
+        # Reset focus
+        app.screen.set_focus(None)
+        assert app.screen.focused is None
+        # Click egg (outside of focusable widget)
+        await pilot.click("#egg")
+        # Confirm nothing focused
+        assert app.screen.focused is None

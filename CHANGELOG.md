@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
+- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
 
 ### Fixed
 
@@ -26,9 +27,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
 
-### Added
+### Changed
 
-- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
+- Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
 
 ## [0.52.1] - 2024-02-20
 

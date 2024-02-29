@@ -307,6 +307,29 @@ class Screen(Generic[ScreenResultType], Widget):
         """
         return self._compositor.get_widgets_at(x, y)
 
+    def get_focusable_widget_at(self, x: int, y: int) -> Widget | None:
+        """Get the focusable widget under a given coordinate.
+
+        If the widget directly under the given coordinate is not focusable, then this method will check
+        if any of the ancestors are focusable. If no ancestors are focusable, then `None` will be returned.
+
+        Args:
+            x: X coordinate.
+            y: Y coordinate.
+
+        Returns:
+            A `Widget`, or `None` if there is no focusable widget underneath the coordinate.
+        """
+        try:
+            widget, _region = self.get_widget_at(x, y)
+        except NoWidget:
+            return None
+
+        for node in widget.ancestors_with_self:
+            if isinstance(node, Widget) and node.focusable:
+                return node
+        return None
+
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the style under a given coordinate.
 
@@ -1015,8 +1038,10 @@ class Screen(Generic[ScreenResultType], Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseDown) and widget.focusable:
-                    self.set_focus(widget, scroll_visible=False)
+                if isinstance(event, events.MouseDown):
+                    focusable_widget = self.get_focusable_widget_at(event.x, event.y)
+                    if focusable_widget:
+                        self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()
