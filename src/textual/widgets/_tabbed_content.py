@@ -8,6 +8,8 @@ from rich.repr import Result
 from rich.text import Text, TextType
 from typing_extensions import Final
 
+from textual.await_remove import AwaitRemove
+
 from ..app import ComposeResult
 from ..await_complete import AwaitComplete
 from ..css.query import NoMatches
@@ -449,7 +451,7 @@ class TabbedContent(Widget):
             An optionally awaitable object that waits for the pane to be removed
                 and the Cleared message to be posted.
         """
-        removal_awaitables = [
+        removal_awaitables: list[AwaitComplete | AwaitRemove] = [
             self.get_child_by_type(ContentTabs).remove_tab(
                 ContentTab.add_prefix(pane_id)
             )
