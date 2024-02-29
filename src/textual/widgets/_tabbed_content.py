@@ -15,7 +15,7 @@ from ..await_complete import AwaitComplete
 from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
-from ..widget import Widget
+from ..widget import AwaitMount, Widget
 from ._content_switcher import ContentSwitcher
 from ._tabs import Tab, Tabs
 
@@ -432,13 +432,19 @@ class TabbedContent(Widget):
         pane = self._set_id(pane, tabs.tab_count + 1)
         assert pane.id is not None
         pane.display = False
+
+        async def _add_part(awaitable: AwaitComplete | AwaitMount) -> None:
+            await awaitable
+
         return AwaitComplete(
-            tabs.add_tab(
-                ContentTab(pane._title, pane.id),
-                before=before if before is None else ContentTab.add_prefix(before),
-                after=after if after is None else ContentTab.add_prefix(after),
+            _add_part(
+                tabs.add_tab(
+                    ContentTab(pane._title, pane.id),
+                    before=before if before is None else ContentTab.add_prefix(before),
+                    after=after if after is None else ContentTab.add_prefix(after),
+                )
             ),
-            self.get_child_by_type(ContentSwitcher).mount(pane),
+            _add_part(self.get_child_by_type(ContentSwitcher).mount(pane)),
         )
 
     def remove_pane(self, pane_id: str) -> AwaitComplete:
