@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from asyncio import Future, gather
-from typing import Any, Coroutine, Iterator, TypeVar
+from typing import Any, Coroutine, Generator, TypeVar
 
 import rich.repr
 
@@ -19,12 +19,12 @@ class AwaitComplete:
             coroutines: One or more coroutines to execute.
         """
         self.coroutines: tuple[Coroutine[Any, Any, Any], ...] = coroutines
-        self._future: Future = gather(*self.coroutines)
+        self._future: Future[Any] = gather(*self.coroutines)
 
     async def __call__(self) -> Any:
         return await self
 
-    def __await__(self) -> Iterator[None]:
+    def __await__(self) -> Generator[Any, None, Any]:
         return self._future.__await__()
 
     @property
