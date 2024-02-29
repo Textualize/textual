@@ -28,6 +28,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
 - Recognise pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
 
+### Changed
+
+- Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
+
 ## [0.52.1] - 2024-02-20
 
 ### Fixed
