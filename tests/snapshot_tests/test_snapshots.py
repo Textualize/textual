@@ -498,6 +498,7 @@ def test_programmatic_scrollbar_gutter_change(snap_compare):
 
 # --- Other ---
 
+
 def test_key_display(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "key_display.py")
 
@@ -564,8 +565,10 @@ def test_richlog_width(snap_compare):
     """Check that min_width applies in RichLog and that we can write
     to the RichLog when it's not visible, and it still renders as expected
     when made visible again."""
+
     async def setup(pilot):
         from rich.text import Text
+
         rich_log: RichLog = pilot.app.query_one(RichLog)
         rich_log.write(Text("hello1", style="on red", justify="right"), expand=True)
         rich_log.visible = False
@@ -576,8 +579,7 @@ def test_richlog_width(snap_compare):
         rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
         rich_log.display = True
 
-    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py",
-                        run_before=setup)
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py", run_before=setup)
 
 
 def test_tabs_invalidate(snap_compare):
@@ -981,6 +983,7 @@ def test_text_area_alternate_screen(snap_compare):
         SNAPSHOT_APPS_DIR / "text_area_alternate_screen.py", terminal_size=(48, 10)
     )
 
+
 @pytest.mark.syntax
 def test_text_area_wrapping_and_folding(snap_compare):
     assert snap_compare(
@@ -1103,10 +1106,12 @@ def test_input_percentage_width(snap_compare):
     # https://github.com/Textualize/textual/issues/3721
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
 
+
 def test_recompose(snap_compare):
     """Check recompose works."""
     # https://github.com/Textualize/textual/pull/4206
     assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
+
 
 @pytest.mark.parametrize("dark", [True, False])
 def test_ansi_color_mapping(snap_compare, dark):
@@ -1124,3 +1129,9 @@ def test_pretty_grid_gutter_interaction(snap_compare):
         SNAPSHOT_APPS_DIR / "pretty_grid_gutter_interaction.py", terminal_size=(81, 7)
     )
 
+
+def test_sort_children(snap_compare):
+    """Test sort_children method."""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "test_sort_children.py", terminal_size=(80, 25)
+    )

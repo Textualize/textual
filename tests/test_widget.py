@@ -1,3 +1,5 @@
+from operator import attrgetter
+
 import pytest
 from rich.text import Text
 
@@ -436,3 +438,40 @@ async def test_render_returns_text():
     render_result = widget._render()
     assert isinstance(render_result, Text)
     assert render_result.plain == "Hello World!"
+
+
+async def test_sort_children() -> None:
+    """Test the sort_children method."""
+
+    class SortApp(App):
+
+        def compose(self) -> ComposeResult:
+            with Container(id="container"):
+                yield Label("three", id="l3")
+                yield Label("one", id="l1")
+                yield Label("four", id="l4")
+                yield Label("two", id="l2")
+
+    app = SortApp()
+    async with app.run_test():
+        container = app.query_one("#container", Container)
+        assert [label.id for label in container.query(Label)] == [
+            "l3",
+            "l1",
+            "l4",
+            "l2",
+        ]
+        container.sort_children(key=attrgetter("id"))
+        assert [label.id for label in container.query(Label)] == [
+            "l1",
+            "l2",
+            "l3",
+            "l4",
+        ]
+        container.sort_children(key=attrgetter("id"), reverse=True)
+        assert [label.id for label in container.query(Label)] == [
+            "l4",
+            "l3",
+            "l2",
+            "l1",
+        ]
