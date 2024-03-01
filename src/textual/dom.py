@@ -348,6 +348,14 @@ class DOMNode(MessagePump):
     ) -> None:
         """Sort child widgets with an optional key function.
 
+        If `key` is not provided then widgets will be sorted in the order they are constructed.
+
+        Example:
+            ```python
+            # Sort widgets by name
+            screen.sort_children(key=lambda widget: widget.name or "")
+            ```
+
         Args:
             key: A callable which accepts a widget and returns something that can be sorted,
                 or `None` to sort without a key function.
