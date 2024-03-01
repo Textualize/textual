@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any, Iterator, Sequence, overload
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 
 import rich.repr
 
@@ -48,6 +48,22 @@ class NodeList(Sequence["Widget"]):
 
     def __contains__(self, widget: object) -> bool:
         return widget in self._nodes
+
+    def _sort(
+        self,
+        *,
+        key: Callable[[Widget], object] | None = None,
+        reverse: bool = False,
+    ):
+        """Sort nodes.
+
+        Args:
+            key: A key function which accepts a widget, or `None` for no key function.
+            reverse: Sort in descending order.
+        """
+        # Couldn't find a straightforward way of typing a key function
+        self._nodes.sort(key=key, reverse=reverse)  # type: ignore
+        self._updates += 1
 
     def index(self, widget: Any, start: int = 0, stop: int = sys.maxsize) -> int:
         """Return the index of the given widget.

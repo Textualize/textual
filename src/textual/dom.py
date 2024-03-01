@@ -338,6 +338,21 @@ class DOMNode(MessagePump):
         """
         return self._nodes
 
+    def sort_children(
+        self,
+        key: Callable[[Widget], object] | None = None,
+        reverse: bool = False,
+    ) -> None:
+        """Sort child widgets with an optional key function.
+
+        Args:
+            key: A callable which accepts a widget and returns something that can be sorted,
+                or `None` to sort without a key function.
+            reverse: Sort in descending order.
+        """
+        self._nodes._sort(key=key, reverse=reverse)
+        self.refresh(layout=True)
+
     @property
     def auto_refresh(self) -> float | None:
         """Number of seconds between automatic refresh, or `None` for no automatic refresh."""
