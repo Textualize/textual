@@ -298,7 +298,7 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
-    #
+    # Default sort order, incremented by constructor
     _sort_order: ClassVar[int] = 0
 
     def __init__(
@@ -345,7 +345,6 @@ class Widget(DOMNode):
         self._repaint_regions: set[Region] = set()
 
         # Cache the auto content dimensions
-        # TODO: add mechanism to explicitly clear this
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
