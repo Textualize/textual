@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 import rich.repr
 
 if TYPE_CHECKING:
-    from useful_types import SupportsRichComparison
+    from _typeshed import SupportsRichComparison
 
     from .widget import Widget
 

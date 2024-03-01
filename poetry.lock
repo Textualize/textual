@@ -2123,20 +2123,6 @@ socks = ["pysocks (>=1.5.6,!=1.5.7,<2.0)"]
 zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
-name = "useful-types"
-version = "0.2.0"
-description = "A collection of useful types."
-optional = false
-python-versions = ">=3.8"
-files = [
-    {file = "useful_types-0.2.0-py3-none-any.whl", hash = "sha256:3d05d9d92d2b5f235b1c7bf327a394a6b1903c2aa232f06519f95d8fb0372988"},
-    {file = "useful_types-0.2.0.tar.gz", hash = "sha256:6d9aef0a911dcc46015ac07db1d5e8f8f01523b2856a377a03356c998d70dfa1"},
-]
-
-[package.dependencies]
-typing_extensions = ">=4.7"
-
-[[package]]
 name = "virtualenv"
 version = "20.25.1"
 description = "Virtual Python Environment builder"
@@ -2321,4 +2307,4 @@ syntax = ["tree-sitter", "tree_sitter_languages"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "0afec171dafa45b0f7406002a1d86889d598bf66d3a3c978dc703186edd1537f"
+content-hash = "014186a223d4236fb0ace86bef24fb030d6921cf714a8b4d2b889ba066a26375"

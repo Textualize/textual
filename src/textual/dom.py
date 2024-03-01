@@ -47,7 +47,7 @@ from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias
-    from useful_types import SupportsRichComparison
+    from _typeshed import SupportsRichComparison
 
     from rich.console import RenderableType
     from .app import App
