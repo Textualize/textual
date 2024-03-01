@@ -65,9 +65,12 @@ class SortApp(App):
             yield NumberList(id="descending")
 
     def on_mount(self) -> None:
-        self.query_one("#ascending").sort_children(key=attrgetter("number"))
+        self.query_one("#ascending").sort_children(
+            key=attrgetter("number"),
+        )
         self.query_one("#descending").sort_children(
-            key=attrgetter("number"), reverse=True
+            key=attrgetter("number"),
+            reverse=True,
         )
 
 

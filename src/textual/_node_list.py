@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 import rich.repr
 
 if TYPE_CHECKING:
+    from useful_types import SupportsRichComparison
+
     from .widget import Widget
 
 
@@ -52,7 +54,7 @@ class NodeList(Sequence["Widget"]):
     def _sort(
         self,
         *,
-        key: Callable[[Widget], object] | None = None,
+        key: Callable[[Widget], SupportsRichComparison] | None = None,
         reverse: bool = False,
     ):
         """Sort nodes.

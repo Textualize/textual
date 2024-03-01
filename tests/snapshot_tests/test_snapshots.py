@@ -1132,6 +1132,4 @@ def test_pretty_grid_gutter_interaction(snap_compare):
 
 def test_sort_children(snap_compare):
     """Test sort_children method."""
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "test_sort_children.py", terminal_size=(80, 25)
-    )
+    assert snap_compare(SNAPSHOT_APPS_DIR / "sort_children.py", terminal_size=(80, 25))

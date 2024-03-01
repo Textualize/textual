@@ -71,6 +71,7 @@ pytest-textual-snapshot = ">=0.4.0"
 types-tree-sitter = "^0.20.1.4"
 types-tree-sitter-languages = "^1.7.0.1"
 griffe = "0.32.3"
+useful-types = ">=0.2.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
