@@ -342,6 +342,7 @@ class DOMNode(MessagePump):
 
     def sort_children(
         self,
+        *,
         key: Callable[[Widget], SupportsRichComparison] | None = None,
         reverse: bool = False,
     ) -> None:
