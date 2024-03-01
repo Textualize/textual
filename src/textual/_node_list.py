@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 
 import rich.repr
@@ -63,8 +64,11 @@ class NodeList(Sequence["Widget"]):
             key: A key function which accepts a widget, or `None` for no key function.
             reverse: Sort in descending order.
         """
-        # Couldn't find a straightforward way of typing a key function
-        self._nodes.sort(key=key, reverse=reverse)  # type: ignore
+        if key is None:
+            self._nodes.sort(key=attrgetter("sort_order"), reverse=reverse)
+        else:
+            self._nodes.sort(key=key, reverse=reverse)
+
         self._updates += 1
 
     def index(self, widget: Any, start: int = 0, stop: int = sys.maxsize) -> int:

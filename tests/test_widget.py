@@ -475,3 +475,41 @@ async def test_sort_children() -> None:
             "l2",
             "l1",
         ]
+
+
+async def test_sort_children_no_key() -> None:
+    """Test sorting with no key."""
+
+    class SortApp(App):
+
+        def compose(self) -> ComposeResult:
+            with Container(id="container"):
+                yield Label("three", id="l3")
+                yield Label("one", id="l1")
+                yield Label("four", id="l4")
+                yield Label("two", id="l2")
+
+    app = SortApp()
+    async with app.run_test():
+        container = app.query_one("#container", Container)
+        assert [label.id for label in container.query(Label)] == [
+            "l3",
+            "l1",
+            "l4",
+            "l2",
+        ]
+        # Without a key, the sort order is the order children were instantiated
+        container.sort_children()
+        assert [label.id for label in container.query(Label)] == [
+            "l3",
+            "l1",
+            "l4",
+            "l2",
+        ]
+        container.sort_children(reverse=True)
+        assert [label.id for label in container.query(Label)] == [
+            "l2",
+            "l4",
+            "l1",
+            "l3",
+        ]

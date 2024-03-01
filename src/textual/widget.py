@@ -298,6 +298,9 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
+    #
+    _sort_order: ClassVar[int] = 0
+
     def __init__(
         self,
         *children: Widget,
@@ -324,6 +327,8 @@ class Widget(DOMNode):
         self._recompose_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
+        Widget._sort_order += 1
+        self.sort_order = Widget._sort_order
         self.highlight_style: Style | None = None
 
         self._vertical_scrollbar: ScrollBar | None = None
