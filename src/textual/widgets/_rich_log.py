@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, cast
 
 from rich.console import RenderableType
-from rich.highlighter import ReprHighlighter
+from rich.highlighter import Highlighter, ReprHighlighter
 from rich.measure import measure_renderables
 from rich.pretty import Pretty
 from rich.protocol import is_renderable
@@ -86,7 +86,8 @@ class RichLog(ScrollView, can_focus=True):
         """Apply Rich console markup."""
         self.auto_scroll = auto_scroll
         """Automatically scroll to the end on write."""
-        self.highlighter = ReprHighlighter()
+        self.highlighter: Highlighter = ReprHighlighter()
+        """Rich Highlighter used to highlight content when highlight is True"""
 
         self._last_container_width: int = min_width
         """Record the last width we rendered content at."""
