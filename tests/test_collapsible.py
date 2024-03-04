@@ -148,7 +148,7 @@ async def test_toggle_message():
 
 
 async def test_expand_message():
-    """Toggling should post a message."""
+    """Clicking to expand should post a message."""
 
     hits = []
 
