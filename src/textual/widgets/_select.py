@@ -240,7 +240,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | NoSelection] = var[Union[SelectType, NoSelection]](BLANK)
+    value: var[SelectType | NoSelection] = var[Union[SelectType, NoSelection]](
+        BLANK, init=False
+    )
     """The value of the selection.
 
     If the widget has no selection, its value will be [`Select.BLANK`][textual.widgets.Select.BLANK].
@@ -459,6 +461,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                         select_overlay.highlighted = index
                         select_current.update(prompt)
                         break
+            self.post_message(self.Changed(self, value))
 
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
@@ -509,7 +512,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         value = self._options[event.option_index][1]
         if value != self.value:
             self.value = value
-            self.post_message(self.Changed(self, value))
 
         async def update_focus() -> None:
             """Update focus and reset overlay."""
