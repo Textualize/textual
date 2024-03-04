@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import sys
-from typing import TYPE_CHECKING, Any, Iterator, Sequence, overload
+from operator import attrgetter
+from typing import TYPE_CHECKING, Any, Callable, Iterator, Sequence, overload
 
 import rich.repr
 
 if TYPE_CHECKING:
+    from _typeshed import SupportsRichComparison
+
     from .widget import Widget
 
 
@@ -48,6 +51,25 @@ class NodeList(Sequence["Widget"]):
 
     def __contains__(self, widget: object) -> bool:
         return widget in self._nodes
+
+    def _sort(
+        self,
+        *,
+        key: Callable[[Widget], SupportsRichComparison] | None = None,
+        reverse: bool = False,
+    ):
+        """Sort nodes.
+
+        Args:
+            key: A key function which accepts a widget, or `None` for no key function.
+            reverse: Sort in descending order.
+        """
+        if key is None:
+            self._nodes.sort(key=attrgetter("sort_order"), reverse=reverse)
+        else:
+            self._nodes.sort(key=key, reverse=reverse)
+
+        self._updates += 1
 
     def index(self, widget: Any, start: int = 0, stop: int = sys.maxsize) -> int:
         """Return the index of the given widget.
