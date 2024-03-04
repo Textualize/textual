@@ -7,7 +7,7 @@ import rich.repr
 
 
 @rich.repr.auto(angular=True)
-class AwaitComplete(Awaitable):
+class AwaitComplete:
     """An 'optionally-awaitable' object."""
 
     def __init__(self, *awaitables: Awaitable) -> None:
