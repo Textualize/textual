@@ -192,7 +192,7 @@ async def test_expand_via_watcher_message():
 
 
 async def test_collapse_message():
-    """Toggling should post a message."""
+    """Clicking on collapsed should post a message."""
 
     hits = []
 
