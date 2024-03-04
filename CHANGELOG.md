@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
 - `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
+- Added `sort_children` method https://github.com/Textualize/textual/pull/4244
 - Support for pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
 
 ### Fixed
