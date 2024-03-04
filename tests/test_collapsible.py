@@ -169,6 +169,28 @@ async def test_expand_message():
         assert len(hits) == 1
 
 
+async def test_expand_via_watcher_message():
+    """Setting `collapsed` to `False` should post a message."""
+
+    hits = []
+
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(collapsed=True)
+
+        def on_collapsible_expanded(self) -> None:
+            hits.append("expanded")
+
+    async with CollapsibleApp().run_test() as pilot:
+        assert pilot.app.query_one(Collapsible).collapsed
+
+        pilot.app.query_one(Collapsible).collapsed = False
+        await pilot.pause()
+
+        assert not pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 1
+
+
 async def test_collapse_message():
     """Toggling should post a message."""
 
