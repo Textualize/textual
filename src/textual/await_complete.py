@@ -1,25 +1,22 @@
 from __future__ import annotations
 
 from asyncio import Future, gather
-from typing import Any, Coroutine, Generator, TypeVar
+from typing import Any, Awaitable, Generator
 
 import rich.repr
 
-ReturnType = TypeVar("ReturnType")
-
 
 @rich.repr.auto(angular=True)
-class AwaitComplete:
+class AwaitComplete(Awaitable):
     """An 'optionally-awaitable' object."""
 
-    def __init__(self, *coroutines: Coroutine[Any, Any, Any]) -> None:
+    def __init__(self, *awaitables: Awaitable) -> None:
         """Create an AwaitComplete.
 
         Args:
-            coroutines: One or more coroutines to execute.
+            awaitables: One or more awaitables to run concurrently.
         """
-        self.coroutines: tuple[Coroutine[Any, Any, Any], ...] = coroutines
-        self._future: Future[Any] = gather(*self.coroutines)
+        self._future: Future[Any] = gather(*awaitables)
 
     async def __call__(self) -> Any:
         return await self
