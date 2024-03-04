@@ -8,7 +8,7 @@ import rich.repr
 
 @rich.repr.auto(angular=True)
 class AwaitComplete:
-    """An 'optionally-awaitable' object."""
+    """An 'optionally-awaitable' object which runs one or more coroutines (or other awaitables) concurrently."""
 
     def __init__(self, *awaitables: Awaitable) -> None:
         """Create an AwaitComplete.
@@ -26,12 +26,12 @@ class AwaitComplete:
 
     @property
     def is_done(self) -> bool:
-        """Returns True if the task has completed."""
+        """`True` if the task has completed."""
         return self._future.done()
 
     @property
     def exception(self) -> BaseException | None:
-        """An exception if it occurred in any of the coroutines."""
+        """An exception if the awaitables failed."""
         if self._future.done():
             return self._future.exception()
         return None
