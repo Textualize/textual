@@ -285,7 +285,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             messages.
         """
         if self._send_messages:
-            self.post_message(self.SelectedChanged(self))
+            self.post_message(self.SelectedChanged(self).set_sender(self))
 
     def _apply_to_all(self, state_change: Callable[[SelectionType], bool]) -> Self:
         """Apply a selection state change to all selection options in the list.
