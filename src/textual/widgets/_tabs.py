@@ -797,7 +797,7 @@ class Tabs(Widget, can_focus=True):
             next_tab = self._next_active
             self.active = next_tab.id or "" if next_tab else ""
         tab_to_hide.add_class("-hidden")
-        self.post_message(self.TabHidden(self, tab_to_hide))
+        self.post_message(self.TabHidden(self, tab_to_hide).set_sender(self))
         self.call_after_refresh(self._highlight_active)
         return tab_to_hide
 
