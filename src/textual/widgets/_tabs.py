@@ -820,7 +820,7 @@ class Tabs(Widget, can_focus=True):
             raise self.TabError(f"There is no tab with ID {tab_id!r} to show.")
 
         tab_to_show.remove_class("-hidden")
-        self.post_message(self.TabShown(self, tab_to_show))
+        self.post_message(self.TabShown(self, tab_to_show).set_sender(self))
         if not self.active:
             self._activate_tab(tab_to_show)
         self.call_after_refresh(self._highlight_active)
