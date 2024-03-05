@@ -16,7 +16,17 @@ import threading
 from asyncio import CancelledError, Queue, QueueEmpty, Task, create_task
 from contextlib import contextmanager
 from functools import partial
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generator, Iterable, cast
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Awaitable,
+    Callable,
+    Generator,
+    Iterable,
+    Type,
+    TypeVar,
+    cast,
+)
 from weakref import WeakSet
 
 from . import Logger, events, log, messages
@@ -52,18 +62,21 @@ class MessagePumpClosed(Exception):
     pass
 
 
+_MessagePumpMetaSub = TypeVar("_MessagePumpMetaSub", bound="_MessagePumpMeta")
+
+
 class _MessagePumpMeta(type):
     """Metaclass for message pump. This exists to populate a Message inner class of a Widget with the
     parent classes' name.
     """
 
     def __new__(
-        cls,
+        cls: Type[_MessagePumpMetaSub],
         name: str,
         bases: tuple[type, ...],
         class_dict: dict[str, Any],
-        **kwargs,
-    ):
+        **kwargs: Any,
+    ) -> _MessagePumpMetaSub:
         namespace = camel_to_snake(name)
         isclass = inspect.isclass
         handlers: dict[

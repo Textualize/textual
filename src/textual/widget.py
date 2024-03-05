@@ -243,6 +243,10 @@ class _BorderTitle:
         return title.markup
 
 
+class BadWidgetName(Exception):
+    """Raised when widget class names do not satisfy the required restrictions."""
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -2888,11 +2892,17 @@ class Widget(DOMNode):
         inherit_css: bool = True,
         inherit_bindings: bool = True,
     ) -> None:
-        base = cls.__mro__[0]
+        name = cls.__name__
+        if not name[0].isupper() and not name.startswith("_"):
+            raise BadWidgetName(
+                f"Widget subclass {name!r} should be capitalised or start with '_'."
+            )
+
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
         )
+        base = cls.__mro__[0]
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (
