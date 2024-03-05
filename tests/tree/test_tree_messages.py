@@ -160,13 +160,17 @@ async def test_tree_node_highlighted_message() -> None:
 class TreeWrapper(Vertical):
     """Testing widget related to https://github.com/Textualize/textual/issues/3869"""
 
+    def __init__(self, auto_expand: bool) -> None:
+        super().__init__()
+        self._auto_expand = auto_expand
+
     def compose(self) -> ComposeResult:
         """Compose the child widgets."""
         yield Button(id="expander")
         yield MyTree("Root", id="test-tree")
 
     def on_mount(self) -> None:
-        self.query_one(MyTree).auto_expand = False
+        self.query_one(MyTree).auto_expand = self._auto_expand
         self.query_one(MyTree).root.add("Child")
 
     def on_button_pressed(self) -> None:
@@ -176,13 +180,14 @@ class TreeWrapper(Vertical):
 class TreeViaCodeApp(App[None]):
     """Testing app related to https://github.com/Textualize/textual/issues/3869"""
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, auto_expand: bool, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.messages: list[tuple[str, str]] = []
+        self._auto_expand = auto_expand
 
     def compose(self) -> ComposeResult:
         """Compose the child widgets."""
-        yield TreeWrapper()
+        yield TreeWrapper(self._auto_expand)
 
     def record(
         self,
@@ -212,6 +217,6 @@ class TreeViaCodeApp(App[None]):
 
 async def test_expand_node_from_code() -> None:
     """Expanding a node from code should result in the appropriate message."""
-    async with TreeViaCodeApp().run_test() as pilot:
+    async with TreeViaCodeApp(False).run_test() as pilot:
         await pilot.click("#expander")
         assert pilot.app.messages == [("NodeExpanded", "test-tree")]
