@@ -92,33 +92,33 @@ TextArea {
     height: 1fr;
     border: tall $background;
     padding: 0 1;
-    
+
     & .text-area--gutter {
         color: $text 40%;
     }
-    
+
     & .text-area--cursor-gutter {
         color: $text 60%;
         background: $boost;
         text-style: bold;
     }
-    
+
     & .text-area--cursor-line {
        background: $boost;
     }
-    
+
     & .text-area--selection {
         background: $accent-lighten-1 40%;
     }
-    
+
     & .text-area--matching-bracket {
         background: $foreground 30%;
     }
-    
+
     &:focus {
         border: tall $accent;
     }
-    
+
     &:dark {
         .text-area--cursor {
            color: $text 90%;
@@ -128,11 +128,11 @@ TextArea {
             background: $warning-darken-1;
         }
     }
-    
+
     &:light {
         .text-area--cursor {
             color: $text 90%;
-            background: $foreground 70%;   
+            background: $foreground 70%;
         }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
@@ -151,9 +151,9 @@ TextArea {
     }
     """
     `TextArea` offers some component classes which can be used to style aspects of the widget.
-    
+
     Note that any attributes provided in the chosen `TextAreaTheme` will take priority here.
-    
+
     | Class | Description |
     | :- | :- |
     | `text-area--cursor` | Target the cursor. |
@@ -313,9 +313,9 @@ TextArea {
 
     read_only: Reactive[bool] = reactive(False)
     """True if the content is read-only.
-    
+
     Read-only means end users cannot insert, delete or replace content.
-    
+
     The document can still be edited programmatically via the API.
     """
 
