@@ -1202,6 +1202,7 @@ TextArea {
             value: The text to load into the TextArea.
         """
         self.load_text(value)
+        self.post_message(self.Changed(self))
 
     @property
     def selected_text(self) -> str:

@@ -64,6 +64,19 @@ async def test_changed_message_via_typing():
         ]
 
 
+async def test_changed_message_edit_via_assignment():
+    app = TextAreaApp()
+    async with app.run_test() as pilot:
+        text_area = app.query_one(TextArea)
+        assert get_changed_messages(app.messages) == []
+
+        text_area.text = ""
+        await pilot.pause()
+
+        assert get_changed_messages(app.messages) == [TextArea.Changed(text_area)]
+        assert get_selection_changed_messages(app.messages) == []
+
+
 async def test_selection_changed_via_api():
     app = TextAreaApp()
     async with app.run_test() as pilot:
