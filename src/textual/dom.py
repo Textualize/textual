@@ -46,6 +46,9 @@ from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
+    from typing_extensions import Self, TypeAlias
+    from _typeshed import SupportsRichComparison
+
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
@@ -54,7 +57,6 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
     from .worker import Worker, WorkType, ResultType
-    from typing_extensions import Self, TypeAlias
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import NoMatches, TooManyMatches, WrongType  # type: ignore  # noqa: F401
@@ -337,6 +339,30 @@ class DOMNode(MessagePump):
             The node's children.
         """
         return self._nodes
+
+    def sort_children(
+        self,
+        *,
+        key: Callable[[Widget], SupportsRichComparison] | None = None,
+        reverse: bool = False,
+    ) -> None:
+        """Sort child widgets with an optional key function.
+
+        If `key` is not provided then widgets will be sorted in the order they are constructed.
+
+        Example:
+            ```python
+            # Sort widgets by name
+            screen.sort_children(key=lambda widget: widget.name or "")
+            ```
+
+        Args:
+            key: A callable which accepts a widget and returns something that can be sorted,
+                or `None` to sort without a key function.
+            reverse: Sort in descending order.
+        """
+        self._nodes._sort(key=key, reverse=reverse)
+        self.refresh(layout=True)
 
     @property
     def auto_refresh(self) -> float | None:

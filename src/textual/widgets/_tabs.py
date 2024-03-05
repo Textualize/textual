@@ -496,7 +496,7 @@ class Tabs(Widget, can_focus=True):
         underline.highlight_end = 0
         self.call_after_refresh(self.post_message, self.Cleared(self))
         self.active = ""
-        return AwaitComplete(self.query("#tabs-list > Tab").remove()())
+        return AwaitComplete(self.query("#tabs-list > Tab").remove())
 
     def remove_tab(self, tab_or_id: Tab | str | None) -> AwaitComplete:
         """Remove a tab.
@@ -508,7 +508,7 @@ class Tabs(Widget, can_focus=True):
             An optionally awaitable object that waits for the tab to be removed.
         """
         if not tab_or_id:
-            return AwaitComplete(self.app._remove_nodes([], None)())
+            return AwaitComplete(self.app._remove_nodes([], None))
 
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
@@ -516,7 +516,7 @@ class Tabs(Widget, can_focus=True):
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return AwaitComplete(self.app._remove_nodes([], None)())
+                return AwaitComplete(self.app._remove_nodes([], None))
 
         removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active

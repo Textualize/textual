@@ -3,6 +3,7 @@ from __future__ import annotations
 from asyncio import gather
 from dataclasses import dataclass
 from itertools import zip_longest
+from typing import Awaitable
 
 from rich.repr import Result
 from rich.text import Text, TextType
@@ -449,7 +450,7 @@ class TabbedContent(Widget):
             An optionally awaitable object that waits for the pane to be removed
                 and the Cleared message to be posted.
         """
-        removal_awaitables = [
+        removal_awaitables: list[Awaitable] = [
             self.get_child_by_type(ContentTabs).remove_tab(
                 ContentTab.add_prefix(pane_id)
             )
