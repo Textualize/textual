@@ -248,7 +248,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = False
         self._updates += 1
-        self._tree.post_message(Tree.NodeCollapsed(self))
+        self._tree.post_message(Tree.NodeCollapsed(self).set_sender(self._tree))
         if collapse_all:
             for child in self.children:
                 child._collapse(collapse_all)

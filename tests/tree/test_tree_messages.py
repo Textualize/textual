@@ -167,14 +167,18 @@ class TreeWrapper(Vertical):
     def compose(self) -> ComposeResult:
         """Compose the child widgets."""
         yield Button(id="expander")
+        yield Button(id="collapser")
         yield MyTree("Root", id="test-tree")
 
     def on_mount(self) -> None:
         self.query_one(MyTree).auto_expand = self._auto_expand
         self.query_one(MyTree).root.add("Child")
 
-    def on_button_pressed(self) -> None:
-        self.query_one(Tree).root.expand()
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "expander":
+            self.query_one(Tree).root.expand()
+        elif event.button.id == "collapser":
+            self.query_one(Tree).root.collapse()
 
 
 class TreeViaCodeApp(App[None]):
@@ -220,3 +224,10 @@ async def test_expand_node_from_code() -> None:
     async with TreeViaCodeApp(False).run_test() as pilot:
         await pilot.click("#expander")
         assert pilot.app.messages == [("NodeExpanded", "test-tree")]
+
+
+async def test_collapse_node_from_code() -> None:
+    """Collapsing a node from code should result in the appropriate message."""
+    async with TreeViaCodeApp(True).run_test() as pilot:
+        await pilot.click("#collapser")
+        assert pilot.app.messages == [("NodeCollapsed", "test-tree")]
