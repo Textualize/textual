@@ -32,7 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
-- BREAKING: Querying and TCSS expect widget class names to start with a capital letter or an underscore `_` https://github.com/Textualize/textual/pull/4252
+- BREAKING: widget class names must start with a capital letter or an underscore `_` https://github.com/Textualize/textual/pull/4252
 
 ## [0.52.1] - 2024-02-20
 

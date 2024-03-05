@@ -4,7 +4,6 @@ The base class for widgets.
 
 from __future__ import annotations
 
-import warnings
 from asyncio import Lock, create_task, wait
 from collections import Counter
 from contextlib import asynccontextmanager
@@ -13,7 +12,6 @@ from itertools import islice
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
-    Any,
     AsyncGenerator,
     Awaitable,
     ClassVar,
@@ -22,7 +20,6 @@ from typing import (
     Iterable,
     NamedTuple,
     Sequence,
-    Type,
     TypeVar,
     cast,
     overload,
@@ -75,7 +72,6 @@ from .geometry import (
 )
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from .message_pump import _MessagePumpMeta
 from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
@@ -247,35 +243,12 @@ class _BorderTitle:
         return title.markup
 
 
-_WidgetMetaSub = TypeVar("_WidgetMetaSub", bound="_WidgetMeta")
-
-
-class _WidgetMeta(_MessagePumpMeta):
-    """Metaclass for widgets.
-
-    Used to issue a warning if a widget subclass is created with naming that's
-    incompatible with TCSS/querying.
-    """
-
-    def __new__(
-        mcs: Type[_WidgetMetaSub],
-        name: str,
-        *args: Any,
-        **kwargs: Any,
-    ) -> _WidgetMetaSub:
-        """Hook into widget subclass creation to check the subclass name."""
-        if not name[0].isupper() and not name.startswith("_"):
-            warnings.warn(
-                SyntaxWarning(
-                    f"Widget subclass {name!r} should be capitalised or start with '_'."
-                ),
-                stacklevel=2,
-            )
-        return super().__new__(mcs, name, *args, **kwargs)
+class BadWidgetName(Exception):
+    """Raised when widget class names do not satisfy the required restrictions."""
 
 
 @rich.repr.auto
-class Widget(DOMNode, metaclass=_WidgetMeta):
+class Widget(DOMNode):
     """
     A Widget is the base class for Textual widgets.
 
@@ -2919,11 +2892,17 @@ class Widget(DOMNode, metaclass=_WidgetMeta):
         inherit_css: bool = True,
         inherit_bindings: bool = True,
     ) -> None:
-        base = cls.__mro__[0]
+        name = cls.__name__
+        if not name[0].isupper() and not name.startswith("_"):
+            raise BadWidgetName(
+                f"Widget subclass {name!r} should be capitalised or start with '_'."
+            )
+
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
         )
+        base = cls.__mro__[0]
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (

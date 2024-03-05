@@ -11,7 +11,7 @@ from textual.css.errors import StyleValueError
 from textual.css.query import NoMatches
 from textual.geometry import Offset, Size
 from textual.message import Message
-from textual.widget import MountError, PseudoClasses, Widget
+from textual.widget import BadWidgetName, MountError, PseudoClasses, Widget
 from textual.widgets import Label, LoadingIndicator
 
 
@@ -513,3 +513,12 @@ async def test_sort_children_no_key() -> None:
             "l1",
             "l3",
         ]
+
+
+def test_bad_widget_name_raised() -> None:
+    """Ensure error is raised when bad class names are used for widgets."""
+
+    with pytest.raises(BadWidgetName):
+
+        class lowercaseWidget(Widget):
+            pass
