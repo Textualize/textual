@@ -883,6 +883,7 @@ TextArea {
         """
         self.history.clear()
         self._set_document(text, self.language)
+        self.post_message(self.Changed(self).set_sender(self))
 
     def _on_resize(self) -> None:
         self._rewrap_and_refresh_virtual_size()
@@ -1202,7 +1203,6 @@ TextArea {
             value: The text to load into the TextArea.
         """
         self.load_text(value)
-        self.post_message(self.Changed(self).set_sender(self))
 
     @property
     def selected_text(self) -> str:
