@@ -488,15 +488,11 @@ class TabbedContent(Widget):
             self.get_child_by_type(ContentSwitcher).remove_children(),
         )
 
-        async def _clear_content(cleared_message: TabbedContent.Cleared) -> None:
+        async def _clear_content() -> None:
             await await_clear
-            self.post_message(cleared_message)
+            self.post_message(self.Cleared(self).set_sender(self))
 
-        # Note that I create the Cleared message out here, rather than in
-        # _clear_content, to ensure that the message's internal
-        # understanding of who the sender is is correct.
-        # https://github.com/Textualize/textual/issues/2750
-        return AwaitComplete(_clear_content(self.Cleared(self)))
+        return AwaitComplete(_clear_content())
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
