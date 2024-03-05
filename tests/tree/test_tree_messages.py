@@ -196,8 +196,7 @@ class TreeViaCodeApp(App[None]):
     def record(
         self,
         event: (
-            Tree.NodeSelected[None]
-            | Tree.NodeExpanded[None]
+            Tree.NodeExpanded[None]
             | Tree.NodeCollapsed[None]
             | Tree.NodeHighlighted[None]
         ),
@@ -205,9 +204,6 @@ class TreeViaCodeApp(App[None]):
         self.messages.append(
             (event.__class__.__name__, event.node.tree.id or "Unknown")
         )
-
-    def on_tree_node_selected(self, event: Tree.NodeSelected[None]) -> None:
-        self.record(event)
 
     def on_tree_node_expanded(self, event: Tree.NodeExpanded[None]) -> None:
         self.record(event)
