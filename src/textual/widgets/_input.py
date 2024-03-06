@@ -52,7 +52,7 @@ class _InputRenderable:
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
-    ) -> "RichRenderResult":
+    ) -> RichRenderResult:
         input = self.input
         result = input._value
         width = input.content_size.width
