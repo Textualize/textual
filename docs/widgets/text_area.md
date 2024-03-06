@@ -84,6 +84,10 @@ This method is the programmatic equivalent of selecting some text and then pasti
 
 Some other convenient methods are available, such as [`insert`][textual.widgets._text_area.TextArea.insert], [`delete`][textual.widgets._text_area.TextArea.delete], and [`clear`][textual.widgets._text_area.TextArea.clear].
 
+!!! tip
+    The `TextArea.document.end` property returns the location at the end of the
+    document, which might be convenient when editing programmatically.
+
 ### Working with the cursor
 
 #### Moving the cursor
