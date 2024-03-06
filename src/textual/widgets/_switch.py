@@ -26,7 +26,7 @@ class Switch(Widget, can_focus=True):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("enter,space", "toggle_switch", "Toggle", show=False),
     ]
     """
     | Key(s) | Description |
@@ -164,7 +164,7 @@ class Switch(Widget, can_focus=True):
         event.stop()
         self.toggle()
 
-    def action_toggle(self) -> None:
+    def action_toggle_switch(self) -> None:
         """Toggle the state of the switch."""
         self.toggle()
 
