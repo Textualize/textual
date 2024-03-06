@@ -61,16 +61,16 @@ class Button(Widget, can_focus=True):
             tint: $background 30%;
         }
 
-        &.-primary {            
+        &.-primary {
             background: $primary;
             color: $text;
             border-top: tall $primary-lighten-3;
-            border-bottom: tall $primary-darken-3;      
-                  
+            border-bottom: tall $primary-darken-3;
+
             &:hover {
                 background: $primary-darken-2;
                 color: $text;
-                border-top: tall $primary;                
+                border-top: tall $primary;
             }
 
             &.-active {
