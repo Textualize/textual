@@ -20,6 +20,8 @@ _re_terminal_mode_response = re.compile(
 )
 _re_bracketed_paste_start = re.compile(r"^\x1b\[200~$")
 _re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
+_re_focusin = re.compile(r"^\x1b\[I$")
+_re_focusout = re.compile(r"^\x1b\[O$")
 
 
 class XTermParser(Parser[events.Event]):
@@ -201,6 +203,14 @@ class XTermParser(Parser[events.Event]):
                     sequence = new_sequence
 
                     self.debug_log(f"sequence={sequence!r}")
+
+                    if _re_focusin.match(sequence):
+                        on_token(events.AppFocus())
+                        break
+
+                    if _re_focusout.match(sequence):
+                        on_token(events.AppBlur())
+                        break
 
                     bracketed_paste_start_match = _re_bracketed_paste_start.match(
                         sequence
