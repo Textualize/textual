@@ -149,12 +149,12 @@ def test_no_focus_empty_selector(screen: Screen):
 
     screen.set_focus(screen.query_one("#foo"))
     assert screen.focused is not None
-    assert screen.focus_next("bananas") is None
+    assert screen.focus_next("#bananas") is None
     assert screen.focused is None
 
     screen.set_focus(screen.query_one("#foo"))
     assert screen.focused is not None
-    assert screen.focus_previous("bananas") is None
+    assert screen.focus_previous("#bananas") is None
     assert screen.focused is None
 
 
