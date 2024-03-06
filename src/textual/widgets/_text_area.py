@@ -2011,10 +2011,7 @@ TextArea {
         Returns:
             An EditResult relating to the deletion of all content.
         """
-        document = self.document
-        last_line = document[-1]
-        document_end = (document.line_count, len(last_line))
-        return self.delete((0, 0), document_end, maintain_selection_offset=False)
+        return self.delete((0, 0), self.document.end, maintain_selection_offset=False)
 
     def _delete_via_keyboard(
         self,
