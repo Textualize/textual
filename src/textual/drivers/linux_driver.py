@@ -317,7 +317,7 @@ class LinuxDriver(Driver):
 
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
-            self.write("\033[?1004h\n")  # Disable FocusIn/FocusOut.
+            self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
             self.flush()
 
     def close(self) -> None:
