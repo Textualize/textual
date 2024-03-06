@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
 - Added `sort_children` method https://github.com/Textualize/textual/pull/4244
 - Support for pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
+- Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
 
 ### Fixed
 
