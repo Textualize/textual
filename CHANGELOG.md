@@ -33,6 +33,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
 - BREAKING: widget class names must start with a capital letter or an underscore `_` https://github.com/Textualize/textual/pull/4252
+- BREAKING: for many widgets, messages are now sent when programmatic changes that mirror user input are made https://github.com/Textualize/textual/pull/4256
+  - Changed `Collapsible`
+  - Changed `Markdown`
+  - Changed `Select`
+  - Changed `SelectionList`
+  - Changed `TabbedContent`
+  - Changed `Tabs`
+  - Changed `TextArea`
+  - Changed `Tree`
 
 ## [0.52.1] - 2024-02-20
 
