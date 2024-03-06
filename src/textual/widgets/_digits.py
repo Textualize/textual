@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from rich.align import Align, AlignMethod
-from rich.console import RenderableType
 
+if TYPE_CHECKING:
+    from ..app import RenderResult
 from ..geometry import Size
 from ..renderables.digits import Digits as DigitsRenderable
 from ..widget import Widget
@@ -68,7 +69,7 @@ class Digits(Widget):
         self._value = value
         self.refresh(layout=layout_required)
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Render digits."""
         rich_style = self.rich_style
         digits = DigitsRenderable(self._value, rich_style)

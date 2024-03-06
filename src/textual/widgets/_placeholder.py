@@ -6,10 +6,13 @@ from itertools import cycle
 from typing import TYPE_CHECKING, Iterator
 from weakref import WeakKeyDictionary
 
-from rich.console import RenderableType
 from typing_extensions import Literal, Self
 
 from .. import events
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
 from ..widget import Widget
@@ -128,7 +131,7 @@ class Placeholder(Widget):
         )
         self.styles.background = f"{next(colors)} 50%"
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Render the placeholder.
 
         Returns:

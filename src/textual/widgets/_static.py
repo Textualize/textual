@@ -1,8 +1,13 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from rich.console import RenderableType
 from rich.protocol import is_renderable
 from rich.text import Text
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
 
 from ..errors import RenderError
 from ..widget import Widget
@@ -80,7 +85,7 @@ class Static(Widget, inherit_bindings=False):
             self._renderable = renderable
         self.clear_cached_dimensions()
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Get a rich renderable for the widget's content.
 
         Returns:

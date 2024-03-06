@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import rich.repr
 from rich.console import ConsoleRenderable, RenderableType
@@ -9,6 +9,10 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from .. import events
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..binding import Binding
 from ..css._error_tools import friendly_list
 from ..message import Message
@@ -61,16 +65,16 @@ class Button(Widget, can_focus=True):
             tint: $background 30%;
         }
 
-        &.-primary {            
+        &.-primary {
             background: $primary;
             color: $text;
             border-top: tall $primary-lighten-3;
-            border-bottom: tall $primary-darken-3;      
-                  
+            border-bottom: tall $primary-darken-3;
+
             &:hover {
                 background: $primary-darken-2;
                 color: $text;
-                border-top: tall $primary;                
+                border-top: tall $primary;
             }
 
             &.-active {
@@ -220,7 +224,7 @@ class Button(Widget, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         assert isinstance(self.label, Text)
         label = self.label.copy()
         label.stylize(self.rich_style)

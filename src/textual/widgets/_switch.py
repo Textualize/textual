@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from rich.console import RenderableType
-
+if TYPE_CHECKING:
+    from ..app import RenderResult
 from ..binding import Binding, BindingType
 from ..events import Click
 from ..geometry import Size
@@ -143,7 +143,7 @@ class Switch(Widget, can_focus=True):
     def watch_slider_pos(self, slider_pos: float) -> None:
         self.set_class(slider_pos == 1, "-on")
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         style = self.get_component_rich_style("switch--slider")
         return ScrollBarRender(
             virtual_size=100,
