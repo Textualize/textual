@@ -4,6 +4,8 @@ import re
 import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
+from typing_extensions import Final
+
 from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from ._parser import Awaitable, Parser, TokenCallback
@@ -20,8 +22,11 @@ _re_terminal_mode_response = re.compile(
 )
 _re_bracketed_paste_start = re.compile(r"^\x1b\[200~$")
 _re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
-_re_focusin = re.compile(r"^\x1b\[I$")
-_re_focusout = re.compile(r"^\x1b\[O$")
+
+FOCUSIN: Final[str] = "\x1b[I"
+"""Sequence received when the terminal receives focus."""
+FOCUSOUT: Final[str] = "\x1b[O"
+"""Sequence received when focus is lost from the terminal."""
 
 
 class XTermParser(Parser[events.Event]):
@@ -204,11 +209,11 @@ class XTermParser(Parser[events.Event]):
 
                     self.debug_log(f"sequence={sequence!r}")
 
-                    if _re_focusin.match(sequence):
+                    if sequence == FOCUSIN:
                         on_token(events.AppFocus())
                         break
 
-                    if _re_focusout.match(sequence):
+                    if sequence == FOCUSOUT:
                         on_token(events.AppBlur())
                         break
 
