@@ -629,6 +629,13 @@ class App(Generic[ReturnType], DOMNode):
         See [`textual.constants.TEXTUAL_ANIMATIONS`][textual.constants.TEXTUAL_ANIMATIONS].
         """
 
+        self._last_focused_on_app_blur: Widget | None = None
+        """The widget that had focus when the last `AppBlur` happened.
+
+        This will be used to restore correct focus when an `AppFocus`
+        happens.
+        """
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
@@ -3197,10 +3204,20 @@ class App(Generic[ReturnType], DOMNode):
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
         if focus:
-            focused = self.screen.focused
-            self.screen.set_focus(None)
-            self.screen.set_focus(focused)
+            # Attempt to focus the widget that last had focus. While it is
+            # possible that the widget, or even the screen that owned it,
+            # have gone away while the app was without focus, this is safe
+            # to do. It just means that a focus message will be sent to a
+            # now-orphaned widget reference.
+            self.screen.set_focus(self._last_focused_on_app_blur)
+            # Now that we have focus back on the app and we don't need the
+            # widget reference any more, don't keep it hanging around here.
+            self._last_focused_on_app_blur = None
         else:
+            # Remember which widget has focus, when the app gets focus back
+            # we'll want to try and focus it again.
+            self._last_focused_on_app_blur = self.screen.focused
+            # Remove focus for now.
             self.screen.set_focus(None)
 
     async def action_check_bindings(self, key: str) -> None:
