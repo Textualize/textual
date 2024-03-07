@@ -252,14 +252,19 @@ class SelectionList(Generic[SelectionType], OptionList):
         """Tracking of which values are selected."""
         self._send_messages = False
         """Keep track of when we're ready to start sending messages."""
+        options = [self._make_selection(selection) for selection in selections]
         super().__init__(
-            *[self._make_selection(selection) for selection in selections],
+            *options,
             name=name,
             id=id,
             classes=classes,
             disabled=disabled,
             wrap=False,
         )
+        self._values: dict[SelectionType, int] = {
+            option.value: index for index, option in enumerate(options)
+        }
+        """Keeps track of which value relates to which option."""
 
     @property
     def selected(self) -> list[SelectionType]:
@@ -285,7 +290,20 @@ class SelectionList(Generic[SelectionType], OptionList):
             messages.
         """
         if self._send_messages:
-            self.post_message(self.SelectedChanged(self))
+            self.post_message(self.SelectedChanged(self).set_sender(self))
+
+    def _message_toggled(self, option_index: int) -> None:
+        """Post a message that an option was toggled, where appropriate.
+
+        Note:
+            A message will only be sent if `_send_messages` is `True`. This
+            makes this safe to call before the widget is ready for posting
+            messages.
+        """
+        if self._send_messages:
+            self.post_message(
+                self.SelectionToggled(self, option_index).set_sender(self)
+            )
 
     def _apply_to_all(self, state_change: Callable[[SelectionType], bool]) -> Self:
         """Apply a selection state change to all selection options in the list.
@@ -306,9 +324,9 @@ class SelectionList(Generic[SelectionType], OptionList):
         changed = False
 
         # Next we run through everything and apply the change, preventing
-        # the changed message because the caller really isn't going to be
-        # expecting a message storm from this.
-        with self.prevent(self.SelectedChanged):
+        # the toggled and changed messages because the caller really isn't
+        # going to be expecting a message storm from this.
+        with self.prevent(self.SelectedChanged, self.SelectionToggled):
             for selection in self._options:
                 changed = (
                     state_change(cast(Selection[SelectionType], selection).value)
@@ -416,6 +434,7 @@ class SelectionList(Generic[SelectionType], OptionList):
             self._deselect(value)
         else:
             self._select(value)
+        self._message_toggled(self._values[value])
         return True
 
     def toggle(self, selection: Selection[SelectionType] | SelectionType) -> Self:
@@ -593,7 +612,6 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         event.stop()
         self._toggle_highlighted_selection()
-        self.post_message(self.SelectionToggled(self, event.option_index))
 
     def get_option_at_index(self, index: int) -> Selection[SelectionType]:
         """Get the selection option at the given index.
@@ -632,7 +650,9 @@ class SelectionList(Generic[SelectionType], OptionList):
         Raises:
             IndexError: If there is no selection option of the given index.
         """
-        self._deselect(self.get_option_at_index(index).value)
+        option = self.get_option_at_index(index)
+        self._deselect(option.value)
+        del self._values[option.value]
         return super()._remove_option(index)
 
     def add_options(
@@ -679,6 +699,15 @@ class SelectionList(Generic[SelectionType], OptionList):
                 raise SelectionError(
                     "Only Selection or a prompt/value tuple is supported in SelectionList"
                 )
+
+        # Add the new items to the value mappings.
+        self._values.update(
+            {
+                option.value: index
+                for index, option in enumerate(cleaned_options, start=self.option_count)
+            }
+        )
+
         return super().add_options(cleaned_options)
 
     def add_option(
@@ -711,4 +740,5 @@ class SelectionList(Generic[SelectionType], OptionList):
             The `SelectionList` instance.
         """
         self._selected.clear()
+        self._values.clear()
         return super().clear_options()

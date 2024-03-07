@@ -466,16 +466,12 @@ class TabbedContent(Widget):
             # other means; so allow that to be a no-op.
             pass
 
-        async def _remove_content(cleared_message: TabbedContent.Cleared) -> None:
+        async def _remove_content() -> None:
             await gather(*removal_awaitables)
             if self.tab_count == 0:
-                self.post_message(cleared_message)
+                self.post_message(self.Cleared(self).set_sender(self))
 
-        # Note that I create the Cleared message out here, rather than in
-        # _remove_content, to ensure that the message's internal
-        # understanding of who the sender is is correct.
-        # https://github.com/Textualize/textual/issues/2750
-        return AwaitComplete(_remove_content(self.Cleared(self)))
+        return AwaitComplete(_remove_content())
 
     def clear_panes(self) -> AwaitComplete:
         """Remove all the panes in the tabbed content.
@@ -489,15 +485,11 @@ class TabbedContent(Widget):
             self.get_child_by_type(ContentSwitcher).remove_children(),
         )
 
-        async def _clear_content(cleared_message: TabbedContent.Cleared) -> None:
+        async def _clear_content() -> None:
             await await_clear
-            self.post_message(cleared_message)
+            self.post_message(self.Cleared(self).set_sender(self))
 
-        # Note that I create the Cleared message out here, rather than in
-        # _clear_content, to ensure that the message's internal
-        # understanding of who the sender is is correct.
-        # https://github.com/Textualize/textual/issues/2750
-        return AwaitComplete(_clear_content(self.Cleared(self)))
+        return AwaitComplete(_clear_content())
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
