@@ -1600,7 +1600,7 @@ class App(Generic[ReturnType], DOMNode):
                 for screen in self.screen_stack:
                     self.stylesheet.update(screen)
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         return Blank(self.styles.background)
 
     ExpectType = TypeVar("ExpectType", bound=Widget)

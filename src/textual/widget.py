@@ -32,14 +32,17 @@ from rich.console import (
     ConsoleRenderable,
     JustifyMethod,
     RenderableType,
-    RenderResult,
-    RichCast,
 )
+from rich.console import RenderResult as RichRenderResult
+from rich.console import RichCast
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
+
+if TYPE_CHECKING:
+    from .app import RenderResult
 
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
@@ -152,7 +155,7 @@ class _Styled:
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
-    ) -> "RenderResult":
+    ) -> "RichRenderResult":
         style = console.get_style(self.style)
         result_segments = console.render(self.renderable, options)
 
@@ -3385,7 +3388,7 @@ class Widget(DOMNode):
             with self.app.batch_update():
                 yield
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Get text or Rich renderable for this widget.
 
         Implement this for custom widgets.

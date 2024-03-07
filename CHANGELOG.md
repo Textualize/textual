@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `RichLog.min_width` not being used https://github.com/Textualize/textual/pull/4223
 - Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
+- Rename `Switch.action_toggle` to `action_toggle_switch` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/issues/4262
 
 ### Changed
 

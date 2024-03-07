@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import ClassVar, Optional
+from typing import TYPE_CHECKING, ClassVar, Optional
 
 import rich.repr
-from rich.console import RenderableType
 from rich.text import Text
 
 from .. import events
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..reactive import reactive
 from ..widget import Widget
 
@@ -138,7 +141,7 @@ class Footer(Widget):
     def post_render(self, renderable):
         return renderable
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         if self._key_text is None:
             self._key_text = self._make_key_text()
         return self._key_text

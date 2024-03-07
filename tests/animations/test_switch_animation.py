@@ -21,7 +21,7 @@ async def test_switch_animates_on_full() -> None:
         animator = app.animator
         # Freeze time at 0 before triggering the animation.
         animator._get_time = lambda *_: 0
-        switch.action_toggle()
+        switch.action_toggle_switch()
         await pilot.pause()
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
@@ -40,7 +40,7 @@ async def test_switch_animates_on_basic() -> None:
         animator = app.animator
         # Freeze time at 0 before triggering the animation.
         animator._get_time = lambda *_: 0
-        switch.action_toggle()
+        switch.action_toggle_switch()
         await pilot.pause()
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
@@ -59,7 +59,7 @@ async def test_switch_does_not_animate_on_none() -> None:
         animator = app.animator
         # Freeze time at 0 before triggering the animation.
         animator._get_time = lambda *_: 0
-        switch.action_toggle()
+        switch.action_toggle_switch()
         await pilot.pause()
         # Freeze time after the animation start and before animation end.
         animator._get_time = lambda *_: 0.01
