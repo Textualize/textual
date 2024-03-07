@@ -90,7 +90,7 @@ from .css.errors import StylesheetError
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
-from .dom import DOMNode
+from .dom import DOMNode, NoScreen
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
@@ -3204,12 +3204,17 @@ class App(Generic[ReturnType], DOMNode):
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
         if focus:
-            # Attempt to focus the widget that last had focus. While it is
-            # possible that the widget, or even the screen that owned it,
-            # have gone away while the app was without focus, this is safe
-            # to do. It just means that a focus message will be sent to a
-            # now-orphaned widget reference.
-            self.screen.set_focus(self._last_focused_on_app_blur)
+            # If we've got a last-focused widget, if it still has a screen,
+            # and if the screen is still the current screen...
+            try:
+                if (
+                    self._last_focused_on_app_blur is not None
+                    and self._last_focused_on_app_blur.screen is self.screen
+                ):
+                    # ...settle focus back on that widget.
+                    self.screen.set_focus(self._last_focused_on_app_blur)
+            except NoScreen:
+                pass
             # Now that we have focus back on the app and we don't need the
             # widget reference any more, don't keep it hanging around here.
             self._last_focused_on_app_blur = None
