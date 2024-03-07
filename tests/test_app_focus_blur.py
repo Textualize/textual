@@ -62,3 +62,18 @@ async def test_app_focus_handles_missing_widget() -> None:
         pilot.app.post_message(AppFocus())
         await pilot.pause()
         assert pilot.app.focused is None
+
+
+async def test_app_focus_defers_to_new_focus() -> None:
+    """Test that AppFocus doesn't undo a fresh focus done while the app is in AppBlur state."""
+    async with FocusBlurApp().run_test() as pilot:
+        assert pilot.app.focused is not None
+        assert pilot.app.focused.id == "input-4"
+        pilot.app.post_message(AppBlur())
+        await pilot.pause()
+        assert pilot.app.focused is None
+        pilot.app.query_one("#input-1").focus()
+        await pilot.pause()
+        pilot.app.post_message(AppFocus())
+        await pilot.pause()
+        assert pilot.app.focused.id == "input-1"

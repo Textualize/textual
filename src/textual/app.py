@@ -3205,11 +3205,13 @@ class App(Generic[ReturnType], DOMNode):
         """Respond to changes in app focus."""
         if focus:
             # If we've got a last-focused widget, if it still has a screen,
-            # and if the screen is still the current screen...
+            # and if the screen is still the current screen and if nothing
+            # is focused right now...
             try:
                 if (
                     self._last_focused_on_app_blur is not None
                     and self._last_focused_on_app_blur.screen is self.screen
+                    and self.screen.focused is None
                 ):
                     # ...settle focus back on that widget.
                     self.screen.set_focus(self._last_focused_on_app_blur)
