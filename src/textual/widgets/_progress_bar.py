@@ -4,16 +4,16 @@ from __future__ import annotations
 
 from math import ceil
 from time import monotonic
-from typing import Callable, Optional
+from typing import Optional
 
 from rich.style import Style
 
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
+from ..eta import ETA
 from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
-from ..timer import Timer
 from ..widget import Widget
 from ..widgets import Label
 
@@ -80,7 +80,7 @@ class Bar(Widget, can_focus=False):
         if percentage is not None:
             self.auto_refresh = None
         else:
-            self.auto_refresh = 1 / 15
+            self.auto_refresh = 1 / 5
 
     def render(self) -> RenderResult:
         """Render the bar with the correct portion filled."""
@@ -105,6 +105,8 @@ class Bar(Widget, can_focus=False):
         # Width used to enable the visual effect of the bar going into the corners.
         total_imaginary_width = width + highlighted_bar_width
 
+        start: float
+        end: float
         if self.app.animation_level == "none":
             start = 0
             end = width
@@ -188,15 +190,7 @@ class ETAStatus(Label):
         content-align-horizontal: right;
     }
     """
-
-    _label_text: reactive[str] = reactive("", repaint=False)
-    """This is used as an auxiliary reactive to only refresh the label when needed."""
-    _percentage: reactive[float | None] = reactive[Optional[float]](None)
-    """The percentage of progress that has been completed."""
-    _refresh_timer: Timer | None
-    """Timer to update ETA status even when progress stalls."""
-    _start_time: float | None
-    """The time when the widget started tracking progress."""
+    eta: reactive[float | None] = reactive[Optional[float]](None)
 
     def __init__(
         self,
@@ -205,62 +199,24 @@ class ETAStatus(Label):
         classes: str | None = None,
         disabled: bool = False,
     ):
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._percentage = None
-        self._label_text = "--:--:--"
-        self._start_time = None
-        self._refresh_timer = None
+        super().__init__(
+            "--:--:--", name=name, id=id, classes=classes, disabled=disabled
+        )
 
-    def on_mount(self) -> None:
-        """Periodically refresh the countdown so that the ETA is always up to date."""
-        self._refresh_timer = self.set_interval(1 / 2, self.update_eta, pause=True)
-
-    def watch__percentage(self, percentage: float | None) -> None:
-        if percentage is None:
-            self._label_text = "--:--:--"
+    def render(self) -> RenderResult:
+        """Render the ETA display."""
+        eta = self.eta
+        if eta is None:
+            return "--:--:--"
         else:
-            if self._refresh_timer is not None:
-                self._refresh_timer.reset()
-            self.update_eta()
-
-    def update_eta(self) -> None:
-        """Update the ETA display."""
-        percentage = self._percentage
-        delta = self._get_elapsed_time()
-        # We display --:--:-- if we haven't started, if we are done,
-        # or if we don't know when we started keeping track of time.
-        if not percentage or percentage >= 1 or not delta:
-            self._label_text = "--:--:--"
-            # If we are done, we can delete the timer that periodically refreshes
-            # the countdown display.
-            if percentage is not None and percentage >= 1:
-                self.auto_refresh = None
-        # Render a countdown timer with hh:mm:ss, unless it's a LONG time.
-        else:
-            left = ceil((delta / percentage) * (1 - percentage))
-            minutes, seconds = divmod(left, 60)
+            minutes, seconds = divmod(ceil(eta), 60)
             hours, minutes = divmod(minutes, 60)
             if hours > 999999:
-                self._label_text = "+999999h"
+                return "+999999h"
             elif hours > 99:
-                self._label_text = f"{hours}h"
+                return f"{hours}h"
             else:
-                self._label_text = f"{hours:02}:{minutes:02}:{seconds:02}"
-
-    def _get_elapsed_time(self) -> float:
-        """Get time to estimate time to progress completion.
-
-        Returns:
-            The time elapsed since the bar started being animated.
-        """
-        if self._start_time is None:
-            self._start_time = monotonic()
-            return 0
-        return monotonic() - self._start_time
-
-    def watch__label_text(self, label_text: str) -> None:
-        """If the ETA label changed, update the renderable (which also refreshes)."""
-        self.update(label_text)
+                return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 
 class ProgressBar(Widget, can_focus=False):
@@ -296,6 +252,7 @@ class ProgressBar(Widget, can_focus=False):
         print(progress_bar.percentage)  # 0.5
         ```
     """
+    _display_eta: reactive[float | None] = reactive[Optional[float]](None)
 
     def __init__(
         self,
@@ -334,39 +291,28 @@ class ProgressBar(Widget, can_focus=False):
             disabled: Whether the widget is disabled or not.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
+        self.total = total
         self.show_bar = show_bar
         self.show_percentage = show_percentage
         self.show_eta = show_eta
+        self._eta = ETA()
 
-        self.total = total
+    def on_mount(self) -> None:
+        def refresh_eta() -> None:
+            """Refresh eta display."""
+            self._display_eta = self._eta.eta
+
+        self.set_interval(1 / 2, refresh_eta)
 
     def compose(self) -> ComposeResult:
-        # We create a closure so that we can determine what are the sub-widgets
-        # that are present and, therefore, will need to be notified about changes
-        # to the percentage.
-        def update_percentage(
-            widget: Bar | PercentageStatus | ETAStatus,
-        ) -> Callable[[float | None], None]:
-            """Closure to allow updating the percentage of a given widget."""
-
-            def updater(percentage: float | None) -> None:
-                """Update the percentage reactive of the enclosed widget."""
-                widget._percentage = percentage
-
-            return updater
-
         if self.show_bar:
-            bar = Bar(id="bar")
-            self.watch(self, "percentage", update_percentage(bar))
-            yield bar
+            yield Bar(id="bar").data_bind(_percentage=ProgressBar.percentage)
         if self.show_percentage:
-            percentage_status = PercentageStatus(id="percentage")
-            self.watch(self, "percentage", update_percentage(percentage_status))
-            yield percentage_status
+            PercentageStatus(id="percentage").data_bind(
+                _percentage=ProgressBar.percentage
+            )
         if self.show_eta:
-            eta_status = ETAStatus(id="eta")
-            self.watch(self, "percentage", update_percentage(eta_status))
-            yield eta_status
+            yield ETAStatus(id="eta").data_bind(eta=ProgressBar._display_eta)
 
     def _validate_progress(self, progress: float) -> float:
         """Clamp the progress between 0 and the maximum total."""
@@ -406,7 +352,7 @@ class ProgressBar(Widget, can_focus=False):
         Args:
             advance: Number of steps to advance progress by.
         """
-        self.progress += advance
+        self.update(advance=advance)
 
     def update(
         self,
@@ -431,8 +377,16 @@ class ProgressBar(Widget, can_focus=False):
             advance: Advance the progress by this number of steps.
         """
         if not isinstance(total, UnusedParameter):
+            if total != self.total:
+                self._eta.reset()
             self.total = total
-        if not isinstance(progress, UnusedParameter):
+
+        elif not isinstance(progress, UnusedParameter):
             self.progress = progress
-        if not isinstance(advance, UnusedParameter):
+            if self.progress is not None and self.total is not None:
+                self._eta.add_sample(self.progress / self.total)
+
+        elif not isinstance(advance, UnusedParameter):
             self.progress += advance
+            if self.progress is not None and self.total is not None:
+                self._eta.add_sample(self.progress / self.total)
