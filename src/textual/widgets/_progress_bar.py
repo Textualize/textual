@@ -153,32 +153,12 @@ class PercentageStatus(Label):
     }
     """
 
-    _label_text: reactive[str] = reactive("", repaint=False)
-    """This is used as an auxiliary reactive to only refresh the label when needed."""
     _percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
 
-    def __init__(
-        self,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
-        disabled: bool = False,
-    ):
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._percentage = None
-        self._label_text = "--%"
-
-    def watch__percentage(self, percentage: float | None) -> None:
-        """Manage the text that shows the percentage of progress."""
-        if percentage is None:
-            self._label_text = "--%"
-        else:
-            self._label_text = f"{int(100 * percentage)}%"
-
-    def watch__label_text(self, label_text: str) -> None:
-        """If the label text changed, update the renderable (which also refreshes)."""
-        self.update(label_text)
+    def render(self) -> RenderResult:
+        percentage = self._percentage
+        return "--%" if percentage is None else f"{int(100 * percentage)}%"
 
 
 class ETAStatus(Label):
@@ -293,7 +273,7 @@ class ProgressBar(Widget, can_focus=False):
         if self.show_bar:
             yield Bar(id="bar").data_bind(_percentage=ProgressBar.percentage)
         if self.show_percentage:
-            PercentageStatus(id="percentage").data_bind(
+            yield PercentageStatus(id="percentage").data_bind(
                 _percentage=ProgressBar.percentage
             )
         if self.show_eta:
