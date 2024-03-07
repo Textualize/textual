@@ -701,13 +701,12 @@ class SelectionList(Generic[SelectionType], OptionList):
                 )
 
         # Add the new items to the value mappings.
-        self._values = {
-            **self._values,
-            **{
+        self._values.update(
+            {
                 option.value: index
                 for index, option in enumerate(cleaned_options, start=self.option_count)
-            },
-        }
+            }
+        )
 
         return super().add_options(cleaned_options)
 
