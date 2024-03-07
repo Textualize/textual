@@ -192,17 +192,6 @@ class ETAStatus(Label):
     """
     eta: reactive[float | None] = reactive[Optional[float]](None)
 
-    def __init__(
-        self,
-        name: str | None = None,
-        id: str | None = None,
-        classes: str | None = None,
-        disabled: bool = False,
-    ):
-        super().__init__(
-            "--:--:--", name=name, id=id, classes=classes, disabled=disabled
-        )
-
     def render(self) -> RenderResult:
         """Render the ETA display."""
         eta = self.eta
@@ -252,7 +241,7 @@ class ProgressBar(Widget, can_focus=False):
         print(progress_bar.percentage)  # 0.5
         ```
     """
-    _display_eta: reactive[float | None] = reactive[Optional[float]](None)
+    _display_eta: reactive[int | None] = reactive[Optional[int]](None)
 
     def __init__(
         self,
@@ -298,11 +287,7 @@ class ProgressBar(Widget, can_focus=False):
         self._eta = ETA()
 
     def on_mount(self) -> None:
-        def refresh_eta() -> None:
-            """Refresh eta display."""
-            self._display_eta = self._eta.eta
-
-        self.set_interval(1 / 2, refresh_eta)
+        self.set_interval(0.5, self.update)
 
     def compose(self) -> ComposeResult:
         if self.show_bar:
@@ -390,3 +375,5 @@ class ProgressBar(Widget, can_focus=False):
             self.progress += advance
             if self.progress is not None and self.total is not None:
                 self._eta.add_sample(self.progress / self.total)
+
+        self._display_eta = self._eta.eta

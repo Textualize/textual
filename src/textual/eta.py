@@ -1,4 +1,5 @@
 import bisect
+from math import ceil
 from operator import itemgetter
 from time import monotonic
 
@@ -23,6 +24,7 @@ class ETA:
 
     @property
     def _current_time(self) -> float:
+        """The time since the ETA was started."""
         return monotonic() - self._start_time
 
     def add_sample(self, progress: float) -> None:
@@ -81,7 +83,7 @@ class ETA:
         return speed
 
     @property
-    def eta(self) -> float | None:
+    def eta(self) -> int | None:
         """Estimated seconds until completion, or `None` if no estimate can be made."""
         current_time = self._current_time
         if not self._samples:
@@ -93,4 +95,4 @@ class ETA:
         time_since_sample = current_time - recent_time
         remaining = 1.0 - (recent_progress + speed * time_since_sample)
         eta = max(0, remaining / speed)
-        return eta
+        return ceil(eta)
