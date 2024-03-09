@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from math import ceil
 from time import monotonic
 from typing import Callable, Optional
 
@@ -11,7 +10,6 @@ from rich.style import Style
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
 from ..eta import ETA
-from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
 from ..widget import Widget
@@ -58,7 +56,7 @@ class Bar(Widget, can_focus=False):
     }
     """
 
-    _percentage: reactive[float | None] = reactive[Optional[float]](None)
+    percentage: reactive[float | None] = reactive[float | None](None)
     """The percentage of progress that has been completed."""
     _start_time: float | None
     """The time when the widget started tracking progress."""
@@ -75,27 +73,32 @@ class Bar(Widget, can_focus=False):
         self._get_time = _get_time
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._start_time = None
-        self._percentage = None
+        self.percentage = None
 
-    def watch__percentage(self, percentage: float | None) -> None:
+    def _validate_percentage(self, percentage: float | None) -> float | None:
+        """Avoid updating the bar, if the percentage increase is to small to render."""
+        width = self.size.width * 2
+        return None if percentage is None else int(percentage * width) / width
+
+    def watch_percentage(self, percentage: float | None) -> None:
         """Manage the timer that enables the indeterminate bar animation."""
         if percentage is not None:
             self.auto_refresh = None
         else:
-            self.auto_refresh = 1 / 5
+            self.auto_refresh = 1 / 15
 
     def render(self) -> RenderResult:
         """Render the bar with the correct portion filled."""
-        if self._percentage is None:
+        if self.percentage is None:
             return self.render_indeterminate()
         else:
             bar_style = (
                 self.get_component_rich_style("bar--bar")
-                if self._percentage < 1
+                if self.percentage < 1
                 else self.get_component_rich_style("bar--complete")
             )
             return BarRenderable(
-                highlight_range=(0, self.size.width * self._percentage),
+                highlight_range=(0, self.size.width * self.percentage),
                 highlight_style=Style.from_color(bar_style.color),
                 background_style=Style.from_color(bar_style.bgcolor),
             )
@@ -155,12 +158,14 @@ class PercentageStatus(Label):
     }
     """
 
-    _percentage: reactive[float | None] = reactive[Optional[float]](None)
+    percentage: reactive[int | None] = reactive[Optional[int]](None)
     """The percentage of progress that has been completed."""
 
+    def _validate_percentage(self, percentage: float | None) -> int | None:
+        return None if percentage is None else round(percentage * 100)
+
     def render(self) -> RenderResult:
-        percentage = self._percentage
-        return "--%" if percentage is None else f"{int(100 * percentage)}%"
+        return "--%" if self.percentage is None else f"{self.percentage}%"
 
 
 class ETAStatus(Label):
@@ -181,7 +186,7 @@ class ETAStatus(Label):
         if eta is None:
             return "--:--:--"
         else:
-            minutes, seconds = divmod(ceil(eta), 60)
+            minutes, seconds = divmod(round(eta), 60)
             hours, minutes = divmod(minutes, 60)
             if hours > 999999:
                 return "+999999h"
@@ -269,7 +274,7 @@ class ProgressBar(Widget, can_focus=False):
         self.show_percentage = show_percentage
         self.show_eta = show_eta
         self._get_time = _get_time
-        self._eta = ETA(_get_time=_get_time)
+        self._eta = ETA()
 
     def on_mount(self) -> None:
         self.update()
@@ -277,21 +282,11 @@ class ProgressBar(Widget, can_focus=False):
 
     def compose(self) -> ComposeResult:
         if self.show_bar:
-            yield Bar(id="bar", _get_time=self._get_time).data_bind(
-                _percentage=ProgressBar.percentage
-            )
+            yield Bar(id="bar").data_bind(ProgressBar.percentage)
         if self.show_percentage:
-            yield PercentageStatus(id="percentage").data_bind(
-                _percentage=ProgressBar.percentage
-            )
+            yield PercentageStatus(id="percentage").data_bind(ProgressBar.percentage)
         if self.show_eta:
             yield ETAStatus(id="eta").data_bind(eta=ProgressBar._display_eta)
-
-    def _validate_progress(self, progress: float) -> float:
-        """Clamp the progress between 0 and the maximum total."""
-        if self.total is not None:
-            return clamp(progress, 0, self.total)
-        return progress
 
     def _validate_total(self, total: float | None) -> float | None:
         """Ensure the total is not negative."""
@@ -357,6 +352,6 @@ class ProgressBar(Widget, can_focus=False):
             self.progress += advance
 
         if self.progress is not None and self.total is not None:
-            self._eta.add_sample(self.progress / self.total)
+            self._eta.add_sample(self._get_time(), self.progress / self.total)
 
-        self._display_eta = self._eta.eta
+        self._display_eta = self._eta.get_eta(self._get_time())
