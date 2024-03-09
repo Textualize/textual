@@ -56,7 +56,7 @@ class Bar(Widget, can_focus=False):
     }
     """
 
-    percentage: reactive[float | None] = reactive[float | None](None)
+    percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
     _start_time: float | None
     """The time when the widget started tracking progress."""
