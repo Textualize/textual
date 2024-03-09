@@ -163,6 +163,8 @@ class DOMNode(MessagePump):
 
     _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
+    _computes: ClassVar[frozenset[str]]
+
     def __init__(
         self,
         *,
@@ -470,6 +472,15 @@ class DOMNode(MessagePump):
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
+        cls._computes = frozenset(
+            dict.fromkeys(
+                [
+                    name.lstrip("_")[8:]
+                    for name in dir(cls)
+                    if name.startswith(("_compute_", "compute_"))
+                ]
+            ).keys()
+        )
 
     def get_component_styles(self, name: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
