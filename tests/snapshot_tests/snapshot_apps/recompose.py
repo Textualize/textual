@@ -29,7 +29,7 @@ class Progress(Horizontal):
     progress = reactive(0, recompose=True)
 
     def compose(self) -> ComposeResult:
-        bar = ProgressBar(100)
+        bar = ProgressBar(100, show_eta=False)
         bar.progress = self.progress
         yield bar
 

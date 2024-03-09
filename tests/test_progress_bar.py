@@ -52,7 +52,6 @@ def test_progress_overflow():
     assert pb.percentage == 1
 
     pb.update(total=50)
-    assert pb.progress == 50
     assert pb.percentage == 1
 
 

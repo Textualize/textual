@@ -2,30 +2,42 @@ import bisect
 from math import ceil
 from operator import itemgetter
 from time import monotonic
+from typing import Callable
+
+import rich.repr
 
 
+@rich.repr.auto(angular=True)
 class ETA:
     """Calculate speed and estimate time to arrival."""
 
-    def __init__(self, estimation_period: float = 30) -> None:
+    def __init__(
+        self, estimation_period: float = 30, _get_time: Callable[[], float] = monotonic
+    ) -> None:
         """Create an ETA.
 
         Args:
             estimation_period: Period in seconds, used to calculate speed. Defaults to 30.
+            _get_time: Optional replacement function to get current time.
         """
         self.estimation_period = estimation_period
-        self._start_time = monotonic()
+        self._get_time = _get_time
+        self._start_time = _get_time()
         self._samples: list[tuple[float, float]] = [(0.0, 0.0)]
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "speed", self.speed
+        yield "eta", self.eta
 
     def reset(self) -> None:
         """Start ETA calculations from current time."""
         del self._samples[:]
-        self._start_time = monotonic()
+        self._start_time = self._get_time()
 
     @property
     def _current_time(self) -> float:
         """The time since the ETA was started."""
-        return monotonic() - self._start_time
+        return self._get_time() - self._start_time
 
     def add_sample(self, progress: float) -> None:
         """Add a new sample.
@@ -69,7 +81,7 @@ class ETA:
     def speed(self) -> float | None:
         """The current speed, or `None` if it couldn't be calculated."""
 
-        if len(self._samples) <= 2:
+        if len(self._samples) < 2:
             # Need at less 2 samples to calculate speed
             return None
 
@@ -79,15 +91,13 @@ class ETA:
         )
         time_delta = recent_sample_time - progress_start_time
         distance = progress2 - progress1
-        speed = distance / time_delta
+        speed = distance / time_delta if time_delta else 0
         return speed
 
     @property
     def eta(self) -> int | None:
         """Estimated seconds until completion, or `None` if no estimate can be made."""
         current_time = self._current_time
-        if not self._samples:
-            return None
         speed = self.speed
         if not speed:
             return None
