@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import bisect
 from math import ceil
-from operator import itemgetter
 from time import monotonic
 
 import rich.repr
@@ -65,12 +64,12 @@ class ETA:
             # Keep at least 10 samples
             return
         prune_time = self._samples[-1][0] - self.estimation_period
-        index = bisect.bisect_left(self._samples, prune_time, key=itemgetter(0))
+        index = bisect.bisect_left(self._samples, prune_time)
         del self._samples[:index]
 
     def _get_progress_at(self, time: float) -> tuple[float, float]:
         """Get the progress at a specific time."""
-        index = bisect.bisect_left(self._samples, time, key=itemgetter(0))
+        index = bisect.bisect_left(self._samples, time)
         if index >= len(self._samples):
             return self.last_sample
         if index == 0:
