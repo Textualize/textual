@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
-from time import monotonic
-from typing import Callable, Optional
+from typing import Optional
 
 from rich.style import Style
 
 from .._types import UnusedParameter
 from ..app import ComposeResult, RenderResult
+from ..clock import Clock
 from ..eta import ETA
+from ..geometry import clamp
 from ..reactive import reactive
 from ..renderables.bar import Bar as BarRenderable
 from ..widget import Widget
@@ -58,8 +59,6 @@ class Bar(Widget, can_focus=False):
 
     percentage: reactive[float | None] = reactive[Optional[float]](None)
     """The percentage of progress that has been completed."""
-    _start_time: float | None
-    """The time when the widget started tracking progress."""
 
     def __init__(
         self,
@@ -67,18 +66,20 @@ class Bar(Widget, can_focus=False):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        _get_time: Callable[[], float] = monotonic,
+        clock: Clock | None = None,
     ):
         """Create a bar for a [`ProgressBar`][textual.widgets.ProgressBar]."""
-        self._get_time = _get_time
+        self._clock = (clock or Clock()).clone()
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._start_time = None
-        self.percentage = None
 
     def _validate_percentage(self, percentage: float | None) -> float | None:
-        """Avoid updating the bar, if the percentage increase is to small to render."""
+        """Avoid updating the bar, if the percentage increase is too small to render."""
         width = self.size.width * 2
-        return None if percentage is None else int(percentage * width) / width
+        return (
+            None
+            if percentage is None
+            else (int(percentage * width) / width if width else percentage)
+        )
 
     def watch_percentage(self, percentage: float | None) -> None:
         """Manage the timer that enables the indeterminate bar animation."""
@@ -105,11 +106,11 @@ class Bar(Widget, can_focus=False):
 
     def render_indeterminate(self) -> RenderResult:
         """Render a frame of the indeterminate progress bar animation."""
+        print(self._clock)
         width = self.size.width
         highlighted_bar_width = 0.25 * width
         # Width used to enable the visual effect of the bar going into the corners.
         total_imaginary_width = width + highlighted_bar_width
-
         start: float
         end: float
         if self.app.animation_level == "none":
@@ -118,7 +119,7 @@ class Bar(Widget, can_focus=False):
         else:
             speed = 30  # Cells per second.
             # Compute the position of the bar.
-            start = (speed * self._get_elapsed_time()) % (2 * total_imaginary_width)
+            start = (speed * self._clock.time) % (2 * total_imaginary_width)
             if start > total_imaginary_width:
                 # If the bar is to the right of its width, wrap it back from right to left.
                 start = 2 * total_imaginary_width - start  # = (tiw - (start - tiw))
@@ -131,21 +132,6 @@ class Bar(Widget, can_focus=False):
             highlight_style=Style.from_color(bar_style.color),
             background_style=Style.from_color(bar_style.bgcolor),
         )
-
-    def _get_elapsed_time(self) -> float:
-        """Get time for the indeterminate progress animation.
-
-        This method ensures that the progress bar animation always starts at the
-        beginning and it also makes it easier to test the bar if we monkey patch
-        this method.
-
-        Returns:
-            The time elapsed since the bar started being animated.
-        """
-        if self._start_time is None:
-            self._start_time = self._get_time()
-            return 0
-        return self._get_time() - self._start_time
 
 
 class PercentageStatus(Label):
@@ -242,7 +228,7 @@ class ProgressBar(Widget, can_focus=False):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        _get_time: Callable[[], float] = monotonic,
+        clock: Clock | None = None,
     ):
         """Create a Progress Bar widget.
 
@@ -267,22 +253,24 @@ class ProgressBar(Widget, can_focus=False):
             id: The ID of the widget in the DOM.
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
+            clock: An optional clock object (leave as default unless testing).
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.total = total
         self.show_bar = show_bar
         self.show_percentage = show_percentage
         self.show_eta = show_eta
-        self._get_time = _get_time
+        self._clock = clock or Clock()
         self._eta = ETA()
 
     def on_mount(self) -> None:
         self.update()
         self.set_interval(0.5, self.update)
+        self._clock.reset()
 
     def compose(self) -> ComposeResult:
         if self.show_bar:
-            yield Bar(id="bar").data_bind(ProgressBar.percentage)
+            yield Bar(id="bar", clock=self._clock).data_bind(ProgressBar.percentage)
         if self.show_percentage:
             yield PercentageStatus(id="percentage").data_bind(ProgressBar.percentage)
         if self.show_eta:
@@ -300,9 +288,9 @@ class ProgressBar(Widget, can_focus=False):
         This will report a percentage of `1` if the total is zero.
         """
         if self.total:
-            return min(1.0, self.progress / self.total)
+            return clamp(self.progress / self.total, 0.0, 1.0)
         elif self.total == 0:
-            return 1
+            return 1.0
         return None
 
     def advance(self, advance: float = 1) -> None:
@@ -340,6 +328,7 @@ class ProgressBar(Widget, can_focus=False):
             progress: Set the progress to the given number of steps.
             advance: Advance the progress by this number of steps.
         """
+        current_time = self._clock.time
         if not isinstance(total, UnusedParameter):
             if total != self.total:
                 self._eta.reset()
@@ -351,7 +340,7 @@ class ProgressBar(Widget, can_focus=False):
         if not isinstance(advance, UnusedParameter):
             self.progress += advance
 
-        if self.progress is not None and self.total is not None:
-            self._eta.add_sample(self._get_time(), self.progress / self.total)
+        if self.progress is not None and self.total:
+            self._eta.add_sample(current_time, self.progress / self.total)
 
-        self._display_eta = self._eta.get_eta(self._get_time())
+        self._display_eta = self._eta.get_eta(current_time)

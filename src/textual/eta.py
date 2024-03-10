@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import bisect
+from math import ceil
 from operator import itemgetter
 from time import monotonic
 
@@ -112,4 +113,4 @@ class ETA:
         time_since_sample = time - recent_time
         remaining = 1.0 - (recent_progress + speed * time_since_sample)
         eta = max(0, remaining / speed)
-        return round(eta)
+        return ceil(eta)
