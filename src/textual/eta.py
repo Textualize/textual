@@ -64,12 +64,12 @@ class ETA:
             # Keep at least 10 samples
             return
         prune_time = self._samples[-1][0] - self.estimation_period
-        index = bisect.bisect_left(self._samples, prune_time)
+        index = bisect.bisect_left(self._samples, (prune_time, 0))
         del self._samples[:index]
 
     def _get_progress_at(self, time: float) -> tuple[float, float]:
         """Get the progress at a specific time."""
-        index = bisect.bisect_left(self._samples, time)
+        index = bisect.bisect_left(self._samples, (time, 0))
         if index >= len(self._samples):
             return self.last_sample
         if index == 0:

@@ -474,13 +474,11 @@ class DOMNode(MessagePump):
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
         cls._computes = frozenset(
-            dict.fromkeys(
-                [
-                    name.lstrip("_")[8:]
-                    for name in dir(cls)
-                    if name.startswith(("_compute_", "compute_"))
-                ]
-            ).keys()
+            [
+                name.lstrip("_")[8:]
+                for name in dir(cls)
+                if name.startswith(("_compute_", "compute_"))
+            ]
         )
 
     def get_component_styles(self, name: str) -> RenderStyles:
