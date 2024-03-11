@@ -90,7 +90,7 @@ from .css.errors import StylesheetError
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
-from .dom import DOMNode
+from .dom import DOMNode, NoScreen
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
@@ -627,6 +627,13 @@ class App(Generic[ReturnType], DOMNode):
         """Determines what type of animations the app will display.
 
         See [`textual.constants.TEXTUAL_ANIMATIONS`][textual.constants.TEXTUAL_ANIMATIONS].
+        """
+
+        self._last_focused_on_app_blur: Widget | None = None
+        """The widget that had focus when the last `AppBlur` happened.
+
+        This will be used to restore correct focus when an `AppFocus`
+        happens.
         """
 
     def validate_title(self, title: Any) -> str:
@@ -3197,10 +3204,27 @@ class App(Generic[ReturnType], DOMNode):
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
         if focus:
-            focused = self.screen.focused
-            self.screen.set_focus(None)
-            self.screen.set_focus(focused)
+            # If we've got a last-focused widget, if it still has a screen,
+            # and if the screen is still the current screen and if nothing
+            # is focused right now...
+            try:
+                if (
+                    self._last_focused_on_app_blur is not None
+                    and self._last_focused_on_app_blur.screen is self.screen
+                    and self.screen.focused is None
+                ):
+                    # ...settle focus back on that widget.
+                    self.screen.set_focus(self._last_focused_on_app_blur)
+            except NoScreen:
+                pass
+            # Now that we have focus back on the app and we don't need the
+            # widget reference any more, don't keep it hanging around here.
+            self._last_focused_on_app_blur = None
         else:
+            # Remember which widget has focus, when the app gets focus back
+            # we'll want to try and focus it again.
+            self._last_focused_on_app_blur = self.screen.focused
+            # Remove focus for now.
             self.screen.set_focus(None)
 
     async def action_check_bindings(self, key: str) -> None:

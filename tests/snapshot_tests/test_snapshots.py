@@ -1133,3 +1133,10 @@ def test_pretty_grid_gutter_interaction(snap_compare):
 def test_sort_children(snap_compare):
     """Test sort_children method."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "sort_children.py", terminal_size=(80, 25))
+
+
+def test_app_blur(snap_compare):
+    """Test Styling after receiving an AppBlur message."""
+    async def run_before(pilot) -> None:
+        await pilot.pause()     # Allow the AppBlur message to get processed.
+    assert snap_compare(SNAPSHOT_APPS_DIR / "app_blur.py", run_before=run_before)
