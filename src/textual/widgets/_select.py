@@ -95,6 +95,12 @@ class SelectOverlay(OptionList):
         event.stop()
         self.post_message(self.UpdateSelection(event.option_index))
 
+    def on_option_list_option_highlighted(
+        self, event: OptionList.OptionHighlighted
+    ) -> None:
+        """Stop option list highlighted messages leaking."""
+        event.stop()
+
 
 class SelectCurrent(Horizontal):
     """Displays the currently selected option."""
