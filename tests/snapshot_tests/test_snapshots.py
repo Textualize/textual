@@ -278,6 +278,10 @@ def test_tabbed_content_with_modified_tabs(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "modified_tabs.py")
 
 
+def test_tabbed_content_styling_not_leaking(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tabbed_content_style_leak_test.py")
+
+
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
