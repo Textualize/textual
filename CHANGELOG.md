@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
 - Rename `Switch.action_toggle` to `action_toggle_switch` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/issues/4262
 - Fixed `OptionList.OptionHighlighted` leaking out of `Select` https://github.com/Textualize/textual/issues/4224
+- Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
 
 ### Changed
 
