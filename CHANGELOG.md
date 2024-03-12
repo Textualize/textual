@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - BREAKING: `AppFocus` and `AppBlur` are now posted when the terminal window gains or loses focus, if the terminal supports this https://github.com/Textualize/textual/pull/4265
   - When the terminal window loses focus, the currently-focused widget will also lose focus.
   - When the terminal window regains focus, the previously-focused widget will regain focus.
+- TextArea binding for <kbd>ctrl</kbd>+<kbd>k</kbd> will now delete the line if the line is empty https://github.com/Textualize/textual/issues/4277
 
 ## [0.52.1] - 2024-02-20
 
