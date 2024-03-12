@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rename `Switch.action_toggle` to `action_toggle_switch` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/issues/4262
 - Fixed `OptionList.OptionHighlighted` leaking out of `Select` https://github.com/Textualize/textual/issues/4224
 - Fixed `Tab` enable/disable messages leaking into `TabbedContent` https://github.com/Textualize/textual/issues/4233
+- Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
 
 ### Changed
 
