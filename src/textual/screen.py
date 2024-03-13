@@ -762,26 +762,6 @@ class Screen(Generic[ScreenResultType], Widget):
         self._update_timer.pause()
         ResizeEvent = events.Resize
 
-        def _message_visibility(
-            widget: Widget, event: events.Show | events.Hide
-        ) -> None:
-            """Send a Show or Hide event to the given widget.
-
-            Args:
-                widget: The widget to send the event to.
-                event: The event to be sent.
-
-            Note:
-                This function ensures that any scrollbars attached to the
-                widget also get the messages; these are needed to help
-                update the grabbed status.
-            """
-            widget.post_message(event)
-            if widget.show_vertical_scrollbar:
-                widget.vertical_scrollbar.post_message(event)
-            if widget.show_horizontal_scrollbar:
-                widget.horizontal_scrollbar.post_message(event)
-
         try:
             if scroll:
                 exposed_widgets = self._compositor.reflow_visible(self, size)
@@ -812,7 +792,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 Show = events.Show
 
                 for widget in hidden:
-                    _message_visibility(widget, Hide())
+                    widget.post_message(Hide())
 
                 # We want to send a resize event to widgets that were just added or change since last layout
                 send_resize = shown | resized
@@ -834,7 +814,7 @@ class Screen(Generic[ScreenResultType], Widget):
                         )
 
                 for widget in shown:
-                    _message_visibility(widget, Show())
+                    widget.post_message(Show())
 
         except Exception as error:
             self.app._handle_exception(error)
