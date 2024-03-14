@@ -3706,7 +3706,17 @@ class Widget(DOMNode):
             self.scroll_page_right()
             event.stop()
 
+    def _on_show(self, event: events.Show) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
+
     def _on_hide(self, event: events.Hide) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
         if self.has_focus:
             self.blur()
 
