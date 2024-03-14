@@ -73,6 +73,10 @@ class Placeholder(Widget):
         content-align: center middle;
         overflow: hidden;
         color: $text;
+
+        &:disabled {
+            opacity: 0.7;
+        }
     }
     Placeholder.-text {
         padding: 1;

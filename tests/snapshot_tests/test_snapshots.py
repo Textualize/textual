@@ -1144,3 +1144,8 @@ def test_app_blur(snap_compare):
     async def run_before(pilot) -> None:
         await pilot.pause()     # Allow the AppBlur message to get processed.
     assert snap_compare(SNAPSHOT_APPS_DIR / "app_blur.py", run_before=run_before)
+
+
+def test_placeholder_disabled(snap_compare):
+    """Test placeholder with diabled set to True."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "placeholder_disabled.py")
