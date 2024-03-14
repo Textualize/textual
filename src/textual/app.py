@@ -2706,7 +2706,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.screen._refresh_layout(self.size, full=True)
+        self.screen._refresh_layout(self.size)
         # The other screens in the stack will need to know about some style
         # changes, as a final pass let's check in on every screen that isn't
         # the current one and update them too.

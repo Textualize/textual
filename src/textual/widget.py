@@ -3165,7 +3165,7 @@ class Widget(DOMNode):
             if layout:
                 self.virtual_size = virtual_size
             else:
-                self._reactive_virtual_size = virtual_size
+                self.set_reactive(Widget.virtual_size, virtual_size)
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
