@@ -455,8 +455,6 @@ class TabbedContent(Widget):
 
         async def _remove_content() -> None:
             await gather(*removal_awaitables)
-            if self.tab_count == 0:
-                self.post_message(self.Cleared(self).set_sender(self))
 
         return AwaitComplete(_remove_content())
 
@@ -474,7 +472,6 @@ class TabbedContent(Widget):
 
         async def _clear_content() -> None:
             await await_clear
-            self.post_message(self.Cleared(self).set_sender(self))
 
         return AwaitComplete(_clear_content())
 
