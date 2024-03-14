@@ -3567,8 +3567,12 @@ class Widget(DOMNode):
         message_type = type(message)
         if self._is_prevented(message_type):
             return False
-        # Otherwise, if this is a mouse event, the widget receiving the
-        # event must not be disabled at this moment.
+        # Mouse scroll events should always go through, this allows mouse
+        # wheel scrolling to pass through disabled widgets.
+        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+            return True
+        # Otherwise, if this is any other mouse event, the widget receiving
+        # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
             if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
