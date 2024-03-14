@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `OptionList.OptionHighlighted` leaking out of `Select` https://github.com/Textualize/textual/issues/4224
 - Fixed `Tab` enable/disable messages leaking into `TabbedContent` https://github.com/Textualize/textual/issues/4233
 - Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
+- Fixed active hidden scrollbars not releasing the mouse https://github.com/Textualize/textual/issues/4274
 - Fixed the mouse not being released when hiding a `TextArea` while mouse selection is happening https://github.com/Textualize/textual/issues/4292
 
 ### Changed
