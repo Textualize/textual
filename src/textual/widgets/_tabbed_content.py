@@ -276,7 +276,11 @@ class TabbedContent(Widget):
             yield self.pane
 
     class Cleared(Message):
-        """Posted when there are no more tab panes."""
+        """Posted when no tab pane is active.
+
+        This can happen if all tab panes are removed or if the currently active tab
+        pane is unset.
+        """
 
         def __init__(self, tabbed_content: TabbedContent) -> None:
             """Initialize message.
@@ -328,22 +332,6 @@ class TabbedContent(Widget):
         if not active:
             return None
         return self.get_pane(self.active)
-
-    def validate_active(self, active: str) -> str:
-        """It doesn't make sense for `active` to be an empty string.
-
-        Args:
-            active: Attribute to be validated.
-
-        Returns:
-            Value of `active`.
-
-        Raises:
-            ValueError: If the active attribute is set to empty string when there are tabs available.
-        """
-        if not active and self.get_child_by_type(ContentSwitcher).current:
-            raise ValueError("'active' tab must not be empty string.")
-        return active
 
     @staticmethod
     def _set_id(content: TabPane, new_id: int) -> TabPane:
@@ -547,7 +535,7 @@ class TabbedContent(Widget):
 
     def _watch_active(self, active: str) -> None:
         """Switch tabs when the active attributes changes."""
-        with self.prevent(Tabs.TabActivated):
+        with self.prevent(Tabs.TabActivated, Tabs.Cleared):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
         self.get_child_by_type(ContentSwitcher).current = active
         if active:
@@ -556,6 +544,10 @@ class TabbedContent(Widget):
                     tabbed_content=self,
                     tab=self.get_child_by_type(ContentTabs).get_content_tab(active),
                 )
+            )
+        else:
+            self.post_message(
+                TabbedContent.Cleared(tabbed_content=self).set_sender(self)
             )
 
     @property
