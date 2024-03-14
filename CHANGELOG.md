@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
 - Fixed active hidden scrollbars not releasing the mouse https://github.com/Textualize/textual/issues/4274
 - Fixed the mouse not being released when hiding a `TextArea` while mouse selection is happening https://github.com/Textualize/textual/issues/4292
+- Fix mouse scrolling not working when mouse cursor is over a disabled child widget https://github.com/Textualize/textual/issues/4242
 
 ### Changed
 
