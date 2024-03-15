@@ -106,7 +106,6 @@ class Bar(Widget, can_focus=False):
 
     def render_indeterminate(self) -> RenderResult:
         """Render a frame of the indeterminate progress bar animation."""
-        print(self._clock)
         width = self.size.width
         highlighted_bar_width = 0.25 * width
         # Width used to enable the visual effect of the bar going into the corners.
@@ -334,13 +333,17 @@ class ProgressBar(Widget, can_focus=False):
                 self._eta.reset()
             self.total = total
 
+        def add_sample() -> None:
+            """Add a new sample."""
+            if self.progress is not None and self.total:
+                self._eta.add_sample(current_time, self.progress / self.total)
+
         if not isinstance(progress, UnusedParameter):
             self.progress = progress
+            add_sample()
 
         if not isinstance(advance, UnusedParameter):
             self.progress += advance
-
-        if self.progress is not None and self.total:
-            self._eta.add_sample(current_time, self.progress / self.total)
+            add_sample()
 
         self._display_eta = self._eta.get_eta(current_time)

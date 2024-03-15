@@ -11,13 +11,17 @@ import rich.repr
 class ETA:
     """Calculate speed and estimate time to arrival."""
 
-    def __init__(self, estimation_period: float = 60) -> None:
+    def __init__(
+        self, estimation_period: float = 60, extrapolate_period: float = 30
+    ) -> None:
         """Create an ETA.
 
         Args:
-            estimation_period: Period in seconds, used to calculate speed. Defaults to 30.
+            estimation_period: Period in seconds, used to calculate speed.
+            extrapolate_period: Maximum number of seconds used to estimate progress after last sample.
         """
         self.estimation_period = estimation_period
+        self.max_extrapolate = extrapolate_period
         self._samples: list[tuple[float, float]] = [(0.0, 0.0)]
         self._add_count = 0
 
@@ -51,7 +55,6 @@ class ETA:
         if self._samples and self.last_sample[1] > progress:
             # If progress goes backwards, we need to reset calculations
             self.reset()
-            return
         self._samples.append((time, progress))
         self._add_count += 1
         if self._add_count % 100 == 0:
@@ -69,14 +72,15 @@ class ETA:
 
     def _get_progress_at(self, time: float) -> tuple[float, float]:
         """Get the progress at a specific time."""
+
         index = bisect.bisect_left(self._samples, (time, 0))
         if index >= len(self._samples):
             return self.last_sample
         if index == 0:
             return self.first_sample
         # Linearly interpolate progress between two samples
-        time1, progress1 = self._samples[index]
-        time2, progress2 = self._samples[index + 1]
+        time1, progress1 = self._samples[index - 1]
+        time2, progress2 = self._samples[index]
         factor = (time - time1) / (time2 - time1)
         intermediate_progress = progress1 + (progress2 - progress1) * factor
         return time, intermediate_progress
@@ -86,7 +90,7 @@ class ETA:
         """The current speed, or `None` if it couldn't be calculated."""
 
         if len(self._samples) < 2:
-            # Need at less 2 samples to calculate speed
+            # Need at least 2 samples to calculate speed
             return None
 
         recent_sample_time, progress2 = self.last_sample
@@ -109,7 +113,14 @@ class ETA:
             # Not enough samples to guess
             return None
         recent_time, recent_progress = self.last_sample
-        time_since_sample = time - recent_time
-        remaining = 1.0 - (recent_progress + speed * time_since_sample)
-        eta = max(0, remaining / speed)
+        remaining = 1.0 - recent_progress
+        if remaining <= 0:
+            # Complete
+            return 0
+        # The bar is not complete, so we will extrapolate progress
+        # This will give us a countdown, even with no samples
+        time_since_sample = min(self.max_extrapolate, time - recent_time)
+        extrapolate_progress = speed * time_since_sample
+        # We don't want to extrapolate all the way to 0, as that would erroneously suggest it is finished
+        eta = max(1.0, (remaining - extrapolate_progress) / speed)
         return ceil(eta)
