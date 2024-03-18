@@ -4,11 +4,11 @@ The `Resize` event is sent to a widget when its size changes and when it is firs
 
 ## Attributes
 
-| attribute        | type | purpose                                          |
-|------------------|------|--------------------------------------------------|
-| `size`           | Size | The new size of the Widget                       |
-| `virtual_size`   | Size | The virtual size (scrollable area) of the Widget |
-| `container_size` | Size | The size of the container (parent widget)        |
+| Attribute        | Type                            | Purpose                                          |
+|------------------|---------------------------------|--------------------------------------------------|
+| `size`           | [`Size`][textual.geometry.Size] | The new size of the Widget                       |
+| `virtual_size`   | [`Size`][textual.geometry.Size] | The virtual size (scrollable area) of the Widget |
+| `container_size` | [`Size`][textual.geometry.Size] | The size of the container (parent widget)        |
 
 ## Code
 
