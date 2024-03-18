@@ -62,6 +62,7 @@ nav:
           - "events/mouse_scroll_up.md"
           - "events/mouse_up.md"
           - "events/paste.md"
+          - "events/print.md"
           - "events/resize.md"
           - "events/screen_resume.md"
           - "events/screen_suspend.md"
