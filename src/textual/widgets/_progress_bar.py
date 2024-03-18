@@ -292,6 +292,10 @@ class ProgressBar(Widget, can_focus=False):
             return 1.0
         return None
 
+    def _watch_progress(self, progress: float) -> None:
+        """Perform update when progress is modified."""
+        self.update(progress=progress)
+
     def advance(self, advance: float = 1) -> None:
         """Advance the progress of the progress bar by the given amount.
 
