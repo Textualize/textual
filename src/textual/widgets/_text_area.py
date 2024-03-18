@@ -1396,7 +1396,7 @@ TextArea {
             # `insert` is not None because event.character cannot be
             # None because we've checked that it's printable.
             assert insert is not None
-            start, end = self.selection
+            start, end = sorted(self.selection)
             self._replace_via_keyboard(insert, start, end)
 
     def _find_columns_to_next_tab_stop(self) -> int:
