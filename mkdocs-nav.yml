@@ -43,6 +43,8 @@ nav:
           - "css_types/vertical.md"
       - Events:
           - "events/index.md"
+          - "events/app_blur.md"
+          - "events/app_focus.md"
           - "events/blur.md"
           - "events/click.md"
           - "events/descendant_blur.md"
