@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Changed `Tabs`
   - Changed `TextArea`
   - Changed `Tree`
+- Improved ETA calculation for ProgressBar https://github.com/Textualize/textual/pull/4271
 
 ## [0.52.1] - 2024-02-20
 
