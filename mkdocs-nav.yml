@@ -44,6 +44,7 @@ nav:
       - Events:
           - "events/index.md"
           - "events/blur.md"
+          - "events/click.md"
           - "events/descendant_blur.md"
           - "events/descendant_focus.md"
           - "events/enter.md"
@@ -54,7 +55,6 @@ nav:
           - "events/load.md"
           - "events/mount.md"
           - "events/mouse_capture.md"
-          - "events/click.md"
           - "events/mouse_down.md"
           - "events/mouse_move.md"
           - "events/mouse_release.md"
