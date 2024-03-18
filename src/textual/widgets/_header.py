@@ -192,10 +192,10 @@ class Header(Widget):
         return sub_title
 
     def _on_mount(self, _: Mount) -> None:
-        def set_title() -> None:
+        async def set_title() -> None:
             self.query_one(HeaderTitle).text = self.screen_title
 
-        def set_sub_title(sub_title: str) -> None:
+        async def set_sub_title() -> None:
             self.query_one(HeaderTitle).sub_text = self.screen_sub_title
 
         self.watch(self.app, "title", set_title)
