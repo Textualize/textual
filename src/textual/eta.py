@@ -31,13 +31,13 @@ class ETA:
 
     @property
     def first_sample(self) -> tuple[float, float]:
-        """First sample, or `None` if no samples."""
+        """First sample."""
         assert self._samples, "Assumes samples not empty"
         return self._samples[0]
 
     @property
     def last_sample(self) -> tuple[float, float]:
-        """Last sample, or `None` if no samples."""
+        """Last sample."""
         assert self._samples, "Assumes samples not empty"
         return self._samples[-1]
 

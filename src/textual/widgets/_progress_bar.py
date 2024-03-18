@@ -163,7 +163,7 @@ class ETAStatus(Label):
     }
     """
     eta: reactive[float | None] = reactive[Optional[float]](None)
-    """Estimated number of seconds till completion."""
+    """Estimated number of seconds till completion, or `None` if no estimate is available."""
 
     def render(self) -> RenderResult:
         """Render the ETA display."""
@@ -254,13 +254,13 @@ class ProgressBar(Widget, can_focus=False):
             disabled: Whether the widget is disabled or not.
             clock: An optional clock object (leave as default unless testing).
         """
+        self._clock = clock or Clock()
+        self._eta = ETA()
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.total = total
         self.show_bar = show_bar
         self.show_percentage = show_percentage
         self.show_eta = show_eta
-        self._clock = clock or Clock()
-        self._eta = ETA()
 
     def on_mount(self) -> None:
         self.update()
