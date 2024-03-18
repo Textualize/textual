@@ -219,7 +219,12 @@ TextArea {
         Binding(
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
-        Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
+        Binding(
+            "ctrl+k",
+            "delete_to_end_of_line_or_delete_line",
+            "delete to line end",
+            show=False,
+        ),
         Binding("ctrl+z", "undo", "Undo", show=False),
         Binding("ctrl+y", "redo", "Redo", show=False),
     ]
@@ -1493,12 +1498,20 @@ TextArea {
             selection_start, _ = self.selection
             self.selection = Selection(selection_start, target)
 
-    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+    def _end_mouse_selection(self) -> None:
         """Finalize the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
         self._restart_blink()
+
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+        """Finalize the selection that has been made using the mouse."""
+        self._end_mouse_selection()
+
+    async def _on_hide(self, event: events.Hide) -> None:
+        """Finalize the selection that has been made using the mouse when thew widget is hidden."""
+        self._end_mouse_selection()
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
@@ -2111,6 +2124,26 @@ TextArea {
         from_location = self.selection.end
         to_location = self.get_cursor_line_end_location()
         self._delete_via_keyboard(from_location, to_location)
+
+    async def action_delete_to_end_of_line_or_delete_line(self) -> None:
+        """Deletes from the cursor location to the end of the line, or deletes the line.
+
+        The line will be deleted if the line is empty.
+        """
+        # Assume we're just going to delete to the end of the line.
+        action = "delete_to_end_of_line"
+        if self.get_cursor_line_start_location() == self.get_cursor_line_end_location():
+            # The line is empty, so we'll simply remove the line itself.
+            action = "delete_line"
+        elif (
+            self.selection.start
+            == self.selection.end
+            == self.get_cursor_line_end_location()
+        ):
+            # We're at the end of the line, so the kill delete operation
+            # should join the next line to this.
+            action = "delete_right"
+        await self.run_action(action)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""

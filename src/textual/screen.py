@@ -751,9 +751,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Remove the latest result callback from the stack."""
         self._result_callbacks.pop()
 
-    def _refresh_layout(
-        self, size: Size | None = None, full: bool = False, scroll: bool = False
-    ) -> None:
+    def _refresh_layout(self, size: Size | None = None, scroll: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if not size:
@@ -850,7 +848,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
 
     def _on_screen_resume(self) -> None:
@@ -858,7 +856,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
         # Only auto-focus when the app has focus (textual-web only)
         if self.app.app_focus:

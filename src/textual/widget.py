@@ -2937,10 +2937,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = bool(
+        show_vertical_scrollbar = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = bool(
+        show_horizontal_scrollbar = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -2974,10 +2974,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = bool(
+        show_vertical_scrollbar = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = bool(
+        show_horizontal_scrollbar = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -3165,7 +3165,7 @@ class Widget(DOMNode):
             if layout:
                 self.virtual_size = virtual_size
             else:
-                self._reactive_virtual_size = virtual_size
+                self.set_reactive(Widget.virtual_size, virtual_size)
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
@@ -3567,8 +3567,12 @@ class Widget(DOMNode):
         message_type = type(message)
         if self._is_prevented(message_type):
             return False
-        # Otherwise, if this is a mouse event, the widget receiving the
-        # event must not be disabled at this moment.
+        # Mouse scroll events should always go through, this allows mouse
+        # wheel scrolling to pass through disabled widgets.
+        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+            return True
+        # Otherwise, if this is any other mouse event, the widget receiving
+        # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
             if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
@@ -3706,7 +3710,17 @@ class Widget(DOMNode):
             self.scroll_page_right()
             event.stop()
 
+    def _on_show(self, event: events.Show) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
+
     def _on_hide(self, event: events.Hide) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
         if self.has_focus:
             self.blur()
 

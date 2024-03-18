@@ -29,6 +29,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
 - Rename `Switch.action_toggle` to `action_toggle_switch` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/issues/4262
+- Fixed `OptionList.OptionHighlighted` leaking out of `Select` https://github.com/Textualize/textual/issues/4224
+- Fixed `Tab` enable/disable messages leaking into `TabbedContent` https://github.com/Textualize/textual/issues/4233
+- Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
+- Fixed active hidden scrollbars not releasing the mouse https://github.com/Textualize/textual/issues/4274
+- Fixed the mouse not being released when hiding a `TextArea` while mouse selection is happening https://github.com/Textualize/textual/issues/4292
+- Fix mouse scrolling not working when mouse cursor is over a disabled child widget https://github.com/Textualize/textual/issues/4242
 
 ### Changed
 
@@ -44,6 +50,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Changed `TextArea`
   - Changed `Tree`
 - Improved ETA calculation for ProgressBar https://github.com/Textualize/textual/pull/4271
+- BREAKING: `AppFocus` and `AppBlur` are now posted when the terminal window gains or loses focus, if the terminal supports this https://github.com/Textualize/textual/pull/4265
+  - When the terminal window loses focus, the currently-focused widget will also lose focus.
+  - When the terminal window regains focus, the previously-focused widget will regain focus.
+- TextArea binding for <kbd>ctrl</kbd>+<kbd>k</kbd> will now delete the line if the line is empty https://github.com/Textualize/textual/issues/4277
 
 ## [0.52.1] - 2024-02-20
 

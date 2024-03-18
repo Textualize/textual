@@ -229,12 +229,11 @@ class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
     DEFAULT_CSS = """
-
     TabbedContent {
         height: auto;
-    }
-    TabbedContent Tabs {
-        dock: top;
+        &> ContentTabs {
+            dock: top;
+        }
     }
     """
 
@@ -611,6 +610,8 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
         """Disable the corresponding tab pane."""
+        if event.tabs.parent is not self:
+            return
         event.stop()
         tab_id = event.tab.id or ""
         try:
@@ -632,6 +633,8 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_enabled(self, event: Tabs.TabEnabled) -> None:
         """Enable the corresponding tab pane."""
+        if event.tabs.parent is not self:
+            return
         event.stop()
         tab_id = event.tab.id or ""
         try:
