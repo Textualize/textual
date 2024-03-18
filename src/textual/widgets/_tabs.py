@@ -165,7 +165,8 @@ class Tab(Static):
         """
         super().__init__(id=id, classes=classes, disabled=disabled)
         self._label: Text
-        self.label = label
+        # Setter takes Text or str
+        self.label = label  # type: ignore[assignment]
 
     @property
     def label(self) -> Text:
@@ -530,7 +531,7 @@ class Tabs(Widget, can_focus=True):
             if next_tab is None:
                 self.active = ""
             elif removing_active_tab:
-                self.active = next_tab.id
+                self.active = next_tab.id or ""
                 next_tab.add_class("-active")
 
             highlight_updated.set()

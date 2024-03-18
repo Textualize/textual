@@ -10,12 +10,9 @@ from __future__ import annotations
 
 from functools import partial
 from itertools import count
-from typing import TYPE_CHECKING, Literal, Protocol, Sequence
+from typing import Literal, Protocol, Sequence
 
-from typing_extensions import TypeAlias, TypeVar
-
-if TYPE_CHECKING:
-    from .widget import Widget
+from typing_extensions import TypeAlias
 
 
 class Disableable(Protocol):
@@ -30,8 +27,6 @@ Direction: TypeAlias = Literal[-1, 1]
 In a vertical setting, 1 points down and -1 points up.
 In a horizontal setting, 1 points right and -1 points left.
 """
-_DisableableType = TypeVar("_DisableableType", bound=Disableable)
-_WidgetType = TypeVar("_WidgetType", bound="Widget")
 
 
 def get_directed_distance(
@@ -70,7 +65,7 @@ def get_directed_distance(
 
 
 def find_first_enabled(
-    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
+    candidates: Sequence[Disableable],
 ) -> int | None:
     """Find the first enabled candidate in a sequence of possibly-disabled objects.
 
@@ -86,9 +81,7 @@ def find_first_enabled(
     )
 
 
-def find_last_enabled(
-    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
-) -> int | None:
+def find_last_enabled(candidates: Sequence[Disableable]) -> int | None:
     """Find the last enabled candidate in a sequence of possibly-disabled objects.
 
     Args:
@@ -109,7 +102,7 @@ def find_last_enabled(
 
 
 def find_next_enabled(
-    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
+    candidates: Sequence[Disableable],
     anchor: int | None,
     direction: Direction,
     with_anchor: bool = False,
@@ -155,7 +148,7 @@ def find_next_enabled(
 
 
 def find_next_enabled_no_wrap(
-    candidates: Sequence[_DisableableType] | Sequence[_WidgetType],
+    candidates: Sequence[Disableable],
     anchor: int | None,
     direction: Direction,
     with_anchor: bool = False,
