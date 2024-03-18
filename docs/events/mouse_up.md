@@ -2,9 +2,6 @@
 
 The `MouseUp` event is sent to a widget when the user releases a mouse button.
 
-- [x] Bubbles
-- [x] Verbose
-
 ## Attributes
 
 | attribute  | type | purpose                                   |

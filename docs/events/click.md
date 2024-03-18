@@ -2,9 +2,6 @@
 
 The `Click` event is sent to a widget when the user clicks a mouse button.
 
-- [x] Bubbles
-- [ ] Verbose
-
 ## Attributes
 
 | attribute  | type | purpose                                   |

@@ -2,9 +2,6 @@
 
 The `MouseMove` event is sent to a widget when the mouse pointer is moved over a widget.
 
-- [x] Bubbles
-- [x] Verbose
-
 ## Attributes
 
 | attribute  | type | purpose                                   |

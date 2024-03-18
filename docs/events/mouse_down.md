@@ -2,9 +2,6 @@
 
 The `MouseDown` event is sent to a widget when a mouse button is pressed.
 
-- [x] Bubbles
-- [x] Verbose
-
 ## Attributes
 
 | attribute  | type | purpose                                   |
