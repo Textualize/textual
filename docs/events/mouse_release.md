@@ -11,3 +11,7 @@ The `MouseRelease` event is sent to a widget when it is no longer receiving mous
 ## Code
 
 ::: textual.events.MouseRelease
+
+## See also
+
+- [MouseCapture](mouse_capture.md)

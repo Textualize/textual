@@ -11,3 +11,7 @@ The `MouseCapture` event is sent to a widget when it is capturing mouse events f
 ## Code
 
 ::: textual.events.MouseCapture
+
+## See also
+
+- [MouseRelease](mouse_release.md)
