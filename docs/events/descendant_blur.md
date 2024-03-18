@@ -4,7 +4,10 @@ The `DescendantBlur` event is sent to a widget when one of its children loses fo
 
 ## Attributes
 
-_No other attributes_
+| Attribute | Type                              | Purpose                                            |
+|-----------|-----------------------------------|----------------------------------------------------|
+| `widget`  | [`Widget`][textual.widget.Widget] | The widget that was blurred                        |
+| `control` | [`Widget`][textual.widget.Widget] | The widget that was blurred (an alias of `widget`) |
 
 ## Code
 
