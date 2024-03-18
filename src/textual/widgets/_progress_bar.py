@@ -333,7 +333,7 @@ class ProgressBar(Widget, can_focus=False):
         """
         current_time = self._clock.time
         if not isinstance(total, UnusedParameter):
-            if total != self.total:
+            if total is None or total != self.total:
                 self._eta.reset()
             self.total = total
 
@@ -350,4 +350,6 @@ class ProgressBar(Widget, can_focus=False):
             self.progress += advance
             add_sample()
 
-        self._display_eta = self._eta.get_eta(current_time)
+        self._display_eta = (
+            None if self.total is None else self._eta.get_eta(current_time)
+        )
