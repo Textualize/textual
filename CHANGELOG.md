@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with data binding
+- Fixed issue with data binding https://github.com/Textualize/textual/pull/4308
 
 ## [0.53.0] - 2023-03-18
 
