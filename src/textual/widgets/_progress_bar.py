@@ -264,7 +264,7 @@ class ProgressBar(Widget, can_focus=False):
 
     def on_mount(self) -> None:
         self.update()
-        self.set_interval(0.5, self.update)
+        self.set_interval(1, self.update)
         self._clock.reset()
 
     def compose(self) -> ComposeResult:
