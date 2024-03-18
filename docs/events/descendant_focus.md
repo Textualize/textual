@@ -4,7 +4,10 @@ The `DescendantFocus` event is sent to a widget when one of its descendants rece
 
 ## Attributes
 
-_No other attributes_
+| Attribute | Type                              | Purpose                                            |
+|-----------|-----------------------------------|----------------------------------------------------|
+| `widget`  | [`Widget`][textual.widget.Widget] | The widget that was focused                        |
+| `control` | [`Widget`][textual.widget.Widget] | The widget that was focused (an alias of `widget`) |
 
 ## Code
 
