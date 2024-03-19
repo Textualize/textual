@@ -2926,7 +2926,9 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:
-            target, params = action
+            # `action` can end up coming in as (), so if that happens we'll
+            # ask the action parser for a correctly-formed empty action.
+            target, params = action or actions.parse("")
         implicit_destination = True
         if "." in target:
             destination, action_name = target.split(".", 1)
