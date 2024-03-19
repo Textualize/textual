@@ -278,7 +278,10 @@ class DOMNode(MessagePump):
                     f"Unable to bind data; {reactive.owner.__name__} is not defined on {parent.__class__.__name__}."
                 )
             self._reactive_connect[name] = (parent, reactive)
-        self.call_later(self._initialize_data_bind)
+        if self._is_mounted:
+            self._initialize_data_bind()
+        else:
+            self.call_later(self._initialize_data_bind)
         return self
 
     def _initialize_data_bind(self) -> None:
