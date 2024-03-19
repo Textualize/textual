@@ -329,10 +329,7 @@ class Worker(Generic[ResultType]):
         if (
             inspect.iscoroutinefunction(self._work)
             or hasattr(self._work, "func")
-            and (
-                hasattr(self._work, "func")
-                and inspect.iscoroutinefunction(self._work.func)
-            )
+            and inspect.iscoroutinefunction(self._work.func)
         ):
             return await self._work()
         elif inspect.isawaitable(self._work):
