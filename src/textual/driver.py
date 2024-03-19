@@ -66,7 +66,7 @@ class Driver(ABC):
         """
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.
-        event._set_sender(self._app)
+        event.set_sender(self._app)
         if isinstance(event, events.MouseDown):
             if event.button:
                 self._down_buttons.append(event.button)

@@ -124,6 +124,12 @@ You register a file with a `Selector` object, then call `select()` which returns
 
 See [watcher.py](https://github.com/Textualize/toolong/blob/main/src/toolong/watcher.py) in Toolong, which runs a thread to monitors files for changes with a selector.
 
+!!! warning "Addendum"
+
+    So it turns out that watching regular files for changes with selectors only works with `KqueueSelector` which is the default on macOS.
+    Disappointingly, the Python docs aren't clear on this.
+    Toolong will use a polling approach where this selector is unavailable.
+
 ## Textual learnings
 
 This project was a chance for me to "dogfood" Textual.

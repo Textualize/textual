@@ -92,33 +92,33 @@ TextArea {
     height: 1fr;
     border: tall $background;
     padding: 0 1;
-    
+
     & .text-area--gutter {
         color: $text 40%;
     }
-    
+
     & .text-area--cursor-gutter {
         color: $text 60%;
         background: $boost;
         text-style: bold;
     }
-    
+
     & .text-area--cursor-line {
        background: $boost;
     }
-    
+
     & .text-area--selection {
         background: $accent-lighten-1 40%;
     }
-    
+
     & .text-area--matching-bracket {
         background: $foreground 30%;
     }
-    
+
     &:focus {
         border: tall $accent;
     }
-    
+
     &:dark {
         .text-area--cursor {
            color: $text 90%;
@@ -128,11 +128,11 @@ TextArea {
             background: $warning-darken-1;
         }
     }
-    
+
     &:light {
         .text-area--cursor {
             color: $text 90%;
-            background: $foreground 70%;   
+            background: $foreground 70%;
         }
         &.-read-only .text-area--cursor {
             background: $warning-darken-1;
@@ -151,9 +151,9 @@ TextArea {
     }
     """
     `TextArea` offers some component classes which can be used to style aspects of the widget.
-    
+
     Note that any attributes provided in the chosen `TextAreaTheme` will take priority here.
-    
+
     | Class | Description |
     | :- | :- |
     | `text-area--cursor` | Target the cursor. |
@@ -219,7 +219,12 @@ TextArea {
         Binding(
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
-        Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
+        Binding(
+            "ctrl+k",
+            "delete_to_end_of_line_or_delete_line",
+            "delete to line end",
+            show=False,
+        ),
         Binding("ctrl+z", "undo", "Undo", show=False),
         Binding("ctrl+y", "redo", "Redo", show=False),
     ]
@@ -313,9 +318,9 @@ TextArea {
 
     read_only: Reactive[bool] = reactive(False)
     """True if the content is read-only.
-    
+
     Read-only means end users cannot insert, delete or replace content.
-    
+
     The document can still be edited programmatically via the API.
     """
 
@@ -883,6 +888,7 @@ TextArea {
         """
         self.history.clear()
         self._set_document(text, self.language)
+        self.post_message(self.Changed(self).set_sender(self))
 
     def _on_resize(self) -> None:
         self._rewrap_and_refresh_virtual_size()
@@ -1285,7 +1291,7 @@ TextArea {
             return
 
         old_gutter_width = self.gutter_width
-        minimum_from = edits[-1].from_location
+        minimum_from = edits[-1].top
         maximum_old_end = (0, 0)
         maximum_new_end = (0, 0)
         for edit in reversed(edits):
@@ -1298,7 +1304,7 @@ TextArea {
             if end_location > maximum_old_end:
                 maximum_old_end = end_location
             if edit.to_location > maximum_new_end:
-                maximum_new_end = edit.to_location
+                maximum_new_end = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
@@ -1492,12 +1498,20 @@ TextArea {
             selection_start, _ = self.selection
             self.selection = Selection(selection_start, target)
 
-    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+    def _end_mouse_selection(self) -> None:
         """Finalize the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
         self._restart_blink()
+
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+        """Finalize the selection that has been made using the mouse."""
+        self._end_mouse_selection()
+
+    async def _on_hide(self, event: events.Hide) -> None:
+        """Finalize the selection that has been made using the mouse when thew widget is hidden."""
+        self._end_mouse_selection()
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
@@ -2110,6 +2124,26 @@ TextArea {
         from_location = self.selection.end
         to_location = self.get_cursor_line_end_location()
         self._delete_via_keyboard(from_location, to_location)
+
+    async def action_delete_to_end_of_line_or_delete_line(self) -> None:
+        """Deletes from the cursor location to the end of the line, or deletes the line.
+
+        The line will be deleted if the line is empty.
+        """
+        # Assume we're just going to delete to the end of the line.
+        action = "delete_to_end_of_line"
+        if self.get_cursor_line_start_location() == self.get_cursor_line_end_location():
+            # The line is empty, so we'll simply remove the line itself.
+            action = "delete_line"
+        elif (
+            self.selection.start
+            == self.selection.end
+            == self.get_cursor_line_end_location()
+        ):
+            # We're at the end of the line, so the kill delete operation
+            # should join the next line to this.
+            action = "delete_right"
+        await self.run_action(action)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""

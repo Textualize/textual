@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import ClassVar, Iterable
+from typing import TYPE_CHECKING, ClassVar, Iterable
 
 from rich.cells import cell_len, get_character_cell_size
-from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+from rich.console import Console, ConsoleOptions
+from rich.console import RenderResult as RichRenderResult
 from rich.highlighter import Highlighter
 from rich.segment import Segment
 from rich.text import Text
@@ -13,6 +14,10 @@ from typing_extensions import Literal
 
 from .. import events
 from .._segment_tools import line_crop
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..binding import Binding, BindingType
 from ..css._error_tools import friendly_list
 from ..events import Blur, Focus, Mount
@@ -47,7 +52,7 @@ class _InputRenderable:
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
-    ) -> "RenderResult":
+    ) -> RichRenderResult:
         input = self.input
         result = input._value
         width = input.content_size.width
@@ -460,7 +465,7 @@ class Input(Widget, can_focus=True):
             return cell_len(self.placeholder)
         return self._position_to_cell(len(self.value)) + 1
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         self.view_position = self.view_position
         if not self.value:
             placeholder = Text(self.placeholder, justify="left")

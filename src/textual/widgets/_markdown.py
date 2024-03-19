@@ -934,7 +934,9 @@ class Markdown(Widget):
                     (stack[-1]._blocks if stack else output).append(external)
 
         self.post_message(
-            Markdown.TableOfContentsUpdated(self, self._table_of_contents)
+            Markdown.TableOfContentsUpdated(self, self._table_of_contents).set_sender(
+                self
+            )
         )
         markdown_block = self.query("MarkdownBlock")
 

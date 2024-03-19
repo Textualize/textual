@@ -7,6 +7,15 @@ Displays pulsating dots to indicate when data is being loaded.
 - [ ] Focusable
 - [ ] Container
 
+
+!!! tip
+
+    Widgets have a [`loading`][textual.widget.Widget.loading] reactive which
+    you can use to temporarily replace your widget with a `LoadingIndicator`.
+    See the [Loading Indicator](../guide/widgets.md#loading-indicator) section
+    in the Widgets guide for details.
+
+
 ## Example
 
 Simple usage example:
