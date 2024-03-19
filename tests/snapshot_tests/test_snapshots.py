@@ -1141,11 +1141,18 @@ def test_sort_children(snap_compare):
 
 def test_app_blur(snap_compare):
     """Test Styling after receiving an AppBlur message."""
+
     async def run_before(pilot) -> None:
-        await pilot.pause()     # Allow the AppBlur message to get processed.
+        await pilot.pause()  # Allow the AppBlur message to get processed.
+
     assert snap_compare(SNAPSHOT_APPS_DIR / "app_blur.py", run_before=run_before)
 
 
 def test_placeholder_disabled(snap_compare):
     """Test placeholder with diabled set to True."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "placeholder_disabled.py")
+
+
+def test_listview_index(snap_compare):
+    """Tests that ListView scrolls correctly after updating its index."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "listview_index.py")
