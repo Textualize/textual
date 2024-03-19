@@ -1,7 +1,3 @@
----
-title: Blur
----
-
 ::: textual.events.Blur
     options:
       heading_level: 1
