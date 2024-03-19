@@ -393,7 +393,7 @@ class StylesCache:
                 has_left,
                 has_right,
                 label_segments,
-                label_alignment,
+                label_alignment,  # type: ignore
             )
 
         # Draw padding (B)

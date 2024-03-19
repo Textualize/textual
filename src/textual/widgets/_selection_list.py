@@ -11,6 +11,7 @@ from rich.style import Style
 from rich.text import Text, TextType
 from typing_extensions import Self
 
+from .. import events
 from ..binding import Binding
 from ..messages import Message
 from ..strip import Strip
@@ -277,7 +278,7 @@ class SelectionList(Generic[SelectionType], OptionList):
         """
         return list(self._selected.keys())
 
-    def _on_mount(self) -> None:
+    def _on_mount(self, _event: events.Mount) -> None:
         """Configure the list once the DOM is ready."""
         self._send_messages = True
 

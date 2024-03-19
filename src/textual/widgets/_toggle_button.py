@@ -32,7 +32,7 @@ class ToggleButton(Static, can_focus=True):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("enter,space", "toggle_button", "Toggle", show=False),
     ]
     """
     | Key(s) | Description |
@@ -238,7 +238,7 @@ class ToggleButton(Static, can_focus=True):
         self.value = not self.value
         return self
 
-    def action_toggle(self) -> None:
+    def action_toggle_button(self) -> None:
         """Toggle the value of the widget when called as an action.
 
         This would normally be used for a keyboard binding.
