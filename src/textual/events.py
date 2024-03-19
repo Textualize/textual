@@ -574,11 +574,12 @@ class AppFocus(Event, bubble=False):
 class AppBlur(Event, bubble=False):
     """Sent when the app loses focus.
 
-    Only available when running within a terminal that supports `FocusOut`,
-    or when running via textual-web.
-
     - [ ] Bubbles
     - [ ] Verbose
+
+    Note:
+        Only available when running within a terminal that supports
+        `FocusOut`, or when running via textual-web.
     """
 
 
