@@ -108,9 +108,33 @@ async def test_tabbed_content_switch_via_code():
         with pytest.raises(ValueError):
             tabbed_content.active = "X"
 
-        # Check fail with empty tab
-        with pytest.raises(ValueError):
-            tabbed_content.active = ""
+
+async def test_unsetting_tabbed_content_active():
+    """Check that setting `TabbedContent.active = ""` unsets active tab."""
+
+    messages = []
+
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="bar"):
+                with TabPane("foo", id="foo"):
+                    yield Label("Foo", id="foo-label")
+                with TabPane("bar", id="bar"):
+                    yield Label("Bar", id="bar-label")
+                with TabPane("baz", id="baz"):
+                    yield Label("Baz", id="baz-label")
+
+        def on_tabbed_content_cleared(self, event: TabbedContent.Cleared) -> None:
+            messages.append(event)
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        assert bool(tabbed_content.active)
+        tabbed_content.active = ""
+        await pilot.pause()
+        assert len(messages) == 1
+        assert isinstance(messages[0], TabbedContent.Cleared)
 
 
 async def test_tabbed_content_initial():
