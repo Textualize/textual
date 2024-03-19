@@ -2926,9 +2926,7 @@ class App(Generic[ReturnType], DOMNode):
         if isinstance(action, str):
             target, params = actions.parse(action)
         else:
-            # `action` can end up coming in as (), so if that happens we'll
-            # ask the action parser for a correctly-formed empty action.
-            target, params = action or actions.parse("")
+            target, params = action
         implicit_destination = True
         if "." in target:
             destination, action_name = target.split(".", 1)
@@ -3008,11 +3006,16 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, (str, tuple)):
+        if isinstance(action, str) or (isinstance(action, tuple) and len(action) == 2):
             await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:
+            if isinstance(action, tuple) and self.debug:
+                # It's a tuple and made it this far, which means it'll be a
+                # malformed action. This is a no-op, but let's log that
+                # anyway.
+                log.warning(f"{event_name} event has an empty a action!")
             return False
         return True
 
