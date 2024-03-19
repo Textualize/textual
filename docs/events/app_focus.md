@@ -1,19 +1,10 @@
-# AppFocus
-
-The `AppFocus` event is sent to the application when the terminal window
-gains focus.
-
-!!! note
-    Only available when running under textual-web or within terminals that
-    support `FocusOut` reporting.
-
-## Attributes
-
-_No other attributes_
-
-## Code
+---
+title: AppFocus
+---
 
 ::: textual.events.AppFocus
+    options:
+      heading_level: 1
 
 ## See also
 

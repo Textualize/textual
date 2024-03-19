@@ -563,16 +563,17 @@ class Blur(Event, bubble=False):
 class AppFocus(Event, bubble=False):
     """Sent when the app has focus.
 
-    Only available when running within a terminal that supports `FocusIn`,
-    or when running via textual-web.
-
     - [ ] Bubbles
     - [ ] Verbose
+
+    Note:
+        Only available when running within a terminal that supports
+        `FocusIn`, or when running via textual-web.
     """
 
 
 class AppBlur(Event, bubble=False):
-    """Sent when the app loses focus.
+    """Sent when the app gains focus.
 
     - [ ] Bubbles
     - [ ] Verbose
