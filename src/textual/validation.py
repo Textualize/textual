@@ -384,12 +384,15 @@ class Length(Validator):
         minimum: int | None = None,
         maximum: int | None = None,
         failure_description: str | None = None,
+        strip_spaces: bool = False,
     ) -> None:
         super().__init__(failure_description=failure_description)
         self.minimum = minimum
         """The inclusive minimum length of the value, or None if unbounded."""
         self.maximum = maximum
         """The inclusive maximum length of the value, or None if unbounded."""
+        self.strip_spaces = strip_spaces
+        """If true, then check the length while ignoring trailing and leading spaces"""
 
     class Incorrect(Failure):
         """Indicates a failure due to the length of the value being outside the range."""
@@ -403,8 +406,9 @@ class Length(Validator):
         Returns:
             The result of the validation.
         """
-        too_short = self.minimum is not None and len(value) < self.minimum
-        too_long = self.maximum is not None and len(value) > self.maximum
+        check_len_on = value.strip() if self.strip_spaces else value
+        too_short = self.minimum is not None and len(check_len_on) < self.minimum
+        too_long = self.maximum is not None and len(check_len_on) > self.maximum
         if too_short or too_long:
             return ValidationResult.failure([Length.Incorrect(self, value)])
         return self.success()
@@ -419,12 +423,19 @@ class Length(Validator):
             A string description of the failure.
         """
         if isinstance(failure, Length.Incorrect):
+            desc: str = ""
             if self.minimum is None and self.maximum is not None:
-                return f"Must be shorter than {self.maximum} characters."
+                desc += f"Must be shorter than {self.maximum} characters."
             elif self.minimum is not None and self.maximum is None:
-                return f"Must be longer than {self.minimum} characters."
+                desc += f"Must be longer than {self.minimum} characters."
             else:
-                return f"Must be between {self.minimum} and {self.maximum} characters."
+                desc += f"Must be between {self.minimum} and {self.maximum} characters."
+
+            desc += (
+                " (Trailing and leading spaces ignored)" if self.strip_spaces else ""
+            )
+            return desc
+
         return None
 
 
