@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
+
+## [0.53.1] - 2023-03-18
+
+### Fixed
+
+- Fixed issue with data binding https://github.com/Textualize/textual/pull/4308
+
+## [0.53.0] - 2023-03-18
+
 ### Added
 
 - Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
@@ -49,10 +61,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
   - Changed `Tabs`
   - Changed `TextArea`
   - Changed `Tree`
+- Improved ETA calculation for ProgressBar https://github.com/Textualize/textual/pull/4271
 - BREAKING: `AppFocus` and `AppBlur` are now posted when the terminal window gains or loses focus, if the terminal supports this https://github.com/Textualize/textual/pull/4265
   - When the terminal window loses focus, the currently-focused widget will also lose focus.
   - When the terminal window regains focus, the previously-focused widget will regain focus.
 - TextArea binding for <kbd>ctrl</kbd>+<kbd>k</kbd> will now delete the line if the line is empty https://github.com/Textualize/textual/issues/4277
+- The active tab (in `Tabs`) / tab pane (in `TabbedContent`) can now be unset https://github.com/Textualize/textual/issues/4241
 
 ## [0.52.1] - 2024-02-20
 
@@ -1779,6 +1793,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.53.1]: https://github.com/Textualize/textual/compare/v0.53.0...v0.53.1
+[0.53.0]: https://github.com/Textualize/textual/compare/v0.52.1...v0.53.0
+[0.52.1]: https://github.com/Textualize/textual/compare/v0.52.0...v0.52.1
+[0.52.0]: https://github.com/Textualize/textual/compare/v0.51.0...v0.52.0
 [0.51.0]: https://github.com/Textualize/textual/compare/v0.50.1...v0.51.0
 [0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0

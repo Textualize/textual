@@ -1291,7 +1291,7 @@ TextArea {
             return
 
         old_gutter_width = self.gutter_width
-        minimum_from = edits[-1].from_location
+        minimum_from = edits[-1].top
         maximum_old_end = (0, 0)
         maximum_new_end = (0, 0)
         for edit in reversed(edits):
@@ -1304,7 +1304,7 @@ TextArea {
             if end_location > maximum_old_end:
                 maximum_old_end = end_location
             if edit.to_location > maximum_new_end:
-                maximum_new_end = edit.to_location
+                maximum_new_end = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
