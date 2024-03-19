@@ -300,6 +300,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.44.0] - 2023-12-1
 
+### Added
+
+- Added Restrictor class to allow arbitrary text restriction on Input
+
 ### Changed
 
 - Breaking change: Dropped 3.7 support https://github.com/Textualize/textual/pull/3766
