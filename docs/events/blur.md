@@ -1,14 +1,10 @@
-# Blur
-
-The `Blur` event is sent to a widget when it loses focus.
-
-## Attributes
-
-_No other attributes_
-
-## Code
+---
+title: Blur
+---
 
 ::: textual.events.Blur
+    options:
+      heading_level: 1
 
 ## See also
 
