@@ -97,6 +97,9 @@ class ETA:
         progress_start_time, progress1 = self._get_progress_at(
             recent_sample_time - self.estimation_period
         )
+        if recent_sample_time - progress_start_time < 1:
+            # Require at least a second span to calculate speed.
+            return None
         time_delta = recent_sample_time - progress_start_time
         distance = progress2 - progress1
         speed = distance / time_delta if time_delta else 0
