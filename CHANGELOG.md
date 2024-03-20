@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
+- Fixed issue with flickering scrollbars https://github.com/Textualize/textual/pull/4315
 
 ## [0.53.1] - 2023-03-18
 
