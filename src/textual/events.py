@@ -333,15 +333,25 @@ class MouseEvent(InputEvent, bubble=True):
     ) -> None:
         super().__init__()
         self.x = x
+        """The relative x coordinate."""
         self.y = y
+        """The relative y coordinate."""
         self.delta_x = delta_x
+        """Change in x since the last message."""
         self.delta_y = delta_y
+        """Change in y since the last message."""
         self.button = button
+        """Indexed of the pressed button."""
         self.shift = shift
+        """`True` if the shift key is pressed."""
         self.meta = meta
+        """`True` if the meta key is pressed."""
         self.ctrl = ctrl
+        """`True` if the ctrl key is pressed."""
         self.screen_x = x if screen_x is None else screen_x
+        """The absolute x coordinate."""
         self.screen_y = y if screen_y is None else screen_y
+        """The absolute y coordinate."""
         self._style = style or Style()
 
     @classmethod
