@@ -32,7 +32,7 @@ class TwoWayDict(Generic[Key, Value]):
     def __iter__(self):
         return iter(self._forward)
 
-    def get(self, key: Key) -> Value:
+    def get(self, key: Key) -> Value | None:
         """Given a key, efficiently lookup and return the associated value.
 
         Args:
@@ -43,7 +43,7 @@ class TwoWayDict(Generic[Key, Value]):
         """
         return self._forward.get(key)
 
-    def get_key(self, value: Value) -> Key:
+    def get_key(self, value: Value) -> Key | None:
         """Given a value, efficiently lookup and return the associated key.
 
         Args:

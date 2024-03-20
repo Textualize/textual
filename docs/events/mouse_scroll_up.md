@@ -1,17 +1,20 @@
-# MouseScrollUp
-
-The `MouseScrollUp` event is sent to a widget when the scroll wheel (or trackpad equivalent) is moved _up_.
-
-- [x] Bubbles
-- [x] Verbose
-
-## Attributes
-
-| attribute | type | purpose                                |
-|-----------|------|----------------------------------------|
-| `x`       | int  | Mouse x coordinate, relative to Widget |
-| `y`       | int  | Mouse y coordinate, relative to Widget |
-
-## Code
+---
+title: MouseScrollUp
+---
 
 ::: textual.events.MouseScrollUp
+    options:
+      heading_level: 1
+
+See [MouseEvent][textual.events.MouseEvent] for the full list of properties and methods.
+
+## See also
+
+- [Click](click.md)
+- [Enter](enter.md)
+- [Leave](leave.md)
+- [MouseDown](mouse_down.md)
+- [MouseEvent][textual.events.MouseEvent]
+- [MouseMove](mouse_move.md)
+- [MouseScrollDown](mouse_scroll_down.md)
+- [MouseUp](mouse_up.md)

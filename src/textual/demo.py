@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from importlib.metadata import version
 from pathlib import Path
+from typing import cast
 
 from rich import box
 from rich.console import RenderableType
@@ -194,8 +195,9 @@ class Welcome(Container):
         yield Button("Start", variant="success")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.app.add_note("[b magenta]Start!")
-        self.app.query_one(".location-first").scroll_visible(duration=0.5, top=True)
+        app = cast(DemoApp, self.app)
+        app.add_note("[b magenta]Start!")
+        app.query_one(".location-first").scroll_visible(duration=0.5, top=True)
 
 
 class OptionGroup(Container):
@@ -248,8 +250,9 @@ class LocationLink(Static):
         self.reveal = reveal
 
     def on_click(self) -> None:
-        self.app.query_one(self.reveal).scroll_visible(top=True, duration=0.5)
-        self.app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
+        app = cast(DemoApp, self.app)
+        app.query_one(self.reveal).scroll_visible(top=True, duration=0.5)
+        app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
 
 
 class LoginForm(Container):

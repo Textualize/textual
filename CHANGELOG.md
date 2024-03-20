@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
+- Fix progress bar ETA not updating when setting `total` reactive https://github.com/Textualize/textual/pull/4316
+- ProgressBar won't show ETA until there is at least one second of samples https://github.com/Textualize/textual/pull/4316
 
 ## [0.53.1] - 2023-03-18
 
