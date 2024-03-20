@@ -213,6 +213,7 @@ class MouseRelease(Event, bubble=False):
     def __init__(self, mouse_position: Offset) -> None:
         super().__init__()
         self.mouse_position = mouse_position
+        """The position of the mouse when released."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
