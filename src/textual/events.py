@@ -636,6 +636,7 @@ class Paste(Event, bubble=True):
     def __init__(self, text: str) -> None:
         super().__init__()
         self.text = text
+        """The text that was pasted."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "text", self.text
