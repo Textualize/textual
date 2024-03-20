@@ -233,8 +233,6 @@ class Key(InputEvent):
     Args:
         key: The key that was pressed.
         character: A printable character or ``None`` if it is not printable.
-    Attributes:
-        aliases: The aliases for the key, including the key itself.
     """
 
     __slots__ = ["key", "character", "aliases"]
@@ -242,10 +240,13 @@ class Key(InputEvent):
     def __init__(self, key: str, character: str | None) -> None:
         super().__init__()
         self.key = key
+        """The key that was pressed."""
         self.character = (
             (key if len(key) == 1 else None) if character is None else character
         )
+        """A printable character or ``None`` if it is not printable."""
         self.aliases: list[str] = _get_key_aliases(key)
+        """The aliases for the key, including the key itself."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
@@ -269,7 +270,7 @@ class Key(InputEvent):
         """Check if the key is printable (produces a unicode character).
 
         Returns:
-            True if the key is printable.
+            `True` if the key is printable.
         """
         return False if self.character is None else self.character.isprintable()
 
