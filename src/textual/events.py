@@ -110,8 +110,11 @@ class Resize(Event, bubble=False):
         container_size: Size | None = None,
     ) -> None:
         self.size = size
+        """The new size of the Widget."""
         self.virtual_size = virtual_size
+        """The virtual size (scrollable size) of the Widget."""
         self.container_size = size if container_size is None else container_size
+        """The size of the Widget's container widget."""
         super().__init__()
 
     def can_replace(self, message: "Message") -> bool:
