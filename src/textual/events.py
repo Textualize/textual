@@ -581,7 +581,7 @@ class AppFocus(Event, bubble=False):
 
 
 class AppBlur(Event, bubble=False):
-    """Sent when the app gains focus.
+    """Sent when the app loses focus.
 
     - [ ] Bubbles
     - [ ] Verbose
