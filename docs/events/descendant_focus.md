@@ -1,20 +1,15 @@
-# DescendantFocus
-
-The `DescendantFocus` event is sent to a widget when one of its descendants receives focus.
-
-## Attributes
-
-| Attribute | Type                              | Purpose                                            |
-|-----------|-----------------------------------|----------------------------------------------------|
-| `widget`  | [`Widget`][textual.widget.Widget] | The widget that was focused                        |
-| `control` | [`Widget`][textual.widget.Widget] | The widget that was focused (an alias of `widget`) |
-
-## Code
+---
+title: DescendantFocus
+---
 
 ::: textual.events.DescendantFocus
+    options:
+      heading_level: 1
 
 ## See also
 
+- [AppBlur](app_blur.md)
+- [AppFocus](app_focus.md)
 - [Blur](blur.md)
 - [DescendantBlur](descendant_blur.md)
 - [Focus](focus.md)
