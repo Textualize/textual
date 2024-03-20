@@ -1,11 +1,7 @@
-# ScreenSuspend
-
-The `ScreenSuspend` event is sent to a **Screen** when it is replaced by another screen.
-
-## Attributes
-
-_No other attributes_
-
-## Code
+---
+title: ScreenSuspend
+---
 
 ::: textual.events.ScreenSuspend
+    options:
+      heading_level: 1
