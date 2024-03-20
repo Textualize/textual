@@ -6,6 +6,8 @@ See [MouseEvent][textual.events.MouseEvent] for the full list of properties and 
 
 ## See also
 
+- [Enter](enter.md)
+- [Leave](leave.md)
 - [MouseDown](mouse_down.md)
 - [MouseEvent][textual.events.MouseEvent]
 - [MouseMove](mouse_move.md)
