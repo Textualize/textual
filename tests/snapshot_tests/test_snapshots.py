@@ -1156,3 +1156,9 @@ def test_placeholder_disabled(snap_compare):
 def test_listview_index(snap_compare):
     """Tests that ListView scrolls correctly after updating its index."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "listview_index.py")
+
+
+def test_button_widths(snap_compare):
+    """Test that button widths expand auto containers as expected."""
+    # https://github.com/Textualize/textual/issues/4024
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_widths.py")
