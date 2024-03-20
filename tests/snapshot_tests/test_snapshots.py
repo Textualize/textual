@@ -1160,4 +1160,5 @@ def test_listview_index(snap_compare):
 
 def test_button_widths(snap_compare):
     """Test that button widths expand auto containers as expected."""
+    # https://github.com/Textualize/textual/issues/4024
     assert snap_compare(SNAPSHOT_APPS_DIR / "button_widths.py")
