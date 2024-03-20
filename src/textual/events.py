@@ -660,21 +660,26 @@ class ScreenSuspend(Event, bubble=False):
 
 @rich.repr.auto
 class Print(Event, bubble=False):
-    """Sent to a widget that is capturing prints.
+    """Sent to a widget that is capturing [`print`][print].
 
     - [ ] Bubbles
     - [ ] Verbose
 
     Args:
         text: Text that was printed.
-        stderr: True if the print was to stderr, or False for stdout.
+        stderr: `True` if the print was to stderr, or `False` for stdout.
 
+    Note:
+        Python's [`print`][print] output can be captured with
+        [`App.begin_capture_print`][textual.app.App.begin_capture_print].
     """
 
     def __init__(self, text: str, stderr: bool = False) -> None:
         super().__init__()
         self.text = text
+        """The text that was printed."""
         self.stderr = stderr
+        """`True` if the print was to stderr, or `False` for stdout."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.text
