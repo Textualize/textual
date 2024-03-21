@@ -686,6 +686,9 @@ def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
         run_before=run_before,
     )
 
+def test_markdown_space_squashing(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_whitespace.py")
+
 
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
