@@ -35,8 +35,12 @@ from ..widget import PseudoClasses
 CellCacheKey: TypeAlias = (
     "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
 )
-LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
-RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
+LineCacheKey: TypeAlias = (
+    "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
+)
+RowCacheKey: TypeAlias = (
+    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
+)
 CursorType = Literal["cell", "row", "column", "none"]
 """The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
@@ -602,7 +606,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Initialises a widget to display tabular data.
+        """Initializes a widget to display tabular data.
 
         Args:
             show_header: Whether the table header should be visible or not.
@@ -658,7 +662,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
         """For each row (a row can have a height of multiple lines), we maintain a
-        cache of the fixed and scrollable lines within that row to minimise how often
+        cache of the fixed and scrollable lines within that row to minimize how often
         we need to re-render it. """
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""

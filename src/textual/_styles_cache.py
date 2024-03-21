@@ -10,7 +10,9 @@ from rich.style import Style
 from rich.text import Text
 
 from . import log
+from ._ansi_theme import DEFAULT_TERMINAL_THEME
 from ._border import get_box, render_border_label, render_row
+from ._context import active_app
 from ._opacity import _apply_opacity
 from ._segment_tools import line_pad, line_trim
 from .color import Color
@@ -318,8 +320,14 @@ class StylesCache:
             Returns:
                 New list of segments
             """
+            try:
+                app = active_app.get()
+                ansi_theme = app.ansi_theme
+            except LookupError:
+                ansi_theme = DEFAULT_TERMINAL_THEME
+
             if styles.tint.a:
-                segments = Tint.process_segments(segments, styles.tint)
+                segments = Tint.process_segments(segments, styles.tint, ansi_theme)
             if opacity != 1.0:
                 segments = _apply_opacity(segments, base_background, opacity)
             return segments
@@ -347,9 +355,11 @@ class StylesCache:
                         if label_color.a
                         else None
                     ),
-                    (base_label_background + label_background).rich_color
-                    if label_background.a
-                    else None,
+                    (
+                        (base_label_background + label_background).rich_color
+                        if label_background.a
+                        else None
+                    ),
                 )
                 render_label = (label, style)
             # Try to save time with expensive call to `render_border_label`:
@@ -383,7 +393,7 @@ class StylesCache:
                 has_left,
                 has_right,
                 label_segments,
-                label_alignment,
+                label_alignment,  # type: ignore
             )
 
         # Draw padding (B)

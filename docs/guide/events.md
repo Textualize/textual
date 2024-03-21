@@ -43,7 +43,7 @@ When the `on_key` method returns, Textual will get the next event from the queue
 
 You may be familiar with Python's [super](https://docs.python.org/3/library/functions.html#super) function to call a function defined in a base class. You will not have to use this in event handlers as Textual will automatically call handler methods defined in a widget's base class(es).
 
-For instance, let's say we are building the classic game of Pong and we have written a `Paddle` widget which extends [Static][textual.widgets.Static]. When a [Key][textual.events.Key] event arrives, Textual calls `Paddle.on_key` (to respond to ++left++ and ++right++ keys), then `Static.on_key`, and finally `Widget.on_key`.
+For instance, let's say we are building the classic game of Pong and we have written a `Paddle` widget which extends [Static][textual.widgets.Static]. When a [Key][textual.events.Key] event arrives, Textual calls `Paddle.on_key` (to respond to ++up++ and ++down++ keys), then `Static.on_key`, and finally `Widget.on_key`.
 
 ### Preventing default behaviors
 
@@ -210,6 +210,12 @@ In the following example we have three buttons, each of which does something dif
 
     1. The message handler is called when any button is pressed
 
+=== "on_decorator.tcss"
+
+    ```css title="on_decorator.tcss"
+    --8<-- "docs/examples/events/on_decorator.tcss"
+    ```
+
 === "Output"
 
     ```{.textual path="docs/examples/events/on_decorator01.py"}
@@ -232,6 +238,12 @@ The following example uses the decorator approach to write individual message ha
     1. Matches the button with an id of "bell" (note the `#` to match the id)
     2. Matches the button with class names "toggle" *and* "dark"
     3. Matches the button with an id of "quit"
+
+=== "on_decorator.tcss"
+
+    ```css title="on_decorator.tcss"
+    --8<-- "docs/examples/events/on_decorator.tcss"
+    ```
 
 === "Output"
 
@@ -313,7 +325,7 @@ Let's look at an example which looks up word definitions from an [api](https://d
     ```
 === "dictionary.tcss"
 
-    ```python title="dictionary.tcss"
+    ```css title="dictionary.tcss"
     --8<-- "docs/examples/events/dictionary.tcss"
     ```
 

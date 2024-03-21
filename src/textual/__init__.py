@@ -27,13 +27,21 @@ __all__ = [
 LogCallable: TypeAlias = "Callable"
 
 
-def __getattr__(name: str) -> str:
-    """Lazily get the version."""
-    if name == "__version__":
-        from importlib.metadata import version
+if TYPE_CHECKING:
 
-        return version("textual")
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    from importlib.metadata import version
+
+    __version__ = version("textual")
+
+else:
+
+    def __getattr__(name: str) -> str:
+        """Lazily get the version."""
+        if name == "__version__":
+            from importlib.metadata import version
+
+            return version("textual")
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 class LoggerError(Exception):

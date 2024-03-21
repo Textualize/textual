@@ -18,7 +18,7 @@ class HelloWorld {
 
 class TextAreaCustomLanguage(App):
     def compose(self) -> ComposeResult:
-        text_area = TextArea(text=java_code)
+        text_area = TextArea.code_editor(text=java_code)
         text_area.cursor_blink = False
 
         # Register the Java language and highlight query

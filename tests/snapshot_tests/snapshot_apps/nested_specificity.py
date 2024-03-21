@@ -31,14 +31,15 @@ class NestedCSS(BaseTester):
     DEFAULT_CSS = """
     NestedCSS {
         width: 1fr;
-        height: 1fr;
-        background: green 10%;
-        border: blank;
+        height: 1fr;        
 
         &:focus {
             background: green 20%;
             border: round green;
         }
+
+        background: green 10%;
+        border: blank;
     }
     """
 

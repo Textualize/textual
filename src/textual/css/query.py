@@ -9,7 +9,6 @@ Additional methods apply actions to all nodes in the query.
     If this sounds like JQuery, a (once) popular JS library, it is no coincidence.
 """
 
-
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Generic, Iterable, Iterator, TypeVar, cast, overload
@@ -86,6 +85,7 @@ class DOMQuery(Generic[QueryType]):
         Raises:
             InvalidQueryFormat: If the format of the query is invalid.
         """
+        _rich_traceback_omit = True
         self._node = node
         self._nodes: list[QueryType] | None = None
         self._filters: list[tuple[SelectorSet, ...]] = (
@@ -145,27 +145,28 @@ class DOMQuery(Generic[QueryType]):
         return reversed(self.nodes)
 
     @overload
-    def __getitem__(self, index: int) -> QueryType:
-        ...
+    def __getitem__(self, index: int) -> QueryType: ...
 
     @overload
-    def __getitem__(self, index: slice) -> list[QueryType]:
-        ...
+    def __getitem__(self, index: slice) -> list[QueryType]: ...
 
     def __getitem__(self, index: int | slice) -> QueryType | list[QueryType]:
         return self.nodes[index]
 
     def __rich_repr__(self) -> rich.repr.Result:
-        if self._filters:
-            yield "query", " AND ".join(
-                ",".join(selector.css for selector in selectors)
-                for selectors in self._filters
-            )
-        if self._excludes:
-            yield "exclude", " OR ".join(
-                ",".join(selector.css for selector in selectors)
-                for selectors in self._excludes
-            )
+        try:
+            if self._filters:
+                yield "query", " AND ".join(
+                    ",".join(selector.css for selector in selectors)
+                    for selectors in self._filters
+                )
+            if self._excludes:
+                yield "exclude", " OR ".join(
+                    ",".join(selector.css for selector in selectors)
+                    for selectors in self._excludes
+                )
+        except AttributeError:
+            pass
 
     def filter(self, selector: str) -> DOMQuery[QueryType]:
         """Filter this set by the given CSS selector.
@@ -191,12 +192,10 @@ class DOMQuery(Generic[QueryType]):
         return DOMQuery(self.node, exclude=selector, parent=self)
 
     @overload
-    def first(self) -> QueryType:
-        ...
+    def first(self) -> QueryType: ...
 
     @overload
-    def first(self, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def first(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def first(
         self, expect_type: type[ExpectType] | None = None
@@ -224,15 +223,13 @@ class DOMQuery(Generic[QueryType]):
                     )
             return first
         else:
-            raise NoMatches(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r} on {self.node!r}")
 
     @overload
-    def only_one(self) -> QueryType:
-        ...
+    def only_one(self) -> QueryType: ...
 
     @overload
-    def only_one(self, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def only_one(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def only_one(
         self, expect_type: type[ExpectType] | None = None
@@ -274,12 +271,10 @@ class DOMQuery(Generic[QueryType]):
         return the_one
 
     @overload
-    def last(self) -> QueryType:
-        ...
+    def last(self) -> QueryType: ...
 
     @overload
-    def last(self, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def last(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def last(
         self, expect_type: type[ExpectType] | None = None
@@ -298,7 +293,7 @@ class DOMQuery(Generic[QueryType]):
             The matching Widget.
         """
         if not self.nodes:
-            raise NoMatches(f"No nodes match {self!r}")
+            raise NoMatches(f"No nodes match {self!r} on dom{self.node!r}")
         last = self.nodes[-1]
         if expect_type is not None and not isinstance(last, expect_type):
             raise WrongType(
@@ -307,12 +302,10 @@ class DOMQuery(Generic[QueryType]):
         return last
 
     @overload
-    def results(self) -> Iterator[QueryType]:
-        ...
+    def results(self) -> Iterator[QueryType]: ...
 
     @overload
-    def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]:
-        ...
+    def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]: ...
 
     def results(
         self, filter_type: type[ExpectType] | None = None
@@ -416,17 +409,72 @@ class DOMQuery(Generic[QueryType]):
         return self
 
     def refresh(
-        self, *, repaint: bool = True, layout: bool = False
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
     ) -> DOMQuery[QueryType]:
         """Refresh matched nodes.
 
         Args:
             repaint: Repaint node(s).
             layout: Layout node(s).
+            recompose: Recompose node(s).
 
         Returns:
             Query for chaining.
         """
         for node in self:
-            node.refresh(repaint=repaint, layout=layout)
+            node.refresh(repaint=repaint, layout=layout, recompose=recompose)
+        return self
+
+    def focus(self) -> DOMQuery[QueryType]:
+        """Focus the first matching node that permits focus.
+
+        Returns:
+            Query for chaining.
+        """
+        for node in self:
+            if node.allow_focus():
+                node.focus()
+                break
+        return self
+
+    def blur(self) -> DOMQuery[QueryType]:
+        """Blur the first matching node that is focused.
+
+        Returns:
+            Query for chaining.
+        """
+        focused = self._node.screen.focused
+        if focused is not None:
+            nodes: list[Widget] = list(self)
+            if focused in nodes:
+                self._node.screen._reset_focus(focused, avoiding=nodes)
+        return self
+
+    def set(
+        self,
+        display: bool | None = None,
+        visible: bool | None = None,
+        disabled: bool | None = None,
+        loading: bool | None = None,
+    ) -> DOMQuery[QueryType]:
+        """Sets common attributes on matched nodes.
+
+        Args:
+            display: Set `display` attribute on nodes, or `None` for no change.
+            visible: Set `visible` attribute on nodes, or `None` for no change.
+            disabled: Set `disabled` attribute on nodes, or `None` for no change.
+            loading: Set `loading` attribute on nodes, or `None` for no change.
+
+        Returns:
+            Query for chaining.
+        """
+        for node in self:
+            if display is not None:
+                node.display = display
+            if visible is not None:
+                node.visible = visible
+            if disabled is not None:
+                node.disabled = disabled
+            if loading is not None:
+                node.loading = loading
         return self

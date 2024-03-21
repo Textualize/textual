@@ -3,7 +3,6 @@ A DOMNode is a base class for any object within the Textual Document Object Mode
 which includes all Widgets, Screens, and Apps.
 """
 
-
 from __future__ import annotations
 
 import re
@@ -29,7 +28,7 @@ from rich.style import Style
 from rich.text import Text
 from rich.tree import Tree
 
-from ._context import NoActiveAppError
+from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
 from ._worker_manager import WorkerManager
@@ -42,11 +41,14 @@ from .css.parse import parse_declarations
 from .css.styles import RenderStyles, Styles
 from .css.tokenize import IDENTIFIER
 from .message_pump import MessagePump
-from .reactive import Reactive, _watch
+from .reactive import Reactive, ReactiveError, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
+    from typing_extensions import Self, TypeAlias
+    from _typeshed import SupportsRichComparison
+
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
@@ -55,7 +57,6 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
     from .worker import Worker, WorkType, ResultType
-    from typing_extensions import Self, TypeAlias
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import NoMatches, TooManyMatches, WrongType  # type: ignore  # noqa: F401
@@ -69,6 +70,9 @@ WalkMethod: TypeAlias = Literal["depth", "breadth"]
 """Valid walking methods for the [`DOMNode.walk_children` method][textual.dom.DOMNode.walk_children]."""
 
 
+ReactiveType = TypeVar("ReactiveType")
+
+
 class BadIdentifier(Exception):
     """Exception raised if you supply a `id` attribute or class name in the wrong format."""
 
@@ -80,7 +84,7 @@ def check_identifiers(description: str, *names: str) -> None:
         description: Description of where identifier is used for error message.
         *names: Identifiers to check.
     """
-    match = _re_identifier.match
+    match = _re_identifier.fullmatch
     for name in names:
         if match(name) is None:
             raise BadIdentifier(
@@ -159,6 +163,9 @@ class DOMNode(MessagePump):
 
     _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
+    # Names of potential computed reactives
+    _computes: ClassVar[frozenset[str]]
+
     def __init__(
         self,
         *,
@@ -195,8 +202,128 @@ class DOMNode(MessagePump):
         )
         self._has_hover_style: bool = False
         self._has_focus_within: bool = False
+        self._reactive_connect: (
+            dict[str, tuple[MessagePump, Reactive | object]] | None
+        ) = None
 
         super().__init__()
+
+    def set_reactive(
+        self, reactive: Reactive[ReactiveType], value: ReactiveType
+    ) -> None:
+        """Sets a reactive value *without* invoking validators or watchers.
+
+        Example:
+            ```python
+            self.set_reactive(App.dark_mode, True)
+            ```
+
+        Args:
+            name: Name of reactive attribute.
+            value: New value of reactive.
+
+        Raises:
+            AttributeError: If the first argument is not a reactive.
+        """
+        if not isinstance(reactive, Reactive):
+            raise TypeError(
+                "A Reactive class is required; for example: MyApp.dark_mode"
+            )
+        if reactive.name not in self._reactives:
+            raise AttributeError(
+                "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
+            )
+        setattr(self, f"_reactive_{reactive.name}", value)
+
+    def data_bind(
+        self,
+        *reactives: Reactive[Any],
+        **bind_vars: Reactive[Any] | object,
+    ) -> Self:
+        """Bind reactive data so that changes to a reactive automatically change the reactive on another widget.
+
+        Reactives may be given as positional arguments or keyword arguments.
+        See the [guide on data binding](/guide/reactivity#data-binding).
+
+        Example:
+            ```python
+            def compose(self) -> ComposeResult:
+                yield WorldClock("Europe/London").data_bind(WorldClockApp.time)
+                yield WorldClock("Europe/Paris").data_bind(WorldClockApp.time)
+                yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
+            ```
+
+        Raises:
+            ReactiveError: If the data wasn't bound.
+
+        Returns:
+            Self.
+        """
+        _rich_traceback_omit = True
+
+        parent = active_message_pump.get()
+
+        if self._reactive_connect is None:
+            self._reactive_connect = {}
+        bind_vars = {**{reactive.name: reactive for reactive in reactives}, **bind_vars}
+        for name, reactive in bind_vars.items():
+            if name not in self._reactives:
+                raise ReactiveError(
+                    f"Unable to bind non-reactive attribute {name!r} on {self}"
+                )
+            if isinstance(reactive, Reactive) and not isinstance(
+                parent, reactive.owner
+            ):
+                raise ReactiveError(
+                    f"Unable to bind data; {reactive.owner.__name__} is not defined on {parent.__class__.__name__}."
+                )
+            self._reactive_connect[name] = (parent, reactive)
+        if self._is_mounted:
+            self._initialize_data_bind()
+        else:
+            self.call_later(self._initialize_data_bind)
+        return self
+
+    def _initialize_data_bind(self) -> None:
+        """initialize a data binding.
+
+        Args:
+            compose_parent: The node doing the binding.
+        """
+        if not self._reactive_connect:
+            return
+        for variable_name, (compose_parent, reactive) in self._reactive_connect.items():
+
+            def make_setter(variable_name: str) -> Callable[[object], None]:
+                """Make a setter for the given variable name.
+
+                Args:
+                    variable_name: Name of variable being set.
+
+                Returns:
+                    A callable which takes the value to set.
+                """
+
+                def setter(value: object) -> None:
+                    """Set bound data."""
+                    _rich_traceback_omit = True
+                    Reactive._initialize_object(self)
+                    setattr(self, variable_name, value)
+
+                return setter
+
+            assert isinstance(compose_parent, DOMNode)
+            setter = make_setter(variable_name)
+            if isinstance(reactive, Reactive):
+                self.watch(
+                    compose_parent,
+                    reactive.name,
+                    setter,
+                    init=True,
+                )
+            else:
+                self.call_later(partial(setter, reactive))
+        self._reactive_connect = None
 
     def compose_add_child(self, widget: Widget) -> None:
         """Add a node to children.
@@ -218,6 +345,30 @@ class DOMNode(MessagePump):
             The node's children.
         """
         return self._nodes
+
+    def sort_children(
+        self,
+        *,
+        key: Callable[[Widget], SupportsRichComparison] | None = None,
+        reverse: bool = False,
+    ) -> None:
+        """Sort child widgets with an optional key function.
+
+        If `key` is not provided then widgets will be sorted in the order they are constructed.
+
+        Example:
+            ```python
+            # Sort widgets by name
+            screen.sort_children(key=lambda widget: widget.name or "")
+            ```
+
+        Args:
+            key: A callable which accepts a widget and returns something that can be sorted,
+                or `None` to sort without a key function.
+            reverse: Sort in descending order.
+        """
+        self._nodes._sort(key=key, reverse=reverse)
+        self.refresh(layout=True)
 
     @property
     def auto_refresh(self) -> float | None:
@@ -325,6 +476,13 @@ class DOMNode(MessagePump):
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
+        cls._computes = frozenset(
+            [
+                name.lstrip("_")[8:]
+                for name in dir(cls)
+                if name.startswith(("_compute_", "compute_"))
+            ]
+        )
 
     def get_component_styles(self, name: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
@@ -1030,8 +1188,7 @@ class DOMNode(MessagePump):
         with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
-    ) -> list[WalkType]:
-        ...
+    ) -> list[WalkType]: ...
 
     @overload
     def walk_children(
@@ -1040,8 +1197,7 @@ class DOMNode(MessagePump):
         with_self: bool = False,
         method: WalkMethod = "depth",
         reverse: bool = False,
-    ) -> list[DOMNode]:
-        ...
+    ) -> list[DOMNode]: ...
 
     def walk_children(
         self,
@@ -1078,20 +1234,18 @@ class DOMNode(MessagePump):
         return cast("list[DOMNode]", nodes)
 
     @overload
-    def query(self, selector: str | None) -> DOMQuery[Widget]:
-        ...
+    def query(self, selector: str | None) -> DOMQuery[Widget]: ...
 
     @overload
-    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]:
-        ...
+    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
     def query(
         self, selector: str | type[QueryType] | None = None
     ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
-        """Get a DOM query matching a selector.
+        """Query the DOM for children that match a selector or widget type.
 
         Args:
-            selector: A CSS selector or `None` for all nodes.
+            selector: A CSS selector, widget type, or `None` for all nodes.
 
         Returns:
             A query object.
@@ -1105,26 +1259,23 @@ class DOMNode(MessagePump):
             return DOMQuery[QueryType](self, filter=selector.__name__)
 
     @overload
-    def query_one(self, selector: str) -> Widget:
-        ...
+    def query_one(self, selector: str) -> Widget: ...
 
     @overload
-    def query_one(self, selector: type[QueryType]) -> QueryType:
-        ...
+    def query_one(self, selector: type[QueryType]) -> QueryType: ...
 
     @overload
-    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType:
-        ...
+    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType: ...
 
     def query_one(
         self,
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
     ) -> QueryType | Widget:
-        """Get a single Widget matching the given selector or selector type.
+        """Get a widget from this widget's children that matches a selector or widget type.
 
         Args:
-            selector: A selector.
+            selector: A selector or widget type.
             expect_type: Require the object be of the supplied type, or None for any type.
 
         Raises:
@@ -1297,5 +1448,18 @@ class DOMNode(MessagePump):
         """
         return class_names.issubset(self.get_pseudo_classes())
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
+    ) -> Self:
         return self
+
+    async def action_toggle(self, attribute_name: str) -> None:
+        """Toggle an attribute on the node.
+
+        Assumes the attribute is a bool.
+
+        Args:
+            attribute_name: Name of the attribute.
+        """
+        value = getattr(self, attribute_name)
+        setattr(self, attribute_name, not value)
