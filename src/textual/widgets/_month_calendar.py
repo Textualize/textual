@@ -4,6 +4,7 @@ import calendar
 import datetime
 from typing import Sequence
 
+# TODO: Does `python-dateutil` need adding as a dependency?
 from dateutil.relativedelta import relativedelta  # type: ignore[import-untyped]
 from rich.text import Text
 
