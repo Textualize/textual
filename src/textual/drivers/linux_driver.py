@@ -42,8 +42,8 @@ class LinuxDriver(Driver):
             size: Initial size of the terminal or `None` to detect.
         """
         super().__init__(app, debug=debug, size=size)
-        self._file = sys.__stdout__
-        self.fileno = sys.stdin.fileno()
+        self._file = sys.__stderr__
+        self.fileno = sys.__stdin__.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
@@ -232,6 +232,7 @@ class LinuxDriver(Driver):
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1003h\n")
+        self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
@@ -259,7 +260,19 @@ class LinuxDriver(Driver):
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
-        return attrs & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+        """Patch termios lflag.
+
+        Args:
+            attributes: New set attributes.
+
+        Returns:
+            New lflag.
+
+        """
+        # if TEXTUAL_ALLOW_SIGNALS env var is set, then allow Ctrl+C to send signals
+        ISIG = 0 if os.environ.get("TEXTUAL_ALLOW_SIGNALS") else termios.ISIG
+
+        return attrs & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | ISIG)
 
     @classmethod
     def _patch_iflag(cls, attrs: int) -> int:
@@ -304,6 +317,7 @@ class LinuxDriver(Driver):
 
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
+            self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
             self.flush()
 
     def close(self) -> None:
@@ -328,15 +342,16 @@ class LinuxDriver(Driver):
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
-        selector = selectors.DefaultSelector()
+        selector = selectors.SelectSelector()
         selector.register(self.fileno, selectors.EVENT_READ)
 
         fileno = self.fileno
+        EVENT_READ = selectors.EVENT_READ
 
         def more_data() -> bool:
             """Check if there is more data to parse."""
-            EVENT_READ = selectors.EVENT_READ
-            for key, events in selector.select(0.01):
+
+            for _key, events in selector.select(0.01):
                 if events & EVENT_READ:
                     return True
             return False
@@ -347,14 +362,15 @@ class LinuxDriver(Driver):
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
-        EVENT_READ = selectors.EVENT_READ
 
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
                     if mask & EVENT_READ:
-                        unicode_data = decode(read(fileno, 1024))
+                        unicode_data = decode(
+                            read(fileno, 1024), final=self.exit_event.is_set()
+                        )
                         for event in feed(unicode_data):
                             self.process_event(event)
         finally:

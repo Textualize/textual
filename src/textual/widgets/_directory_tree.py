@@ -332,6 +332,7 @@ class DirectoryTree(Tree[DirEntry]):
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
+        self.reset_node(self.root, str(self.path), DirEntry(self.PATH(self.path)))
         await self.reload()
 
     def process_label(self, label: TextType) -> Text:

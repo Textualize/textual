@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
-from rich.console import RenderableType
-
+if TYPE_CHECKING:
+    from ..app import RenderResult
 from ..binding import Binding, BindingType
 from ..events import Click
 from ..geometry import Size
@@ -26,7 +26,7 @@ class Switch(Widget, can_focus=True):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("enter,space", "toggle_switch", "Toggle", show=False),
     ]
     """
     | Key(s) | Description |
@@ -130,7 +130,12 @@ class Switch(Widget, can_focus=True):
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0
         if self._should_animate:
-            self.animate("slider_pos", target_slider_pos, duration=0.3)
+            self.animate(
+                "slider_pos",
+                target_slider_pos,
+                duration=0.3,
+                level="basic",
+            )
         else:
             self.slider_pos = target_slider_pos
         self.post_message(self.Changed(self, self.value))
@@ -138,7 +143,7 @@ class Switch(Widget, can_focus=True):
     def watch_slider_pos(self, slider_pos: float) -> None:
         self.set_class(slider_pos == 1, "-on")
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         style = self.get_component_rich_style("switch--slider")
         return ScrollBarRender(
             virtual_size=100,
@@ -159,7 +164,7 @@ class Switch(Widget, can_focus=True):
         event.stop()
         self.toggle()
 
-    def action_toggle(self) -> None:
+    def action_toggle_switch(self) -> None:
         """Toggle the state of the switch."""
         self.toggle()
 

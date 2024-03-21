@@ -46,6 +46,9 @@ from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
 
 if TYPE_CHECKING:
+    from typing_extensions import Self, TypeAlias
+    from _typeshed import SupportsRichComparison
+
     from rich.console import RenderableType
     from .app import App
     from .css.query import DOMQuery, QueryType
@@ -54,7 +57,6 @@ if TYPE_CHECKING:
     from .screen import Screen
     from .widget import Widget
     from .worker import Worker, WorkType, ResultType
-    from typing_extensions import Self, TypeAlias
 
     # Unused & ignored imports are needed for the docs to link to these objects:
     from .css.query import NoMatches, TooManyMatches, WrongType  # type: ignore  # noqa: F401
@@ -161,6 +163,9 @@ class DOMNode(MessagePump):
 
     _decorated_handlers: dict[type[Message], list[tuple[Callable, str | None]]]
 
+    # Names of potential computed reactives
+    _computes: ClassVar[frozenset[str]]
+
     def __init__(
         self,
         *,
@@ -248,7 +253,6 @@ class DOMNode(MessagePump):
                 yield WorldClock("Asia/Tokyo").data_bind(WorldClockApp.time)
             ```
 
-
         Raises:
             ReactiveError: If the data wasn't bound.
 
@@ -274,7 +278,10 @@ class DOMNode(MessagePump):
                     f"Unable to bind data; {reactive.owner.__name__} is not defined on {parent.__class__.__name__}."
                 )
             self._reactive_connect[name] = (parent, reactive)
-        self._initialize_data_bind()
+        if self._is_mounted:
+            self._initialize_data_bind()
+        else:
+            self.call_later(self._initialize_data_bind)
         return self
 
     def _initialize_data_bind(self) -> None:
@@ -312,7 +319,7 @@ class DOMNode(MessagePump):
                     compose_parent,
                     reactive.name,
                     setter,
-                    init=self._parent is not None,
+                    init=True,
                 )
             else:
                 self.call_later(partial(setter, reactive))
@@ -338,6 +345,30 @@ class DOMNode(MessagePump):
             The node's children.
         """
         return self._nodes
+
+    def sort_children(
+        self,
+        *,
+        key: Callable[[Widget], SupportsRichComparison] | None = None,
+        reverse: bool = False,
+    ) -> None:
+        """Sort child widgets with an optional key function.
+
+        If `key` is not provided then widgets will be sorted in the order they are constructed.
+
+        Example:
+            ```python
+            # Sort widgets by name
+            screen.sort_children(key=lambda widget: widget.name or "")
+            ```
+
+        Args:
+            key: A callable which accepts a widget and returns something that can be sorted,
+                or `None` to sort without a key function.
+            reverse: Sort in descending order.
+        """
+        self._nodes._sort(key=key, reverse=reverse)
+        self.refresh(layout=True)
 
     @property
     def auto_refresh(self) -> float | None:
@@ -445,6 +476,13 @@ class DOMNode(MessagePump):
             css_type_names.add(base.__name__)
         cls._merged_bindings = cls._merge_bindings()
         cls._css_type_names = frozenset(css_type_names)
+        cls._computes = frozenset(
+            [
+                name.lstrip("_")[8:]
+                for name in dir(cls)
+                if name.startswith(("_compute_", "compute_"))
+            ]
+        )
 
     def get_component_styles(self, name: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
@@ -1204,10 +1242,10 @@ class DOMNode(MessagePump):
     def query(
         self, selector: str | type[QueryType] | None = None
     ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
-        """Get a DOM query matching a selector.
+        """Query the DOM for children that match a selector or widget type.
 
         Args:
-            selector: A CSS selector or `None` for all nodes.
+            selector: A CSS selector, widget type, or `None` for all nodes.
 
         Returns:
             A query object.
@@ -1234,10 +1272,10 @@ class DOMNode(MessagePump):
         selector: str | type[QueryType],
         expect_type: type[QueryType] | None = None,
     ) -> QueryType | Widget:
-        """Get a single Widget matching the given selector or selector type.
+        """Get a widget from this widget's children that matches a selector or widget type.
 
         Args:
-            selector: A selector.
+            selector: A selector or widget type.
             expect_type: Require the object be of the supplied type, or None for any type.
 
         Raises:
@@ -1410,7 +1448,9 @@ class DOMNode(MessagePump):
         """
         return class_names.issubset(self.get_pseudo_classes())
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> Self:
+    def refresh(
+        self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
+    ) -> Self:
         return self
 
     async def action_toggle(self, attribute_name: str) -> None:

@@ -52,11 +52,11 @@ from weakref import WeakKeyDictionary, WeakSet
 
 import rich
 import rich.repr
-from rich import terminal_theme
 from rich.console import Console, RenderableType
 from rich.control import Control
 from rich.protocol import is_renderable
 from rich.segment import Segment, Segments
+from rich.terminal_theme import TerminalTheme
 
 from . import (
     Logger,
@@ -71,6 +71,7 @@ from . import (
 )
 from ._animator import DEFAULT_EASING, Animatable, Animator, EasingFunction
 from ._ansi_sequences import SYNC_END, SYNC_START
+from ._ansi_theme import ALABASTER, MONOKAI
 from ._callback import invoke
 from ._compose import compose
 from ._compositor import CompositorUpdate
@@ -78,6 +79,7 @@ from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
+from ._types import AnimationLevel
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
@@ -88,12 +90,13 @@ from .css.errors import StylesheetError
 from .css.query import NoMatches
 from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
-from .dom import DOMNode
+from .dom import DOMNode, NoScreen
 from .driver import Driver
 from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
+from .filter import ANSIToTruecolor, DimFilter, Monochrome
 from .geometry import Offset, Region, Size
 from .keys import (
     REPLACED_KEYS,
@@ -118,7 +121,7 @@ from .worker import NoActiveWorker, get_current_worker
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
-    from typing_extensions import Coroutine, Literal, TypeAlias
+    from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
     from ._system_commands import SystemCommands
     from ._types import MessageTarget
@@ -396,6 +399,12 @@ class App(Generic[ReturnType], DOMNode):
     get focus when the terminal widget has focus.
     """
 
+    ansi_theme_dark = Reactive(MONOKAI, init=False)
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in dark mode."""
+
+    ansi_theme_light = Reactive(ALABASTER, init=False)
+    """Maps ANSI colors to hex colors using a Rich TerminalTheme object while in light mode."""
+
     def __init__(
         self,
         driver_class: Type[Driver] | None = None,
@@ -420,21 +429,17 @@ class App(Generic[ReturnType], DOMNode):
         super().__init__()
         self.features: frozenset[FeatureFlag] = parse_features(os.getenv("TEXTUAL", ""))
 
-        self._filters: list[LineFilter] = []
+        ansi_theme = self.ansi_theme_dark if self.dark else self.ansi_theme_light
+        self._filters: list[LineFilter] = [ANSIToTruecolor(ansi_theme)]
+
         environ = dict(os.environ)
         no_color = environ.pop("NO_COLOR", None)
         if no_color is not None:
-            from .filter import ANSIToTruecolor, Monochrome
-
-            self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
             self._filters.append(Monochrome())
 
         for filter_name in constants.FILTERS.split(","):
             filter = filter_name.lower().strip()
             if filter == "dim":
-                from .filter import ANSIToTruecolor, DimFilter
-
-                self._filters.append(ANSIToTruecolor(terminal_theme.DIMMED_MONOKAI))
                 self._filters.append(DimFilter())
 
         self.console = Console(
@@ -549,6 +554,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self._compose_stacks: list[list[Widget]] = []
         self._composed: list[list[Widget]] = []
+        self._recompose_required = False
 
         self.devtools: DevtoolsClient | None = None
         self._devtools_redirector: StdoutRedirector | None = None
@@ -616,6 +622,19 @@ class App(Generic[ReturnType], DOMNode):
 
         self.set_class(self.dark, "-dark-mode")
         self.set_class(not self.dark, "-light-mode")
+
+        self.animation_level: AnimationLevel = constants.TEXTUAL_ANIMATIONS
+        """Determines what type of animations the app will display.
+
+        See [`textual.constants.TEXTUAL_ANIMATIONS`][textual.constants.TEXTUAL_ANIMATIONS].
+        """
+
+        self._last_focused_on_app_blur: Widget | None = None
+        """The widget that had focus when the last `AppBlur` happened.
+
+        This will be used to restore correct focus when an `AppFocus`
+        happens.
+        """
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -712,6 +731,7 @@ class App(Generic[ReturnType], DOMNode):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -726,6 +746,7 @@ class App(Generic[ReturnType], DOMNode):
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self._animate(
             attribute,
@@ -736,6 +757,7 @@ class App(Generic[ReturnType], DOMNode):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
+            level=level,
         )
 
     async def stop_animation(self, attribute: str, complete: bool = True) -> None:
@@ -873,7 +895,39 @@ class App(Generic[ReturnType], DOMNode):
         """
         self.set_class(dark, "-dark-mode", update=False)
         self.set_class(not dark, "-light-mode", update=False)
+        self._refresh_truecolor_filter(self.ansi_theme)
         self.call_later(self.refresh_css)
+
+    def watch_ansi_theme_dark(self, theme: TerminalTheme) -> None:
+        if self.dark:
+            self._refresh_truecolor_filter(theme)
+            self.call_later(self.refresh_css)
+
+    def watch_ansi_theme_light(self, theme: TerminalTheme) -> None:
+        if not self.dark:
+            self._refresh_truecolor_filter(theme)
+            self.call_later(self.refresh_css)
+
+    @property
+    def ansi_theme(self) -> TerminalTheme:
+        """The ANSI TerminalTheme currently being used.
+
+        Defines how colors defined as ANSI (e.g. `magenta`) inside Rich renderables
+        are mapped to hex codes.
+        """
+        return self.ansi_theme_dark if self.dark else self.ansi_theme_light
+
+    def _refresh_truecolor_filter(self, theme: TerminalTheme) -> None:
+        """Update the ANSI to Truecolor filter, if available, with a new theme mapping.
+
+        Args:
+            theme: The new terminal theme to use for mapping ANSI to truecolor.
+        """
+        filters = self._filters
+        for index, filter in enumerate(filters):
+            if isinstance(filter, ANSIToTruecolor):
+                filters[index] = ANSIToTruecolor(theme)
+                return
 
     def get_driver_class(self) -> Type[Driver]:
         """Get a driver class for this platform.
@@ -1146,7 +1200,7 @@ class App(Generic[ReturnType], DOMNode):
     def save_screenshot(
         self,
         filename: str | None = None,
-        path: str = "./",
+        path: str | None = None,
         time_format: str | None = None,
     ) -> str:
         """Save an SVG screenshot of the current screen.
@@ -1161,7 +1215,8 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Filename of screenshot.
         """
-        if filename is None:
+        path = path or "./"
+        if not filename:
             if time_format is None:
                 dt = datetime.now().isoformat()
             else:
@@ -1227,9 +1282,7 @@ class App(Generic[ReturnType], DOMNode):
             if key.startswith("wait:"):
                 _, wait_ms = key.split(":")
                 await asyncio.sleep(float(wait_ms) / 1000)
-                await wait_for_idle(0)
                 await app._animator.wait_until_complete()
-                await wait_for_idle(0)
             else:
                 if len(key) == 1 and not key.isalnum():
                     key = _character_to_key(key)
@@ -1240,7 +1293,7 @@ class App(Generic[ReturnType], DOMNode):
                 except KeyError:
                     char = key if len(key) == 1 else None
                 key_event = events.Key(key, char)
-                key_event._set_sender(app)
+                key_event.set_sender(app)
                 driver.send_event(key_event)
                 await wait_for_idle(0)
                 await app._animator.wait_until_complete()
@@ -1547,7 +1600,7 @@ class App(Generic[ReturnType], DOMNode):
                 for screen in self.screen_stack:
                     self.stylesheet.update(screen)
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         return Blank(self.styles.background)
 
     ExpectType = TypeVar("ExpectType", bound=Widget)
@@ -2390,7 +2443,10 @@ class App(Generic[ReturnType], DOMNode):
 
         async def take_screenshot() -> None:
             """Take a screenshot and exit."""
-            self.save_screenshot()
+            self.save_screenshot(
+                path=constants.SCREENSHOT_LOCATION,
+                filename=constants.SCREENSHOT_FILENAME,
+            )
             self.exit()
 
         if constants.SCREENSHOT_DELAY >= 0:
@@ -2409,8 +2465,20 @@ class App(Generic[ReturnType], DOMNode):
 
         await self.mount_all(widgets)
 
-    def _on_idle(self) -> None:
-        """Perform actions when there are no messages in the queue."""
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
+        """Recompose the widget.
+
+        Recomposing will remove children and call `self.compose` again to remount.
+        """
+        async with self.screen.batch():
+            await self.screen.query("*").exclude(".-textual-system").remove()
+            await self.screen.mount_all(compose(self))
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
@@ -2601,10 +2669,32 @@ class App(Generic[ReturnType], DOMNode):
         self._begin_batch()  # Prevent repaint / layout while shutting down
         await self._message_queue.put(None)
 
-    def refresh(self, *, repaint: bool = True, layout: bool = False) -> None:
+    def refresh(
+        self,
+        *,
+        repaint: bool = True,
+        layout: bool = False,
+        recompose: bool = False,
+    ) -> Self:
+        """Refresh the entire screen.
+
+        Args:
+            repaint: Repaint the widget (will call render() again).
+            layout: Also layout widgets in the view.
+            recompose: Re-compose the widget (will remove and re-mount children).
+
+        Returns:
+            The `App` instance.
+        """
+        if recompose:
+            self._recompose_required = recompose
+            self.call_next(self._check_recompose)
+            return self
+
         if self._screen_stack:
             self.screen.refresh(repaint=repaint, layout=layout)
         self.check_idle()
+        return self
 
     def refresh_css(self, animate: bool = True) -> None:
         """Refresh CSS.
@@ -2616,7 +2706,7 @@ class App(Generic[ReturnType], DOMNode):
         stylesheet.set_variables(self.get_css_variables())
         stylesheet.reparse()
         stylesheet.update(self.app, animate=animate)
-        self.screen._refresh_layout(self.size, full=True)
+        self.screen._refresh_layout(self.size)
         # The other screens in the stack will need to know about some style
         # changes, as a final pass let's check in on every screen that isn't
         # the current one and update them too.
@@ -3114,10 +3204,27 @@ class App(Generic[ReturnType], DOMNode):
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
         if focus:
-            focused = self.screen.focused
-            self.screen.set_focus(None)
-            self.screen.set_focus(focused)
+            # If we've got a last-focused widget, if it still has a screen,
+            # and if the screen is still the current screen and if nothing
+            # is focused right now...
+            try:
+                if (
+                    self._last_focused_on_app_blur is not None
+                    and self._last_focused_on_app_blur.screen is self.screen
+                    and self.screen.focused is None
+                ):
+                    # ...settle focus back on that widget.
+                    self.screen.set_focus(self._last_focused_on_app_blur)
+            except NoScreen:
+                pass
+            # Now that we have focus back on the app and we don't need the
+            # widget reference any more, don't keep it hanging around here.
+            self._last_focused_on_app_blur = None
         else:
+            # Remember which widget has focus, when the app gets focus back
+            # we'll want to try and focus it again.
+            self._last_focused_on_app_blur = self.screen.focused
+            # Remove focus for now.
             self.screen.set_focus(None)
 
     async def action_check_bindings(self, key: str) -> None:

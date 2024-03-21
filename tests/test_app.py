@@ -1,5 +1,7 @@
 import contextlib
 
+from rich.terminal_theme import DIMMED_MONOKAI, MONOKAI, NIGHT_OWLISH
+
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Input
 
@@ -117,3 +119,24 @@ async def test_no_return_code_while_running():
     app = App()
     async with app.run_test():
         assert app.return_code is None
+
+
+async def test_ansi_theme():
+    app = App()
+    async with app.run_test():
+        app.ansi_theme_dark = NIGHT_OWLISH
+        assert app.ansi_theme == NIGHT_OWLISH
+
+        app.dark = False
+        assert app.ansi_theme != NIGHT_OWLISH
+
+        app.ansi_theme_light = MONOKAI
+        assert app.ansi_theme == MONOKAI
+
+        # Ensure if we change the dark theme while on light mode,
+        # then change back to dark mode, the dark theme is updated.
+        app.ansi_theme_dark = DIMMED_MONOKAI
+        assert app.ansi_theme == MONOKAI
+
+        app.dark = True
+        assert app.ansi_theme == DIMMED_MONOKAI

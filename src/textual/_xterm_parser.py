@@ -4,6 +4,8 @@ import re
 import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
+from typing_extensions import Final
+
 from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from ._parser import Awaitable, Parser, TokenCallback
@@ -18,8 +20,15 @@ _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z"
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
-_re_bracketed_paste_start = re.compile(r"^\x1b\[200~$")
-_re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
+
+BRACKETED_PASTE_START: Final[str] = "\x1b[200~"
+"""Sequence received when a bracketed paste event starts."""
+BRACKETED_PASTE_END: Final[str] = "\x1b[201~"
+"""Sequence received when a bracketed paste event ends."""
+FOCUSIN: Final[str] = "\x1b[I"
+"""Sequence received when the terminal receives focus."""
+FOCUSOUT: Final[str] = "\x1b[O"
+"""Sequence received when focus is lost from the terminal."""
 
 
 class XTermParser(Parser[events.Event]):
@@ -202,15 +211,19 @@ class XTermParser(Parser[events.Event]):
 
                     self.debug_log(f"sequence={sequence!r}")
 
-                    bracketed_paste_start_match = _re_bracketed_paste_start.match(
-                        sequence
-                    )
-                    if bracketed_paste_start_match is not None:
+                    if sequence == FOCUSIN:
+                        on_token(events.AppFocus())
+                        break
+
+                    if sequence == FOCUSOUT:
+                        on_token(events.AppBlur())
+                        break
+
+                    if sequence == BRACKETED_PASTE_START:
                         bracketed_paste = True
                         break
 
-                    bracketed_paste_end_match = _re_bracketed_paste_end.match(sequence)
-                    if bracketed_paste_end_match is not None:
+                    if sequence == BRACKETED_PASTE_END:
                         bracketed_paste = False
                         break
 

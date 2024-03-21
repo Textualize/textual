@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, cast
 
 from rich.console import RenderableType
-from rich.highlighter import ReprHighlighter
+from rich.highlighter import Highlighter, ReprHighlighter
 from rich.measure import measure_renderables
 from rich.pretty import Pretty
 from rich.protocol import is_renderable
@@ -86,10 +86,17 @@ class RichLog(ScrollView, can_focus=True):
         """Apply Rich console markup."""
         self.auto_scroll = auto_scroll
         """Automatically scroll to the end on write."""
-        self.highlighter = ReprHighlighter()
+        self.highlighter: Highlighter = ReprHighlighter()
+        """Rich Highlighter used to highlight content when highlight is True"""
+
+        self._last_container_width: int = min_width
+        """Record the last width we rendered content at."""
 
     def notify_style_update(self) -> None:
         self._line_cache.clear()
+
+    def on_resize(self) -> None:
+        self._last_container_width = self.scrollable_content_region.width
 
     def _make_renderable(self, content: RenderableType | object) -> RenderableType:
         """Make content renderable.
@@ -153,14 +160,22 @@ class RichLog(ScrollView, can_focus=True):
         render_width = measure_renderables(
             console, render_options, [renderable]
         ).maximum
+
         container_width = (
             self.scrollable_content_region.width if width is None else width
         )
-        if container_width:
-            if expand and render_width < container_width:
-                render_width = container_width
-            if shrink and render_width > container_width:
-                render_width = container_width
+
+        # Use the container_width if it's available, otherwise use the last available width.
+        container_width = (
+            container_width if container_width else self._last_container_width
+        )
+
+        if expand and render_width < container_width:
+            render_width = container_width
+        if shrink and render_width > container_width:
+            render_width = container_width
+
+        render_width = max(render_width, self.min_width)
 
         segments = self.app.console.render(
             renderable, render_options.update_width(render_width)

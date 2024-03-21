@@ -3,14 +3,14 @@ from __future__ import annotations
 import dataclasses
 import re
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, ClassVar, Iterable, Optional, Tuple
+from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
 
 from rich.style import Style
 from rich.text import Text
-from typing_extensions import Literal, Protocol, runtime_checkable
+from typing_extensions import Literal
 
 from textual._text_area_theme import TextAreaTheme
 from textual._tree_sitter import TREE_SITTER
@@ -24,6 +24,8 @@ from textual.document._document import (
     _utf8_encode,
 )
 from textual.document._document_navigator import DocumentNavigator
+from textual.document._edit import Edit
+from textual.document._history import EditHistory
 from textual.document._languages import BUILTIN_LANGUAGES
 from textual.document._syntax_aware_document import (
     SyntaxAwareDocument,
@@ -83,49 +85,59 @@ class TextAreaLanguage:
     highlight_query: str
 
 
-class TextArea(ScrollView, can_focus=True):
+class TextArea(ScrollView):
     DEFAULT_CSS = """\
 TextArea {
     width: 1fr;
     height: 1fr;
     border: tall $background;
     padding: 0 1;
-    
+
+    & .text-area--gutter {
+        color: $text 40%;
+    }
+
+    & .text-area--cursor-gutter {
+        color: $text 60%;
+        background: $boost;
+        text-style: bold;
+    }
+
+    & .text-area--cursor-line {
+       background: $boost;
+    }
+
+    & .text-area--selection {
+        background: $accent-lighten-1 40%;
+    }
+
+    & .text-area--matching-bracket {
+        background: $foreground 30%;
+    }
+
     &:focus {
         border: tall $accent;
     }
-}
 
-.text-area--cursor {
-    color: $text 90%;
-    background: $foreground 90%;
-}
+    &:dark {
+        .text-area--cursor {
+           color: $text 90%;
+            background: $foreground 90%;
+        }
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
+        }
+    }
 
-TextArea:light .text-area--cursor {
-    color: $text 90%;
-    background: $foreground 70%;
-}
-
-.text-area--gutter {
-    color: $text 40%;
-}
-
-.text-area--cursor-line {
-    background: $boost;
-}
-
-.text-area--cursor-gutter {
-    color: $text 60%;
-    background: $boost;
-    text-style: bold;
-}
-
-.text-area--selection {
-    background: $accent-lighten-1 40%;
-}
-
-.text-area--matching-bracket {
-    background: $foreground 30%;
+    &:light {
+        .text-area--cursor {
+            color: $text 90%;
+            background: $foreground 70%;
+        }
+        &.-read-only .text-area--cursor {
+            background: $warning-darken-1;
+        }
+    }
 }
 """
 
@@ -139,9 +151,9 @@ TextArea:light .text-area--cursor {
     }
     """
     `TextArea` offers some component classes which can be used to style aspects of the widget.
-    
+
     Note that any attributes provided in the chosen `TextAreaTheme` will take priority here.
-    
+
     | Class | Description |
     | :- | :- |
     | `text-area--cursor` | Target the cursor. |
@@ -207,7 +219,14 @@ TextArea:light .text-area--cursor {
         Binding(
             "ctrl+u", "delete_to_start_of_line", "delete to line start", show=False
         ),
-        Binding("ctrl+k", "delete_to_end_of_line", "delete to line end", show=False),
+        Binding(
+            "ctrl+k",
+            "delete_to_end_of_line_or_delete_line",
+            "delete to line end",
+            show=False,
+        ),
+        Binding("ctrl+z", "undo", "Undo", show=False),
+        Binding("ctrl+y", "redo", "Redo", show=False),
     ]
     """
     | Key(s)                 | Description                                  |
@@ -239,6 +258,8 @@ TextArea:light .text-area--cursor {
     | ctrl+k                 | Delete from cursor to the end of the line.   |
     | f6                     | Select the current line.                     |
     | f7                     | Select all text in the document.             |
+    | ctrl+z                 | Undo.                                        |
+    | ctrl+y                 | Redo.                                        |
     """
 
     language: Reactive[str | None] = reactive(None, always_update=True, init=False)
@@ -252,7 +273,7 @@ TextArea:light .text-area--cursor {
     it first using  [`TextArea.register_language`][textual.widgets._text_area.TextArea.register_language].
     """
 
-    theme: Reactive[str | None] = reactive(None, always_update=True, init=False)
+    theme: Reactive[str] = reactive("css", always_update=True, init=False)
     """The name of the theme to use.
 
     Themes must be registered using  [`TextArea.register_theme`][textual.widgets._text_area.TextArea.register_theme] before they can be used.
@@ -295,6 +316,14 @@ TextArea:light .text-area--cursor {
     soft_wrap: Reactive[bool] = reactive(True, init=False)
     """True if text should soft wrap."""
 
+    read_only: Reactive[bool] = reactive(False)
+    """True if the content is read-only.
+
+    Read-only means end users cannot insert, delete or replace content.
+
+    The document can still be edited programmatically via the API.
+    """
+
     _cursor_visible: Reactive[bool] = reactive(False, repaint=False, init=False)
     """Indicates where the cursor is in the blink cycle. If it's currently
     not visible due to blinking, this is False."""
@@ -335,10 +364,12 @@ TextArea:light .text-area--cursor {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = None,
+        theme: str = "css",
         soft_wrap: bool = True,
-        tab_behaviour: Literal["focus", "indent"] = "focus",
+        tab_behavior: Literal["focus", "indent"] = "focus",
+        read_only: bool = False,
         show_line_numbers: bool = False,
+        max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -351,15 +382,16 @@ TextArea:light .text-area--cursor {
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            read_only: Enable read-only mode. This prevents edits using the keyboard.
             show_line_numbers: Show line numbers on the left edge.
+            max_checkpoints: The maximum number of undo history checkpoints to retain.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self._initial_text = text
 
         self._languages: dict[str, TextAreaLanguage] = {}
         """Maps language names to TextAreaLanguage."""
@@ -373,7 +405,11 @@ TextArea:light .text-area--cursor {
         self._word_pattern = re.compile(r"(?<=\W)(?=\w)|(?<=\w)(?=\W)")
         """Compiled regular expression for what we consider to be a 'word'."""
 
-        self._undo_stack: list[Undoable] = []
+        self.history: EditHistory = EditHistory(
+            max_checkpoints=max_checkpoints,
+            checkpoint_timer=2.0,
+            checkpoint_max_characters=100,
+        )
         """A stack (the end of the list is the top of the stack) for tracking edits."""
 
         self._selecting = False
@@ -387,7 +423,7 @@ TextArea:light .text-area--cursor {
         self._highlights: dict[int, list[Highlight]] = defaultdict(list)
         """Mapping line numbers to the set of highlights for that line."""
 
-        self._highlight_query: "Query" | None = None
+        self._highlight_query: "Query | None" = None
         """The query that's currently being used for highlighting."""
 
         self.document: DocumentBase = Document(text)
@@ -405,20 +441,19 @@ TextArea:light .text-area--cursor {
 
         self._set_document(text, language)
 
-        self._theme: TextAreaTheme | None = None
+        self.language = language
+        self.theme = theme
+
+        self._theme: TextAreaTheme
         """The `TextAreaTheme` corresponding to the set theme name. When the `theme`
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
 
-        self.language = language
+        self.set_reactive(TextArea.soft_wrap, soft_wrap)
+        self.set_reactive(TextArea.read_only, read_only)
+        self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
 
-        self.theme = theme
-
-        self._reactive_soft_wrap = soft_wrap
-
-        self._reactive_show_line_numbers = show_line_numbers
-
-        self.tab_behaviour = tab_behaviour
+        self.tab_behavior = tab_behavior
 
         # When `app.dark` is toggled, reset the theme (since it caches values).
         self.watch(self.app, "dark", self._app_dark_toggled, init=False)
@@ -429,10 +464,12 @@ TextArea:light .text-area--cursor {
         text: str = "",
         *,
         language: str | None = None,
-        theme: str | None = "monokai",
+        theme: str = "monokai",
         soft_wrap: bool = False,
-        tab_behaviour: Literal["focus", "indent"] = "indent",
+        tab_behavior: Literal["focus", "indent"] = "indent",
+        read_only: bool = False,
         show_line_numbers: bool = True,
+        max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
@@ -441,14 +478,14 @@ TextArea:light .text-area--cursor {
         """Construct a new `TextArea` with sensible defaults for editing code.
 
         This instantiates a `TextArea` with line numbers enabled, soft wrapping
-        disabled, and "indent" tab behaviour.
+        disabled, "indent" tab behavior, and the "monokai" theme.
 
         Args:
             text: The initial text to load into the TextArea.
             language: The language to use.
             theme: The theme to use.
             soft_wrap: Enable soft wrapping.
-            tab_behaviour: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
+            tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
@@ -460,8 +497,10 @@ TextArea:light .text-area--cursor {
             language=language,
             theme=theme,
             soft_wrap=soft_wrap,
-            tab_behaviour=tab_behaviour,
+            tab_behavior=tab_behavior,
+            read_only=read_only,
             show_line_numbers=show_line_numbers,
+            max_checkpoints=max_checkpoints,
             name=name,
             id=id,
             classes=classes,
@@ -523,6 +562,7 @@ TextArea:light .text-area--cursor {
         if focus:
             self._restart_blink()
             self.app.cursor_position = self.cursor_screen_offset
+            self.history.checkpoint()
         else:
             self._pause_blink(visible=False)
 
@@ -561,6 +601,10 @@ TextArea:light .text-area--cursor {
         else:
             self._pause_blink(visible=self.has_focus)
 
+    def _watch_read_only(self, read_only: bool) -> None:
+        self.set_class(read_only, "-read-only")
+        self._set_theme(self._theme.name)
+
     def _recompute_cursor_offset(self):
         """Recompute the (x, y) coordinate of the cursor in the wrapped document."""
         self._cursor_offset = self.wrapped_document.location_to_offset(
@@ -581,7 +625,7 @@ TextArea:light .text-area--cursor {
             If the character is not available for bracket matching, `None` is returned.
         """
         match_location = None
-        bracket_stack = []
+        bracket_stack: list[str] = []
         if bracket in _OPENING_BRACKETS:
             for candidate, candidate_location in self._yield_character_locations(
                 search_from
@@ -631,11 +675,7 @@ TextArea:light .text-area--cursor {
                 f"then switch to it by setting the `TextArea.language` attribute."
             )
 
-        self._set_document(
-            self.document.text if self.document is not None else self._initial_text,
-            language,
-        )
-        self._initial_text = ""
+        self._set_document(self.document.text, language)
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
@@ -643,7 +683,7 @@ TextArea:light .text-area--cursor {
         self.scroll_cursor_visible()
 
     def _watch_indent_width(self) -> None:
-        """Changing width of tabs will change document display width."""
+        """Changing width of tabs will change the document display width."""
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
@@ -651,32 +691,28 @@ TextArea:light .text-area--cursor {
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
-    def _watch_theme(self, theme: str | None) -> None:
+    def _watch_theme(self, theme: str) -> None:
         """We set the styles on this widget when the theme changes, to ensure that
-        if padding is applied, the colours match."""
+        if padding is applied, the colors match."""
         self._set_theme(theme)
 
-    def _app_dark_toggled(self):
+    def _app_dark_toggled(self) -> None:
         self._set_theme(self._theme.name)
 
-    def _set_theme(self, theme: str | None):
+    def _set_theme(self, theme: str) -> None:
         theme_object: TextAreaTheme | None
-        if theme is None:
-            # If the theme is None, use the default.
-            theme_object = TextAreaTheme.default()
-        else:
-            # If the user supplied a string theme name, find it and apply it.
-            try:
-                theme_object = self._themes[theme]
-            except KeyError:
-                theme_object = TextAreaTheme.get_builtin_theme(theme)
 
+        # If the user supplied a string theme name, find it and apply it.
+        try:
+            theme_object = self._themes[theme]
+        except KeyError:
+            theme_object = TextAreaTheme.get_builtin_theme(theme)
             if theme_object is None:
                 raise ThemeDoesNotExist(
                     f"{theme!r} is not a builtin theme, or it has not been registered. "
                     f"To use a custom theme, register it first using `register_theme`, "
                     f"then switch to that theme by setting the `TextArea.theme` attribute."
-                )
+                ) from None
 
         self._theme = dataclasses.replace(theme_object)
         if theme_object:
@@ -735,7 +771,7 @@ TextArea:light .text-area--cursor {
 
     def register_language(
         self,
-        language: str | "Language",
+        language: "str | Language",
         highlight_query: str,
     ) -> None:
         """Register a language and corresponding highlight query.
@@ -792,7 +828,7 @@ TextArea:light .text-area--cursor {
         if TREE_SITTER and language:
             # Attempt to get the override language.
             text_area_language = self._languages.get(language, None)
-            document_language: str | "Language"
+            document_language: "str | Language"
             if text_area_language:
                 document_language = text_area_language.language
                 highlight_query = text_area_language.highlight_query
@@ -845,12 +881,14 @@ TextArea:light .text-area--cursor {
     def load_text(self, text: str) -> None:
         """Load text into the TextArea.
 
-        This will replace the text currently in the TextArea.
+        This will replace the text currently in the TextArea and clear the edit history.
 
         Args:
             text: The text to load into the TextArea.
         """
+        self.history.clear()
         self._set_document(text, self.language)
+        self.post_message(self.Changed(self).set_sender(self))
 
     def _on_resize(self) -> None:
         self._rewrap_and_refresh_virtual_size()
@@ -930,11 +968,11 @@ TextArea:light .text-area--cursor {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
-    def render_line(self, widget_y: int) -> Strip:
+    def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
         Args:
-            widget_y: Y Coordinate of line relative to the widget region.
+            y: Y Coordinate of line relative to the widget region.
 
         Returns:
             A rendered line.
@@ -948,7 +986,7 @@ TextArea:light .text-area--cursor {
         scroll_x, scroll_y = self.scroll_offset
 
         # Account for how much the TextArea is scrolled.
-        y_offset = widget_y + scroll_y
+        y_offset = y + scroll_y
 
         # If we're beyond the height of the document, render blank lines
         out_of_bounds = y_offset >= wrapped_document.height
@@ -973,7 +1011,7 @@ TextArea:light .text-area--cursor {
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
-        virtual_width, virtual_height = self.virtual_size
+        virtual_width, _virtual_height = self.virtual_size
 
         selection = self.selection
         start, end = selection
@@ -982,21 +1020,6 @@ TextArea:light .text-area--cursor {
         selection_top, selection_bottom = sorted(selection)
         selection_top_row, selection_top_column = selection_top
         selection_bottom_row, selection_bottom_column = selection_bottom
-
-        highlights = self._highlights
-        if highlights and theme:
-            line_bytes = _utf8_encode(line_string)
-            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
-            get_highlight_from_theme = theme.syntax_styles.get
-            line_highlights = highlights[line_index]
-            for highlight_start, highlight_end, highlight_name in line_highlights:
-                node_style = get_highlight_from_theme(highlight_name)
-                if node_style is not None:
-                    line.stylize(
-                        node_style,
-                        byte_to_codepoint.get(highlight_start, 0),
-                        byte_to_codepoint.get(highlight_end) if highlight_end else None,
-                    )
 
         cursor_line_style = theme.cursor_line_style if theme else None
         if cursor_line_style and cursor_row == line_index:
@@ -1031,6 +1054,21 @@ TextArea:light .text-area--cursor {
                             line.stylize(selection_style, end=selection_bottom_column)
                         else:
                             line.stylize(selection_style, end=line_character_count)
+
+        highlights = self._highlights
+        if highlights and theme:
+            line_bytes = _utf8_encode(line_string)
+            byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
+            get_highlight_from_theme = theme.syntax_styles.get
+            line_highlights = highlights[line_index]
+            for highlight_start, highlight_end, highlight_name in line_highlights:
+                node_style = get_highlight_from_theme(highlight_name)
+                if node_style is not None:
+                    line.stylize(
+                        node_style,
+                        byte_to_codepoint.get(highlight_start, 0),
+                        byte_to_codepoint.get(highlight_end) if highlight_end else None,
+                    )
 
         # Highlight the cursor
         matching_bracket = self._matching_bracket_location
@@ -1164,6 +1202,8 @@ TextArea:light .text-area--cursor {
     def text(self, value: str) -> None:
         """Replace the text currently in the TextArea. This is an alias of `load_text`.
 
+        Setting this value will clear the edit history.
+
         Args:
             value: The text to load into the TextArea.
         """
@@ -1200,6 +1240,7 @@ TextArea:light .text-area--cursor {
         """
         old_gutter_width = self.gutter_width
         result = edit.do(self)
+        self.history.record(edit)
         new_gutter_width = self.gutter_width
 
         if old_gutter_width != new_gutter_width:
@@ -1217,13 +1258,127 @@ TextArea:light .text-area--cursor {
         self.post_message(self.Changed(self))
         return result
 
+    def undo(self) -> None:
+        """Undo the edits since the last checkpoint (the most recent batch of edits)."""
+        if edits := self.history._pop_undo():
+            self._undo_batch(edits)
+
+    def action_undo(self) -> None:
+        """Undo the edits since the last checkpoint (the most recent batch of edits)."""
+        self.undo()
+
+    def redo(self) -> None:
+        """Redo the most recently undone batch of edits."""
+        if edits := self.history._pop_redo():
+            self._redo_batch(edits)
+
+    def action_redo(self) -> None:
+        """Redo the most recently undone batch of edits."""
+        self.redo()
+
+    def _undo_batch(self, edits: Sequence[Edit]) -> None:
+        """Undo a batch of Edits.
+
+        The sequence must be chronologically ordered by edit time.
+
+        There must be no edits missing from the sequence, or the resulting content
+        will be incorrect.
+
+        Args:
+            edits: The edits to undo, in the order they were originally performed.
+        """
+        if not edits:
+            return
+
+        old_gutter_width = self.gutter_width
+        minimum_from = edits[-1].top
+        maximum_old_end = (0, 0)
+        maximum_new_end = (0, 0)
+        for edit in reversed(edits):
+            edit.undo(self)
+            end_location = (
+                edit._edit_result.end_location if edit._edit_result else (0, 0)
+            )
+            if edit.from_location < minimum_from:
+                minimum_from = edit.from_location
+            if end_location > maximum_old_end:
+                maximum_old_end = end_location
+            if edit.to_location > maximum_new_end:
+                maximum_new_end = edit.bottom
+
+        new_gutter_width = self.gutter_width
+        if old_gutter_width != new_gutter_width:
+            self.wrapped_document.wrap(self.wrap_width, self.indent_width)
+        else:
+            self.wrapped_document.wrap_range(
+                minimum_from, maximum_old_end, maximum_new_end
+            )
+
+        self._refresh_size()
+        for edit in reversed(edits):
+            edit.after(self)
+        self._build_highlight_map()
+        self.post_message(self.Changed(self))
+
+    def _redo_batch(self, edits: Sequence[Edit]) -> None:
+        """Redo a batch of Edits in order.
+
+        The sequence must be chronologically ordered by edit time.
+
+        Edits are applied from the start of the sequence to the end.
+
+        There must be no edits missing from the sequence, or the resulting content
+        will be incorrect.
+
+        Args:
+            edits: The edits to redo.
+        """
+        if not edits:
+            return
+
+        old_gutter_width = self.gutter_width
+        minimum_from = edits[0].from_location
+        maximum_old_end = (0, 0)
+        maximum_new_end = (0, 0)
+        for edit in edits:
+            edit.do(self, record_selection=False)
+            end_location = (
+                edit._edit_result.end_location if edit._edit_result else (0, 0)
+            )
+            if edit.from_location < minimum_from:
+                minimum_from = edit.from_location
+            if end_location > maximum_new_end:
+                maximum_new_end = end_location
+            if edit.to_location > maximum_old_end:
+                maximum_old_end = edit.to_location
+
+        new_gutter_width = self.gutter_width
+        if old_gutter_width != new_gutter_width:
+            self.wrapped_document.wrap(self.wrap_width, self.indent_width)
+        else:
+            self.wrapped_document.wrap_range(
+                minimum_from,
+                maximum_old_end,
+                maximum_new_end,
+            )
+
+        self._refresh_size()
+        for edit in edits:
+            edit.after(self)
+        self._build_highlight_map()
+        self.post_message(self.Changed(self))
+
     async def _on_key(self, event: events.Key) -> None:
         """Handle key presses which correspond to document inserts."""
+        self._restart_blink()
+        if self.read_only:
+            return
+
         key = event.key
         insert_values = {
             "enter": "\n",
         }
-        if self.tab_behaviour == "indent":
+        if self.tab_behavior == "indent":
             if key == "escape":
                 event.stop()
                 event.prevent_default()
@@ -1234,7 +1389,6 @@ TextArea:light .text-area--cursor {
             else:
                 insert_values["tab"] = " " * self._find_columns_to_next_tab_stop()
 
-        self._restart_blink()
         if event.is_printable or key in insert_values:
             event.stop()
             event.prevent_default()
@@ -1243,7 +1397,7 @@ TextArea:light .text-area--cursor {
             # None because we've checked that it's printable.
             assert insert is not None
             start, end = self.selection
-            self.replace(insert, start, end, maintain_selection_offset=False)
+            self._replace_via_keyboard(insert, start, end)
 
     def _find_columns_to_next_tab_stop(self) -> int:
         """Get the location of the next tab stop after the cursors position on the current line.
@@ -1297,7 +1451,7 @@ TextArea:light .text-area--cursor {
         )
         return gutter_width
 
-    def _on_mount(self, _: events.Mount) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         self.blink_timer = self.set_interval(
             0.5,
             self._toggle_cursor_blink_visible,
@@ -1307,6 +1461,11 @@ TextArea:light .text-area--cursor {
     def _toggle_cursor_blink_visible(self) -> None:
         """Toggle visibility of the cursor for the purposes of 'cursor blink'."""
         self._cursor_visible = not self._cursor_visible
+        _, cursor_y = self._cursor_offset
+        self.refresh_lines(cursor_y)
+
+    def _watch__cursor_visible(self) -> None:
+        """When the cursor visibility is toggled, ensure the row is refreshed."""
         _, cursor_y = self._cursor_offset
         self.refresh_lines(cursor_y)
 
@@ -1330,6 +1489,7 @@ TextArea:light .text-area--cursor {
         # TextArea widget while selecting, the widget still scrolls.
         self.capture_mouse()
         self._pause_blink(visible=True)
+        self.history.checkpoint()
 
     async def _on_mouse_move(self, event: events.MouseMove) -> None:
         """Handles click and drag to expand and contract the selection."""
@@ -1338,17 +1498,27 @@ TextArea:light .text-area--cursor {
             selection_start, _ = self.selection
             self.selection = Selection(selection_start, target)
 
-    async def _on_mouse_up(self, event: events.MouseUp) -> None:
-        """Finalise the selection that has been made using the mouse."""
+    def _end_mouse_selection(self) -> None:
+        """Finalize the selection that has been made using the mouse."""
         self._selecting = False
         self.release_mouse()
         self.record_cursor_width()
         self._restart_blink()
 
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+        """Finalize the selection that has been made using the mouse."""
+        self._end_mouse_selection()
+
+    async def _on_hide(self, event: events.Hide) -> None:
+        """Finalize the selection that has been made using the mouse when thew widget is hidden."""
+        self._end_mouse_selection()
+
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
-        result = self.replace(event.text, *self.selection)
-        self.move_cursor(result.end_location)
+        if self.read_only:
+            return
+        if result := self._replace_via_keyboard(event.text, *self.selection):
+            self.move_cursor(result.end_location)
 
     def cell_width_to_column_index(self, cell_width: int, row_index: int) -> int:
         """Return the column that the cell width corresponds to on the given row.
@@ -1428,7 +1598,7 @@ TextArea:light .text-area--cursor {
                 that is wide enough.
         """
         if select:
-            start, end = self.selection
+            start, _end = self.selection
             self.selection = Selection(start, location)
         else:
             self.selection = Selection.cursor(location)
@@ -1438,6 +1608,8 @@ TextArea:light .text-area--cursor {
 
         if center:
             self.scroll_cursor_visible(center)
+
+        self.history.checkpoint()
 
     def move_cursor_relative(
         self,
@@ -1459,7 +1631,7 @@ TextArea:light .text-area--cursor {
                 that is wide enough.
         """
         clamp_visitable = self.clamp_visitable
-        start, end = self.selection
+        _start, end = self.selection
         current_row, current_column = end
         target = clamp_visitable((current_row + rows, current_column + columns))
         self.move_cursor(target, select, center, record_width)
@@ -1847,12 +2019,54 @@ TextArea:light .text-area--cursor {
         """
         return self.edit(Edit(insert, start, end, maintain_selection_offset))
 
-    def clear(self) -> None:
-        """Delete all text from the document."""
+    def clear(self) -> EditResult:
+        """Delete all text from the document.
+
+        Returns:
+            An EditResult relating to the deletion of all content.
+        """
         document = self.document
         last_line = document[-1]
         document_end = (document.line_count, len(last_line))
-        self.delete((0, 0), document_end, maintain_selection_offset=False)
+        return self.delete((0, 0), document_end, maintain_selection_offset=False)
+
+    def _delete_via_keyboard(
+        self,
+        start: Location,
+        end: Location,
+    ) -> EditResult | None:
+        """Handle a deletion performed using a keyboard (as opposed to the API).
+
+        Args:
+            start: The start location of the text to delete.
+            end: The end location of the text to delete.
+
+        Returns:
+            An EditResult or None if no edit was performed (e.g. on read-only mode).
+        """
+        if self.read_only:
+            return None
+        return self.delete(start, end, maintain_selection_offset=False)
+
+    def _replace_via_keyboard(
+        self,
+        insert: str,
+        start: Location,
+        end: Location,
+    ) -> EditResult | None:
+        """Handle a replacement performed using a keyboard (as opposed to the API).
+
+        Args:
+            insert: The text to insert into the document.
+            start: The start location of the text to replace.
+            end: The end location of the text to replace.
+
+        Returns:
+            An EditResult or None if no edit was performed (e.g. on read-only mode).
+        """
+        if self.read_only:
+            return None
+        return self.replace(insert, start, end, maintain_selection_offset=False)
 
     def action_delete_left(self) -> None:
         """Deletes the character to the left of the cursor and updates the cursor location.
@@ -1865,7 +2079,7 @@ TextArea:light .text-area--cursor {
         if selection.is_empty:
             end = self.get_cursor_left_location()
 
-        self.delete(start, end, maintain_selection_offset=False)
+        self._delete_via_keyboard(start, end)
 
     def action_delete_right(self) -> None:
         """Deletes the character to the right of the cursor and keeps the cursor at the same location.
@@ -1878,13 +2092,13 @@ TextArea:light .text-area--cursor {
         if selection.is_empty:
             end = self.get_cursor_right_location()
 
-        self.delete(start, end, maintain_selection_offset=False)
+        self._delete_via_keyboard(start, end)
 
     def action_delete_line(self) -> None:
         """Deletes the lines which intersect with the selection."""
         start, end = self.selection
         start, end = sorted((start, end))
-        start_row, start_column = start
+        start_row, _start_column = start
         end_row, end_column = end
 
         # Generally editors will only delete line the end line of the
@@ -1895,20 +2109,41 @@ TextArea:light .text-area--cursor {
         from_location = (start_row, 0)
         to_location = (end_row + 1, 0)
 
-        self.delete(from_location, to_location, maintain_selection_offset=False)
-        self.move_cursor_relative(columns=end_column, record_width=False)
+        deletion = self._delete_via_keyboard(from_location, to_location)
+        if deletion is not None:
+            self.move_cursor_relative(columns=end_column, record_width=False)
 
     def action_delete_to_start_of_line(self) -> None:
         """Deletes from the cursor location to the start of the line."""
         from_location = self.selection.end
         to_location = self.get_cursor_line_start_location()
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
 
     def action_delete_to_end_of_line(self) -> None:
         """Deletes from the cursor location to the end of the line."""
         from_location = self.selection.end
         to_location = self.get_cursor_line_end_location()
-        self.delete(from_location, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(from_location, to_location)
+
+    async def action_delete_to_end_of_line_or_delete_line(self) -> None:
+        """Deletes from the cursor location to the end of the line, or deletes the line.
+
+        The line will be deleted if the line is empty.
+        """
+        # Assume we're just going to delete to the end of the line.
+        action = "delete_to_end_of_line"
+        if self.get_cursor_line_start_location() == self.get_cursor_line_end_location():
+            # The line is empty, so we'll simply remove the line itself.
+            action = "delete_line"
+        elif (
+            self.selection.start
+            == self.selection.end
+            == self.get_cursor_line_end_location()
+        ):
+            # We're at the end of the line, so the kill delete operation
+            # should join the next line to this.
+            action = "delete_right"
+        await self.run_action(action)
 
     def action_delete_word_left(self) -> None:
         """Deletes the word to the left of the cursor and updates the cursor location."""
@@ -1919,11 +2154,11 @@ TextArea:light .text-area--cursor {
         # deletes the characters within the selection range, ignoring word boundaries.
         start, end = self.selection
         if start != end:
-            self.delete(start, end, maintain_selection_offset=False)
+            self._delete_via_keyboard(start, end)
             return
 
         to_location = self.get_cursor_word_left_location()
-        self.delete(self.selection.end, to_location, maintain_selection_offset=False)
+        self._delete_via_keyboard(self.selection.end, to_location)
 
     def action_delete_word_right(self) -> None:
         """Deletes the word to the right of the cursor and keeps the cursor at the same location.
@@ -1937,7 +2172,7 @@ TextArea:light .text-area--cursor {
 
         start, end = self.selection
         if start != end:
-            self.delete(start, end, maintain_selection_offset=False)
+            self._delete_via_keyboard(start, end)
             return
 
         cursor_row, cursor_column = end
@@ -1957,144 +2192,7 @@ TextArea:light .text-area--cursor {
         else:
             to_location = (cursor_row, current_row_length)
 
-        self.delete(end, to_location, maintain_selection_offset=False)
-
-
-@dataclass
-class Edit:
-    """Implements the Undoable protocol to replace text at some range within a document."""
-
-    text: str
-    """The text to insert. An empty string is equivalent to deletion."""
-    from_location: Location
-    """The start location of the insert."""
-    to_location: Location
-    """The end location of the insert"""
-    maintain_selection_offset: bool
-    """If True, the selection will maintain its offset to the replacement range."""
-    _updated_selection: Selection | None = field(init=False, default=None)
-    """Where the selection should move to after the replace happens."""
-
-    def do(self, text_area: TextArea) -> EditResult:
-        """Perform the edit operation.
-
-        Args:
-            text_area: The `TextArea` to perform the edit on.
-
-        Returns:
-            An `EditResult` containing information about the replace operation.
-        """
-        text = self.text
-
-        edit_from = self.from_location
-        edit_to = self.to_location
-
-        # This code is mostly handling how we adjust TextArea.selection
-        # when an edit is made to the document programmatically.
-        # We want a user who is typing away to maintain their relative
-        # position in the document even if an insert happens before
-        # their cursor position.
-
-        edit_bottom_row, edit_bottom_column = self.bottom
-
-        selection_start, selection_end = text_area.selection
-        selection_start_row, selection_start_column = selection_start
-        selection_end_row, selection_end_column = selection_end
-
-        replace_result = text_area.document.replace_range(self.top, self.bottom, text)
-
-        new_edit_to_row, new_edit_to_column = replace_result.end_location
-
-        # TODO: We could maybe improve the situation where the selection
-        #  and the edit range overlap with each other.
-        column_offset = new_edit_to_column - edit_bottom_column
-        target_selection_start_column = (
-            selection_start_column + column_offset
-            if edit_bottom_row == selection_start_row
-            and edit_bottom_column <= selection_start_column
-            else selection_start_column
-        )
-        target_selection_end_column = (
-            selection_end_column + column_offset
-            if edit_bottom_row == selection_end_row
-            and edit_bottom_column <= selection_end_column
-            else selection_end_column
-        )
-
-        row_offset = new_edit_to_row - edit_bottom_row
-        target_selection_start_row = selection_start_row + row_offset
-        target_selection_end_row = selection_end_row + row_offset
-
-        if self.maintain_selection_offset:
-            self._updated_selection = Selection(
-                start=(target_selection_start_row, target_selection_start_column),
-                end=(target_selection_end_row, target_selection_end_column),
-            )
-        else:
-            self._updated_selection = Selection.cursor(replace_result.end_location)
-
-        return replace_result
-
-    def undo(self, text_area: TextArea) -> EditResult:
-        """Undo the edit operation.
-
-        Args:
-            text_area: The `TextArea` to undo the insert operation on.
-
-        Returns:
-            An `EditResult` containing information about the replace operation.
-        """
-        raise NotImplementedError()
-
-    def after(self, text_area: TextArea) -> None:
-        """Possibly update the cursor location after the widget has been refreshed.
-
-        Args:
-            text_area: The `TextArea` this operation was performed on.
-        """
-        if self._updated_selection is not None:
-            text_area.selection = self._updated_selection
-        text_area.record_cursor_width()
-
-    @property
-    def top(self) -> Location:
-        """The Location impacted by this edit that is nearest the start of the document."""
-        return min([self.from_location, self.to_location])
-
-    @property
-    def bottom(self) -> Location:
-        """The Location impacted by this edit that is nearest the end of the document."""
-        return max([self.from_location, self.to_location])
-
-
-@runtime_checkable
-class Undoable(Protocol):
-    """Protocol for actions performed in the text editor which can be done and undone.
-
-    These are typically actions which affect the document (e.g. inserting and deleting
-    text), but they can really be anything.
-
-    To perform an edit operation, pass the Edit to `TextArea.edit()`"""
-
-    def do(self, text_area: TextArea) -> Any:
-        """Do the action.
-
-        Args:
-            The `TextArea` to perform the action on.
-
-        Returns:
-            Anything. This protocol doesn't prescribe what is returned.
-        """
-
-    def undo(self, text_area: TextArea) -> Any:
-        """Undo the action.
-
-        Args:
-            The `TextArea` to perform the action on.
-
-        Returns:
-            Anything. This protocol doesn't prescribe what is returned.
-        """
+        self._delete_via_keyboard(end, to_location)
 
 
 @lru_cache(maxsize=128)
@@ -2107,7 +2205,7 @@ def build_byte_to_codepoint_dict(data: bytes) -> dict[int, int]:
     Returns:
         A `dict[int, int]` mapping byte indices to codepoint indices within `data`.
     """
-    byte_to_codepoint = {}
+    byte_to_codepoint: dict[int, int] = {}
     current_byte_offset = 0
     code_point_offset = 0
 

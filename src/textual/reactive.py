@@ -16,6 +16,7 @@ from typing import (
     Generic,
     Type,
     TypeVar,
+    cast,
     overload,
 )
 
@@ -23,7 +24,14 @@ import rich.repr
 
 from . import events
 from ._callback import count_parameters
-from ._types import MessageTarget, WatchCallbackType
+from ._context import active_message_pump
+from ._types import (
+    MessageTarget,
+    WatchCallbackBothValuesType,
+    WatchCallbackNewValueType,
+    WatchCallbackNoArgsType,
+    WatchCallbackType,
+)
 
 if TYPE_CHECKING:
     from .dom import DOMNode
@@ -42,6 +50,49 @@ class TooManyComputesError(ReactiveError):
     """Raised when an attribute has public and private compute methods."""
 
 
+async def await_watcher(obj: Reactable, awaitable: Awaitable[object]) -> None:
+    """Coroutine to await an awaitable returned from a watcher"""
+    _rich_traceback_omit = True
+    await awaitable
+    # Watcher may have changed the state, so run compute again
+    obj.post_message(events.Callback(callback=partial(Reactive._compute, obj)))
+
+
+def invoke_watcher(
+    watcher_object: Reactable,
+    watch_function: WatchCallbackType,
+    old_value: object,
+    value: object,
+) -> None:
+    """Invoke a watch function.
+
+    Args:
+        watcher_object: The object watching for the changes.
+        watch_function: A watch function, which may be sync or async.
+        old_value: The old value of the attribute.
+        value: The new value of the attribute.
+    """
+    _rich_traceback_omit = True
+    param_count = count_parameters(watch_function)
+    reset_token = active_message_pump.set(watcher_object)
+    try:
+        if param_count == 2:
+            watch_result = cast(WatchCallbackBothValuesType, watch_function)(
+                old_value, value
+            )
+        elif param_count == 1:
+            watch_result = cast(WatchCallbackNewValueType, watch_function)(value)
+        else:
+            watch_result = cast(WatchCallbackNoArgsType, watch_function)()
+        if isawaitable(watch_result):
+            # Result is awaitable, so we need to await it within an async context
+            watcher_object.call_next(
+                partial(await_watcher, watcher_object, watch_result)
+            )
+    finally:
+        active_message_pump.reset(reset_token)
+
+
 @rich.repr.auto
 class Reactive(Generic[ReactiveType]):
     """Reactive descriptor.
@@ -53,6 +104,7 @@ class Reactive(Generic[ReactiveType]):
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
         compute: Run compute methods when attribute is changed.
+        recompose: Compose the widget again when the attribute changes.
     """
 
     _reactives: ClassVar[dict[str, object]] = {}
@@ -66,6 +118,7 @@ class Reactive(Generic[ReactiveType]):
         init: bool = False,
         always_update: bool = False,
         compute: bool = True,
+        recompose: bool = False,
     ) -> None:
         self._default = default
         self._layout = layout
@@ -73,6 +126,7 @@ class Reactive(Generic[ReactiveType]):
         self._init = init
         self._always_update = always_update
         self._run_compute = compute
+        self._recompose = recompose
         self._owner: Type[MessageTarget] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -82,6 +136,7 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
+        yield "recompose", self._recompose
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -235,11 +290,15 @@ class Reactive(Generic[ReactiveType]):
                 self._compute(obj)
 
             # Refresh according to descriptor flags
-            if self._layout or self._repaint:
-                obj.refresh(repaint=self._repaint, layout=self._layout)
+            if self._layout or self._repaint or self._recompose:
+                obj.refresh(
+                    repaint=self._repaint,
+                    layout=self._layout,
+                    recompose=self._recompose,
+                )
 
     @classmethod
-    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any):
+    def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
         """Check watchers, and call watch methods / computes
 
         Args:
@@ -252,39 +311,6 @@ class Reactive(Generic[ReactiveType]):
         internal_name = f"_reactive_{name}"
         value = getattr(obj, internal_name)
 
-        async def await_watcher(awaitable: Awaitable) -> None:
-            """Coroutine to await an awaitable returned from a watcher"""
-            _rich_traceback_omit = True
-            await awaitable
-            # Watcher may have changed the state, so run compute again
-            obj.post_message(events.Callback(callback=partial(Reactive._compute, obj)))
-
-        def invoke_watcher(
-            watcher_object: Reactable,
-            watch_function: Callable,
-            old_value: object,
-            value: object,
-        ) -> None:
-            """Invoke a watch function.
-
-            Args:
-                watcher_object: The object watching for the changes.
-                watch_function: A watch function, which may be sync or async.
-                old_value: The old value of the attribute.
-                value: The new value of the attribute.
-            """
-            _rich_traceback_omit = True
-            param_count = count_parameters(watch_function)
-            if param_count == 2:
-                watch_result = watch_function(old_value, value)
-            elif param_count == 1:
-                watch_result = watch_function(value)
-            else:
-                watch_result = watch_function()
-            if isawaitable(watch_result):
-                # Result is awaitable, so we need to await it within an async context
-                watcher_object.call_next(partial(await_watcher, watch_result))
-
         private_watch_function = getattr(obj, f"_watch_{name}", None)
         if callable(private_watch_function):
             invoke_watcher(obj, private_watch_function, old_value, value)
@@ -294,7 +320,7 @@ class Reactive(Generic[ReactiveType]):
             invoke_watcher(obj, public_watch_function, old_value, value)
 
         # Process "global" watchers
-        watchers: list[tuple[Reactable, Callable]]
+        watchers: list[tuple[Reactable, WatchCallbackType]]
         watchers = getattr(obj, "__watchers", {}).get(name, [])
         # Remove any watchers for reactables that have since closed
         if watchers:
@@ -315,7 +341,7 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable object.
         """
         _rich_traceback_guard = True
-        for compute in obj._reactives.keys():
+        for compute in obj._reactives.keys() & obj._computes:
             try:
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
@@ -351,6 +377,7 @@ class reactive(Reactive[ReactiveType]):
         repaint: bool = True,
         init: bool = True,
         always_update: bool = False,
+        recompose: bool = False,
     ) -> None:
         super().__init__(
             default,
@@ -358,6 +385,7 @@ class reactive(Reactive[ReactiveType]):
             repaint=repaint,
             init=init,
             always_update=always_update,
+            recompose=recompose,
         )
 
 
@@ -404,11 +432,13 @@ def _watch(
     """
     if not hasattr(obj, "__watchers"):
         setattr(obj, "__watchers", {})
-    watchers: dict[str, list[tuple[Reactable, Callable]]] = getattr(obj, "__watchers")
+    watchers: dict[str, list[tuple[Reactable, WatchCallbackType]]] = getattr(
+        obj, "__watchers"
+    )
     watcher_list = watchers.setdefault(attribute_name, [])
-    if callback in watcher_list:
+    if any(callback == callback_from_list for _, callback_from_list in watcher_list):
         return
-    watcher_list.append((node, callback))
     if init:
         current_value = getattr(obj, attribute_name, None)
-        Reactive._check_watchers(obj, attribute_name, current_value)
+        invoke_watcher(obj, callback, current_value, current_value)
+    watcher_list.append((node, callback))
