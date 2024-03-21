@@ -367,6 +367,9 @@ class Widget(DOMNode):
         self._absolute_offset: Offset | None = None
         """Force an absolute offset for the widget (used by tooltips)."""
 
+        self._scrollbar_changes: set[tuple[bool, bool]] = set()
+        """Used to stabilize scrollbars."""
+
         super().__init__(
             name=name,
             id=id,
@@ -797,7 +800,6 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
-        self._stabilize_scrollbar = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -1453,8 +1455,15 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-        if overflow_x != "auto" or overflow_y != "auto":
+        _show_horizontal = show_horizontal
+        _show_vertical = show_vertical
+
+        if not (
+            overflow_x == "auto"
+            and overflow_y == "auto"
+            and (show_horizontal, show_vertical) in self._scrollbar_changes
+        ):
+            # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
             if overflow_x == "auto" and show_vertical and not show_horizontal:
                 show_horizontal = self.virtual_size.width > (
                     width - styles.scrollbar_size_vertical
@@ -1463,6 +1472,14 @@ class Widget(DOMNode):
                 show_vertical = self.virtual_size.height > (
                     height - styles.scrollbar_size_horizontal
                 )
+
+        if (
+            self.show_horizontal_scrollbar != show_horizontal
+            or self.show_vertical_scrollbar != show_vertical
+        ):
+            self._scrollbar_changes.add((_show_horizontal, _show_vertical))
+        else:
+            self._scrollbar_changes.clear()
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
