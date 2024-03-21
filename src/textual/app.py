@@ -3015,7 +3015,9 @@ class App(Generic[ReturnType], DOMNode):
                 # It's a tuple and made it this far, which means it'll be a
                 # malformed action. This is a no-op, but let's log that
                 # anyway.
-                log.warning(f"{event_name} event has an empty action")
+                log.warning(
+                    f"Can't parse @{event_name} action from style meta; check your console markup syntax"
+                )
             return False
         return True
 
