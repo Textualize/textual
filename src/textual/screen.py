@@ -38,6 +38,7 @@ from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
+from .errors import NoWidget
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
@@ -54,7 +55,6 @@ if TYPE_CHECKING:
     from .command import Provider
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .errors import NoWidget  # type: ignore  # noqa: F401
     from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
