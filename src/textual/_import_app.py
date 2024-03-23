@@ -7,6 +7,8 @@ import sys
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
+from textual.devtools.inspector import Inspector
+
 if TYPE_CHECKING:
     from textual.app import App
 
