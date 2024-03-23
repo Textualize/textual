@@ -89,6 +89,7 @@ class ScrollView(ScrollableContainer):
             or virtual_size != self.virtual_size
             or container_size != self.container_size
         ):
+            self._scrollbar_changes.clear()
             self._size = size
             virtual_size = self.virtual_size
             self._container_size = size - self.styles.gutter.totals
