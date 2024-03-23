@@ -1,3 +1,3 @@
-::: textual.events.Load
+::: textual.events.Print
     options:
       heading_level: 1
