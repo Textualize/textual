@@ -153,7 +153,7 @@ class MarkdownBlock(Static):
                     content.append(
                         # Ensure repeating spaces and/or tabs get squashed
                         # down to a single space.
-                        re.sub(r"[ \t]+", " ", child.content),
+                        re.sub(r"\s+", " ", child.content),
                         style_stack[-1],
                     )
                 if child.type == "hardbreak":
