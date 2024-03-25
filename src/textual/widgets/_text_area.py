@@ -691,7 +691,8 @@ TextArea {
         self.scroll_cursor_visible()
 
     def _watch_show_vertical_scrollbar(self) -> None:
-        self._rewrap_and_refresh_virtual_size()
+        if self.wrap_width:
+            self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
     def _watch_theme(self, theme: str) -> None:
