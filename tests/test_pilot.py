@@ -7,6 +7,7 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
 from textual.pilot import OutOfBounds
+from textual.screen import Screen
 from textual.widgets import Button, Label
 
 KEY_CHARACTERS_TO_TEST = "akTW03" + punctuation
@@ -56,7 +57,7 @@ async def test_pilot_press_ascii_chars():
             assert keys_pressed[-1] == char
 
 
-async def test_pilot_exception_catching_compose():
+async def test_pilot_exception_catching_app_compose():
     """Ensuring that test frameworks are aware of exceptions
     inside compose methods when running via Pilot run_test()."""
 
@@ -64,6 +65,21 @@ async def test_pilot_exception_catching_compose():
         def compose(self) -> ComposeResult:
             1 / 0
             yield Label("Beep")
+
+    with pytest.raises(ZeroDivisionError):
+        async with FailingApp().run_test():
+            pass
+
+
+async def test_pilot_exception_cathing_widget_compose():
+    class SomeScreen(Screen[None]):
+        def compose(self) -> ComposeResult:
+            1 / 0
+            yield Label("Beep")
+
+    class FailingApp(App[None]):
+        def on_mount(self) -> None:
+            self.push_screen(SomeScreen())
 
     with pytest.raises(ZeroDivisionError):
         async with FailingApp().run_test():
