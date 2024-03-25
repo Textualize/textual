@@ -444,14 +444,6 @@ TextArea {
         reactive is set as a string, the watcher will update this attribute to the
         corresponding `TextAreaTheme` object."""
 
-        self._edit_count: int = 0
-        """Tracks the number of edits that have been made in this instance."""
-
-        self._last_scrollbar_wrap_width: int = 0
-        """The width the vertical scrollbar was last toggled at. Used to prevent
-        a flickering scrollbar where text wraps resulting in a scrollbar appearing,
-        resulting in wrapping again, etc."""
-
         self.set_reactive(TextArea.soft_wrap, soft_wrap)
         self.set_reactive(TextArea.read_only, read_only)
         self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
@@ -1259,7 +1251,6 @@ TextArea {
         edit.after(self)
         self._build_highlight_map()
         self.post_message(self.Changed(self))
-        self._edit_count += 1
         return result
 
     def undo(self) -> None:
