@@ -1,7 +1,6 @@
 from ._data_table import (
     CellDoesNotExist,
     CellKey,
-    CellType,
     Column,
     ColumnDoesNotExist,
     ColumnKey,
@@ -15,7 +14,6 @@ from ._data_table import (
 __all__ = [
     "CellDoesNotExist",
     "CellKey",
-    "CellType",
     "Column",
     "ColumnDoesNotExist",
     "ColumnKey",

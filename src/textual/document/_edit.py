@@ -9,6 +9,10 @@ if TYPE_CHECKING:
     from textual.widgets import TextArea
 
 
+class EditError(Exception):
+    pass
+
+
 @dataclass
 class Edit:
     """Implements the Undoable protocol to replace text at some range within a document."""
@@ -106,6 +110,9 @@ class Edit:
         Returns:
             An `EditResult` containing information about the replace operation.
         """
+        if self._edit_result is None:
+            raise EditError(f"`Edit.undo()` must be called after `Edit.do()`.")
+
         replaced_text = self._edit_result.replaced_text
         edit_end = self._edit_result.end_location
 
