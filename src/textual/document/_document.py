@@ -175,6 +175,7 @@ class DocumentBase(ABC):
     @abstractmethod
     def start(self) -> Location:
         """Returns the location of the start of the document (0, 0)."""
+        return (0, 0)
 
     @property
     @abstractmethod
@@ -344,7 +345,7 @@ class Document(DocumentBase):
     @property
     def start(self) -> Location:
         """Returns the location of the start of the document (0, 0)."""
-        return (0, 0)
+        return super().start
 
     @property
     def end(self) -> Location:
