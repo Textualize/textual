@@ -147,7 +147,7 @@ class MarkdownBlock(Static):
         self._token = token
         style_stack: list[Style] = [Style()]
         content = Text()
-        repeating_whitespace = re.compile(r"[ \t]+")  # Space or tabs get reduced.
+        repeating_whitespace = re.compile(r"[ \t]+")  # Spaces and tabs get reduced.
         if token.children:
             for child in token.children:
                 if child.type == "text":
