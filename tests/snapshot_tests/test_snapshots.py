@@ -278,6 +278,10 @@ def test_tabbed_content_with_modified_tabs(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "modified_tabs.py")
 
 
+def test_tabbed_content_styling_not_leaking(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tabbed_content_style_leak_test.py")
+
+
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
@@ -1133,3 +1137,33 @@ def test_pretty_grid_gutter_interaction(snap_compare):
 def test_sort_children(snap_compare):
     """Test sort_children method."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "sort_children.py", terminal_size=(80, 25))
+
+
+def test_app_blur(snap_compare):
+    """Test Styling after receiving an AppBlur message."""
+
+    async def run_before(pilot) -> None:
+        await pilot.pause()  # Allow the AppBlur message to get processed.
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "app_blur.py", run_before=run_before)
+
+
+def test_placeholder_disabled(snap_compare):
+    """Test placeholder with diabled set to True."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "placeholder_disabled.py")
+
+
+def test_listview_index(snap_compare):
+    """Tests that ListView scrolls correctly after updating its index."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "listview_index.py")
+
+
+def test_button_widths(snap_compare):
+    """Test that button widths expand auto containers as expected."""
+    # https://github.com/Textualize/textual/issues/4024
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_widths.py")
+
+
+def test_welcome(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "welcome_widget.py")
+

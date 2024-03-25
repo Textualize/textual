@@ -256,7 +256,9 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
     def _scroll_highlighted_region(self) -> None:
         """Used to keep the highlighted index within vision"""
         if self.highlighted_child is not None:
-            self.scroll_to_widget(self.highlighted_child, animate=False)
+            self.call_after_refresh(
+                self.scroll_to_widget, self.highlighted_child, animate=False
+            )
 
     def __len__(self) -> int:
         """Compute the length (in number of items) of the list view."""

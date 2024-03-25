@@ -62,7 +62,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("down,right", "next_button", "", show=False),
-        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("enter,space", "toggle_button", "Toggle", show=False),
         Binding("up,left", "previous_button", "", show=False),
     ]
     """
@@ -265,7 +265,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             direction=1,
         )
 
-    def action_toggle(self) -> None:
+    def action_toggle_button(self) -> None:
         """Toggle the state of the currently-selected button."""
         if self._selected is not None:
             button = self._nodes[self._selected]

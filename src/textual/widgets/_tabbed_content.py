@@ -229,12 +229,11 @@ class TabbedContent(Widget):
     """A container with associated tabs to toggle content visibility."""
 
     DEFAULT_CSS = """
-
     TabbedContent {
         height: auto;
-    }
-    TabbedContent Tabs {
-        dock: top;
+        &> ContentTabs {
+            dock: top;
+        }
     }
     """
 
@@ -277,7 +276,11 @@ class TabbedContent(Widget):
             yield self.pane
 
     class Cleared(Message):
-        """Posted when there are no more tab panes."""
+        """Posted when no tab pane is active.
+
+        This can happen if all tab panes are removed or if the currently active tab
+        pane is unset.
+        """
 
         def __init__(self, tabbed_content: TabbedContent) -> None:
             """Initialize message.
@@ -329,22 +332,6 @@ class TabbedContent(Widget):
         if not active:
             return None
         return self.get_pane(self.active)
-
-    def validate_active(self, active: str) -> str:
-        """It doesn't make sense for `active` to be an empty string.
-
-        Args:
-            active: Attribute to be validated.
-
-        Returns:
-            Value of `active`.
-
-        Raises:
-            ValueError: If the active attribute is set to empty string when there are tabs available.
-        """
-        if not active and self.get_child_by_type(ContentSwitcher).current:
-            raise ValueError("'active' tab must not be empty string.")
-        return active
 
     @staticmethod
     def _set_id(content: TabPane, new_id: int) -> TabPane:
@@ -466,16 +453,10 @@ class TabbedContent(Widget):
             # other means; so allow that to be a no-op.
             pass
 
-        async def _remove_content(cleared_message: TabbedContent.Cleared) -> None:
+        async def _remove_content() -> None:
             await gather(*removal_awaitables)
-            if self.tab_count == 0:
-                self.post_message(cleared_message)
 
-        # Note that I create the Cleared message out here, rather than in
-        # _remove_content, to ensure that the message's internal
-        # understanding of who the sender is is correct.
-        # https://github.com/Textualize/textual/issues/2750
-        return AwaitComplete(_remove_content(self.Cleared(self)))
+        return AwaitComplete(_remove_content())
 
     def clear_panes(self) -> AwaitComplete:
         """Remove all the panes in the tabbed content.
@@ -489,15 +470,10 @@ class TabbedContent(Widget):
             self.get_child_by_type(ContentSwitcher).remove_children(),
         )
 
-        async def _clear_content(cleared_message: TabbedContent.Cleared) -> None:
+        async def _clear_content() -> None:
             await await_clear
-            self.post_message(cleared_message)
 
-        # Note that I create the Cleared message out here, rather than in
-        # _clear_content, to ensure that the message's internal
-        # understanding of who the sender is is correct.
-        # https://github.com/Textualize/textual/issues/2750
-        return AwaitComplete(_clear_content(self.Cleared(self)))
+        return AwaitComplete(_clear_content())
 
     def compose_add_child(self, widget: Widget) -> None:
         """When using the context manager compose syntax, we want to attach nodes to the switcher.
@@ -556,7 +532,7 @@ class TabbedContent(Widget):
 
     def _watch_active(self, active: str) -> None:
         """Switch tabs when the active attributes changes."""
-        with self.prevent(Tabs.TabActivated):
+        with self.prevent(Tabs.TabActivated, Tabs.Cleared):
             self.get_child_by_type(ContentTabs).active = ContentTab.add_prefix(active)
         self.get_child_by_type(ContentSwitcher).current = active
         if active:
@@ -565,6 +541,10 @@ class TabbedContent(Widget):
                     tabbed_content=self,
                     tab=self.get_child_by_type(ContentTabs).get_content_tab(active),
                 )
+            )
+        else:
+            self.post_message(
+                TabbedContent.Cleared(tabbed_content=self).set_sender(self)
             )
 
     @property
@@ -619,6 +599,8 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_disabled(self, event: Tabs.TabDisabled) -> None:
         """Disable the corresponding tab pane."""
+        if event.tabs.parent is not self:
+            return
         event.stop()
         tab_id = event.tab.id or ""
         try:
@@ -640,6 +622,8 @@ class TabbedContent(Widget):
 
     def _on_tabs_tab_enabled(self, event: Tabs.TabEnabled) -> None:
         """Enable the corresponding tab pane."""
+        if event.tabs.parent is not self:
+            return
         event.stop()
         tab_id = event.tab.id or ""
         try:

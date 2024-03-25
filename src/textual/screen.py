@@ -38,6 +38,7 @@ from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
+from .errors import NoWidget
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
@@ -54,7 +55,6 @@ if TYPE_CHECKING:
     from .command import Provider
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .errors import NoWidget  # type: ignore  # noqa: F401
     from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
@@ -751,9 +751,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Remove the latest result callback from the stack."""
         self._result_callbacks.pop()
 
-    def _refresh_layout(
-        self, size: Size | None = None, full: bool = False, scroll: bool = False
-    ) -> None:
+    def _refresh_layout(self, size: Size | None = None, scroll: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if not size:
@@ -850,7 +848,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
 
     def _on_screen_resume(self) -> None:
@@ -858,7 +856,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
         # Only auto-focus when the app has focus (textual-web only)
         if self.app.app_focus:

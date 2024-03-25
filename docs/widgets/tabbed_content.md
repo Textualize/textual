@@ -127,6 +127,7 @@ For example, to create a `TabbedContent` that has red and green labels:
 
 ## Messages
 
+- [TabbedContent.Cleared][textual.widgets.TabbedContent.Cleared]
 - [TabbedContent.TabActivated][textual.widgets.TabbedContent.TabActivated]
 
 ## Bindings

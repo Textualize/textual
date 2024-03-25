@@ -165,7 +165,8 @@ class Tab(Static):
         """
         super().__init__(id=id, classes=classes, disabled=disabled)
         self._label: Text
-        self.label = label
+        # Setter takes Text or str
+        self.label = label  # type: ignore[assignment]
 
     @property
     def label(self) -> Text:
@@ -285,7 +286,8 @@ class Tabs(Widget, can_focus=True):
     class Cleared(Message):
         """Sent when there are no active tabs.
 
-        This can occur when Tabs are cleared, or if all tabs are hidden.
+        This can occur when Tabs are cleared, if all tabs are hidden, or if the
+        currently active tab is unset.
         """
 
         def __init__(self, tabs: Tabs) -> None:
@@ -527,10 +529,10 @@ class Tabs(Widget, can_focus=True):
         async def do_remove() -> None:
             """Perform the remove after refresh so the underline bar gets new positions."""
             await remove_await
-            if next_tab is None:
+            if next_tab is None or (removing_active_tab and next_tab.id is None):
                 self.active = ""
             elif removing_active_tab:
-                self.active = next_tab.id
+                self.active = next_tab.id or ""
                 next_tab.add_class("-active")
 
             highlight_updated.set()
@@ -575,12 +577,12 @@ class Tabs(Widget, can_focus=True):
 
     def watch_active(self, previously_active: str, active: str) -> None:
         """Handle a change to the active tab."""
+        self.query("#tabs-list > Tab.-active").remove_class("-active")
         if active:
             try:
                 active_tab = self.query_one(f"#tabs-list > #{active}", Tab)
             except NoMatches:
                 return
-            self.query("#tabs-list > Tab.-active").remove_class("-active")
             active_tab.add_class("-active")
             self._highlight_active(animate=previously_active != "")
             self._scroll_active_tab()
@@ -699,16 +701,20 @@ class Tabs(Widget, can_focus=True):
         self._move_tab(-1)
 
     def _move_tab(self, direction: int) -> None:
-        """Activate the next tab.
+        """Activate the next enabled tab in the given direction.
+
+        Tab selection wraps around. If no tab is currently active, the "next"
+        tab is set to be the first and the "previous" tab is the last one.
 
         Args:
             direction: +1 for the next tab, -1 for the previous.
         """
         active_tab = self.active_tab
-        if active_tab is None:
-            return
         tabs = self._potentially_active_tabs
         if not tabs:
+            return
+        if not active_tab:
+            self.active = tabs[0 if direction == 1 else -1].id or ""
             return
         tab_count = len(tabs)
         new_tab_index = (tabs.index(active_tab) + direction) % tab_count
@@ -797,7 +803,7 @@ class Tabs(Widget, can_focus=True):
             next_tab = self._next_active
             self.active = next_tab.id or "" if next_tab else ""
         tab_to_hide.add_class("-hidden")
-        self.post_message(self.TabHidden(self, tab_to_hide))
+        self.post_message(self.TabHidden(self, tab_to_hide).set_sender(self))
         self.call_after_refresh(self._highlight_active)
         return tab_to_hide
 
@@ -820,7 +826,7 @@ class Tabs(Widget, can_focus=True):
             raise self.TabError(f"There is no tab with ID {tab_id!r} to show.")
 
         tab_to_show.remove_class("-hidden")
-        self.post_message(self.TabShown(self, tab_to_show))
+        self.post_message(self.TabShown(self, tab_to_show).set_sender(self))
         if not self.active:
             self._activate_tab(tab_to_show)
         self.call_after_refresh(self._highlight_active)

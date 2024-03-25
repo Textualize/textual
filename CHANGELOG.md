@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Fixed
+
+- Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
+- Fixed issue with flickering scrollbars https://github.com/Textualize/textual/pull/4315
+- Fix progress bar ETA not updating when setting `total` reactive https://github.com/Textualize/textual/pull/4316
+
+### Changed 
+
+- ProgressBar won't show ETA until there is at least one second of samples https://github.com/Textualize/textual/pull/4316
+
+## [0.53.1] - 2023-03-18
+
+### Fixed
+
+- Fixed issue with data binding https://github.com/Textualize/textual/pull/4308
+
+## [0.53.0] - 2023-03-18
+
 ### Added
 
 - Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
@@ -29,11 +47,33 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `RichLog.min_width` not being used https://github.com/Textualize/textual/pull/4223
 - Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
 - Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
+- Rename `Switch.action_toggle` to `action_toggle_switch` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/issues/4262
+- Fixed `OptionList.OptionHighlighted` leaking out of `Select` https://github.com/Textualize/textual/issues/4224
+- Fixed `Tab` enable/disable messages leaking into `TabbedContent` https://github.com/Textualize/textual/issues/4233
+- Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
+- Fixed active hidden scrollbars not releasing the mouse https://github.com/Textualize/textual/issues/4274
+- Fixed the mouse not being released when hiding a `TextArea` while mouse selection is happening https://github.com/Textualize/textual/issues/4292
+- Fix mouse scrolling not working when mouse cursor is over a disabled child widget https://github.com/Textualize/textual/issues/4242
 
 ### Changed
 
 - Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
 - BREAKING: widget class names must start with a capital letter or an underscore `_` https://github.com/Textualize/textual/pull/4252
+- BREAKING: for many widgets, messages are now sent when programmatic changes that mirror user input are made https://github.com/Textualize/textual/pull/4256
+  - Changed `Collapsible`
+  - Changed `Markdown`
+  - Changed `Select`
+  - Changed `SelectionList`
+  - Changed `TabbedContent`
+  - Changed `Tabs`
+  - Changed `TextArea`
+  - Changed `Tree`
+- Improved ETA calculation for ProgressBar https://github.com/Textualize/textual/pull/4271
+- BREAKING: `AppFocus` and `AppBlur` are now posted when the terminal window gains or loses focus, if the terminal supports this https://github.com/Textualize/textual/pull/4265
+  - When the terminal window loses focus, the currently-focused widget will also lose focus.
+  - When the terminal window regains focus, the previously-focused widget will regain focus.
+- TextArea binding for <kbd>ctrl</kbd>+<kbd>k</kbd> will now delete the line if the line is empty https://github.com/Textualize/textual/issues/4277
+- The active tab (in `Tabs`) / tab pane (in `TabbedContent`) can now be unset https://github.com/Textualize/textual/issues/4241
 
 ## [0.52.1] - 2024-02-20
 
@@ -1760,6 +1800,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.53.1]: https://github.com/Textualize/textual/compare/v0.53.0...v0.53.1
+[0.53.0]: https://github.com/Textualize/textual/compare/v0.52.1...v0.53.0
+[0.52.1]: https://github.com/Textualize/textual/compare/v0.52.0...v0.52.1
+[0.52.0]: https://github.com/Textualize/textual/compare/v0.51.0...v0.52.0
 [0.51.0]: https://github.com/Textualize/textual/compare/v0.50.1...v0.51.0
 [0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
 [0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0
