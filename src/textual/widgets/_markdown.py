@@ -147,12 +147,13 @@ class MarkdownBlock(Static):
         self._token = token
         style_stack: list[Style] = [Style()]
         content = Text()
-        repeating_whitespace = re.compile(r"[ \t]+")  # Spaces and tabs get reduced.
         if token.children:
             for child in token.children:
                 if child.type == "text":
                     content.append(
-                        re.sub(repeating_whitespace, " ", child.content),
+                        # Ensure repeating spaces and/or tabs get squashed
+                        # down to a single space.
+                        re.sub(r"[ \t]+", " ", child.content),
                         style_stack[-1],
                     )
                 if child.type == "hardbreak":
