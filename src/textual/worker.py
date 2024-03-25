@@ -375,7 +375,7 @@ class Worker(Generic[ResultType]):
 
             app.log.worker(Traceback())
             if self.exit_on_error:
-                app._fatal_error()
+                app._handle_exception(error)
         else:
             self.state = WorkerState.SUCCESS
             app.log.worker(self)

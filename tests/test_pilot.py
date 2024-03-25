@@ -2,7 +2,7 @@ from string import punctuation
 
 import pytest
 
-from textual import events
+from textual import events, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
@@ -71,7 +71,7 @@ async def test_pilot_exception_catching_app_compose():
             pass
 
 
-async def test_pilot_exception_cathing_widget_compose():
+async def test_pilot_exception_catching_widget_compose():
     class SomeScreen(Screen[None]):
         def compose(self) -> ComposeResult:
             1 / 0
@@ -99,6 +99,20 @@ async def test_pilot_exception_catching_action():
     with pytest.raises(ZeroDivisionError):
         async with FailingApp().run_test() as pilot:
             await pilot.press("b")
+
+
+async def test_pilot_exception_catching_worker():
+    class SimpleAppThatCrashes(App[None]):
+        def on_mount(self) -> None:
+            self.crash()
+
+        @work(name="crash")
+        async def crash(self) -> None:
+            1 / 0
+
+    with pytest.raises(ZeroDivisionError):
+        async with SimpleAppThatCrashes().run_test():
+            pass
 
 
 async def test_pilot_click_screen():
