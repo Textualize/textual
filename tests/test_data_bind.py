@@ -22,7 +22,7 @@ class DataBindApp(App):
 
 async def test_data_binding():
     app = DataBindApp()
-    async with app.run_test():
+    async with app.run_test() as pilot:
 
         # Check default
         assert app.bar == "Bar"
@@ -51,6 +51,7 @@ async def test_data_binding():
 
         # Bind data outside of compose
         label2.data_bind(foo=DataBindApp.bar)
+        await pilot.pause()
         # Confirm new binding has propagated
         assert label2.foo == "Baz"
 

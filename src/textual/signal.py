@@ -88,4 +88,6 @@ class Signal:
                     try:
                         callback()
                     except Exception as error:
-                        log.error(f"error publishing signal to {node} ignored; {error}")
+                        log.error(
+                            f"error publishing signal to {node} ignored (callback={callback}); {error}"
+                        )

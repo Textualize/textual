@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
 
@@ -103,6 +104,7 @@ class MarkdownBlock(Static):
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
         self._text = Text()
+        self._token: Token | None = None
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
 
@@ -117,6 +119,100 @@ class MarkdownBlock(Static):
     async def action_link(self, href: str) -> None:
         """Called on link click."""
         self.post_message(Markdown.LinkClicked(self._markdown, href))
+
+    def notify_style_update(self) -> None:
+        """If CSS was reloaded, try to rebuild this block from its token."""
+        super().notify_style_update()
+        self.rebuild()
+
+    def rebuild(self) -> None:
+        """Rebuild the content of the block if we have a source token."""
+        if self._token is not None:
+            self.build_from_token(self._token)
+
+    def build_from_token(self, token: Token) -> None:
+        """Build the block content from its source token.
+
+        This method allows the block to be rebuilt on demand, which is useful
+        when the styles assigned to the
+        [Markdown.COMPONENT_CLASSES][textual.widgets.Markdown.COMPONENT_CLASSES]
+        change.
+
+        See https://github.com/Textualize/textual/issues/3464 for more information.
+
+        Args:
+            token: The token from which this block is built.
+        """
+
+        self._token = token
+        style_stack: list[Style] = [Style()]
+        content = Text()
+        if token.children:
+            for child in token.children:
+                if child.type == "text":
+                    content.append(
+                        # Ensure repeating spaces and/or tabs get squashed
+                        # down to a single space.
+                        re.sub(r"\s+", " ", child.content),
+                        style_stack[-1],
+                    )
+                if child.type == "hardbreak":
+                    content.append("\n")
+                if child.type == "softbreak":
+                    content.append(" ", style_stack[-1])
+                elif child.type == "code_inline":
+                    content.append(
+                        child.content,
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style(
+                            "code_inline", partial=True
+                        ),
+                    )
+                elif child.type == "em_open":
+                    style_stack.append(
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style("em", partial=True)
+                    )
+                elif child.type == "strong_open":
+                    style_stack.append(
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style(
+                            "strong", partial=True
+                        )
+                    )
+                elif child.type == "s_open":
+                    style_stack.append(
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style("s", partial=True)
+                    )
+                elif child.type == "link_open":
+                    href = child.attrs.get("href", "")
+                    action = f"link({href!r})"
+                    style_stack.append(
+                        style_stack[-1] + Style.from_meta({"@click": action})
+                    )
+                elif child.type == "image":
+                    href = child.attrs.get("src", "")
+                    alt = child.attrs.get("alt", "")
+
+                    action = f"link({href!r})"
+                    style_stack.append(
+                        style_stack[-1] + Style.from_meta({"@click": action})
+                    )
+
+                    content.append("🖼  ", style_stack[-1])
+                    if alt:
+                        content.append(f"({alt})", style_stack[-1])
+                    if child.children is not None:
+                        for grandchild in child.children:
+                            content.append(grandchild.content, style_stack[-1])
+
+                    style_stack.pop()
+
+                elif child.type.endswith("_close"):
+                    style_stack.pop()
+
+        self.set_content(content)
 
 
 class MarkdownHeader(MarkdownBlock):
@@ -833,67 +929,7 @@ class Markdown(Widget):
                 else:
                     output.append(block)
             elif token.type == "inline":
-                style_stack: list[Style] = [Style()]
-                content = Text()
-                if token.children:
-                    for child in token.children:
-                        if child.type == "text":
-                            content.append(child.content, style_stack[-1])
-                        if child.type == "hardbreak":
-                            content.append("\n")
-                        if child.type == "softbreak":
-                            content.append(" ", style_stack[-1])
-                        elif child.type == "code_inline":
-                            content.append(
-                                child.content,
-                                style_stack[-1]
-                                + self.get_component_rich_style(
-                                    "code_inline", partial=True
-                                ),
-                            )
-                        elif child.type == "em_open":
-                            style_stack.append(
-                                style_stack[-1]
-                                + self.get_component_rich_style("em", partial=True)
-                            )
-                        elif child.type == "strong_open":
-                            style_stack.append(
-                                style_stack[-1]
-                                + self.get_component_rich_style("strong", partial=True)
-                            )
-                        elif child.type == "s_open":
-                            style_stack.append(
-                                style_stack[-1]
-                                + self.get_component_rich_style("s", partial=True)
-                            )
-                        elif child.type == "link_open":
-                            href = child.attrs.get("href", "")
-                            action = f"link({href!r})"
-                            style_stack.append(
-                                style_stack[-1] + Style.from_meta({"@click": action})
-                            )
-                        elif child.type == "image":
-                            href = child.attrs.get("src", "")
-                            alt = child.attrs.get("alt", "")
-
-                            action = f"link({href!r})"
-                            style_stack.append(
-                                style_stack[-1] + Style.from_meta({"@click": action})
-                            )
-
-                            content.append("🖼  ", style_stack[-1])
-                            if alt:
-                                content.append(f"({alt})", style_stack[-1])
-                            if child.children is not None:
-                                for grandchild in child.children:
-                                    content.append(grandchild.content, style_stack[-1])
-
-                            style_stack.pop()
-
-                        elif child.type.endswith("_close"):
-                            style_stack.pop()
-
-                stack[-1].set_content(content)
+                stack[-1].build_from_token(token)
             elif token.type in ("fence", "code_block"):
                 (stack[-1]._blocks if stack else output).append(
                     MarkdownFence(self, token.content.rstrip(), token.info)
@@ -904,7 +940,9 @@ class Markdown(Widget):
                     (stack[-1]._blocks if stack else output).append(external)
 
         self.post_message(
-            Markdown.TableOfContentsUpdated(self, self._table_of_contents)
+            Markdown.TableOfContentsUpdated(self, self._table_of_contents).set_sender(
+                self
+            )
         )
         markdown_block = self.query("MarkdownBlock")
 

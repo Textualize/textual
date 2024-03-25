@@ -1,0 +1,10 @@
+Input {
+    dock: top;
+    margin-top: 1;
+}
+
+Name {
+    width: auto;
+    height: auto;
+    border: heavy $secondary;
+}

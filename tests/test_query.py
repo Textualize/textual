@@ -244,7 +244,7 @@ async def test_query_set_styles_invalid_css_raises_error():
     app = App()
     async with app.run_test():
         with pytest.raises(DeclarationError):
-            app.query(Widget).set_styles(css="random_rule: 1fr;")
+            app.query(Widget).set_styles(css="random-rule: 1fr;")
 
 
 async def test_query_set_styles_kwds():
@@ -301,7 +301,7 @@ async def test_query_refresh(args):
     refreshes = []
 
     class MyWidget(Widget):
-        def refresh(self, *, repaint=None, layout=None):
+        def refresh(self, *, repaint=None, layout=None, recompose=None):
             super().refresh(repaint=repaint, layout=layout)
             refreshes.append((repaint, layout))
 

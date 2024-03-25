@@ -1,6 +1,6 @@
 from time import time
 
-from textual.app import App, ComposeResult, RenderableType
+from textual.app import App, ComposeResult, RenderResult
 from textual.containers import Container
 from textual.renderables.gradient import LinearGradient
 from textual.widgets import Static
@@ -41,7 +41,7 @@ class Splash(Container):
     def compose(self) -> ComposeResult:
         yield Static("Making a splash with Textual!")  # (2)!
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         return LinearGradient(time() * 90, STOPS)  # (3)!
 
 

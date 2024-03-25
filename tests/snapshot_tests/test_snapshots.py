@@ -4,7 +4,7 @@ import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
-from textual.widgets import TextArea, Input, Button
+from textual.widgets import RichLog, TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
 
 # These paths should be relative to THIS directory.
@@ -278,6 +278,10 @@ def test_tabbed_content_with_modified_tabs(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "modified_tabs.py")
 
 
+def test_tabbed_content_styling_not_leaking(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "tabbed_content_style_leak_test.py")
+
+
 def test_option_list_strings(snap_compare):
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_strings.py")
 
@@ -511,15 +515,6 @@ def test_demo(snap_compare):
     )
 
 
-# def test_demo_with_keys(snap_compare):
-#     """Test the demo app (python -m textual)"""
-#     assert snap_compare(
-#         Path("../../src/textual/demo.py"),
-#         press=["down", "down", "down", "wait:500"],
-#         terminal_size=(100, 30),
-#     )
-
-
 def test_label_widths(snap_compare):
     """Test renderable widths are calculate correctly."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "label_widths.py")
@@ -568,6 +563,27 @@ def test_table_markup(snap_compare):
 
 def test_richlog_scroll(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_scroll.py")
+
+
+def test_richlog_width(snap_compare):
+    """Check that min_width applies in RichLog and that we can write
+    to the RichLog when it's not visible, and it still renders as expected
+    when made visible again."""
+
+    async def setup(pilot):
+        from rich.text import Text
+
+        rich_log: RichLog = pilot.app.query_one(RichLog)
+        rich_log.write(Text("hello1", style="on red", justify="right"), expand=True)
+        rich_log.visible = False
+        rich_log.write(Text("world2", style="on green", justify="right"), expand=True)
+        rich_log.visible = True
+        rich_log.write(Text("hello3", style="on blue", justify="right"), expand=True)
+        rich_log.display = False
+        rich_log.write(Text("world4", style="on yellow", justify="right"), expand=True)
+        rich_log.display = True
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "richlog_width.py", run_before=setup)
 
 
 def test_tabs_invalidate(snap_compare):
@@ -648,6 +664,30 @@ def test_datatable_hot_reloading(snap_compare, monkeypatch):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "datatable_hot_reloading.py", run_before=run_before
     )
+
+
+def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
+    """Tests all markdown component classes reload correctly.
+
+    See https://github.com/Textualize/textual/issues/3464."""
+
+    monkeypatch.setenv(
+        "TEXTUAL", "debug"
+    )  # This will make sure we create a file monitor.
+
+    async def run_before(pilot):
+        css_file = pilot.app.CSS_PATH
+        with open(css_file, "w") as f:
+            f.write("/* This file is purposefully empty. */\n")  # Clear all the CSS.
+        await pilot.app._on_css_change()
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "markdown_component_classes_reloading.py",
+        run_before=run_before,
+    )
+
+def test_markdown_space_squashing(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_whitespace.py")
 
 
 def test_layer_fix(snap_compare):
@@ -950,6 +990,7 @@ def test_text_area_alternate_screen(snap_compare):
         SNAPSHOT_APPS_DIR / "text_area_alternate_screen.py", terminal_size=(48, 10)
     )
 
+
 @pytest.mark.syntax
 def test_text_area_wrapping_and_folding(snap_compare):
     assert snap_compare(
@@ -1073,6 +1114,12 @@ def test_input_percentage_width(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "input_percentage_width.py")
 
 
+def test_recompose(snap_compare):
+    """Check recompose works."""
+    # https://github.com/Textualize/textual/pull/4206
+    assert snap_compare(SNAPSHOT_APPS_DIR / "recompose.py")
+
+
 @pytest.mark.parametrize("dark", [True, False])
 def test_ansi_color_mapping(snap_compare, dark):
     """Test how ANSI colors in Rich renderables are mapped to hex colors."""
@@ -1088,3 +1135,38 @@ def test_pretty_grid_gutter_interaction(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "pretty_grid_gutter_interaction.py", terminal_size=(81, 7)
     )
+
+
+def test_sort_children(snap_compare):
+    """Test sort_children method."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "sort_children.py", terminal_size=(80, 25))
+
+
+def test_app_blur(snap_compare):
+    """Test Styling after receiving an AppBlur message."""
+
+    async def run_before(pilot) -> None:
+        await pilot.pause()  # Allow the AppBlur message to get processed.
+
+    assert snap_compare(SNAPSHOT_APPS_DIR / "app_blur.py", run_before=run_before)
+
+
+def test_placeholder_disabled(snap_compare):
+    """Test placeholder with diabled set to True."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "placeholder_disabled.py")
+
+
+def test_listview_index(snap_compare):
+    """Tests that ListView scrolls correctly after updating its index."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "listview_index.py")
+
+
+def test_button_widths(snap_compare):
+    """Test that button widths expand auto containers as expected."""
+    # https://github.com/Textualize/textual/issues/4024
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_widths.py")
+
+
+def test_welcome(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "welcome_widget.py")
+

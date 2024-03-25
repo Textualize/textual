@@ -38,6 +38,7 @@ from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
+from .errors import NoWidget
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
@@ -54,7 +55,6 @@ if TYPE_CHECKING:
     from .command import Provider
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .errors import NoWidget  # type: ignore  # noqa: F401
     from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
@@ -289,6 +289,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Returns:
             Widget and screen region.
+
+        Raises:
+            NoWidget: If there is no widget under the screen coordinate.
         """
         return self._compositor.get_widget_at(x, y)
 
@@ -303,6 +306,29 @@ class Screen(Generic[ScreenResultType], Widget):
             Sequence of (WIDGET, REGION) tuples.
         """
         return self._compositor.get_widgets_at(x, y)
+
+    def get_focusable_widget_at(self, x: int, y: int) -> Widget | None:
+        """Get the focusable widget under a given coordinate.
+
+        If the widget directly under the given coordinate is not focusable, then this method will check
+        if any of the ancestors are focusable. If no ancestors are focusable, then `None` will be returned.
+
+        Args:
+            x: X coordinate.
+            y: Y coordinate.
+
+        Returns:
+            A `Widget`, or `None` if there is no focusable widget underneath the coordinate.
+        """
+        try:
+            widget, _region = self.get_widget_at(x, y)
+        except NoWidget:
+            return None
+
+        for node in widget.ancestors_with_self:
+            if isinstance(node, Widget) and node.focusable:
+                return node
+        return None
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the style under a given coordinate.
@@ -628,6 +654,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._layout_required
                 or self._scroll_required
                 or self._repaint_required
+                or self._recompose_required
                 or self._dirty_widgets
             ):
                 self._update_timer.resume()
@@ -671,6 +698,10 @@ class Screen(Generic[ScreenResultType], Widget):
             if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
                 self._compositor_refresh()
+
+            if self._recompose_required:
+                self._recompose_required = False
+                self.call_next(self.recompose)
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)
@@ -720,9 +751,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Remove the latest result callback from the stack."""
         self._result_callbacks.pop()
 
-    def _refresh_layout(
-        self, size: Size | None = None, full: bool = False, scroll: bool = False
-    ) -> None:
+    def _refresh_layout(self, size: Size | None = None, scroll: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if not size:
@@ -819,7 +848,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
 
     def _on_screen_resume(self) -> None:
@@ -827,7 +856,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
         # Only auto-focus when the app has focus (textual-web only)
         if self.app.app_focus:
@@ -881,11 +910,15 @@ class Screen(Generic[ScreenResultType], Widget):
         # If there's a widget associated with the tooltip at all...
         if self._tooltip_widget is not None:
             # ...look at what's currently under the mouse.
-            under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
-            # If it's not the same widget...
-            if under_mouse is not self._tooltip_widget:
-                # ...clear the tooltip.
-                self._clear_tooltip()
+            try:
+                under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                # If it's not the same widget...
+                if under_mouse is not self._tooltip_widget:
+                    # ...clear the tooltip.
+                    self._clear_tooltip()
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
         """Called by a timer from _handle_mouse_move to update the tooltip.
@@ -1003,8 +1036,10 @@ class Screen(Generic[ScreenResultType], Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseDown) and widget.focusable:
-                    self.set_focus(widget, scroll_visible=False)
+                if isinstance(event, events.MouseDown):
+                    focusable_widget = self.get_focusable_widget_at(event.x, event.y)
+                    if focusable_widget:
+                        self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()

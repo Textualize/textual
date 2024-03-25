@@ -32,14 +32,17 @@ from rich.console import (
     ConsoleRenderable,
     JustifyMethod,
     RenderableType,
-    RenderResult,
-    RichCast,
 )
+from rich.console import RenderResult as RichRenderResult
+from rich.console import RichCast
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
+
+if TYPE_CHECKING:
+    from .app import RenderResult
 
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
@@ -152,7 +155,7 @@ class _Styled:
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
-    ) -> "RenderResult":
+    ) -> "RichRenderResult":
         style = console.get_style(self.style)
         result_segments = console.render(self.renderable, options)
 
@@ -243,6 +246,10 @@ class _BorderTitle:
         return title.markup
 
 
+class BadWidgetName(Exception):
+    """Raised when widget class names do not satisfy the required restrictions."""
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -298,6 +305,9 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
+    # Default sort order, incremented by constructor
+    _sort_order: ClassVar[int] = 0
+
     def __init__(
         self,
         *children: Widget,
@@ -321,8 +331,11 @@ class Widget(DOMNode):
         self._layout_required = False
         self._repaint_required = False
         self._scroll_required = False
+        self._recompose_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
+        Widget._sort_order += 1
+        self.sort_order = Widget._sort_order
         self.highlight_style: Style | None = None
 
         self._vertical_scrollbar: ScrollBar | None = None
@@ -339,7 +352,6 @@ class Widget(DOMNode):
         self._repaint_regions: set[Region] = set()
 
         # Cache the auto content dimensions
-        # TODO: add mechanism to explicitly clear this
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
@@ -349,13 +361,14 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
-        self._stabilize_scrollbar: tuple[Size, str, str] | None = None
-        """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
         self._absolute_offset: Offset | None = None
         """Force an absolute offset for the widget (used by tooltips)."""
+
+        self._scrollbar_changes: set[tuple[bool, bool]] = set()
+        """Used to stabilize scrollbars."""
 
         super().__init__(
             name=name,
@@ -787,7 +800,6 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
-        self._stabilize_scrollbar = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -1038,7 +1050,10 @@ class Widget(DOMNode):
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
 
-        Extend this to build a UI.
+        This method is called when a widget is mounted or by setting `recompose=True` when
+        calling [`refresh()`][textual.widget.Widget.refresh].
+
+        Note that you don't typically need to explicitly call this method.
 
         Example:
             ```python
@@ -1050,6 +1065,22 @@ class Widget(DOMNode):
             ```
         """
         yield from ()
+
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
+        """Recompose the widget.
+
+        Recomposing will remove children and call `self.compose` again to remount.
+        """
+        if self._parent is not None:
+            async with self.batch():
+                await self.query("*").exclude(".-textual-system").remove()
+                await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -1406,14 +1437,6 @@ class Widget(DOMNode):
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
 
-        stabilize_scrollbar = (
-            self.container_size,
-            overflow_x,
-            overflow_y,
-        )
-        if self._stabilize_scrollbar == stabilize_scrollbar:
-            return
-
         width, height = self._container_size
 
         show_horizontal = False
@@ -1432,17 +1455,31 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-        if overflow_x == "auto" and show_vertical and not show_horizontal:
-            show_horizontal = self.virtual_size.width > (
-                width - styles.scrollbar_size_vertical
-            )
-        if overflow_y == "auto" and show_horizontal and not show_vertical:
-            show_vertical = self.virtual_size.height > (
-                height - styles.scrollbar_size_horizontal
-            )
+        _show_horizontal = show_horizontal
+        _show_vertical = show_vertical
 
-        self._stabilize_scrollbar = stabilize_scrollbar
+        if not (
+            overflow_x == "auto"
+            and overflow_y == "auto"
+            and (show_horizontal, show_vertical) in self._scrollbar_changes
+        ):
+            # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+            if overflow_x == "auto" and show_vertical and not show_horizontal:
+                show_horizontal = self.virtual_size.width > (
+                    width - styles.scrollbar_size_vertical
+                )
+            if overflow_y == "auto" and show_horizontal and not show_vertical:
+                show_vertical = self.virtual_size.height > (
+                    height - styles.scrollbar_size_horizontal
+                )
+
+        if (
+            self.show_horizontal_scrollbar != show_horizontal
+            or self.show_vertical_scrollbar != show_vertical
+        ):
+            self._scrollbar_changes.add((_show_horizontal, _show_vertical))
+        else:
+            self._scrollbar_changes.clear()
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -2864,11 +2901,17 @@ class Widget(DOMNode):
         inherit_css: bool = True,
         inherit_bindings: bool = True,
     ) -> None:
-        base = cls.__mro__[0]
+        name = cls.__name__
+        if not name[0].isupper() and not name.startswith("_"):
+            raise BadWidgetName(
+                f"Widget subclass {name!r} should be capitalised or start with '_'."
+            )
+
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
         )
+        base = cls.__mro__[0]
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (
@@ -2900,10 +2943,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = bool(
+        show_vertical_scrollbar = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = bool(
+        show_horizontal_scrollbar = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -2937,10 +2980,10 @@ class Widget(DOMNode):
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
 
-        show_vertical_scrollbar: bool = bool(
+        show_vertical_scrollbar = bool(
             show_vertical_scrollbar and scrollbar_size_vertical
         )
-        show_horizontal_scrollbar: bool = bool(
+        show_horizontal_scrollbar = bool(
             show_horizontal_scrollbar and scrollbar_size_horizontal
         )
 
@@ -3128,7 +3171,7 @@ class Widget(DOMNode):
             if layout:
                 self.virtual_size = virtual_size
             else:
-                self._reactive_virtual_size = virtual_size
+                self.set_reactive(Widget.virtual_size, virtual_size)
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
@@ -3257,6 +3300,7 @@ class Widget(DOMNode):
         *regions: Region,
         repaint: bool = True,
         layout: bool = False,
+        recompose: bool = False,
     ) -> Self:
         """Initiate a refresh of the widget.
 
@@ -3275,6 +3319,7 @@ class Widget(DOMNode):
             *regions: Additional screen regions to mark as dirty.
             repaint: Repaint the widget (will call render() again).
             layout: Also layout widgets in the view.
+            recompose: Re-compose the widget (will remove and re-mount children).
 
         Returns:
             The `Widget` instance.
@@ -3283,13 +3328,17 @@ class Widget(DOMNode):
             return self
         if layout:
             self._layout_required = True
-            self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if repaint:
+        if recompose:
+            self._recompose_required = True
+            self.call_next(self._check_recompose)
+            return self
+
+        elif repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()
             self._rich_style_cache.clear()
@@ -3344,7 +3393,7 @@ class Widget(DOMNode):
             with self.app.batch_update():
                 yield
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Get text or Rich renderable for this widget.
 
         Implement this for custom widgets.
@@ -3523,8 +3572,12 @@ class Widget(DOMNode):
         message_type = type(message)
         if self._is_prevented(message_type):
             return False
-        # Otherwise, if this is a mouse event, the widget receiving the
-        # event must not be disabled at this moment.
+        # Mouse scroll events should always go through, this allows mouse
+        # wheel scrolling to pass through disabled widgets.
+        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+            return True
+        # Otherwise, if this is any other mouse event, the widget receiving
+        # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
             if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
@@ -3555,6 +3608,9 @@ class Widget(DOMNode):
     async def _on_compose(self, event: events.Compose) -> None:
         _rich_traceback_omit = True
         event.prevent_default()
+        await self._compose()
+
+    async def _compose(self) -> None:
         try:
             widgets = [*self._pending_children, *compose(self)]
             self._pending_children.clear()
@@ -3659,7 +3715,17 @@ class Widget(DOMNode):
             self.scroll_page_right()
             event.stop()
 
+    def _on_show(self, event: events.Show) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
+
     def _on_hide(self, event: events.Hide) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
         if self.has_focus:
             self.blur()
 

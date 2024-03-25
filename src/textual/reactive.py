@@ -104,6 +104,7 @@ class Reactive(Generic[ReactiveType]):
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
         compute: Run compute methods when attribute is changed.
+        recompose: Compose the widget again when the attribute changes.
     """
 
     _reactives: ClassVar[dict[str, object]] = {}
@@ -117,6 +118,7 @@ class Reactive(Generic[ReactiveType]):
         init: bool = False,
         always_update: bool = False,
         compute: bool = True,
+        recompose: bool = False,
     ) -> None:
         self._default = default
         self._layout = layout
@@ -124,6 +126,7 @@ class Reactive(Generic[ReactiveType]):
         self._init = init
         self._always_update = always_update
         self._run_compute = compute
+        self._recompose = recompose
         self._owner: Type[MessageTarget] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -133,6 +136,7 @@ class Reactive(Generic[ReactiveType]):
         yield "init", self._init
         yield "always_update", self._always_update
         yield "compute", self._run_compute
+        yield "recompose", self._recompose
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -286,8 +290,12 @@ class Reactive(Generic[ReactiveType]):
                 self._compute(obj)
 
             # Refresh according to descriptor flags
-            if self._layout or self._repaint:
-                obj.refresh(repaint=self._repaint, layout=self._layout)
+            if self._layout or self._repaint or self._recompose:
+                obj.refresh(
+                    repaint=self._repaint,
+                    layout=self._layout,
+                    recompose=self._recompose,
+                )
 
     @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
@@ -333,7 +341,7 @@ class Reactive(Generic[ReactiveType]):
             obj: Reactable object.
         """
         _rich_traceback_guard = True
-        for compute in obj._reactives.keys():
+        for compute in obj._reactives.keys() & obj._computes:
             try:
                 compute_method = getattr(obj, f"compute_{compute}")
             except AttributeError:
@@ -369,6 +377,7 @@ class reactive(Reactive[ReactiveType]):
         repaint: bool = True,
         init: bool = True,
         always_update: bool = False,
+        recompose: bool = False,
     ) -> None:
         super().__init__(
             default,
@@ -376,6 +385,7 @@ class reactive(Reactive[ReactiveType]):
             repaint=repaint,
             init=init,
             always_update=always_update,
+            recompose=recompose,
         )
 
 

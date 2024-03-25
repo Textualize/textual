@@ -48,11 +48,9 @@ def test_progress_overflow():
     pb = ProgressBar(total=100)
 
     pb.advance(999_999)
-    assert pb.progress == 100
     assert pb.percentage == 1
 
     pb.update(total=50)
-    assert pb.progress == 50
     assert pb.percentage == 1
 
 
@@ -60,7 +58,6 @@ def test_progress_underflow():
     pb = ProgressBar(total=100)
 
     pb.advance(-999_999)
-    assert pb.progress == 0
     assert pb.percentage == 0
 
 

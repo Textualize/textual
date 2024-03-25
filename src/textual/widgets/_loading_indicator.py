@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 from time import time
+from typing import TYPE_CHECKING
 
-from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
+if TYPE_CHECKING:
+    from ..app import RenderResult
 from ..color import Gradient
 from ..events import Mount
 from ..widget import Widget
@@ -53,7 +55,7 @@ class LoadingIndicator(Widget):
         self._start_time = time()
         self.auto_refresh = 1 / 16
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         if self.app.animation_level == "none":
             return Text("Loading...")
 
