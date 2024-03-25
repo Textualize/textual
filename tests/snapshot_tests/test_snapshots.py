@@ -1162,3 +1162,8 @@ def test_button_widths(snap_compare):
     """Test that button widths expand auto containers as expected."""
     # https://github.com/Textualize/textual/issues/4024
     assert snap_compare(SNAPSHOT_APPS_DIR / "button_widths.py")
+
+
+def test_welcome(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "welcome_widget.py")
+
