@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.54.0] - 2023-03-26
+## [0.54.0] - 2024-03-26
 
 ### Fixed
 
@@ -24,13 +24,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
 
-## [0.53.1] - 2023-03-18
+## [0.53.1] - 2024-03-18
 
 ### Fixed
 
 - Fixed issue with data binding https://github.com/Textualize/textual/pull/4308
 
-## [0.53.0] - 2023-03-18
+## [0.53.0] - 2024-03-18
 
 ### Added
 
