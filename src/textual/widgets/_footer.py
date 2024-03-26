@@ -103,9 +103,7 @@ class Footer(Widget):
         description_style = self.get_component_rich_style("footer--description")
 
         bindings = [
-            binding
-            for (_, binding) in self.app.namespace_bindings.values()
-            if binding.show
+            binding for (_, binding) in self.app.active_bindings if binding.show
         ]
 
         action_to_bindings = defaultdict(list)
