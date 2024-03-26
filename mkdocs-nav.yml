@@ -69,6 +69,7 @@ nav:
           - "events/screen_resume.md"
           - "events/screen_suspend.md"
           - "events/show.md"
+          - "events/unmount.md"
       - Styles:
           - "styles/index.md"
           - "styles/align.md"
