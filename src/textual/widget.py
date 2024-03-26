@@ -3618,10 +3618,8 @@ class Widget(DOMNode):
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
-        except Exception:
-            from rich.traceback import Traceback
-
-            self.app.panic(Traceback())
+        except Exception as error:
+            self.app._handle_exception(error)
         else:
             self._extend_compose(widgets)
             await self.mount_composed_widgets(widgets)
