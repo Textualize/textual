@@ -7850,6 +7850,8 @@ Verbose events are excluded from the textual console, unless you explicitly requ
 
   
       <p>Sent to a widget to request it to compose and mount children.</p>
+<p>This event is used internally by Textual.
+You won't typically need to explicitly handle it,</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled checked/><span class="task-list-indicator"></span></label> Verbose</li>
@@ -8178,8 +8180,13 @@ Verbose events are excluded from the textual console, unless you explicitly requ
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
 </ul>
-<p>A widget may be hidden by setting its <code>visible</code> flag to <code>False</code>, if it is no longer in a layout,
-or if it has been offset beyond the edges of the terminal.</p>
+<p>Sent when any of the following conditions apply:</p>
+<ul>
+<li>The widget is removed from the DOM.</li>
+<li>The widget is no longer displayed because it has been scrolled or clipped from the terminal or its container.</li>
+<li>The widget has its <code>display</code> attribute set to <code>False</code>.</li>
+<li>The widget's <code>display</code> style is set to <code>"none"</code>.</li>
+</ul>
 
 
 
@@ -8556,7 +8563,7 @@ through the usual message queue.</p>
 
   
       <p>Sent when the App is running but <em>before</em> the terminal is in application mode.</p>
-<p>Use this event to run any set up that doesn't require any visuals such as loading
+<p>Use this event to run any setup that doesn't require any visuals such as loading
 configuration and binding keys.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
@@ -9900,7 +9907,7 @@ and disable it when the app shuts down.</p>
         Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
 
   
-      <p>Sent to the app when the DOM is ready.</p>
+      <p>Sent to the <code>App</code> when the DOM is ready and the first frame has been displayed.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
@@ -10170,7 +10177,7 @@ and disable it when the app shuts down.</p>
         Bases: <code><a class="autorefs autorefs-internal" title="textual.events.Event" href="#textual.events.Event">Event</a></code></p>
 
   
-      <p>Sent when a widget has become visible.</p>
+      <p>Sent when a widget is first displayed.</p>
 <ul class="task-list">
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
 <li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
