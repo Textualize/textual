@@ -105,7 +105,7 @@ def test_input_suggestions(snap_compare):
         pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before
+        SNAPSHOT_APPS_DIR / "input_suggestions.py", press=["b"], run_before=run_before
     )
 
 
@@ -686,6 +686,9 @@ def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
         run_before=run_before,
     )
 
+def test_markdown_space_squashing(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_whitespace.py")
+
 
 def test_layer_fix(snap_compare):
     # Check https://github.com/Textualize/textual/issues/1358
@@ -1141,6 +1144,29 @@ def test_sort_children(snap_compare):
 
 def test_app_blur(snap_compare):
     """Test Styling after receiving an AppBlur message."""
+
     async def run_before(pilot) -> None:
-        await pilot.pause()     # Allow the AppBlur message to get processed.
+        await pilot.pause()  # Allow the AppBlur message to get processed.
+
     assert snap_compare(SNAPSHOT_APPS_DIR / "app_blur.py", run_before=run_before)
+
+
+def test_placeholder_disabled(snap_compare):
+    """Test placeholder with diabled set to True."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "placeholder_disabled.py")
+
+
+def test_listview_index(snap_compare):
+    """Tests that ListView scrolls correctly after updating its index."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "listview_index.py")
+
+
+def test_button_widths(snap_compare):
+    """Test that button widths expand auto containers as expected."""
+    # https://github.com/Textualize/textual/issues/4024
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_widths.py")
+
+
+def test_welcome(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "welcome_widget.py")
+
