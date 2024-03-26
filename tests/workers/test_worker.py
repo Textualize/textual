@@ -113,10 +113,10 @@ async def test_run_error() -> None:
         pass
 
     app = ErrorApp()
-    async with app.run_test():
-        worker: Worker[str] = Worker(app, run_error)
-        worker._start(app)
-        with pytest.raises(WorkerFailed):
+    with pytest.raises(WorkerFailed):
+        async with app.run_test():
+            worker: Worker[str] = Worker(app, run_error)
+            worker._start(app)
             await worker.wait()
 
 
@@ -218,12 +218,12 @@ async def test_self_referential_deadlock():
         await get_current_worker().wait()
 
     app = App()
-    async with app.run_test():
-        worker = Worker(app, self_referential_work)
-        worker._start(app)
-        with pytest.raises(WorkerFailed) as exc:
+    with pytest.raises(WorkerFailed) as exc:
+        async with app.run_test():
+            worker = Worker(app, self_referential_work)
+            worker._start(app)
             await worker.wait()
-            assert exc.type is DeadlockError
+        assert exc.type is DeadlockError
 
 
 async def test_wait_without_start():

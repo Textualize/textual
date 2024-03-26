@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with flickering scrollbars https://github.com/Textualize/textual/pull/4315
 - Fixed issue where narrow TextArea would repeatedly wrap due to scrollbar appearing/disappearing https://github.com/Textualize/textual/pull/4334
 - Fix progress bar ETA not updating when setting `total` reactive https://github.com/Textualize/textual/pull/4316
+- Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
 
 ### Changed
 
