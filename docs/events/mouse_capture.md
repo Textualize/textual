@@ -8,4 +8,6 @@ title: MouseCapture
 
 ## See also
 
+- [capture_mouse][textual.widget.Widget.capture_mouse]
+- [release_mouse][textual.widget.Widget.release_mouse]
 - [MouseRelease](mouse_release.md)

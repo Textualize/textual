@@ -3012,11 +3012,18 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, (str, tuple)):
+        if isinstance(action, str) or (isinstance(action, tuple) and len(action) == 2):
             await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
         elif callable(action):
             await action()
         else:
+            if isinstance(action, tuple) and self.debug:
+                # It's a tuple and made it this far, which means it'll be a
+                # malformed action. This is a no-op, but let's log that
+                # anyway.
+                log.warning(
+                    f"Can't parse @{event_name} action from style meta; check your console markup syntax"
+                )
             return False
         return True
 
