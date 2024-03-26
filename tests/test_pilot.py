@@ -9,6 +9,7 @@ from textual.containers import Center, Middle
 from textual.pilot import OutOfBounds
 from textual.screen import Screen
 from textual.widgets import Button, Label
+from textual.worker import WorkerFailed
 
 KEY_CHARACTERS_TO_TEST = "akTW03" + punctuation
 """Test some "simple" characters (letters + digits) and all punctuation."""
@@ -110,9 +111,10 @@ async def test_pilot_exception_catching_worker():
         async def crash(self) -> None:
             1 / 0
 
-    with pytest.raises(ZeroDivisionError):
+    with pytest.raises(WorkerFailed) as exc:
         async with SimpleAppThatCrashes().run_test():
             pass
+        assert exc.type is ZeroDivisionError
 
 
 async def test_pilot_click_screen():
