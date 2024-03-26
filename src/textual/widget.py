@@ -361,13 +361,14 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
-        self._stabilize_scrollbar: tuple[Size, str, str] | None = None
-        """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
         self._absolute_offset: Offset | None = None
         """Force an absolute offset for the widget (used by tooltips)."""
+
+        self._scrollbar_changes: set[tuple[bool, bool]] = set()
+        """Used to stabilize scrollbars."""
 
         super().__init__(
             name=name,
@@ -799,7 +800,6 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
-        self._stabilize_scrollbar = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -1437,14 +1437,6 @@ class Widget(DOMNode):
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
 
-        stabilize_scrollbar = (
-            self.container_size,
-            overflow_x,
-            overflow_y,
-        )
-        if self._stabilize_scrollbar == stabilize_scrollbar:
-            return
-
         width, height = self._container_size
 
         show_horizontal = False
@@ -1463,17 +1455,31 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-        if overflow_x == "auto" and show_vertical and not show_horizontal:
-            show_horizontal = self.virtual_size.width > (
-                width - styles.scrollbar_size_vertical
-            )
-        if overflow_y == "auto" and show_horizontal and not show_vertical:
-            show_vertical = self.virtual_size.height > (
-                height - styles.scrollbar_size_horizontal
-            )
+        _show_horizontal = show_horizontal
+        _show_vertical = show_vertical
 
-        self._stabilize_scrollbar = stabilize_scrollbar
+        if not (
+            overflow_x == "auto"
+            and overflow_y == "auto"
+            and (show_horizontal, show_vertical) in self._scrollbar_changes
+        ):
+            # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+            if overflow_x == "auto" and show_vertical and not show_horizontal:
+                show_horizontal = self.virtual_size.width > (
+                    width - styles.scrollbar_size_vertical
+                )
+            if overflow_y == "auto" and show_horizontal and not show_vertical:
+                show_vertical = self.virtual_size.height > (
+                    height - styles.scrollbar_size_horizontal
+                )
+
+        if (
+            self.show_horizontal_scrollbar != show_horizontal
+            or self.show_vertical_scrollbar != show_vertical
+        ):
+            self._scrollbar_changes.add((_show_horizontal, _show_vertical))
+        else:
+            self._scrollbar_changes.clear()
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -3322,7 +3328,6 @@ class Widget(DOMNode):
             return self
         if layout:
             self._layout_required = True
-            self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break

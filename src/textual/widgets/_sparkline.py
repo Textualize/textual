@@ -66,7 +66,7 @@ class Sparkline(Widget):
 
         Args:
             data: The initial data to populate the sparkline with.
-            summary_function: Summarises bar values into a single value used to
+            summary_function: Summarizes bar values into a single value used to
                 represent each bar.
             name: The name of the widget.
             id: The ID of the widget in the DOM.
