@@ -1441,8 +1441,8 @@ class App(Generic[ReturnType], DOMNode):
     async def run_async(
         self,
         *,
-        inline: bool = True,
         headless: bool = False,
+        inline: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1539,6 +1539,7 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 await self.run_async(
                     headless=headless,
+                    inline=inline,
                     size=size,
                     auto_pilot=auto_pilot,
                 )
@@ -2316,7 +2317,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self.log.system("---")
 
-        self.log.system(driver=self.driver_class)
         self.log.system(loop=asyncio.get_running_loop())
         self.log.system(features=self.features)
         if constants.LOG_FILE is not None:
@@ -2426,6 +2426,7 @@ class App(Generic[ReturnType], DOMNode):
                 debug=constants.DEBUG,
                 size=terminal_size,
             )
+            self.log(driver=driver)
 
             if not self._exit:
                 driver.start_application_mode()
