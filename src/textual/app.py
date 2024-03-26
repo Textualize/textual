@@ -846,7 +846,7 @@ class App(Generic[ReturnType], DOMNode):
         return focused
 
     @property
-    def active_bindings(self) -> list[tuple[DOMNode, Binding]]:
+    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
         """Get currently active bindings.
 
         If no widget is focused, then app-level bindings are returned.
@@ -855,15 +855,21 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            A list of tuples containing bindings that are currently active and the DOMNode the binding is associated with.
+            A map of keys to a tuple containing the DOMNode and Binding that key corresponds to.
         """
 
-        nodes_and_bindings: list[tuple[DOMNode, Binding]] = []
+        bindings_map: dict[str, tuple[DOMNode, Binding]] = {}
         for namespace, bindings in reversed(self._binding_chain):
-            for binding in bindings.keys.values():
-                nodes_and_bindings.append((namespace, binding))
+            for key, binding in bindings.keys.items():
+                existing_key_and_binding = bindings_map.get(key)
+                if existing_key_and_binding:
+                    _, existing_binding = existing_key_and_binding
+                    if binding.priority and not existing_binding.priority:
+                        bindings_map[key] = (namespace, binding)
+                else:
+                    bindings_map[key] = (namespace, binding)
 
-        return nodes_and_bindings
+        return bindings_map
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
