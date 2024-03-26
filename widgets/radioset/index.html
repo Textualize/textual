@@ -1610,6 +1610,14 @@ window.onload = async (event) => {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
       
@@ -1658,11 +1666,74 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
+      <a href="../../events/app_blur/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppBlur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/app_focus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppFocus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Blur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/click/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Click
   </span>
   
 
@@ -1889,27 +1960,6 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../events/click/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Click
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../events/mouse_down/" class="md-nav__link">
         
   
@@ -2057,6 +2107,27 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
+      <a href="../../events/print/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Print
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../events/resize/" class="md-nav__link">
         
   
@@ -2125,6 +2196,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Show
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/unmount/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unmount
   </span>
   
 
@@ -4555,9 +4647,9 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._radio_set.RadioSet.action_toggle" class="md-nav__link">
+  <a href="#textual.widgets._radio_set.RadioSet.action_toggle_button" class="md-nav__link">
     <span class="md-ellipsis">
-      action_toggle()
+      action_toggle_button()
     </span>
   </a>
   
@@ -6586,9 +6678,9 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
-  <a href="#textual.widgets._radio_set.RadioSet.action_toggle" class="md-nav__link">
+  <a href="#textual.widgets._radio_set.RadioSet.action_toggle_button" class="md-nav__link">
     <span class="md-ellipsis">
-      action_toggle()
+      action_toggle_button()
     </span>
   </a>
   
@@ -7269,9 +7361,11 @@ it.</p>
 <a href="#textual.widgets._radio_set.RadioSet.BINDINGS" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BINDINGS</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">BindingType</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;down,right&quot;</span><span class="p">,</span> <span class="s2">&quot;next_button&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;enter,space&quot;</span><span class="p">,</span> <span class="s2">&quot;toggle&quot;</span><span class="p">,</span> <span class="s2">&quot;Toggle&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;up,left&quot;</span><span class="p">,</span> <span class="s2">&quot;previous_button&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">]</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">Binding</span><span class="p">(</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="s2">&quot;enter,space&quot;</span><span class="p">,</span> <span class="s2">&quot;toggle_button&quot;</span><span class="p">,</span> <span class="s2">&quot;Toggle&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="p">),</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">Binding</span><span class="p">(</span><span class="s2">&quot;up,left&quot;</span><span class="p">,</span> <span class="s2">&quot;previous_button&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">]</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -7421,8 +7515,8 @@ it.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._radio_set.RadioSet.Changed.ALLOW_SELECTOR_MATCH" class="headerlink" title="Permanent link">&para;</a></h4>
@@ -7593,15 +7687,15 @@ and is used by the <a class="autorefs autorefs-internal" href="../../api/on/#tex
 
 
 
-<h3 id="textual.widgets._radio_set.RadioSet.action_toggle" class="doc doc-heading">
-        <span class="doc doc-object-name doc-function-name">action_toggle</span>
+<h3 id="textual.widgets._radio_set.RadioSet.action_toggle_button" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">action_toggle_button</span>
   
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-method"><code>method</code></small>
   </span>
 
-<a href="#textual.widgets._radio_set.RadioSet.action_toggle" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<a href="#textual.widgets._radio_set.RadioSet.action_toggle_button" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">action_toggle_button</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">

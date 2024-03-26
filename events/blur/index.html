@@ -11,10 +11,10 @@
         <link rel="canonical" href="https://textual.textualize.io/events/blur/">
       
       
-        <link rel="prev" href="../">
+        <link rel="prev" href="../app_focus/">
       
       
-        <link rel="next" href="../descendant_blur/">
+        <link rel="next" href="../click/">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
@@ -130,7 +130,7 @@ window.onload = async (event) => {
     <div data-md-component="skip">
       
         
-        <a href="#blur" class="md-skip">
+        <a href="#textual.events.Blur" class="md-skip">
           Skip to content
         </a>
       
@@ -1612,6 +1612,14 @@ window.onload = async (event) => {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
       
@@ -1651,6 +1659,48 @@ window.onload = async (event) => {
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_blur/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppBlur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_focus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppFocus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -1706,33 +1756,6 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Attributes
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Code
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Blur" class="md-nav__link">
-    <span class="md-ellipsis">
-      Blur
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       See also
@@ -1745,6 +1768,27 @@ window.onload = async (event) => {
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../click/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Click
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -1967,27 +2011,6 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../click/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Click
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../mouse_down/" class="md-nav__link">
         
   
@@ -2135,6 +2158,27 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
+      <a href="../print/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Print
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../resize/" class="md-nav__link">
         
   
@@ -2203,6 +2247,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Show
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unmount/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unmount
   </span>
   
 
@@ -6240,33 +6305,6 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#attributes" class="md-nav__link">
-    <span class="md-ellipsis">
-      Attributes
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Code
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Blur" class="md-nav__link">
-    <span class="md-ellipsis">
-      Blur
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#see-also" class="md-nav__link">
     <span class="md-ellipsis">
       See also
@@ -6293,24 +6331,13 @@ window.onload = async (event) => {
   
 
 
-<h1 id="blur">Blur<a class="headerlink" href="#blur" title="Permanent link">&para;</a></h1>
-<p>The <code>Blur</code> event is sent to a widget when it loses focus.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h2>
-<p><em>No other attributes</em></p>
-<h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
-
-
 <div class="doc doc-object doc-class">
 
 
 
 
 
-<h2 id="textual.events.Blur" class="doc doc-heading">
+<h1 id="textual.events.Blur" class="doc doc-heading">
         <span class="doc doc-object-name doc-class-name">textual.events.Blur</span>
 
   
@@ -6318,7 +6345,7 @@ window.onload = async (event) => {
       <small class="doc doc-label doc-label-class"><code>class</code></small>
   </span>
 
-<a href="#textual.events.Blur" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.events.Blur" class="headerlink" title="Permanent link">&para;</a></h1>
 
 
   <div class="doc doc-contents first">
@@ -6371,7 +6398,7 @@ window.onload = async (event) => {
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: Events">
+          <a href="../app_focus/" class="md-footer__link md-footer__link--prev" aria-label="Previous: AppFocus">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -6381,20 +6408,20 @@ window.onload = async (event) => {
                 Previous
               </span>
               <div class="md-ellipsis">
-                Events
+                AppFocus
               </div>
             </div>
           </a>
         
         
           
-          <a href="../descendant_blur/" class="md-footer__link md-footer__link--next" aria-label="Next: DescendantBlur">
+          <a href="../click/" class="md-footer__link md-footer__link--next" aria-label="Next: Click">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                DescendantBlur
+                Click
               </div>
             </div>
             <div class="md-footer__button md-icon">

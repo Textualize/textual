@@ -1605,6 +1605,14 @@ window.onload = async (event) => {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
       
@@ -1653,11 +1661,74 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
+      <a href="../../events/app_blur/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppBlur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/app_focus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppFocus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../events/blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Blur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/click/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Click
   </span>
   
 
@@ -1884,27 +1955,6 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../../events/click/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Click
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../events/mouse_down/" class="md-nav__link">
         
   
@@ -2052,6 +2102,27 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
+      <a href="../../events/print/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Print
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../events/resize/" class="md-nav__link">
         
   
@@ -2120,6 +2191,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Show
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../events/unmount/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unmount
   </span>
   
 
@@ -6982,7 +7074,7 @@ window.onload = async (event) => {
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
 <a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">node</span><span class="p">,</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">work</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">work</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="o">*</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">group</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
@@ -7026,10 +7118,10 @@ window.onload = async (event) => {
           <td>
             <strong><code>work</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.worker.WorkType" href="#textual.worker.WorkType">WorkType</a> | None</code>
+                <code><a class="autorefs autorefs-internal" title="textual.worker.WorkType" href="#textual.worker.WorkType">WorkType</a></code>
           </td>
           <td>
-            <code>None</code>
+            <em>required</em>
           </td>
           <td><p>A callable, coroutine, or other awaitable object to run in the worker.</p></td>
         </tr>
@@ -7838,8 +7930,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.CANCELLED" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7862,8 +7954,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.ERROR" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7886,8 +7978,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.PENDING" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7910,8 +8002,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.RUNNING" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7934,8 +8026,8 @@ window.onload = async (event) => {
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.worker.WorkerState.SUCCESS" class="headerlink" title="Permanent link">&para;</a></h3>

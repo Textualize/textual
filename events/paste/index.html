@@ -14,7 +14,7 @@
         <link rel="prev" href="../mouse_up/">
       
       
-        <link rel="next" href="../resize/">
+        <link rel="next" href="../print/">
       
       
         <link rel="alternate" type="application/rss+xml" title="RSS feed" href="../../feed_rss_created.xml">
@@ -130,7 +130,7 @@ window.onload = async (event) => {
     <div data-md-component="skip">
       
         
-        <a href="#paste" class="md-skip">
+        <a href="#textual.events.Paste" class="md-skip">
           Skip to content
         </a>
       
@@ -1612,6 +1612,14 @@ window.onload = async (event) => {
       
         
       
+        
+      
+        
+      
+        
+      
+        
+      
     
     
       
@@ -1660,11 +1668,74 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
+      <a href="../app_blur/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppBlur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app_focus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AppFocus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../blur/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Blur
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../click/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Click
   </span>
   
 
@@ -1891,27 +1962,6 @@ window.onload = async (event) => {
   
   
     <li class="md-nav__item">
-      <a href="../click/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Click
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../mouse_down/" class="md-nav__link">
         
   
@@ -2084,27 +2134,9 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#attributes" class="md-nav__link">
+  <a href="#textual.events.Paste.text" class="md-nav__link">
     <span class="md-ellipsis">
-      Attributes
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Code
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Paste" class="md-nav__link">
-    <span class="md-ellipsis">
-      Paste
+      text
     </span>
   </a>
   
@@ -2114,6 +2146,27 @@ window.onload = async (event) => {
   
 </nav>
       
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../print/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Print
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -2194,6 +2247,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Show
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../unmount/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unmount
   </span>
   
 
@@ -6231,27 +6305,9 @@ window.onload = async (event) => {
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#attributes" class="md-nav__link">
+  <a href="#textual.events.Paste.text" class="md-nav__link">
     <span class="md-ellipsis">
-      Attributes
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#code" class="md-nav__link">
-    <span class="md-ellipsis">
-      Code
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#textual.events.Paste" class="md-nav__link">
-    <span class="md-ellipsis">
-      Paste
+      text
     </span>
   </a>
   
@@ -6275,39 +6331,13 @@ window.onload = async (event) => {
   
 
 
-<h1 id="paste">Paste<a class="headerlink" href="#paste" title="Permanent link">&para;</a></h1>
-<p>The <code>Paste</code> event is sent to a widget when the user pastes text.</p>
-<ul class="task-list">
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Bubbles</li>
-<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Verbose</li>
-</ul>
-<h2 id="attributes">Attributes<a class="headerlink" href="#attributes" title="Permanent link">&para;</a></h2>
-<table>
-<thead>
-<tr>
-<th>attribute</th>
-<th>type</th>
-<th>purpose</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>text</code></td>
-<td>str</td>
-<td>The text that was pasted</td>
-</tr>
-</tbody>
-</table>
-<h2 id="code">Code<a class="headerlink" href="#code" title="Permanent link">&para;</a></h2>
-
-
 <div class="doc doc-object doc-class">
 
 
 
 
 
-<h2 id="textual.events.Paste" class="doc doc-heading">
+<h1 id="textual.events.Paste" class="doc doc-heading">
         <span class="doc doc-object-name doc-class-name">textual.events.Paste</span>
 
   
@@ -6315,7 +6345,7 @@ window.onload = async (event) => {
       <small class="doc doc-label doc-label-class"><code>class</code></small>
   </span>
 
-<a href="#textual.events.Paste" class="headerlink" title="Permanent link">&para;</a></h2>
+<a href="#textual.events.Paste" class="headerlink" title="Permanent link">&para;</a></h1>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
 </code></pre></div>
 
@@ -6368,6 +6398,29 @@ and disable it when the app shuts down.</p>
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="textual.events.Paste.text" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">text</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.events.Paste.text" class="headerlink" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">text</span> <span class="o">=</span> <span class="n">text</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The text that was pasted.</p>
+  </div>
+
+</div>
 
 
 
@@ -6424,13 +6477,13 @@ and disable it when the app shuts down.</p>
         
         
           
-          <a href="../resize/" class="md-footer__link md-footer__link--next" aria-label="Next: Resize">
+          <a href="../print/" class="md-footer__link md-footer__link--next" aria-label="Next: Print">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Resize
+                Print
               </div>
             </div>
             <div class="md-footer__button md-icon">
