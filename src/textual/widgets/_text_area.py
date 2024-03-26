@@ -688,7 +688,8 @@ TextArea {
         self.scroll_cursor_visible()
 
     def _watch_show_vertical_scrollbar(self) -> None:
-        self._rewrap_and_refresh_virtual_size()
+        if self.wrap_width:
+            self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
     def _watch_theme(self, theme: str) -> None:
@@ -2025,10 +2026,7 @@ TextArea {
         Returns:
             An EditResult relating to the deletion of all content.
         """
-        document = self.document
-        last_line = document[-1]
-        document_end = (document.line_count, len(last_line))
-        return self.delete((0, 0), document_end, maintain_selection_offset=False)
+        return self.delete((0, 0), self.document.end, maintain_selection_offset=False)
 
     def _delete_via_keyboard(
         self,

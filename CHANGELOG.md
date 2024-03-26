@@ -5,18 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
 ## Unreleased
+
+- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
+
+
+## [0.54.0] - 2023-03-26
 
 ### Fixed
 
 - Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
 - Fixed issue with flickering scrollbars https://github.com/Textualize/textual/pull/4315
+- Fixed issue where narrow TextArea would repeatedly wrap due to scrollbar appearing/disappearing https://github.com/Textualize/textual/pull/4334
 - Fix progress bar ETA not updating when setting `total` reactive https://github.com/Textualize/textual/pull/4316
-- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
+- Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
 
 ### Changed
 
 - ProgressBar won't show ETA until there is at least one second of samples https://github.com/Textualize/textual/pull/4316
+- `Input` waits until an edit has been made, after entry to the widget, before offering a suggestion https://github.com/Textualize/textual/pull/4335
+
+### Added
+
+- Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
 
 ## [0.53.1] - 2023-03-18
 
@@ -1800,6 +1812,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.54.0]: https://github.com/Textualize/textual/compare/v0.53.1...v0.54.0
 [0.53.1]: https://github.com/Textualize/textual/compare/v0.53.0...v0.53.1
 [0.53.0]: https://github.com/Textualize/textual/compare/v0.52.1...v0.53.0
 [0.52.1]: https://github.com/Textualize/textual/compare/v0.52.0...v0.52.1
