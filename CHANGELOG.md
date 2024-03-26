@@ -11,10 +11,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
 
-### Changed
-
-- App.namespace_bindings renamed to App.active_bindings and now returns a list instead of a dict https://github.com/Textualize/textual/pull/4342
-
 ## [0.54.0] - 2024-03-26
 
 ### Fixed
