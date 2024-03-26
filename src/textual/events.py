@@ -59,7 +59,7 @@ class Load(Event, bubble=False):
     """
     Sent when the App is running but *before* the terminal is in application mode.
 
-    Use this event to run any set up that doesn't require any visuals such as loading
+    Use this event to run any setup that doesn't require any visuals such as loading
     configuration and binding keys.
 
     - [ ] Bubbles
@@ -129,6 +129,9 @@ class Resize(Event, bubble=False):
 class Compose(Event, bubble=False, verbose=True):
     """Sent to a widget to request it to compose and mount children.
 
+    This event is used internally by Textual.
+    You won't typically need to explicitly handle it,
+
     - [ ] Bubbles
     - [X] Verbose
     """
@@ -151,7 +154,7 @@ class Unmount(Event, bubble=False, verbose=False):
 
 
 class Show(Event, bubble=False):
-    """Sent when a widget has become visible.
+    """Sent when a widget is first displayed.
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -164,13 +167,17 @@ class Hide(Event, bubble=False):
     - [ ] Bubbles
     - [ ] Verbose
 
-    A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
-    or if it has been offset beyond the edges of the terminal.
+    Sent when any of the following conditions apply:
+
+    - The widget is removed from the DOM.
+    - The widget is no longer displayed because it has been scrolled or clipped from the terminal or its container.
+    - The widget has its `display` attribute set to `False`.
+    - The widget's `display` style is set to `"none"`.
     """
 
 
 class Ready(Event, bubble=False):
-    """Sent to the app when the DOM is ready.
+    """Sent to the `App` when the DOM is ready and the first frame has been displayed.
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -232,7 +239,7 @@ class Key(InputEvent):
 
     Args:
         key: The key that was pressed.
-        character: A printable character or ``None`` if it is not printable.
+        character: A printable character or `None` if it is not printable.
     """
 
     __slots__ = ["key", "character", "aliases"]
