@@ -44,6 +44,11 @@ class Driver(ABC):
         return False
 
     @property
+    def is_inline(self) -> bool:
+        """Is the driver 'inline' (not full-screen)?"""
+        return False
+
+    @property
     def can_suspend(self) -> bool:
         """Can this driver be suspended?"""
         return False

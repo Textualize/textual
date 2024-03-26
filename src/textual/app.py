@@ -45,7 +45,6 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    cast,
     overload,
 )
 from weakref import WeakKeyDictionary, WeakSet
@@ -92,7 +91,6 @@ from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode, NoScreen
 from .driver import Driver
-from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
@@ -1443,6 +1441,7 @@ class App(Generic[ReturnType], DOMNode):
     async def run_async(
         self,
         *,
+        inline: bool = True,
         headless: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
@@ -1501,6 +1500,7 @@ class App(Generic[ReturnType], DOMNode):
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
+                inline=inline,
                 terminal_size=size,
             )
         finally:
@@ -1516,6 +1516,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        inline: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -2297,6 +2298,7 @@ class App(Generic[ReturnType], DOMNode):
         self,
         ready_callback: CallbackType | None = None,
         headless: bool = False,
+        inline: bool = False,
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
@@ -2406,10 +2408,19 @@ class App(Generic[ReturnType], DOMNode):
             await self._dispatch_message(load_event)
 
             driver: Driver
-            driver_class = cast(
-                "type[Driver]",
-                HeadlessDriver if headless else self.driver_class,
-            )
+
+            driver_class: type[Driver]
+            if headless:
+                from .drivers.headless_driver import HeadlessDriver
+
+                driver_class = HeadlessDriver
+            elif inline:
+                from .drivers.linux_inline_driver import LinuxInlineDriver
+
+                driver_class = LinuxInlineDriver
+            else:
+                driver_class = self.driver_class
+
             driver = self._driver = driver_class(
                 self,
                 debug=constants.DEBUG,
