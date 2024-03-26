@@ -105,7 +105,7 @@ def test_input_suggestions(snap_compare):
         pilot.app.query(Input).first().cursor_blink = False
 
     assert snap_compare(
-        SNAPSHOT_APPS_DIR / "input_suggestions.py", press=[], run_before=run_before
+        SNAPSHOT_APPS_DIR / "input_suggestions.py", press=["b"], run_before=run_before
     )
 
 
