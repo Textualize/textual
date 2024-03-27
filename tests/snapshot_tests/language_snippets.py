@@ -480,7 +480,7 @@ func main() {
     age := 30
     isStudent := true
 
-    fmt.Printf("Hello, %s! You are %d years old.\n", name, age)
+    fmt.Printf("Hello, %s! You are %d years old.", name, age)
 
     if age >= 18 && isStudent {
         fmt.Println("You are an adult student.")
@@ -495,24 +495,24 @@ func main() {
     for _, num := range numbers {
         sum += num
     }
-    fmt.Printf("The sum is: %d\n", sum)
+    fmt.Printf("The sum is: %d", sum)
 
     message := "Hello, World!"
     uppercaseMessage := strings.ToUpper(message)
     fmt.Println(uppercaseMessage)
 
     circle := Circle{Radius: 5}
-    fmt.Printf("Circle area: %.2f\n", circle.Area())
+    fmt.Printf("Circle area: %.2f", circle.Area())
 
     result := factorial(5)
-    fmt.Printf("Factorial of 5: %d\n", result)
+    fmt.Printf("Factorial of 5: %d", result)
 
     defer fmt.Println("Program finished.")
 
     sqrt := func(x float64) float64 {
         return math.Sqrt(x)
     }
-    fmt.Printf("Square root of 16: %.2f\n", sqrt(16))
+    fmt.Printf("Square root of 16: %.2f", sqrt(16))
 }
 
 func factorial(n int) int {

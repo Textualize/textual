@@ -1,16 +1,32 @@
-(pair
-  key: (_) @string.special.key)
+[
+ (true)
+ (false)
+] @boolean
 
-(string) @string
+(null) @json.null
 
 (number) @number
 
+(pair key: (string) @json.label)
+(pair value: (string) @string)
+
+(array (string) @string)
+
+(string_content) @spell
+
+(ERROR) @json.error
+
+["," ":"] @punctuation.delimiter
+
 [
-  (null)
-  (true)
-  (false)
-] @constant.builtin
+ "[" "]"
+ "{" "}"
+] @punctuation.bracket
 
-(escape_sequence) @escape
+(("\"" @conceal)
+ (#set! conceal ""))
 
-(comment) @comment
+(escape_sequence) @string.escape
+((escape_sequence) @conceal
+ (#eq? @conceal "\\\"")
+ (#set! conceal "\""))
