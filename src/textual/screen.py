@@ -664,7 +664,21 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
-        if self is self.app.screen:
+
+        if self.app.is_inline:
+            size = self.app.size
+            inline_height = self.get_content_height(size, size, size.width)
+            self.app._display(
+                self,
+                self._compositor.render_inline(
+                    Size(size.width, inline_height),
+                    screen_stack=self.app._background_screens,
+                ),
+            )
+            self._dirty_widgets.clear()
+            self._compositor._dirty_regions.clear()
+
+        elif self is self.app.screen:
             # Top screen
             update = self._compositor.render_update(
                 screen_stack=self.app._background_screens

@@ -250,6 +250,8 @@ class LinuxInlineDriver(Driver):
         self._disable_bracketed_paste()
         self.disable_input()
 
+        self.write("\x1b[A\x1b[J")
+
         if self.attrs_before is not None:
             try:
                 termios.tcsetattr(self.fileno, termios.TCSANOW, self.attrs_before)
@@ -258,4 +260,5 @@ class LinuxInlineDriver(Driver):
 
             self.write("\x1b[?25h")  # Show cursor
             self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
+
             self.flush()

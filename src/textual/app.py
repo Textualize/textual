@@ -777,11 +777,16 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def is_headless(self) -> bool:
-        """Is the driver running in 'headless' mode?
+        """Is the app running in 'headless' mode?
 
         Headless mode is used when running tests with [run_test][textual.app.App.run_test].
         """
         return False if self._driver is None else self._driver.is_headless
+
+    @property
+    def is_inline(self) -> bool:
+        """Is the app running in 'inline' mode?"""
+        return False if self._driver is None else self._driver.is_inline
 
     @property
     def screen_stack(self) -> Sequence[Screen[Any]]:
@@ -977,6 +982,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def animator(self) -> Animator:
+        """The animator object."""
         return self._animator
 
     @property
@@ -2751,9 +2757,10 @@ class App(Generic[ReturnType], DOMNode):
                         if isinstance(renderable, CompositorUpdate):
                             cursor_x, cursor_y = self.cursor_position
                             terminal_sequence = renderable.render_segments(console)
-                            terminal_sequence += Control.move_to(
-                                cursor_x, cursor_y
-                            ).segment.text
+                            if not self.is_inline:
+                                terminal_sequence += Control.move_to(
+                                    cursor_x, cursor_y
+                                ).segment.text
                         else:
                             segments = console.render(renderable)
                             terminal_sequence = console._render_buffer(segments)
