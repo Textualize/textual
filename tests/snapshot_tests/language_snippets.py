@@ -452,6 +452,77 @@ a(?=b)          # Positive lookahead: matches "a" that is followed by "b"
 a(?!b)          # Negative lookahead: matches "a" that is not followed by "b"
 """
 
+GO = """\
+package main
+
+import (
+    "fmt"
+    "math"
+    "strings"
+)
+
+const PI = 3.14159
+
+type Shape interface {
+    Area() float64
+}
+
+type Circle struct {
+    Radius float64
+}
+
+func (c Circle) Area() float64 {
+    return PI * c.Radius * c.Radius
+}
+
+func main() {
+    var name string = "John"
+    age := 30
+    isStudent := true
+
+    fmt.Printf("Hello, %s! You are %d years old.\n", name, age)
+
+    if age >= 18 && isStudent {
+        fmt.Println("You are an adult student.")
+    } else if age >= 18 {
+        fmt.Println("You are an adult.")
+    } else {
+        fmt.Println("You are a minor.")
+    }
+
+    numbers := []int{1, 2, 3, 4, 5}
+    sum := 0
+    for _, num := range numbers {
+        sum += num
+    }
+    fmt.Printf("The sum is: %d\n", sum)
+
+    message := "Hello, World!"
+    uppercaseMessage := strings.ToUpper(message)
+    fmt.Println(uppercaseMessage)
+
+    circle := Circle{Radius: 5}
+    fmt.Printf("Circle area: %.2f\n", circle.Area())
+
+    result := factorial(5)
+    fmt.Printf("Factorial of 5: %d\n", result)
+
+    defer fmt.Println("Program finished.")
+
+    sqrt := func(x float64) float64 {
+        return math.Sqrt(x)
+    }
+    fmt.Printf("Square root of 16: %.2f\n", sqrt(16))
+}
+
+func factorial(n int) int {
+    if n == 0 {
+        return 1
+    }
+    return n * factorial(n-1)
+}
+"""
+
 SNIPPETS = {
     "python": PYTHON,
     "markdown": MARKDOWN,
@@ -462,4 +533,5 @@ SNIPPETS = {
     "html": HTML,
     "json": JSON,
     "regex": REGEX,
+    "go": GO,
 }
