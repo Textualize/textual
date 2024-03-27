@@ -163,6 +163,7 @@ class LinuxInlineDriver(Driver):
             )
 
             def on_terminal_resize(signum, stack) -> None:
+                self.write("\x1b[J")
                 send_size_event()
 
             signal.signal(signal.SIGWINCH, on_terminal_resize)
