@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from asyncio import Lock
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Generic, Iterable, NewType, TypeVar, cast
 
@@ -216,7 +215,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = True
         self._updates += 1
-        self._tree.post_message(Tree.NodeExpanded(self))
+        self._tree.post_message(Tree.NodeExpanded(self).set_sender(self._tree))
         if expand_all:
             for child in self.children:
                 child._expand(expand_all)
@@ -249,7 +248,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = False
         self._updates += 1
-        self._tree.post_message(Tree.NodeCollapsed(self))
+        self._tree.post_message(Tree.NodeCollapsed(self).set_sender(self._tree))
         if collapse_all:
             for child in self.children:
                 child._collapse(collapse_all)
@@ -618,8 +617,6 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
         self._tree_lines_cached: list[_TreeLine[TreeDataType]] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
-        self.lock = Lock()
-        """Used to synchronise stateful directory tree operations."""
 
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 

@@ -1,4 +1,5 @@
 from textual.app import App, ComposeResult
+from textual.clock import MockClock
 from textual.containers import Center, Middle
 from textual.timer import Timer
 from textual.widgets import Footer, ProgressBar
@@ -12,13 +13,14 @@ class StyledProgressBar(App[None]):
     """Timer to simulate progress happening."""
 
     def compose(self) -> ComposeResult:
+        self.clock = MockClock()
         with Center():
             with Middle():
-                yield ProgressBar()
+                yield ProgressBar(clock=self.clock)
         yield Footer()
 
     def on_mount(self) -> None:
-        """Set up a timer to simulate progess happening."""
+        """Set up a timer to simulate progress happening."""
         self.progress_timer = self.set_interval(1 / 10, self.make_progress, pause=True)
 
     def make_progress(self) -> None:
@@ -29,15 +31,18 @@ class StyledProgressBar(App[None]):
         """Start the progress tracking."""
         self.query_one(ProgressBar).update(total=100)
         self.progress_timer.resume()
+        self.query_one(ProgressBar).refresh()
 
     def key_f(self) -> None:
         # Freeze time for the indeterminate progress bar.
-        self.query_one(ProgressBar).query_one("#bar")._get_elapsed_time = lambda: 5
+        self.clock.set_time(5.0)
 
     def key_t(self) -> None:
         # Freeze time to show always the same ETA.
-        self.query_one(ProgressBar).query_one("#eta")._get_elapsed_time = lambda: 3.9
-        self.query_one(ProgressBar).update(total=100, progress=39)
+        self.clock.set_time(0)
+        self.query_one(ProgressBar).update(total=100, progress=0)
+        self.clock.set_time(3.9)
+        self.query_one(ProgressBar).update(progress=39)
 
     def key_u(self) -> None:
         self.query_one(ProgressBar).update(total=100, progress=100)

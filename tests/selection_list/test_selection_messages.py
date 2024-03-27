@@ -28,17 +28,21 @@ class SelectionListApp(App[None]):
     @on(SelectionList.SelectedChanged)
     def _record(
         self,
-        event: OptionList.OptionMessage
-        | SelectionList.SelectionMessage
-        | SelectionList.SelectedChanged,
+        event: (
+            OptionList.OptionMessage
+            | SelectionList.SelectionMessage
+            | SelectionList.SelectedChanged
+        ),
     ) -> None:
         assert event.control == self.query_one(SelectionList)
         self.messages.append(
             (
                 event.__class__.__name__,
-                event.selection_index
-                if isinstance(event, SelectionList.SelectionMessage)
-                else None,
+                (
+                    event.selection_index
+                    if isinstance(event, SelectionList.SelectionMessage)
+                    else None
+                ),
             )
         )
 
@@ -71,6 +75,7 @@ async def test_toggle() -> None:
         assert pilot.app.messages == [
             ("SelectionHighlighted", 0),
             ("SelectedChanged", None),
+            ("SelectionToggled", 0),
         ]
 
 

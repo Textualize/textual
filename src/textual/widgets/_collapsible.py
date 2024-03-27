@@ -34,7 +34,9 @@ class CollapsibleTitle(Static, can_focus=True):
     }
     """
 
-    BINDINGS = [Binding("enter", "toggle", "Toggle collapsible", show=False)]
+    BINDINGS = [
+        Binding("enter", "toggle_collapsible", "Toggle collapsible", show=False)
+    ]
     """
     | Key(s) | Description |
     | :- | :- |
@@ -68,7 +70,7 @@ class CollapsibleTitle(Static, can_focus=True):
         event.stop()
         self.post_message(self.Toggle())
 
-    def action_toggle(self) -> None:
+    def action_toggle_collapsible(self) -> None:
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
@@ -90,7 +92,7 @@ class CollapsibleTitle(Static, can_focus=True):
 class Collapsible(Widget):
     """A collapsible container."""
 
-    collapsed = reactive(True)
+    collapsed = reactive(True, init=False)
     title = reactive("Toggle")
 
     DEFAULT_CSS = """
@@ -192,14 +194,14 @@ class Collapsible(Widget):
     def _on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
-        if self.collapsed:
-            self.post_message(self.Collapsed(self))
-        else:
-            self.post_message(self.Expanded(self))
 
     def _watch_collapsed(self, collapsed: bool) -> None:
         """Update collapsed state when reactive is changed."""
         self._update_collapsed(collapsed)
+        if self.collapsed:
+            self.post_message(self.Collapsed(self))
+        else:
+            self.post_message(self.Expanded(self))
 
     def _update_collapsed(self, collapsed: bool) -> None:
         """Update children to match collapsed state."""

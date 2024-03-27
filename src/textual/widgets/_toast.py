@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
-from rich.console import RenderableType
 from rich.text import Text
 
 from .. import on
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..containers import Container
 from ..css.query import NoMatches
 from ..events import Click, Mount
@@ -93,6 +96,8 @@ class Toast(Static, inherit_css=False):
     | `toast--title` | Targets the title of the toast. |
     """
 
+    DEFAULT_CLASSES = "-textual-system"
+
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
 
@@ -103,7 +108,7 @@ class Toast(Static, inherit_css=False):
         self._notification = notification
         self._timeout = notification.time_left
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Render the toast's content.
 
         Returns:
@@ -158,6 +163,7 @@ class ToastRack(Container, inherit_css=False):
         margin-right: 1;
     }
     """
+    DEFAULT_CLASSES = "-textual-system"
 
     @staticmethod
     def _toast_id(notification: Notification) -> str:

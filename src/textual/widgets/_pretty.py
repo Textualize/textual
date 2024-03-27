@@ -59,4 +59,5 @@ class Pretty(Widget):
             object: The object to pretty-print.
         """
         self._renderable = PrettyRenderable(object)
+        self.clear_cached_dimensions()
         self.refresh(layout=True)

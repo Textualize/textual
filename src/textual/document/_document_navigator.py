@@ -101,11 +101,15 @@ class DocumentNavigator:
     def is_end_of_document_line(self, location: Location) -> bool:
         """True if the location is at the end of a line in the document.
 
+        Note that the "end" of a line is equal to its length (one greater
+        than the final index), since there is a space at the end of the line
+        for the cursor to rest.
+
         Args:
             location: The location to examine.
 
         Returns:
-            True if and only if the document is on the last line of the document.
+            True if and only if the document is at the end of a line in the document.
         """
         row, column = location
         row_length = len(self._document[row])

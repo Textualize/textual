@@ -2,13 +2,14 @@ from string import punctuation
 
 import pytest
 
-from textual import events
+from textual import events, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
-from textual.events import MouseDown, MouseUp
 from textual.pilot import OutOfBounds
+from textual.screen import Screen
 from textual.widgets import Button, Label
+from textual.worker import WorkerFailed
 
 KEY_CHARACTERS_TO_TEST = "akTW03" + punctuation
 """Test some "simple" characters (letters + digits) and all punctuation."""
@@ -57,7 +58,7 @@ async def test_pilot_press_ascii_chars():
             assert keys_pressed[-1] == char
 
 
-async def test_pilot_exception_catching_compose():
+async def test_pilot_exception_catching_app_compose():
     """Ensuring that test frameworks are aware of exceptions
     inside compose methods when running via Pilot run_test()."""
 
@@ -65,6 +66,21 @@ async def test_pilot_exception_catching_compose():
         def compose(self) -> ComposeResult:
             1 / 0
             yield Label("Beep")
+
+    with pytest.raises(ZeroDivisionError):
+        async with FailingApp().run_test():
+            pass
+
+
+async def test_pilot_exception_catching_widget_compose():
+    class SomeScreen(Screen[None]):
+        def compose(self) -> ComposeResult:
+            1 / 0
+            yield Label("Beep")
+
+    class FailingApp(App[None]):
+        def on_mount(self) -> None:
+            self.push_screen(SomeScreen())
 
     with pytest.raises(ZeroDivisionError):
         async with FailingApp().run_test():
@@ -84,6 +100,21 @@ async def test_pilot_exception_catching_action():
     with pytest.raises(ZeroDivisionError):
         async with FailingApp().run_test() as pilot:
             await pilot.press("b")
+
+
+async def test_pilot_exception_catching_worker():
+    class SimpleAppThatCrashes(App[None]):
+        def on_mount(self) -> None:
+            self.crash()
+
+        @work(name="crash")
+        async def crash(self) -> None:
+            1 / 0
+
+    with pytest.raises(WorkerFailed) as exc:
+        async with SimpleAppThatCrashes().run_test():
+            pass
+        assert exc.type is ZeroDivisionError
 
 
 async def test_pilot_click_screen():
@@ -352,3 +383,15 @@ async def test_pilot_target_screen_always_true(method, offset):
     async with app.run_test(size=(80, 24)) as pilot:
         pilot_method = getattr(pilot, method)
         assert (await pilot_method(offset=offset)) is True
+
+
+async def test_pilot_resize_terminal():
+    app = App()
+    async with app.run_test(size=(80, 24)) as pilot:
+        # Sanity checks.
+        assert app.size == (80, 24)
+        assert app.screen.size == (80, 24)
+        await pilot.resize_terminal(27, 15)
+        await pilot.pause()
+        assert app.size == (27, 15)
+        assert app.screen.size == (27, 15)

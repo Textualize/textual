@@ -19,7 +19,7 @@ There were some interesting technical challenges in building Toolong that I'd li
     This isn't specifically [Textual](https://github.com/textualize/textual/) related. These techniques could be employed in any Python project.
 
 These techniques aren't difficult, and shouldn't be beyond anyone with an intermediate understanding of Python.
-They are the kind of "if you know it you kow it" knowledge that you may not need often, but can make a massive difference when you do!
+They are the kind of "if you know it you know it" knowledge that you may not need often, but can make a massive difference when you do!
 
 ## Opening large files
 
@@ -55,7 +55,7 @@ And that would likely have worked just fine, but there is a bit of magic in the 
 The [mmap](https://docs.python.org/3/library/mmap.html) module is a real gem for this kind of thing.
 A *memory mapped file* is an OS-level construct that *appears* to load a file instantaneously.
 In Python you get an object which behaves like a `bytearray`, but loads data from disk when it is accessed.
-The beauty of this module is that you can work with files in much the same way as if you had read the entire file in to memory, while leaving the actually reading of the file to the OS.
+The beauty of this module is that you can work with files in much the same way as if you had read the entire file in to memory, while leaving the actual reading of the file to the OS.
 
 Here's the method that Toolong uses to scan for line breaks.
 Forgive the micro-optimizations, I was going for raw execution speed here.
@@ -123,6 +123,12 @@ It can do this very efficiently, because it relies on the OS to tell us when a f
 You register a file with a `Selector` object, then call `select()` which returns as soon as there is new data available for reading.
 
 See [watcher.py](https://github.com/Textualize/toolong/blob/main/src/toolong/watcher.py) in Toolong, which runs a thread to monitors files for changes with a selector.
+
+!!! warning "Addendum"
+
+    So it turns out that watching regular files for changes with selectors only works with `KqueueSelector` which is the default on macOS.
+    Disappointingly, the Python docs aren't clear on this.
+    Toolong will use a polling approach where this selector is unavailable.
 
 ## Textual learnings
 

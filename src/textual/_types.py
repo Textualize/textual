@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Any, Awaitable, Callable, List, Union
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, List, Literal, Union
 
 from typing_extensions import Protocol
 
@@ -52,3 +52,6 @@ WatchCallbackType = Union[
     WatchCallbackNoArgsType,
 ]
 """Type used for callbacks passed to the `watch` method of widgets."""
+
+AnimationLevel = Literal["none", "basic", "full"]
+"""The levels that the [`TEXTUAL_ANIMATIONS`][textual.constants.TEXTUAL_ANIMATIONS] env var can be set to."""

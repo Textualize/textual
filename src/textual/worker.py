@@ -138,7 +138,7 @@ class Worker(Generic[ResultType]):
     def __init__(
         self,
         node: DOMNode,
-        work: WorkType | None = None,
+        work: WorkType,
         *,
         name: str = "",
         group: str = "default",
@@ -316,9 +316,9 @@ class Worker(Generic[ResultType]):
         else:
             raise WorkerError("Unsupported attempt to run a thread worker")
 
-        return await asyncio.get_running_loop().run_in_executor(
-            None, runner, self._work
-        )
+        loop = asyncio.get_running_loop()
+        assert loop is not None
+        return await loop.run_in_executor(None, runner, self._work)
 
     async def _run_async(self) -> ResultType:
         """Run an async worker.
@@ -375,7 +375,8 @@ class Worker(Generic[ResultType]):
 
             app.log.worker(Traceback())
             if self.exit_on_error:
-                app._fatal_error()
+                worker_failed = WorkerFailed(self._error)
+                app._handle_exception(worker_failed)
         else:
             self.state = WorkerState.SUCCESS
             app.log.worker(self)
