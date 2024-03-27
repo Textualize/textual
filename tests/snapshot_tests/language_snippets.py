@@ -523,6 +523,188 @@ func factorial(n int) int {
 }
 """
 
+JAVASCRIPT = """\
+// Variable declarations
+const name = "John";
+let age = 30;
+var isStudent = true;
+
+// Template literals
+console.log(`Hello, ${name}! You are ${age} years old.`);
+
+// Conditional statements
+if (age >= 18 && isStudent) {
+  console.log("You are an adult student.");
+} else if (age >= 18) {
+  console.log("You are an adult.");
+} else {
+  console.log("You are a minor.");
+}
+
+// Arrays and array methods
+const numbers = [1, 2, 3, 4, 5];
+const doubledNumbers = numbers.map((num) => num * 2);
+console.log("Doubled numbers:", doubledNumbers);
+
+// Objects
+const person = {
+  firstName: "John",
+  lastName: "Doe",
+  getFullName() {
+    return `${this.firstName} ${this.lastName}`;
+  },
+};
+console.log("Full name:", person.getFullName());
+
+// Classes
+class Rectangle {
+  constructor(width, height) {
+    this.width = width;
+    this.height = height;
+  }
+
+  getArea() {
+    return this.width * this.height;
+  }
+}
+const rectangle = new Rectangle(5, 3);
+console.log("Rectangle area:", rectangle.getArea());
+
+// Async/Await and Promises
+async function fetchData() {
+  try {
+    const response = await fetch("https://api.example.com/data");
+    const data = await response.json();
+    console.log("Fetched data:", data);
+  } catch (error) {
+    console.error("Error:", error);
+  }
+}
+fetchData();
+
+// Arrow functions
+const greet = (name) => {
+  console.log(`Hello, ${name}!`);
+};
+greet("Alice");
+
+// Destructuring assignment
+const [a, b, ...rest] = [1, 2, 3, 4, 5];
+console.log(a, b, rest);
+
+// Spread operator
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combinedArr = [...arr1, ...arr2];
+console.log("Combined array:", combinedArr);
+
+// Ternary operator
+const message = age >= 18 ? "You are an adult." : "You are a minor.";
+console.log(message);
+"""
+
+BASH = """\
+#!/bin/bash
+
+# Variables
+name="John"
+age=30
+is_student=true
+
+# Printing variables
+echo "Hello, $name! You are $age years old."
+
+# Conditional statements
+if [[ $age -ge 18 && $is_student == true ]]; then
+  echo "You are an adult student."
+elif [[ $age -ge 18 ]]; then
+  echo "You are an adult."
+else
+  echo "You are a minor."
+fi
+
+# Arrays
+numbers=(1 2 3 4 5)
+echo "Numbers: ${numbers[@]}"
+
+# Loops
+for num in "${numbers[@]}"; do
+  echo "Number: $num"
+done
+
+# Functions
+greet() {
+  local name=$1
+  echo "Hello, $name!"
+}
+greet "Alice"
+
+# Command substitution
+current_date=$(date +%Y-%m-%d)
+echo "Current date: $current_date"
+
+# File operations
+touch file.txt
+echo "Some content" > file.txt
+cat file.txt
+
+# Conditionals with file checks
+if [[ -f file.txt ]]; then
+  echo "file.txt exists."
+else
+  echo "file.txt does not exist."
+fi
+
+# Case statement
+case $age in
+  18)
+    echo "You are 18 years old."
+    ;;
+  30)
+    echo "You are 30 years old."
+    ;;
+  *)
+    echo "You are neither 18 nor 30 years old."
+    ;;
+esac
+
+# While loop
+counter=0
+while [[ $counter -lt 5 ]]; do
+  echo "Counter: $counter"
+  ((counter++))
+done
+
+# Until loop
+until [[ $counter -eq 0 ]]; do
+  echo "Counter: $counter"
+  ((counter--))
+done
+
+# Heredoc
+cat << EOF
+This is a heredoc.
+It allows you to write multiple lines of text.
+EOF
+
+# Redirection
+ls > file_list.txt
+grep "file" file_list.txt > filtered_list.txt
+
+# Pipes
+cat file_list.txt | wc -l
+
+# Arithmetic operations
+result=$((10 + 5))
+echo "Result: $result"
+
+# Exporting variables
+export DB_PASSWORD="secret"
+
+# Sourcing external files
+source config.sh
+"""
+
 SNIPPETS = {
     "python": PYTHON,
     "markdown": MARKDOWN,
@@ -534,4 +716,6 @@ SNIPPETS = {
     "json": JSON,
     "regex": REGEX,
     "go": GO,
+    "javascript": JAVASCRIPT,
+    "bash": BASH,
 }
