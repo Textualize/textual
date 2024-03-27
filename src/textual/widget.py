@@ -3064,6 +3064,8 @@ class Widget(DOMNode):
                         yield "focus-within"
                         break
                     node = node._parent
+        if self.app.is_inline:
+            yield "inline"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.

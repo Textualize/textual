@@ -5,6 +5,9 @@
 Screen {
     layers: base overlay notes notifications;
     overflow: hidden;
+    &:inline {
+        height: 50vh;
+    }
 }
 
 

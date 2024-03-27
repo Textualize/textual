@@ -175,7 +175,10 @@ class InlineUpdate(CompositorUpdate):
             append(strip.render(console))
             if not last:
                 append("\n")
-        append(f"\x1b[{len(self.strips)-1}A\r")
+        if len(self.strips) > 1:
+            append(f"\x1b[{len(self.strips)-1}A\r")
+        else:
+            append("\r")
         return "".join(sequences)
 
 
