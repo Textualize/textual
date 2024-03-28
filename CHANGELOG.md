@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
+
+### Changed
+
 - Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
 
 ### Added
