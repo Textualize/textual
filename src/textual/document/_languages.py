@@ -11,6 +11,7 @@ BUILTIN_LANGUAGES = sorted(
         "markdown",
         "python",
         "rust",
+        "regex",
         "sql",
         "toml",
         "yaml",
