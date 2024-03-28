@@ -519,6 +519,7 @@ class Input(Widget, can_focus=True):
         if self.cursor_blink:
             self._blink_timer.resume()
         self.app.cursor_position = self.cursor_screen_offset
+        self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
         self._cursor_visible = True

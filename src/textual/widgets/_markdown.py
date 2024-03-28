@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
 
@@ -149,7 +150,12 @@ class MarkdownBlock(Static):
         if token.children:
             for child in token.children:
                 if child.type == "text":
-                    content.append(child.content, style_stack[-1])
+                    content.append(
+                        # Ensure repeating spaces and/or tabs get squashed
+                        # down to a single space.
+                        re.sub(r"\s+", " ", child.content),
+                        style_stack[-1],
+                    )
                 if child.type == "hardbreak":
                     content.append("\n")
                 if child.type == "softbreak":
