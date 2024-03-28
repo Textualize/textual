@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
+- Added support for JavaScript, Golang, Rust, Bash, Java and Kotlin to `TextArea` https://github.com/Textualize/textual/pull/4350
 
 ## [0.54.0] - 2024-03-26
 
