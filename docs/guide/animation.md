@@ -1,6 +1,6 @@
 # Animation
 
-Thss chapter discusses how to use Textual's animation system to create visual effects such as movement, blending, and fading.
+This chapter discusses how to use Textual's animation system to create visual effects such as movement, blending, and fading.
 
 
 ## Animating styles
