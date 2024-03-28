@@ -1300,11 +1300,11 @@ TextArea {
             end_location = (
                 edit._edit_result.end_location if edit._edit_result else (0, 0)
             )
-            if edit.from_location < minimum_from:
-                minimum_from = edit.from_location
+            if edit.top < minimum_from:
+                minimum_from = edit.top
             if end_location > maximum_old_end:
                 maximum_old_end = end_location
-            if edit.to_location > maximum_new_end:
+            if edit.bottom > maximum_new_end:
                 maximum_new_end = edit.bottom
 
         new_gutter_width = self.gutter_width
@@ -1346,12 +1346,12 @@ TextArea {
             end_location = (
                 edit._edit_result.end_location if edit._edit_result else (0, 0)
             )
-            if edit.from_location < minimum_from:
-                minimum_from = edit.from_location
+            if edit.top < minimum_from:
+                minimum_from = edit.top
             if end_location > maximum_new_end:
                 maximum_new_end = end_location
-            if edit.to_location > maximum_old_end:
-                maximum_old_end = edit.to_location
+            if edit.bottom > maximum_old_end:
+                maximum_old_end = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
