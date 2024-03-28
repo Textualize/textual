@@ -265,4 +265,4 @@ class LinuxInlineDriver(Driver):
             self.write("\x1b[?25h")  # Show cursor
             self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
 
-            self.flush()
+        self.flush()

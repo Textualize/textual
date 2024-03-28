@@ -1449,6 +1449,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         headless: bool = False,
         inline: bool = False,
+        inline_no_clear: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1456,6 +1457,8 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1507,6 +1510,7 @@ class App(Generic[ReturnType], DOMNode):
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
                 inline=inline,
+                inline_no_clear=inline_no_clear,
                 terminal_size=size,
             )
         finally:
@@ -1523,6 +1527,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         headless: bool = False,
         inline: bool = False,
+        inline_no_clear: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1530,6 +1535,8 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1546,6 +1553,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self.run_async(
                     headless=headless,
                     inline=inline,
+                    inline_no_clear=inline_no_clear,
                     size=size,
                     auto_pilot=auto_pilot,
                 )
@@ -2306,6 +2314,7 @@ class App(Generic[ReturnType], DOMNode):
         ready_callback: CallbackType | None = None,
         headless: bool = False,
         inline: bool = False,
+        inline_no_clear: bool = False,
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
@@ -2442,6 +2451,10 @@ class App(Generic[ReturnType], DOMNode):
                             await run_process_messages()
 
                 finally:
+                    if inline_no_clear:
+                        console = Console()
+                        console.print(self.screen._compositor)
+                        console.print()
                     driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
