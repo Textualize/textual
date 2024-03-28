@@ -144,7 +144,10 @@ class LinuxInlineDriver(Driver):
                             read(fileno, 1024), final=self.exit_event.is_set()
                         )
                         for event in feed(unicode_data):
-                            self.process_event(event)
+                            if isinstance(event, events.CursorPosition):
+                                self.cursor_origin = (event.x, event.y)
+                            else:
+                                self.process_event(event)
         finally:
             selector.close()
 

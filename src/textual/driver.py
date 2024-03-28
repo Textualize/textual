@@ -37,6 +37,7 @@ class Driver(ABC):
         self._last_move_event: events.MouseMove | None = None
         self._auto_restart = True
         """Should the application auto-restart (where appropriate)?"""
+        self.cursor_origin = (0, 0)
 
     @property
     def is_headless(self) -> bool:
@@ -72,6 +73,13 @@ class Driver(ABC):
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.
         event.set_sender(self._app)
+        offset_x, offset_y = self.cursor_origin
+        if isinstance(event, events.MouseEvent):
+            event.x -= offset_x
+            event.y -= offset_y
+            event.screen_x -= offset_x
+            event.screen_y -= offset_y
+
         if isinstance(event, events.MouseDown):
             if event.button:
                 self._down_buttons.append(event.button)
@@ -84,6 +92,7 @@ class Driver(ABC):
                 and not event.button
                 and self._last_move_event is not None
             ):
+
                 # Deduplicate self._down_buttons while preserving order.
                 buttons = list(dict.fromkeys(self._down_buttons).keys())
                 self._down_buttons.clear()

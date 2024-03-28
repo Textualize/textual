@@ -21,6 +21,8 @@ _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
 
+_re_cursor_position = re.compile(r"\x1b\[(?P<row>\d+);(?P<col>\d+)R")
+
 BRACKETED_PASTE_START: Final[str] = "\x1b[200~"
 """Sequence received when a bracketed paste event starts."""
 BRACKETED_PASTE_END: Final[str] = "\x1b[201~"
@@ -253,6 +255,15 @@ class XTermParser(Parser[events.Event]):
                             ):
                                 on_token(messages.TerminalSupportsSynchronizedOutput())
                             break
+
+                        if (
+                            cursor_position_match := _re_cursor_position.match(sequence)
+                        ) is not None:
+                            row, column = cursor_position_match.groups()
+                            on_token(
+                                events.CursorPosition(x=int(column), y=int(row) - 1)
+                            )
+
             else:
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):

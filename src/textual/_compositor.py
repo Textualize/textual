@@ -170,15 +170,16 @@ class InlineUpdate(CompositorUpdate):
         """
         sequences: list[str] = []
         append = sequences.append
-        append("\x1b[J")
         for last, strip in loop_last(self.strips):
             append(strip.render(console))
             if not last:
                 append("\n")
+        append("\x1b[J")
         if len(self.strips) > 1:
             append(f"\x1b[{len(self.strips)-1}A\r")
         else:
             append("\r")
+        append("\x1b[6n")
         return "".join(sequences)
 
 
