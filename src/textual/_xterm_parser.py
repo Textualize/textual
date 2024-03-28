@@ -261,8 +261,9 @@ class XTermParser(Parser[events.Event]):
                         ) is not None:
                             row, column = cursor_position_match.groups()
                             on_token(
-                                events.CursorPosition(x=int(column), y=int(row) - 1)
+                                events.CursorPosition(x=int(column) - 1, y=int(row) - 1)
                             )
+                            break
 
             else:
                 if not bracketed_paste:

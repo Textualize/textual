@@ -174,12 +174,15 @@ class InlineUpdate(CompositorUpdate):
             append(strip.render(console))
             if not last:
                 append("\n")
-        append("\x1b[J")
+        # append("\x1b[B")
+        append("\n\x1b[J")  # Clear down
         if len(self.strips) > 1:
-            append(f"\x1b[{len(self.strips)-1}A\r")
+            append(
+                f"\x1b[{len(self.strips)}A\r"
+            )  # Move cursor back to original position
         else:
             append("\r")
-        append("\x1b[6n")
+        append("\x1b[6n")  # Query cursor position
         return "".join(sequences)
 
 

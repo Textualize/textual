@@ -881,6 +881,7 @@ class Screen(Generic[ScreenResultType], Widget):
             inline_height = max(inline_height, int(min_height.resolve(size, size)))
         if max_height is not None:
             inline_height = min(inline_height, int(max_height.resolve(size, size)))
+        inline_height = min(self.app.size.height - 1, inline_height)
         return inline_height
 
     def _screen_resized(self, size: Size):
