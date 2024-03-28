@@ -8,7 +8,7 @@ from asyncio import Lock, create_task, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
-from itertools import islice
+from itertools import groupby, islice
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
@@ -361,6 +361,13 @@ class Widget(DOMNode):
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
+        self._enable_delta_updates: bool = True
+        """Get the compositor to only rerender lines that changed between consecutive
+        updates.
+        """
+        self._delta_updates_cache: tuple[Region, Region, Region, list[Strip]] | None = (
+            None
+        )
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
@@ -3265,8 +3272,57 @@ class Widget(DOMNode):
         Returns:
             A list of list of segments.
         """
+        self._delta_updates_cache = None
         strips = self._styles_cache.render_widget(self, crop)
         return strips
+
+    def render_delta_lines(
+        self,
+        region: Region,
+        clip: Region,
+        region_to_render: Region,
+    ) -> Generator[tuple[Region, Region, list[Strip]], None, None]:
+        """Render the lines of the widget that changed since the last render.
+
+        When a widget is rendered consecutively in the same region
+        """
+        print(self)
+        strips = self._styles_cache.render_widget(self, region_to_render)
+
+        if self._delta_updates_cache is None:
+            self._delta_updates_cache = (region, clip, region_to_render, strips)
+            yield region, clip, strips
+            return
+
+        cached_region, cached_clip, cached_region_to_render, cached_strips = (
+            self._delta_updates_cache
+        )
+        self._delta_updates_cache = (region, clip, region_to_render, strips)
+        if (
+            cached_region != region
+            or cached_clip != clip
+            or cached_region_to_render != region_to_render
+        ):
+            yield region, clip, strips
+            return
+
+        cached_strips_iter = iter(cached_strips)
+        y_offset = 0
+        for matches_cache, new_strips in groupby(
+            strips, key=lambda strip: strip == next(cached_strips_iter)
+        ):
+            new_strips = list(new_strips)
+            if matches_cache:
+                y_offset += len(new_strips)
+                continue
+            reg = Region(
+                region_to_render.x + region.x,
+                region_to_render.y + region.y + y_offset,
+                region.width,
+                len(new_strips),
+            )
+            y_offset += len(new_strips)
+            yield reg, clip, new_strips
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the Rich style in a widget at a given relative offset.
