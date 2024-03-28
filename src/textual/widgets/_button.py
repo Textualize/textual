@@ -227,7 +227,7 @@ class Button(Widget, can_focus=True):
     def render(self) -> RenderResult:
         assert isinstance(self.label, Text)
         label = self.label.copy()
-        label.stylize(self.rich_style)
+        label.stylize_before(self.rich_style)
         return HorizontalPad(
             label,
             1,

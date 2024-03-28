@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
+- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
 
 ### Added
 
