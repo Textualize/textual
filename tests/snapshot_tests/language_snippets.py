@@ -910,6 +910,112 @@ fn main() {
 }
 """
 
+JAVA = """\
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+// Classes and interfaces
+interface Shape {
+    double getArea();
+}
+
+class Rectangle implements Shape {
+    private double width;
+    private double height;
+
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    @Override
+    public double getArea() {
+        return width * height;
+    }
+}
+
+// Enums
+enum DaysOfWeek {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+}
+
+public class Main {
+    // Constants
+    private static final double PI = 3.14159;
+
+    // Methods
+    public static int sum(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        // Variables
+        String name = "John";
+        int age = 30;
+        boolean isStudent = true;
+
+        // Printing variables
+        System.out.println("Hello, " + name + "! You are " + age + " years old.");
+
+        // Conditional statements
+        if (age >= 18 && isStudent) {
+            System.out.println("You are an adult student.");
+        } else if (age >= 18) {
+            System.out.println("You are an adult.");
+        } else {
+            System.out.println("You are a minor.");
+        }
+
+        // Arrays
+        int[] numbers = {1, 2, 3, 4, 5};
+        System.out.println("Numbers: " + Arrays.toString(numbers));
+
+        // Lists
+        List<String> fruits = new ArrayList<>();
+        fruits.add("apple");
+        fruits.add("banana");
+        fruits.add("orange");
+        System.out.println("Fruits: " + fruits);
+
+        // Loops
+        for (int num : numbers) {
+            System.out.println("Number: " + num);
+        }
+
+        // Hash maps
+        Map<String, Integer> scores = new HashMap<>();
+        scores.put("Alice", 100);
+        scores.put("Bob", 80);
+        System.out.println("Alice's score: " + scores.get("Alice"));
+
+        // Exception handling
+        try {
+            int result = 10 / 0;
+        } catch (ArithmeticException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        // Instantiating objects
+        Rectangle rect = new Rectangle(10, 20);
+        System.out.println("Rectangle area: " + rect.getArea());
+
+        // Enums
+        DaysOfWeek today = DaysOfWeek.MONDAY;
+        System.out.println("Today is " + today);
+
+        // Calling methods
+        int sum = sum(5, 10);
+        System.out.println("Sum: " + sum);
+
+        // Ternary operator
+        String message = age >= 18 ? "You are an adult." : "You are a minor.";
+        System.out.println(message);
+    }
+}
+"""
+
 SNIPPETS = {
     "python": PYTHON,
     "markdown": MARKDOWN,
@@ -925,4 +1031,5 @@ SNIPPETS = {
     "bash": BASH,
     "kotlin": KOTLIN,
     "rust": RUST,
+    "java": JAVA,
 }
