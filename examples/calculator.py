@@ -168,4 +168,4 @@ class CalculatorApp(App):
 
 
 if __name__ == "__main__":
-    CalculatorApp().run()
+    CalculatorApp().run(inline=True)

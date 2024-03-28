@@ -145,6 +145,48 @@ class LayoutUpdate(CompositorUpdate):
 
 
 @rich.repr.auto(angular=True)
+class InlineUpdate(CompositorUpdate):
+
+    def __init__(self, strips: list[Strip]) -> None:
+        self.strips = strips
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        new_line = Segment.line()
+        for last, line in loop_last(self.strips):
+            yield from line
+            if not last:
+                yield new_line
+
+    def render_segments(self, console: Console) -> str:
+        """Render the update to raw data, suitable for writing to terminal.
+
+        Args:
+            console: Console instance.
+
+        Returns:
+            Raw data with escape sequences.
+        """
+        sequences: list[str] = []
+        append = sequences.append
+        for last, strip in loop_last(self.strips):
+            append(strip.render(console))
+            if not last:
+                append("\n")
+        # append("\x1b[B")
+        append("\n\x1b[J")  # Clear down
+        if len(self.strips) > 1:
+            append(
+                f"\x1b[{len(self.strips)}A\r"
+            )  # Move cursor back to original position
+        else:
+            append("\r")
+        append("\x1b[6n")  # Query cursor position
+        return "".join(sequences)
+
+
+@rich.repr.auto(angular=True)
 class ChopsUpdate(CompositorUpdate):
     """A renderable that applies updated spans to the screen."""
 
@@ -966,6 +1008,19 @@ class Compositor:
         else:
             return self.render_partial_update()
 
+    def render_inline(
+        self, size: Size, screen_stack: list[Screen] | None = None
+    ) -> RenderableType:
+        visible_screen_stack.set([] if screen_stack is None else screen_stack)
+
+        # from rich.live_render import LiveRender
+
+        # from textual.strip import StripRenderable
+
+        # return LiveRender(StripRenderable(self.render_strips(size), size.width))
+
+        return InlineUpdate(self.render_strips(size))
+
     def render_full_update(self) -> LayoutUpdate:
         """Render a full update.
 
@@ -999,14 +1054,16 @@ class Compositor:
         chop_ends = [cut_set[1:] for cut_set in self.cuts]
         return ChopsUpdate(chops, spans, chop_ends)
 
-    def render_strips(self) -> list[Strip]:
+    def render_strips(self, size: Size | None = None) -> list[Strip]:
         """Render to a list of strips.
 
         Returns:
             A list of strips with the screen content.
         """
-        chops = self._render_chops(self.size.region, lambda y: True)
-        render_strips = [Strip.join(chop.values()) for chop in chops]
+        if size is None:
+            size = self.size
+        chops = self._render_chops(size.region, lambda y: True)
+        render_strips = [Strip.join(chop.values()) for chop in chops[: size.height]]
         return render_strips
 
     def _render_chops(

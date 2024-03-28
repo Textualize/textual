@@ -137,6 +137,11 @@ class Screen(Generic[ScreenResultType], Widget):
         layout: vertical;
         overflow-y: auto;
         background: $surface;
+
+        &:inline {
+            height: auto;
+            min-height: 1;
+        }
     }
     """
 
@@ -664,7 +669,23 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
-        if self is self.app.screen:
+
+        if self.app.is_inline:
+            size = self.app.size
+            inline_height = self.get_content_height(size, size, size.width)
+            inline_height = self.size.height
+
+            self.app._display(
+                self,
+                self._compositor.render_inline(
+                    Size(size.width, inline_height),
+                    screen_stack=self.app._background_screens,
+                ),
+            )
+            self._dirty_widgets.clear()
+            self._compositor._dirty_regions.clear()
+
+        elif self is self.app.screen:
             # Top screen
             update = self._compositor.render_update(
                 screen_stack=self.app._background_screens
@@ -754,6 +775,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def _refresh_layout(self, size: Size | None = None, scroll: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
+        if self.app.is_inline:
+            size = Size(size.width, self.get_inline_height(self.app.size))
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
@@ -845,6 +868,21 @@ class Screen(Generic[ScreenResultType], Widget):
         message.prevent_default()
         self._scroll_required = True
         self.check_idle()
+
+    def get_inline_height(self, size: Size) -> int:
+        height_scalar = self.styles.height
+        if height_scalar is None or height_scalar.is_auto:
+            inline_height = self.get_content_height(size, size, size.width)
+        else:
+            inline_height = int(height_scalar.resolve(size, size))
+        min_height = self.styles.min_height
+        max_height = self.styles.max_height
+        if min_height is not None:
+            inline_height = max(inline_height, int(min_height.resolve(size, size)))
+        if max_height is not None:
+            inline_height = min(inline_height, int(max_height.resolve(size, size)))
+        inline_height = min(self.app.size.height - 1, inline_height)
+        return inline_height
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""

@@ -55,6 +55,14 @@ class Shutdown(Event):
     pass
 
 
+@dataclass
+class CursorPosition(Event, bubble=False):
+    """Internal event used to retrieve the terminal's cursor position."""
+
+    x: int
+    y: int
+
+
 class Load(Event, bubble=False):
     """
     Sent when the App is running but *before* the terminal is in application mode.

@@ -1,5 +1,8 @@
 Screen {
     background: $surface-darken-1;
+    &:inline {
+        height: 50vh;
+    }
 }
 
 #tree-view {

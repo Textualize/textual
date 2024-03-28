@@ -393,4 +393,4 @@ class DemoApp(App[None]):
 
 app = DemoApp()
 if __name__ == "__main__":
-    app.run()
+    app.run(inline=True)
