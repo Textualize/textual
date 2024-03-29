@@ -32,7 +32,7 @@ class WindowsDriver(Driver):
             mouse: Enable mouse support.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
         self._file = sys.__stdout__
         self.exit_event = Event()
         self._event_thread: Thread | None = None
