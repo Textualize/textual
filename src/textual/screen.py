@@ -141,8 +141,8 @@ class Screen(Generic[ScreenResultType], Widget):
         &:inline {
             height: auto;
             # min-height: 1;
-            border-top: tall $surface;
-            border-bottom: tall $surface;
+            border-top: tall $background;
+            border-bottom: tall $background;
         }
     }
     """
