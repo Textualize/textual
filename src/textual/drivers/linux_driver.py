@@ -111,6 +111,8 @@ class LinuxDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -133,6 +135,8 @@ class LinuxDriver(Driver):
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000l")  #
         write("\x1b[?1003l")  #

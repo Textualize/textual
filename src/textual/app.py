@@ -474,6 +474,9 @@ class App(Generic[ReturnType], DOMNode):
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
 
+        self._previous_cursor_position = Offset(0, 0)
+        """The previous cursor position"""
+
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
 
@@ -1450,6 +1453,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         inline: bool = False,
         inline_no_clear: bool = False,
+        mouse: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1459,6 +1463,7 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output).
             inline: Run the app inline (under the prompt).
             inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1511,6 +1516,7 @@ class App(Generic[ReturnType], DOMNode):
                 headless=headless,
                 inline=inline,
                 inline_no_clear=inline_no_clear,
+                mouse=mouse,
                 terminal_size=size,
             )
         finally:
@@ -1528,6 +1534,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         inline: bool = False,
         inline_no_clear: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1537,6 +1544,7 @@ class App(Generic[ReturnType], DOMNode):
             headless: Run in headless mode (no output).
             inline: Run the app inline (under the prompt).
             inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1554,6 +1562,7 @@ class App(Generic[ReturnType], DOMNode):
                     headless=headless,
                     inline=inline,
                     inline_no_clear=inline_no_clear,
+                    mouse=mouse,
                     size=size,
                     auto_pilot=auto_pilot,
                 )
@@ -2315,6 +2324,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         inline: bool = False,
         inline_no_clear: bool = False,
+        mouse: bool = True,
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
@@ -2439,6 +2449,7 @@ class App(Generic[ReturnType], DOMNode):
             driver = self._driver = driver_class(
                 self,
                 debug=constants.DEBUG,
+                mouse=mouse,
                 size=terminal_size,
             )
             self.log(driver=driver)
@@ -2451,6 +2462,11 @@ class App(Generic[ReturnType], DOMNode):
                             await run_process_messages()
 
                 finally:
+                    if self._driver.is_inline:
+                        cursor_x, cursor_y = self._previous_cursor_position
+                        self._driver.write(
+                            Control.move(-cursor_x, -cursor_y).segment.text
+                        )
                     if inline_no_clear:
                         console = Console()
                         console.print(self.screen._compositor)
@@ -2768,12 +2784,16 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
+                            cursor_x, cursor_y = self._previous_cursor_position
+                            terminal_sequence = Control.move(
+                                -cursor_x, -cursor_y
+                            ).segment.text
                             cursor_x, cursor_y = self.cursor_position
-                            terminal_sequence = renderable.render_segments(console)
-                            if not self.is_inline:
-                                terminal_sequence += Control.move_to(
-                                    cursor_x, cursor_y
-                                ).segment.text
+                            terminal_sequence += renderable.render_segments(console)
+                            terminal_sequence += Control.move(
+                                cursor_x, cursor_y
+                            ).segment.text
+                            self._previous_cursor_position = self.cursor_position
                         else:
                             segments = console.render(renderable)
                             terminal_sequence = console._render_buffer(segments)

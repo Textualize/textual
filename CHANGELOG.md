@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
+- Added `inline` parameter to `run` and `run_async` to run app inline (under the promot).
+- Added `mouse` parameter to disable mouse support
 
 ## [0.54.0] - 2024-03-26
 

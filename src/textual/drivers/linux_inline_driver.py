@@ -30,9 +30,10 @@ class LinuxInlineDriver(Driver):
         app: App,
         *,
         debug: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
     ):
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
         self._file = sys.__stderr__
         self.fileno = sys.__stdin__.fileno()
         self.attrs_before: list[Any] | None = None
@@ -76,6 +77,8 @@ class LinuxInlineDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -87,6 +90,8 @@ class LinuxInlineDriver(Driver):
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000l")  #
         write("\x1b[?1003l")  #

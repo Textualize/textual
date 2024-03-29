@@ -20,6 +20,7 @@ class Driver(ABC):
         app: App,
         *,
         debug: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize a driver.
@@ -27,17 +28,19 @@ class Driver(ABC):
         Args:
             app: The App instance.
             debug: Enable debug mode.
+            mouse: Enable mouse support,
             size: Initial size of the terminal or `None` to detect.
         """
         self._app = app
         self._debug = debug
+        self._mouse = mouse
         self._size = size
         self._loop = asyncio.get_running_loop()
         self._down_buttons: list[int] = []
         self._last_move_event: events.MouseMove | None = None
         self._auto_restart = True
         """Should the application auto-restart (where appropriate)?"""
-        self.cursor_origin = (0, 0)
+        self.cursor_origin: tuple[int, int] | None = None
 
     @property
     def is_headless(self) -> bool:
@@ -73,7 +76,11 @@ class Driver(ABC):
         # NOTE: This runs in a thread.
         # Avoid calling methods on the app.
         event.set_sender(self._app)
-        offset_x, offset_y = self.cursor_origin
+        if self.cursor_origin is None:
+            offset_x = 0
+            offset_y = 0
+        else:
+            offset_x, offset_y = self.cursor_origin
         if isinstance(event, events.MouseEvent):
             event.x -= offset_x
             event.y -= offset_y

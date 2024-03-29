@@ -21,6 +21,7 @@ class WindowsDriver(Driver):
         app: App,
         *,
         debug: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize Windows driver.
@@ -28,6 +29,7 @@ class WindowsDriver(Driver):
         Args:
             app: The App instance.
             debug: Enable debug mode.
+            mouse: Enable mouse support.
             size: Initial size of the terminal or `None` to detect.
         """
         super().__init__(app, debug=debug, size=size)
@@ -53,6 +55,8 @@ class WindowsDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -62,6 +66,8 @@ class WindowsDriver(Driver):
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000l")
         write("\x1b[?1003l")
