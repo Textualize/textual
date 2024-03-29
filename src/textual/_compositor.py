@@ -146,6 +146,7 @@ class LayoutUpdate(CompositorUpdate):
 
 @rich.repr.auto(angular=True)
 class InlineUpdate(CompositorUpdate):
+    """A renderable to write an inline update."""
 
     def __init__(self, strips: list[Strip]) -> None:
         self.strips = strips
@@ -174,7 +175,6 @@ class InlineUpdate(CompositorUpdate):
             append(strip.render(console))
             if not last:
                 append("\n")
-        # append("\x1b[B")
         append("\n\x1b[J")  # Clear down
         if len(self.strips) > 1:
             append(
@@ -182,7 +182,7 @@ class InlineUpdate(CompositorUpdate):
             )  # Move cursor back to original position
         else:
             append("\r")
-        append("\x1b[6n")  # Query cursor position
+        append("\x1b[6n")  # Query new cursor position
         return "".join(sequences)
 
 
@@ -995,7 +995,7 @@ class Compositor:
         """Render an update renderable.
 
         Args:
-            full: Enable full update, or `False` for a partial update.
+            screen_stack: Screen stack list. Defaults to None.
 
         Returns:
             A renderable for the update, or `None` if no update was required.
@@ -1011,6 +1011,15 @@ class Compositor:
     def render_inline(
         self, size: Size, screen_stack: list[Screen] | None = None
     ) -> RenderableType:
+        """Render an inline update.
+
+        Args:
+            size: Inline size.
+            screen_stack: Screen stack list. Defaults to None.
+
+        Returns:
+            A renderable.
+        """
         visible_screen_stack.set([] if screen_stack is None else screen_stack)
         return InlineUpdate(self.render_strips(size))
 
@@ -1049,6 +1058,9 @@ class Compositor:
 
     def render_strips(self, size: Size | None = None) -> list[Strip]:
         """Render to a list of strips.
+
+        Args:
+            size: Size of render.
 
         Returns:
             A list of strips with the screen content.

@@ -237,8 +237,7 @@ class XTermParser(Parser[events.Event]):
                         if key_events:
                             break
                         # Or a mouse event?
-                        mouse_match = _re_mouse_event.match(sequence)
-                        if mouse_match is not None:
+                        if (mouse_match := _re_mouse_event.match(sequence)) is not None:
                             mouse_code = mouse_match.group(0)
                             event = self.parse_mouse_code(mouse_code)
                             if event:
@@ -247,8 +246,11 @@ class XTermParser(Parser[events.Event]):
 
                         # Or a mode report?
                         # (i.e. the terminal saying it supports a mode we requested)
-                        mode_report_match = _re_terminal_mode_response.match(sequence)
-                        if mode_report_match is not None:
+                        if (
+                            mode_report_match := _re_terminal_mode_response.match(
+                                sequence
+                            )
+                        ) is not None:
                             if (
                                 mode_report_match["mode_id"] == "2026"
                                 and int(mode_report_match["setting_parameter"]) > 0
@@ -256,6 +258,7 @@ class XTermParser(Parser[events.Event]):
                                 on_token(messages.TerminalSupportsSynchronizedOutput())
                             break
 
+                        # Or a cursor position query?
                         if (
                             cursor_position_match := _re_cursor_position.match(sequence)
                         ) is not None:

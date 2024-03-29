@@ -677,7 +677,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self.app._display(
                 self,
                 self._compositor.render_inline(
-                    Size(size.width, self.get_inline_height(size)),
+                    Size(size.width, self._get_inline_height(size)),
                     screen_stack=self.app._background_screens,
                 ),
             )
@@ -775,7 +775,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if self.app.is_inline:
-            size = Size(size.width, self.get_inline_height(self.app.size))
+            size = Size(size.width, self._get_inline_height(self.app.size))
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
@@ -868,7 +868,15 @@ class Screen(Generic[ScreenResultType], Widget):
         self._scroll_required = True
         self.check_idle()
 
-    def get_inline_height(self, size: Size) -> int:
+    def _get_inline_height(self, size: Size) -> int:
+        """Get the inline height (number of lines to display when running inline mode).
+
+        Args:
+            size: Size of the terminal
+
+        Returns:
+            Height for inline mode.
+        """
         height_scalar = self.styles.height
         if height_scalar is None or height_scalar.is_auto:
             inline_height = self.get_content_height(size, size, size.width)
