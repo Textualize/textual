@@ -384,7 +384,7 @@ class Length(Validator):
         minimum: int | None = None,
         maximum: int | None = None,
         failure_description: str | None = None,
-        strip_spaces: bool = False,
+        strip_spaces: bool = True,
     ) -> None:
         super().__init__(failure_description=failure_description)
         self.minimum = minimum
@@ -423,20 +423,12 @@ class Length(Validator):
             A string description of the failure.
         """
         if isinstance(failure, Length.Incorrect):
-            desc: str = ""
             if self.minimum is None and self.maximum is not None:
-                desc += f"Must be shorter than {self.maximum} characters."
+                return f"Must be shorter than {self.maximum} characters."
             elif self.minimum is not None and self.maximum is None:
-                desc += f"Must be longer than {self.minimum} characters."
+                return f"Must be longer than {self.minimum} characters."
             else:
-                desc += f"Must be between {self.minimum} and {self.maximum} characters."
-
-            desc += (
-                " (Trailing and leading spaces ignored)" if self.strip_spaces else ""
-            )
-            return desc
-
-        return None
+                return f"Must be between {self.minimum} and {self.maximum} characters."
 
 
 class Function(Validator):
