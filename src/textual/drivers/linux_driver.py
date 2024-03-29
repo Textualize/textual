@@ -32,6 +32,7 @@ class LinuxDriver(Driver):
         app: App,
         *,
         debug: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize Linux driver.
@@ -39,9 +40,10 @@ class LinuxDriver(Driver):
         Args:
             app: The App instance.
             debug: Enable debug mode.
+            mouse: Enable mouse support.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
         self._file = sys.__stderr__
         self.fileno = sys.__stdin__.fileno()
         self.attrs_before: list[Any] | None = None
