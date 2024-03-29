@@ -1012,13 +1012,6 @@ class Compositor:
         self, size: Size, screen_stack: list[Screen] | None = None
     ) -> RenderableType:
         visible_screen_stack.set([] if screen_stack is None else screen_stack)
-
-        # from rich.live_render import LiveRender
-
-        # from textual.strip import StripRenderable
-
-        # return LiveRender(StripRenderable(self.render_strips(size), size.width))
-
         return InlineUpdate(self.render_strips(size))
 
     def render_full_update(self) -> LayoutUpdate:

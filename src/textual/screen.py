@@ -137,10 +137,12 @@ class Screen(Generic[ScreenResultType], Widget):
         layout: vertical;
         overflow-y: auto;
         background: $surface;
-
+        
         &:inline {
             height: auto;
-            min-height: 1;
+            # min-height: 1;
+            border-top: tall $surface;
+            border-bottom: tall $surface;
         }
     }
     """
@@ -672,13 +674,10 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if self.app.is_inline:
             size = self.app.size
-            inline_height = self.get_content_height(size, size, size.width)
-            inline_height = self.size.height
-
             self.app._display(
                 self,
                 self._compositor.render_inline(
-                    Size(size.width, inline_height),
+                    Size(size.width, self.get_inline_height(size)),
                     screen_stack=self.app._background_screens,
                 ),
             )
@@ -875,6 +874,7 @@ class Screen(Generic[ScreenResultType], Widget):
             inline_height = self.get_content_height(size, size, size.width)
         else:
             inline_height = int(height_scalar.resolve(size, size))
+        inline_height += self.styles.gutter.height
         min_height = self.styles.min_height
         max_height = self.styles.max_height
         if min_height is not None:
