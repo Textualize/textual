@@ -28,4 +28,4 @@ class ClockApp(App):
 
 if __name__ == "__main__":
     app = ClockApp()
-    app.run(inline=True)
+    app.run(inline=True)  #  (1)!

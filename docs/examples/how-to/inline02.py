@@ -8,6 +8,13 @@ class ClockApp(App):
     CSS = """
     Screen {
         align: center middle;
+        &:inline {
+            border: none;
+            height: 50vh;
+            Digits {
+                color: $success;
+            }
+        }
     }
     #clock {
         width: auto;

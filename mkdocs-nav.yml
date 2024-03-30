@@ -223,6 +223,7 @@ nav:
       - "how-to/design-a-layout.md"
       - "how-to/package-with-hatch.md"
       - "how-to/render-and-compose.md"
+      - "how-to/style-inline-apps.md"
   - "FAQ.md"
   - "roadmap.md"
   - "Blog":

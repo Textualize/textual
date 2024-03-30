@@ -40,7 +40,12 @@ class WebDriver(Driver):
     """A headless driver that may be run remotely."""
 
     def __init__(
-        self, app: App, *, debug: bool = False, size: tuple[int, int] | None = None
+        self,
+        app: App,
+        *,
+        debug: bool = False,
+        mouse: bool = True,
+        size: tuple[int, int] | None = None,
     ):
         if size is None:
             try:
@@ -50,7 +55,7 @@ class WebDriver(Driver):
                 pass
             else:
                 size = width, height
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
         self.stdout = sys.__stdout__
         self.fileno = sys.__stdout__.fileno()
         self._write = partial(os.write, self.fileno)
