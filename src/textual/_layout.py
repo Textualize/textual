@@ -162,7 +162,8 @@ class Layout(ABC):
         else:
             # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
             arrangement = widget._arrange(Size(0, 0))
-            return arrangement.total_region.right
+            width = arrangement.total_region.right
+
         return width
 
     def get_content_height(
