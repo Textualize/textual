@@ -1170,3 +1170,7 @@ def test_button_widths(snap_compare):
 def test_welcome(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "welcome_widget.py")
 
+
+def test_button_with_console_markup(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4328"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_markup.py")
