@@ -140,7 +140,7 @@ class Screen(Generic[ScreenResultType], Widget):
         
         &:inline {
             height: auto;
-            # min-height: 1;
+            min-height: 1;
             border-top: tall $background;
             border-bottom: tall $background;
         }
