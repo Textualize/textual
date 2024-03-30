@@ -37,7 +37,7 @@ class Notification:
     """The severity level for the notification."""
 
     timeout: float = 5
-    """The timeout for the notification."""
+    """The timeout (in seconds) for the notification."""
 
     raised_at: float = field(default_factory=time)
     """The time when the notification was raised (in Unix time)."""
