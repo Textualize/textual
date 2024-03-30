@@ -3791,7 +3791,7 @@ class Widget(DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout for the notification.
+            timeout: The timeout (in seconds) for the notification.
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.
