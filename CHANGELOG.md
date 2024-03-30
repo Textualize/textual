@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
+- Patch for issues mixing `width: 100%` with `width: auto` https://github.com/Textualize/textual/issues/4360
 
 ### Changed
 
