@@ -68,6 +68,7 @@ VALID_PSEUDO_CLASSES: Final = {
     "focus-within",
     "focus",
     "hover",
+    "inline",
     "light",
 }
 VALID_OVERLAY: Final = {"none", "screen"}

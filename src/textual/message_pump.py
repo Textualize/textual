@@ -350,7 +350,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Make a function call after a delay.
 
         Args:
-            delay: Time to wait before invoking callback.
+            delay: Time (in seconds) to wait before invoking callback.
             callback: Callback to call after time has expired.
             name: Name of the timer (for debug).
             pause: Start timer paused.
@@ -382,7 +382,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Call a function at periodic intervals.
 
         Args:
-            interval: Time between calls.
+            interval: Time (in seconds) between calls.
             callback: Function to call.
             name: Name of the timer object.
             repeat: Number of times to repeat the call or 0 for continuous.

@@ -45,7 +45,6 @@ from typing import (
     Type,
     TypeVar,
     Union,
-    cast,
     overload,
 )
 from weakref import WeakKeyDictionary, WeakSet
@@ -92,7 +91,6 @@ from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode, NoScreen
 from .driver import Driver
-from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
@@ -476,6 +474,9 @@ class App(Generic[ReturnType], DOMNode):
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
 
+        self._previous_cursor_position = Offset(0, 0)
+        """The previous cursor position"""
+
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
 
@@ -741,7 +742,7 @@ class App(Generic[ReturnType], DOMNode):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation.
-            duration: The duration of the animate.
+            duration: The duration (in seconds) of the animation.
             speed: The speed of the animation.
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
@@ -779,11 +780,16 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def is_headless(self) -> bool:
-        """Is the driver running in 'headless' mode?
+        """Is the app running in 'headless' mode?
 
         Headless mode is used when running tests with [run_test][textual.app.App.run_test].
         """
         return False if self._driver is None else self._driver.is_headless
+
+    @property
+    def is_inline(self) -> bool:
+        """Is the app running in 'inline' mode?"""
+        return False if self._driver is None else self._driver.is_inline
 
     @property
     def screen_stack(self) -> Sequence[Screen[Any]]:
@@ -979,6 +985,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def animator(self) -> Animator:
+        """The animator object."""
         return self._animator
 
     @property
@@ -1444,6 +1451,9 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = False,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1451,6 +1461,9 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1501,6 +1514,9 @@ class App(Generic[ReturnType], DOMNode):
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
+                inline=inline,
+                inline_no_clear=inline_no_clear,
+                mouse=mouse,
                 terminal_size=size,
             )
         finally:
@@ -1516,6 +1532,9 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1523,6 +1542,9 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1538,6 +1560,9 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 await self.run_async(
                     headless=headless,
+                    inline=inline,
+                    inline_no_clear=inline_no_clear,
+                    mouse=mouse,
                     size=size,
                     auto_pilot=auto_pilot,
                 )
@@ -2297,6 +2322,9 @@ class App(Generic[ReturnType], DOMNode):
         self,
         ready_callback: CallbackType | None = None,
         headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = True,
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
@@ -2314,7 +2342,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self.log.system("---")
 
-        self.log.system(driver=self.driver_class)
         self.log.system(loop=asyncio.get_running_loop())
         self.log.system(features=self.features)
         if constants.LOG_FILE is not None:
@@ -2406,15 +2433,26 @@ class App(Generic[ReturnType], DOMNode):
             await self._dispatch_message(load_event)
 
             driver: Driver
-            driver_class = cast(
-                "type[Driver]",
-                HeadlessDriver if headless else self.driver_class,
-            )
+
+            driver_class: type[Driver]
+            if headless:
+                from .drivers.headless_driver import HeadlessDriver
+
+                driver_class = HeadlessDriver
+            elif inline:
+                from .drivers.linux_inline_driver import LinuxInlineDriver
+
+                driver_class = LinuxInlineDriver
+            else:
+                driver_class = self.driver_class
+
             driver = self._driver = driver_class(
                 self,
                 debug=constants.DEBUG,
+                mouse=mouse,
                 size=terminal_size,
             )
+            self.log(driver=driver)
 
             if not self._exit:
                 driver.start_application_mode()
@@ -2424,6 +2462,15 @@ class App(Generic[ReturnType], DOMNode):
                             await run_process_messages()
 
                 finally:
+                    if self._driver.is_inline:
+                        cursor_x, cursor_y = self._previous_cursor_position
+                        self._driver.write(
+                            Control.move(-cursor_x, -cursor_y).segment.text
+                        )
+                    if inline_no_clear:
+                        console = Console()
+                        console.print(self.screen._compositor)
+                        console.print()
                     driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
@@ -2737,11 +2784,16 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
+                            cursor_x, cursor_y = self._previous_cursor_position
+                            terminal_sequence = Control.move(
+                                -cursor_x, -cursor_y
+                            ).segment.text
                             cursor_x, cursor_y = self.cursor_position
-                            terminal_sequence = renderable.render_segments(console)
-                            terminal_sequence += Control.move_to(
+                            terminal_sequence += renderable.render_segments(console)
+                            terminal_sequence += Control.move(
                                 cursor_x, cursor_y
                             ).segment.text
+                            self._previous_cursor_position = self.cursor_position
                         else:
                             segments = console.render(renderable)
                             terminal_sequence = console._render_buffer(segments)
@@ -3387,7 +3439,7 @@ class App(Generic[ReturnType], DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout for the notification.
+            timeout: The timeout (in seconds) for the notification.
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
