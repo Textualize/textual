@@ -861,15 +861,21 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            A mapping of keys onto pairs of nodes and bindings.
+            A map of keys to a tuple containing the DOMNode and Binding that key corresponds to.
         """
 
-        namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
+        bindings_map: dict[str, tuple[DOMNode, Binding]] = {}
         for namespace, bindings in reversed(self._binding_chain):
             for key, binding in bindings.keys.items():
-                namespace_binding_map[key] = (namespace, binding)
+                existing_key_and_binding = bindings_map.get(key)
+                if existing_key_and_binding:
+                    _, existing_binding = existing_key_and_binding
+                    if binding.priority and not existing_binding.priority:
+                        bindings_map[key] = (namespace, binding)
+                else:
+                    bindings_map[key] = (namespace, binding)
 
-        return namespace_binding_map
+        return bindings_map
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
