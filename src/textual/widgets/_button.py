@@ -239,6 +239,9 @@ class Button(Widget, can_focus=True):
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         return cast(ConsoleRenderable, renderable)
 
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return len(self.label) + 2
+
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
         self.press()
