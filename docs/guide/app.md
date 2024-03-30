@@ -45,11 +45,7 @@ If you hit ++ctrl+c++ Textual will exit application mode and return you to the c
 You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
 Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.
 
-To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run].
-
-!!! tip
-    
-    You can apply [custom styles to inline apps](../how-to/style-inline-apps.md).
+To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run]. See [Style Inline Apps](../how-to/style-inline-apps.md) for how to apply additional styles to inline apps.
 
 ## Events
 
