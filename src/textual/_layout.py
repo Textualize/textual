@@ -160,7 +160,8 @@ class Layout(ABC):
         if not widget._nodes:
             width = 0
         else:
-            arrangement = widget._arrange(Size(container.width, 0))
+            # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
+            arrangement = widget._arrange(Size(0, 0))
             return arrangement.total_region.right
         return width
 
