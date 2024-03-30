@@ -1,4 +1,4 @@
-# Style Inline apps
+# Style Inline Apps
 
 Version 0.55.0 of Textual added support for running apps *inline* (below the prompt).
 Running an inline app is as simple as adding `inline=True` to [`run()`][textual.app.App.run].
