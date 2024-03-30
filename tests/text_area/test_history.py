@@ -341,3 +341,16 @@ async def test_redo_stack(pilot: Pilot, text_area: TextArea):
     text_area.redo()
     assert len(text_area.history.undo_stack) == 2
     assert len(text_area.history.redo_stack) == 0
+
+
+async def test_backward_selection_undo_redo(pilot: Pilot, text_area: TextArea):
+    # Failed prior to https://github.com/Textualize/textual/pull/4352
+    text_area.text = SIMPLE_TEXT
+    text_area.selection = Selection((3, 2), (0, 0))
+
+    await pilot.press("a")
+
+    text_area.undo()
+    await pilot.press("down", "down", "down", "down")
+
+    assert text_area.text == SIMPLE_TEXT
