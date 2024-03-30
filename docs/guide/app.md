@@ -47,6 +47,10 @@ Inline apps are useful for tools that integrate closely with the typical workflo
 
 To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run].
 
+!!! tip
+    
+    You can apply [custom styles to inline apps](../how-to/style-inline-apps.md).
+
 ## Events
 
 Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with `on_` followed by the name of the event.
