@@ -4,6 +4,7 @@ from functools import partial
 from typing import TYPE_CHECKING, cast
 
 import rich.repr
+from rich.cells import cell_len
 from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
 
 from ..binding import Binding
 from ..css._error_tools import friendly_list
+from ..geometry import Size
 from ..message import Message
 from ..pad import HorizontalPad
 from ..reactive import reactive
@@ -202,6 +204,9 @@ class Button(Widget, can_focus=True):
         self.variant = variant
         self.active_effect_duration = 0.3
         """Amount of time in seconds the button 'press' animation lasts."""
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        return cell_len(str(self.label)) + 2
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
