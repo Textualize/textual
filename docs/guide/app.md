@@ -40,7 +40,7 @@ If you hit ++ctrl+c++ Textual will exit application mode and return you to the c
 
 #### Run inline
 
-!!! tip "Added in version 0.45.0"
+!!! tip "Added in version 0.55.0"
 
 You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
 Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.
