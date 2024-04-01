@@ -206,7 +206,11 @@ class Button(Widget, can_focus=True):
         """Amount of time in seconds the button 'press' animation lasts."""
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
-        return cell_len(str(self.label)) + 2
+        try:
+            return max([cell_len(line) for line in self.label.plain.splitlines()]) + 2
+        except ValueError:
+            # Empty string label
+            return 2
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
