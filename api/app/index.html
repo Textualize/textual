@@ -5028,6 +5028,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.animator" class="md-nav__link">
+    <span class="md-ellipsis">
+      animator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.ansi_theme" class="md-nav__link">
     <span class="md-ellipsis">
       ansi_theme
@@ -5139,6 +5148,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.is_headless" class="md-nav__link">
     <span class="md-ellipsis">
       is_headless
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.is_inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_inline
     </span>
   </a>
   
@@ -6875,6 +6893,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -6991,6 +7011,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Render and compose
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/style-inline-apps/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Style Inline Apps
   </span>
   
 
@@ -7528,6 +7569,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.animator" class="md-nav__link">
+    <span class="md-ellipsis">
+      animator
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.ansi_theme" class="md-nav__link">
     <span class="md-ellipsis">
       ansi_theme
@@ -7639,6 +7689,15 @@ window.onload = async (event) => {
   <a href="#textual.app.App.is_headless" class="md-nav__link">
     <span class="md-ellipsis">
       is_headless
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.app.App.is_inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_inline
     </span>
   </a>
   
@@ -9011,6 +9070,29 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
 
 
+<h3 id="textual.app.App.animator" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">animator</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.animator" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">animator</span><span class="p">:</span> <span class="n">Animator</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>The animator object.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.app.App.ansi_theme" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">ansi_theme</span>
 
@@ -9366,8 +9448,31 @@ positioning of OS IME and emoji popup menus.</p>
 
   <div class="doc doc-contents ">
   
-      <p>Is the driver running in 'headless' mode?</p>
+      <p>Is the app running in 'headless' mode?</p>
 <p>Headless mode is used when running tests with <a class="autorefs autorefs-internal" href="#textual.app.App.run_test">run_test</a>.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.app.App.is_inline" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">is_inline</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.app.App.is_inline" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_inline</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Is the app running in 'inline' mode?</p>
   </div>
 
 </div>
@@ -9455,7 +9560,7 @@ If a widget is focused, then any bindings present in the active screen and app a
           <td>
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#tuple">tuple</a>[<a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a>, <a class="autorefs autorefs-internal" title="textual.binding.Binding" href="../binding/#textual.binding.Binding">Binding</a>]]</code>
           </td>
-          <td><p>A mapping of keys onto pairs of nodes and bindings.</p></td>
+          <td><p>A map of keys to a tuple containing the DOMNode and Binding that key corresponds to.</p></td>
         </tr>
     </tbody>
   </table>
@@ -9716,8 +9821,8 @@ If the app wasn't exited yet, this will be <code>None</code>.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9748,8 +9853,8 @@ The new value is always converted to string.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -10662,7 +10767,7 @@ under Textual Web this is a non-operation.</p>
           <td>
             <code>None</code>
           </td>
-          <td><p>The duration of the animate.</p></td>
+          <td><p>The duration (in seconds) of the animation.</p></td>
         </tr>
         <tr>
           <td>
@@ -12574,7 +12679,7 @@ provided a <code>MountError</code> will be raised.</p>
           <td>
             <code><span title="textual.notifications.Notification">Notification</span>.<span title="textual.notifications.Notification.timeout">timeout</span></code>
           </td>
-          <td><p>The timeout for the notification.</p></td>
+          <td><p>The timeout (in seconds) for the notification.</p></td>
         </tr>
     </tbody>
   </table>
@@ -13146,7 +13251,16 @@ to await the result of the screen.</p></td>
   </span>
 
 <a href="#textual.app.App.run" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_pilot</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">inline</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">inline_no_clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">mouse</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">auto_pilot</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13173,6 +13287,39 @@ to await the result of the screen.</p></td>
             <code>False</code>
           </td>
           <td><p>Run in headless mode (no output).</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>inline</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Run the app inline (under the prompt).</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>inline_no_clear</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Don't clear the app output when exiting an inline app.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>mouse</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>True</code>
+          </td>
+          <td><p>Enable mouse support.</p></td>
         </tr>
         <tr>
           <td>
@@ -13313,8 +13460,15 @@ or None to use app.</p></td>
 
 <a href="#textual.app.App.run_async" class="headerlink" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">run_async</span><span class="p">(</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">auto_pilot</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="o">*</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">headless</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">inline</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="n">inline_no_clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">mouse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">auto_pilot</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -13341,6 +13495,39 @@ or None to use app.</p></td>
             <code>False</code>
           </td>
           <td><p>Run in headless mode (no output).</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>inline</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Run the app inline (under the prompt).</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>inline_no_clear</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Don't clear the app output when exiting an inline app.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>mouse</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Enable mouse support.</p></td>
         </tr>
         <tr>
           <td>

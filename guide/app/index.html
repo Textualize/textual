@@ -834,6 +834,21 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="The run method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run inline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -5988,6 +6003,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -6104,6 +6121,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Render and compose
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/style-inline-apps/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Style Inline Apps
   </span>
   
 
@@ -6514,6 +6552,21 @@ window.onload = async (event) => {
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="The run method">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#run-inline" class="md-nav__link">
+    <span class="md-ellipsis">
+      Run inline
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
       </ul>
@@ -6905,6 +6958,13 @@ window.onload = async (event) => {
 <p class="admonition-title">Tip</p>
 <p>A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the <span class="keys"><kbd class="key-option">Option</kbd></span> key. See the documentation for your terminal software for how to select text in application mode.</p>
 </div>
+<h4 id="run-inline">Run inline<a class="headerlink" href="#run-inline" title="Permanent link">&para;</a></h4>
+<div class="admonition tip">
+<p class="admonition-title">Added in version 0.45.0</p>
+</div>
+<p>You can also run apps in <em>inline</em> mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
+Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.</p>
+<p>To run an app in inline mode set the <code>inline</code> parameter to <code>True</code> when you call <a class="autorefs autorefs-internal" href="../../api/app/#textual.app.App.run">App.run()</a>. See <a href="../../how-to/style-inline-apps/">Style Inline Apps</a> for how to apply additional styles to inline apps.</p>
 <h2 id="events">Events<a class="headerlink" href="#events" title="Permanent link">&para;</a></h2>
 <p>Textual has an event system you can use to respond to key presses, mouse actions, and internal state changes. Event handlers are methods prefixed with <code>on_</code> followed by the name of the event.</p>
 <p>One such event is the <em>mount</em> event which is sent to an application after it enters application mode. You can respond to this event by defining a method called <code>on_mount</code>.</p>

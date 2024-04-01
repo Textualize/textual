@@ -6003,6 +6003,8 @@ window.onload = async (event) => {
       
         
       
+        
+      
     
     
       
@@ -6119,6 +6121,27 @@ window.onload = async (event) => {
   
   <span class="md-ellipsis">
     Render and compose
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../how-to/style-inline-apps/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Style Inline Apps
   </span>
   
 
@@ -7724,12 +7747,13 @@ These are used by the CSS to identify parts of the DOM. We will cover these in t
 <p>The <code>background: green</code> is only applied to the Button underneath the mouse cursor. When you move the cursor away from the button it will return to its previous background color.</p>
 <p>Here are some other pseudo classes:</p>
 <ul>
+<li><code>:blur</code> Matches widgets which <em>do not</em> have input focus.</li>
+<li><code>:dark</code> Matches widgets in dark mode (where <code>App.dark == True</code>).</li>
 <li><code>:disabled</code> Matches widgets which are in a disabled state.</li>
 <li><code>:enabled</code> Matches widgets which are in an enabled state.</li>
-<li><code>:focus</code> Matches widgets which have input focus.</li>
-<li><code>:blur</code> Matches widgets which <em>do not</em> have input focus.</li>
 <li><code>:focus-within</code> Matches widgets with a focused child widget.</li>
-<li><code>:dark</code> Matches widgets in dark mode (where <code>App.dark == True</code>).</li>
+<li><code>:focus</code> Matches widgets which have input focus.</li>
+<li><code>:inline</code> Matches widgets when the app is running in inline mode.</li>
 <li><code>:light</code> Matches widgets in dark mode (where <code>App.dark == False</code>).</li>
 </ul>
 <h2 id="combinators">Combinators<a class="headerlink" href="#combinators" title="Permanent link">&para;</a></h2>
