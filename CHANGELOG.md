@@ -9,12 +9,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
+- Reverted auto-width change https://github.com/Textualize/textual/pull/4369
+
+### Changed
+
 - Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
 - Fixed `DataTable` scrolling issues by changing `max-height` back to 100% https://github.com/Textualize/textual/issues/4286
+- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
 
 ### Added
 
 - Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
+- Added support for JavaScript, Golang, Rust, Bash, Java and Kotlin to `TextArea` https://github.com/Textualize/textual/pull/4350
+- Added `inline` parameter to `run` and `run_async` to run app inline (under the prompt). https://github.com/Textualize/textual/pull/4343
+- Added `mouse` parameter to disable mouse support https://github.com/Textualize/textual/pull/4343
 
 ## [0.54.0] - 2024-03-26
 

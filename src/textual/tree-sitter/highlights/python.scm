@@ -15,20 +15,6 @@
 ((identifier) @constant
  (#lua-match? @constant "^[A-Z][A-Z_0-9]*$"))
 
-((identifier) @constant.builtin
- (#lua-match? @constant.builtin "^__[a-zA-Z0-9_]*__$"))
-
-((identifier) @constant.builtin
- (#any-of? @constant.builtin
-           ;; https://docs.python.org/3/library/constants.html
-           "NotImplemented"
-           "Ellipsis"
-           "quit"
-           "exit"
-           "copyright"
-           "credits"
-           "license"))
-
 ((attribute
     attribute: (identifier) @field)
  (#match? @field "^([A-Z])@!.*$"))

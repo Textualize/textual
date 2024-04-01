@@ -1292,27 +1292,27 @@ TextArea {
             return
 
         old_gutter_width = self.gutter_width
-        minimum_from = edits[-1].top
-        maximum_old_end = (0, 0)
-        maximum_new_end = (0, 0)
+        minimum_top = edits[-1].top
+        maximum_old_bottom = (0, 0)
+        maximum_new_bottom = (0, 0)
         for edit in reversed(edits):
             edit.undo(self)
             end_location = (
                 edit._edit_result.end_location if edit._edit_result else (0, 0)
             )
-            if edit.from_location < minimum_from:
-                minimum_from = edit.from_location
-            if end_location > maximum_old_end:
-                maximum_old_end = end_location
-            if edit.to_location > maximum_new_end:
-                maximum_new_end = edit.bottom
+            if edit.top < minimum_top:
+                minimum_top = edit.top
+            if end_location > maximum_old_bottom:
+                maximum_old_bottom = end_location
+            if edit.bottom > maximum_new_bottom:
+                maximum_new_bottom = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                minimum_from, maximum_old_end, maximum_new_end
+                minimum_top, maximum_old_bottom, maximum_new_bottom
             )
 
         self._refresh_size()
@@ -1338,29 +1338,29 @@ TextArea {
             return
 
         old_gutter_width = self.gutter_width
-        minimum_from = edits[0].from_location
-        maximum_old_end = (0, 0)
-        maximum_new_end = (0, 0)
+        minimum_top = edits[0].top
+        maximum_old_bottom = (0, 0)
+        maximum_new_bottom = (0, 0)
         for edit in edits:
             edit.do(self, record_selection=False)
             end_location = (
                 edit._edit_result.end_location if edit._edit_result else (0, 0)
             )
-            if edit.from_location < minimum_from:
-                minimum_from = edit.from_location
-            if end_location > maximum_new_end:
-                maximum_new_end = end_location
-            if edit.to_location > maximum_old_end:
-                maximum_old_end = edit.to_location
+            if edit.top < minimum_top:
+                minimum_top = edit.top
+            if end_location > maximum_new_bottom:
+                maximum_new_bottom = end_location
+            if edit.bottom > maximum_old_bottom:
+                maximum_old_bottom = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                minimum_from,
-                maximum_old_end,
-                maximum_new_end,
+                minimum_top,
+                maximum_old_bottom,
+                maximum_new_bottom,
             )
 
         self._refresh_size()

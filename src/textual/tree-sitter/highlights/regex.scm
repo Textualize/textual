@@ -1,34 +1,50 @@
-;; Forked from tree-sitter-regex
-;; The MIT License (MIT) Copyright (c) 2014 Max Brunsfeld
 [
- "("
- ")"
- "(?"
- "(?:"
- "(?<"
- ">"
- "["
- "]"
- "{"
- "}"
-] @regex.punctuation.bracket
+  "("
+  ")"
+  "(?"
+  "(?:"
+  "(?<"
+  ">"
+  "["
+  "]"
+  "{"
+  "}"
+] @punctuation.bracket
 
 (group_name) @property
 
-;; These are escaped special characters that lost their special meaning
-;; -> no special highlighting
-(identity_escape) @string.regex
-
-(class_character) @constant
+[
+  (identity_escape)
+  (control_letter_escape)
+  (character_class_escape)
+  (control_escape)
+  (start_assertion)
+  (end_assertion)
+  (boundary_assertion)
+  (non_boundary_assertion)
+] @escape
 
 [
- (control_letter_escape)
- (character_class_escape)
- (control_escape)
- (start_assertion)
- (end_assertion)
- (boundary_assertion)
- (non_boundary_assertion)
-] @string.escape
+  "*"
+  "+"
+  "?"
+  "|"
+  "="
+  "!"
+] @operator
 
-[ "*" "+" "?" "|" "=" "!" ] @regex.operator
+(count_quantifier
+  [
+    (decimal_digits) @number
+    "," @punctuation.delimiter
+  ])
+
+(character_class
+  [
+    "^" @operator
+    (class_range "-" @operator)
+  ])
+
+(class_character) @constant.character
+
+(pattern_character) @string
