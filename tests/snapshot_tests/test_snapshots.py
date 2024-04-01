@@ -686,6 +686,7 @@ def test_markdown_component_classes_reloading(snap_compare, monkeypatch):
         run_before=run_before,
     )
 
+
 def test_markdown_space_squashing(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "markdown_whitespace.py")
 
@@ -1174,3 +1175,8 @@ def test_welcome(snap_compare):
 def test_button_with_console_markup(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4328"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "button_markup.py")
+
+
+def test_width_100(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4360"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "width_100.py")
