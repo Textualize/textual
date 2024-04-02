@@ -1459,7 +1459,7 @@ class App(Generic[ReturnType], DOMNode):
         headless: bool = False,
         inline: bool = False,
         inline_no_clear: bool = False,
-        mouse: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
