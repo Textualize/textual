@@ -237,7 +237,6 @@ class LinuxDriver(Driver):
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1003h\n")
         self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
