@@ -32,13 +32,13 @@ In this example, we have 3 widgets with differing offsets.
 
 === "offset.tcss"
 
-    ```sass hl_lines="13 20 27"
+    ```css hl_lines="13 20 27"
     --8<-- "docs/examples/styles/offset.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Move the widget 8 cells in the x direction and 2 in the y direction */
 offset: 8 2;
 

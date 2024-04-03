@@ -6,6 +6,7 @@ from typing import ClassVar, Optional
 
 import rich.repr
 
+from .. import _widget_navigation
 from ..binding import Binding, BindingType
 from ..containers import Container
 from ..events import Click, Mount
@@ -61,7 +62,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("down,right", "next_button", "", show=False),
-        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("enter,space", "toggle_button", "Toggle", show=False),
         Binding("up,left", "previous_button", "", show=False),
     ]
     """
@@ -151,9 +152,8 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
     def _on_mount(self, _: Mount) -> None:
         """Perform some processing once mounted in the DOM."""
 
-        # If there are radio buttons, select the first one.
-        if self._nodes:
-            self._selected = 0
+        # If there are radio buttons, select the first available one.
+        self.action_next_button()
 
         # Get all the buttons within us; we'll be doing a couple of things
         # with that list.
@@ -248,26 +248,24 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
 
         Note that this will wrap around to the end if at the start.
         """
-        if self._nodes:
-            if self._selected == 0:
-                self._selected = len(self.children) - 1
-            elif self._selected is None:
-                self._selected = 0
-            else:
-                self._selected -= 1
+        self._selected = _widget_navigation.find_next_enabled(
+            self.children,
+            anchor=self._selected,
+            direction=-1,
+        )
 
     def action_next_button(self) -> None:
         """Navigate to the next button in the set.
 
         Note that this will wrap around to the start if at the end.
         """
-        if self._nodes:
-            if self._selected is None or self._selected == len(self._nodes) - 1:
-                self._selected = 0
-            else:
-                self._selected += 1
+        self._selected = _widget_navigation.find_next_enabled(
+            self.children,
+            anchor=self._selected,
+            direction=1,
+        )
 
-    def action_toggle(self) -> None:
+    def action_toggle_button(self) -> None:
         """Toggle the state of the currently-selected button."""
         if self._selected is not None:
             button = self._nodes[self._selected]

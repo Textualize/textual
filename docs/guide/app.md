@@ -38,6 +38,14 @@ If you hit ++ctrl+c++ Textual will exit application mode and return you to the c
 
     A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the ++option++ key. See the documentation for your terminal software for how to select text in application mode.
 
+#### Run inline
+
+!!! tip "Added in version 0.55.0"
+
+You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
+Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.
+
+To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run]. See [Style Inline Apps](../how-to/style-inline-apps.md) for how to apply additional styles to inline apps.
 
 ## Events
 
@@ -240,6 +248,57 @@ if __name__ == "__main__"
     sys.exit(app.return_code or 0)
 ```
 
+## Suspending
+
+A Textual app may be suspended so you can leave application mode for a period of time.
+This is often used to temporarily replace your app with another terminal application.
+
+You could use this to allow the user to edit content with their preferred text editor, for example.
+
+!!! info
+
+    App suspension is unavailable with [textual-web](https://github.com/Textualize/textual-web).
+
+### Suspend context manager
+
+You can use the [App.suspend](/api/app/#textual.app.App.suspend) context manager to suspend your app.
+The following Textual app will launch [vim](https://www.vim.org/) (a text editor) when the user clicks a button:
+
+=== "suspend.py"
+
+    ```python hl_lines="15-16"
+    --8<-- "docs/examples/app/suspend.py"
+    ```
+
+    1. All code in the body of the `with` statement will be run while the app is suspended.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/app/suspend.py"}
+    ```
+
+### Suspending from foreground
+
+On Unix and Unix-like systems (GNU/Linux, macOS, etc) Textual has support for the user pressing a key combination to suspend the application as the foreground process.
+Ordinarily this key combination is <kbd>Ctrl</kbd>+<kbd>Z</kbd>;
+in a Textual application this is disabled by default, but an action is provided ([`action_suspend_process`](/api/app/#textual.app.App.action_suspend_process)) that you can bind in the usual way.
+For example:
+
+=== "suspend_process.py"
+
+    ```python hl_lines="8"
+    --8<-- "docs/examples/app/suspend_process.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/app/suspend_process.py"}
+    ```
+
+!!! note
+
+    If `suspend_process` is called on Windows, or when your application is being hosted under Textual Web, the call will be ignored.
+
 ## CSS
 
 Textual apps can reference [CSS](CSS.md) files which define how your app and widgets will look, while keeping your Python code free of display related code (which tends to be messy).
@@ -262,7 +321,7 @@ The following example enables loading of CSS by adding a `CSS_PATH` class variab
 
 If the path is relative (as it is above) then it is taken as relative to where the app is defined. Hence this example references `"question01.tcss"` in the same directory as the Python code. Here is that CSS file:
 
-```sass title="question02.tcss"
+```css title="question02.tcss"
 --8<-- "docs/examples/app/question02.tcss"
 ```
 

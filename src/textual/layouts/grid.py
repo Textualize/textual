@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 from .._resolve import resolve
 from ..css.scalar import Scalar
-from ..geometry import Region, Size, Spacing
+from ..geometry import Region, Size
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -30,6 +30,11 @@ class GridLayout(Layout):
         table_size_columns = max(1, styles.grid_size_columns)
         table_size_rows = styles.grid_size_rows
         viewport = parent.screen.size
+        keyline_style, keyline_color = styles.keyline
+        offset = (0, 0)
+        if keyline_style != "none":
+            size -= (2, 2)
+            offset = (1, 1)
 
         def cell_coords(column_count: int) -> Iterable[tuple[int, int]]:
             """Iterate over table coordinates ad infinitum.
@@ -206,7 +211,7 @@ class GridLayout(Layout):
                             widget.get_content_height(
                                 size,
                                 viewport,
-                                column_width - parent.styles.grid_gutter_vertical,
+                                column_width,
                             )
                             + widget.styles.gutter.height,
                         )
@@ -221,7 +226,6 @@ class GridLayout(Layout):
         add_widget = widgets.append
         max_column = len(columns) - 1
         max_row = len(rows) - 1
-        margin = Spacing()
         for widget, (column, row, column_span, row_span) in cell_size_map.items():
             x = columns[column][0]
             if row > max_row:
@@ -238,10 +242,10 @@ class GridLayout(Layout):
             )
             region = (
                 Region(x, y, int(width + margin.width), int(height + margin.height))
-                .shrink(margin)
                 .clip_size(cell_size)
+                .shrink(margin)
             )
-            add_placement(WidgetPlacement(region, margin, widget))
+            add_placement(WidgetPlacement(region + offset, margin, widget))
             add_widget(widget)
 
         return placements

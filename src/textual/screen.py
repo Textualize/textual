@@ -38,10 +38,12 @@ from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
 from .dom import DOMNode
+from .errors import NoWidget
 from .geometry import Offset, Region, Size
 from .reactive import Reactive
 from .renderables.background_screen import BackgroundScreen
 from .renderables.blank import Blank
+from .signal import Signal
 from .timer import Timer
 from .widget import Widget
 from .widgets import Tooltip
@@ -53,7 +55,6 @@ if TYPE_CHECKING:
     from .command import Provider
 
     # Unused & ignored imports are needed for the docs to link to these objects:
-    from .errors import NoWidget  # type: ignore  # noqa: F401
     from .message_pump import MessagePump
 
 # Screen updates will be batched so that they don't happen more often than 60 times per second:
@@ -136,6 +137,13 @@ class Screen(Generic[ScreenResultType], Widget):
         layout: vertical;
         overflow-y: auto;
         background: $surface;
+        
+        &:inline {
+            height: auto;
+            min-height: 1;
+            border-top: tall $background;
+            border-bottom: tall $background;
+        }
     }
     """
 
@@ -164,7 +172,7 @@ class Screen(Generic[ScreenResultType], Widget):
     title: Reactive[str | None] = Reactive(None, compute=False)
     """Screen title to override [the app title][textual.app.App.title]."""
 
-    COMMANDS: ClassVar[set[type[Provider]]] = set()
+    COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = set()
     """Command providers used by the [command palette](/guide/command_palette), associated with the screen.
 
     Should be a set of [`command.Provider`][textual.command.Provider] classes.
@@ -213,6 +221,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self.title = self.TITLE
         self.sub_title = self.SUB_TITLE
 
+        self.screen_layout_refresh_signal = Signal(self, "layout-refresh")
+        """The signal that is published when the screen's layout is refreshed."""
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -244,7 +255,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Returns:
             Tuple of layer names.
         """
-        extras = []
+        extras = ["_loading"]
         if not self.app._disable_notifications:
             extras.append("_toastrack")
         if not self.app._disable_tooltips:
@@ -285,6 +296,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
         Returns:
             Widget and screen region.
+
+        Raises:
+            NoWidget: If there is no widget under the screen coordinate.
         """
         return self._compositor.get_widget_at(x, y)
 
@@ -299,6 +313,29 @@ class Screen(Generic[ScreenResultType], Widget):
             Sequence of (WIDGET, REGION) tuples.
         """
         return self._compositor.get_widgets_at(x, y)
+
+    def get_focusable_widget_at(self, x: int, y: int) -> Widget | None:
+        """Get the focusable widget under a given coordinate.
+
+        If the widget directly under the given coordinate is not focusable, then this method will check
+        if any of the ancestors are focusable. If no ancestors are focusable, then `None` will be returned.
+
+        Args:
+            x: X coordinate.
+            y: Y coordinate.
+
+        Returns:
+            A `Widget`, or `None` if there is no focusable widget underneath the coordinate.
+        """
+        try:
+            widget, _region = self.get_widget_at(x, y)
+        except NoWidget:
+            return None
+
+        for node in widget.ancestors_with_self:
+            if isinstance(node, Widget) and node.focusable:
+                return node
+        return None
 
     def get_style_at(self, x: int, y: int) -> Style:
         """Get the style under a given coordinate.
@@ -354,7 +391,7 @@ class Screen(Generic[ScreenResultType], Widget):
             if node is None:
                 pop()
             else:
-                if node.disabled:
+                if node._check_disabled():
                     continue
                 node_styles_visibility = node.styles.get_rule("visibility")
                 node_is_visible = (
@@ -362,14 +399,14 @@ class Screen(Generic[ScreenResultType], Widget):
                     if node_styles_visibility
                     else parent_visibility  # Inherit visibility if the style is unset.
                 )
-                if node.is_container and node.can_focus_children:
+                if node.is_container and node.allow_focus_children():
                     sorted_displayed_children = sorted(
                         node.displayed_children, key=focus_sorter
                     )
                     push((iter(sorted_displayed_children), node_is_visible))
                 # Same check as `if node.focusable`, but we cached inherited visibility
                 # and we also skipped disabled nodes altogether.
-                if node_is_visible and node.can_focus:
+                if node_is_visible and node.allow_focus():
                     add_widget(node)
 
         return widgets
@@ -589,6 +626,7 @@ class Screen(Generic[ScreenResultType], Widget):
                             self.screen.scroll_to_center(widget, origin_visible=True)
 
                     self.call_after_refresh(scroll_to_center, widget)
+
                 widget.post_message(events.Focus())
                 focused = widget
 
@@ -610,6 +648,10 @@ class Screen(Generic[ScreenResultType], Widget):
         if not self.app._disable_notifications:
             widgets.insert(0, ToastRack(id="textual-toastrack"))
 
+    def _on_mount(self, event: events.Mount) -> None:
+        """Set up the tooltip-clearing signal when we mount."""
+        self.screen_layout_refresh_signal.subscribe(self, self._maybe_clear_tooltip)
+
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
@@ -619,6 +661,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._layout_required
                 or self._scroll_required
                 or self._repaint_required
+                or self._recompose_required
                 or self._dirty_widgets
             ):
                 self._update_timer.resume()
@@ -628,7 +671,20 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
-        if self is self.app.screen:
+
+        if self.app.is_inline:
+            size = self.app.size
+            self.app._display(
+                self,
+                self._compositor.render_inline(
+                    Size(size.width, self._get_inline_height(size)),
+                    screen_stack=self.app._background_screens,
+                ),
+            )
+            self._dirty_widgets.clear()
+            self._compositor._dirty_regions.clear()
+
+        elif self is self.app.screen:
             # Top screen
             update = self._compositor.render_update(
                 screen_stack=self.app._background_screens
@@ -644,7 +700,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
         self._update_timer.pause()
-        if self.is_current:
+        if self.is_current and not self.app._batch_count:
             if self._layout_required:
                 self._refresh_layout()
                 self._layout_required = False
@@ -662,6 +718,10 @@ class Screen(Generic[ScreenResultType], Widget):
             if self._dirty_widgets:
                 self._compositor.update_widgets(self._dirty_widgets)
                 self._compositor_refresh()
+
+            if self._recompose_required:
+                self._recompose_required = False
+                self.call_next(self.recompose)
 
         if self._callbacks:
             self.call_next(self._invoke_and_clear_callbacks)
@@ -711,11 +771,11 @@ class Screen(Generic[ScreenResultType], Widget):
         """Remove the latest result callback from the stack."""
         self._result_callbacks.pop()
 
-    def _refresh_layout(
-        self, size: Size | None = None, full: bool = False, scroll: bool = False
-    ) -> None:
+    def _refresh_layout(self, size: Size | None = None, scroll: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
+        if self.app.is_inline:
+            size = Size(size.width, self._get_inline_height(self.app.size))
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
@@ -782,7 +842,9 @@ class Screen(Generic[ScreenResultType], Widget):
         if self.is_current:
             self._compositor_refresh()
 
-        if not self.app._dom_ready:
+        if self.app._dom_ready:
+            self.screen_layout_refresh_signal.publish()
+        else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
 
@@ -806,9 +868,33 @@ class Screen(Generic[ScreenResultType], Widget):
         self._scroll_required = True
         self.check_idle()
 
+    def _get_inline_height(self, size: Size) -> int:
+        """Get the inline height (number of lines to display when running inline mode).
+
+        Args:
+            size: Size of the terminal
+
+        Returns:
+            Height for inline mode.
+        """
+        height_scalar = self.styles.height
+        if height_scalar is None or height_scalar.is_auto:
+            inline_height = self.get_content_height(size, size, size.width)
+        else:
+            inline_height = int(height_scalar.resolve(size, size))
+        inline_height += self.styles.gutter.height
+        min_height = self.styles.min_height
+        max_height = self.styles.max_height
+        if min_height is not None:
+            inline_height = max(inline_height, int(min_height.resolve(size, size)))
+        if max_height is not None:
+            inline_height = min(inline_height, int(max_height.resolve(size, size)))
+        inline_height = min(self.app.size.height - 1, inline_height)
+        return inline_height
+
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
 
     def _on_screen_resume(self) -> None:
@@ -816,18 +902,23 @@ class Screen(Generic[ScreenResultType], Widget):
         self.stack_updates += 1
         self.app._refresh_notifications()
         size = self.app.size
-        self._refresh_layout(size, full=True)
+        self._refresh_layout(size)
         self.refresh()
-        auto_focus = self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
-        if auto_focus and self.focused is None:
-            for widget in self.query(auto_focus):
-                if widget.focusable:
-                    self.set_focus(widget)
-                    break
+        # Only auto-focus when the app has focus (textual-web only)
+        if self.app.app_focus:
+            auto_focus = (
+                self.app.AUTO_FOCUS if self.AUTO_FOCUS is None else self.AUTO_FOCUS
+            )
+            if auto_focus and self.focused is None:
+                for widget in self.query(auto_focus):
+                    if widget.focusable:
+                        self.set_focus(widget)
+                        break
 
     def _on_screen_suspend(self) -> None:
         """Screen has suspended."""
         self.app._set_mouse_over(None)
+        self._clear_tooltip()
         self.stack_updates += 1
 
     async def _on_resize(self, event: events.Resize) -> None:
@@ -845,6 +936,35 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             if tooltip.display and self._tooltip_widget is widget:
                 self._handle_tooltip_timer(widget)
+
+    def _clear_tooltip(self) -> None:
+        """Unconditionally clear any existing tooltip."""
+        try:
+            tooltip = self.get_child_by_type(Tooltip)
+        except NoMatches:
+            return
+        if tooltip.display:
+            if self._tooltip_timer is not None:
+                self._tooltip_timer.stop()
+            tooltip.display = False
+
+    def _maybe_clear_tooltip(self) -> None:
+        """Check if the widget under the mouse cursor still pertains to the tooltip.
+
+        If they differ, the tooltip will be removed.
+        """
+        # If there's a widget associated with the tooltip at all...
+        if self._tooltip_widget is not None:
+            # ...look at what's currently under the mouse.
+            try:
+                under_mouse, _ = self.get_widget_at(*self.app.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                # If it's not the same widget...
+                if under_mouse is not self._tooltip_widget:
+                    # ...clear the tooltip.
+                    self._clear_tooltip()
 
     def _handle_tooltip_timer(self, widget: Widget) -> None:
         """Called by a timer from _handle_mouse_move to update the tooltip.
@@ -962,13 +1082,10 @@ class Screen(Generic[ScreenResultType], Widget):
             except errors.NoWidget:
                 self.set_focus(None)
             else:
-                if isinstance(event, events.MouseDown) and widget.focusable:
-                    self.set_focus(widget)
-                elif isinstance(event, events.MouseUp) and widget.focusable:
-                    if self.focused is not widget:
-                        self.set_focus(widget)
-                        event.stop()
-                        return
+                if isinstance(event, events.MouseDown):
+                    focusable_widget = self.get_focusable_widget_at(event.x, event.y)
+                    if focusable_widget:
+                        self.set_focus(focusable_widget, scroll_visible=False)
                 event.style = self.get_style_at(event.screen_x, event.screen_y)
                 if widget is self:
                     event._set_forwarded()
@@ -976,17 +1093,6 @@ class Screen(Generic[ScreenResultType], Widget):
                 else:
                     widget._forward_event(event._apply_offset(-region.x, -region.y))
 
-        elif isinstance(event, (events.MouseScrollDown, events.MouseScrollUp)):
-            try:
-                widget, _region = self.get_widget_at(event.x, event.y)
-            except errors.NoWidget:
-                return
-            scroll_widget = widget
-            if scroll_widget is not None:
-                if scroll_widget is self:
-                    self.post_message(event)
-                else:
-                    scroll_widget._forward_event(event)
         else:
             self.post_message(event)
 
@@ -1078,3 +1184,15 @@ class ModalScreen(Screen[ScreenResultType]):
     ) -> None:
         super().__init__(name=name, id=id, classes=classes)
         self._modal = True
+
+
+class _SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
+    """A variant of `ModalScreen` for internal use.
+
+    This version of `ModalScreen` allows us to build system-level screens;
+    the type being used to indicate that the screen should be isolated from
+    the main application.
+
+    Note:
+        This screen is set to *not* inherit CSS.
+    """

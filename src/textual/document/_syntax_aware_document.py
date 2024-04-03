@@ -58,8 +58,16 @@ class SyntaxAwareDocument(Document):
         if isinstance(language, str):
             if language not in BUILTIN_LANGUAGES:
                 raise SyntaxAwareDocumentError(f"Invalid language {language!r}")
-            self.language = get_language(language)
-            self._parser = get_parser(language)
+            # If tree-sitter-languages is not installed properly, get_language
+            # and get_parser may raise an OSError when unable to load their
+            # resources
+            try:
+                self.language = get_language(language)
+                self._parser = get_parser(language)
+            except OSError as e:
+                raise SyntaxAwareDocumentError(
+                    f"Could not find binaries for {language!r}"
+                ) from e
         else:
             self.language = language
             self._parser = Parser()
@@ -80,7 +88,7 @@ class SyntaxAwareDocument(Document):
         To execute a query, call `query_syntax_tree`.
 
         Args:
-            The string query to prepare.
+            query: The string query to prepare.
 
         Returns:
             The prepared query.

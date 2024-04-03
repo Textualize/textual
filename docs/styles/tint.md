@@ -21,7 +21,7 @@ This examples shows a green tint with gradually increasing alpha.
 
 === "tint.py"
 
-    ```python hl_lines="11"
+    ```python hl_lines="13"
     --8<-- "docs/examples/styles/tint.py"
     ```
 
@@ -29,13 +29,13 @@ This examples shows a green tint with gradually increasing alpha.
 
 === "tint.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/styles/tint.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* A red tint (could indicate an error) */
 tint: red 20%;
 

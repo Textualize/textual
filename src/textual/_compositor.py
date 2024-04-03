@@ -145,6 +145,48 @@ class LayoutUpdate(CompositorUpdate):
 
 
 @rich.repr.auto(angular=True)
+class InlineUpdate(CompositorUpdate):
+    """A renderable to write an inline update."""
+
+    def __init__(self, strips: list[Strip]) -> None:
+        self.strips = strips
+
+    def __rich_console__(
+        self, console: Console, options: ConsoleOptions
+    ) -> RenderResult:
+        new_line = Segment.line()
+        for last, line in loop_last(self.strips):
+            yield from line
+            if not last:
+                yield new_line
+
+    def render_segments(self, console: Console) -> str:
+        """Render the update to raw data, suitable for writing to terminal.
+
+        Args:
+            console: Console instance.
+
+        Returns:
+            Raw data with escape sequences.
+        """
+        sequences: list[str] = []
+        append = sequences.append
+        for last, strip in loop_last(self.strips):
+            append(strip.render(console))
+            if not last:
+                append("\n")
+        append("\n\x1b[J")  # Clear down
+        if len(self.strips) > 1:
+            append(
+                f"\x1b[{len(self.strips)}A\r"
+            )  # Move cursor back to original position
+        else:
+            append("\r")
+        append("\x1b[6n")  # Query new cursor position
+        return "".join(sequences)
+
+
+@rich.repr.auto(angular=True)
 class ChopsUpdate(CompositorUpdate):
     """A renderable that applies updated spans to the screen."""
 
@@ -423,9 +465,7 @@ class Compositor:
         self.size = size
 
         # Keep a copy of the old map because we're going to compare it with the update
-        old_map = (
-            self._visible_map if self._visible_map is not None else self._full_map or {}
-        )
+        old_map = self._visible_map or {}
         map, widgets = self._arrange_root(parent, size, visible_only=True)
 
         # Replace map and widgets
@@ -573,6 +613,8 @@ class Compositor:
                 visible: Whether the widget should be visible by default.
                     This may be overridden by the CSS rule `visibility`.
             """
+            if not widget._is_mounted:
+                return
             styles = widget.styles
             visibility = styles.get_rule("visibility")
             if visibility is not None:
@@ -594,10 +636,11 @@ class Compositor:
             # Widgets with scrollbars (containers or scroll view) require additional processing
             if widget.is_scrollable:
                 # The region that contains the content (container region minus scrollbars)
-                child_region = widget._get_scrollable_region(container_region)
-
-                # Adjust the clip region accordingly
-                sub_clip = clip.intersection(child_region)
+                child_region = (
+                    container_region
+                    if widget.loading
+                    else widget._get_scrollable_region(container_region)
+                )
 
                 # The region covered by children relative to parent widget
                 total_region = child_region.reset_offset
@@ -608,9 +651,12 @@ class Compositor:
                     arranged_widgets = arrange_result.widgets
                     widgets.update(arranged_widgets)
 
+                    # Get the region that will be updated
+                    sub_clip = clip.intersection(child_region)
+
                     if visible_only:
                         placements = arrange_result.get_visible_placements(
-                            container_size.region + widget.scroll_offset
+                            sub_clip - child_region.offset + widget.scroll_offset
                         )
                     else:
                         placements = arrange_result.placements
@@ -620,9 +666,9 @@ class Compositor:
                     placement_offset = container_region.offset
                     placement_scroll_offset = placement_offset - widget.scroll_offset
 
-                    _layers = widget.layers
                     layers_to_index = {
-                        layer_name: index for index, layer_name in enumerate(_layers)
+                        layer_name: index
+                        for index, layer_name in enumerate(widget.layers)
                     }
 
                     get_layer_index = layers_to_index.get
@@ -660,7 +706,10 @@ class Compositor:
 
                 if visible:
                     # Add any scrollbars
-                    if any(widget.scrollbars_enabled):
+                    if (
+                        widget.show_vertical_scrollbar
+                        or widget.show_horizontal_scrollbar
+                    ):
                         for chrome_widget, chrome_region in widget._arrange_scrollbars(
                             container_region
                         ):
@@ -874,16 +923,14 @@ class Compositor:
             return self._cuts
 
         width, height = self.size
-        screen_region = self.size.region
         cuts = [[0, width] for _ in range(height)]
 
         intersection = Region.intersection
         extend = list.extend
 
         for region, clip in self.visible_widgets.values():
-            region = intersection(region, clip)
-            if region and (region in screen_region):
-                x, y, region_width, region_height = region
+            x, y, region_width, region_height = intersection(region, clip)
+            if region_width and region_height:
                 region_cuts = (x, x + region_width)
                 for cut in cuts[y : y + region_height]:
                     extend(cut, region_cuts)
@@ -934,15 +981,13 @@ class Compositor:
                     _Region(0, 0, region.width, region.height)
                 )
             else:
-                clipped_region = intersection(region, clip)
-                if not clipped_region:
-                    continue
-                new_x, new_y, new_width, new_height = clipped_region
-                delta_x = new_x - region.x
-                delta_y = new_y - region.y
-                yield region, clip, widget.render_lines(
-                    _Region(delta_x, delta_y, new_width, new_height)
-                )
+                new_x, new_y, new_width, new_height = intersection(region, clip)
+                if new_width and new_height:
+                    yield region, clip, widget.render_lines(
+                        _Region(
+                            new_x - region.x, new_y - region.y, new_width, new_height
+                        )
+                    )
 
     def render_update(
         self, full: bool = False, screen_stack: list[Screen] | None = None
@@ -950,7 +995,7 @@ class Compositor:
         """Render an update renderable.
 
         Args:
-            full: Enable full update, or `False` for a partial update.
+            screen_stack: Screen stack list. Defaults to None.
 
         Returns:
             A renderable for the update, or `None` if no update was required.
@@ -962,6 +1007,21 @@ class Compositor:
             return self.render_full_update()
         else:
             return self.render_partial_update()
+
+    def render_inline(
+        self, size: Size, screen_stack: list[Screen] | None = None
+    ) -> RenderableType:
+        """Render an inline update.
+
+        Args:
+            size: Inline size.
+            screen_stack: Screen stack list. Defaults to None.
+
+        Returns:
+            A renderable.
+        """
+        visible_screen_stack.set([] if screen_stack is None else screen_stack)
+        return InlineUpdate(self.render_strips(size))
 
     def render_full_update(self) -> LayoutUpdate:
         """Render a full update.
@@ -996,14 +1056,19 @@ class Compositor:
         chop_ends = [cut_set[1:] for cut_set in self.cuts]
         return ChopsUpdate(chops, spans, chop_ends)
 
-    def render_strips(self) -> list[Strip]:
+    def render_strips(self, size: Size | None = None) -> list[Strip]:
         """Render to a list of strips.
+
+        Args:
+            size: Size of render.
 
         Returns:
             A list of strips with the screen content.
         """
-        chops = self._render_chops(self.size.region, lambda y: True)
-        render_strips = [Strip.join(chop.values()) for chop in chops]
+        if size is None:
+            size = self.size
+        chops = self._render_chops(size.region, lambda y: True)
+        render_strips = [Strip.join(chop.values()) for chop in chops[: size.height]]
         return render_strips
 
     def _render_chops(

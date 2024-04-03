@@ -26,18 +26,18 @@ It also shows that `link-color` does not affect hyperlinks.
 
 === "link_color.py"
 
-    ```py hl_lines="8-9 12-13 16-17 20-21"
+    ```py hl_lines="10-11 14-15 18-19 22-23"
     --8<-- "docs/examples/styles/link_color.py"
     ```
 
-    1. This label has an hyperlink so it won't be affected by the `link-color` rule.
+    1. This label has a hyperlink so it won't be affected by the `link-color` rule.
     2. This label has an "action link" that can be styled with `link-color`.
     3. This label has an "action link" that can be styled with `link-color`.
     4. This label has an "action link" that can be styled with `link-color`.
 
 === "link_color.tcss"
 
-    ```sass hl_lines="2 6 10"
+    ```css hl_lines="2 6 10"
     --8<-- "docs/examples/styles/link_color.tcss"
     ```
 
@@ -45,7 +45,7 @@ It also shows that `link-color` does not affect hyperlinks.
 
 ## CSS
 
-```sass
+```css
 link-color: red 70%;
 link-color: $accent;
 ```
@@ -63,4 +63,4 @@ widget.styles.link_color = Color(100, 30, 173)
 ## See also
 
  - [`link-background`](./link_background.md) to set the background color of link text.
- - [`link-hover-color](./link_hover_color.md) to set the color of link text when the mouse pointer is over it.
+ - [`link-color-hover](./link_color_hover.md) to set the color of link text when the mouse pointer is over it.

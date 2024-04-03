@@ -671,6 +671,17 @@ async def test_update_cell_cell_doesnt_exist():
             table.update_cell("INVALID", "CELL", "Value")
 
 
+async def test_update_cell_invalid_column_key():
+    """Regression test for https://github.com/Textualize/textual/issues/3335"""
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("Column1", key="C1")
+        table.add_row("TargetValue", key="R1")
+        with pytest.raises(CellDoesNotExist):
+            table.update_cell("R1", "INVALID_COLUMN", "New Value")
+
+
 async def test_update_cell_at_coordinate_exists():
     app = DataTableApp()
     async with app.run_test():
@@ -1197,6 +1208,100 @@ async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
         assert not table._show_hover_cursor
 
 
+async def test_sort_by_all_columns_no_key():
+    """Test sorting a `DataTable` by all columns."""
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(1, 3, 8)
+        table.add_row(2, 9, 5)
+        table.add_row(1, 1, 9)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [2, 9, 5]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+        table.sort()
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(reverse=True)
+        assert table.get_row_at(0) == [2, 9, 5]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [1, 1, 9]
+
+
+async def test_sort_by_multiple_columns_no_key():
+    """Test sorting a `DataTable` by multiple columns."""
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        table.add_row(1, 3, 8)
+        table.add_row(2, 9, 5)
+        table.add_row(1, 1, 9)
+
+        table.sort(a, b, c)
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(a, c, b)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [1, 1, 9]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(c, a, b, reverse=True)
+        assert table.get_row_at(0) == [1, 1, 9]
+        assert table.get_row_at(1) == [1, 3, 8]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+        table.sort(a, c)
+        assert table.get_row_at(0) == [1, 3, 8]
+        assert table.get_row_at(1) == [1, 1, 9]
+        assert table.get_row_at(2) == [2, 9, 5]
+
+
+async def test_sort_by_function_sum():
+    """Test sorting a `DataTable` using a custom sort function."""
+
+    def custom_sort(row_data):
+        return sum(row_data)
+
+    row_data = (
+        [1, 3, 8],  # SUM=12
+        [2, 9, 5],  # SUM=16
+        [1, 1, 9],  # SUM=11
+    )
+
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        a, b, c = table.add_columns("A", "B", "C")
+        for i, row in enumerate(row_data):
+            table.add_row(*row)
+
+        # Sorting by all columns
+        table.sort(a, b, c, key=custom_sort)
+        sorted_row_data = sorted(row_data, key=sum)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        # Passing a sort function but no columns also sorts by all columns
+        table.sort(key=custom_sort)
+        sorted_row_data = sorted(row_data, key=sum)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+        table.sort(a, b, c, key=custom_sort, reverse=True)
+        sorted_row_data = sorted(row_data, key=sum, reverse=True)
+        for i, row in enumerate(sorted_row_data):
+            assert table.get_row_at(i) == row
+
+
 @pytest.mark.parametrize(
     ["cell", "height"],
     [
@@ -1277,3 +1382,41 @@ async def test_cell_padding_cannot_be_negative():
         assert table.cell_padding == 0
         table.cell_padding = -1234
         assert table.cell_padding == 0
+
+
+async def test_move_cursor_respects_animate_parameter():
+    """Regression test for https://github.com/Textualize/textual/issues/3840
+
+    Make sure that the call to `_scroll_cursor_into_view` from `move_cursor` happens
+    before the call from the watcher method from `cursor_coordinate`.
+    The former should animate because we call it with `animate=True` whereas the later
+    should not.
+    """
+
+    scrolls = []
+
+    class _DataTable(DataTable):
+        def _scroll_cursor_into_view(self, animate=False):
+            nonlocal scrolls
+            scrolls.append(animate)
+            super()._scroll_cursor_into_view(animate)
+
+    class LongDataTableApp(App):
+        def compose(self):
+            yield _DataTable()
+
+        def on_mount(self):
+            dt = self.query_one(_DataTable)
+            dt.add_columns("one", "two")
+            for _ in range(100):
+                dt.add_row("one", "two")
+
+        def key_s(self):
+            table = self.query_one(_DataTable)
+            table.move_cursor(row=99, animate=True)
+
+    app = LongDataTableApp()
+    async with app.run_test() as pilot:
+        await pilot.press("s")
+
+    assert scrolls == [True, False]

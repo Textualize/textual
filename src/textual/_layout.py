@@ -5,7 +5,9 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 from ._spatial_map import SpatialMap
+from .canvas import Canvas, Rectangle
 from .geometry import Offset, Region, Size, Spacing
+from .strip import StripRenderable
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
@@ -63,8 +65,17 @@ class DockArrangeResult:
         Returns:
             Set of placements.
         """
+        if self.total_region in region:
+            # Short circuit for when we want all the placements
+            return self.placements
         visible_placements = self.spatial_map.get_values_in_region(region)
-        return visible_placements
+        overlaps = region.overlaps
+        culled_placements = [
+            placement
+            for placement in visible_placements
+            if placement.fixed or overlaps(placement.region)
+        ]
+        return culled_placements
 
 
 class WidgetPlacement(NamedTuple):
@@ -149,7 +160,6 @@ class Layout(ABC):
         if not widget._nodes:
             width = 0
         else:
-            # Use a size of 0, 0 to ignore relative sizes, since those are flexible anyway
             arrangement = widget._arrange(Size(0, 0))
             return arrangement.total_region.right
         return width
@@ -172,7 +182,54 @@ class Layout(ABC):
             height = 0
         else:
             # Use a height of zero to ignore relative heights
-            arrangement = widget._arrange(Size(width, 0))
+            styles_height = widget.styles.height
+            if widget._parent and len(widget._nodes) == 1:
+                # If it is an only child with height auto we want it to expand
+                height = (
+                    container.height
+                    if styles_height is not None and styles_height.is_auto
+                    else 0
+                )
+            else:
+                height = 0
+            arrangement = widget._arrange(Size(width, height))
             height = arrangement.total_region.bottom
 
         return height
+
+    def render_keyline(self, container: Widget) -> StripRenderable:
+        """Render keylines around all widgets.
+
+        Args:
+            container: The container widget.
+
+        Returns:
+            A renderable to draw the keylines.
+        """
+        width, height = container.outer_size
+        canvas = Canvas(width, height)
+
+        line_style, keyline_color = container.styles.keyline
+
+        container_offset = container.content_region.offset
+
+        def get_rectangle(region: Region) -> Rectangle:
+            """Get a canvas Rectangle that wraps a region.
+
+            Args:
+                region: Widget region.
+
+            Returns:
+                A Rectangle that encloses the widget.
+            """
+            offset = region.offset - container_offset - (1, 1)
+            width, height = region.size
+            return Rectangle(offset, width + 2, height + 2, keyline_color, line_style)
+
+        primitives = [
+            get_rectangle(widget.region)
+            for widget in container.children
+            if widget.visible
+        ]
+        canvas_renderable = canvas.render(primitives, container.rich_style)
+        return canvas_renderable

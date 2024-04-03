@@ -26,7 +26,7 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
 
 === "screen01.tcss"
 
-    ```sass title="screen01.tcss"
+    ```css title="screen01.tcss"
     --8<-- "docs/examples/guide/screens/screen01.tcss"
     ```
 
@@ -55,7 +55,7 @@ You can also _install_ new named screens dynamically with the [install_screen][t
 
 === "screen02.tcss"
 
-    ```sass title="screen02.tcss"
+    ```css title="screen02.tcss"
     --8<-- "docs/examples/guide/screens/screen02.tcss"
     ```
 
@@ -171,7 +171,7 @@ From the quit screen you can click either Quit to exit the app immediately, or C
 
 === "modal01.tcss"
 
-    ```sass title="modal01.tcss"
+    ```css title="modal01.tcss"
     --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
@@ -213,7 +213,7 @@ Let's see what happens when we use `ModalScreen`.
 
 === "modal01.tcss"
 
-    ```sass title="modal01.tcss"
+    ```css title="modal01.tcss"
     --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
@@ -240,7 +240,7 @@ Let's modify the previous example to use `dismiss` rather than an explicit `pop_
 
 === "modal01.tcss"
 
-    ```sass title="modal01.tcss"
+    ```css title="modal01.tcss"
     --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
@@ -256,6 +256,45 @@ Returning data in this way can help keep your code manageable by making it easy 
 
 You may have noticed in the previous example that we changed the base class to `ModalScreen[bool]`.
 The addition of `[bool]` adds typing information that tells the type checker to expect a boolean in the call to `dismiss`, and that any callback set in `push_screen` should also expect the same type. As always, typing is optional in Textual, but this may help you catch bugs.
+
+
+### Waiting for screens
+
+It is also possible to wait on a screen to be dismissed, which can feel like a more natural way of expressing logic than a callback.
+The [`push_screen_wait()`][textual.app.App.push_screen_wait] method will push a screen and wait for its result (the value from [`Screen.dismiss()`][textual.screen.Screen.dismiss]).
+
+This can only be done from a [worker](./workers.md), so that waiting for the screen doesn't prevent your app from updating.
+
+Let's look at an example that uses `push_screen_wait` to ask a question and waits for the user to reply by clicking a button.
+
+
+=== "questions01.py"
+
+    ```python title="questions01.py" hl_lines="35-37"
+    --8<-- "docs/examples/guide/screens/questions01.py"
+    ```
+
+    1. Dismiss with `True` when pressing the Yes button.
+    2. Dismiss with `False` when pressing the No button.
+    3. The `work` decorator will make this method run in a worker (background task).
+    4. Will return a result when the user clicks one of the buttons.
+
+
+=== "questions01.tcss"
+
+    ```css title="questions01.tcss"
+    --8<-- "docs/examples/guide/screens/questions01.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/screens/questions01.py"}
+    ```
+
+The mount handler on the app is decorated with `@work`, which makes the code run in a worker (background task).
+In the mount handler we push the screen with the `push_screen_wait`.
+When the user presses one of the buttons, the screen calls [`dismiss()`][textual.screen.Screen.dismiss] with either `True` or `False`.
+This value is then returned from the `push_screen_wait` method in the mount handler.
 
 
 ## Modes

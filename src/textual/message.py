@@ -8,14 +8,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ClassVar
 
 import rich.repr
+from typing_extensions import Self
 
 from . import _time
 from ._context import active_message_pump
 from .case import camel_to_snake
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .message_pump import MessagePump
-    from .widget import Widget
 
 
 @rich.repr.auto
@@ -77,7 +78,7 @@ class Message:
         cls.handler_name = f"on_{namespace}_{name}" if namespace else f"on_{name}"
 
     @property
-    def control(self) -> Widget | None:
+    def control(self) -> DOMNode | None:
         """The widget associated with this message, or None by default."""
         return None
 
@@ -90,9 +91,23 @@ class Message:
         """Mark this event as being forwarded."""
         self._forwarded = True
 
-    def _set_sender(self, sender: MessagePump) -> None:
-        """Set the sender."""
+    def set_sender(self, sender: MessagePump) -> Self:
+        """Set the sender of the message.
+
+        Args:
+            sender: The sender.
+
+        Note:
+            When creating a message the sender is automatically set.
+            Normally there will be no need for this method to be called.
+            This method will be used when strict control is required over
+            the sender of a message.
+
+        Returns:
+            Self.
+        """
         self._sender = sender
+        return self
 
     def can_replace(self, message: "Message") -> bool:
         """Check if another message may supersede this one.

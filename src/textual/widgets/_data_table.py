@@ -4,7 +4,7 @@ import functools
 from dataclasses import dataclass
 from itertools import chain, zip_longest
 from operator import itemgetter
-from typing import Any, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
+from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeVar, cast
 
 import rich.repr
 from rich.console import RenderableType
@@ -16,11 +16,11 @@ from rich.text import Text, TextType
 from typing_extensions import Literal, Self, TypeAlias
 
 from .. import events
-from .._cache import LRUCache
 from .._segment_tools import line_crop
 from .._two_way_dict import TwoWayDict
 from .._types import SegmentLines
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..color import Color
 from ..coordinate import Coordinate
 from ..geometry import Region, Size, Spacing, clamp
@@ -35,11 +35,16 @@ from ..widget import PseudoClasses
 CellCacheKey: TypeAlias = (
     "tuple[RowKey, ColumnKey, Style, bool, bool, bool, int, PseudoClasses]"
 )
-LineCacheKey: TypeAlias = "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
-RowCacheKey: TypeAlias = "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
+LineCacheKey: TypeAlias = (
+    "tuple[int, int, int, int, Coordinate, Coordinate, Style, CursorType, bool, int, PseudoClasses]"
+)
+RowCacheKey: TypeAlias = (
+    "tuple[RowKey, int, Style, Coordinate, Coordinate, CursorType, bool, bool, int, PseudoClasses]"
+)
 CursorType = Literal["cell", "row", "column", "none"]
 """The valid types of cursors for [`DataTable.cursor_type`][textual.widgets.DataTable.cursor_type]."""
 CellType = TypeVar("CellType")
+"""Type used for cells in the DataTable."""
 
 _DEFAULT_CELL_X_PADDING = 1
 """Default padding to use on each side of a column in the data table."""
@@ -131,12 +136,16 @@ class ColumnKey(StringKey):
 class CellKey(NamedTuple):
     """A unique identifier for a cell in the DataTable.
 
+    A cell key is a `(row_key, column_key)` tuple.
+
     Even if the cell changes
     visual location (i.e. moves to a different coordinate in the table), this key
     can still be used to retrieve it, regardless of where it currently is."""
 
     row_key: RowKey
+    """The key of this cell's row."""
     column_key: ColumnKey
+    """The key of this cell's column."""
 
     def __rich_repr__(self):
         yield "row_key", self.row_key
@@ -251,7 +260,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     DEFAULT_CSS = """
     DataTable:dark {
-        background:;
+        background: initial;
     }
     DataTable {
         background: $surface ;
@@ -597,7 +606,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """Initialises a widget to display tabular data.
+        """Initializes a widget to display tabular data.
 
         Args:
             show_header: Whether the table header should be visible or not.
@@ -653,7 +662,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             RowCacheKey, tuple[SegmentLines, SegmentLines]
         ] = LRUCache(1000)
         """For each row (a row can have a height of multiple lines), we maintain a
-        cache of the fixed and scrollable lines within that row to minimise how often
+        cache of the fixed and scrollable lines within that row to minimize how often
         we need to re-render it. """
         self._cell_render_cache: LRUCache[CellCacheKey, SegmentLines] = LRUCache(10000)
         """Cache for individual cells."""
@@ -786,12 +795,15 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if isinstance(column_key, str):
             column_key = ColumnKey(column_key)
 
-        try:
-            self._data[row_key][column_key] = value
-        except KeyError:
+        if (
+            row_key not in self._row_locations
+            or column_key not in self._column_locations
+        ):
             raise CellDoesNotExist(
                 f"No cell exists for row_key={row_key!r}, column_key={column_key!r}."
-            ) from None
+            )
+
+        self._data[row_key][column_key] = value
         self._update_count += 1
 
         # Recalculate widths if necessary
@@ -852,7 +864,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         return self.get_cell(row_key, column_key)
 
     def get_cell_coordinate(
-        self, row_key: RowKey | str, column_key: Column | str
+        self, row_key: RowKey | str, column_key: ColumnKey | str
     ) -> Coordinate:
         """Given a row key and column key, return the corresponding cell coordinate.
 
@@ -1086,7 +1098,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
                 self._highlight_column(new_coordinate.column)
             # If the coordinate was changed via `move_cursor`, give priority to its
             # scrolling because it may be animated.
-            self.call_next(self._scroll_cursor_into_view)
+            self.call_after_refresh(self._scroll_cursor_into_view)
 
     def move_cursor(
         self,
@@ -1111,14 +1123,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             column: The new column to move the cursor to.
             animate: Whether to animate the change of coordinates.
         """
+
         cursor_row, cursor_column = self.cursor_coordinate
         if row is not None:
             cursor_row = row
         if column is not None:
             cursor_column = column
         destination = Coordinate(cursor_row, cursor_column)
+
+        # Scroll the cursor after refresh to ensure the virtual height
+        # (calculated in on_idle) has settled. If we tried to scroll before
+        # the virtual size has been set, then it might fail if we added a bunch
+        # of rows then tried to immediately move the cursor.
+        # We do this before setting `cursor_coordinate` because its watcher will also
+        # schedule a call to `_scroll_cursor_into_view` without optionally animating.
+        self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
+
         self.cursor_coordinate = destination
-        self._scroll_cursor_into_view(animate=animate)
 
     def _highlight_coordinate(self, coordinate: Coordinate) -> None:
         """Apply highlighting to the cell at the coordinate, and post event."""
@@ -1690,9 +1711,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         if self._updated_cells:
             # Cell contents have already been updated at this point.
             # Now we only need to worry about measuring column widths.
-            updated_columns = self._updated_cells.copy()
+            updated_cells = self._updated_cells.copy()
             self._updated_cells.clear()
-            self._update_column_widths(updated_columns)
+            self._update_column_widths(updated_cells)
 
         if self._require_update_dimensions:
             # Add the new rows *before* updating the column widths, since
@@ -2343,30 +2364,40 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     def sort(
         self,
         *columns: ColumnKey | str,
+        key: Callable[[Any], Any] | None = None,
         reverse: bool = False,
     ) -> Self:
-        """Sort the rows in the `DataTable` by one or more column keys.
+        """Sort the rows in the `DataTable` by one or more column keys or a
+        key function (or other callable). If both columns and a key function
+        are specified, only data from those columns will sent to the key function.
 
         Args:
             columns: One or more columns to sort by the values in.
+            key: A function (or other callable) that returns a key to
+                use for sorting purposes.
             reverse: If True, the sort order will be reversed.
 
         Returns:
             The `DataTable` instance.
         """
 
-        def sort_by_column_keys(
-            row: tuple[RowKey, dict[ColumnKey | str, CellType]]
-        ) -> Any:
+        def key_wrapper(row: tuple[RowKey, dict[ColumnKey | str, CellType]]) -> Any:
             _, row_data = row
-            result = itemgetter(*columns)(row_data)
+            if columns:
+                result = itemgetter(*columns)(row_data)
+            else:
+                result = tuple(row_data.values())
+            if key is not None:
+                return key(result)
             return result
 
         ordered_rows = sorted(
-            self._data.items(), key=sort_by_column_keys, reverse=reverse
+            self._data.items(),
+            key=key_wrapper,
+            reverse=reverse,
         )
         self._row_locations = TwoWayDict(
-            {key: new_index for new_index, (key, _) in enumerate(ordered_rows)}
+            {row_key: new_index for new_index, (row_key, _) in enumerate(ordered_rows)}
         )
         self._update_count += 1
         self.refresh()

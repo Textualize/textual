@@ -14,8 +14,10 @@ from rich.padding import Padding
 from rich.repr import Result
 from rich.rule import Rule
 from rich.style import Style
-from typing_extensions import Literal, Self, TypeAlias
+from typing_extensions import Self, TypeAlias
 
+from .. import _widget_navigation
+from .._widget_navigation import Direction
 from ..binding import Binding, BindingType
 from ..events import Click, Idle, Leave, MouseMove
 from ..geometry import Region, Size
@@ -26,11 +28,11 @@ from ..strip import Strip
 
 
 class DuplicateID(Exception):
-    """Exception raised if a duplicate ID is used."""
+    """Raised if a duplicate ID is used when adding options to an option list."""
 
 
 class OptionDoesNotExist(Exception):
-    """Exception raised when a request has been made for an option that doesn't exist."""
+    """Raised when a request has been made for an option that doesn't exist."""
 
 
 class Option:
@@ -126,7 +128,7 @@ NewOptionListContent: TypeAlias = "OptionListContent | None | RenderableType"
 """The type of a new item of option list content to be added to an option list.
 
 This type represents all of the types that will be accepted when adding new
-content to the option list. This is a superset of `OptionListContent`.
+content to the option list. This is a superset of [`OptionListContent`][textual.types.OptionListContent].
 """
 
 
@@ -158,11 +160,8 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option",
         "option-list--option-disabled",
         "option-list--option-highlighted",
-        "option-list--option-highlighted-disabled",
         "option-list--option-hover",
-        "option-list--option-hover-disabled",
         "option-list--option-hover-highlighted",
-        "option-list--option-hover-highlighted-disabled",
         "option-list--separator",
     }
     """
@@ -170,17 +169,15 @@ class OptionList(ScrollView, can_focus=True):
     | :- | :- |
     | `option-list--option-disabled` | Target disabled options. |
     | `option-list--option-highlighted` | Target the highlighted option. |
-    | `option-list--option-highlighted-disabled` | Target a disabled option that is also highlighted. |
     | `option-list--option-hover` | Target an option that has the mouse over it. |
-    | `option-list--option-hover-disabled` | Target a disabled option that has the mouse over it. |
     | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
-    | `option-list--option-hover-highlighted-disabled` | Target a disabled highlighted option that has the mouse over it. |
     | `option-list--separator` | Target the separators. |
     """
 
     DEFAULT_CSS = """
     OptionList {
         height: auto;
+        max-height: 100%;
         background: $boost;
         color: $text;
         overflow-x: hidden;
@@ -210,21 +207,7 @@ class OptionList(ScrollView, can_focus=True):
         color: $text-disabled;
     }
 
-    OptionList > .option-list--option-highlighted-disabled {
-        color: $text-disabled;
-        background: $accent 20%;
-    }
-
-    OptionList:focus > .option-list--option-highlighted-disabled {
-        background: $accent 30%;
-    }
-
     OptionList > .option-list--option-hover {
-        background: $boost;
-    }
-
-    OptionList > .option-list--option-hover-disabled {
-        color: $text-disabled;
         background: $boost;
     }
 
@@ -238,11 +221,6 @@ class OptionList(ScrollView, can_focus=True):
         background: $accent;
         color: $text;
         text-style: bold;
-    }
-
-    OptionList > .option-list--option-hover-highlighted-disabled {
-        color: $text-disabled;
-        background: $accent 60%;
     }
     """
 
@@ -351,7 +329,9 @@ class OptionList(ScrollView, can_focus=True):
         content that isn't an option.
         """
 
-        self._option_ids: dict[str, int] = {}
+        self._option_ids: dict[str, int] = {
+            option.id: index for index, option in enumerate(self._options) if option.id
+        }
         """A dictionary of option IDs and the option indexes they relate to."""
 
         self._lines: list[Line] = []
@@ -378,8 +358,7 @@ class OptionList(ScrollView, can_focus=True):
 
         # Finally, cause the highlighted property to settle down based on
         # the state of the option list in regard to its available options.
-        # Be sure to have a look at validate_highlighted.
-        self.highlighted = None
+        self.action_first()
 
     def _request_content_tracking_refresh(
         self, rescroll_to_highlight: bool = False
@@ -435,8 +414,8 @@ class OptionList(ScrollView, can_focus=True):
         Args:
             event: The click event.
         """
-        clicked_option = event.style.meta.get("option")
-        if clicked_option is not None:
+        clicked_option: int | None = event.style.meta.get("option")
+        if clicked_option is not None and not self._options[clicked_option].disabled:
             self.highlighted = clicked_option
             self.action_select()
 
@@ -459,10 +438,6 @@ class OptionList(ScrollView, can_focus=True):
         """Clear down the content tracking information."""
         self._lines.clear()
         self._spans.clear()
-        # TODO: Having the option ID tracking be tied up with the main
-        # content tracking isn't necessary. Can possibly improve this a wee
-        # bit.
-        self._option_ids.clear()
 
     def _left_gutter_width(self) -> int:
         """Returns the size of any left gutter that should be taken into account.
@@ -501,7 +476,6 @@ class OptionList(ScrollView, can_focus=True):
         # Set up for doing less property access work inside the loop.
         lines_from = self.app.console.render_lines
         add_span = self._spans.append
-        option_ids = self._option_ids
         add_lines = self._lines.extend
 
         # Adjust the options for our purposes.
@@ -519,7 +493,7 @@ class OptionList(ScrollView, can_focus=True):
         # break out the individual lines that will be used to draw it, and
         # also set up the tracking of the actual options.
         line = 0
-        option = 0
+        option_index = 0
         padding = self.get_component_styles("option-list--option").padding
         for content in self._contents:
             if isinstance(content, Option):
@@ -527,8 +501,10 @@ class OptionList(ScrollView, can_focus=True):
                 # work out the lines needed to show it.
                 new_lines = [
                     Line(
-                        Strip(prompt_line).apply_style(Style(meta={"option": option})),
-                        option,
+                        Strip(prompt_line).apply_style(
+                            Style(meta={"option": option_index})
+                        ),
+                        option_index,
                     )
                     for prompt_line in lines_from(
                         Padding(content.prompt, padding) if padding else content.prompt,
@@ -537,11 +513,7 @@ class OptionList(ScrollView, can_focus=True):
                 ]
                 # Record the span information for the option.
                 add_span(OptionLineSpan(line, len(new_lines)))
-                if content.id is not None:
-                    # The option has an ID set, create a mapping from that
-                    # ID to the option so we can use it later.
-                    option_ids[content.id] = option
-                option += 1
+                option_index += 1
             else:
                 # The content isn't an option, so it must be a separator (if
                 # there were to be other non-option content for an option
@@ -602,9 +574,17 @@ class OptionList(ScrollView, can_focus=True):
             content = [self._make_content(item) for item in items]
             self._duplicate_id_check(content)
             self._contents.extend(content)
-            # Pull out the content that is genuine options and add them to the
-            # list of options.
-            self._options.extend([item for item in content if isinstance(item, Option)])
+            # Pull out the content that is genuine options, create any new
+            # ID mappings required, then add the new options to the option
+            # list.
+            new_options = [item for item in content if isinstance(item, Option)]
+            for new_option_index, new_option in enumerate(
+                new_options, start=len(self._options)
+            ):
+                if new_option.id:
+                    self._option_ids[new_option.id] = new_option_index
+            self._options.extend(new_options)
+
             self._refresh_content_tracking(force=True)
             self.refresh()
         return self
@@ -635,6 +615,12 @@ class OptionList(ScrollView, can_focus=True):
         option = self._options[index]
         del self._options[index]
         del self._contents[self._contents.index(option)]
+        # Decrement index of options after the one we just removed.
+        self._option_ids = {
+            option_id: option_index - 1 if option_index > index else option_index
+            for option_id, option_index in self._option_ids.items()
+            if option_index != index
+        }
         self._refresh_content_tracking(force=True)
         # Force a re-validation of the highlight.
         self.highlighted = self.highlighted
@@ -672,7 +658,7 @@ class OptionList(ScrollView, can_focus=True):
             self._remove_option(index)
         except IndexError:
             raise OptionDoesNotExist(
-                f"There is no option with an index of {index}"
+                f"There is no option with an index of {index!r}"
             ) from None
         return self
 
@@ -732,6 +718,7 @@ class OptionList(ScrollView, can_focus=True):
         """
         self._contents.clear()
         self._options.clear()
+        self._option_ids.clear()
         self.highlighted = None
         self._mouse_hovering_over = None
         self.virtual_size = Size(self.scrollable_content_region.width, 0)
@@ -749,6 +736,10 @@ class OptionList(ScrollView, can_focus=True):
             The `OptionList` instance.
         """
         self._options[index].disabled = disabled
+        if index == self.highlighted:
+            self.highlighted = _widget_navigation.find_next_enabled(
+                self._options, anchor=index, direction=1
+            )
         # TODO: Refresh only if the affected option is visible.
         self.refresh()
         return self
@@ -851,11 +842,14 @@ class OptionList(ScrollView, can_focus=True):
         """
         return self.get_option_at_index(self.get_option_index(option_id))
 
-    def get_option_index(self, option_id):
+    def get_option_index(self, option_id: str) -> int:
         """Get the index of the option with the given ID.
 
         Args:
             option_id: The ID of the option to get the index of.
+
+        Returns:
+            The index of the item with the given ID.
 
         Raises:
             OptionDoesNotExist: If no option has the given ID.
@@ -915,21 +909,6 @@ class OptionList(ScrollView, can_focus=True):
 
         # Handle drawing a disabled option.
         if self._options[option_index].disabled:
-            # Disabled but the highlight?
-            if option_index == highlighted:
-                return strip.apply_style(
-                    self.get_component_rich_style(
-                        "option-list--option-hover-highlighted-disabled"
-                        if option_index == mouse_over
-                        else "option-list--option-highlighted-disabled"
-                    )
-                )
-            # Disabled but mouse hover?
-            if option_index == mouse_over:
-                return strip.apply_style(
-                    self.get_component_rich_style("option-list--option-hover-disabled")
-                )
-            # Just a normal disabled option.
             return strip.apply_style(
                 self.get_component_rich_style("option-list--option-disabled")
             )
@@ -963,7 +942,6 @@ class OptionList(ScrollView, can_focus=True):
 
         Args:
             top: Scroll highlight to top of the list.
-
         """
         highlighted = self.highlighted
         if highlighted is None:
@@ -986,51 +964,53 @@ class OptionList(ScrollView, can_focus=True):
 
     def validate_highlighted(self, highlighted: int | None) -> int | None:
         """Validate the `highlighted` property value on access."""
-        if not self._options:
+        if highlighted is None or not self._options:
             return None
-        if highlighted is None or highlighted < 0:
+        elif highlighted < 0:
             return 0
-        return min(highlighted, len(self._options) - 1)
+        elif highlighted >= len(self._options):
+            return len(self._options) - 1
+
+        return highlighted
 
     def watch_highlighted(self, highlighted: int | None) -> None:
         """React to the highlighted option having changed."""
-        if highlighted is not None:
+        if highlighted is not None and not self._options[highlighted].disabled:
             self.scroll_to_highlight()
-            if not self._options[highlighted].disabled:
-                self.post_message(self.OptionHighlighted(self, highlighted))
+            self.post_message(self.OptionHighlighted(self, highlighted))
 
     def action_cursor_up(self) -> None:
-        """Move the highlight up by one option."""
-        if self.highlighted is not None:
-            if self.highlighted > 0:
-                self.highlighted -= 1
-            else:
-                self.highlighted = len(self._options) - 1
-        elif self._options:
-            self.action_first()
+        """Move the highlight up to the previous enabled option."""
+        self.highlighted = _widget_navigation.find_next_enabled(
+            self._options,
+            anchor=self.highlighted,
+            direction=-1,
+        )
 
     def action_cursor_down(self) -> None:
-        """Move the highlight down by one option."""
-        if self.highlighted is not None:
-            if self.highlighted < len(self._options) - 1:
-                self.highlighted += 1
-            else:
-                self.highlighted = 0
-        elif self._options:
-            self.action_first()
+        """Move the highlight down to the next enabled option."""
+        self.highlighted = _widget_navigation.find_next_enabled(
+            self._options,
+            anchor=self.highlighted,
+            direction=1,
+        )
 
     def action_first(self) -> None:
-        """Move the highlight to the first option."""
-        if self._options:
-            self.highlighted = 0
+        """Move the highlight to the first enabled option."""
+        self.highlighted = _widget_navigation.find_first_enabled(self._options)
 
     def action_last(self) -> None:
-        """Move the highlight to the last option."""
-        if self._options:
-            self.highlighted = len(self._options) - 1
+        """Move the highlight to the last enabled option."""
+        self.highlighted = _widget_navigation.find_last_enabled(self._options)
 
-    def _page(self, direction: Literal[-1, 1]) -> None:
-        """Move the highlight by one page.
+    def _page(self, direction: Direction) -> None:
+        """Move the highlight roughly by one page in the given direction.
+
+        The highlight will tentatively move by exactly one page.
+        If this would result in highlighting a disabled option, instead we look for
+        an enabled option "further down" the list of options.
+        If there are no such enabled options, we fallback to the "last" enabled option.
+        (The meaning of "further down" and "last" depend on the direction specified.)
 
         Args:
             direction: The direction to head, -1 for up and 1 for down.
@@ -1060,19 +1040,33 @@ class OptionList(ScrollView, can_focus=True):
                 target_option = self._lines[target_line].option_index
             except IndexError:
                 # An index error suggests we've gone out of bounds, let's
-                # settle on whatever the call things is a good place to wrap
+                # settle on whatever the call thinks is a good place to wrap
                 # to.
                 fallback()
             else:
-                # Looks like we've figured out the next option to jump to.
-                self.highlighted = target_option
+                # Looks like we've figured where we'd like to jump to, we
+                # just need to make sure we jump to an option that's enabled.
+                if target_option is not None:
+                    target_option = _widget_navigation.find_next_enabled_no_wrap(
+                        candidates=self._options,
+                        anchor=target_option,
+                        direction=direction,
+                        with_anchor=True,
+                    )
+                    # If we couldn't find an enabled option that's at least one page
+                    # away from the current one, we instead move less than one page
+                    # to the last enabled option in the correct direction.
+                    if target_option is None:
+                        fallback()
+                    else:
+                        self.highlighted = target_option
 
-    def action_page_up(self):
-        """Move the highlight up one page."""
+    def action_page_up(self) -> None:
+        """Move the highlight up roughly by one page."""
         self._page(-1)
 
-    def action_page_down(self):
-        """Move the highlight down one page."""
+    def action_page_down(self) -> None:
+        """Move the highlight down roughly by one page."""
         self._page(1)
 
     def action_select(self) -> None:

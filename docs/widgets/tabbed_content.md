@@ -94,6 +94,30 @@ The following example contains a `TabbedContent` with three tabs.
     --8<-- "docs/examples/widgets/tabbed_content.py"
     ```
 
+## Styling
+
+The `TabbedContent` widget is composed of two main sub-widgets: a
+[`Tabs`](tabs.md) and a [`ContentSwitcher`]((content_switcher.md)); you can
+style them accordingly.
+
+The tabs within the `Tabs` widget will have prefixed IDs; each ID being the
+ID of the `TabPane` the `Tab` is for, prefixed with `--content-tab-`. If you
+wish to style individual tabs within the `TabbedContent` widget you will
+need to use that prefix for the `Tab` IDs.
+
+For example, to create a `TabbedContent` that has red and green labels:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/tabbed_content_label_color.py"}
+    ```
+
+=== "tabbed_content.py"
+
+    ```python
+    --8<-- "docs/examples/widgets/tabbed_content_label_color.py"
+    ```
+
 ## Reactive Attributes
 
 | Name     | Type  | Default | Description                                                    |
@@ -103,6 +127,7 @@ The following example contains a `TabbedContent` with three tabs.
 
 ## Messages
 
+- [TabbedContent.Cleared][textual.widgets.TabbedContent.Cleared]
 - [TabbedContent.TabActivated][textual.widgets.TabbedContent.TabActivated]
 
 ## Bindings

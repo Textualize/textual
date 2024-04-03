@@ -30,8 +30,8 @@ my_selection_list: SelectionList[int] =  SelectionList(*selections)
 ## Examples
 
 A selection list is designed to be built up of single-line prompts (which
-can be [Rich renderables](../guide/widgets.md#rich-renderables)) and an
-associated unique value.
+can be [Rich `Text`](https://rich.readthedocs.io/en/stable/text.html)) and
+an associated unique value.
 
 ### Selections as tuples
 
@@ -54,7 +54,7 @@ optionally contain a flag for the initial selected state of the option.
 
 === "selection_list.tcss"
 
-    ~~~python
+    ~~~css
     --8<-- "docs/examples/widgets/selection_list.tcss"
     ~~~
 
@@ -78,7 +78,7 @@ Alternatively, selections can be passed in as
 
 === "selection_list.tcss"
 
-    ~~~python
+    ~~~css
     --8<-- "docs/examples/widgets/selection_list.tcss"
     ~~~
 
@@ -105,7 +105,7 @@ collection of selected values:
 
 === "selection_list.tcss"
 
-    ~~~python
+    ~~~css
     --8<-- "docs/examples/widgets/selection_list_selected.tcss"
     ~~~
 

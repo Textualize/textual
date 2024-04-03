@@ -5,22 +5,23 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Callable, ClassVar, Iterable, Iterator
 
-if TYPE_CHECKING:
-    from typing_extensions import Self
-
 from rich.style import Style
 from rich.text import Text, TextType
 
 from .. import work
+from ..await_complete import AwaitComplete
 from ..message import Message
 from ..reactive import var
 from ..worker import Worker, WorkerCancelled, WorkerFailed, get_current_worker
 from ._tree import TOGGLE_STYLE, Tree, TreeNode
 
+if TYPE_CHECKING:
+    from typing_extensions import Self
+
 
 @dataclass
 class DirEntry:
-    """Attaches directory information to a node."""
+    """Attaches directory information to a [`DirectoryTree`][textual.widgets.DirectoryTree] node."""
 
     path: Path
     """The path of the directory entry."""
@@ -152,27 +153,38 @@ class DirectoryTree(Tree[DirEntry]):
         )
         self.path = path
 
-    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> None:
+    def _add_to_load_queue(self, node: TreeNode[DirEntry]) -> AwaitComplete:
         """Add the given node to the load queue.
+
+        The return value can optionally be awaited until the queue is empty.
 
         Args:
             node: The node to add to the load queue.
+
+        Returns:
+            An optionally awaitable object that can be awaited until the
+                load queue has finished processing.
         """
         assert node.data is not None
         if not node.data.loaded:
             node.data.loaded = True
             self._load_queue.put_nowait(node)
 
-    def reload(self) -> None:
-        """Reload the `DirectoryTree` contents."""
-        self.reset(str(self.path), DirEntry(self.PATH(self.path)))
+        return AwaitComplete(self._load_queue.join())
+
+    def reload(self) -> AwaitComplete:
+        """Reload the `DirectoryTree` contents.
+
+        Returns:
+            An optionally awaitable that ensures the tree has finished reloading.
+        """
         # Orphan the old queue...
         self._load_queue = Queue()
+        # ... reset the root node ...
+        processed = self.reload_node(self.root)
         # ...and replace the old load with a new one.
         self._loader()
-        # We have a fresh queue, we have a fresh loader, get the fresh root
-        # loading up.
-        self._add_to_load_queue(self.root)
+        return processed
 
     def clear_node(self, node: TreeNode[DirEntry]) -> Self:
         """Clear all nodes under the given node.
@@ -181,17 +193,7 @@ class DirectoryTree(Tree[DirEntry]):
             The `Tree` instance.
         """
         self._clear_line_cache()
-        node_label = node._label
-        node_data = node.data
-        node_parent = node.parent
-        node = TreeNode(
-            self,
-            node_parent,
-            self._new_id(),
-            node_label,
-            node_data,
-            expanded=True,
-        )
+        node.remove_children()
         self._updates += 1
         self.refresh()
         return self
@@ -202,6 +204,7 @@ class DirectoryTree(Tree[DirEntry]):
         """Clear the subtree and reset the given node.
 
         Args:
+            node: The node to reset.
             label: The label for the node.
             data: Optional data for the node.
 
@@ -213,16 +216,100 @@ class DirectoryTree(Tree[DirEntry]):
         node.data = data
         return self
 
-    def reload_node(self, node: TreeNode[DirEntry]) -> None:
-        """Reload the given node's contents.
+    async def _reload(self, node: TreeNode[DirEntry]) -> None:
+        """Reloads the subtree rooted at the given node while preserving state.
+
+        After reloading the subtree, nodes that were expanded and still exist
+        will remain expanded and the highlighted node will be preserved, if it
+        still exists. If it doesn't, highlighting goes up to the first parent
+        directory that still exists.
 
         Args:
-            node: The node to reload.
+            node: The root of the subtree to reload.
         """
-        self.reset_node(
-            node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
-        )
-        self._add_to_load_queue(node)
+        async with self.lock:
+            # Track nodes that were expanded before reloading.
+            currently_open: set[Path] = set()
+            to_check: list[TreeNode[DirEntry]] = [node]
+            while to_check:
+                checking = to_check.pop()
+                if checking.allow_expand and checking.is_expanded:
+                    if checking.data:
+                        currently_open.add(checking.data.path)
+                    to_check.extend(checking.children)
+
+            # Track node that was highlighted before reloading.
+            highlighted_path: None | Path = None
+            if self.cursor_line > -1:
+                highlighted_node = self.get_node_at_line(self.cursor_line)
+                if highlighted_node is not None and highlighted_node.data is not None:
+                    highlighted_path = highlighted_node.data.path
+
+            if node.data is not None:
+                self.reset_node(
+                    node, str(node.data.path.name), DirEntry(self.PATH(node.data.path))
+                )
+
+            # Reopen nodes that were expanded and still exist.
+            to_reopen = [node]
+            while to_reopen:
+                reopening = to_reopen.pop()
+                if not reopening.data:
+                    continue
+                if reopening.allow_expand and (
+                    reopening.data.path in currently_open or reopening == node
+                ):
+                    try:
+                        content = await self._load_directory(reopening).wait()
+                    except (WorkerCancelled, WorkerFailed):
+                        continue
+                    reopening.data.loaded = True
+                    self._populate_node(reopening, content)
+                    to_reopen.extend(reopening.children)
+                    reopening.expand()
+
+            if highlighted_path is None:
+                return
+
+            # Restore the highlighted path and consider the parents as fallbacks.
+            looking = [node]
+            highlight_candidates = set(highlighted_path.parents)
+            highlight_candidates.add(highlighted_path)
+            best_found: None | TreeNode[DirEntry] = None
+            while looking:
+                checking = looking.pop()
+                checking_path = (
+                    checking.data.path if checking.data is not None else None
+                )
+                if checking_path in highlight_candidates:
+                    best_found = checking
+                    if checking_path == highlighted_path:
+                        break
+                if (
+                    checking.allow_expand
+                    and checking.is_expanded
+                    and checking_path in highlighted_path.parents
+                ):
+                    looking.extend(checking.children)
+            if best_found is not None:
+                # We need valid lines. Make sure the tree lines have been computed:
+                _ = self._tree_lines
+                self.cursor_line = best_found.line
+
+    def reload_node(self, node: TreeNode[DirEntry]) -> AwaitComplete:
+        """Reload the given node's contents.
+
+        The return value may be awaited to ensure the DirectoryTree has reached
+        a stable state and is no longer performing any node reloading (of this node
+        or any other nodes).
+
+        Args:
+            node: The root of the subtree to reload.
+
+        Returns:
+            An optionally awaitable that ensures the subtree has finished reloading.
+        """
+        return AwaitComplete(self._reload(node))
 
     def validate_path(self, path: str | Path) -> Path:
         """Ensure that the path is of the `Path` type.
@@ -239,13 +326,14 @@ class DirectoryTree(Tree[DirEntry]):
         """
         return self.PATH(path)
 
-    def watch_path(self) -> None:
+    async def watch_path(self) -> None:
         """Watch for changes to the `path` of the directory tree.
 
         If the path is changed the directory tree will be repopulated using
         the new value as the root.
         """
-        self.reload()
+        self.reset_node(self.root, str(self.path), DirEntry(self.PATH(self.path)))
+        await self.reload()
 
     def process_label(self, label: TextType) -> Text:
         """Process a str or Text into a label. Maybe overridden in a subclass to modify how labels are rendered.
@@ -278,6 +366,11 @@ class DirectoryTree(Tree[DirEntry]):
         """
         node_label = node._label.copy()
         node_label.stylize(style)
+
+        # If the tree isn't mounted yet we can't use component classes to stylize
+        # the label fully, so we return early.
+        if not self.is_mounted:
+            return node_label
 
         if node._allow_expand:
             prefix = ("📂 " if node.is_expanded else "📁 ", base_style + TOGGLE_STYLE)
@@ -377,7 +470,7 @@ class DirectoryTree(Tree[DirEntry]):
         except PermissionError:
             pass
 
-    @work(thread=True)
+    @work(thread=True, exit_on_error=False)
     def _load_directory(self, node: TreeNode[DirEntry]) -> list[Path]:
         """Load the directory contents for a given node.
 
@@ -404,37 +497,39 @@ class DirectoryTree(Tree[DirEntry]):
             # this blocks if the queue is empty.
             node = await self._load_queue.get()
             content: list[Path] = []
-            try:
-                # Spin up a short-lived thread that will load the content of
-                # the directory associated with that node.
-                content = await self._load_directory(node).wait()
-            except WorkerCancelled:
-                # The worker was cancelled, that would suggest we're all
-                # done here and we should get out of the loader in general.
-                break
-            except WorkerFailed:
-                # This particular worker failed to start. We don't know the
-                # reason so let's no-op that (for now anyway).
-                pass
-            else:
-                # We're still here and we have directory content, get it into
-                # the tree.
-                if content:
-                    self._populate_node(node, content)
-            # Mark this iteration as done.
-            self._load_queue.task_done()
+            async with self.lock:
+                try:
+                    # Spin up a short-lived thread that will load the content of
+                    # the directory associated with that node.
+                    content = await self._load_directory(node).wait()
+                except WorkerCancelled:
+                    # The worker was cancelled, that would suggest we're all
+                    # done here and we should get out of the loader in general.
+                    break
+                except WorkerFailed:
+                    # This particular worker failed to start. We don't know the
+                    # reason so let's no-op that (for now anyway).
+                    pass
+                else:
+                    # We're still here and we have directory content, get it into
+                    # the tree.
+                    if content:
+                        self._populate_node(node, content)
+                finally:
+                    # Mark this iteration as done.
+                    self._load_queue.task_done()
 
-    def _on_tree_node_expanded(self, event: Tree.NodeExpanded) -> None:
+    async def _on_tree_node_expanded(self, event: Tree.NodeExpanded[DirEntry]) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:
             return
         if self._safe_is_dir(dir_entry.path):
-            self._add_to_load_queue(event.node)
+            await self._add_to_load_queue(event.node)
         else:
             self.post_message(self.FileSelected(event.node, dir_entry.path))
 
-    def _on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
+    def _on_tree_node_selected(self, event: Tree.NodeSelected[DirEntry]) -> None:
         event.stop()
         dir_entry = event.node.data
         if dir_entry is None:

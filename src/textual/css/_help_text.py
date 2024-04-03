@@ -14,6 +14,7 @@ from .constants import (
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
+    VALID_KEYLINE,
     VALID_LAYOUT,
     VALID_STYLE_FLAGS,
     VALID_TEXT_ALIGN,
@@ -149,7 +150,7 @@ def property_invalid_value_help_text(
         suggested_property_name = _contextualize_property_name(
             suggested_property_name, context
         )
-        summary += f'. Did you mean "{suggested_property_name}"?'
+        summary += f". Did you mean '{suggested_property_name}'?"
     return HelpText(summary)
 
 
@@ -323,7 +324,7 @@ def color_property_help_text(
         error.suggested_color if error and isinstance(error, ColorParseError) else None
     )
     if suggested_color:
-        summary += f'. Did you mean "{suggested_color}"?'
+        summary += f". Did you mean '{suggested_color}'?"
     return HelpText(
         summary=summary,
         bullets=[
@@ -663,6 +664,26 @@ def align_help_text() -> HelpText:
             Bullet(
                 f"Valid values for <vertical> are {friendly_list(VALID_ALIGN_VERTICAL)}",
             ),
+        ],
+    )
+
+
+def keyline_help_text() -> HelpText:
+    """Help text to show when the user supplies an invalid value for a `keyline`.
+
+    Returns:
+        Renderable for displaying the help text for this property.
+    """
+    return HelpText(
+        summary="Invalid value for [i]keyline[/] property",
+        bullets=[
+            Bullet(
+                markup="The [i]keyline[/] property expects exactly 2 values",
+                examples=[
+                    Example("keyline: <type> <color>"),
+                ],
+            ),
+            Bullet(f"Valid values for <type> are {friendly_list(VALID_KEYLINE)}"),
         ],
     )
 

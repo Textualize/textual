@@ -12,6 +12,10 @@ Screen {
     min-height: 25;
     min-width: 26;
     height: 100%;
+
+    &:inline {
+        margin: 0 2;
+    }
 }
 
 Button {

@@ -98,7 +98,7 @@ For example, if its container is big enough, a label with `width: auto` will be 
 
 ### CSS
 
-```sass
+```css
 Horizontal {
     width: 60;     /* 60 cells */
     height: 1fr;   /* proportional size of 1 */

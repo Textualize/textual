@@ -42,13 +42,13 @@ Because there are more rows than scalars in the style definition, the scalars wi
 
 === "grid_rows.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/styles/grid_rows.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Set all rows to have 50% height */
 grid-rows: 50%;
 

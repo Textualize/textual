@@ -1,5 +1,7 @@
 import contextlib
 
+from rich.terminal_theme import DIMMED_MONOKAI, MONOKAI, NIGHT_OWLISH
+
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Input
 
@@ -30,14 +32,25 @@ async def test_hover_update_styles():
     app = MyApp()
     async with app.run_test() as pilot:
         button = app.query_one(Button)
-        assert button.pseudo_classes == {"enabled", "can-focus", "dark"}
+        assert button.pseudo_classes == {
+            "blur",
+            "can-focus",
+            "dark",
+            "enabled",
+        }
 
         # Take note of the initial background colour
         initial_background = button.styles.background
         await pilot.hover(Button)
 
         # We've hovered, so ensure the pseudoclass is present and background changed
-        assert button.pseudo_classes == {"enabled", "hover", "can-focus", "dark"}
+        assert button.pseudo_classes == {
+            "blur",
+            "can-focus",
+            "dark",
+            "enabled",
+            "hover",
+        }
         assert button.styles.background != initial_background
 
 
@@ -106,3 +119,24 @@ async def test_no_return_code_while_running():
     app = App()
     async with app.run_test():
         assert app.return_code is None
+
+
+async def test_ansi_theme():
+    app = App()
+    async with app.run_test():
+        app.ansi_theme_dark = NIGHT_OWLISH
+        assert app.ansi_theme == NIGHT_OWLISH
+
+        app.dark = False
+        assert app.ansi_theme != NIGHT_OWLISH
+
+        app.ansi_theme_light = MONOKAI
+        assert app.ansi_theme == MONOKAI
+
+        # Ensure if we change the dark theme while on light mode,
+        # then change back to dark mode, the dark theme is updated.
+        app.ansi_theme_dark = DIMMED_MONOKAI
+        assert app.ansi_theme == MONOKAI
+
+        app.dark = True
+        assert app.ansi_theme == DIMMED_MONOKAI

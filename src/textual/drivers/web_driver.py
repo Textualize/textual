@@ -1,6 +1,6 @@
 """
 
-The Remote driver uses the following packet stricture.
+The Remote driver uses the following packet structure.
 
 1 byte for packet type. "D" for data, "M" for meta.
 4 byte little endian integer for the size of the payload.
@@ -40,7 +40,12 @@ class WebDriver(Driver):
     """A headless driver that may be run remotely."""
 
     def __init__(
-        self, app: App, *, debug: bool = False, size: tuple[int, int] | None = None
+        self,
+        app: App,
+        *,
+        debug: bool = False,
+        mouse: bool = True,
+        size: tuple[int, int] | None = None,
     ):
         if size is None:
             try:
@@ -50,7 +55,7 @@ class WebDriver(Driver):
                 pass
             else:
                 size = width, height
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
         self.stdout = sys.__stdout__
         self.fileno = sys.__stdout__.fileno()
         self._write = partial(os.write, self.fileno)
@@ -142,6 +147,7 @@ class WebDriver(Driver):
         self._enable_bracketed_paste()
         self.flush()
         self._key_thread.start()
+        self._app.post_message(events.AppBlur())
 
     def disable_input(self) -> None:
         """Disable further input."""
@@ -188,7 +194,7 @@ class WebDriver(Driver):
             payload: Meta payload (JSON encoded as bytes).
         """
         payload_map = json.loads(payload)
-        _type = payload_map.get("type")
+        _type = payload_map.get("type", {})
         if isinstance(payload_map, dict):
             self.on_meta(_type, payload_map)
 
@@ -203,6 +209,10 @@ class WebDriver(Driver):
             self._size = (payload["width"], payload["height"])
             size = Size(*self._size)
             self._app.post_message(events.Resize(size, size))
+        elif packet_type == "focus":
+            self._app.post_message(events.AppFocus())
+        elif packet_type == "blur":
+            self._app.post_message(events.AppBlur())
         elif packet_type == "quit":
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":

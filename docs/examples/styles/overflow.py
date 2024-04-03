@@ -12,6 +12,8 @@ Where the fear has gone there will be nothing. Only I will remain."""
 
 
 class OverflowApp(App):
+    CSS_PATH = "overflow.tcss"
+
     def compose(self):
         yield Horizontal(
             VerticalScroll(Static(TEXT), Static(TEXT), Static(TEXT), id="left"),
@@ -19,4 +21,6 @@ class OverflowApp(App):
         )
 
 
-app = OverflowApp(css_path="overflow.tcss")
+if __name__ == "__main__":
+    app = OverflowApp()
+    app.run()

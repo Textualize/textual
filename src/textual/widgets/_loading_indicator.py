@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 from time import time
-from typing import Awaitable
+from typing import TYPE_CHECKING
 
-from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 
+if TYPE_CHECKING:
+    from ..app import RenderResult
 from ..color import Gradient
-from ..css.query import NoMatches
 from ..events import Mount
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 
 
 class LoadingIndicator(Widget):
@@ -24,54 +24,41 @@ class LoadingIndicator(Widget):
         content-align: center middle;
         color: $accent;
     }
-    LoadingIndicator.-overlay {
-        overlay: screen;
+    LoadingIndicator.-textual-loading-indicator {
+        layer: _loading;
         background: $boost;
+        dock: top;
     }
     """
 
-    def apply(self, widget: Widget) -> AwaitMount:
-        """Apply the loading indicator to a `widget`.
-
-        This will overlay the given widget with a loading indicator.
-
-        Args:
-            widget: A widget.
-
-        Returns:
-            AwaitMount: An awaitable for mounting the indicator.
-        """
-        self.add_class("-overlay")
-        await_mount = widget.mount(self, before=0)
-        return await_mount
-
-    @classmethod
-    def clear(cls, widget: Widget) -> Awaitable:
-        """Clear any loading indicator from the given widget.
+    def __init__(
+        self,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        """Initialize a loading indicator.
 
         Args:
-            widget: Widget to clear the loading indicator from.
-
-        Returns:
-            Optional awaitable.
+            name: The name of the widget.
+            id: The ID of the widget in the DOM.
+            classes: The CSS classes for the widget.
+            disabled: Whether the widget is disabled or not.
         """
-        try:
-            await_remove = widget.get_child_by_type(cls).remove()
-        except NoMatches:
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
-            async def null() -> None:
-                """Nothing to remove"""
-                return None
-
-            return null()
-
-        return await_remove
+        self._start_time: float = 0.0
+        """The time the loading indicator was mounted (a Unix timestamp)."""
 
     def _on_mount(self, _: Mount) -> None:
         self._start_time = time()
         self.auto_refresh = 1 / 16
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
+        if self.app.animation_level == "none":
+            return Text("Loading...")
+
         elapsed = time() - self._start_time
         speed = 0.8
         dot = "\u25cf"

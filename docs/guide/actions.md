@@ -10,13 +10,13 @@ Action methods are methods on your app or widgets prefixed with `action_`. Aside
 
     Action methods may be coroutines (defined with the `async` keyword).
 
-Let's write an app with a simple action.
+Let's write an app with a simple action method.
 
 ```python title="actions01.py" hl_lines="6-7 11"
 --8<-- "docs/examples/guide/actions/actions01.py"
 ```
 
-The `action_set_background` method is an action which sets the background of the screen. The key handler above will call this action if you press the ++r++ key.
+The `action_set_background` method is an action method which sets the background of the screen. The key handler above will call this action method if you press the ++r++ key.
 
 Although it is possible (and occasionally useful) to call action methods in this way, they are intended to be parsed from an _action string_. For instance, the string `"set_background('red')"` is an action string which would call `self.action_set_background('red')`.
 
@@ -40,9 +40,9 @@ Action strings have a simple syntax, which for the most part replicates Python's
 
 Action strings have the following format:
 
-- The name of an action on is own will call the action method with no parameters. For example, an action string of `"bell"` will call `action_bell()`.
-- Actions may be followed by braces containing Python objects. For example, the action string `set_background("red")` will call `action_set_background("red")`.
-- Actions may be prefixed with a _namespace_ (see below) followed by a dot.
+- The name of an action on its own will call the action method with no parameters. For example, an action string of `"bell"` will call `action_bell()`.
+- Action strings may be followed by parenthesis containing Python objects. For example, the action string `set_background("red")` will call `action_set_background("red")`.
+- Action strings may be prefixed with a _namespace_ ([see below](#namespaces)) and a dot.
 
 <div class="excalidraw">
 --8<-- "docs/images/actions/format.excalidraw.svg"
@@ -50,13 +50,13 @@ Action strings have the following format:
 
 ### Parameters
 
-If the action string contains parameters, these must be valid Python literals. Which means you can include numbers, strings, dicts, lists etc. but you can't include variables or references to any other Python symbols.
+If the action string contains parameters, these must be valid Python literals, which means you can include numbers, strings, dicts, lists, etc., but you can't include variables or references to any other Python symbols.
 
 Consequently `"set_background('blue')"` is a valid action string, but `"set_background(new_color)"` is not &mdash; because `new_color` is a variable and not a literal.
 
 ## Links
 
-Actions may be embedded as links within console markup. You can create such links with a  `@click` tag.
+Actions may be embedded as links within console markup. You can create such links with a `@click` tag.
 
 The following example mounts simple static text with embedded action links.
 
@@ -106,11 +106,11 @@ The following example defines a custom widget with its own `set_background` acti
 
 === "actions05.tcss"
 
-    ```sass title="actions05.tcss"
+    ```css title="actions05.tcss"
     --8<-- "docs/examples/guide/actions/actions05.tcss"
     ```
 
-There are two instances of the custom widget mounted. If you click the links in either of them it will changed the background for that widget only. The ++r++, ++g++, and ++b++ key bindings are set on the App so will set the background for the screen.
+There are two instances of the custom widget mounted. If you click the links in either of them it will change the background for that widget only. The ++r++, ++g++, and ++b++ key bindings are set on the App so will set the background for the screen.
 
 You can optionally prefix an action with a _namespace_, which tells Textual to run actions for a different object.
 
@@ -139,5 +139,6 @@ Textual supports the following builtin actions which are defined on the app.
 - [action_remove_class][textual.app.App.action_remove_class]
 - [action_screenshot][textual.app.App.action_screenshot]
 - [action_switch_screen][textual.app.App.action_switch_screen]
+- [action_suspend_process][textual.app.App.action_suspend_process]
 - [action_toggle_class][textual.app.App.action_toggle_class]
 - [action_toggle_dark][textual.app.App.action_toggle_dark]

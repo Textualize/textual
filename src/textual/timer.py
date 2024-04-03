@@ -7,19 +7,18 @@ Timer objects are created by [set_interval][textual.message_pump.MessagePump.set
 from __future__ import annotations
 
 import weakref
-from asyncio import CancelledError, Event, Task
-from typing import Awaitable, Callable, Union
+from asyncio import CancelledError, Event, Task, create_task
+from typing import Any, Awaitable, Callable, Union
 
 from rich.repr import Result, rich_repr
 
 from . import _time, events
-from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._time import sleep
 from ._types import MessageTarget
 
-TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
+TimerCallback = Union[Callable[[], Awaitable[Any]], Callable[[], Any]]
 """Type of valid callbacks to be used with timers."""
 
 

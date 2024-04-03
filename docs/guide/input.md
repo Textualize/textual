@@ -96,7 +96,7 @@ The following example shows how focus works in practice.
 
 === "key03.tcss"
 
-    ```python title="key03.tcss" hl_lines="15-17"
+    ```css title="key03.tcss" hl_lines="15-17"
     --8<-- "docs/examples/guide/input/key03.tcss"
     ```
 
@@ -138,7 +138,7 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
 
 === "binding01.tcss"
 
-    ```python title="binding01.tcss"
+    ```css title="binding01.tcss"
     --8<-- "docs/examples/guide/input/binding01.tcss"
     ```
 
@@ -202,13 +202,13 @@ The following example shows mouse movements being used to _attach_ a widget to t
 
 === "mouse01.py"
 
-    ```python title="mouse01.py" hl_lines="11-13"
+    ```python title="mouse01.py" hl_lines="17-19"
     --8<-- "docs/examples/guide/input/mouse01.py"
     ```
 
 === "mouse01.tcss"
 
-    ```python title="mouse01.tcss"
+    ```css title="mouse01.tcss"
     --8<-- "docs/examples/guide/input/mouse01.tcss"
     ```
 

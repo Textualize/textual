@@ -86,7 +86,7 @@ def resolve_fraction_unit(
     remaining_space: Fraction,
     resolve_dimension: Literal["width", "height"] = "width",
 ) -> Fraction:
-    """Calculate the fraction
+    """Calculate the fraction.
 
     Args:
         widget_styles: Styles for widgets with fraction units.

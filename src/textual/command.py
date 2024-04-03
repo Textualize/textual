@@ -7,29 +7,35 @@ See the guide on the [Command Palette](../guide/command_palette.md) for full det
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from asyncio import CancelledError, Queue, Task, TimeoutError, wait, wait_for
+from asyncio import (
+    CancelledError,
+    Queue,
+    Task,
+    TimeoutError,
+    create_task,
+    wait,
+    wait_for,
+)
 from dataclasses import dataclass
 from functools import total_ordering
+from inspect import isclass
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
 
 import rich.repr
 from rich.align import Align
 from rich.console import Group, RenderableType
-from rich.emoji import Emoji
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Final, TypeAlias
 
 from . import on, work
-from ._asyncio import create_task
 from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .fuzzy import Matcher
 from .reactive import var
-from .screen import ModalScreen, Screen
+from .screen import Screen, _SystemModalScreen
 from .timer import Timer
 from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
@@ -42,6 +48,7 @@ if TYPE_CHECKING:
 
 __all__ = [
     "CommandPalette",
+    "DiscoveryHit",
     "Hit",
     "Hits",
     "Matcher",
@@ -75,6 +82,11 @@ class Hit:
     help: str | None = None
     """Optional help text for the command."""
 
+    @property
+    def prompt(self) -> RenderableType:
+        """The prompt to use when displaying the hit in the command palette."""
+        return self.match_display
+
     def __lt__(self, other: object) -> bool:
         if isinstance(other, Hit):
             return self.score < other.score
@@ -98,7 +110,57 @@ class Hit:
                 )
 
 
-Hits: TypeAlias = AsyncIterator[Hit]
+@dataclass
+class DiscoveryHit:
+    """Holds the details of a single command search hit."""
+
+    display: RenderableType
+    """A string or Rich renderable representation of the hit."""
+
+    command: IgnoreReturnCallbackType
+    """The function to call when the command is chosen."""
+
+    text: str | None = None
+    """The command text associated with the hit, as plain text.
+
+    If `display` is not simple text, this attribute should be provided by
+    the [Provider][textual.command.Provider] object.
+    """
+
+    help: str | None = None
+    """Optional help text for the command."""
+
+    @property
+    def prompt(self) -> RenderableType:
+        """The prompt to use when displaying the discovery hit in the command palette."""
+        return self.display
+
+    def __lt__(self, other: object) -> bool:
+        if isinstance(other, DiscoveryHit):
+            assert self.text is not None
+            assert other.text is not None
+            return other.text < self.text
+        return NotImplemented
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, Hit):
+            return self.text == other.text
+        return NotImplemented
+
+    def __post_init__(self) -> None:
+        """Ensure 'text' is populated."""
+        if self.text is None:
+            if isinstance(self.display, str):
+                self.text = self.display
+            elif isinstance(self.display, Text):
+                self.text = self.display.plain
+            else:
+                raise ValueError(
+                    "A value for 'text' is required if 'display' is not a str or Text"
+                )
+
+
+Hits: TypeAlias = AsyncIterator["DiscoveryHit | Hit"]
 """Return type for the command provider's `search` method."""
 
 
@@ -165,6 +227,8 @@ class Provider(ABC):
             try:
                 await self.startup()
             except Exception:
+                from rich.traceback import Traceback
+
                 self.app.log.error(Traceback())
             else:
                 self._init_success = True
@@ -190,9 +254,12 @@ class Provider(ABC):
         """
         await self._wait_init()
         if self._init_success:
-            hits = self.search(query)
+            # An empty search string is a discovery search, anything else is
+            # a conventional search.
+            hits = self.search(query) if query else self.discover()
             async for hit in hits:
-                yield hit
+                if hit is not NotImplemented:
+                    yield hit
 
     @abstractmethod
     async def search(self, query: str) -> Hits:
@@ -206,11 +273,29 @@ class Provider(ABC):
         """
         yield NotImplemented
 
+    async def discover(self) -> Hits:
+        """A default collection of hits for the provider.
+
+        Yields:
+            Instances of [`DiscoveryHit`][textual.command.DiscoveryHit].
+
+        Note:
+            This is different from
+            [`search`][textual.command.Provider.search] in that it should
+            yield [`DiscoveryHit`s][textual.command.DiscoveryHit] that
+            should be shown by default (before user input).
+
+            It is permitted to *not* implement this method.
+        """
+        yield NotImplemented
+
     async def _shutdown(self) -> None:
         """Internal method to call shutdown and log errors."""
         try:
             await self.shutdown()
         except Exception:
+            from rich.traceback import Traceback
+
             self.app.log.error(Traceback())
 
     async def shutdown(self) -> None:
@@ -229,7 +314,7 @@ class Command(Option):
     def __init__(
         self,
         prompt: RenderableType,
-        command: Hit,
+        command: DiscoveryHit | Hit,
         id: str | None = None,
         disabled: bool = False,
     ) -> None:
@@ -298,13 +383,14 @@ class SearchIcon(Static, inherit_css=False):
 
     DEFAULT_CSS = """
     SearchIcon {
+        color: #000;  /* required for snapshot tests */
         margin-left: 1;
         margin-top: 1;
         width: 2;
     }
     """
 
-    icon: var[str] = var(Emoji.replace(":magnifying_glass_tilted_right:"))
+    icon: var[str] = var("🔎")
     """The icon to display."""
 
     def render(self) -> RenderableType:
@@ -329,7 +415,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
+class CommandPalette(_SystemModalScreen[CallbackType]):
     """The Textual command palette."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -454,7 +540,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     def __init__(self) -> None:
         """Initialise the command palette."""
         super().__init__(id=self._PALETTE_ID)
-        self._selected_command: Hit | None = None
+        self._selected_command: DiscoveryHit | Hit | None = None
         """The command that was selected by the user."""
         self._busy_timer: Timer | None = None
         """Keeps track of if there's a busy indication timer in effect."""
@@ -483,10 +569,27 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         application][textual.app.App.COMMANDS] and those [defined in
         the current screen][textual.screen.Screen.COMMANDS].
         """
+
+        def get_providers(root: App | Screen) -> Iterable[type[Provider]]:
+            """Get providers from app or screen.
+
+            Args:
+                root: The app or screen.
+
+            Returns:
+                An iterable of providers.
+            """
+            for provider in root.COMMANDS:
+                if isclass(provider) and issubclass(provider, Provider):
+                    yield provider
+                else:
+                    # Lazy loaded providers
+                    yield provider()  # type: ignore
+
         return (
             set()
             if self._calling_screen is None
-            else self.app.COMMANDS | self._calling_screen.COMMANDS
+            else {*get_providers(self.app), *get_providers(self._calling_screen)}
         )
 
     def compose(self) -> ComposeResult:
@@ -515,11 +618,11 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         method of dismissing the palette.
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
-            self.workers.cancel_all()
+            self._cancel_gather_commands()
             self.dismiss()
 
-    def on_mount(self, _: Mount) -> None:
-        """Capture the calling screen."""
+    def _on_mount(self, _: Mount) -> None:
+        """Configure the command palette once the DOM is ready."""
         self._calling_screen = self.app.screen_stack[-2]
 
         match_style = self.get_component_rich_style(
@@ -533,8 +636,9 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         ]
         for provider in self._providers:
             provider._post_init()
+        self._gather_commands("")
 
-    async def on_unmount(self) -> None:
+    async def _on_unmount(self) -> None:
         """Shutdown providers when command palette is closed."""
         if self._providers:
             await wait(
@@ -570,23 +674,36 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     _NO_MATCHES_COUNTDOWN: Final[float] = 0.5
     """How many seconds to wait before showing 'No matches found'."""
 
-    def _start_no_matches_countdown(self) -> None:
+    def _start_no_matches_countdown(self, search_value: str) -> None:
         """Start a countdown to showing that there are no matches for the query.
 
-        Adds a 'No matches found' option to the command list after `_NO_MATCHES_COUNTDOWN` seconds.
+        Args:
+            search_value: The value being searched for.
+
+        Adds a 'No matches found' option to the command list after
+        `_NO_MATCHES_COUNTDOWN` seconds.
         """
         self._stop_no_matches_countdown()
 
         def _show_no_matches() -> None:
-            command_list = self.query_one(CommandList)
-            command_list.add_option(
-                Option(
-                    Align.center(Text("No matches found")),
-                    disabled=True,
-                    id=self._NO_MATCHES,
+            # If we were actually searching for something, show that we
+            # found no matches.
+            if search_value:
+                command_list = self.query_one(CommandList)
+                command_list.add_option(
+                    Option(
+                        Align.center(Text("No matches found")),
+                        disabled=True,
+                        id=self._NO_MATCHES,
+                    )
                 )
-            )
-            self._list_visible = True
+                self._list_visible = True
+            else:
+                # The search value was empty, which means we were in
+                # discover mode; in that case it makes no sense to show that
+                # no matches were found. Lack of commands that can be
+                # discovered is a situation we don't need to highlight.
+                self._list_visible = False
 
         self._no_matches_timer = self.set_timer(
             self._NO_MATCHES_COUNTDOWN,
@@ -612,7 +729,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         self.query_one(CommandList).set_class(self._show_busy, "--populating")
 
     @staticmethod
-    async def _consume(hits: Hits, commands: Queue[Hit]) -> None:
+    async def _consume(hits: Hits, commands: Queue[DiscoveryHit | Hit]) -> None:
         """Consume a source of matching commands, feeding the given command queue.
 
         Args:
@@ -622,7 +739,9 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         async for hit in hits:
             await commands.put(hit)
 
-    async def _search_for(self, search_value: str) -> AsyncGenerator[Hit, bool]:
+    async def _search_for(
+        self, search_value: str
+    ) -> AsyncGenerator[DiscoveryHit | Hit, bool]:
         """Search for a given search value amongst all of the command providers.
 
         Args:
@@ -633,7 +752,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         """
 
         # Set up a queue to stream in the command hits from all the providers.
-        commands: Queue[Hit] = Queue()
+        commands: Queue[DiscoveryHit | Hit] = Queue()
 
         # Fire up an instance of each command provider, inside a task, and
         # have them go start looking for matches.
@@ -681,6 +800,8 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             if search.done():
                 exception = search.exception()
                 if exception is not None:
+                    from rich.traceback import Traceback
+
                     self.log.error(
                         Traceback.from_exception(
                             type(exception), exception, exception.__traceback__
@@ -764,7 +885,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             else None
         )
         command_list.clear_options().add_options(sorted(commands, reverse=True))
-        if highlighted is not None:
+        if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
         self._list_visible = bool(command_list.option_count)
 
@@ -774,7 +895,10 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
     _NO_MATCHES: Final[str] = "--no-matches"
     """The ID to give the disabled option that shows there were no matches."""
 
-    @work(exclusive=True)
+    _GATHER_COMMANDS_GROUP: Final[str] = "--textual-command-palette-gather-commands"
+    """The group name of the command gathering worker."""
+
+    @work(exclusive=True, group=_GATHER_COMMANDS_GROUP)
     async def _gather_commands(self, search_value: str) -> None:
         """Gather up all of the commands that match the search value.
 
@@ -844,7 +968,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         while hit:
             # Turn the command into something for display, and add it to the
             # list of commands that have been gathered so far.
-            prompt = hit.match_display
+            prompt = hit.prompt
             if hit.help:
                 prompt = Group(prompt, Text(hit.help, style=help_style))
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
@@ -893,7 +1017,11 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
         # mean nothing was found. Give the user positive feedback to that
         # effect.
         if command_list.option_count == 0 and not worker.is_cancelled:
-            self._start_no_matches_countdown()
+            self._start_no_matches_countdown(search_value)
+
+    def _cancel_gather_commands(self) -> None:
+        """Cancel any operation that is gather commands."""
+        self.workers.cancel_group(self, self._GATHER_COMMANDS_GROUP)
 
     @on(Input.Changed)
     def _input(self, event: Input.Changed) -> None:
@@ -903,15 +1031,9 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             event: The input event.
         """
         event.stop()
-        self.workers.cancel_all()
+        self._cancel_gather_commands()
         self._stop_no_matches_countdown()
-
-        search_value = event.value.strip()
-        if search_value:
-            self._gather_commands(search_value)
-        else:
-            self._list_visible = False
-            self.query_one(CommandList).clear_options()
+        self._gather_commands(event.value.strip())
 
     @on(OptionList.OptionSelected)
     def _select_command(self, event: OptionList.OptionSelected) -> None:
@@ -921,7 +1043,7 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             event: The option selection event.
         """
         event.stop()
-        self.workers.cancel_all()
+        self._cancel_gather_commands()
         input = self.query_one(CommandInput)
         with self.prevent(Input.Changed):
             assert isinstance(event.option, Command)
@@ -958,15 +1080,20 @@ class CommandPalette(ModalScreen[CallbackType], inherit_css=False):
             if self._selected_command is not None:
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
-                self.workers.cancel_all()
+                self._cancel_gather_commands()
                 self.dismiss(self._selected_command.command)
+
+    @on(OptionList.OptionHighlighted)
+    def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
+        """Stop any unused events so they don't leak to the application."""
+        event.stop()
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
         if self._list_visible:
             self._list_visible = False
         else:
-            self.workers.cancel_all()
+            self._cancel_gather_commands()
             self.dismiss()
 
     def _action_command_list(self, action: str) -> None:

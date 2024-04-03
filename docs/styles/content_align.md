@@ -39,7 +39,7 @@ This first example shows three labels stacked vertically, each with different co
 
 === "content_align.tcss"
 
-    ```sass hl_lines="2 7-8 13"
+    ```css hl_lines="2 7-8 13"
     --8<-- "docs/examples/styles/content_align.tcss"
     ```
 
@@ -61,13 +61,13 @@ Each label has its text aligned differently.
 
 === "content_align_all.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
+    ```css hl_lines="2 5 8 11 14 17 20 23 26"
     --8<-- "docs/examples/styles/content_align_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Align content in the very center of a widget */
 content-align: center middle;
 /* Align content at the top right of a widget */

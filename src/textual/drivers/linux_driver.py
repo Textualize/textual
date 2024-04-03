@@ -12,9 +12,8 @@ from threading import Event, Thread
 from typing import TYPE_CHECKING, Any
 
 import rich.repr
-import rich.traceback
 
-from .. import events, log
+from .. import events
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -33,6 +32,7 @@ class LinuxDriver(Driver):
         app: App,
         *,
         debug: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize Linux driver.
@@ -40,15 +40,52 @@ class LinuxDriver(Driver):
         Args:
             app: The App instance.
             debug: Enable debug mode.
+            mouse: Enable mouse support.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, debug=debug, size=size)
-        self._file = sys.__stdout__
-        self.fileno = sys.stdin.fileno()
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
+        self._file = sys.__stderr__
+        self.fileno = sys.__stdin__.fileno()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
         self._writer_thread: WriterThread | None = None
+
+        # If we've finally and properly come back from a SIGSTOP we want to
+        # be able to ask the app to publish its resume signal; to do that we
+        # need to know that we came in here via a SIGTSTP; this flag helps
+        # keep track of this.
+        self._must_signal_resume = False
+
+        # Put handlers for SIGTSTP and SIGCONT in place. These are necessary
+        # to support the user pressing Ctrl+Z (or whatever the dev might
+        # have bound to call the relevant action on App) to suspend the
+        # application.
+        signal.signal(signal.SIGTSTP, self._sigtstp_application)
+        signal.signal(signal.SIGCONT, self._sigcont_application)
+
+    def _sigtstp_application(self, *_) -> None:
+        """Handle a SIGTSTP signal."""
+        # If we're supposed to auto-restart, that means we need to shut down
+        # first.
+        if self._auto_restart:
+            self.suspend_application_mode()
+            # Flag that we'll need to signal a resume on successful startup
+            # again.
+            self._must_signal_resume = True
+        # Now send a SIGSTOP to our process to *actually* suspend the
+        # process.
+        os.kill(os.getpid(), signal.SIGSTOP)
+
+    def _sigcont_application(self, *_) -> None:
+        """Handle a SICONT application."""
+        if self._auto_restart:
+            self.resume_application_mode()
+
+    @property
+    def can_suspend(self) -> bool:
+        """Can this driver be suspended?"""
+        return True
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._app
@@ -76,6 +113,8 @@ class LinuxDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -98,6 +137,8 @@ class LinuxDriver(Driver):
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000l")  #
         write("\x1b[?1003l")  #
@@ -116,6 +157,39 @@ class LinuxDriver(Driver):
 
     def start_application_mode(self):
         """Start application mode."""
+
+        def _stop_again(*_) -> None:
+            """Signal handler that will put the application back to sleep."""
+            os.kill(os.getpid(), signal.SIGSTOP)
+
+        # If we're working with an actual tty...
+        # https://github.com/Textualize/textual/issues/4104
+        if os.isatty(self.fileno):
+            # Set up handlers to ensure that, if there's a SIGTTOU or a SIGTTIN,
+            # we go back to sleep.
+            signal.signal(signal.SIGTTOU, _stop_again)
+            signal.signal(signal.SIGTTIN, _stop_again)
+            try:
+                # Here we perform a NOP tcsetattr. The reason for this is
+                # that, if we're suspended and the user has performed a `bg`
+                # in the shell, we'll SIGCONT *but* we won't be allowed to
+                # do terminal output; so rather than get into the business
+                # of spinning up application mode again and then finding
+                # out, we perform a no-consequence change and detect the
+                # problem right away.
+                termios.tcsetattr(
+                    self.fileno, termios.TCSANOW, termios.tcgetattr(self.fileno)
+                )
+            except termios.error:
+                # There was an error doing the tcsetattr; there is no sense
+                # in carrying on because we'll be doing a SIGSTOP (see
+                # above).
+                return
+            finally:
+                # We don't need to be hooking SIGTTOU or SIGTTIN any more.
+                signal.signal(signal.SIGTTOU, signal.SIG_DFL)
+                signal.signal(signal.SIGTTIN, signal.SIG_DFL)
+
         loop = asyncio.get_running_loop()
 
         def send_size_event():
@@ -163,13 +237,22 @@ class LinuxDriver(Driver):
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1003h\n")
+        self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
+
+        # If we need to ask the app to signal that we've come back from a
+        # SIGTSTP...
+        if self._must_signal_resume:
+            self._must_signal_resume = False
+            asyncio.run_coroutine_threadsafe(
+                self._app._post_message(self.SignalResume()),
+                loop=loop,
+            )
 
     def _request_terminal_sync_mode_support(self) -> None:
         """Writes an escape sequence to query the terminal support for the sync protocol."""
@@ -182,7 +265,19 @@ class LinuxDriver(Driver):
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
-        return attrs & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | termios.ISIG)
+        """Patch termios lflag.
+
+        Args:
+            attributes: New set attributes.
+
+        Returns:
+            New lflag.
+
+        """
+        # if TEXTUAL_ALLOW_SIGNALS env var is set, then allow Ctrl+C to send signals
+        ISIG = 0 if os.environ.get("TEXTUAL_ALLOW_SIGNALS") else termios.ISIG
+
+        return attrs & ~(termios.ECHO | termios.ICANON | termios.IEXTEN | ISIG)
 
     @classmethod
     def _patch_iflag(cls, attrs: int) -> int:
@@ -227,6 +322,7 @@ class LinuxDriver(Driver):
 
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
+            self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
             self.flush()
 
     def close(self) -> None:
@@ -242,6 +338,8 @@ class LinuxDriver(Driver):
         try:
             self.run_input_thread()
         except BaseException as error:
+            import rich.traceback
+
             self._app.call_later(
                 self._app.panic,
                 rich.traceback.Traceback(),
@@ -249,15 +347,16 @@ class LinuxDriver(Driver):
 
     def run_input_thread(self) -> None:
         """Wait for input and dispatch events."""
-        selector = selectors.DefaultSelector()
+        selector = selectors.SelectSelector()
         selector.register(self.fileno, selectors.EVENT_READ)
 
         fileno = self.fileno
+        EVENT_READ = selectors.EVENT_READ
 
         def more_data() -> bool:
             """Check if there is more data to parse."""
-            EVENT_READ = selectors.EVENT_READ
-            for key, events in selector.select(0.01):
+
+            for _key, events in selector.select(0.01):
                 if events & EVENT_READ:
                     return True
             return False
@@ -268,14 +367,15 @@ class LinuxDriver(Driver):
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
-        EVENT_READ = selectors.EVENT_READ
 
         try:
             while not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
                     if mask & EVENT_READ:
-                        unicode_data = decode(read(fileno, 1024))
+                        unicode_data = decode(
+                            read(fileno, 1024), final=self.exit_event.is_set()
+                        )
                         for event in feed(unicode_data):
                             self.process_event(event)
         finally:

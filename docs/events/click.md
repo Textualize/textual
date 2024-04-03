@@ -1,25 +1,16 @@
-# Click
-
-The `Click` event is sent to a widget when the user clicks a mouse button.
-
-- [x] Bubbles
-- [ ] Verbose
-
-## Attributes
-
-| attribute  | type | purpose                                   |
-|------------|------|-------------------------------------------|
-| `x`        | int  | Mouse x coordinate, relative to Widget    |
-| `y`        | int  | Mouse y coordinate, relative to Widget    |
-| `delta_x`  | int  | Change in x since last mouse event        |
-| `delta_y`  | int  | Change in y since last mouse event        |
-| `button`   | int  | Index of mouse button                     |
-| `shift`    | bool | Shift key pressed if True                 |
-| `meta`     | bool | Meta key pressed if True                  |
-| `ctrl`     | bool | Ctrl key pressed if True                  |
-| `screen_x` | int  | Mouse x coordinate relative to the screen |
-| `screen_y` | int  | Mouse y coordinate relative to the screen |
-
-## Code
-
 ::: textual.events.Click
+    options:
+      heading_level: 1
+
+See [MouseEvent][textual.events.MouseEvent] for the full list of properties and methods.
+
+## See also
+
+- [Enter](enter.md)
+- [Leave](leave.md)
+- [MouseDown](mouse_down.md)
+- [MouseEvent][textual.events.MouseEvent]
+- [MouseMove](mouse_move.md)
+- [MouseScrollDown](mouse_scroll_down.md)
+- [MouseScrollUp](mouse_scroll_up.md)
+- [MouseUp](mouse_up.md)

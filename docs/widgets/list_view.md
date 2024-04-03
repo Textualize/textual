@@ -25,7 +25,7 @@ The example below shows an app with a simple `ListView`.
 
 === "list_view.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/widgets/list_view.tcss"
     ```
 

@@ -5,12 +5,13 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import TYPE_CHECKING, NamedTuple, Tuple, overload
 
+from typing_extensions import Literal, get_args
+
 if TYPE_CHECKING:
     from tree_sitter import Node
     from tree_sitter.binding import Query
 
 from textual._cells import cell_len
-from textual._types import Literal, get_args
 from textual.geometry import Size
 
 Newline = Literal["\r\n", "\n", "\r"]
@@ -51,7 +52,7 @@ def _detect_newline_style(text: str) -> Newline:
         text: The text to inspect.
 
     Returns:
-        The NewlineStyle used in the file.
+        The Newline used in the file.
     """
     if "\r\n" in text:  # Windows newline
         return "\r\n"
@@ -89,6 +90,16 @@ class DocumentBase(ABC):
     @abstractmethod
     def newline(self) -> Newline:
         """Return the line separator used in the document."""
+
+    @property
+    @abstractmethod
+    def lines(self) -> list[str]:
+        """Get the lines of the document as a list of strings.
+
+        The strings should *not* include newline characters. The newline
+        character used for the document can be retrieved via the newline
+        property.
+        """
 
     @abstractmethod
     def get_line(self, index: int) -> str:
@@ -132,10 +143,10 @@ class DocumentBase(ABC):
 
     def query_syntax_tree(
         self,
-        query: "Query",
+        query: Query,
         start_point: tuple[int, int] | None = None,
         end_point: tuple[int, int] | None = None,
-    ) -> list[tuple["Node", str]]:
+    ) -> list[tuple[Node, str]]:
         """Query the tree-sitter syntax tree.
 
         The default implementation always returns an empty list.
@@ -152,7 +163,7 @@ class DocumentBase(ABC):
         """
         return []
 
-    def prepare_query(self, query: str) -> "Query" | None:
+    def prepare_query(self, query: str) -> Query | None:
         return None
 
     @property
@@ -160,13 +171,22 @@ class DocumentBase(ABC):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
 
-    @overload
-    def __getitem__(self, line_index: int) -> str:
-        ...
+    @property
+    @abstractmethod
+    def start(self) -> Location:
+        """Returns the location of the start of the document (0, 0)."""
+        return (0, 0)
+
+    @property
+    @abstractmethod
+    def end(self) -> Location:
+        """Returns the location of the end of the document."""
 
     @overload
-    def __getitem__(self, line_index: slice) -> list[str]:
-        ...
+    def __getitem__(self, line_index: int) -> str: ...
+
+    @overload
+    def __getitem__(self, line_index: slice) -> list[str]: ...
 
     @abstractmethod
     def __getitem__(self, line_index: int | slice) -> str | list[str]:
@@ -231,6 +251,8 @@ class Document(DocumentBase):
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
+
+        This is the only method by which a document may be updated.
 
         Args:
             start: A tuple (row, column) where the edit starts.
@@ -320,6 +342,53 @@ class Document(DocumentBase):
         """Returns the number of lines in the document."""
         return len(self._lines)
 
+    @property
+    def start(self) -> Location:
+        """Returns the location of the start of the document (0, 0)."""
+        return super().start
+
+    @property
+    def end(self) -> Location:
+        """Returns the location of the end of the document."""
+        last_line = self._lines[-1]
+        return (self.line_count, len(last_line))
+
+    def get_index_from_location(self, location: Location) -> int:
+        """Given a location, returns the index from the document's text.
+
+        Args:
+            location: The location in the document.
+
+        Returns:
+            The index in the document's text.
+        """
+        row, column = location
+        index = row * len(self.newline) + column
+        for line_index in range(row):
+            index += len(self.get_line(line_index))
+        return index
+
+    def get_location_from_index(self, index: int) -> Location:
+        """Given an index in the document's text, returns the corresponding location.
+
+        Args:
+            index: The index in the document's text.
+
+        Returns:
+            The corresponding location.
+        """
+        column_index = 0
+        newline_length = len(self.newline)
+        for line_index in range(self.line_count):
+            next_column_index = (
+                column_index + len(self.get_line(line_index)) + newline_length
+            )
+            if index < next_column_index:
+                return (line_index, index - column_index)
+            elif index == next_column_index:
+                return (line_index + 1, 0)
+            column_index = next_column_index
+
     def get_line(self, index: int) -> str:
         """Returns the line with the given index from the document.
 
@@ -333,12 +402,10 @@ class Document(DocumentBase):
         return line_string
 
     @overload
-    def __getitem__(self, line_index: int) -> str:
-        ...
+    def __getitem__(self, line_index: int) -> str: ...
 
     @overload
-    def __getitem__(self, line_index: slice) -> list[str]:
-        ...
+    def __getitem__(self, line_index: slice) -> list[str]: ...
 
     def __getitem__(self, line_index: int | slice) -> str | list[str]:
         """Return the content of a line as a string, excluding newline characters.

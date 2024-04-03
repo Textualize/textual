@@ -2,7 +2,7 @@
 
 In the previous chapter we introduced the [DOM](../guide/CSS.md#the-dom) which is how Textual apps keep track of widgets. We saw how you can apply styles to the DOM with CSS [selectors](./CSS.md#selectors).
 
-Selectors are a very useful idea and can do more that apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
+Selectors are a very useful idea and can do more than apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
 
 ## Query one
 
@@ -116,7 +116,7 @@ If the last widget is *not* a button, Textual will raise a [WrongType][textual.c
 
 ## Filter
 
-Query objects have a [filter][textual.css.query.DOMQuery.filter] method which further refines a query. This method will return a new query object with widgets that match both the original query _and_ the new selector
+Query objects have a [filter][textual.css.query.DOMQuery.filter] method which further refines a query. This method will return a new query object with widgets that match both the original query _and_ the new selector.
 
 Let's say we have a query which gets all the buttons in an app, and we want a new query object with just the disabled buttons. We could write something like this:
 
@@ -161,10 +161,12 @@ for widget in self.query("Button"):
 
 Here are the other loop-free methods on query objects:
 
-- [set_class][textual.css.query.DOMQuery.set_class] Sets a CSS class (or classes) on matched widgets.
 - [add_class][textual.css.query.DOMQuery.add_class] Adds a CSS class (or classes) to matched widgets.
-- [remove_class][textual.css.query.DOMQuery.remove_class] Removes a CSS class (or classes) from matched widgets.
-- [toggle_class][textual.css.query.DOMQuery.toggle_class] Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.
-- [remove][textual.css.query.DOMQuery.remove] Removes matched widgets from the DOM.
+- [blur][textual.css.query.DOMQuery.focus] Blurs (removes focus) from matching widgets.
+- [focus][textual.css.query.DOMQuery.focus] Focuses the first matching widgets.
 - [refresh][textual.css.query.DOMQuery.refresh] Refreshes matched widgets.
-
+- [remove_class][textual.css.query.DOMQuery.remove_class] Removes a CSS class (or classes) from matched widgets.
+- [remove][textual.css.query.DOMQuery.remove] Removes matched widgets from the DOM.
+- [set_class][textual.css.query.DOMQuery.set_class] Sets a CSS class (or classes) on matched widgets.
+- [set][textual.css.query.DOMQuery.set] Sets common attributes on a widget.
+- [toggle_class][textual.css.query.DOMQuery.toggle_class] Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.

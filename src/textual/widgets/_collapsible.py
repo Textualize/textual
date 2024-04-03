@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from rich.console import RenderableType
-from rich.text import Text
-
 from .. import events
 from ..app import ComposeResult
 from ..binding import Binding
@@ -11,11 +8,12 @@ from ..css.query import NoMatches
 from ..message import Message
 from ..reactive import reactive
 from ..widget import Widget
+from ..widgets import Static
 
 __all__ = ["Collapsible", "CollapsibleTitle"]
 
 
-class CollapsibleTitle(Widget, can_focus=True):
+class CollapsibleTitle(Static, can_focus=True):
     """Title and symbol for the Collapsible."""
 
     DEFAULT_CSS = """
@@ -36,7 +34,9 @@ class CollapsibleTitle(Widget, can_focus=True):
     }
     """
 
-    BINDINGS = [Binding("enter", "toggle", "Toggle collapsible", show=False)]
+    BINDINGS = [
+        Binding("enter", "toggle_collapsible", "Toggle collapsible", show=False)
+    ]
     """
     | Key(s) | Description |
     | :- | :- |
@@ -44,6 +44,7 @@ class CollapsibleTitle(Widget, can_focus=True):
     """
 
     collapsed = reactive(True)
+    label = reactive("Toggle")
 
     def __init__(
         self,
@@ -57,7 +58,9 @@ class CollapsibleTitle(Widget, can_focus=True):
         self.collapsed_symbol = collapsed_symbol
         self.expanded_symbol = expanded_symbol
         self.label = label
-        self.collapse = collapsed
+        self.collapsed = collapsed
+        self._collapsed_label = f"{collapsed_symbol} {label}"
+        self._expanded_label = f"{expanded_symbol} {label}"
 
     class Toggle(Message):
         """Request toggle."""
@@ -67,22 +70,30 @@ class CollapsibleTitle(Widget, can_focus=True):
         event.stop()
         self.post_message(self.Toggle())
 
-    def action_toggle(self) -> None:
+    def action_toggle_collapsible(self) -> None:
         """Toggle the state of the parent collapsible."""
         self.post_message(self.Toggle())
 
-    def render(self) -> RenderableType:
-        """Compose right/down arrow and label."""
+    def _watch_label(self, label: str) -> None:
+        self._collapsed_label = f"{self.collapsed_symbol} {label}"
+        self._expanded_label = f"{self.expanded_symbol} {label}"
         if self.collapsed:
-            return Text(f"{self.collapsed_symbol} {self.label}")
+            self.update(self._collapsed_label)
         else:
-            return Text(f"{self.expanded_symbol} {self.label}")
+            self.update(self._expanded_label)
+
+    def _watch_collapsed(self, collapsed: bool) -> None:
+        if collapsed:
+            self.update(self._collapsed_label)
+        else:
+            self.update(self._expanded_label)
 
 
 class Collapsible(Widget):
     """A collapsible container."""
 
-    collapsed = reactive(True)
+    collapsed = reactive(True, init=False)
+    title = reactive("Toggle")
 
     DEFAULT_CSS = """
     Collapsible {
@@ -98,6 +109,42 @@ class Collapsible(Widget):
         display: none;
     }
     """
+
+    class Toggled(Message):
+        """Parent class subclassed by `Collapsible` messages.
+
+        Can be handled with `on(Collapsible.Toggled)` if you want to handle expansions
+        and collapsed in the same way, or you can handle the specific events individually.
+        """
+
+        def __init__(self, collapsible: Collapsible) -> None:
+            """Create an instance of the message.
+
+            Args:
+                collapsible: The `Collapsible` widget that was toggled.
+            """
+            self.collapsible: Collapsible = collapsible
+            """The collapsible that was toggled."""
+            super().__init__()
+
+        @property
+        def control(self) -> Collapsible:
+            """An alias for [Toggled.collapsible][textual.widgets.Collapsible.Toggled.collapsible]."""
+            return self.collapsible
+
+    class Expanded(Toggled):
+        """Event sent when the `Collapsible` widget is expanded.
+
+        Can be handled using `on_collapsible_expanded` in a subclass of
+        [`Collapsible`][textual.widgets.Collapsible] or in a parent widget in the DOM.
+        """
+
+    class Collapsed(Toggled):
+        """Event sent when the `Collapsible` widget is collapsed.
+
+        Can be handled using `on_collapsible_collapsed` in a subclass of
+        [`Collapsible`][textual.widgets.Collapsible] or in a parent widget in the DOM.
+        """
 
     class Contents(Container):
         DEFAULT_CSS = """
@@ -133,23 +180,28 @@ class Collapsible(Widget):
             classes: The CSS classes of the collapsible.
             disabled: Whether the collapsible is disabled or not.
         """
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._title = CollapsibleTitle(
             label=title,
             collapsed_symbol=collapsed_symbol,
             expanded_symbol=expanded_symbol,
             collapsed=collapsed,
         )
+        self.title = title
         self._contents_list: list[Widget] = list(children)
-        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self.collapsed = collapsed
 
-    def on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
+    def _on_collapsible_title_toggle(self, event: CollapsibleTitle.Toggle) -> None:
         event.stop()
         self.collapsed = not self.collapsed
 
     def _watch_collapsed(self, collapsed: bool) -> None:
         """Update collapsed state when reactive is changed."""
         self._update_collapsed(collapsed)
+        if self.collapsed:
+            self.post_message(self.Collapsed(self))
+        else:
+            self.post_message(self.Expanded(self))
 
     def _update_collapsed(self, collapsed: bool) -> None:
         """Update children to match collapsed state."""
@@ -159,7 +211,7 @@ class Collapsible(Widget):
         except NoMatches:
             pass
 
-    def _on_mount(self) -> None:
+    def _on_mount(self, event: events.Mount) -> None:
         """Initialise collapsed state."""
         self._update_collapsed(self.collapsed)
 
@@ -174,3 +226,6 @@ class Collapsible(Widget):
             widget: A Widget to add.
         """
         self._contents_list.append(widget)
+
+    def _watch_title(self, title: str) -> None:
+        self._title.label = title

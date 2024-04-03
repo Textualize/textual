@@ -65,23 +65,22 @@ def test_eq():
 
 
 def test_adjust_cell_length():
-    for repeat in range(3):
-        assert Strip([]).adjust_cell_length(3) == Strip([Segment("   ")])
-        assert Strip([Segment("f")]).adjust_cell_length(3) == Strip(
-            [Segment("f"), Segment("  ")]
-        )
-        assert Strip([Segment("💩")]).adjust_cell_length(3) == Strip(
-            [Segment("💩"), Segment(" ")]
-        )
+    assert Strip([]).adjust_cell_length(3) == Strip([Segment("   ")])
+    assert Strip([Segment("f")]).adjust_cell_length(3) == Strip(
+        [Segment("f"), Segment("  ")]
+    )
+    assert Strip([Segment("💩")]).adjust_cell_length(3) == Strip(
+        [Segment("💩"), Segment(" ")]
+    )
 
-        assert Strip([Segment("💩💩")]).adjust_cell_length(3) == Strip([Segment("💩 ")])
-        assert Strip([Segment("💩💩")]).adjust_cell_length(4) == Strip([Segment("💩💩")])
-        assert Strip([Segment("💩"), Segment("💩💩")]).adjust_cell_length(2) == Strip(
-            [Segment("💩")]
-        )
-        assert Strip([Segment("💩"), Segment("💩💩")]).adjust_cell_length(4) == Strip(
-            [Segment("💩"), Segment("💩")]
-        )
+    assert Strip([Segment("💩💩")]).adjust_cell_length(3) == Strip([Segment("💩 ")])
+    assert Strip([Segment("💩💩")]).adjust_cell_length(4) == Strip([Segment("💩💩")])
+    assert Strip([Segment("💩"), Segment("💩💩")]).adjust_cell_length(2) == Strip(
+        [Segment("💩")]
+    )
+    assert Strip([Segment("💩"), Segment("💩💩")]).adjust_cell_length(4) == Strip(
+        [Segment("💩"), Segment("💩")]
+    )
 
 
 def test_extend_cell_length():
@@ -101,8 +100,6 @@ def test_simplify():
 def test_apply_filter():
     strip = Strip([Segment("foo", Style.parse("red"))])
     expected = Strip([Segment("foo", Style.parse("#1b1b1b"))])
-    print(repr(strip))
-    print(repr(expected))
     assert strip.apply_filter(Monochrome(), Color(0, 0, 0)) == expected
 
 
@@ -128,26 +125,37 @@ def test_style_links():
 
 
 def test_crop():
-    for repeat in range(3):
-        assert Strip([Segment("foo")]).crop(0, 3) == Strip([Segment("foo")])
-        assert Strip([Segment("foo")]).crop(0, 2) == Strip([Segment("fo")])
-        assert Strip([Segment("foo")]).crop(0, 1) == Strip([Segment("f")])
+    assert Strip([Segment("foo")]).crop(0, 3) == Strip([Segment("foo")])
+    assert Strip([Segment("foo")]).crop(0, 2) == Strip([Segment("fo")])
+    assert Strip([Segment("foo")]).crop(0, 1) == Strip([Segment("f")])
 
-        assert Strip([Segment("foo")]).crop(1, 3) == Strip([Segment("oo")])
-        assert Strip([Segment("foo")]).crop(1, 2) == Strip([Segment("o")])
-        assert Strip([Segment("foo")]).crop(1, 1) == Strip([Segment("")])
+    assert Strip([Segment("foo")]).crop(1, 3) == Strip([Segment("oo")])
+    assert Strip([Segment("foo")]).crop(1, 2) == Strip([Segment("o")])
+    assert Strip([Segment("foo")]).crop(1, 1) == Strip([Segment("")])
 
-        assert Strip([Segment("foo💩"), Segment("b💩ar"), Segment("ba💩z")]).crop(
-            1, 6
-        ) == Strip([Segment("oo💩"), Segment("b")])
+    assert Strip([Segment("foo💩"), Segment("b💩ar"), Segment("ba💩z")]).crop(
+        1, 6
+    ) == Strip([Segment("oo💩"), Segment("b")])
+
+
+@pytest.mark.parametrize(
+    "text,crop,output",
+    [
+        ["foo", (0, 5), [Segment("foo")]],
+        ["foo", (2, 5), [Segment("o")]],
+        ["foo", (3, 5), []],
+        ["foo", (4, 6), []],
+    ],
+)
+def test_crop_out_of_bounds(text, crop, output):
+    assert Strip([Segment(text)]).crop(*crop) == Strip(output)
 
 
 def test_divide():
-    for repeat in range(3):
-        assert Strip([Segment("foo")]).divide([1, 2]) == [
-            Strip([Segment("f")]),
-            Strip([Segment("o")]),
-        ]
+    assert Strip([Segment("foo")]).divide([1, 2]) == [
+        Strip([Segment("f")]),
+        Strip([Segment("o")]),
+    ]
 
 
 @pytest.mark.parametrize(

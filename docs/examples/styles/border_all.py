@@ -4,6 +4,8 @@ from textual.widgets import Label
 
 
 class AllBordersApp(App):
+    CSS_PATH = "border_all.tcss"
+
     def compose(self):
         yield Grid(
             Label("ascii", id="ascii"),
@@ -15,6 +17,7 @@ class AllBordersApp(App):
             Label("hkey", id="hkey"),
             Label("inner", id="inner"),
             Label("outer", id="outer"),
+            Label("panel", id="panel"),
             Label("round", id="round"),
             Label("solid", id="solid"),
             Label("tall", id="tall"),
@@ -24,4 +27,6 @@ class AllBordersApp(App):
         )
 
 
-app = AllBordersApp(css_path="border_all.tcss")
+if __name__ == "__main__":
+    app = AllBordersApp()
+    app.run()

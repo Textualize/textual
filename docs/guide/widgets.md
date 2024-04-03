@@ -24,7 +24,7 @@ Let's create a simple custom widget to display a greeting.
 --8<-- "docs/examples/guide/widgets/hello01.py"
 ```
 
-The three highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
+The highlighted lines define a custom widget class with just a [render()][textual.widget.Widget.render] method. Textual will display whatever is returned from render in the content area of your widget. We have returned a string in the code above, but there are other possible return types which we will cover later.
 
 Note that the text contains tags in square brackets, i.e. `[b]`. This is [console markup](https://rich.readthedocs.io/en/latest/markup.html) which allows you to embed various styles within your content. If you run this you will find that `World` is in bold.
 
@@ -42,7 +42,7 @@ This (very simple) custom widget may be [styled](./styles.md) in the same way as
 
 === "hello02.tcss"
 
-    ```sass title="hello02.tcss"
+    ```css title="hello02.tcss"
     --8<-- "docs/examples/guide/widgets/hello02.tcss"
     ```
 
@@ -59,13 +59,13 @@ Let's use Static to create a widget which cycles through "hello" in various lang
 
 === "hello03.py"
 
-    ```python title="hello03.py" hl_lines="24-36"
+    ```python title="hello03.py" hl_lines="23-35"
     --8<-- "docs/examples/guide/widgets/hello03.py"
     ```
 
 === "hello03.tcss"
 
-    ```sass title="hello03.tcss"
+    ```css title="hello03.tcss"
     --8<-- "docs/examples/guide/widgets/hello03.tcss"
     ```
 
@@ -88,13 +88,13 @@ Here's the Hello example again, this time the widget has embedded default CSS:
 
 === "hello04.py"
 
-    ```python title="hello04.py" hl_lines="27-36"
+    ```python title="hello04.py" hl_lines="26-35"
     --8<-- "docs/examples/guide/widgets/hello04.py"
     ```
 
 === "hello04.tcss"
 
-    ```sass title="hello04.tcss"
+    ```css title="hello04.tcss"
     --8<-- "docs/examples/guide/widgets/hello04.tcss"
     ```
 
@@ -109,7 +109,7 @@ Default CSS is *scoped* by default.
 All this means is that CSS defined in `DEFAULT_CSS` will affect the widget and potentially its children only.
 This is to prevent you from inadvertently breaking an unrelated widget.
 
-You can disabled scoped CSS by setting the class var `SCOPED_CSS` to `False`.
+You can disable scoped CSS by setting the class var `SCOPED_CSS` to `False`.
 
 #### Default specificity
 
@@ -131,13 +131,13 @@ Let's use markup links in the hello example so that the greeting becomes a link 
 
 === "hello05.py"
 
-    ```python title="hello05.py"  hl_lines="24-33"
+    ```python title="hello05.py"  hl_lines="23-32"
     --8<-- "docs/examples/guide/widgets/hello05.py"
     ```
 
 === "hello05.tcss"
 
-    ```sass title="hello05.tcss"
+    ```css title="hello05.tcss"
     --8<-- "docs/examples/guide/widgets/hello05.tcss"
     ```
 
@@ -175,7 +175,7 @@ Let's demonstrate setting a title, both as a class variable and a instance varia
 
 === "hello06.tcss"
 
-    ```sass title="hello06.tcss"
+    ```css title="hello06.tcss"
     --8<-- "docs/examples/guide/widgets/hello06.tcss"
     ```
 
@@ -206,7 +206,7 @@ This app will "play" fizz buzz by displaying a table of the first 15 numbers and
 
 === "fizzbuzz01.tcss"
 
-    ```sass title="fizzbuzz01.tcss" hl_lines="32-35"
+    ```css title="fizzbuzz01.tcss" hl_lines="32-35"
     --8<-- "docs/examples/guide/widgets/fizzbuzz01.tcss"
     ```
 
@@ -230,7 +230,7 @@ Let's modify the default width for the fizzbuzz example. By default, the table w
 
 === "fizzbuzz02.tcss"
 
-    ```sass title="fizzbuzz02.tcss"
+    ```css title="fizzbuzz02.tcss"
     --8<-- "docs/examples/guide/widgets/fizzbuzz02.tcss"
     ```
 

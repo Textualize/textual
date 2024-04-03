@@ -30,7 +30,7 @@ This examples creates a widget with a height of 50% of the screen.
 
 === "height.tcss"
 
-    ```sass hl_lines="3"
+    ```css hl_lines="3"
     --8<-- "docs/examples/styles/height.tcss"
     ```
 
@@ -47,7 +47,7 @@ Open the CSS file tab to see the comments that explain how each height is comput
 
 === "height_comparison.py"
 
-    ```py hl_lines="15-23"
+    ```py hl_lines="17-25"
     --8<-- "docs/examples/styles/height_comparison.py"
     ```
 
@@ -55,7 +55,7 @@ Open the CSS file tab to see the comments that explain how each height is comput
 
 === "height_comparison.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
+    ```css hl_lines="2 5 8 11 14 17 20 23 26"
     --8<-- "docs/examples/styles/height_comparison.tcss"
     ```
 
@@ -73,7 +73,7 @@ Open the CSS file tab to see the comments that explain how each height is comput
 
 ## CSS
 
-```sass
+```css
 /* Explicit cell height */
 height: 10;
 

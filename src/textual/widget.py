@@ -4,14 +4,15 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import wait
+from asyncio import Lock, create_task, wait
 from collections import Counter
+from contextlib import asynccontextmanager
 from fractions import Fraction
 from itertools import islice
-from operator import attrgetter
 from types import TracebackType
 from typing import (
     TYPE_CHECKING,
+    AsyncGenerator,
     Awaitable,
     ClassVar,
     Collection,
@@ -31,45 +32,60 @@ from rich.console import (
     ConsoleRenderable,
     JustifyMethod,
     RenderableType,
-    RenderResult,
-    RichCast,
 )
+from rich.console import RenderResult as RichRenderResult
+from rich.console import RichCast
 from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
-from rich.traceback import Traceback
 from typing_extensions import Self
+
+if TYPE_CHECKING:
+    from .app import RenderResult
 
 from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
-from ._asyncio import create_task
-from ._cache import FIFOCache
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
+from ._types import AnimationLevel
 from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
+from .cache import FIFOCache
+from .css.match import match
+from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
 from .css.scalar import ScalarOffset
 from .dom import DOMNode, NoScreen
-from .geometry import NULL_REGION, NULL_SPACING, Offset, Region, Size, Spacing, clamp
+from .geometry import (
+    NULL_REGION,
+    NULL_SIZE,
+    NULL_SPACING,
+    Offset,
+    Region,
+    Size,
+    Spacing,
+    clamp,
+)
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
 from .notifications import Notification, SeverityLevel
 from .reactive import Reactive
 from .render import measure
+from .renderables.blank import Blank
 from .strip import Strip
 from .walk import walk_depth_first
 
 if TYPE_CHECKING:
     from .app import App, ComposeResult
+    from .css.query import QueryType
     from .message_pump import MessagePump
     from .scrollbar import (
         ScrollBar,
@@ -86,6 +102,9 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
     "end": "right",
     "justify": "full",
 }
+
+
+_NULL_STYLE = Style()
 
 
 class AwaitMount:
@@ -136,7 +155,7 @@ class _Styled:
 
     def __rich_console__(
         self, console: "Console", options: "ConsoleOptions"
-    ) -> "RenderResult":
+    ) -> "RichRenderResult":
         style = console.get_style(self.style)
         result_segments = console.render(self.renderable, options)
 
@@ -227,6 +246,10 @@ class _BorderTitle:
         return title.markup
 
 
+class BadWidgetName(Exception):
+    """Raised when widget class names do not satisfy the required restrictions."""
+
+
 @rich.repr.auto
 class Widget(DOMNode):
     """
@@ -246,12 +269,12 @@ class Widget(DOMNode):
         scrollbar-corner-color: $panel-darken-1;
         scrollbar-size-vertical: 2;
         scrollbar-size-horizontal: 1;
-        link-background:;
+        link-background: initial;
         link-color: $text;
         link-style: underline;
-        link-hover-background: $accent;
-        link-hover-color: $text;
-        link-hover-style: bold not underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
     """
     COMPONENT_CLASSES: ClassVar[set[str]] = set()
@@ -282,6 +305,9 @@ class Widget(DOMNode):
     loading: Reactive[bool] = Reactive(False)
     """If set to `True` this widget will temporarily be replaced with a loading indicator."""
 
+    # Default sort order, incremented by constructor
+    _sort_order: ClassVar[int] = 0
+
     def __init__(
         self,
         *children: Widget,
@@ -299,13 +325,17 @@ class Widget(DOMNode):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
-        self._size = Size(0, 0)
-        self._container_size = Size(0, 0)
+        _null_size = NULL_SIZE
+        self._size = _null_size
+        self._container_size = _null_size
         self._layout_required = False
         self._repaint_required = False
         self._scroll_required = False
+        self._recompose_required = False
         self._default_layout = VerticalLayout()
         self._animate: BoundAnimator | None = None
+        Widget._sort_order += 1
+        self.sort_order = Widget._sort_order
         self.highlight_style: Style | None = None
 
         self._vertical_scrollbar: ScrollBar | None = None
@@ -315,30 +345,30 @@ class Widget(DOMNode):
         self._border_title: Text | None = None
         self._border_subtitle: Text | None = None
 
-        self._render_cache = _RenderCache(Size(0, 0), [])
+        self._render_cache = _RenderCache(_null_size, [])
         # Regions which need to be updated (in Widget)
         self._dirty_regions: set[Region] = set()
         # Regions which need to be transferred from cache to screen
         self._repaint_regions: set[Region] = set()
 
         # Cache the auto content dimensions
-        # TODO: add mechanism to explicitly clear this
         self._content_width_cache: tuple[object, int] = (None, 0)
         self._content_height_cache: tuple[object, int] = (None, 0)
 
-        self._arrangement_cache: FIFOCache[
-            tuple[Size, int], DockArrangeResult
-        ] = FIFOCache(4)
+        self._arrangement_cache: FIFOCache[tuple[Size, int], DockArrangeResult] = (
+            FIFOCache(4)
+        )
 
         self._styles_cache = StylesCache()
         self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
-        self._stabilize_scrollbar: tuple[Size, str, str] | None = None
-        """Used to prevent scrollbar logic getting stuck in an infinite loop."""
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
         self._absolute_offset: Offset | None = None
         """Force an absolute offset for the widget (used by tooltips)."""
+
+        self._scrollbar_changes: set[tuple[bool, bool]] = set()
+        """Used to stabilize scrollbars."""
 
         super().__init__(
             name=name,
@@ -354,13 +384,20 @@ class Widget(DOMNode):
                 raise TypeError(
                     f"Widget positional arguments must be Widget subclasses; not {child!r}"
                 )
-
-        self._add_children(*children)
+        self._pending_children = list(children)
         self.disabled = disabled
         if self.BORDER_TITLE:
             self.border_title = self.BORDER_TITLE
         if self.BORDER_SUBTITLE:
             self.border_subtitle = self.BORDER_SUBTITLE
+
+        self.lock = Lock()
+        """`asyncio` lock to be used to synchronize the state of the widget.
+
+        Two different tasks might call methods on a widget at the same time, which
+        might result in a race condition.
+        This can be fixed by adding `async with widget.lock:` around the method calls.
+        """
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
@@ -381,7 +418,7 @@ class Widget(DOMNode):
     scroll_target_y = Reactive(0.0, repaint=False)
 
     show_vertical_scrollbar: Reactive[bool] = Reactive(False, layout=True)
-    """Show a horizontal scrollbar?"""
+    """Show a vertical scrollbar?"""
 
     show_horizontal_scrollbar: Reactive[bool] = Reactive(False, layout=True)
     """Show a horizontal scrollbar?"""
@@ -390,6 +427,11 @@ class Widget(DOMNode):
     """A title to show in the top border (if there is one)."""
     border_subtitle: str | Text | None = _BorderTitle()  # type: ignore
     """A title to show in the bottom border (if there is one)."""
+
+    @property
+    def is_mounted(self) -> bool:
+        """Check if this widget is mounted."""
+        return self._is_mounted
 
     @property
     def siblings(self) -> list[Widget]:
@@ -424,6 +466,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_vertical_scrollbar
 
     @property
@@ -432,6 +476,8 @@ class Widget(DOMNode):
 
         May be overridden if you want different logic regarding allowing scrolling.
         """
+        if self._check_disabled():
+            return False
         return self.is_scrollable and self.show_horizontal_scrollbar
 
     @property
@@ -468,6 +514,15 @@ class Widget(DOMNode):
                 break
         return opacity
 
+    def _check_disabled(self) -> bool:
+        """Check if the widget is disabled either explicitly by setting `disabled`,
+        or implicitly by setting `loading`.
+
+        Returns:
+            True if the widget should be disabled.
+        """
+        return self.disabled or self.loading
+
     @property
     def tooltip(self) -> RenderableType | None:
         """Tooltip for the widget, or `None` for no tooltip."""
@@ -480,6 +535,41 @@ class Widget(DOMNode):
             self.screen._update_tooltip(self)
         except NoScreen:
             pass
+
+    def allow_focus(self) -> bool:
+        """Check if the widget is permitted to focus.
+
+        The base class returns [`can_focus`][textual.widget.Widget.can_focus].
+        This method maybe overridden if additional logic is required.
+
+        Returns:
+            `True` if the widget may be focused, or `False` if it may not be focused.
+        """
+        return self.can_focus
+
+    def allow_focus_children(self) -> bool:
+        """Check if a widget's children may be focused.
+
+        The base class returns [`can_focus_children`][textual.widget.Widget.can_focus_children].
+        This method maybe overridden if additional logic is required.
+
+        Returns:
+            `True` if the widget's children may be focused, or `False` if the widget's children may not be focused.
+        """
+        return self.can_focus_children
+
+    def compose_add_child(self, widget: Widget) -> None:
+        """Add a node to children.
+
+        This is used by the compose process when it adds children.
+        There is no need to use it directly, but you may want to override it in a subclass
+        if you want children to be attached to a different node.
+
+        Args:
+            widget: A Widget to add.
+        """
+        _rich_traceback_omit = True
+        self._pending_children.append(widget)
 
     def __enter__(self) -> Self:
         """Use as context manager when composing."""
@@ -500,6 +590,30 @@ class Widget(DOMNode):
         else:
             self.app._composed[-1].append(composed)
 
+    def clear_cached_dimensions(self) -> None:
+        """Clear cached results of `get_content_width` and `get_content_height`.
+
+        Call if the widget's renderable changes size after the widget has been created.
+
+        !!! note
+
+            This is not required if you are extending [`Static`][textual.widgets.Static].
+
+        """
+        self._content_width_cache = (None, 0)
+        self._content_height_cache = (None, 0)
+
+    def get_loading_widget(self) -> Widget:
+        """Get a widget to display a loading indicator.
+
+        The default implementation will defer to App.get_loading_widget.
+
+        Returns:
+            A widget in place of this widget to indicate a loading.
+        """
+        loading_widget = self.app.get_loading_widget()
+        return loading_widget
+
     def set_loading(self, loading: bool) -> Awaitable:
         """Set or reset the loading state of this widget.
 
@@ -511,13 +625,15 @@ class Widget(DOMNode):
         Returns:
             An optional awaitable.
         """
-        from textual.widgets import LoadingIndicator
 
         if loading:
-            loading_indicator = LoadingIndicator()
-            return loading_indicator.apply(self)
+            loading_indicator = self.get_loading_widget()
+            loading_indicator.add_class("-textual-loading-indicator")
+            await_mount = self.mount(loading_indicator)
+            return await_mount
         else:
-            return LoadingIndicator.clear(self)
+            await_remove = self.query(".-textual-loading-indicator").remove()
+            return await_remove
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
@@ -526,12 +642,10 @@ class Widget(DOMNode):
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
     @overload
-    def get_child_by_id(self, id: str) -> Widget:
-        ...
+    def get_child_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -562,12 +676,12 @@ class Widget(DOMNode):
         return child
 
     @overload
-    def get_widget_by_id(self, id: str) -> Widget:
-        ...
+    def get_widget_by_id(self, id: str) -> Widget: ...
 
     @overload
-    def get_widget_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType:
-        ...
+    def get_widget_by_id(
+        self, id: str, expect_type: type[ExpectType]
+    ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -604,16 +718,18 @@ class Widget(DOMNode):
         raise NoMatches(f"No descendant found with id={id!r}")
 
     def get_child_by_type(self, expect_type: type[ExpectType]) -> ExpectType:
-        """Get a child of a give type.
+        """Get the first immediate child of a given type.
+
+        Only returns exact matches, and so will not match subclasses of the given type.
 
         Args:
-            expect_type: The type of the expected child.
+            expect_type: The type of the child to search for.
 
         Raises:
-            NoMatches: If no valid child is found.
+            NoMatches: If no matching child is found.
 
         Returns:
-            A widget.
+            The first immediate child widget with the expected type.
         """
         for child in self._nodes:
             # We want the child with the exact type (not subclasses)
@@ -670,8 +786,6 @@ class Widget(DOMNode):
         Returns:
             Widget locations.
         """
-        assert self.is_container
-
         cache_key = (size, self._nodes._updates)
         cached_result = self._arrangement_cache.get(cache_key)
         if cached_result is not None:
@@ -686,7 +800,6 @@ class Widget(DOMNode):
     def _clear_arrangement_cache(self) -> None:
         """Clear arrangement cache, forcing a new arrange operation."""
         self._arrangement_cache.clear()
-        self._stabilize_scrollbar = None
 
     def _get_virtual_dom(self) -> Iterable[Widget]:
         """Get widgets not part of the DOM.
@@ -777,7 +890,6 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-
         # Check for duplicate IDs in the incoming widgets
         ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
         unique_ids = set(ids_to_mount)
@@ -848,9 +960,28 @@ class Widget(DOMNode):
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
+    @overload
     def move_child(
         self,
         child: int | Widget,
+        *,
+        before: int | Widget,
+        after: None = None,
+    ) -> None: ...
+
+    @overload
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
+        after: int | Widget,
+        before: None = None,
+    ) -> None: ...
+
+    def move_child(
+        self,
+        child: int | Widget,
+        *,
         before: int | Widget | None = None,
         after: int | Widget | None = None,
     ) -> None:
@@ -876,10 +1007,6 @@ class Widget(DOMNode):
         elif before is not None and after is not None:
             raise WidgetError("Only one of `before` or `after` can be handled.")
 
-        # We short-circuit the no-op, otherwise it will error later down the road.
-        if child is before or child is after:
-            return
-
         def _to_widget(child: int | Widget, called: str) -> Widget:
             """Ensure a given child reference is a Widget."""
             if isinstance(child, int):
@@ -904,6 +1031,9 @@ class Widget(DOMNode):
             cast("int | Widget", before if after is None else after), "move towards"
         )
 
+        if child is target:
+            return  # Nothing to be done.
+
         # At this point we should know what we're moving, and it should be a
         # child; where we're moving it to, which should be within the child
         # list; and how we're supposed to move it. All that's left is doing
@@ -920,19 +1050,37 @@ class Widget(DOMNode):
     def compose(self) -> ComposeResult:
         """Called by Textual to create child widgets.
 
-        Extend this to build a UI.
+        This method is called when a widget is mounted or by setting `recompose=True` when
+        calling [`refresh()`][textual.widget.Widget.refresh].
+
+        Note that you don't typically need to explicitly call this method.
 
         Example:
             ```python
             def compose(self) -> ComposeResult:
                 yield Header()
-                yield Container(
-                    Tree(), Viewer()
-                )
+                yield Label("Press the button below:")
+                yield Button()
                 yield Footer()
             ```
         """
         yield from ()
+
+    async def _check_recompose(self) -> None:
+        """Check if a recompose is required."""
+        if self._recompose_required:
+            self._recompose_required = False
+            await self.recompose()
+
+    async def recompose(self) -> None:
+        """Recompose the widget.
+
+        Recomposing will remove children and call `self.compose` again to remount.
+        """
+        if self._parent is not None:
+            async with self.batch():
+                await self.query("*").exclude(".-textual-system").remove()
+                await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -941,10 +1089,10 @@ class Widget(DOMNode):
             app: App instance.
         """
         # Parse the Widget's CSS
-        for path, css, tie_breaker, scope in self._get_default_css():
+        for read_from, css, tie_breaker, scope in self._get_default_css():
             self.app.stylesheet.add_source(
                 css,
-                path=path,
+                read_from=read_from,
                 is_default_css=True,
                 tie_breaker=tie_breaker,
                 scope=scope,
@@ -981,8 +1129,6 @@ class Widget(DOMNode):
 
         # Container minus padding and border
         content_container = container - gutter.totals
-        # The container including the content
-        sizing_container = content_container if is_border_box else container
 
         if styles.width is None:
             # No width specified, fill available space
@@ -990,9 +1136,7 @@ class Widget(DOMNode):
         elif is_auto_width:
             # When width is auto, we want enough space to always fit the content
             content_width = Fraction(
-                self.get_content_width(
-                    content_container - styles.margin.totals, viewport
-                )
+                self.get_content_width(content_container - margin.totals, viewport)
             )
             if styles.scrollbar_gutter == "stable" and styles.overflow_x == "auto":
                 content_width += styles.scrollbar_size_vertical
@@ -1005,22 +1149,24 @@ class Widget(DOMNode):
             # An explicit width
             styles_width = styles.width
             content_width = styles_width.resolve(
-                sizing_container - styles.margin.totals, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
-            if is_border_box and styles_width.excludes_border:
+            if is_border_box:
                 content_width -= gutter.width
 
         if styles.min_width is not None:
             # Restrict to minimum width, if set
             min_width = styles.min_width.resolve(
-                content_container, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
-            content_width = max(content_width, min_width)
+            if is_border_box:
+                min_width -= gutter.width
+            content_width = max(content_width, min_width, Fraction(0))
 
         if styles.max_width is not None:
             # Restrict to maximum width, if set
             max_width = styles.max_width.resolve(
-                content_container, viewport, width_fraction
+                container - margin.totals, viewport, width_fraction
             )
             if is_border_box:
                 max_width -= gutter.width
@@ -1047,23 +1193,27 @@ class Widget(DOMNode):
             styles_height = styles.height
             # Explicit height set
             content_height = styles_height.resolve(
-                sizing_container - styles.margin.totals, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
-            if is_border_box and styles_height.excludes_border:
+            if is_border_box:
                 content_height -= gutter.height
 
         if styles.min_height is not None:
             # Restrict to minimum height, if set
             min_height = styles.min_height.resolve(
-                content_container, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
-            content_height = max(content_height, min_height)
+            if is_border_box:
+                min_height -= gutter.height
+            content_height = max(content_height, min_height, Fraction(0))
 
         if styles.max_height is not None:
             # Restrict maximum height, if set
             max_height = styles.max_height.resolve(
-                content_container, viewport, height_fraction
+                container - margin.totals, viewport, height_fraction
             )
+            if is_border_box:
+                max_height -= gutter.height
             content_height = min(content_height, max_height)
 
         content_height = max(Fraction(0), content_height)
@@ -1131,10 +1281,22 @@ class Widget(DOMNode):
                 return self._content_height_cache[1]
 
             renderable = self.render()
-            options = self._console.options.update_width(width).update(highlight=False)
-            segments = self._console.render(renderable, options)
-            # Cheaper than counting the lines returned from render_lines!
-            height = sum([text.count("\n") for text, _, _ in segments])
+            if isinstance(renderable, Text):
+                height = len(
+                    renderable.wrap(
+                        self._console,
+                        width,
+                        no_wrap=renderable.no_wrap,
+                        tab_size=renderable.tab_size or 8,
+                    )
+                )
+            else:
+                options = self._console.options.update_width(width).update(
+                    highlight=False
+                )
+                segments = self._console.render(renderable, options)
+                # Cheaper than counting the lines returned from render_lines!
+                height = sum([text.count("\n") for text, _, _ in segments])
             self._content_height_cache = (cache_key, height)
 
         return height
@@ -1275,14 +1437,6 @@ class Widget(DOMNode):
         overflow_x = styles.overflow_x
         overflow_y = styles.overflow_y
 
-        stabilize_scrollbar = (
-            self.container_size,
-            overflow_x,
-            overflow_y,
-        )
-        if self._stabilize_scrollbar == stabilize_scrollbar:
-            return
-
         width, height = self._container_size
 
         show_horizontal = False
@@ -1301,17 +1455,31 @@ class Widget(DOMNode):
         elif overflow_y == "auto":
             show_vertical = self.virtual_size.height > height
 
-        # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
-        if overflow_x == "auto" and show_vertical and not show_horizontal:
-            show_horizontal = self.virtual_size.width > (
-                width - styles.scrollbar_size_vertical
-            )
-        if overflow_y == "auto" and show_horizontal and not show_vertical:
-            show_vertical = self.virtual_size.height > (
-                height - styles.scrollbar_size_horizontal
-            )
+        _show_horizontal = show_horizontal
+        _show_vertical = show_vertical
 
-        self._stabilize_scrollbar = stabilize_scrollbar
+        if not (
+            overflow_x == "auto"
+            and overflow_y == "auto"
+            and (show_horizontal, show_vertical) in self._scrollbar_changes
+        ):
+            # When a single scrollbar is shown, the other dimension changes, so we need to recalculate.
+            if overflow_x == "auto" and show_vertical and not show_horizontal:
+                show_horizontal = self.virtual_size.width > (
+                    width - styles.scrollbar_size_vertical
+                )
+            if overflow_y == "auto" and show_horizontal and not show_vertical:
+                show_vertical = self.virtual_size.height > (
+                    height - styles.scrollbar_size_horizontal
+                )
+
+        if (
+            self.show_horizontal_scrollbar != show_horizontal
+            or self.show_vertical_scrollbar != show_vertical
+        ):
+            self._scrollbar_changes.add((_show_horizontal, _show_vertical))
+        else:
+            self._scrollbar_changes.clear()
 
         self.show_horizontal_scrollbar = show_horizontal
         self.show_vertical_scrollbar = show_vertical
@@ -1331,8 +1499,7 @@ class Widget(DOMNode):
         if not self.is_scrollable:
             return False, False
 
-        enabled = self.show_vertical_scrollbar, self.show_horizontal_scrollbar
-        return enabled
+        return (self.show_vertical_scrollbar, self.show_horizontal_scrollbar)
 
     @property
     def scrollbars_space(self) -> tuple[int, int]:
@@ -1537,7 +1704,12 @@ class Widget(DOMNode):
     @property
     def focusable(self) -> bool:
         """Can this widget currently be focused?"""
-        return self.can_focus and self.visible and not self._self_or_ancestors_disabled
+        return (
+            not self.loading
+            and self.can_focus
+            and self.visible
+            and not self._self_or_ancestors_disabled
+        )
 
     @property
     def _focus_sort_key(self) -> tuple[int, int]:
@@ -1612,6 +1784,7 @@ class Widget(DOMNode):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -1619,11 +1792,12 @@ class Widget(DOMNode):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation. Defaults to `value` if not set.
-            duration: The duration of the animate.
+            duration: The duration (in seconds) of the animation.
             speed: The speed of the animation.
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if self._animate is None:
             self._animate = self.app.animator.bind(self)
@@ -1637,6 +1811,7 @@ class Widget(DOMNode):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
+            level=level,
         )
 
     async def stop_animation(self, attribute: str, complete: bool = True) -> None:
@@ -1717,7 +1892,7 @@ class Widget(DOMNode):
         return style
 
     @property
-    def link_hover_style(self) -> Style:
+    def link_style_hover(self) -> Style:
         """Style of links underneath the mouse cursor.
 
         Returns:
@@ -1725,13 +1900,13 @@ class Widget(DOMNode):
         """
         styles = self.styles
         _, background = self.background_colors
-        hover_background = background + styles.link_hover_background
+        hover_background = background + styles.link_background_hover
         hover_color = hover_background + (
-            hover_background.get_contrast_text(styles.link_hover_color.a)
-            if styles.auto_link_hover_color
-            else styles.link_hover_color
+            hover_background.get_contrast_text(styles.link_color_hover.a)
+            if styles.auto_link_color_hover
+            else styles.link_color_hover
         )
-        style = styles.link_hover_style + Style.from_color(
+        style = styles.link_style_hover + Style.from_color(
             hover_color.rich_color,
             hover_background.rich_color,
         )
@@ -1783,6 +1958,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -1795,6 +1971,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if the scroll position changed, otherwise `False`.
@@ -1803,6 +1980,11 @@ class Widget(DOMNode):
         maybe_scroll_x = x is not None and (self.allow_horizontal_scroll or force)
         maybe_scroll_y = y is not None and (self.allow_vertical_scroll or force)
         scrolled_x = scrolled_y = False
+
+        animator = self.app.animator
+        animator.force_stop_animation(self, "scroll_x")
+        animator.force_stop_animation(self, "scroll_y")
+
         if animate:
             # TODO: configure animation speed
             if duration is None and speed is None:
@@ -1822,6 +2004,7 @@ class Widget(DOMNode):
                         duration=duration,
                         easing=easing,
                         on_complete=on_complete,
+                        level=level,
                     )
                     scrolled_x = True
             if maybe_scroll_y:
@@ -1835,6 +2018,7 @@ class Widget(DOMNode):
                         duration=duration,
                         easing=easing,
                         on_complete=on_complete,
+                        level=level,
                     )
                     scrolled_y = True
 
@@ -1866,6 +2050,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to a given (absolute) coordinate, optionally animating.
 
@@ -1878,6 +2063,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Note:
             The call to scroll is made after the next refresh.
@@ -1892,6 +2078,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_relative(
@@ -1905,6 +2092,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll relative to current position.
 
@@ -1917,6 +2105,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             None if x is None else (self.scroll_x + x),
@@ -1927,6 +2116,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_home(
@@ -1938,6 +2128,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to home position.
 
@@ -1948,6 +2139,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -1960,6 +2152,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_end(
@@ -1971,6 +2164,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll to the end of the container.
 
@@ -1981,6 +2175,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 1.0
@@ -2002,6 +2197,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
                 on_complete=on_complete,
+                level=level,
             )
 
         self.call_after_refresh(_lazily_scroll_end)
@@ -2015,6 +2211,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one cell left.
 
@@ -2025,6 +2222,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             x=self.scroll_target_x - 1,
@@ -2034,6 +2232,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_left_for_pointer(
@@ -2045,6 +2244,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll left one position, taking scroll sensitivity into account.
 
@@ -2055,6 +2255,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2071,6 +2272,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_right(
@@ -2082,6 +2284,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one cell right.
 
@@ -2092,6 +2295,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             x=self.scroll_target_x + 1,
@@ -2101,6 +2305,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_right_for_pointer(
@@ -2112,6 +2317,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll right one position, taking scroll sensitivity into account.
 
@@ -2122,6 +2328,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2138,6 +2345,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_down(
@@ -2149,6 +2357,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one line down.
 
@@ -2159,6 +2368,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_target_y + 1,
@@ -2168,6 +2378,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_down_for_pointer(
@@ -2179,6 +2390,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll down one position, taking scroll sensitivity into account.
 
@@ -2189,6 +2401,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2205,6 +2418,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_up(
@@ -2216,6 +2430,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one line up.
 
@@ -2226,6 +2441,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_target_y - 1,
@@ -2235,6 +2451,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def _scroll_up_for_pointer(
@@ -2246,6 +2463,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll up one position, taking scroll sensitivity into account.
 
@@ -2256,6 +2474,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling was done.
@@ -2272,6 +2491,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_up(
@@ -2283,6 +2503,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page up.
 
@@ -2293,6 +2514,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_y - self.container_size.height,
@@ -2302,6 +2524,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_down(
@@ -2313,6 +2536,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page down.
 
@@ -2323,6 +2547,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         self.scroll_to(
             y=self.scroll_y + self.container_size.height,
@@ -2332,6 +2557,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_left(
@@ -2343,6 +2569,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page left.
 
@@ -2353,6 +2580,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 0.3
@@ -2364,6 +2592,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_page_right(
@@ -2375,6 +2604,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll one page right.
 
@@ -2385,6 +2615,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if speed is None and duration is None:
             duration = 0.3
@@ -2396,6 +2627,7 @@ class Widget(DOMNode):
             easing=easing,
             force=force,
             on_complete=on_complete,
+            level=level,
         )
 
     def scroll_to_widget(
@@ -2411,6 +2643,7 @@ class Widget(DOMNode):
         origin_visible: bool = True,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> bool:
         """Scroll scrolling to bring a widget in to view.
 
@@ -2424,6 +2657,7 @@ class Widget(DOMNode):
             origin_visible: Ensure that the top left of the widget is within the window.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             `True` if any scrolling has occurred in any descendant, otherwise `False`.
@@ -2450,6 +2684,7 @@ class Widget(DOMNode):
                     origin_visible=origin_visible,
                     force=force,
                     on_complete=on_complete,
+                    level=level,
                 )
                 if scroll_offset:
                     scrolled = True
@@ -2484,6 +2719,7 @@ class Widget(DOMNode):
         origin_visible: bool = True,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> Offset:
         """Scrolls a given region in to view, if required.
 
@@ -2501,6 +2737,7 @@ class Widget(DOMNode):
             origin_visible: Ensure that the top left of the widget is within the window.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
 
         Returns:
             The distance that was scrolled.
@@ -2547,6 +2784,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
                 on_complete=on_complete,
+                level=level,
             )
         return delta
 
@@ -2560,6 +2798,7 @@ class Widget(DOMNode):
         easing: EasingFunction | str | None = None,
         force: bool = False,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll the container to make this widget visible.
 
@@ -2571,6 +2810,7 @@ class Widget(DOMNode):
             easing: An easing method for the scrolling animation.
             force: Force scrolling even when prohibited by overflow styling.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         parent = self.parent
         if isinstance(parent, Widget):
@@ -2584,6 +2824,7 @@ class Widget(DOMNode):
                 easing=easing,
                 force=force,
                 on_complete=on_complete,
+                level=level,
             )
 
     def scroll_to_center(
@@ -2597,6 +2838,7 @@ class Widget(DOMNode):
         force: bool = False,
         origin_visible: bool = True,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "basic",
     ) -> None:
         """Scroll this widget to the center of self.
 
@@ -2611,6 +2853,7 @@ class Widget(DOMNode):
             force: Force scrolling even when prohibited by overflow styling.
             origin_visible: Ensure that the top left corner of the widget remains visible after the scroll.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
 
         self.call_after_refresh(
@@ -2624,6 +2867,7 @@ class Widget(DOMNode):
             center=True,
             origin_visible=origin_visible,
             on_complete=on_complete,
+            level=level,
         )
 
     def can_view(self, widget: Widget) -> bool:
@@ -2657,11 +2901,17 @@ class Widget(DOMNode):
         inherit_css: bool = True,
         inherit_bindings: bool = True,
     ) -> None:
-        base = cls.__mro__[0]
+        name = cls.__name__
+        if not name[0].isupper() and not name.startswith("_"):
+            raise BadWidgetName(
+                f"Widget subclass {name!r} should be capitalised or start with '_'."
+            )
+
         super().__init_subclass__(
             inherit_css=inherit_css,
             inherit_bindings=inherit_bindings,
         )
+        base = cls.__mro__[0]
         if issubclass(base, Widget):
             cls.can_focus = base.can_focus if can_focus is None else can_focus
             cls.can_focus_children = (
@@ -2671,9 +2921,12 @@ class Widget(DOMNode):
             )
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield "id", self.id, None
-        if self.name:
-            yield "name", self.name
+        try:
+            yield "id", self.id, None
+            if self.name:
+                yield "name", self.name
+        except AttributeError:
+            pass
 
     def _get_scrollable_region(self, region: Region) -> Region:
         """Adjusts the Widget region to accommodate scrollbars.
@@ -2689,6 +2942,13 @@ class Widget(DOMNode):
         styles = self.styles
         scrollbar_size_horizontal = styles.scrollbar_size_horizontal
         scrollbar_size_vertical = styles.scrollbar_size_vertical
+
+        show_vertical_scrollbar = bool(
+            show_vertical_scrollbar and scrollbar_size_vertical
+        )
+        show_horizontal_scrollbar = bool(
+            show_horizontal_scrollbar and scrollbar_size_horizontal
+        )
 
         if styles.scrollbar_gutter == "stable":
             # Let's _always_ reserve some space, whether the scrollbar is actually displayed or not:
@@ -2719,6 +2979,13 @@ class Widget(DOMNode):
 
         scrollbar_size_horizontal = self.scrollbar_size_horizontal
         scrollbar_size_vertical = self.scrollbar_size_vertical
+
+        show_vertical_scrollbar = bool(
+            show_vertical_scrollbar and scrollbar_size_vertical
+        )
+        show_horizontal_scrollbar = bool(
+            show_horizontal_scrollbar and scrollbar_size_horizontal
+        )
 
         if show_horizontal_scrollbar and show_vertical_scrollbar:
             (
@@ -2768,6 +3035,14 @@ class Widget(DOMNode):
         Returns:
             Names of the pseudo classes.
         """
+        if self.mouse_over:
+            yield "hover"
+        if self.has_focus:
+            yield "focus"
+        else:
+            yield "blur"
+        if self.can_focus:
+            yield "can-focus"
         node: MessagePump | None = self
         while isinstance(node, Widget):
             if node.disabled:
@@ -2776,12 +3051,6 @@ class Widget(DOMNode):
             node = node._parent
         else:
             yield "enabled"
-        if self.mouse_over:
-            yield "hover"
-        if self.has_focus:
-            yield "focus"
-        if self.can_focus:
-            yield "can-focus"
         try:
             focused = self.screen.focused
         except NoScreen:
@@ -2795,6 +3064,8 @@ class Widget(DOMNode):
                         yield "focus-within"
                         break
                     node = node._parent
+        if self.app.is_inline:
+            yield "inline"
 
     def get_pseudo_class_state(self) -> PseudoClasses:
         """Get an object describing whether each pseudo class is present on this object or not.
@@ -2817,16 +3088,22 @@ class Widget(DOMNode):
         )
         return pseudo_classes
 
+    def _get_rich_justify(self) -> JustifyMethod | None:
+        """Get the justify method that may be passed to a Rich renderable."""
+        text_justify: JustifyMethod | None = None
+        if self.styles.has_rule("text_align"):
+            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
+            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+        return text_justify
+
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
         Returns:
             A new renderable.
         """
-        text_justify: JustifyMethod | None = None
-        if self.styles.has_rule("text_align"):
-            text_align: JustifyMethod = cast(JustifyMethod, self.styles.text_align)
-            text_justify = _JUSTIFY_MAP.get(text_align, text_align)
+
+        text_justify = self._get_rich_justify()
 
         if isinstance(renderable, str):
             renderable = Text.from_markup(renderable, justify=text_justify)
@@ -2867,7 +3144,7 @@ class Widget(DOMNode):
                 and self in self.app.focused.ancestors_with_self
             ):
                 self.app.focused.blur()
-        except ScreenStackError:
+        except (ScreenStackError, NoActiveAppError):
             pass
         self._update_styles()
 
@@ -2896,7 +3173,7 @@ class Widget(DOMNode):
             if layout:
                 self.virtual_size = virtual_size
             else:
-                self._reactive_virtual_size = virtual_size
+                self.set_reactive(Widget.virtual_size, virtual_size)
             self._container_size = container_size
             if self.is_scrollable:
                 self._scroll_update(virtual_size)
@@ -2934,8 +3211,8 @@ class Widget(DOMNode):
         width, height = self.size
         renderable = self.render()
         renderable = self.post_render(renderable)
-        options = self._console.options.update_dimensions(width, height).update(
-            highlight=False
+        options = self._console.options.update(
+            highlight=False, width=width, height=height
         )
 
         segments = self._console.render(renderable, options)
@@ -2954,7 +3231,7 @@ class Widget(DOMNode):
         lines = list(
             align_lines(
                 lines,
-                Style(),
+                _NULL_STYLE,
                 self.size,
                 align_horizontal,
                 align_vertical,
@@ -3025,6 +3302,7 @@ class Widget(DOMNode):
         *regions: Region,
         repaint: bool = True,
         layout: bool = False,
+        recompose: bool = False,
     ) -> Self:
         """Initiate a refresh of the widget.
 
@@ -3043,22 +3321,28 @@ class Widget(DOMNode):
             *regions: Additional screen regions to mark as dirty.
             repaint: Repaint the widget (will call render() again).
             layout: Also layout widgets in the view.
+            recompose: Re-compose the widget (will remove and re-mount children).
 
         Returns:
             The `Widget` instance.
         """
+        if not self._is_mounted:
+            return self
         if layout:
             self._layout_required = True
-            self._stabilize_scrollbar = None
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if repaint:
+        if recompose:
+            self._recompose_required = True
+            self.call_next(self._check_recompose)
+            return self
+
+        elif repaint:
             self._set_dirty(*regions)
-            self._content_width_cache = (None, 0)
-            self._content_height_cache = (None, 0)
+            self.clear_cached_dimensions()
             self._rich_style_cache.clear()
             self._repaint_required = True
 
@@ -3075,23 +3359,67 @@ class Widget(DOMNode):
         await_remove = self.app._remove_nodes([self], self.parent)
         return await_remove
 
-    def remove_children(self) -> AwaitRemove:
-        """Remove all children of this Widget from the DOM.
+    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+        """Remove the immediate children of this Widget from the DOM.
+
+        Args:
+            selector: A CSS selector to specify which direct children to remove.
 
         Returns:
-            An awaitable object that waits for the children to be removed.
+            An awaitable object that waits for the direct children to be removed.
         """
-        await_remove = self.app._remove_nodes(list(self.children), self)
+        if not isinstance(selector, str):
+            selector = selector.__name__
+        parsed_selectors = parse_selectors(selector)
+        children_to_remove = [
+            child for child in self.children if match(parsed_selectors, child)
+        ]
+        await_remove = self.app._remove_nodes(children_to_remove, self)
         return await_remove
 
-    def render(self) -> RenderableType:
-        """Get renderable for widget.
+    @asynccontextmanager
+    async def batch(self) -> AsyncGenerator[None, None]:
+        """Async context manager that combines widget locking and update batching.
+
+        Use this async context manager whenever you want to acquire the widget lock and
+        batch app updates at the same time.
+
+        Example:
+            ```py
+            async with container.batch():
+                await container.remove_children(Button)
+                await container.mount(Label("All buttons are gone."))
+            ```
+        """
+        async with self.lock:
+            with self.app.batch_update():
+                yield
+
+    def render(self) -> RenderResult:
+        """Get text or Rich renderable for this widget.
+
+        Implement this for custom widgets.
+
+        Example:
+            ```python
+            from textual.app import RenderableType
+            from textual.widget import Widget
+
+            class CustomWidget(Widget):
+                def render(self) -> RenderableType:
+                    return "Welcome to [bold red]Textual[/]!"
+            ```
 
         Returns:
             Any renderable.
         """
-        render: Text | str = "" if self.is_container else self.css_identifier_styled
-        return render
+
+        if self.is_container:
+            if self.styles.layout and self.styles.keyline[0] != "none":
+                return self._layout.render_keyline(self)
+            else:
+                return Blank(self.background_colors[1])
+        return self.css_identifier_styled
 
     def _render(self) -> ConsoleRenderable | RichCast:
         """Get renderable, promoting str to text as required.
@@ -3101,7 +3429,7 @@ class Widget(DOMNode):
         """
         renderable = self.render()
         if isinstance(renderable, str):
-            return Text(renderable)
+            return Text.from_markup(renderable)
         return renderable
 
     async def run_action(self, action: str) -> None:
@@ -3217,18 +3545,18 @@ class Widget(DOMNode):
     def begin_capture_print(self, stdout: bool = True, stderr: bool = True) -> None:
         """Capture text from print statements (or writes to stdout / stderr).
 
-        If printing is captured, the widget will be sent an [events.Print][textual.events.Print] message.
+        If printing is captured, the widget will be sent an [`events.Print`][textual.events.Print] message.
 
-        Call [end_capture_print][textual.widget.Widget.end_capture_print] to disable print capture.
+        Call [`end_capture_print`][textual.widget.Widget.end_capture_print] to disable print capture.
 
         Args:
-            stdout: Capture stdout.
-            stderr: Capture stderr.
+            stdout: Whether to capture stdout.
+            stderr: Whether to capture stderr.
         """
         self.app.begin_capture_print(self, stdout=stdout, stderr=stderr)
 
     def end_capture_print(self) -> None:
-        """End print capture (set with [capture_print][textual.widget.Widget.capture_print])."""
+        """End print capture (set with [`begin_capture_print`][textual.widget.Widget.begin_capture_print])."""
         self.app.end_capture_print(self)
 
     def check_message_enabled(self, message: Message) -> bool:
@@ -3246,8 +3574,12 @@ class Widget(DOMNode):
         message_type = type(message)
         if self._is_prevented(message_type):
             return False
-        # Otherwise, if this is a mouse event, the widget receiving the
-        # event must not be disabled at this moment.
+        # Mouse scroll events should always go through, this allows mouse
+        # wheel scrolling to pass through disabled widgets.
+        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+            return True
+        # Otherwise, if this is any other mouse event, the widget receiving
+        # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
             if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
@@ -3275,18 +3607,36 @@ class Widget(DOMNode):
     async def handle_key(self, event: events.Key) -> bool:
         return await self.dispatch_key(event)
 
-    async def _on_compose(self) -> None:
+    async def _on_compose(self, event: events.Compose) -> None:
+        _rich_traceback_omit = True
+        event.prevent_default()
+        await self._compose()
+
+    async def _compose(self) -> None:
         try:
-            widgets = [*self._nodes, *compose(self)]
+            widgets = [*self._pending_children, *compose(self)]
+            self._pending_children.clear()
         except TypeError as error:
             raise TypeError(
                 f"{self!r} compose() method returned an invalid result; {error}"
             ) from error
-        except Exception:
-            self.app.panic(Traceback())
+        except Exception as error:
+            self.app._handle_exception(error)
         else:
             self._extend_compose(widgets)
-            await self.mount(*widgets)
+            await self.mount_composed_widgets(widgets)
+
+    async def mount_composed_widgets(self, widgets: list[Widget]) -> None:
+        """Called by Textual to mount widgets after compose.
+
+        There is generally no need to implement this method in your application.
+        See [Lazy][textual.lazy.Lazy] for a class which uses this method to implement
+        *lazy* mounting.
+
+        Args:
+            widgets: A list of child widgets.
+        """
+        await self.mount_all(widgets)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Hook to extend composed widgets.
@@ -3365,7 +3715,17 @@ class Widget(DOMNode):
             self.scroll_page_right()
             event.stop()
 
+    def _on_show(self, event: events.Show) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
+
     def _on_hide(self, event: events.Hide) -> None:
+        if self.show_horizontal_scrollbar:
+            self.horizontal_scrollbar.post_message(event)
+        if self.show_vertical_scrollbar:
+            self.vertical_scrollbar.post_message(event)
         if self.has_focus:
             self.blur()
 
@@ -3433,7 +3793,7 @@ class Widget(DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout for the notification.
+            timeout: The timeout (in seconds) for the notification.
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.

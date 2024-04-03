@@ -81,7 +81,7 @@ Let's look at an example which illustrates this. In the following app, the value
 
 === "refresh01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/refresh01.tcss"
     ```
 
@@ -125,7 +125,7 @@ The following example modifies "refresh01.py" so that the greeting has an automa
 
 === "refresh02.tcss"
 
-    ```sass hl_lines="7-9"
+    ```css hl_lines="7-9"
     --8<-- "docs/examples/guide/reactivity/refresh02.tcss"
     ```
 
@@ -152,7 +152,7 @@ A common use for this is to restrict numbers to a given range. The following exa
 
 === "validate01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/validate01.tcss"
     ```
 
@@ -185,7 +185,7 @@ The following app will display any color you type in to the input. Try it with a
 
 === "watch01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/watch01.tcss"
     ```
 
@@ -201,6 +201,109 @@ The color is parsed in `on_input_submitted` and assigned to `self.color`. Becaus
 Textual only calls watch methods if the value of a reactive attribute _changes_.
 If the newly assigned value is the same as the previous value, the watch method is not called.
 You can override this behaviour by passing `always_update=True` to `reactive`.
+
+
+### Dynamically watching reactive attributes
+
+You can programmatically add watchers to reactive attributes with the method [`watch`][textual.dom.DOMNode.watch].
+This is useful when you want to react to changes to reactive attributes for which you can't edit the watch methods.
+
+The example below shows a widget `Counter` that defines a reactive attribute `counter`.
+The app that uses `Counter` uses the method `watch` to keep its progress bar synced with the reactive attribute:
+
+=== "dynamic_watch.py"
+
+    ```python hl_lines="9 28-29 31"
+    --8<-- "docs/examples/guide/reactivity/dynamic_watch.py"
+    ```
+
+    1. `counter` is a reactive attribute defined inside `Counter`.
+    2. `update_progress` is a custom callback that will update the progress bar when `counter` changes.
+    3. We use the method `watch` to set `update_progress` as an additional watcher for the reactive attribute `counter`.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/dynamic_watch.py" press="enter,enter,enter"}
+    ```
+
+## Recompose
+
+An alternative to a refresh is *recompose*.
+If you set `recompose=True` on a reactive, then Textual will remove all the child widgets and call [`compose()`][textual.widget.Widget.compose] again, when the reactive attribute changes.
+The process of removing and mounting new widgets occurs in a single update, so it will appear as though the content has simply updated.
+
+The following example uses recompose:
+
+=== "refresh03.py"
+
+    ```python hl_lines="10 12-13"
+    --8<-- "docs/examples/guide/reactivity/refresh03.py"
+    ```
+
+    1. Setting `recompose=True` will cause all child widgets to be removed and `compose` called again to add new widgets.
+    2. This `compose()` method will be called when `who` is changed.
+
+=== "refresh03.tcss"
+
+    ```css
+    --8<-- "docs/examples/guide/reactivity/refresh03.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/refresh03.py" press="P,a,u,l"}
+    ```
+
+While the end-result is identical to `refresh02.py`, this code works quite differently.
+The main difference is that recomposing creates an entirely new set of child widgets rather than updating existing widgets.
+So when the `who` attribute changes, the `Name` widget will replace its `Label` with a new instance (containing updated content).
+
+!!! warning 
+
+    You should avoid storing a reference to child widgets when using recompose.
+    Better to [query](../guide/queries.md) for a child widget when you need them.
+
+It is important to note that any child widgets will have their state reset after a recompose.
+For simple content, that doesn't matter much.
+But widgets with an internal state (such as [`DataTable`](../widgets/data_table.md), [`Input`](../widgets/input.md), or [`TextArea`](../widgets/text_area.md)) would not be particularly useful if recomposed.
+
+Recomposing is slightly less efficient than a simple refresh, and best avoided if you need to update rapidly or you have many child widgets.
+That said, it can often simplify your code.
+Let's look at a practical example.
+First a version *without* recompose:
+
+=== "recompose01.py"
+
+    ```python hl_lines="20 26-27"
+    --8<-- "docs/examples/guide/reactivity/recompose01.py"
+    ```
+
+    1. Called when the `time` attribute changes.
+    2. Update the time once a second.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/recompose01.py" }
+    ```
+
+This displays a clock which updates once a second.
+The code is straightforward, but note how we format the time in two places: `compose()` *and* `watch_time()`.
+We can simplify this by recomposing rather than refreshing:
+
+=== "recompose02.py"
+
+    ```python hl_lines="15"
+    --8<-- "docs/examples/guide/reactivity/recompose02.py"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/recompose02.py" }
+    ```
+
+In this version, the app is recomposed when the `time` attribute changes, which replaces the `Digits` widget with a new instance and updated time.
+There's no need for the `watch_time` method, because the new `Digits` instance will already show the current time.
+
 
 ## Compute methods
 
@@ -221,7 +324,7 @@ The following example uses a computed attribute. It displays three inputs for ea
 
 === "computed01.tcss"
 
-    ```sass
+    ```css
     --8<-- "docs/examples/guide/reactivity/computed01.tcss"
     ```
 
@@ -241,3 +344,140 @@ When the result of `compute_color` changes, Textual will also call `watch_color`
 !!! note
 
     It is best to avoid doing anything slow or CPU-intensive in a compute method. Textual calls compute methods on an object when _any_ reactive attribute changes.
+
+## Setting reactives without superpowers 
+
+You may find yourself in a situation where you want to set a reactive value, but you *don't* want to invoke watchers or the other super powers.
+This is fairly common in constructors which run prior to mounting; any watcher which queries the DOM may break if the widget has not yet been mounted.
+
+To work around this issue, you can call [set_reactive][textual.dom.DOMNode.set_reactive] as an alternative to setting the attribute.
+The `set_reactive` method accepts the reactive attribute (as a class variable) and the new value.
+
+Let's look at an example.
+The following app is intended to cycle through various greeting when you press ++space++, however it contains a bug.
+
+```python title="set_reactive01.py"
+--8<-- "docs/examples/guide/reactivity/set_reactive01.py"
+```
+
+1. Setting this reactive attribute invokes a watcher.
+2. The watcher attempts to update a label before it is mounted.
+
+If you run this app, you will find Textual raises a `NoMatches` error in `watch_greeting`. 
+This is because the constructor has assigned the reactive before the widget has fully mounted.
+
+The following app contains a fix for this issue:
+
+=== "set_reactive02.py"
+
+    ```python hl_lines="33 34"
+    --8<-- "docs/examples/guide/reactivity/set_reactive02.py"
+    ```
+
+    1. The attribute is set via `set_reactive`, which avoids calling the watcher.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/set_reactive02.py"}
+    ```
+
+The line `self.set_reactive(Greeter.greeting, greeting)` sets the `greeting` attribute but doesn't immediately invoke the watcher.
+
+## Data binding
+
+Reactive attributes from one widget may be *bound* (connected) to another widget, so that changes to a single reactive will automatically update another widget (potentially more than one).
+
+To bind reactive attributes, call [data_bind][textual.dom.DOMNode.data_bind] on a widget.
+This method accepts reactives (as class attributes) in positional arguments or keyword arguments.
+
+Let's look at an app that could benefit from data binding.
+In the following code we have a `WorldClock` widget which displays the time in any given timezone.
+
+
+!!! note
+
+    This example uses the [pytz](https://pypi.org/project/pytz/) library for working with timezones.
+    You can install pytz with `pip install pytz`.
+
+
+=== "world_clock01.py"
+
+    ```python
+    --8<-- "docs/examples/guide/reactivity/world_clock01.py"
+    ```
+
+    1. Update the `time` reactive attribute of every `WorldClock`.
+
+=== "world_clock01.tcss"
+
+    ```css
+    --8<-- "docs/examples/guide/reactivity/world_clock01.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/world_clock01.py"}
+    ```
+
+We've added three world clocks for London, Paris, and Tokyo.
+The clocks are kept up-to-date by watching the app's `time` reactive, and updating the clocks in a loop.
+
+While this approach works fine, it does require we take care to update every `WorldClock` we mount.
+Let's see how data binding can simplify this.
+
+The following app calls `data_bind` on the world clock widgets to connect the app's `time` with the widget's `time` attribute:
+
+=== "world_clock02.py"
+
+    ```python hl_lines="34-36"
+    --8<-- "docs/examples/guide/reactivity/world_clock02.py"
+    ```
+
+    1. Bind the `time` attribute, so that changes to `time` will also change the `time` attribute on the `WorldClock` widgets. The `data_bind` method also returns the widget, so we can yield its return value.
+
+=== "world_clock01.tcss"
+
+    ```css
+    --8<-- "docs/examples/guide/reactivity/world_clock01.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/world_clock02.py"}
+    ```
+
+Note how the addition of the `data_bind` methods negates the need for the watcher in `world_clock01.py`.
+
+
+!!! note
+
+    Data binding works in a single direction.
+    Setting `time` on the app updates the clocks.
+    But setting `time` on the clocks will *not* update `time` on the app.
+
+
+In the previous example app, the call to `data_bind(WorldClockApp.time)` worked because both reactive attributes were named `time`.
+If you want to bind a reactive attribute which has a different name, you can use keyword arguments.
+
+In the following app we have changed the attribute name on `WorldClock` from `time` to `clock_time`.
+We can make the app continue to work by changing the `data_bind` call to `data_bind(clock_time=WorldClockApp.time)`:
+
+
+=== "world_clock03.py"
+
+    ```python hl_lines="34-38"
+    --8<-- "docs/examples/guide/reactivity/world_clock03.py"
+    ```
+
+    1. Uses keyword arguments to bind the `time` attribute of `WorldClockApp` to `clock_time` on `WorldClock`.
+
+=== "world_clock01.tcss"
+
+    ```css
+    --8<-- "docs/examples/guide/reactivity/world_clock01.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/world_clock02.py"}
+    ```
