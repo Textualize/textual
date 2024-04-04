@@ -256,7 +256,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         Returns:
             An awaitable object that waits for the direct children to be removed. 
         """
-        if len(self._nodes) == len(indices):
+        if len(self._nodes) == len(set(indices)):
             return self.clear()
 
         items_to_remove = []
