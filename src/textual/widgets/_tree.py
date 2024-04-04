@@ -1008,6 +1008,15 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self.cursor_line = -1
         self.refresh()
 
+    def render_delta_lines(
+        self,
+        region: Region,
+        clip: Region,
+        region_to_render: Region,
+    ) -> tuple[Region, Region, list[Strip]]:
+        self._pseudo_class_state = self.get_pseudo_class_state()
+        return super().render_delta_lines(region, clip, region_to_render)
+
     def render_lines(self, crop: Region) -> list[Strip]:
         self._pseudo_class_state = self.get_pseudo_class_state()
         return super().render_lines(crop)

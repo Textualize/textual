@@ -941,12 +941,18 @@ class Compositor:
         return self._cuts
 
     def _get_renders(
-        self, crop: Region | None = None
+        self,
+        crop: Region | None = None,
+        allow_delta_updates: bool = False,
     ) -> Iterable[tuple[Region, Region, list[Strip]]]:
         """Get rendered widgets (lists of segments) in the composition.
 
         Args:
             crop: Region to crop to, or `None` for entire screen.
+            allow_delta_updates: Whether we can issue partial updates for widgets or
+                not. If `True`, widgets with `_enable_delta_updates` will produce only
+                updates for lines inside `crop` that have changed. If `False`, each
+                widget produces the full render for the region inside `crop`.
 
         Returns:
             An iterable of <region>, <clip region>, and <strips>
@@ -977,17 +983,16 @@ class Compositor:
 
         for widget, region, clip in widget_regions:
             if contains_region(clip, region):
-                yield region, clip, widget.render_lines(
-                    _Region(0, 0, region.width, region.height)
-                )
+                region_to_render = _Region(0, 0, region.width, region.height)
             else:
                 new_x, new_y, new_width, new_height = intersection(region, clip)
-                if new_width and new_height:
-                    yield region, clip, widget.render_lines(
-                        _Region(
-                            new_x - region.x, new_y - region.y, new_width, new_height
-                        )
-                    )
+                region_to_render = _Region(
+                    new_x - region.x, new_y - region.y, new_width, new_height
+                )
+            if allow_delta_updates and widget._enable_delta_updates:
+                yield from widget.render_delta_lines(region, clip, region_to_render)
+            else:
+                yield region, clip, widget.render_lines(region_to_render)
 
     def render_update(
         self, full: bool = False, screen_stack: list[Screen] | None = None
@@ -1052,7 +1057,7 @@ class Compositor:
             is_rendered_line = {y for y, _, _ in spans}.__contains__
         else:
             return None
-        chops = self._render_chops(crop, is_rendered_line)
+        chops = self._render_chops(crop, is_rendered_line, allow_delta_updates=True)
         chop_ends = [cut_set[1:] for cut_set in self.cuts]
         return ChopsUpdate(chops, spans, chop_ends)
 
@@ -1075,12 +1080,17 @@ class Compositor:
         self,
         crop: Region,
         is_rendered_line: Callable[[int], bool],
+        allow_delta_updates: bool = False,
     ) -> Sequence[Mapping[int, Strip | None]]:
         """Render update 'chops'.
 
         Args:
             crop: Region to crop to.
             is_rendered_line: Callable to check if line should be rendered.
+            allow_delta_updates: Whether we can issue partial updates for widgets or
+                not. If `True`, widgets with `_enable_delta_updates` will produce only
+                updates for lines inside `crop` that have changed. If `False`, each
+                widget produces the full render for the region inside `crop`.
 
         Returns:
             Chops structure.
@@ -1093,7 +1103,7 @@ class Compositor:
         cut_strips: Iterable[Strip]
 
         # Go through all the renders in reverse order and fill buckets with no render
-        renders = self._get_renders(crop)
+        renders = self._get_renders(crop, allow_delta_updates=allow_delta_updates)
         intersection = Region.intersection
 
         for region, clip, strips in renders:

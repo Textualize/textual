@@ -234,6 +234,7 @@ class ScrollBar(Widget):
         self.grabbed_position: float = 0
         super().__init__(name=name)
         self.auto_links = False
+        self._enable_delta_updates = False
 
     window_virtual_size: Reactive[int] = Reactive(100)
     window_size: Reactive[int] = Reactive(0)
@@ -366,6 +367,7 @@ class ScrollBarCorner(Widget):
 
     def __init__(self, name: str | None = None):
         super().__init__(name=name)
+        self._enable_delta_updates = False
 
     def render(self) -> RenderableType:
         assert self.parent is not None
