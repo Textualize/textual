@@ -672,28 +672,28 @@ class Screen(Generic[ScreenResultType], Widget):
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
 
-        if self.app.is_inline:
-            size = self.app.size
-            self.app._display(
+        app = self.app
+        if app.is_inline:
+            app._display(
                 self,
                 self._compositor.render_inline(
-                    Size(size.width, self._get_inline_height(size)),
-                    screen_stack=self.app._background_screens,
+                    app.size.with_height(app._get_inline_height()),
+                    screen_stack=app._background_screens,
                 ),
             )
             self._dirty_widgets.clear()
             self._compositor._dirty_regions.clear()
 
-        elif self is self.app.screen:
+        elif self is app.screen:
             # Top screen
             update = self._compositor.render_update(
-                screen_stack=self.app._background_screens
+                screen_stack=app._background_screens
             )
-            self.app._display(self, update)
+            app._display(self, update)
             self._dirty_widgets.clear()
         elif self in self.app._background_screens and self._compositor._dirty_regions:
             # Background screen
-            self.app.screen.refresh(*self._compositor._dirty_regions)
+            app.screen.refresh(*self._compositor._dirty_regions)
             self._compositor._dirty_regions.clear()
             self._dirty_widgets.clear()
 
@@ -775,7 +775,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if self.app.is_inline:
-            size = Size(size.width, self._get_inline_height(self.app.size))
+            size = size.with_height(self.app._get_inline_height())
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
@@ -840,7 +840,10 @@ class Screen(Generic[ScreenResultType], Widget):
             self.app._handle_exception(error)
             return
         if self.is_current:
-            self._compositor_refresh()
+            if self.app.is_inline:
+                self._update_timer.resume()
+            else:
+                self._compositor_refresh()
 
         if self.app._dom_ready:
             self.screen_layout_refresh_signal.publish()

@@ -1035,6 +1035,15 @@ class App(Generic[ReturnType], DOMNode):
             width, height = self.console.size
         return Size(width, height)
 
+    def _get_inline_height(self) -> int:
+        """Get the inline height (height when in inline mode).
+
+        Returns:
+            Height in lines.
+        """
+        size = self.size
+        return max(screen._get_inline_height(size) for screen in self._screen_stack)
+
     @property
     def log(self) -> Logger:
         """The textual logger.
