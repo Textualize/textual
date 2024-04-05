@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Iterable, TypeVar, Union
 
+import rich.repr
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -256,6 +257,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     exception.
     """
 
+    @rich.repr.auto
     class Changed(Message):
         """Posted when the select value was changed.
 
@@ -273,6 +275,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             """The select widget."""
             self.value = value
             """The value of the Select when it changed."""
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield self.select
+            yield self.value
 
         @property
         def control(self) -> Select[SelectType]:
@@ -407,7 +413,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Initialises the selected option for the `Select`."""
         if hint == self.BLANK and not self._allow_blank:
             hint = self._options[0][1]
-        self.value = hint
+        with self.prevent(Select.Changed):
+            self.value = hint
 
     def set_options(self, options: Iterable[tuple[RenderableType, SelectType]]) -> None:
         """Set the options for the Select.
