@@ -144,6 +144,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
         self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
+        self._prevented_messages_on_mount = self._prevent_message_types_stack[-1]
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -524,7 +525,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         try:
             await self._dispatch_message(events.Compose())
-            await self._dispatch_message(events.Mount())
+            if self._prevented_messages_on_mount:
+                with self.prevent(*self._prevented_messages_on_mount):
+                    await self._dispatch_message(events.Mount())
+            else:
+                await self._dispatch_message(events.Mount())
             self.check_idle()
             self._post_mount()
         except Exception as error:
