@@ -413,8 +413,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Initialises the selected option for the `Select`."""
         if hint == self.BLANK and not self._allow_blank:
             hint = self._options[0][1]
-        with self.prevent(Select.Changed):
-            self.value = hint
+        self.value = hint
 
     def set_options(self, options: Iterable[tuple[RenderableType, SelectType]]) -> None:
         """Set the options for the Select.
