@@ -11,7 +11,7 @@ The number of rows can be left unspecified and it will be computed automatically
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-grid-size: <a href="../../css_types/integer">&lt;integer&gt;</a> [<a href="../../css_types/integer">&lt;integer&gt;</a>];
+grid-size: <a href="../../../css_types/integer">&lt;integer&gt;</a> [<a href="../../../css_types/integer">&lt;integer&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The `grid-size` style takes one or two non-negative [`<integer>`](../../css_types/integer.md).
