@@ -865,10 +865,9 @@ class App(Generic[ReturnType], DOMNode):
         """
 
         bindings_map: dict[str, tuple[DOMNode, Binding]] = {}
-        for namespace, bindings in reversed(self._binding_chain):
+        for namespace, bindings in self._binding_chain:
             for key, binding in bindings.keys.items():
-                existing_key_and_binding = bindings_map.get(key)
-                if existing_key_and_binding:
+                if existing_key_and_binding := bindings_map.get(key):
                     _, existing_binding = existing_key_and_binding
                     if binding.priority and not existing_binding.priority:
                         bindings_map[key] = (namespace, binding)
