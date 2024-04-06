@@ -5807,6 +5807,24 @@ window.onload = async (event) => {
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Size.with_height" class="md-nav__link">
+    <span class="md-ellipsis">
+      with_height()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Size.with_width" class="md-nav__link">
+    <span class="md-ellipsis">
+      with_width()
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -7647,6 +7665,24 @@ window.onload = async (event) => {
   <a href="#textual.geometry.Size.contains_point" class="md-nav__link">
     <span class="md-ellipsis">
       contains_point()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Size.with_height" class="md-nav__link">
+    <span class="md-ellipsis">
+      with_height()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Size.with_width" class="md-nav__link">
+    <span class="md-ellipsis">
+      with_width()
     </span>
   </a>
   
@@ -10898,6 +10934,135 @@ The top left of the returned region is guaranteed to be within the container.</p
                 <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
           </td>
           <td><p>True if the point is within the region.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.geometry.Size.with_height" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">with_height</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.geometry.Size.with_height" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">with_height</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get a new Size with just the height changed.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>width</code></strong>
+            <br>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>New height.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="#textual.geometry.Size">Size</a></code>
+          </td>
+          <td><p>New Size instance.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.geometry.Size.with_width" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">with_width</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.geometry.Size.with_width" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">with_width</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get a new Size with just the width changed.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>width</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>New width.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Size" href="#textual.geometry.Size">Size</a></code>
+          </td>
+          <td><p>New Size instance.</p></td>
         </tr>
     </tbody>
   </table>
