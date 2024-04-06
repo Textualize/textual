@@ -1035,6 +1035,15 @@ class App(Generic[ReturnType], DOMNode):
             width, height = self.console.size
         return Size(width, height)
 
+    def _get_inline_height(self) -> int:
+        """Get the inline height (height when in inline mode).
+
+        Returns:
+            Height in lines.
+        """
+        size = self.size
+        return max(screen._get_inline_height(size) for screen in self._screen_stack)
+
     @property
     def log(self) -> Logger:
         """The textual logger.
@@ -2324,6 +2333,41 @@ class App(Generic[ReturnType], DOMNode):
 
         self._exit_renderables.clear()
 
+    def _build_driver(
+        self, headless: bool, inline: bool, mouse: bool, size: tuple[int, int] | None
+    ) -> Driver:
+        """Construct a driver instance.
+
+        Args:
+            headless: Request headless driver.
+            inline: Request inline driver.
+            mouse: Request mouse support.
+            size: Initial size.
+
+        Returns:
+            Driver instance.
+        """
+        driver: Driver
+        driver_class: type[Driver]
+        if headless:
+            from .drivers.headless_driver import HeadlessDriver
+
+            driver_class = HeadlessDriver
+        elif inline and not WINDOWS:
+            from .drivers.linux_inline_driver import LinuxInlineDriver
+
+            driver_class = LinuxInlineDriver
+        else:
+            driver_class = self.driver_class
+
+        driver = self._driver = driver_class(
+            self,
+            debug=constants.DEBUG,
+            mouse=mouse,
+            size=size,
+        )
+        return driver
+
     async def _process_messages(
         self,
         ready_callback: CallbackType | None = None,
@@ -2438,23 +2482,9 @@ class App(Generic[ReturnType], DOMNode):
             load_event = events.Load()
             await self._dispatch_message(load_event)
 
-            driver: Driver
-
-            driver_class: type[Driver]
-            if headless:
-                from .drivers.headless_driver import HeadlessDriver
-
-                driver_class = HeadlessDriver
-            elif inline:
-                from .drivers.linux_inline_driver import LinuxInlineDriver
-
-                driver_class = LinuxInlineDriver
-            else:
-                driver_class = self.driver_class
-
-            driver = self._driver = driver_class(
-                self,
-                debug=constants.DEBUG,
+            driver = self._driver = self._build_driver(
+                headless=headless,
+                inline=inline,
                 mouse=mouse,
                 size=terminal_size,
             )
@@ -2471,7 +2501,7 @@ class App(Generic[ReturnType], DOMNode):
                     if self._driver.is_inline:
                         cursor_x, cursor_y = self._previous_cursor_position
                         self._driver.write(
-                            Control.move(-cursor_x, -cursor_y).segment.text
+                            Control.move(-cursor_x, -cursor_y + 1).segment.text
                         )
                     if inline_no_clear:
                         console = Console()

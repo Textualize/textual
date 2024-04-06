@@ -977,16 +977,25 @@ class Compositor:
 
         for widget, region, clip in widget_regions:
             if contains_region(clip, region):
-                yield region, clip, widget.render_lines(
-                    _Region(0, 0, region.width, region.height)
+                yield (
+                    region,
+                    clip,
+                    widget.render_lines(_Region(0, 0, region.width, region.height)),
                 )
             else:
                 new_x, new_y, new_width, new_height = intersection(region, clip)
                 if new_width and new_height:
-                    yield region, clip, widget.render_lines(
-                        _Region(
-                            new_x - region.x, new_y - region.y, new_width, new_height
-                        )
+                    yield (
+                        region,
+                        clip,
+                        widget.render_lines(
+                            _Region(
+                                new_x - region.x,
+                                new_y - region.y,
+                                new_width,
+                                new_height,
+                            )
+                        ),
                     )
 
     def render_update(

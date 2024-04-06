@@ -95,8 +95,9 @@ class WindowsDriver(Driver):
         self.write("\x1b[?1049h")  # Enable alt screen
         self._enable_mouse_support()
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1003h\n")
-        self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
+        self.write("\033[?1003h")
+        self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
+        self.flush()
         self._enable_bracketed_paste()
 
         self._event_thread = win32.EventMonitor(
@@ -125,7 +126,7 @@ class WindowsDriver(Driver):
 
         # Disable alt screen, show cursor
         self.write("\x1b[?1049l" + "\x1b[?25h")
-        self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
+        self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
         self.flush()
 
     def close(self) -> None:

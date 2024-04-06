@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.56.0] - Unreleased
 
+### Added
+
+- Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
+  
+### Fixed
+
+- Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
+
 ### Changed
 
 - self.prevent can be used in a widget constructor to prevent messages on mount https://github.com/Textualize/textual/pull/4392
+
 
 ## [0.55.1] - 2024-04-2
 

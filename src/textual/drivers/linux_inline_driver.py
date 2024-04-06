@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 
 @rich.repr.auto(angular=True)
 class LinuxInlineDriver(Driver):
-
     def __init__(
         self,
         app: App,
@@ -157,7 +156,6 @@ class LinuxInlineDriver(Driver):
             selector.close()
 
     def start_application_mode(self) -> None:
-
         loop = asyncio.get_running_loop()
 
         def send_size_event() -> None:
@@ -178,9 +176,11 @@ class LinuxInlineDriver(Driver):
             signal.signal(signal.SIGWINCH, on_terminal_resize)
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
+        self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
 
         self._enable_mouse_support()
+        self.write("\n")
+        self.flush()
         try:
             self.attrs_before = termios.tcgetattr(self.fileno)
         except termios.error:
@@ -260,7 +260,7 @@ class LinuxInlineDriver(Driver):
         self._disable_bracketed_paste()
         self.disable_input()
 
-        self.write("\x1b[A\x1b[J")
+        self.write("\x1b[2A\x1b[J")
 
         if self.attrs_before is not None:
             try:
@@ -269,6 +269,6 @@ class LinuxInlineDriver(Driver):
                 pass
 
             self.write("\x1b[?25h")  # Show cursor
-            self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
+            self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
 
         self.flush()
