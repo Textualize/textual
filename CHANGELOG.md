@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
+- Fixed issue with priority bindings https://github.com/Textualize/textual/pull/4395
 
 ### Changed
 
