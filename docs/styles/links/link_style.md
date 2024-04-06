@@ -9,7 +9,7 @@ The `link-style` style sets the text style for the link text.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-link-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
+link-style: <a href="../../../css_types/text_style">&lt;text-style&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 `link-style` will take all the values specified and will apply that styling to text that is enclosed by a Textual action link.

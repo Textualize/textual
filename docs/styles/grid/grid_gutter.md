@@ -13,7 +13,7 @@ No spacing is added between the edges of the cells and the edges of the containe
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-grid-gutter: <a href="../../css_types/integer">&lt;integer&gt;</a> [<a href="../../css_types/integer">&lt;integer&gt;</a>];
+grid-gutter: <a href="../../../css_types/integer">&lt;integer&gt;</a> [<a href="../../../css_types/integer">&lt;integer&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The `grid-gutter` style takes one or two [`<integer>`](../../css_types/integer.md) that set the length of the gutter along the vertical and horizontal axes.
