@@ -1029,6 +1029,7 @@ class Compositor:
         Args:
             size: Inline size.
             screen_stack: Screen stack list. Defaults to None.
+            clear: Also clear below the inline update (set when size decreases).
 
         Returns:
             A renderable.
