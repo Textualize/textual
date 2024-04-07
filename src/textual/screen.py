@@ -676,13 +676,20 @@ class Screen(Generic[ScreenResultType], Widget):
 
         if self is app.screen:
             if app.is_inline:
+                inline_height = app._get_inline_height()
+                clear = (
+                    app._previous_inline_height is not None
+                    and inline_height < app._previous_inline_height
+                )
                 app._display(
                     self,
                     self._compositor.render_inline(
-                        app.size.with_height(app._get_inline_height()),
+                        app.size.with_height(inline_height),
                         screen_stack=app._background_screens,
+                        clear=clear,
                     ),
                 )
+                app._previous_inline_height = inline_height
                 self._dirty_widgets.clear()
                 self._compositor._dirty_regions.clear()
             else:

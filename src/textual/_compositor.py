@@ -184,7 +184,6 @@ class InlineUpdate(CompositorUpdate):
         else:
             append("\r")
         append("\x1b[6n")  # Query new cursor position
-
         return "".join(sequences)
 
 
@@ -337,9 +336,6 @@ class Compositor:
 
         # Mapping of line numbers on to lists of widget and regions
         self._layers_visible: list[list[tuple[Widget, Region, Region]]] | None = None
-
-        # Size of previous inline update
-        self._previous_inline_height: int | None = None
 
     @classmethod
     def _regions_to_spans(
@@ -1023,7 +1019,10 @@ class Compositor:
             return self.render_partial_update()
 
     def render_inline(
-        self, size: Size, screen_stack: list[Screen] | None = None
+        self,
+        size: Size,
+        screen_stack: list[Screen] | None = None,
+        clear: bool = False,
     ) -> RenderableType:
         """Render an inline update.
 
@@ -1036,11 +1035,6 @@ class Compositor:
         """
         visible_screen_stack.set([] if screen_stack is None else screen_stack)
         strips = self.render_strips(size)
-        clear = (
-            self._previous_inline_height is not None
-            and len(strips) < self._previous_inline_height
-        )
-        self._previous_inline_height = len(strips)
         return InlineUpdate(strips, clear=clear)
 
     def render_full_update(self) -> LayoutUpdate:

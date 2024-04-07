@@ -637,6 +637,9 @@ class App(Generic[ReturnType], DOMNode):
         happens.
         """
 
+        # Size of previous inline update
+        self._previous_inline_height: int | None = None
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
