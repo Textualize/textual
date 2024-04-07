@@ -204,14 +204,6 @@ class SelectionList(Generic[SelectionType], OptionList):
 
         Can be handled using `on_selection_list_selection_toggled` in a subclass of
         [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
-
-        Note:
-            This message is only sent if the selection is toggled by user
-            interaction. See
-            [`SelectedChanged`][textual.widgets.SelectionList.SelectedChanged]
-            for a message sent when any change (selected or deselected,
-            either by user interaction or by API calls) is made to the
-            selected values.
         """
 
     @dataclass
