@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed flicker when non-current screen updates https://github.com/Textualize/textual/pull/4401
 
+### Changed
+
+- Removed additional line at the end of an inline app https://github.com/Textualize/textual/pull/4401
+
 ## [0.56.0] - 2024-04-06
 
 ### Added
