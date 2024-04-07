@@ -673,24 +673,25 @@ class Screen(Generic[ScreenResultType], Widget):
         """Perform a compositor refresh."""
 
         app = self.app
-        if app.is_inline:
-            app._display(
-                self,
-                self._compositor.render_inline(
-                    app.size.with_height(app._get_inline_height()),
-                    screen_stack=app._background_screens,
-                ),
-            )
-            self._dirty_widgets.clear()
-            self._compositor._dirty_regions.clear()
 
-        elif self is app.screen:
-            # Top screen
-            update = self._compositor.render_update(
-                screen_stack=app._background_screens
-            )
-            app._display(self, update)
-            self._dirty_widgets.clear()
+        if self is app.screen:
+            if app.is_inline:
+                app._display(
+                    self,
+                    self._compositor.render_inline(
+                        app.size.with_height(app._get_inline_height()),
+                        screen_stack=app._background_screens,
+                    ),
+                )
+                self._dirty_widgets.clear()
+                self._compositor._dirty_regions.clear()
+            else:
+                # Top screen
+                update = self._compositor.render_update(
+                    screen_stack=app._background_screens
+                )
+                app._display(self, update)
+                self._dirty_widgets.clear()
         elif self in self.app._background_screens and self._compositor._dirty_regions:
             # Background screen
             app.screen.refresh(*self._compositor._dirty_regions)
@@ -892,7 +893,7 @@ class Screen(Generic[ScreenResultType], Widget):
             inline_height = max(inline_height, int(min_height.resolve(size, size)))
         if max_height is not None:
             inline_height = min(inline_height, int(max_height.resolve(size, size)))
-        inline_height = min(self.app.size.height - 1, inline_height)
+        inline_height = min(self.app.size.height, inline_height)
         return inline_height
 
     def _screen_resized(self, size: Size):

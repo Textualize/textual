@@ -207,6 +207,17 @@ class LinuxInlineDriver(Driver):
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
+        self._request_terminal_sync_mode_support()
+        self._enable_bracketed_paste()
+
+    def _request_terminal_sync_mode_support(self) -> None:
+        """Writes an escape sequence to query the terminal support for the sync protocol."""
+        # Terminals should ignore this sequence if not supported.
+        # Apple terminal doesn't, and writes a single 'p' in to the terminal,
+        # so we will make a special case for Apple terminal (which doesn't support sync anyway).
+        if os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
+            self.write("\033[?2026$p")
+            self.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:

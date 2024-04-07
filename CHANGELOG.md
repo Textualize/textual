@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.56.1] - 2024-04-07
+
+### Fixed
+
+- Fixed flicker when non-current screen updates https://github.com/Textualize/textual/pull/4401
+
+### Changed
+
+- Removed additional line at the end of an inline app https://github.com/Textualize/textual/pull/4401
+
 ## [0.56.0] - 2024-04-06
 
 ### Added
@@ -1843,6 +1853,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.56.1]: https://github.com/Textualize/textual/compare/v0.56.0...v0.56.1
 [0.56.0]: https://github.com/Textualize/textual/compare/v0.55.1...v0.56.0
 [0.55.1]: https://github.com/Textualize/textual/compare/v0.55.0...v0.55.1
 [0.55.0]: https://github.com/Textualize/textual/compare/v0.54.0...v0.55.0
