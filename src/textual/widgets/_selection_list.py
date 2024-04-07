@@ -208,7 +208,11 @@ class SelectionList(Generic[SelectionType], OptionList):
 
     @dataclass
     class SelectedChanged(Generic[MessageSelectionType], Message):
-        """Message sent when the collection of selected values changes."""
+        """Message sent when the collection of selected values changes.
+
+        Can be handled using `on_selection_list_selected_changed` in a subclass of
+        [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
+        """
 
         selection_list: SelectionList[MessageSelectionType]
         """The `SelectionList` that sent the message."""
