@@ -1040,10 +1040,8 @@ class Compositor:
             self._previous_inline_height is not None
             and len(strips) < self._previous_inline_height
         )
-        try:
-            return InlineUpdate(strips, clear=clear)
-        finally:
-            self._previous_inline_height = len(strips)
+        self._previous_inline_height = len(strips)
+        return InlineUpdate(strips, clear=clear)
 
     def render_full_update(self) -> LayoutUpdate:
         """Render a full update.
