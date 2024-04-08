@@ -674,8 +674,8 @@ class Screen(Generic[ScreenResultType], Widget):
 
         app = self.app
 
-        if self is app.screen:
-            if app.is_inline:
+        if app.is_inline:
+            if self is app.screen:
                 inline_height = app._get_inline_height()
                 clear = (
                     app._previous_inline_height is not None
@@ -692,18 +692,28 @@ class Screen(Generic[ScreenResultType], Widget):
                 app._previous_inline_height = inline_height
                 self._dirty_widgets.clear()
                 self._compositor._dirty_regions.clear()
-            else:
+            elif (
+                self in self.app._background_screens and self._compositor._dirty_regions
+            ):
+                app.screen.refresh(*self._compositor._dirty_regions)
+                self._compositor._dirty_regions.clear()
+                self._dirty_widgets.clear()
+
+        else:
+            if self is app.screen:
                 # Top screen
                 update = self._compositor.render_update(
                     screen_stack=app._background_screens
                 )
                 app._display(self, update)
                 self._dirty_widgets.clear()
-        elif self in self.app._background_screens and self._compositor._dirty_regions:
-            # Background screen
-            app.screen.refresh(*self._compositor._dirty_regions)
-            self._compositor._dirty_regions.clear()
-            self._dirty_widgets.clear()
+            elif (
+                self in self.app._background_screens and self._compositor._dirty_regions
+            ):
+                # Background screen
+                app.screen.refresh(*self._compositor._dirty_regions)
+                self._compositor._dirty_regions.clear()
+                self._dirty_widgets.clear()
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
@@ -848,10 +858,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self.app._handle_exception(error)
             return
         if self.is_current:
-            if self.app.is_inline:
-                self._update_timer.resume()
-            else:
-                self._compositor_refresh()
+            self._compositor_refresh()
 
         if self.app._dom_ready:
             self.screen_layout_refresh_signal.publish()
