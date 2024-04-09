@@ -6511,6 +6511,10 @@ window.onload = async (event) => {
 <h1 id="dom-queries">DOM Queries<a class="headerlink" href="#dom-queries" title="Permanent link">&para;</a></h1>
 <p>In the previous chapter we introduced the <a href="../CSS/#the-dom">DOM</a> which is how Textual apps keep track of widgets. We saw how you can apply styles to the DOM with CSS <a href="../CSS/#selectors">selectors</a>.</p>
 <p>Selectors are a very useful idea and can do more than apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>See the <a href="https://github.com/davep/textual-query-sandbox/">Textual Query Sandbox</a> project for an interactive way of experimenting with DOM queries.</p>
+</div>
 <h2 id="query-one">Query one<a class="headerlink" href="#query-one" title="Permanent link">&para;</a></h2>
 <p>The <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.query_one">query_one</a> method gets a single widget in an app or other widget. If you call it with a selector it will return the first matching widget.</p>
 <p>Let's say we have a widget with an ID of <code>send</code> and we want to get a reference to it in our app. We could do this with the following:</p>
