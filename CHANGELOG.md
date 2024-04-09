@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.56.4] - 2023-04-09
+
+### Fixed
+
+- Disabled terminal synchronization in inline mode as it breaks on some terminals
+
 ## [0.56.3] - 2024-04-08
 
 ### Fixed

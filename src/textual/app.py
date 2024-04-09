@@ -3430,7 +3430,8 @@ class App(Generic[ReturnType], DOMNode):
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
         log.system("SynchronizedOutput mode is supported")
-        self._sync_available = True
+        if self._driver is not None and not self._driver.is_inline:
+            self._sync_available = True
 
     def _begin_update(self) -> None:
         if self._sync_available and self._driver is not None:
