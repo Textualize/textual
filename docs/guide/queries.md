@@ -4,6 +4,10 @@ In the previous chapter we introduced the [DOM](../guide/CSS.md#the-dom) which i
 
 Selectors are a very useful idea and can do more than apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
 
+!!! tip
+
+    See the [Textual Query Sandbox](https://github.com/davep/textual-query-sandbox/) project for an interactive way of experimenting with DOM queries.
+
 ## Query one
 
 The [query_one][textual.dom.DOMNode.query_one] method gets a single widget in an app or other widget. If you call it with a selector it will return the first matching widget.
