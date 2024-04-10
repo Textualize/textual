@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `Integer` validator missing failure description when not a number https://github.com/Textualize/textual/issues/4413
+
 ## [0.56.4] - 2024-04-09
 
 ### Fixed
