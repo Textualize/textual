@@ -73,7 +73,7 @@ widget.styles.link_style_hover = "bold italic reverse"
 
 ## See also
 
- - [`link-background-hover](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
- - [`link-color-hover](./link_color_hover.md) to set the color of link text when the mouse pointer is over it.
+ - [`link-background-hover`](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
+ - [`link-color-hover`](./link_color_hover.md) to set the color of link text when the mouse pointer is over it.
  - [`link-style`](./link_style.md) to set the style of link text.
  - [`text-style`](../text_style.md) to set the style of text in a widget.

@@ -63,4 +63,4 @@ widget.styles.link_background = Color(100, 30, 173)
 ## See also
 
  - [`link-color`](./link_color.md) to set the color of link text.
- - [`link-background-hover](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
+ - [`link-background-hover`](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
