@@ -214,3 +214,11 @@ def test_Function_validate(function, failure_description, is_valid):
     assert result.is_valid is is_valid
     if result.failure_descriptions:
         assert result.failure_descriptions[0] == failure_description
+
+
+def test_Integer_failure_description_when_NotANumber():
+    """Regression test for https://github.com/Textualize/textual/issues/4413"""
+    validator = Integer()
+    result = validator.validate("x")
+    assert result.is_valid is False
+    assert result.failure_descriptions[0] == "Must be a valid integer."
