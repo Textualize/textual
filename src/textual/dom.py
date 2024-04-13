@@ -284,6 +284,27 @@ class DOMNode(MessagePump):
             self.call_later(self._initialize_data_bind)
         return self
 
+    def get_reactive_state(self) -> dict[str, object]:
+        """Get a dict of reactives and their values.
+
+        Returns:
+            A dict of reactives.
+        """
+        state = {name: getattr(self, name) for name in self._reactives}
+        return state
+
+    def set_reactive_state(self, state: dict[str, object]) -> None:
+        """Set reactives from a state dictionary.
+
+        Args:
+            state: A dict of reactive attributes.
+        """
+        for name in self._reactives:
+            try:
+                setattr(self, name, state[name])
+            except KeyError:
+                pass
+
     def _initialize_data_bind(self) -> None:
         """initialize a data binding.
 

@@ -2561,9 +2561,21 @@ class App(Generic[ReturnType], DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        async with self.screen.batch():
-            await self.screen.query("*").exclude(".-textual-system").remove()
-            await self.screen.mount_all(compose(self))
+        # async with self.screen.batch():
+        #     await self.screen.query("*").exclude(".-textual-system").remove()
+        #     await self.screen.mount_all(compose(self))
+
+        children_by_id = {child.id: child for child in self.children if child.id}
+        new_children = []
+        for widget in compose(self):
+            if (
+                widget.id
+                and (existing_widget := children_by_id.get(widget.id)) is not None
+            ):
+                new_children.append(existing_widget)
+                existing_widget.set_reactive_state(widget.get_reactive_state())
+            else:
+                new_children.append(widget)
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
