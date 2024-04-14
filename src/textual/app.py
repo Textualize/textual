@@ -1128,6 +1128,24 @@ class App(Generic[ReturnType], DOMNode):
 
         return LoadingIndicator()
 
+    def copy_to_clipboard(self, text: str) -> None:
+        """Copy text to the clipboard.
+
+        !!! note
+
+            This does not work on macOS Terminal, but will work on most other terminals.
+
+        Args:
+            text: Text you wish to copy to the clipboard.
+        """
+        if self._driver is None:
+            return
+
+        import base64
+
+        base64_text = base64.b64encode(text.encode("utf-8")).decode("utf-8")
+        self._driver.write(f"\x1b]52;c;{base64_text}\a")
+
     def call_from_thread(
         self,
         callback: Callable[..., CallThreadReturnType | Awaitable[CallThreadReturnType]],
