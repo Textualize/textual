@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added App.copy_to_clipboard
+- Added `App.copy_to_clipboard` https://github.com/Textualize/textual/pull/4416
 
 ## [0.56.4] - 2024-04-09
 
