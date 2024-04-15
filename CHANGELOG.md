@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-## Fixed
+### Fixed
 
 - Fixed a crash in `DataTable` if you clicked a link in the border https://github.com/Textualize/textual/issues/4410
+
+### Added
+
+- Added `App.copy_to_clipboard` https://github.com/Textualize/textual/pull/4416
 
 ## [0.56.4] - 2024-04-09
 
