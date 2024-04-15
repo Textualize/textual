@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## Unreleased
+
+### Added
+
+- Added `App.copy_to_clipboard` https://github.com/Textualize/textual/pull/4416
+
 ## [0.56.4] - 2024-04-09
 
 ### Fixed
