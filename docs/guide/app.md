@@ -38,6 +38,14 @@ If you hit ++ctrl+c++ Textual will exit application mode and return you to the c
 
     A side effect of application mode is that you may no longer be able to select and copy text in the usual way. Terminals typically offer a way to bypass this limit with a key modifier. On iTerm you can select text if you hold the ++option++ key. See the documentation for your terminal software for how to select text in application mode.
 
+#### Run inline
+
+!!! tip "Added in version 0.55.0"
+
+You can also run apps in _inline_ mode, which will cause the app to appear beneath the prompt (and won't go in to application mode).
+Inline apps are useful for tools that integrate closely with the typical workflow of a terminal.
+
+To run an app in inline mode set the `inline` parameter to `True` when you call [App.run()][textual.app.App.run]. See [Style Inline Apps](../how-to/style-inline-apps.md) for how to apply additional styles to inline apps.
 
 ## Events
 

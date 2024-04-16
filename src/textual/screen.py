@@ -137,6 +137,13 @@ class Screen(Generic[ScreenResultType], Widget):
         layout: vertical;
         overflow-y: auto;
         background: $surface;
+        
+        &:inline {
+            height: auto;
+            min-height: 1;
+            border-top: tall $background;
+            border-bottom: tall $background;
+        }
     }
     """
 
@@ -664,18 +671,49 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
-        if self is self.app.screen:
-            # Top screen
-            update = self._compositor.render_update(
-                screen_stack=self.app._background_screens
-            )
-            self.app._display(self, update)
-            self._dirty_widgets.clear()
-        elif self in self.app._background_screens and self._compositor._dirty_regions:
-            # Background screen
-            self.app.screen.refresh(*self._compositor._dirty_regions)
-            self._compositor._dirty_regions.clear()
-            self._dirty_widgets.clear()
+
+        app = self.app
+
+        if app.is_inline:
+            if self is app.screen:
+                inline_height = app._get_inline_height()
+                clear = (
+                    app._previous_inline_height is not None
+                    and inline_height < app._previous_inline_height
+                )
+                app._display(
+                    self,
+                    self._compositor.render_inline(
+                        app.size.with_height(inline_height),
+                        screen_stack=app._background_screens,
+                        clear=clear,
+                    ),
+                )
+                app._previous_inline_height = inline_height
+                self._dirty_widgets.clear()
+                self._compositor._dirty_regions.clear()
+            elif (
+                self in self.app._background_screens and self._compositor._dirty_regions
+            ):
+                app.screen.refresh(*self._compositor._dirty_regions)
+                self._compositor._dirty_regions.clear()
+                self._dirty_widgets.clear()
+
+        else:
+            if self is app.screen:
+                # Top screen
+                update = self._compositor.render_update(
+                    screen_stack=app._background_screens
+                )
+                app._display(self, update)
+                self._dirty_widgets.clear()
+            elif (
+                self in self.app._background_screens and self._compositor._dirty_regions
+            ):
+                # Background screen
+                app.screen.refresh(*self._compositor._dirty_regions)
+                self._compositor._dirty_regions.clear()
+                self._dirty_widgets.clear()
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
@@ -754,6 +792,8 @@ class Screen(Generic[ScreenResultType], Widget):
     def _refresh_layout(self, size: Size | None = None, scroll: bool = False) -> None:
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
+        if self.app.is_inline:
+            size = size.with_height(self.app._get_inline_height())
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
@@ -845,6 +885,30 @@ class Screen(Generic[ScreenResultType], Widget):
         message.prevent_default()
         self._scroll_required = True
         self.check_idle()
+
+    def _get_inline_height(self, size: Size) -> int:
+        """Get the inline height (number of lines to display when running inline mode).
+
+        Args:
+            size: Size of the terminal
+
+        Returns:
+            Height for inline mode.
+        """
+        height_scalar = self.styles.height
+        if height_scalar is None or height_scalar.is_auto:
+            inline_height = self.get_content_height(size, size, size.width)
+        else:
+            inline_height = int(height_scalar.resolve(size, size))
+        inline_height += self.styles.gutter.height
+        min_height = self.styles.min_height
+        max_height = self.styles.max_height
+        if min_height is not None:
+            inline_height = max(inline_height, int(min_height.resolve(size, size)))
+        if max_height is not None:
+            inline_height = min(inline_height, int(max_height.resolve(size, size)))
+        inline_height = min(self.app.size.height, inline_height)
+        return inline_height
 
     def _screen_resized(self, size: Size):
         """Called by App when the screen is resized."""

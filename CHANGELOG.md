@@ -9,11 +9,82 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `Integer` validator missing failure description when not a number https://github.com/Textualize/textual/issues/4413
+- Fixed a crash in `DataTable` if you clicked a link in the border https://github.com/Textualize/textual/issues/4410
+
+### Added
+
+- Added `App.copy_to_clipboard` https://github.com/Textualize/textual/pull/4416
+
+## [0.56.4] - 2024-04-09
+
+### Fixed
+
+- Disabled terminal synchronization in inline mode as it breaks on some terminals
+
+## [0.56.3] - 2024-04-08
+
+### Fixed
+
+- Fixed inline mode not updating https://github.com/Textualize/textual/issues/4403
+
+## [0.56.2] - 2024-04-07
+
+### Fixed
+
+- Fixed inline mode not clearing with multiple screen
+
+## [0.56.1] - 2024-04-07
+
+### Fixed
+
+- Fixed flicker when non-current screen updates https://github.com/Textualize/textual/pull/4401
+
+### Changed
+
+- Removed additional line at the end of an inline app https://github.com/Textualize/textual/pull/4401
+
+## [0.56.0] - 2024-04-06
+
+### Added
+
+- Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
+  
+### Fixed
+
+- Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
+- Fixed issue with priority bindings https://github.com/Textualize/textual/pull/4395
+
+### Changed
+
+- self.prevent can be used in a widget constructor to prevent messages on mount https://github.com/Textualize/textual/pull/4392
+
+
+## [0.55.1] - 2024-04-2
+
+### Fixed
+
+- Fixed mouse escape sequences being generated with `mouse=False` 
+
+## [0.55.0] - 2024-04-1
+
+### Fixed
+
+- Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
+- Reverted auto-width change https://github.com/Textualize/textual/pull/4369
+
+### Changed
+
 - Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
+- Fixed `DataTable` scrolling issues by changing `max-height` back to 100% https://github.com/Textualize/textual/issues/4286
+- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
 
 ### Added
 
 - Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
+- Added support for JavaScript, Golang, Rust, Bash, Java and Kotlin to `TextArea` https://github.com/Textualize/textual/pull/4350
+- Added `inline` parameter to `run` and `run_async` to run app inline (under the prompt). https://github.com/Textualize/textual/pull/4343
+- Added `mouse` parameter to disable mouse support https://github.com/Textualize/textual/pull/4343
 
 ## [0.54.0] - 2024-03-26
 
@@ -1811,6 +1882,12 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.56.3]: https://github.com/Textualize/textual/compare/v0.56.2...v0.56.3
+[0.56.2]: https://github.com/Textualize/textual/compare/v0.56.1...v0.56.2
+[0.56.1]: https://github.com/Textualize/textual/compare/v0.56.0...v0.56.1
+[0.56.0]: https://github.com/Textualize/textual/compare/v0.55.1...v0.56.0
+[0.55.1]: https://github.com/Textualize/textual/compare/v0.55.0...v0.55.1
+[0.55.0]: https://github.com/Textualize/textual/compare/v0.54.0...v0.55.0
 [0.54.0]: https://github.com/Textualize/textual/compare/v0.53.1...v0.54.0
 [0.53.1]: https://github.com/Textualize/textual/compare/v0.53.0...v0.53.1
 [0.53.0]: https://github.com/Textualize/textual/compare/v0.52.1...v0.53.0

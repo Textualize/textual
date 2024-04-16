@@ -430,6 +430,10 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     """
 
     DEFAULT_CSS = """
+    CommandPalette:inline {
+        /* If the command palette is invoked in inline mode, we may need additional lines. */
+        min-height: 20;
+    }
     CommandPalette {
         background: $background 30%;
         align-horizontal: center;

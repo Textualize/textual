@@ -1235,3 +1235,17 @@ def test_example_merlin(snap_compare):
 def test_example_pride(snap_compare):
     """Test the pride example."""
     assert snap_compare(EXAMPLES_DIR / "pride.py")
+
+    
+def test_button_with_console_markup(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4328"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_markup.py")
+
+
+def test_width_100(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4360"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "width_100.py")
+
+
+def test_button_with_multiline_label(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "button_multiline_label.py")

@@ -21,6 +21,8 @@ _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
 
+_re_cursor_position = re.compile(r"\x1b\[(?P<row>\d+);(?P<col>\d+)R")
+
 BRACKETED_PASTE_START: Final[str] = "\x1b[200~"
 """Sequence received when a bracketed paste event starts."""
 BRACKETED_PASTE_END: Final[str] = "\x1b[201~"
@@ -235,8 +237,7 @@ class XTermParser(Parser[events.Event]):
                         if key_events:
                             break
                         # Or a mouse event?
-                        mouse_match = _re_mouse_event.match(sequence)
-                        if mouse_match is not None:
+                        if (mouse_match := _re_mouse_event.match(sequence)) is not None:
                             mouse_code = mouse_match.group(0)
                             event = self.parse_mouse_code(mouse_code)
                             if event:
@@ -245,14 +246,28 @@ class XTermParser(Parser[events.Event]):
 
                         # Or a mode report?
                         # (i.e. the terminal saying it supports a mode we requested)
-                        mode_report_match = _re_terminal_mode_response.match(sequence)
-                        if mode_report_match is not None:
+                        if (
+                            mode_report_match := _re_terminal_mode_response.match(
+                                sequence
+                            )
+                        ) is not None:
                             if (
                                 mode_report_match["mode_id"] == "2026"
                                 and int(mode_report_match["setting_parameter"]) > 0
                             ):
                                 on_token(messages.TerminalSupportsSynchronizedOutput())
                             break
+
+                        # Or a cursor position query?
+                        if (
+                            cursor_position_match := _re_cursor_position.match(sequence)
+                        ) is not None:
+                            row, column = cursor_position_match.groups()
+                            on_token(
+                                events.CursorPosition(x=int(column) - 1, y=int(row) - 1)
+                            )
+                            break
+
             else:
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):
