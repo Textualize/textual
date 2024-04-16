@@ -970,6 +970,17 @@ TextArea {
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
     def get_line(self, line_index: int) -> Text:
+        """Retrieve the line at the given line index.
+
+        You can stylize the Text object returned here to apply additional
+        styling to TextArea content.
+
+        Args:
+            line_index: The index of the line.
+
+        Returns:
+            A `rich.Text` object containing that
+        """
         line_string = self.document.get_line(line_index)
         return Text(line_string, end="")
 
