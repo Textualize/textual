@@ -979,7 +979,7 @@ TextArea {
             line_index: The index of the line.
 
         Returns:
-            A `rich.Text` object containing that
+            A `rich.Text` object containing the requested line.
         """
         line_string = self.document.get_line(line_index)
         return Text(line_string, end="")
