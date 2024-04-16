@@ -969,6 +969,21 @@ TextArea {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
+    def get_line(self, line_index: int) -> Text:
+        """Retrieve the line at the given line index.
+
+        You can stylize the Text object returned here to apply additional
+        styling to TextArea content.
+
+        Args:
+            line_index: The index of the line.
+
+        Returns:
+            A `rich.Text` object containing the requested line.
+        """
+        line_string = self.document.get_line(line_index)
+        return Text(line_string, end="")
+
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
@@ -982,7 +997,6 @@ TextArea {
         if theme:
             theme.apply_css(self)
 
-        document = self.document
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
 
@@ -1006,9 +1020,7 @@ TextArea {
 
         line_index, section_offset = line_info
 
-        # Get the line from the Document.
-        line_string = document.get_line(line_index)
-        line = Text(line_string, end="")
+        line = self.get_line(line_index)
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
@@ -1058,7 +1070,7 @@ TextArea {
 
         highlights = self._highlights
         if highlights and theme:
-            line_bytes = _utf8_encode(line_string)
+            line_bytes = _utf8_encode(line.plain)
             byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
             get_highlight_from_theme = theme.syntax_styles.get
             line_highlights = highlights[line_index]
