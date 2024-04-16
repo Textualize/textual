@@ -74,7 +74,6 @@ class _MessagePumpMeta(type):
         bases: tuple[type, ...],
         class_dict: dict[str, Any],
         **kwargs: Any,
-    ):
     ) -> _MessagePumpMetaSub:
         handlers: dict[
             type[Message], list[tuple[Callable, dict[str, tuple[SelectorSet, ...]]]]
