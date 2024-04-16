@@ -363,7 +363,7 @@ class Integer(Number):
         Returns:
             A string description of the failure.
         """
-        if isinstance(failure, Integer.NotAnInteger):
+        if isinstance(failure, (Integer.NotANumber, Integer.NotAnInteger)):
             return "Must be a valid integer."
         elif isinstance(failure, Integer.NotInRange):
             if self.minimum is None and self.maximum is not None:
