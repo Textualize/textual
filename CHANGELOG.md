@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `Integer` validator missing failure description when not a number https://github.com/Textualize/textual/issues/4413
+- Fixed a crash in `DataTable` if you clicked a link in the border https://github.com/Textualize/textual/issues/4410
 
 ### Added
 

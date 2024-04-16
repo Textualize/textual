@@ -2441,7 +2441,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     async def _on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         meta = event.style.meta
-        if not meta:
+        if not "row" in meta or not "column" in meta:
             return
 
         row_index = meta["row"]
