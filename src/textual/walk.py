@@ -22,8 +22,7 @@ def walk_depth_first(
     root: DOMNode,
     *,
     with_root: bool = True,
-) -> Iterable[DOMNode]:
-    ...
+) -> Iterable[DOMNode]: ...
 
 
 @overload
@@ -32,8 +31,7 @@ def walk_depth_first(
     filter_type: type[WalkType],
     *,
     with_root: bool = True,
-) -> Iterable[WalkType]:
-    ...
+) -> Iterable[WalkType]: ...
 
 
 def walk_depth_first(
@@ -82,8 +80,7 @@ def walk_breadth_first(
     root: DOMNode,
     *,
     with_root: bool = True,
-) -> Iterable[DOMNode]:
-    ...
+) -> Iterable[DOMNode]: ...
 
 
 @overload
@@ -92,8 +89,7 @@ def walk_breadth_first(
     filter_type: type[WalkType],
     *,
     with_root: bool = True,
-) -> Iterable[WalkType]:
-    ...
+) -> Iterable[WalkType]: ...
 
 
 def walk_breadth_first(

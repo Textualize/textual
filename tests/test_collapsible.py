@@ -57,8 +57,8 @@ async def test_compose_nested_collapsible():
                 yield Collapsible(Label("Inner"), id="inner", collapsed=False)
 
     async with CollapsibleApp().run_test() as pilot:
-        outer: Collapsible = pilot.app.get_child_by_id("outer")
-        inner: Collapsible = get_contents(outer).get_child_by_id("inner")
+        outer: Collapsible = pilot.app.get_child_by_id("outer", Collapsible)
+        inner: Collapsible = get_contents(outer).get_child_by_id("inner", Collapsible)
         outer.collapsed = True
         assert not inner.collapsed
 
@@ -148,7 +148,7 @@ async def test_toggle_message():
 
 
 async def test_expand_message():
-    """Toggling should post a message."""
+    """Clicking to expand should post a message."""
 
     hits = []
 
@@ -169,8 +169,30 @@ async def test_expand_message():
         assert len(hits) == 1
 
 
+async def test_expand_via_watcher_message():
+    """Setting `collapsed` to `False` should post a message."""
+
+    hits = []
+
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(collapsed=True)
+
+        def on_collapsible_expanded(self) -> None:
+            hits.append("expanded")
+
+    async with CollapsibleApp().run_test() as pilot:
+        assert pilot.app.query_one(Collapsible).collapsed
+
+        pilot.app.query_one(Collapsible).collapsed = False
+        await pilot.pause()
+
+        assert not pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 1
+
+
 async def test_collapse_message():
-    """Toggling should post a message."""
+    """Clicking on collapsed should post a message."""
 
     hits = []
 
@@ -185,6 +207,28 @@ async def test_collapse_message():
         assert not pilot.app.query_one(Collapsible).collapsed
 
         await pilot.click(CollapsibleTitle)
+        await pilot.pause()
+
+        assert pilot.app.query_one(Collapsible).collapsed
+        assert len(hits) == 1
+
+
+async def test_collapse_via_watcher_message():
+    """Setting `collapsed` to `True` should post a message."""
+
+    hits = []
+
+    class CollapsibleApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Collapsible(collapsed=False)
+
+        def on_collapsible_collapsed(self) -> None:
+            hits.append("collapsed")
+
+    async with CollapsibleApp().run_test() as pilot:
+        assert not pilot.app.query_one(Collapsible).collapsed
+
+        pilot.app.query_one(Collapsible).collapsed = True
         await pilot.pause()
 
         assert pilot.app.query_one(Collapsible).collapsed

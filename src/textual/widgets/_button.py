@@ -1,16 +1,22 @@
 from __future__ import annotations
 
 from functools import partial
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 import rich.repr
+from rich.cells import cell_len
 from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from .. import events
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..binding import Binding
 from ..css._error_tools import friendly_list
+from ..geometry import Size
 from ..message import Message
 from ..pad import HorizontalPad
 from ..reactive import reactive
@@ -61,16 +67,16 @@ class Button(Widget, can_focus=True):
             tint: $background 30%;
         }
 
-        &.-primary {            
+        &.-primary {
             background: $primary;
             color: $text;
             border-top: tall $primary-lighten-3;
-            border-bottom: tall $primary-darken-3;      
-                  
+            border-bottom: tall $primary-darken-3;
+
             &:hover {
                 background: $primary-darken-2;
                 color: $text;
-                border-top: tall $primary;                
+                border-top: tall $primary;
             }
 
             &.-active {
@@ -199,6 +205,13 @@ class Button(Widget, can_focus=True):
         self.active_effect_duration = 0.3
         """Amount of time in seconds the button 'press' animation lasts."""
 
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        try:
+            return max([cell_len(line) for line in self.label.plain.splitlines()]) + 2
+        except ValueError:
+            # Empty string label
+            return 2
+
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
         yield "variant", self.variant, "default"
@@ -220,10 +233,10 @@ class Button(Widget, can_focus=True):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         assert isinstance(self.label, Text)
         label = self.label.copy()
-        label.stylize(self.rich_style)
+        label.stylize_before(self.rich_style)
         return HorizontalPad(
             label,
             1,

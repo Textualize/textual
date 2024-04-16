@@ -13,6 +13,14 @@ async def test_tab_label():
     assert Tab("Pilot").label_text == "Pilot"
 
 
+async def test_tab_relabel():
+    """It should be possible to relabel a tab."""
+    tab = Tab("Pilot")
+    assert tab.label_text == "Pilot"
+    tab.label = "Aeryn"
+    assert tab.label_text == "Aeryn"
+
+
 async def test_compose_empty_tabs():
     """It should be possible to create an empty Tabs."""
 
@@ -308,15 +316,8 @@ async def test_change_active_from_code():
         assert tabs.active_tab.id == "tab-2"
         assert tabs.active == tabs.active_tab.id
 
-        # TODO: This one is questionable. It seems Tabs has been designed so
-        # that you can set the active tab to an empty string, and it remains
-        # so, and just removes the underline; no other changes. So active
-        # will be an empty string while active_tab will be a tab. This feels
-        # like an oversight. Need to investigate and possibly modify this
-        # behaviour unless there's a good reason for this.
         tabs.active = ""
-        assert tabs.active_tab is not None
-        assert tabs.active_tab.id == "tab-2"
+        assert tabs.active_tab is None
 
 
 async def test_navigate_tabs_with_keyboard():

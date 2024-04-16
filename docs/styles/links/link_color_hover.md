@@ -9,7 +9,7 @@ The `link-color-hover` style sets the color of the link text when the mouse curs
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-link-color-hover: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+link-color-hover: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
 `link-color-hover` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the color of text enclosed in Textual action links when the mouse pointer is over it.
@@ -76,5 +76,5 @@ widget.styles.link_color_hover = Color(100, 30, 173)
 ## See also
 
  - [`link-color`](./link_color.md) to set the color of link text.
- - [`link-background-hover](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
- - [`link-style-hover](./link_style_hover.md) to set the style of link text when the mouse pointer is over it.
+ - [`link-background-hover`](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
+ - [`link-style-hover`](./link_style_hover.md) to set the style of link text when the mouse pointer is over it.

@@ -1,10 +1,8 @@
 """
-
 An implementation of a classic calculator, with a layout inspired by macOS calculator.
 
-
+Works like a real calculator. Click the buttons or press the equivalent keys.
 """
-
 
 from decimal import Decimal
 
@@ -28,6 +26,7 @@ class CalculatorApp(App):
     value = var("")
     operator = var("plus")
 
+    # Maps button IDs on to the corresponding key name
     NAME_MAP = {
         "asterisk": "multiply",
         "slash": "divide",
@@ -169,4 +168,4 @@ class CalculatorApp(App):
 
 
 if __name__ == "__main__":
-    CalculatorApp().run()
+    CalculatorApp().run(inline=True)

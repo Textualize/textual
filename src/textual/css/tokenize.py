@@ -30,6 +30,19 @@ STRING = r"\".*?\""
 VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
 
 IDENTIFIER = r"[a-zA-Z_\-][a-zA-Z0-9_\-]*"
+SELECTOR_TYPE_NAME = r"[A-Z_][a-zA-Z0-9_]*"
+"""Selectors representing Widget type names should start with upper case or '_'.
+
+The fact that a selector starts with an upper case letter or '_' is relevant in the
+context of nested CSS to help determine whether xxx:yyy is a declaration + value or a
+selector + pseudo-class."""
+DECLARATION_NAME = r"[a-z][a-zA-Z0-9_\-]*"
+"""Declaration of TCSS rules start with lowercase.
+
+The fact that a declaration starts with a lower case letter is relevant in the context
+of nested CSS to help determine whether xxx:yyy is a declaration + value or a selector
++ pseudo-class.
+"""
 
 # Values permitted in variable and rule declarations.
 DECLARATION_VALUES = {
@@ -54,7 +67,7 @@ expect_root_scope = Expect(
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
-    selector_start=IDENTIFIER,
+    selector_start=SELECTOR_TYPE_NAME,
     variable_name=rf"{VARIABLE_REF}:",
     declaration_set_end=r"\}",
 ).expect_eof(True)
@@ -64,10 +77,11 @@ expect_root_nested = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
+    declaration_name=DECLARATION_NAME + r"\:",
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
-    selector_start=IDENTIFIER,
+    selector_start=SELECTOR_TYPE_NAME,
     variable_name=rf"{VARIABLE_REF}:",
     declaration_set_end=r"\}",
     nested=r"\&",
@@ -97,14 +111,15 @@ expect_selector_continue = Expect(
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
     pseudo_class=r"\:[a-zA-Z_-]+",
-    selector_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
-    selector_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
+    selector_id=r"\#" + IDENTIFIER,
+    selector_class=r"\." + IDENTIFIER,
     selector_universal=r"\*",
-    selector=IDENTIFIER,
+    selector=SELECTOR_TYPE_NAME,
     combinator_child=">",
     new_selector=r",",
     declaration_set_start=r"\{",
     declaration_set_end=r"\}",
+    nested=r"\&",
 ).expect_eof(True)
 
 # A rule declaration e.g. "text: red;"
@@ -115,13 +130,13 @@ expect_declaration = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
-    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_name=DECLARATION_NAME + r"\:",
     declaration_set_end=r"\}",
     #
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
-    selector_start=IDENTIFIER,
+    selector_start=SELECTOR_TYPE_NAME,
 )
 
 expect_declaration_solo = Expect(
@@ -129,7 +144,7 @@ expect_declaration_solo = Expect(
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
-    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_name=DECLARATION_NAME + r"\:",
     declaration_set_end=r"\}",
 ).expect_eof(True)
 
@@ -210,7 +225,7 @@ class TokenizerState:
                 nest_level += 1
             elif name == "declaration_set_end":
                 nest_level -= 1
-                expect = expect_root_nested if nest_level else expect_root_scope
+                expect = expect_declaration if nest_level else expect_root_scope
                 yield token
                 continue
             expect = get_state(name, expect)

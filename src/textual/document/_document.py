@@ -52,7 +52,7 @@ def _detect_newline_style(text: str) -> Newline:
         text: The text to inspect.
 
     Returns:
-        The NewlineStyle used in the file.
+        The Newline used in the file.
     """
     if "\r\n" in text:  # Windows newline
         return "\r\n"
@@ -90,6 +90,16 @@ class DocumentBase(ABC):
     @abstractmethod
     def newline(self) -> Newline:
         """Return the line separator used in the document."""
+
+    @property
+    @abstractmethod
+    def lines(self) -> list[str]:
+        """Get the lines of the document as a list of strings.
+
+        The strings should *not* include newline characters. The newline
+        character used for the document can be retrieved via the newline
+        property.
+        """
 
     @abstractmethod
     def get_line(self, index: int) -> str:
@@ -161,13 +171,22 @@ class DocumentBase(ABC):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
 
-    @overload
-    def __getitem__(self, line_index: int) -> str:
-        ...
+    @property
+    @abstractmethod
+    def start(self) -> Location:
+        """Returns the location of the start of the document (0, 0)."""
+        return (0, 0)
+
+    @property
+    @abstractmethod
+    def end(self) -> Location:
+        """Returns the location of the end of the document."""
 
     @overload
-    def __getitem__(self, line_index: slice) -> list[str]:
-        ...
+    def __getitem__(self, line_index: int) -> str: ...
+
+    @overload
+    def __getitem__(self, line_index: slice) -> list[str]: ...
 
     @abstractmethod
     def __getitem__(self, line_index: int | slice) -> str | list[str]:
@@ -232,6 +251,8 @@ class Document(DocumentBase):
 
     def replace_range(self, start: Location, end: Location, text: str) -> EditResult:
         """Replace text at the given range.
+
+        This is the only method by which a document may be updated.
 
         Args:
             start: A tuple (row, column) where the edit starts.
@@ -321,6 +342,17 @@ class Document(DocumentBase):
         """Returns the number of lines in the document."""
         return len(self._lines)
 
+    @property
+    def start(self) -> Location:
+        """Returns the location of the start of the document (0, 0)."""
+        return super().start
+
+    @property
+    def end(self) -> Location:
+        """Returns the location of the end of the document."""
+        last_line = self._lines[-1]
+        return (self.line_count, len(last_line))
+
     def get_index_from_location(self, location: Location) -> int:
         """Given a location, returns the index from the document's text.
 
@@ -370,12 +402,10 @@ class Document(DocumentBase):
         return line_string
 
     @overload
-    def __getitem__(self, line_index: int) -> str:
-        ...
+    def __getitem__(self, line_index: int) -> str: ...
 
     @overload
-    def __getitem__(self, line_index: slice) -> list[str]:
-        ...
+    def __getitem__(self, line_index: slice) -> list[str]: ...
 
     def __getitem__(self, line_index: int | slice) -> str | list[str]:
         """Return the content of a line as a string, excluding newline characters.

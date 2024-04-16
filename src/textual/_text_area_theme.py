@@ -1,12 +1,16 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, fields
+from typing import TYPE_CHECKING
 
 from rich.style import Style
 
 from textual.app import DEFAULT_COLORS
 from textual.color import Color
 from textual.design import DEFAULT_DARK_SURFACE
+
+if TYPE_CHECKING:
+    from textual.widgets import TextArea
 
 
 @dataclass
@@ -63,10 +67,27 @@ class TextAreaTheme:
     syntax_styles: dict[str, Style] = field(default_factory=dict)
     """The mapping of tree-sitter names from the `highlight_query` to Rich styles."""
 
+    _theme_configured_attributes: set[str] = field(init=False, default_factory=set)
+    """Records which attributes were set via the theme object (as opposed to CSS components)."""
+
     def __post_init__(self) -> None:
-        """Generate some styles if they haven't been supplied."""
-        if self.base_style is None:
-            self.base_style = Style()
+        theme_fields = fields(self)
+        for field in theme_fields:
+            if getattr(self, field.name) is not None:
+                self._theme_configured_attributes.add(field.name)
+
+    def apply_css(self, text_area: TextArea) -> None:
+        """Apply CSS rules from a TextArea to be used for fallback styling.
+
+        If any attributes in the theme aren't supplied, they'll be filled with the appropriate
+        base CSS (e.g. color, background, etc.) and component CSS (e.g. text-area--cursor) from
+        the supplied TextArea.
+
+        Args:
+            text_area: The TextArea instance to retrieve fallback styling from.
+        """
+        self.base_style = text_area.rich_style or Style()
+        get_style = text_area.get_component_rich_style
 
         if self.base_style.color is None:
             self.base_style = Style(color="#f3f3f3", bgcolor=self.base_style.bgcolor)
@@ -76,38 +97,62 @@ class TextAreaTheme:
                 color=self.base_style.color, bgcolor=DEFAULT_DARK_SURFACE
             )
 
+        configured = self._theme_configured_attributes.__contains__
+
         assert self.base_style is not None
         assert self.base_style.color is not None
         assert self.base_style.bgcolor is not None
 
-        if self.gutter_style is None:
-            self.gutter_style = self.base_style.copy()
+        if not configured("gutter_style"):
+            gutter_style = get_style("text-area--gutter")
+            if gutter_style:
+                self.gutter_style = gutter_style
+            else:
+                self.gutter_style = self.base_style.copy()
 
         background_color = Color.from_rich_color(self.base_style.bgcolor)
-        if self.cursor_style is None:
-            self.cursor_style = Style(
-                color=background_color.rich_color,
-                bgcolor=background_color.inverse.rich_color,
-            )
+        if not configured("cursor_style"):
+            # If the theme doesn't contain a cursor style, fallback to component styles.
+            cursor_style = get_style("text-area--cursor")
+            if cursor_style:
+                self.cursor_style = cursor_style
+            else:
+                # There's no component style either, fallback to a default.
+                self.cursor_style = Style.from_color(
+                    color=background_color.rich_color,
+                    bgcolor=background_color.inverse.rich_color,
+                )
 
-        if self.cursor_line_gutter_style is None and self.cursor_line_style is not None:
-            self.cursor_line_gutter_style = self.cursor_line_style.copy()
+        # Apply fallbacks for the styles of the active line and active line gutter.
+        if not configured("cursor_line_style"):
+            self.cursor_line_style = get_style("text-area--cursor-line")
 
-        if self.bracket_matching_style is None:
-            bracket_matching_background = background_color.blend(
-                background_color.inverse, factor=0.05
-            )
-            self.bracket_matching_style = Style(
-                bgcolor=bracket_matching_background.rich_color
-            )
+        if not configured("cursor_line_gutter_style"):
+            self.cursor_line_gutter_style = get_style("text-area--cursor-gutter")
 
-        if self.selection_style is None:
-            selection_background_color = background_color.blend(
-                DEFAULT_COLORS["dark"].primary, factor=0.75
-            )
-            self.selection_style = Style.from_color(
-                bgcolor=selection_background_color.rich_color
-            )
+        if not configured("bracket_matching_style"):
+            matching_bracket_style = get_style("text-area--matching-bracket")
+            if matching_bracket_style:
+                self.bracket_matching_style = matching_bracket_style
+            else:
+                bracket_matching_background = background_color.blend(
+                    background_color.inverse, factor=0.05
+                )
+                self.bracket_matching_style = Style(
+                    bgcolor=bracket_matching_background.rich_color
+                )
+
+        if not configured("selection_style"):
+            selection_style = get_style("text-area--selection")
+            if selection_style:
+                self.selection_style = selection_style
+            else:
+                selection_background_color = background_color.blend(
+                    DEFAULT_COLORS["dark"].primary, factor=0.75
+                )
+                self.selection_style = Style.from_color(
+                    bgcolor=selection_background_color.rich_color
+                )
 
     @classmethod
     def get_builtin_theme(cls, theme_name: str) -> TextAreaTheme | None:
@@ -145,15 +190,6 @@ class TextAreaTheme:
         """
         return list(_BUILTIN_THEMES.values())
 
-    @classmethod
-    def default(cls) -> TextAreaTheme:
-        """Get the default syntax theme.
-
-        Returns:
-            The default TextAreaTheme (probably "monokai").
-        """
-        return _MONOKAI
-
 
 _MONOKAI = TextAreaTheme(
     name="monokai",
@@ -186,6 +222,7 @@ _MONOKAI = TextAreaTheme(
         "method": Style(color="#A6E22E"),
         "method.call": Style(color="#A6E22E"),
         "boolean": Style(color="#66D9EF", italic=True),
+        "constant.builtin": Style(color="#66D9EF", italic=True),
         "json.null": Style(color="#66D9EF", italic=True),
         "regex.punctuation.bracket": Style(color="#F92672"),
         "regex.operator": Style(color="#F92672"),
@@ -235,6 +272,7 @@ _DRACULA = TextAreaTheme(
         "method": Style(color="#50fa7b"),
         "method.call": Style(color="#50fa7b"),
         "boolean": Style(color="#bd93f9"),
+        "constant.builtin": Style(color="#bd93f9"),
         "json.null": Style(color="#bd93f9"),
         "regex.punctuation.bracket": Style(color="#ff79c6"),
         "regex.operator": Style(color="#ff79c6"),
@@ -284,6 +322,7 @@ _DARK_VS = TextAreaTheme(
         "method": Style(color="#4EC9B0"),
         "method.call": Style(color="#4EC9B0"),
         "boolean": Style(color="#7DAF9C"),
+        "constant.builtin": Style(color="#7DAF9C"),
         "json.null": Style(color="#7DAF9C"),
         "tag": Style(color="#EFCB43"),
         "yaml.field": Style(color="#569cd6", bold=True),
@@ -329,6 +368,7 @@ _GITHUB_LIGHT = TextAreaTheme(
         "function": Style(color="#6639BB"),
         "method": Style(color="#6639BB"),
         "boolean": Style(color="#7DAF9C"),
+        "constant.builtin": Style(color="#7DAF9C"),
         "tag": Style(color="#6639BB"),
         "yaml.field": Style(color="#6639BB"),
         "json.label": Style(color="#6639BB"),
@@ -342,12 +382,12 @@ _GITHUB_LIGHT = TextAreaTheme(
     },
 )
 
+_CSS_THEME = TextAreaTheme(name="css", syntax_styles=_DARK_VS.syntax_styles)
+
 _BUILTIN_THEMES = {
+    "css": _CSS_THEME,
     "monokai": _MONOKAI,
     "dracula": _DRACULA,
     "vscode_dark": _DARK_VS,
     "github_light": _GITHUB_LIGHT,
 }
-
-DEFAULT_THEME = TextAreaTheme.get_builtin_theme("monokai")
-"""The default TextAreaTheme used by Textual."""

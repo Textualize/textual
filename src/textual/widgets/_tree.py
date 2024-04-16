@@ -10,11 +10,11 @@ from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
 from .. import events
-from .._cache import LRUCache
 from .._immutable_sequence_view import ImmutableSequenceView
 from .._loop import loop_last
 from .._segment_tools import line_pad
 from ..binding import Binding, BindingType
+from ..cache import LRUCache
 from ..geometry import Region, Size, clamp
 from ..message import Message
 from ..reactive import reactive, var
@@ -215,7 +215,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = True
         self._updates += 1
-        self._tree.post_message(Tree.NodeExpanded(self))
+        self._tree.post_message(Tree.NodeExpanded(self).set_sender(self._tree))
         if expand_all:
             for child in self.children:
                 child._expand(expand_all)
@@ -248,7 +248,7 @@ class TreeNode(Generic[TreeDataType]):
         """
         self._expanded = False
         self._updates += 1
-        self._tree.post_message(Tree.NodeCollapsed(self))
+        self._tree.post_message(Tree.NodeCollapsed(self).set_sender(self._tree))
         if collapse_all:
             for child in self.children:
                 child._collapse(collapse_all)
@@ -615,7 +615,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.root = self._add_node(None, text_label, data)
         """The root node of the tree."""
         self._line_cache: LRUCache[LineCacheKey, Strip] = LRUCache(1024)
-        self._tree_lines_cached: list[_TreeLine] | None = None
+        self._tree_lines_cached: list[_TreeLine[TreeDataType]] | None = None
         self._cursor_node: TreeNode[TreeDataType] | None = None
 
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
@@ -815,7 +815,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.root._reset()
         self.refresh(layout=True)
 
-    def _on_mouse_move(self, event: events.MouseMove):
+    def _on_mouse_move(self, event: events.MouseMove) -> None:
         meta = event.style.meta
         if meta and "line" in meta:
             self.hover_line = meta["line"]
@@ -948,7 +948,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 self._refresh_line(line_no)
 
     @property
-    def _tree_lines(self) -> list[_TreeLine]:
+    def _tree_lines(self) -> list[_TreeLine[TreeDataType]]:
         if self._tree_lines_cached is None:
             self._build()
         assert self._tree_lines_cached is not None
@@ -957,13 +957,14 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     async def _on_idle(self, event: events.Idle) -> None:
         """Check tree needs a rebuild on idle."""
         # Property calls build if required
-        self._tree_lines
+        async with self.lock:
+            self._tree_lines
 
     def _build(self) -> None:
         """Builds the tree by traversing nodes, and creating tree lines."""
 
         TreeLine = _TreeLine
-        lines: list[_TreeLine] = []
+        lines: list[_TreeLine[TreeDataType]] = []
         add_line = lines.append
 
         root = self.root
@@ -989,7 +990,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         show_root = self.show_root
         get_label_width = self.get_label_width
 
-        def get_line_width(line: _TreeLine) -> int:
+        def get_line_width(line: _TreeLine[TreeDataType]) -> int:
             return get_label_width(line.node) + line._get_guide_width(
                 guide_depth, show_root
             )
@@ -1147,17 +1148,18 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             node.expand()
 
     async def _on_click(self, event: events.Click) -> None:
-        meta = event.style.meta
-        if "line" in meta:
-            cursor_line = meta["line"]
-            if meta.get("toggle", False):
-                node = self.get_node_at_line(cursor_line)
-                if node is not None:
-                    self._toggle_node(node)
+        async with self.lock:
+            meta = event.style.meta
+            if "line" in meta:
+                cursor_line = meta["line"]
+                if meta.get("toggle", False):
+                    node = self.get_node_at_line(cursor_line)
+                    if node is not None:
+                        self._toggle_node(node)
 
-            else:
-                self.cursor_line = cursor_line
-                await self.run_action("select_cursor")
+                else:
+                    self.cursor_line = cursor_line
+                    await self.run_action("select_cursor")
 
     def notify_style_update(self) -> None:
         self._invalidate()

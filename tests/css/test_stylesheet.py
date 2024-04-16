@@ -208,6 +208,55 @@ def test_did_you_mean_for_css_property_names(
 
 
 @pytest.mark.parametrize(
+    "css_property_name,expected_property_name_suggestion",
+    [
+        ["backgroundu", "background"],
+        ["bckgroundu", "background"],
+        ["ofset-x", "offset-x"],
+        ["ofst_y", "offset-y"],
+        ["colr", "color"],
+        ["colour", "color"],
+        ["wdth", "width"],
+        ["wth", "width"],
+        ["wh", None],
+        ["xkcd", None],
+    ],
+)
+def test_did_you_mean_for_property_names_in_nested_css(
+    css_property_name: str, expected_property_name_suggestion: "str | None"
+) -> None:
+    """Test that we get nice errors with mistyped declaractions in nested CSS.
+
+    When implementing pseudo-class support in nested TCSS
+    (https://github.com/Textualize/textual/issues/4039), the first iterations didn't
+    preserve this so we add these tests to make sure we don't take this feature away
+    unintentionally.
+    """
+    stylesheet = Stylesheet()
+    css = """
+    Screen {
+        * {
+            border: blue;
+            ${PROPERTY}: red;
+        }
+    }
+    """.replace(
+        "${PROPERTY}", css_property_name
+    )
+
+    stylesheet.add_source(css)
+    with pytest.raises(StylesheetParseError) as err:
+        stylesheet.parse()
+
+    _, help_text = err.value.errors.rules[1].errors[0]
+    displayed_css_property_name = css_property_name.replace("_", "-")
+    expected_summary = f"Invalid CSS property {displayed_css_property_name!r}"
+    if expected_property_name_suggestion:
+        expected_summary += f". Did you mean '{expected_property_name_suggestion}'?"
+    assert help_text.summary == expected_summary
+
+
+@pytest.mark.parametrize(
     "css_property_name,css_property_value,expected_color_suggestion",
     [
         ["color", "blu", "blue"],

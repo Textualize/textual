@@ -12,7 +12,7 @@ def goodbye(name):
 
 class TextAreaExample(App):
     def compose(self) -> ComposeResult:
-        yield TextArea(TEXT, language="python")
+        yield TextArea.code_editor(TEXT, language="python")
 
 
 app = TextAreaExample()

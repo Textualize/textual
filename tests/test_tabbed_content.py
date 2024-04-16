@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from textual.app import App, ComposeResult
@@ -24,6 +26,7 @@ async def test_tabbed_content_switch_via_ui():
         tabbed_content = app.query_one(TabbedContent)
         # Check first tab
         assert tabbed_content.active == "foo"
+        assert tabbed_content.active_pane.id == "foo"
         await pilot.pause()
         assert app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
@@ -32,6 +35,7 @@ async def test_tabbed_content_switch_via_ui():
         # Click second tab
         await pilot.click(f"Tab#{ContentTab.add_prefix('bar')}")
         assert tabbed_content.active == "bar"
+        assert tabbed_content.active_pane.id == "bar"
         await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert app.query_one("#bar-label").region
@@ -40,6 +44,7 @@ async def test_tabbed_content_switch_via_ui():
         # Click third tab
         await pilot.click(f"Tab#{ContentTab.add_prefix('baz')}")
         assert tabbed_content.active == "baz"
+        assert tabbed_content.active_pane.id == "baz"
         await pilot.pause()
         assert not app.query_one("#foo-label").region
         assert not app.query_one("#bar-label").region
@@ -103,9 +108,33 @@ async def test_tabbed_content_switch_via_code():
         with pytest.raises(ValueError):
             tabbed_content.active = "X"
 
-        # Check fail with empty tab
-        with pytest.raises(ValueError):
-            tabbed_content.active = ""
+
+async def test_unsetting_tabbed_content_active():
+    """Check that setting `TabbedContent.active = ""` unsets active tab."""
+
+    messages = []
+
+    class TabbedApp(App[None]):
+        def compose(self) -> ComposeResult:
+            with TabbedContent(initial="bar"):
+                with TabPane("foo", id="foo"):
+                    yield Label("Foo", id="foo-label")
+                with TabPane("bar", id="bar"):
+                    yield Label("Bar", id="bar-label")
+                with TabPane("baz", id="baz"):
+                    yield Label("Baz", id="baz-label")
+
+        def on_tabbed_content_cleared(self, event: TabbedContent.Cleared) -> None:
+            messages.append(event)
+
+    app = TabbedApp()
+    async with app.run_test() as pilot:
+        tabbed_content = app.query_one(TabbedContent)
+        assert bool(tabbed_content.active)
+        tabbed_content.active = ""
+        await pilot.pause()
+        assert len(messages) == 1
+        assert isinstance(messages[0], TabbedContent.Cleared)
 
 
 async def test_tabbed_content_initial():
@@ -134,13 +163,12 @@ async def test_tabbed_content_initial():
 
 async def test_tabbed_content_messages():
     class TabbedApp(App):
-        message = None
+        activation_history: list[Tab] = []
 
         def compose(self) -> ComposeResult:
-            with TabbedContent(initial="bar"):
+            with TabbedContent():
                 with TabPane("foo", id="foo"):
                     yield Label("Foo", id="foo-label")
-
                 with TabPane("bar", id="bar"):
                     yield Label("Bar", id="bar-label")
                 with TabPane("baz", id="baz"):
@@ -149,15 +177,19 @@ async def test_tabbed_content_messages():
         def on_tabbed_content_tab_activated(
             self, event: TabbedContent.TabActivated
         ) -> None:
-            self.message = event
+            self.activation_history.append(event.tab)
 
     app = TabbedApp()
     async with app.run_test() as pilot:
         tabbed_content = app.query_one(TabbedContent)
         tabbed_content.active = "bar"
         await pilot.pause()
-        assert isinstance(app.message, TabbedContent.TabActivated)
-        assert app.message.tab.label.plain == "bar"
+        assert app.activation_history == [
+            # foo was originally activated.
+            app.query_one(TabbedContent).get_tab("foo"),
+            # then we did bar "by hand"
+            app.query_one(TabbedContent).get_tab("bar"),
+        ]
 
 
 async def test_tabbed_content_add_later_from_empty():
@@ -859,3 +891,26 @@ async def test_tabs_nested_doesnt_interfere_with_ancestor_tabbed_content():
 
         assert inner_tabs.active_tab is None
         assert tabbed_content.active == "outer1"
+
+
+async def test_disabling_tab_within_tabbed_content_stays_isolated():
+    """Disabling a tab within a tab pane should not affect the TabbedContent."""
+
+    class TabsNestedInTabbedContent(App):
+        def compose(self) -> ComposeResult:
+            with TabbedContent():
+                with TabPane("TabbedContent", id="duplicate"):
+                    yield Tabs(
+                        Tab("Tab1", id="duplicate"),
+                        Tab("Tab2", id="stay-enabled"),
+                        id="test-tabs",
+                    )
+
+    app = TabsNestedInTabbedContent()
+    async with app.run_test() as pilot:
+        assert app.query_one("Tab#duplicate").disabled is False
+        assert app.query_one("TabPane#duplicate").disabled is False
+        app.query_one("#test-tabs", Tabs).disable("duplicate")
+        await pilot.pause()
+        assert app.query_one("Tab#duplicate").disabled is True
+        assert app.query_one("TabPane#duplicate").disabled is False

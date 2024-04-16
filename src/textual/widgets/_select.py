@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Iterable, TypeVar, Union
 
+import rich.repr
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -94,6 +95,12 @@ class SelectOverlay(OptionList):
         """Inform parent when an option is selected."""
         event.stop()
         self.post_message(self.UpdateSelection(event.option_index))
+
+    def on_option_list_option_highlighted(
+        self, event: OptionList.OptionHighlighted
+    ) -> None:
+        """Stop option list highlighted messages leaking."""
+        event.stop()
 
 
 class SelectCurrent(Horizontal):
@@ -240,7 +247,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     """True to show the overlay, otherwise False."""
     prompt: var[str] = var[str]("Select")
     """The prompt to show when no value is selected."""
-    value: var[SelectType | NoSelection] = var[Union[SelectType, NoSelection]](BLANK)
+    value: var[SelectType | NoSelection] = var[Union[SelectType, NoSelection]](
+        BLANK, init=False
+    )
     """The value of the selection.
 
     If the widget has no selection, its value will be [`Select.BLANK`][textual.widgets.Select.BLANK].
@@ -248,6 +257,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     exception.
     """
 
+    @rich.repr.auto
     class Changed(Message):
         """Posted when the select value was changed.
 
@@ -265,6 +275,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             """The select widget."""
             self.value = value
             """The value of the Select when it changed."""
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield self.select
+            yield self.value
 
         @property
         def control(self) -> Select[SelectType]:
@@ -459,6 +473,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
                         select_overlay.highlighted = index
                         select_current.update(prompt)
                         break
+            self.post_message(self.Changed(self, value))
 
     def compose(self) -> ComposeResult:
         """Compose Select with overlay and current value."""
@@ -509,7 +524,6 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         value = self._options[event.option_index][1]
         if value != self.value:
             self.value = value
-            self.post_message(self.Changed(self, value))
 
         async def update_focus() -> None:
             """Update focus and reset overlay."""
@@ -523,6 +537,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         select_current = self.query_one(SelectCurrent)
         select_current.has_value = True
         self.expanded = True
+        # If we haven't opened the overlay yet, highlight the first option.
+        select_overlay = self.query_one(SelectOverlay)
+        if select_overlay.highlighted is None:
+            select_overlay.action_first()
 
     def is_blank(self) -> bool:
         """Indicates whether this `Select` is blank or not.

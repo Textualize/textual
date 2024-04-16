@@ -476,3 +476,13 @@ def test_inflect():
     assert Region(10, 10, 30, 20).inflect(
         x_axis=-1, margin=Spacing(2, 2, 2, 2)
     ) == Region(-24, 34, 30, 20)
+
+
+def test_size_with_height():
+    """Test Size.with_height"""
+    assert Size(1, 2).with_height(10) == Size(1, 10)
+
+
+def test_size_with_width():
+    """Test Size.with_width"""
+    assert Size(1, 2).with_width(10) == Size(10, 2)

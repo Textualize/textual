@@ -194,6 +194,28 @@ class Size(NamedTuple):
         """A range object that covers values between 0 and `height`."""
         return range(self.height)
 
+    def with_width(self, width: int) -> Size:
+        """Get a new Size with just the width changed.
+
+        Args:
+            width: New width.
+
+        Returns:
+            New Size instance.
+        """
+        return Size(width, self.height)
+
+    def with_height(self, height: int) -> Size:
+        """Get a new Size with just the height changed.
+
+        Args:
+            width: New height.
+
+        Returns:
+            New Size instance.
+        """
+        return Size(self.width, height)
+
     def __add__(self, other: object) -> Size:
         if isinstance(other, tuple):
             width, height = self

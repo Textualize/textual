@@ -55,3 +55,13 @@ async def test_same_selection_does_not_post_message():
         await pilot.click(SelectOverlay, offset=(2, 3))
         await pilot.pause()
         assert len(app.changed_messages) == 1
+
+
+async def test_setting_value_posts_message() -> None:
+    """Setting the value of a Select should post a message."""
+
+    async with (app := SelectApp()).run_test() as pilot:
+        assert len(app.changed_messages) == 0
+        app.query_one(Select).value = 2
+        await pilot.pause()
+        assert len(app.changed_messages) == 1

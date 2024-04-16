@@ -9,7 +9,7 @@ The `link-style-hover` style sets the text style for the link text when the mous
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-link-style-hover: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
+link-style-hover: <a href="../../../css_types/text_style">&lt;text-style&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 `link-style-hover` applies its [`<text-style>`](../../css_types/text_style.md) to the text of Textual action links when the mouse pointer is over them.
@@ -73,7 +73,7 @@ widget.styles.link_style_hover = "bold italic reverse"
 
 ## See also
 
- - [`link-background-hover](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
- - [`link-color-hover](./link_color_hover.md) to set the color of link text when the mouse pointer is over it.
+ - [`link-background-hover`](./link_background_hover.md) to set the background color of link text when the mouse pointer is over it.
+ - [`link-color-hover`](./link_color_hover.md) to set the color of link text when the mouse pointer is over it.
  - [`link-style`](./link_style.md) to set the style of link text.
  - [`text-style`](../text_style.md) to set the style of text in a widget.

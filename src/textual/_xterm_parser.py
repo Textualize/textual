@@ -4,10 +4,12 @@ import re
 import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
+from typing_extensions import Final
+
 from . import events, messages
-from ._ansi_sequences import ANSI_SEQUENCES_KEYS
+from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
 from ._parser import Awaitable, Parser, TokenCallback
-from .keys import KEY_NAME_REPLACEMENTS, _character_to_key
+from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
@@ -18,8 +20,17 @@ _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z"
 _re_terminal_mode_response = re.compile(
     "^" + re.escape("\x1b[") + r"\?(?P<mode_id>\d+);(?P<setting_parameter>\d)\$y"
 )
-_re_bracketed_paste_start = re.compile(r"^\x1b\[200~$")
-_re_bracketed_paste_end = re.compile(r"^\x1b\[201~$")
+
+_re_cursor_position = re.compile(r"\x1b\[(?P<row>\d+);(?P<col>\d+)R")
+
+BRACKETED_PASTE_START: Final[str] = "\x1b[200~"
+"""Sequence received when a bracketed paste event starts."""
+BRACKETED_PASTE_END: Final[str] = "\x1b[201~"
+"""Sequence received when a bracketed paste event ends."""
+FOCUSIN: Final[str] = "\x1b[I"
+"""Sequence received when the terminal receives focus."""
+FOCUSOUT: Final[str] = "\x1b[O"
+"""Sequence received when focus is lost from the terminal."""
 
 
 class XTermParser(Parser[events.Event]):
@@ -99,6 +110,20 @@ class XTermParser(Parser[events.Event]):
         paste_buffer: list[str] = []
         bracketed_paste = False
         use_prior_escape = False
+
+        def on_key_token(event: events.Key) -> None:
+            """Token callback wrapper for handling keys.
+
+            Args:
+                event: The key event to send to the callback.
+
+            This wrapper looks for keys that should be ignored, and filters
+            them out, logging the ignored sequence when it does.
+            """
+            if event.key == Keys.Ignore:
+                self.debug_log(f"ignored={event.character!r}")
+            else:
+                on_token(event)
 
         def reissue_sequence_as_keys(reissue_sequence: str) -> None:
             if self._reissued_sequence_debug_book is not None:
@@ -188,15 +213,19 @@ class XTermParser(Parser[events.Event]):
 
                     self.debug_log(f"sequence={sequence!r}")
 
-                    bracketed_paste_start_match = _re_bracketed_paste_start.match(
-                        sequence
-                    )
-                    if bracketed_paste_start_match is not None:
+                    if sequence == FOCUSIN:
+                        on_token(events.AppFocus())
+                        break
+
+                    if sequence == FOCUSOUT:
+                        on_token(events.AppBlur())
+                        break
+
+                    if sequence == BRACKETED_PASTE_START:
                         bracketed_paste = True
                         break
 
-                    bracketed_paste_end_match = _re_bracketed_paste_end.match(sequence)
-                    if bracketed_paste_end_match is not None:
+                    if sequence == BRACKETED_PASTE_END:
                         bracketed_paste = False
                         break
 
@@ -204,12 +233,11 @@ class XTermParser(Parser[events.Event]):
                         # Was it a pressed key event that we received?
                         key_events = list(sequence_to_key_events(sequence))
                         for key_event in key_events:
-                            on_token(key_event)
+                            on_key_token(key_event)
                         if key_events:
                             break
                         # Or a mouse event?
-                        mouse_match = _re_mouse_event.match(sequence)
-                        if mouse_match is not None:
+                        if (mouse_match := _re_mouse_event.match(sequence)) is not None:
                             mouse_code = mouse_match.group(0)
                             event = self.parse_mouse_code(mouse_code)
                             if event:
@@ -218,18 +246,32 @@ class XTermParser(Parser[events.Event]):
 
                         # Or a mode report?
                         # (i.e. the terminal saying it supports a mode we requested)
-                        mode_report_match = _re_terminal_mode_response.match(sequence)
-                        if mode_report_match is not None:
+                        if (
+                            mode_report_match := _re_terminal_mode_response.match(
+                                sequence
+                            )
+                        ) is not None:
                             if (
                                 mode_report_match["mode_id"] == "2026"
                                 and int(mode_report_match["setting_parameter"]) > 0
                             ):
                                 on_token(messages.TerminalSupportsSynchronizedOutput())
                             break
+
+                        # Or a cursor position query?
+                        if (
+                            cursor_position_match := _re_cursor_position.match(sequence)
+                        ) is not None:
+                            row, column = cursor_position_match.groups()
+                            on_token(
+                                events.CursorPosition(x=int(column) - 1, y=int(row) - 1)
+                            )
+                            break
+
             else:
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):
-                        on_token(event)
+                        on_key_token(event)
 
     def _sequence_to_key_events(
         self, sequence: str, _unicode_name=unicodedata.name
@@ -243,6 +285,13 @@ class XTermParser(Parser[events.Event]):
             Keys
         """
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
+        # If we're being asked to ignore the key...
+        if keys is IGNORE_SEQUENCE:
+            # ...build a special ignore key event, which has the ignore
+            # name as the key (that is, the key this sequence is bound
+            # to is the ignore key) and the sequence that was ignored as
+            # the character.
+            yield events.Key(Keys.Ignore, sequence)
         if isinstance(keys, tuple):
             # If the sequence mapped to a tuple, then it's values from the
             # `Keys` enum. Raise key events from what we find in the tuple.
