@@ -268,7 +268,7 @@ The `on` decorator also accepts selectors as keyword arguments that may be used 
 The snippet below shows how to match the message [`TabbedContent.TabActivated`][textual.widgets.TabbedContent.TabActivated] only when the tab with id `home` was activated:
 
 ```py
-@on(TabbedContent.TabActivated, tab="#home")
+@on(TabbedContent.TabActivated, pane="#home")
 def home_tab(self) -> None:
     self.log("Switched back to home tab.")
     ...
