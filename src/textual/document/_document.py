@@ -351,7 +351,7 @@ class Document(DocumentBase):
     def end(self) -> Location:
         """Returns the location of the end of the document."""
         last_line = self._lines[-1]
-        return (self.line_count, len(last_line))
+        return (self.line_count - 1, len(last_line))
 
     def get_index_from_location(self, location: Location) -> int:
         """Given a location, returns the index from the document's text.
