@@ -225,12 +225,12 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
 
         Returns:
             An awaitable that yields control to the event loop
-                until the DOM has been updated with the new child item. 
+                until the DOM has been updated with the new child item.
         """
         await_mount = self.mount(*items, before=index)
         return await_mount
 
-    def pop(self, index: Optional[int]=None) -> AwaitRemove:
+    def pop(self, index: Optional[int] = None) -> AwaitRemove:
         """Remove last ListItem from ListView or
            Remove ListItem from ListView by index
 
@@ -254,7 +254,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             indices: index(s) of ListItems to remove from ListView
 
         Returns:
-            An awaitable object that waits for the direct children to be removed. 
+            An awaitable object that waits for the direct children to be removed.
         """
         items = self.query("ListItem")
         items_to_remove = []
