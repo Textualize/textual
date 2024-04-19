@@ -956,13 +956,16 @@ class ScrollbarColorProperty(ColorProperty):
         if obj.node is None:
             return
 
-        widget = cast("Widget", obj.node)
+        from ..widget import Widget
 
-        if widget.show_horizontal_scrollbar:
-            widget.horizontal_scrollbar.refresh()
+        if isinstance(obj.node, Widget):
+            widget = obj.node
 
-        if widget.show_vertical_scrollbar:
-            widget.vertical_scrollbar.refresh()
+            if widget.show_horizontal_scrollbar:
+                widget.horizontal_scrollbar.refresh()
+
+            if widget.show_vertical_scrollbar:
+                widget.vertical_scrollbar.refresh()
 
 
 class StyleFlagsProperty:
