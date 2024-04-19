@@ -31,6 +31,7 @@ from ._style_properties import (
     OverflowProperty,
     ScalarListProperty,
     ScalarProperty,
+    ScrollbarColorProperty,
     SpacingProperty,
     StringEnumProperty,
     StyleFlagsProperty,
@@ -288,15 +289,15 @@ class StylesBase(ABC):
     transitions = TransitionsProperty()
 
     tint = ColorProperty("transparent")
-    scrollbar_color = ColorProperty("ansi_bright_magenta")
-    scrollbar_color_hover = ColorProperty("ansi_yellow")
-    scrollbar_color_active = ColorProperty("ansi_bright_yellow")
+    scrollbar_color = ScrollbarColorProperty("ansi_bright_magenta")
+    scrollbar_color_hover = ScrollbarColorProperty("ansi_yellow")
+    scrollbar_color_active = ScrollbarColorProperty("ansi_bright_yellow")
 
-    scrollbar_corner_color = ColorProperty("#666666")
+    scrollbar_corner_color = ScrollbarColorProperty("#666666")
 
-    scrollbar_background = ColorProperty("#555555")
-    scrollbar_background_hover = ColorProperty("#444444")
-    scrollbar_background_active = ColorProperty("black")
+    scrollbar_background = ScrollbarColorProperty("#555555")
+    scrollbar_background_hover = ScrollbarColorProperty("#444444")
+    scrollbar_background_active = ScrollbarColorProperty("black")
 
     scrollbar_gutter = StringEnumProperty(
         VALID_SCROLLBAR_GUTTER, "auto", layout=True, refresh_children=True
