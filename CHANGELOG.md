@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
+- Fixed setting scrollbar colors not updating the scrollbar https://github.com/Textualize/textual/pull/4433
 
 ## [0.57.0] - 2024-04-19
 
