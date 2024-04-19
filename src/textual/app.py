@@ -2840,15 +2840,19 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
-                            cursor_x, cursor_y = self._previous_cursor_position
-                            terminal_sequence = Control.move(
-                                -cursor_x, -cursor_y
-                            ).segment.text
-                            cursor_x, cursor_y = self.cursor_position
-                            terminal_sequence += renderable.render_segments(console)
-                            terminal_sequence += Control.move(
-                                cursor_x, cursor_y
-                            ).segment.text
+                            if self._driver.is_inline:
+                                terminal_sequence = Control.move(
+                                    *(-self._previous_cursor_position)
+                                ).segment.text
+                                terminal_sequence += renderable.render_segments(console)
+                                terminal_sequence += Control.move(
+                                    *self.cursor_position
+                                ).segment.text
+                            else:
+                                terminal_sequence = renderable.render_segments(console)
+                                terminal_sequence += Control.move_to(
+                                    *self.cursor_position
+                                ).segment.text
                             self._previous_cursor_position = self.cursor_position
                         else:
                             segments = console.render(renderable)
