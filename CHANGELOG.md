@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
+
 ## [0.57.0] - 2024-04-19
 
 ### Fixed

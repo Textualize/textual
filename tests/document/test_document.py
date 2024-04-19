@@ -137,3 +137,16 @@ def test_location_from_index(text):
         len(lines) - 1,
         len(lines[-1]),
     )
+
+
+@pytest.mark.parametrize(
+    "text", [TEXT, TEXT_NEWLINE, TEXT_WINDOWS, TEXT_WINDOWS_NEWLINE]
+)
+def test_document_end(text):
+    """The location is always what we expect."""
+    document = Document(text)
+    expected_line_number = (
+        len(text.splitlines()) if text.endswith("\n") else len(text.splitlines()) - 1
+    )
+    expected_pos = 0 if text.endswith("\n") else (len(text.splitlines()[-1]))
+    assert document.end == (expected_line_number, expected_pos)
