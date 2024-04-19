@@ -9,9 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
+
+## [0.57.0] - 2024-04-19
+
+### Fixed
+
 - Fixed `Integer` validator missing failure description when not a number https://github.com/Textualize/textual/issues/4413
 - Fixed a crash in `DataTable` if you clicked a link in the border https://github.com/Textualize/textual/issues/4410
-- Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
+- Fixed issue with cursor position https://github.com/Textualize/textual/pull/4429
 
 ### Added
 
@@ -1883,6 +1889,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.57.0]: https://github.com/Textualize/textual/compare/v0.56.3...v0.57.0
 [0.56.3]: https://github.com/Textualize/textual/compare/v0.56.2...v0.56.3
 [0.56.2]: https://github.com/Textualize/textual/compare/v0.56.1...v0.56.2
 [0.56.1]: https://github.com/Textualize/textual/compare/v0.56.0...v0.56.1

@@ -216,6 +216,54 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         self.index = None
         return await_remove
 
+    def insert(self, index: int, items: Iterable[ListItem]) -> AwaitMount:
+        """Insert new ListItem(s) to specified index.
+
+        Args:
+            index: index to insert new ListItem.
+            items: The ListItems to insert.
+
+        Returns:
+            An awaitable that yields control to the event loop
+                until the DOM has been updated with the new child item.
+        """
+        await_mount = self.mount(*items, before=index)
+        return await_mount
+
+    def pop(self, index: Optional[int] = None) -> AwaitRemove:
+        """Remove last ListItem from ListView or
+           Remove ListItem from ListView by index
+
+        Args:
+            index: index of ListItem to remove from ListView
+
+        Returns:
+            An awaitable that yields control to the event loop until
+                the DOM has been updated to reflect item being removed.
+        """
+        if index is None:
+            await_remove = self.query("ListItem").last().remove()
+        else:
+            await_remove = self.query("ListItem")[index].remove()
+        return await_remove
+
+    def remove_items(self, indices: Iterable[int]) -> AwaitRemove:
+        """Remove ListItems from ListView by indices
+
+        Args:
+            indices: index(s) of ListItems to remove from ListView
+
+        Returns:
+            An awaitable object that waits for the direct children to be removed.
+        """
+        items = self.query("ListItem")
+        items_to_remove = []
+        for index in indices:
+            items_to_remove.append(items[index])
+
+        await_remove = self.app._remove_nodes(items_to_remove, self)
+        return await_remove
+
     def action_select_cursor(self) -> None:
         """Select the current item in the list."""
         selected_child = self.highlighted_child

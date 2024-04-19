@@ -43,7 +43,7 @@ def on(
     Example:
         ```python
         # Handle the activation of the tab "#home" within the `TabbedContent` "#tabs".
-        @on(TabbedContent.TabActivated, "#tabs", tab="#home")
+        @on(TabbedContent.TabActivated, "#tabs", pane="#home")
         def switch_to_home(self) -> None:
             self.log("Switching back to the home tab.")
             ...
