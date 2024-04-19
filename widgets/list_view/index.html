@@ -4491,6 +4491,33 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._list_view.ListView.insert" class="md-nav__link">
+    <span class="md-ellipsis">
+      insert()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._list_view.ListView.pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      pop()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._list_view.ListView.remove_items" class="md-nav__link">
+    <span class="md-ellipsis">
+      remove_items()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._list_view.ListView.validate_index" class="md-nav__link">
     <span class="md-ellipsis">
       validate_index()
@@ -6818,6 +6845,33 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._list_view.ListView.insert" class="md-nav__link">
+    <span class="md-ellipsis">
+      insert()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._list_view.ListView.pop" class="md-nav__link">
+    <span class="md-ellipsis">
+      pop()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._list_view.ListView.remove_items" class="md-nav__link">
+    <span class="md-ellipsis">
+      remove_items()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._list_view.ListView.validate_index" class="md-nav__link">
     <span class="md-ellipsis">
       validate_index()
@@ -7901,6 +7955,215 @@ the DOM has been updated to reflect all children being removed.</p></td>
           </td>
           <td><p>An awaitable that yields control to the event loop
 until the DOM has been updated with the new child items.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._list_view.ListView.insert" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">insert</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._list_view.ListView.insert" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">items</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Insert new ListItem(s) to specified index.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>index</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>index to insert new ListItem.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>items</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-internal" title="textual.widgets._list_item.ListItem" href="../list_item/#textual.widgets.ListItem">ListItem</a>]</code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The ListItems to insert.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.AwaitMount" href="../../api/widget/#textual.widget.AwaitMount">AwaitMount</a></code>
+          </td>
+          <td><p>An awaitable that yields control to the event loop
+until the DOM has been updated with the new child item.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._list_view.ListView.pop" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">pop</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._list_view.ListView.pop" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">pop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Remove last ListItem from ListView or
+   Remove ListItem from ListView by index</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>index</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" title="typing.Optional" href="https://docs.python.org/3/library/typing.html#typing.Optional">Optional</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>index of ListItem to remove from ListView</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../../api/await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
+          </td>
+          <td><p>An awaitable that yields control to the event loop until
+the DOM has been updated to reflect item being removed.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._list_view.ListView.remove_items" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">remove_items</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._list_view.ListView.remove_items" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">remove_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Remove ListItems from ListView by indices</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>indices</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" title="typing.Iterable" href="https://docs.python.org/3/library/typing.html#typing.Iterable">Iterable</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a>]</code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>index(s) of ListItems to remove from ListView</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.await_remove.AwaitRemove" href="../../api/await_remove/#textual.await_remove.AwaitRemove">AwaitRemove</a></code>
+          </td>
+          <td><p>An awaitable object that waits for the direct children to be removed.</p></td>
         </tr>
     </tbody>
   </table>

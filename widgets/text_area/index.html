@@ -5775,6 +5775,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.get_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_line()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._text_area.TextArea.get_target_document_location" class="md-nav__link">
     <span class="md-ellipsis">
       get_target_document_location()
@@ -9704,6 +9713,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._text_area.TextArea.get_line" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_line()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._text_area.TextArea.get_target_document_location" class="md-nav__link">
     <span class="md-ellipsis">
       get_target_document_location()
@@ -12858,8 +12876,8 @@ the strings from this list into <code>TextAreaTheme.get_by_name(theme_name: str)
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.cursor_location" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -13279,8 +13297,8 @@ action, accounting for wrapping etc.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.widgets._text_area.TextArea.text" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -15203,6 +15221,73 @@ offset 0. Smart home only works when wrapping is disabled.</p></td>
                 <code><a class="autorefs autorefs-internal" title="textual.document._document.Location" href="#textual.widgets.text_area.Location">Location</a></code>
           </td>
           <td><p>The location the cursor will jump on "jump word right".</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._text_area.TextArea.get_line" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">get_line</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._text_area.TextArea.get_line" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">get_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_index</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Retrieve the line at the given line index.</p>
+<p>You can stylize the Text object returned here to apply additional
+styling to TextArea content.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>line_index</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The index of the line.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" title="rich.text.Text" href="https://rich.readthedocs.io/en/stable/reference/text.html#rich.text.Text">Text</a></code>
+          </td>
+          <td><p>A <code>rich.Text</code> object containing the requested line.</p></td>
         </tr>
     </tbody>
   </table>
