@@ -48,6 +48,7 @@ from .transition import Transition
 if TYPE_CHECKING:
     from ..canvas import CanvasLineType
     from .._layout import Layout
+    from ..widget import Widget
     from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
@@ -900,7 +901,7 @@ class ColorProperty:
         """
         return cast(Color, obj.get_rule(self.name, self._default_color))
 
-    def __set__(self, obj: StylesBase, color: Color | str | None):
+    def __set__(self, obj: StylesBase, color: Color | str | None) -> None:
         """Set the Color.
 
         Args:
@@ -946,6 +947,27 @@ class ColorProperty:
             raise StyleValueError(f"Invalid color value {color}")
 
 
+class ScrollbarColorProperty(ColorProperty):
+    """A descriptor to set scrollbar color(s)."""
+
+    def __set__(self, obj: StylesBase, color: Color | str | None) -> None:
+        super().__set__(obj, color)
+
+        if obj.node is None:
+            return
+
+        from ..widget import Widget
+
+        if isinstance(obj.node, Widget):
+            widget = obj.node
+
+            if widget.show_horizontal_scrollbar:
+                widget.horizontal_scrollbar.refresh()
+
+            if widget.show_vertical_scrollbar:
+                widget.vertical_scrollbar.refresh()
+
+
 class StyleFlagsProperty:
     """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
 
@@ -966,7 +988,7 @@ class StyleFlagsProperty:
         """
         return cast(Style, obj.get_rule(self.name, Style.null()))
 
-    def __set__(self, obj: StylesBase, style_flags: Style | str | None):
+    def __set__(self, obj: StylesBase, style_flags: Style | str | None) -> None:
         """Set the style using a style flag string.
 
         Args:
