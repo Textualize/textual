@@ -52,6 +52,7 @@ Here's another app that creates an inline code editor:
 
 This post will cover some of what goes on under the hood to make such inline apps work.
 
+<!-- more -->
 
 ## Programming the terminal
 
