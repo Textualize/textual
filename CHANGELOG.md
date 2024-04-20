@@ -5,12 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.57.1] - 2024-04-20
 
 ### Fixed
 
 - Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
 - Fixed setting scrollbar colors not updating the scrollbar https://github.com/Textualize/textual/pull/4433
+- Fixed flushing in inline mode https://github.com/Textualize/textual/pull/4435
+
+### Added
+
+- Added `Offset.clamp` and `Size.clamp_offset` https://github.com/Textualize/textual/pull/4435
+
 
 ## [0.57.0] - 2024-04-19
 
