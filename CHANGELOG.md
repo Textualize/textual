@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed setting scrollbar colors not updating the scrollbar https://github.com/Textualize/textual/pull/4433
 - Fixed flushing in inline mode https://github.com/Textualize/textual/pull/4435
 
+### Added
+
+- Added `Offset.clamp` and `Size.clamp_offset` https://github.com/Textualize/textual/pull/4435
+
+
 ## [0.57.0] - 2024-04-19
 
 ### Fixed
