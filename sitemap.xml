@@ -296,6 +296,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://textual.textualize.io/blog/2024/04/20/behind-the-curtain-of-inline-terminal-applications/</loc>
+         <lastmod>2024-04-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://textual.textualize.io/blog/2023/01/09/so-youre-looking-for-a-wee-bit-of-textual-help/</loc>
          <lastmod>2024-04-20</lastmod>
          <changefreq>daily</changefreq>
