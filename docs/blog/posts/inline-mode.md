@@ -7,6 +7,8 @@ authors:
   - willmcgugan
 ---
 
+# Behind the Curtain of Inline Terminal Applications
+
 Textual recently added the ability to run *inline* terminal apps.
 You can see this in action if you run the [calculator example](https://github.com/Textualize/textual/blob/main/examples/calculator.py):
 
@@ -16,8 +18,7 @@ The application appears directly under the prompt, rather than occupying the ful
 You can interact with the calculator using keys *or* the mouse.
 When you press ++ctrl+c++ the calculator disappears and returns you to the prompt.
 
-Here's another app that create an inline code editor:
-
+Here's another app that creates an inline code editor:
 
 === "Video"
 
@@ -27,7 +28,6 @@ Here's another app that create an inline code editor:
 
 
 === "inline.py"
-
     ```python 
     from textual.app import App, ComposeResult
     from textual.widgets import TextArea
@@ -50,17 +50,16 @@ Here's another app that create an inline code editor:
 
     ```
 
-
-This post will cover some of what goes on under the hood to make inline apps work.
-
+This post will cover some of what goes on under the hood to make such inline apps work.
 
 
-## Recap
+## Programming the terminal
 
 Firstly, let's recap how you program the terminal.
 Broadly speaking, the terminal is a device for displaying text.
-You write (or print) text to the terminal, which it displays at the end of any existing text.
+You write (or print) text to the terminal which typically appears at the end of a continually expanding text buffer.
 In addition to text you can also send [escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code), which are short sequences of characters that instruct the terminal to do things such as change the text color, scroll, or other more exotic things.
+
 We only need a few of these escape codes to implement inline apps.
 
 !!! note
@@ -73,18 +72,19 @@ We only need a few of these escape codes to implement inline apps.
 
 The first step is to display the app, which is simply text (possibly with escape sequences to change color and style).
 The lines are terminated with a newline character (`"\n"`), *except* for the very last line (otherwise we get a blank line a the end which we don't need).
-Rather than a final newline, we write an escape code that moves the cursor back to it's prior position.
+Rather than a final newline, we write an escape code that moves the *cursor* back to it's prior position.
 
-!!! tip
+The cursor is where text will be written.
+It's the same cursor you see as you type.
+Normally it will be at the end of the text in the terminal, but it can be moved around terminal with escape codes.
+It can be made invisible (as in Textual apps), but the terminal will keep track of the cursor, even if it can not be seen.
 
-    The cursor is where text will be written.
-    It's the same cursor you see as you type.
-    Normally it will be at the end of the text in the terminal, but it can be moved around terminal with escape codes.
-    It can be made invisible (as in Textual apps), but the terminal will keep track of the cursor, even if it can not be seen.
-
-Because the cursor has been moved back to its original position, when we write the subsequent frame it overwrites the previous frame.
+Because we move the cursor back to its original starting position, when we write a subsequent frame it overwrites the previous frame.
 Here's a diagram that shows what happens.
-I've drawn the cursor in red, although it isn't typically visible.
+
+!!! note
+
+    I've drawn the cursor in red, although it isn't typically visible.
 
 
 <div class="excalidraw">
@@ -113,7 +113,7 @@ This only really impacts text entry (such as the [Input](https://textual.textual
 
 Inline apps in Textual also support mouse input.
 This works in almost the same way as fullscreen apps.
-You write an escape code to enable mouse input then read mouse coordinates from standard input.
+There is an escape code to enable mouse input which sends encoded mouse coordinates to the app via standard input (in much the same way as you would read keys).
 
 The only real challenge with using the mouse in inline apps is that the mouse coordinates are relative to the top left of the terminal window (*not* the top left of our frame).
 To work around this difference, we need to detect where the cursor is relative to the terminal.
