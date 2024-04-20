@@ -5328,6 +5328,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.geometry.Offset.clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      clamp()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.geometry.Offset.get_distance_to" class="md-nav__link">
     <span class="md-ellipsis">
       get_distance_to()
@@ -5784,6 +5793,15 @@ window.onload = async (event) => {
   <a href="#textual.geometry.Size.width" class="md-nav__link">
     <span class="md-ellipsis">
       width
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Size.clamp_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      clamp_offset()
     </span>
   </a>
   
@@ -7191,6 +7209,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.geometry.Offset.clamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      clamp()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.geometry.Offset.get_distance_to" class="md-nav__link">
     <span class="md-ellipsis">
       get_distance_to()
@@ -7647,6 +7674,15 @@ window.onload = async (event) => {
   <a href="#textual.geometry.Size.width" class="md-nav__link">
     <span class="md-ellipsis">
       width
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.geometry.Size.clamp_offset" class="md-nav__link">
+    <span class="md-ellipsis">
+      clamp_offset()
     </span>
   </a>
   
@@ -8227,6 +8263,82 @@ window.onload = async (event) => {
                 <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
           </td>
           <td><p>A new point on a line between self and destination.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.geometry.Offset.clamp" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clamp</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.geometry.Offset.clamp" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clamp the offset to fit within a rectangle of width x height.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>width</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>Width to clamp.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>height</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>Height to clamp.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>A new offset.</p></td>
         </tr>
     </tbody>
   </table>
@@ -10800,6 +10912,71 @@ The top left of the returned region is guaranteed to be within the container.</p
 </div>
 
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.geometry.Size.clamp_offset" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">clamp_offset</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.geometry.Size.clamp_offset" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">clamp_offset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Clamp an offset to fit within the width x heigh.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>offset</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>An offset.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.geometry.Offset" href="#textual.geometry.Offset">Offset</a></code>
+          </td>
+          <td><p>A new offset that will fit inside the dimensions defined in the Size.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
