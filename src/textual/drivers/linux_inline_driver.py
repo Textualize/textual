@@ -266,6 +266,9 @@ class LinuxInlineDriver(Driver):
             # TODO: log this
             pass
 
+    def flush(self):
+        self._file.flush()
+
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
