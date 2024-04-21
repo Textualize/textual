@@ -6410,7 +6410,7 @@ window.onload = async (event) => {
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8 8 8 0 0 0-8 8 8 8 0 0 0 8 8m0-18a10 10 0 0 1 10 10 10 10 0 0 1-10 10C6.47 22 2 17.5 2 12A10 10 0 0 1 12 2m.5 5v5.25l4.5 2.67-.75 1.23L11 13V7h1.5Z"/></svg>
                           <span class="md-ellipsis">
                             
-                              5 min read
+                              6 min read
                             
                           </span>
                         </div>
@@ -6438,7 +6438,7 @@ window.onload = async (event) => {
 You can see this in action if you run the <a href="https://github.com/Textualize/textual/blob/main/examples/calculator.py">calculator example</a>:</p>
 <p><img alt="Inline Calculator" src="../../../../images/calcinline.png" /></p>
 <p>The application appears directly under the prompt, rather than occupying the full height of the screen&mdash;which is more typical of TUI applications.
-You can interact with the calculator using keys <em>or</em> the mouse.
+You can interact with this calculator using keys <em>or</em> the mouse.
 When you press <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span> the calculator disappears and returns you to the prompt.</p>
 <p>Here's another app that creates an inline code editor:</p>
 <div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Video</label><label for="__tabbed_1_2">inline.py</label></div>
@@ -6472,12 +6472,14 @@ When you press <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</sp
 </div>
 </div>
 <p>This post will cover some of what goes on under the hood to make such inline apps work.</p>
+<p>It's not going to go in to too much detail.
+I'm assuming most readers will be more interested in a birds-eye view rather than all the gory details.</p>
 <!-- more -->
 
 <h2 id="programming-the-terminal">Programming the terminal<a class="headerlink" href="#programming-the-terminal" title="Permanent link">&para;</a></h2>
 <p>Firstly, let's recap how you program the terminal.
 Broadly speaking, the terminal is a device for displaying text.
-You write (or print) text to the terminal which typically appears at the end of a continually expanding text buffer.
+You write (or print) text to the terminal which typically appears at the end of a continually growing text buffer.
 In addition to text you can also send <a href="https://en.wikipedia.org/wiki/ANSI_escape_code">escape codes</a>, which are short sequences of characters that instruct the terminal to do things such as change the text color, scroll, or other more exotic things.</p>
 <p>We only need a few of these escape codes to implement inline apps.</p>
 <div class="admonition note">
@@ -6494,8 +6496,8 @@ Rather than a final newline, we write an escape code that moves the <em>cursor</
 It's the same cursor you see as you type.
 Normally it will be at the end of the text in the terminal, but it can be moved around terminal with escape codes.
 It can be made invisible (as in Textual apps), but the terminal will keep track of the cursor, even if it can not be seen.</p>
-<p>Because we move the cursor back to its original starting position, when we write a subsequent frame it overwrites the previous frame.
-Here's a diagram that shows what happens.</p>
+<p>Textual moves the cursor back to its original starting position so that subsequent frames will overwrite the previous frame.</p>
+<p>Here's a diagram that shows how the cursor is positioned:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>I've drawn the cursor in red, although it isn't typically visible.</p>
@@ -6527,10 +6529,14 @@ Here's a diagram that shows what happens.</p>
 <p>There is an additional consideration that comes in to play when the output has less lines than the previous frame.
 If we were to write a shorter frame, it wouldn't fully overwrite the previous frame.
 We would be left with a few lines of a previous frame that wouldn't update.</p>
-<p>The solution to this problem is to write an escape code that clears lines from the cursor downwards before we write a smaller frame.</p>
+<p>The solution to this problem is to write an escape code that clears lines from the cursor downwards before we write a smaller frame.
+You can see this in action in the above video.
+The inline app can grow or shrink in size, and still be anchored to the bottom of the terminal.</p>
 <h2 id="cursor-input">Cursor input<a class="headerlink" href="#cursor-input" title="Permanent link">&para;</a></h2>
 <p>The cursor tells the terminal where any text will be written by the app, but it also assumes this will be where the user enters text.
-If you enter CJK (Chinese Japanese Korean) text in to the terminal, you will typically see a floating control that points where new text will be written. If you are on a Mac, the emoji entry dialog (<span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-command">Cmd</kbd><span>+</span><kbd class="key-space">Space</kbd></span>) will also point at the current cursor position. To make this work in a sane way, we need to move the terminal's cursor to where any new text will appear.</p>
+If you enter CJK (Chinese Japanese Korean) text in to the terminal, you will typically see a floating control that points where new text will be written.
+If you are on a Mac, the emoji entry dialog (<span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-command">Cmd</kbd><span>+</span><kbd class="key-space">Space</kbd></span>) will also point at the current cursor position. To make this work in a sane way, we need to move the terminal's cursor to where any new text will appear.</p>
+<p>The following diagram shows the cursor moving to the point where new text is displayed.</p>
 <div class="excalidraw">
 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 543.3595769378337 382.90467074489356" width="543.3595769378337" height="382.90467074489356">
   <!-- svg-source:excalidraw -->
@@ -6557,12 +6563,14 @@ If you enter CJK (Chinese Japanese Korean) text in to the terminal, you will typ
 
 <p>This only really impacts text entry (such as the <a href="https://textual.textualize.io/widget_gallery/#input">Input</a> and <a href="https://textual.textualize.io/widget_gallery/#textarea">TextArea</a> widgets).</p>
 <h2 id="mouse-control">Mouse control<a class="headerlink" href="#mouse-control" title="Permanent link">&para;</a></h2>
-<p>Inline apps in Textual also support mouse input.
-This works in almost the same way as fullscreen apps.
-There is an escape code to enable mouse input which sends encoded mouse coordinates to the app via standard input (in much the same way as you would read keys).</p>
-<p>The only real challenge with using the mouse in inline apps is that the mouse coordinates are relative to the top left of the terminal window (<em>not</em> the top left of our frame).
-To work around this difference, we need to detect where the cursor is relative to the terminal.</p>
-<p>The only way I have discovered to do this, is to query the cursor position from the terminal, which we can do by sending an escape sequence then reading the cursor position from standard input. Once we have this information we can work out the mouse position relative to our frame, so that the app knows where you are clicking.</p>
+<p>Inline apps in Textual support mouse input, which works the same as fullscreen apps.</p>
+<p>To use the mouse in the terminal you send an escape code which tells the terminal to write encoded mouse coordinates to standard input.
+The mouse coordinates can then be parsed in much the same was as reading keys.</p>
+<p>In inline mode this works in a similar way, with an added complication that the mouse origin is at the top left of the terminal.
+In other words if you move the mouse to the top left of the terminal you get coordinate (0, 0), but the app expects (0, 0) to be where it was displayed.</p>
+<p>In order for the app to know where the mouse is relative to it's origin, we need to <em>ask</em> the terminal where the cursor is.
+We do this with an escape code, which tells the terminal to write the current cursor coordinate to standard input.
+We can then subtract that coordinate from the physical mouse coordinates, so we can send the app mouse events relative to its on-screen origin.</p>
 <h2 id="tldr">tl;dr<a class="headerlink" href="#tldr" title="Permanent link">&para;</a></h2>
 <p><a href="https://en.wikipedia.org/wiki/ANSI_escape_code">Escapes codes</a>.</p>
 <h2 id="found-this-interesting">Found this interesting?<a class="headerlink" href="#found-this-interesting" title="Permanent link">&para;</a></h2>
