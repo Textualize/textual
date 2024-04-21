@@ -1520,11 +1520,13 @@ TextArea {
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         """Finalize the selection that has been made using the mouse."""
-        self._end_mouse_selection()
+        if self._selecting:
+            self._end_mouse_selection()
 
     async def _on_hide(self, event: events.Hide) -> None:
-        """Finalize the selection that has been made using the mouse when thew widget is hidden."""
-        self._end_mouse_selection()
+        """Finalize the selection that has been made using the mouse when the widget is hidden."""
+        if self._selecting:
+            self._end_mouse_selection()
 
     async def _on_paste(self, event: events.Paste) -> None:
         """When a paste occurs, insert the text from the paste event into the document."""
