@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Added argument to signal callbacks
+- Added argument to signal callbacks https://github.com/Textualize/textual/pull/4438
 
 ## [0.57.1] - 2024-04-20
 
