@@ -603,7 +603,7 @@ class App(Generic[ReturnType], DOMNode):
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
 
-        self.app_suspend_signal = Signal(self, "app-suspend")
+        self.app_suspend_signal: Signal[App] = Signal(self, "app-suspend")
         """The signal that is published when the app is suspended.
 
         When [`App.suspend`][textual.app.App.suspend] is called this signal
@@ -611,7 +611,7 @@ class App(Generic[ReturnType], DOMNode):
         [subscribe][textual.signal.Signal.subscribe] to this signal to
         perform work before the suspension takes place.
         """
-        self.app_resume_signal = Signal(self, "app-resume")
+        self.app_resume_signal: Signal[App] = Signal(self, "app-resume")
         """The signal that is published when the app is resumed after a suspend.
 
         When the app is resumed after a
@@ -3569,12 +3569,12 @@ class App(Generic[ReturnType], DOMNode):
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""
-        self.app_suspend_signal.publish()
+        self.app_suspend_signal.publish(self)
 
     @on(Driver.SignalResume)
     def _resume_signal(self) -> None:
         """Signal that the application is being resumed from a suspension."""
-        self.app_resume_signal.publish()
+        self.app_resume_signal.publish(self)
 
     @contextmanager
     def suspend(self) -> Iterator[None]:

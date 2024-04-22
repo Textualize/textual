@@ -39,11 +39,11 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
             calls.add("resume")
 
     class SuspendApp(App[None]):
-        def on_suspend(self) -> None:
+        def on_suspend(self, _) -> None:
             nonlocal calls
             calls.add("suspend signal")
 
-        def on_resume(self) -> None:
+        def on_resume(self, _) -> None:
             nonlocal calls
             calls.add("resume signal")
 
