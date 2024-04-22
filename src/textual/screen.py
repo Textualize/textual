@@ -265,6 +265,11 @@ class Screen(Generic[ScreenResultType], Widget):
         return (*super().layers, *extras)
 
     def render(self) -> RenderableType:
+        """Render method inherited from widget, used to render the screen's background.
+
+        Returns:
+            Background renderable.
+        """
         background = self.styles.background
         try:
             base_screen = visible_screen_stack.get().pop()
@@ -272,10 +277,13 @@ class Screen(Generic[ScreenResultType], Widget):
             base_screen = None
 
         if base_screen is not None and background.a < 1:
+            # If background is translucent, render a background screen
             return BackgroundScreen(base_screen, background)
 
         if background.is_transparent:
+            # If the background is transparent, defer to App.render
             return self.app.render()
+        # Render a screen of a solid color.
         return Blank(background)
 
     def get_offset(self, widget: Widget) -> Offset:

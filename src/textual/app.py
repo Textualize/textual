@@ -1661,6 +1661,11 @@ class App(Generic[ReturnType], DOMNode):
                     self.stylesheet.update(screen)
 
     def render(self) -> RenderResult:
+        """Render method inherited from widget, to render the screen's background.
+
+        May be override to customize background visuals.
+
+        """
         return Blank(self.styles.background)
 
     ExpectType = TypeVar("ExpectType", bound=Widget)
