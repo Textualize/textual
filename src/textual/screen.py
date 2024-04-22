@@ -221,7 +221,9 @@ class Screen(Generic[ScreenResultType], Widget):
         self.title = self.TITLE
         self.sub_title = self.SUB_TITLE
 
-        self.screen_layout_refresh_signal = Signal(self, "layout-refresh")
+        self.screen_layout_refresh_signal: Signal[Screen] = Signal(
+            self, "layout-refresh"
+        )
         """The signal that is published when the screen's layout is refreshed."""
 
     @property
@@ -861,7 +863,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self._compositor_refresh()
 
         if self.app._dom_ready:
-            self.screen_layout_refresh_signal.publish()
+            self.screen_layout_refresh_signal.publish(self.screen)
         else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
@@ -966,7 +968,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._tooltip_timer.stop()
             tooltip.display = False
 
-    def _maybe_clear_tooltip(self) -> None:
+    def _maybe_clear_tooltip(self, _) -> None:
         """Check if the widget under the mouse cursor still pertains to the tooltip.
 
         If they differ, the tooltip will be removed.

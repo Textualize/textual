@@ -9,7 +9,7 @@ This is experimental for now, for internal use. It may be part of the public API
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Awaitable, Callable, Generic, TypeVar, Union
 from weakref import WeakKeyDictionary
 
 import rich.repr
@@ -17,8 +17,13 @@ import rich.repr
 from textual import log
 
 if TYPE_CHECKING:
-    from ._types import IgnoreReturnCallbackType
     from .dom import DOMNode
+
+SignalT = TypeVar("SignalT")
+
+SignalCallbackType = Union[
+    Callable[[SignalT], Awaitable[Any]], Callable[[SignalT], Any]
+]
 
 
 class SignalError(Exception):
@@ -26,7 +31,7 @@ class SignalError(Exception):
 
 
 @rich.repr.auto(angular=True)
-class Signal:
+class Signal(Generic[SignalT]):
     """A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs."""
 
     def __init__(self, owner: DOMNode, name: str) -> None:
@@ -38,23 +43,23 @@ class Signal:
         """
         self._owner = owner
         self._name = name
-        self._subscriptions: WeakKeyDictionary[
-            DOMNode, list[IgnoreReturnCallbackType]
-        ] = WeakKeyDictionary()
+        self._subscriptions: WeakKeyDictionary[DOMNode, list[SignalCallbackType]] = (
+            WeakKeyDictionary()
+        )
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "owner", self._owner
         yield "name", self._name
         yield "subscriptions", list(self._subscriptions.keys())
 
-    def subscribe(self, node: DOMNode, callback: IgnoreReturnCallbackType) -> None:
+    def subscribe(self, node: DOMNode, callback: SignalCallbackType) -> None:
         """Subscribe a node to this signal.
 
         When the signal is published, the callback will be invoked.
 
         Args:
             node: Node to subscribe.
-            callback: A callback function which takes no arguments, and returns anything (return type ignored).
+            callback: A callback function which takes a single argument and returns anything (return type ignored).
 
         Raises:
             SignalError: Raised when subscribing a non-mounted widget.
@@ -75,8 +80,13 @@ class Signal:
         """
         self._subscriptions.pop(node, None)
 
-    def publish(self) -> None:
-        """Publish the signal (invoke subscribed callbacks)."""
+    def publish(self, data: SignalT) -> None:
+        """Publish the signal (invoke subscribed callbacks).
+
+        Args:
+            data: An argument to pass to the callbacks.
+
+        """
 
         for node, callbacks in list(self._subscriptions.items()):
             if not node.is_running:
@@ -86,7 +96,7 @@ class Signal:
                 # Call callbacks
                 for callback in callbacks:
                     try:
-                        callback()
+                        callback(data)
                     except Exception as error:
                         log.error(
                             f"error publishing signal to {node} ignored (callback={callback}); {error}"
