@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `TextArea` to end mouse selection only if currently selecting https://github.com/Textualize/textual/pull/4436
+
 ## [0.57.1] - 2024-04-20
 
 ### Fixed
