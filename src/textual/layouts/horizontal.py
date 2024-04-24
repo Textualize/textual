@@ -38,7 +38,7 @@ class HorizontalLayout(Layout):
                     ]
                 )
                 + (box_margins[0].left + box_margins[-1].right),
-                min(
+                max(
                     [
                         margin_top + margin_bottom
                         for margin_top, _, margin_bottom, _ in box_margins
