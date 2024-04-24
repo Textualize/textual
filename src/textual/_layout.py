@@ -161,7 +161,7 @@ class Layout(ABC):
             width = 0
         else:
             arrangement = widget._arrange(Size(0, 0))
-            return arrangement.spatial_map.total_region.right
+            return arrangement.total_region.right
         return width
 
     def get_content_height(
