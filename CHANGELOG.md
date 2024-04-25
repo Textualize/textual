@@ -5,12 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.58.0] - 2024-04-25
 
 ### Fixed
 
 - Fixed `TextArea` to end mouse selection only if currently selecting https://github.com/Textualize/textual/pull/4436
-- Fixed issue with scroll_to_widget
+- Fixed issue with scroll_to_widget https://github.com/Textualize/textual/pull/4446
 - Fixed issue with margins https://github.com/Textualize/textual/pull/4441
 
 ### Changed
@@ -1908,6 +1908,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.58.0]: https://github.com/Textualize/textual/compare/v0.57.1...v0.58.0
+[0.57.1]: https://github.com/Textualize/textual/compare/v0.57.0...v0.57.1
 [0.57.0]: https://github.com/Textualize/textual/compare/v0.56.3...v0.57.0
 [0.56.3]: https://github.com/Textualize/textual/compare/v0.56.2...v0.56.3
 [0.56.2]: https://github.com/Textualize/textual/compare/v0.56.1...v0.56.2
