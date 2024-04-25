@@ -29,7 +29,7 @@ class VerticalLayout(Layout):
         ]
         if box_margins:
             resolve_margin = Size(
-                min(
+                max(
                     [
                         margin_right + margin_left
                         for _, margin_right, _, margin_left in box_margins

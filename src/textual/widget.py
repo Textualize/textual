@@ -1233,9 +1233,11 @@ class Widget(DOMNode):
         Returns:
             The optimal width of the content.
         """
+
         if self.is_container:
             assert self._layout is not None
-            return self._layout.get_content_width(self, container, viewport)
+            width = self._layout.get_content_width(self, container, viewport)
+            return width
 
         cache_key = container.width
         if self._content_width_cache[0] == cache_key:
