@@ -3328,14 +3328,18 @@ class Widget(DOMNode):
         Returns:
             The `Widget` instance.
         """
-        if not self._is_mounted:
-            return self
+
         if layout:
             self._layout_required = True
             for ancestor in self.ancestors:
                 if not isinstance(ancestor, Widget):
                     break
                 ancestor._clear_arrangement_cache()
+
+        if not self._is_mounted:
+            self._repaint_required = True
+            self.check_idle()
+            return self
 
         if recompose:
             self._recompose_required = True
