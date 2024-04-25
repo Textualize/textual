@@ -21,6 +21,17 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+        # Python 3.9 is on macos-13 but not macos-latest (macos-14-arm64)
+        # https://github.com/actions/setup-python/issues/696#issuecomment-1637587760
+        exclude:
+          - { python-version: "3.8", os: "macos-latest" }
+          - { python-version: "3.9", os: "macos-latest" }
+          - { python-version: "3.11", os: "macos-latest" }
+        include:
+          - { python-version: "3.8", os: "macos-13" }
+          - { python-version: "3.9", os: "macos-13" }
+          - { python-version: "3.11", os: "macos-13" }
     defaults:
       run:
         shell: bash
@@ -32,18 +43,18 @@ jobs:
         uses: actions/setup-python@v4.7.1
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'poetry'
+          cache: "poetry"
       - name: Install dependencies
         run: poetry install --no-interaction --extras syntax
         if: ${{ matrix.python-version != '3.12' }}
-      - name: Install dependencies for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
+      - name: Install dependencies for 3.12 # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: poetry install --no-interaction
         if: ${{ matrix.python-version == '3.12' }}
       - name: Test with pytest
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
         if: ${{ matrix.python-version != '3.12' }}
-      - name: Test with pytest for 3.12  # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
+      - name: Test with pytest for 3.12 # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: |
           poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax'
         if: ${{ matrix.python-version == '3.12' }}

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `TextArea` to end mouse selection only if currently selecting https://github.com/Textualize/textual/pull/4436
+- Fixed issue with margins https://github.com/Textualize/textual/pull/4441
 
 ### Changed
 
