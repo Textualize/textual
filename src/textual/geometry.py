@@ -162,7 +162,7 @@ class Offset(NamedTuple):
             A new offset.
         """
         x, y = self
-        return Offset(clamp(x, 0, width), clamp(y, 0, height))
+        return Offset(clamp(x, 0, width - 1), clamp(y, 0, height - 1))
 
 
 class Size(NamedTuple):

@@ -2845,7 +2845,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
-                            cursor_position = self.screen.size.clamp_offset(
+                            cursor_position = self.screen.outer_size.clamp_offset(
                                 self.cursor_position
                             )
                             if self._driver.is_inline:
