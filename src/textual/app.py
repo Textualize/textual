@@ -453,7 +453,7 @@ class App(Generic[ReturnType], DOMNode):
             soft_wrap=False,
         )
         self._workers = WorkerManager(self)
-        self.error_console = Console(markup=False, stderr=True)
+        self.error_console = Console(markup=False, highlight=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
         """A stack of screens per mode."""
