@@ -1501,7 +1501,7 @@ class Widget(DOMNode):
         if not self.is_scrollable:
             return False, False
 
-        return (self.show_vertical_scrollbar, self.show_horizontal_scrollbar)
+        return (self.show_vertical_scrollbar and self.styles.scrollbar_size_vertival, self.show_horizontal_scrollbar and self.styles.scrollbar_size_horizontal)
 
     @property
     def scrollbars_space(self) -> tuple[int, int]:
