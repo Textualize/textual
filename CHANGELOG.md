@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `SelectionList` issues after removing an option https://github.com/Textualize/textual/pull/4464
+
 ## [0.58.0] - 2024-04-25
 
 ### Fixed
