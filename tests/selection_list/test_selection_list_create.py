@@ -119,5 +119,7 @@ async def test_options_are_available_soon() -> None:
 async def test_removing_option_updates_indexes() -> None:
     async with SelectionListApp().run_test() as pilot:
         selections = pilot.app.query_one(SelectionList)
+        assert selections._values == {n: n for n in range(5)}
+
         selections.remove_option_at_index(0)
-        assert list(selections._values.values())[0] == 0
+        assert selections._values == {n + 1: n for n in range(4)}
