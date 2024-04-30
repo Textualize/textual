@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed issue with Markdown mounting content lazily 
+- Fixed issue with Markdown mounting content lazily https://github.com/Textualize/textual/pull/4466
 
 ## [0.58.0] - 2024-04-25
 
