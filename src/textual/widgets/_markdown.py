@@ -540,7 +540,7 @@ class MarkdownBullet(Widget):
     }
     """
 
-    symbol = reactive("\u25CF")
+    symbol = reactive("\u25cf")
     """The symbol for the bullet."""
 
     def render(self) -> Text:
@@ -681,7 +681,7 @@ class Markdown(Widget):
     | `strong` | Target text that is styled inline with strong. |
     """
 
-    BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
+    BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
 
     code_dark_theme: reactive[str] = reactive("material")
     """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
@@ -771,9 +771,9 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    def _on_mount(self, _: Mount) -> None:
+    async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
-            self.update(self._markdown)
+            await self.update(self._markdown)
 
     def _watch_code_dark_theme(self) -> None:
         """React to the dark theme being changed."""
