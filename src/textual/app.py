@@ -3341,7 +3341,9 @@ class App(Generic[ReturnType], DOMNode):
                     and self.screen.focused is None
                 ):
                     # ...settle focus back on that widget.
-                    self.screen.set_focus(self._last_focused_on_app_blur)
+                    self.screen.set_focus(
+                        self._last_focused_on_app_blur, scroll_visible=True
+                    )
             except NoScreen:
                 pass
             # Now that we have focus back on the app and we don't need the
