@@ -2664,7 +2664,6 @@ class Widget(DOMNode):
         Returns:
             `True` if any scrolling has occurred in any descendant, otherwise `False`.
         """
-
         # Grow the region by the margin so to keep the margin in view.
         region = widget.virtual_region_with_margin
         scrolled = False
@@ -2857,7 +2856,6 @@ class Widget(DOMNode):
             on_complete: A callable to invoke when the animation is finished.
             level: Minimum level required for the animation to take place (inclusive).
         """
-
         self.call_after_refresh(
             self.scroll_to_widget,
             widget=widget,
