@@ -2845,7 +2845,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
-                            cursor_position = self.screen.size.clamp_offset(
+                            cursor_position = self.screen.outer_size.clamp_offset(
                                 self.cursor_position
                             )
                             if self._driver.is_inline:
@@ -3341,7 +3341,10 @@ class App(Generic[ReturnType], DOMNode):
                     and self.screen.focused is None
                 ):
                     # ...settle focus back on that widget.
-                    self.screen.set_focus(self._last_focused_on_app_blur)
+                    # Don't scroll the newly focused widget, as this can be quite jarring
+                    self.screen.set_focus(
+                        self._last_focused_on_app_blur, scroll_visible=False
+                    )
             except NoScreen:
                 pass
             # Now that we have focus back on the app and we don't need the
