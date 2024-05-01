@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
-## Unreleased
+## [0.58.1] - 2024-05-01
 
 ### Fixed
 
@@ -1917,6 +1917,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.58.1]: https://github.com/Textualize/textual/compare/v0.58.0...v0.58.1
 [0.58.0]: https://github.com/Textualize/textual/compare/v0.57.1...v0.58.0
 [0.57.1]: https://github.com/Textualize/textual/compare/v0.57.0...v0.57.1
 [0.57.0]: https://github.com/Textualize/textual/compare/v0.56.3...v0.57.0
