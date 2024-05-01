@@ -426,7 +426,7 @@ class Region(NamedTuple):
             )
 
         if top:
-            delta_y = top_ - window_top + 1
+            delta_y = top_ - window_top
 
         elif not (
             (window_bottom > top_ >= window_top)

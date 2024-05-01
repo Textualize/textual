@@ -2675,7 +2675,7 @@ class Widget(DOMNode):
             else:
                 scroll_offset = container.scroll_to_region(
                     region,
-                    spacing=widget.gutter + widget.dock_gutter,
+                    spacing=widget.dock_gutter,
                     animate=animate,
                     speed=speed,
                     duration=duration,
@@ -2745,7 +2745,7 @@ class Widget(DOMNode):
         """
         window = self.scrollable_content_region.at_offset(self.scroll_offset)
         if spacing is not None:
-            region = region.grow(spacing)
+            window = window.shrink(spacing)
 
         if window in region and not (top or center):
             return Offset()
@@ -2762,15 +2762,14 @@ class Widget(DOMNode):
         if center:
             region_center_x, region_center_y = region.center
             window_center_x, window_center_y = window.center
+
             delta = clamp_delta(
                 Offset(
                     round(region_center_x - window_center_x),
                     round(region_center_y - window_center_y),
                 )
             )
-            if origin_visible and (
-                region.shrink(spacing).offset not in window.translate(delta)
-            ):
+            if origin_visible and (region.offset not in window.translate(delta)):
                 delta = clamp_delta(
                     Region.get_scroll_to_visible(window, region, top=True)
                 )
