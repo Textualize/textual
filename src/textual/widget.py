@@ -2765,8 +2765,8 @@ class Widget(DOMNode):
 
             delta = clamp_delta(
                 Offset(
-                    round(region_center_x - window_center_x),
-                    round(region_center_y - window_center_y),
+                    int(region_center_x - window_center_x + 0.5),
+                    int(region_center_y - window_center_y + 0.5),
                 )
             )
             if origin_visible and (region.offset not in window.translate(delta)):
