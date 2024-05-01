@@ -2745,38 +2745,46 @@ class Widget(DOMNode):
         """
         window = self.scrollable_content_region.at_offset(self.scroll_offset)
         if spacing is not None:
-            window = window.shrink(spacing)
+            region = region.grow(spacing)
 
         if window in region and not (top or center):
             return Offset()
 
+        def clamp_delta(delta: Offset) -> Offset:
+            """Clamp the delta to avoid scrolling out of range."""
+            scroll_x, scroll_y = self.scroll_offset
+            delta = Offset(
+                clamp(scroll_x + delta.x, 0, self.max_scroll_x) - scroll_x,
+                clamp(scroll_y + delta.y, 0, self.max_scroll_y) - scroll_y,
+            )
+            return delta
+
         if center:
             region_center_x, region_center_y = region.center
             window_center_x, window_center_y = window.center
-            center_delta = Offset(
-                round(region_center_x - window_center_x),
-                round(region_center_y - window_center_y),
+            delta = clamp_delta(
+                Offset(
+                    round(region_center_x - window_center_x),
+                    round(region_center_y - window_center_y),
+                )
             )
-            if (
-                origin_visible
-                and region.offset
-                not in self.scrollable_content_region.translate(center_delta)
+            if origin_visible and (
+                region.shrink(spacing).offset not in window.translate(delta)
             ):
-                center_delta = Region.get_scroll_to_visible(window, region, top=True)
-            delta_x, delta_y = center_delta
+                delta = clamp_delta(
+                    Region.get_scroll_to_visible(window, region, top=True)
+                )
         else:
-            delta_x, delta_y = Region.get_scroll_to_visible(window, region, top=top)
-        scroll_x, scroll_y = self.scroll_offset
+            delta = clamp_delta(
+                Region.get_scroll_to_visible(window, region, top=top),
+            )
 
         if not self.allow_horizontal_scroll and not force:
-            delta_x = 0
-        if not self.allow_vertical_scroll and not force:
-            delta_y = 0
+            delta = Offset(0, delta.y)
 
-        delta = Offset(
-            clamp(scroll_x + delta_x, 0, self.max_scroll_x) - scroll_x,
-            clamp(scroll_y + delta_y, 0, self.max_scroll_y) - scroll_y,
-        )
+        if not self.allow_vertical_scroll and not force:
+            delta = Offset(delta.x, 0)
+
         if delta:
             if speed is None and duration is None:
                 duration = 0.2
