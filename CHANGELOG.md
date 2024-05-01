@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+## Unreleased
+
+### Changed
+
+- When displaying a message using `App.exit()`, the console no longer highlights things such as numbers.
+
+
 ## [0.58.1] - 2024-05-01
 
 ### Fixed
@@ -13,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with Markdown mounting content lazily https://github.com/Textualize/textual/pull/4466
 - Fixed intermittent issue with scrolling to focus https://github.com/Textualize/textual/commit/567caf8acb196260adf6a0a6250e3ff5093056d0
 - Fixed issue with scrolling to center https://github.com/Textualize/textual/pull/4469
+
 
 ## [0.58.0] - 2024-04-25
 
