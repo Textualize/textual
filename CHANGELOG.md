@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issue with Markdown mounting content lazily https://github.com/Textualize/textual/pull/4466
+- Fixed intermittent issue with scrolling to focus https://github.com/Textualize/textual/commit/567caf8acb196260adf6a0a6250e3ff5093056d0
 
 ## [0.58.0] - 2024-04-25
 

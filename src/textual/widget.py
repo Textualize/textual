@@ -2757,7 +2757,11 @@ class Widget(DOMNode):
                 round(region_center_x - window_center_x),
                 round(region_center_y - window_center_y),
             )
-            if origin_visible and region.offset not in window.translate(center_delta):
+            if (
+                origin_visible
+                and region.offset
+                not in self.scrollable_content_region.translate(center_delta)
+            ):
                 center_delta = Region.get_scroll_to_visible(window, region, top=True)
             delta_x, delta_y = center_delta
         else:
