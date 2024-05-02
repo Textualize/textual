@@ -9,14 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed `SelectionList` issues after removing an option https://github.com/Textualize/textual/pull/4464
 - Fixed `ListView` bugs with the initial index https://github.com/Textualize/textual/pull/4452
-
-## Unreleased
 
 ### Changed
 
 - When displaying a message using `App.exit()`, the console no longer highlights things such as numbers.
-
 
 ## [0.58.1] - 2024-05-01
 

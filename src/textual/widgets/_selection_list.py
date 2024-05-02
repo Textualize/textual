@@ -646,6 +646,11 @@ class SelectionList(Generic[SelectionType], OptionList):
         option = self.get_option_at_index(index)
         self._deselect(option.value)
         del self._values[option.value]
+        # Decrement index of options after the one we just removed.
+        self._values = {
+            option_value: option_index - 1 if option_index > index else option_index
+            for option_value, option_index in self._values.items()
+        }
         return super()._remove_option(index)
 
     def add_options(
