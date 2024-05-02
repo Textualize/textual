@@ -12,15 +12,15 @@ from ..geometry import Offset, Size, clamp
 
 
 class ScalarError(Exception):
-    pass
+    """Base class for exceptions raised by the Scalar class."""
 
 
 class ScalarResolveError(ScalarError):
-    pass
+    """Raised for errors resolving scalars (unlikely to occur in practice)."""
 
 
 class ScalarParseError(ScalarError):
-    pass
+    """Raised when a scalar couldn't be parsed from a string."""
 
 
 @unique
