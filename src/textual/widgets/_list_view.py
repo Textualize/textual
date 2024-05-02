@@ -119,9 +119,10 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         )
         # Set the index to the given initial index, or the first available index after.
         self._index = _widget_navigation.find_next_enabled(
-            self._nodes,
-            anchor=initial_index - 1 if initial_index is not None else None,
+            children,
+            anchor=initial_index if initial_index is not None else None,
             direction=1,
+            with_anchor=True,
         )
 
     def _on_mount(self, _: Mount) -> None:
