@@ -164,10 +164,10 @@ def test_Integer_validate(value, minimum, maximum, expected_result):
 
 
 @pytest.mark.parametrize(
-    "value, min_length, max_length, strip_spaces, expected_result",
+    "value, min_length, max_length, strip_whitespace, expected_result",
     [
         ("", None, None, False, True),  # empty string
-        ("", None, None, True, True),  # empty string with stripped spaces
+        ("", None, None, True, True),  # empty string with no whitespace
         ("test", None, None, False, True),  # any string with no restrictions
         (
             "test",
@@ -175,7 +175,7 @@ def test_Integer_validate(value, minimum, maximum, expected_result):
             None,
             True,
             True,
-        ),  # any string with no restrictions and stripped spaces
+        ),  # any string with no restrictions and no whitespace
         ("test", 5, None, False, False),  # shorter than minimum length
         (
             "  test  ",
@@ -183,7 +183,7 @@ def test_Integer_validate(value, minimum, maximum, expected_result):
             None,
             True,
             False,
-        ),  # shorter than minimum length with stripped spaces
+        ),  # shorter than minimum length with no whitespace
         ("test", None, 3, False, False),  # longer than maximum length
         (
             "  test  ",
@@ -191,15 +191,15 @@ def test_Integer_validate(value, minimum, maximum, expected_result):
             3,
             False,
             False,
-        ),  # longer than maximum length with stripped spaces
+        ),  # longer than maximum length with noo whitespace
         ("test", 4, 4, False, True),  # exactly matches minimum and maximum length
         ("test", 2, 6, False, True),  # within length range
-        ("  test  ", 2, 6, True, True),  # within length range with stripped spaces
+        ("  test  ", 2, 6, True, True),  # within length range with no whitespace
     ],
 )
-def test_Length_validate(value, min_length, max_length, strip_spaces, expected_result):
+def test_Length_validate(value, min_length, max_length, strip_whitespace, expected_result):
     validator = Length(
-        minimum=min_length, maximum=max_length, strip_spaces=strip_spaces
+        minimum=min_length, maximum=max_length, strip_whitespace=strip_whitespace
     )
     result = validator.validate(value)
     assert result.is_valid == expected_result
