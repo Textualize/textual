@@ -603,6 +603,10 @@ class Widget(DOMNode):
         self._content_width_cache = (None, 0)
         self._content_height_cache = (None, 0)
 
+    @property
+    def has_keyline(self) -> bool:
+        return self.styles.keyline[0] != "none"
+
     def get_loading_widget(self) -> Widget:
         """Get a widget to display a loading indicator.
 
