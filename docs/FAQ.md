@@ -68,7 +68,7 @@ For more information on ANSI colors in Textual, see [Why no Ansi Themes?](#why-d
 !!! tip
 
     See [*How To Center Things*](https://textual.textualize.io/how-to/center-things/) in the
-    Textual documentation for a more comprensive answer to this question.
+    Textual documentation for a more comprehensive answer to this question.
 
 To center a widget within a container use
 [`align`](https://textual.textualize.io/styles/align/). But remember that
@@ -270,7 +270,7 @@ work in different environments you can try them out with `textual keys`.
 <a name="why-doesn't-textual-look-good-on-macos"></a>
 ## Why doesn't Textual look good on macOS?
 
-You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particuarily when it comes to box characters.
+You may find that the default macOS Terminal.app doesn't render Textual apps (and likely other TUIs) very well, particularly when it comes to box characters.
 For instance, you may find it displays misaligned blocks and lines like this:
 
 <img width="1042" alt="Screenshot 2023-06-19 at 10 43 02" src="https://github.com/Textualize/textual/assets/554369/e61f3876-3dd1-4ac8-b380-22922c89c7d6">
