@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - When displaying a message using `App.exit()`, the console no longer highlights things such as numbers.
 
+### Added
+
+- Added `message_signal` to MessagePump, to listen to events sent to another widget. https://github.com/Textualize/textual/pull/4487
+
 ## [0.58.1] - 2024-05-01
 
 ### Fixed
