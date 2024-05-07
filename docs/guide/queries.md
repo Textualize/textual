@@ -21,7 +21,7 @@ send_button = self.query_one("#send")
 
 This will retrieve a widget with an ID of `send`, if there is exactly one.
 If there are no matching widgets, Textual will raise a [NoMatches][textual.css.query.NoMatches] exception.
-If there are more than one match, Textual will raise a [TooManyMatches][textual.css.query.TooManyMatches] exception.
+If there is more than one match, Textual will raise a [TooManyMatches][textual.css.query.TooManyMatches] exception.
 
 You can also add a second parameter for the expected type, which will ensure that you get the type you are expecting.
 
