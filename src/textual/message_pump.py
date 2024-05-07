@@ -147,6 +147,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._thread_id: int = threading.get_ident()
         self._prevented_messages_on_mount = self._prevent_message_types_stack[-1]
         self.message_signal: Signal[Message] = Signal(self, "messages")
+        """Subscribe to this signal to be notified of all messages sent to this widget.
+        
+        This is a fairly low-level mechanism, and shouldn't replace regular message handling.
+        
+        """
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:

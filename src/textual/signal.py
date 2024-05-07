@@ -17,7 +17,6 @@ import rich.repr
 from textual import log
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
     from .message_pump import MessagePump
 
 SignalT = TypeVar("SignalT")
@@ -73,7 +72,7 @@ class Signal(Generic[SignalT]):
         if callback not in callbacks:
             callbacks.append(callback)
 
-    def unsubscribe(self, node: DOMNode) -> None:
+    def unsubscribe(self, node: MessagePump) -> None:
         """Unsubscribe a node from this signal.
 
         Args:
