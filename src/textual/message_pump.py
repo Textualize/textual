@@ -42,6 +42,7 @@ from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive, TooManyComputesError
+from .signal import Signal
 from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
@@ -145,6 +146,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
         self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
         self._prevented_messages_on_mount = self._prevent_message_types_stack[-1]
+        self.message_signal: Signal[Message] = Signal(self, "messages")
+        """Subscribe to this signal to be notified of all messages sent to this widget.
+        
+        This is a fairly low-level mechanism, and shouldn't replace regular message handling.
+        
+        """
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -582,6 +589,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 self.app._handle_exception(error)
                 break
             finally:
+                self.message_signal.publish(message)
                 self._message_queue.task_done()
 
                 current_time = time()

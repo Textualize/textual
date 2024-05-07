@@ -17,7 +17,7 @@ import rich.repr
 from textual import log
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
+    from .message_pump import MessagePump
 
 SignalT = TypeVar("SignalT")
 
@@ -34,7 +34,7 @@ class SignalError(Exception):
 class Signal(Generic[SignalT]):
     """A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs."""
 
-    def __init__(self, owner: DOMNode, name: str) -> None:
+    def __init__(self, owner: MessagePump, name: str) -> None:
         """Initialize a signal.
 
         Args:
@@ -43,16 +43,16 @@ class Signal(Generic[SignalT]):
         """
         self._owner = owner
         self._name = name
-        self._subscriptions: WeakKeyDictionary[DOMNode, list[SignalCallbackType]] = (
-            WeakKeyDictionary()
-        )
+        self._subscriptions: WeakKeyDictionary[
+            MessagePump, list[SignalCallbackType]
+        ] = WeakKeyDictionary()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "owner", self._owner
         yield "name", self._name
         yield "subscriptions", list(self._subscriptions.keys())
 
-    def subscribe(self, node: DOMNode, callback: SignalCallbackType) -> None:
+    def subscribe(self, node: MessagePump, callback: SignalCallbackType) -> None:
         """Subscribe a node to this signal.
 
         When the signal is published, the callback will be invoked.
@@ -72,7 +72,7 @@ class Signal(Generic[SignalT]):
         if callback not in callbacks:
             callbacks.append(callback)
 
-    def unsubscribe(self, node: DOMNode) -> None:
+    def unsubscribe(self, node: MessagePump) -> None:
         """Unsubscribe a node from this signal.
 
         Args:
