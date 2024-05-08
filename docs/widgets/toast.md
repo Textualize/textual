@@ -20,7 +20,7 @@ Toast {
 }
 ```
 
-If you wish to change the location of Toasts, it is possible by targeting the ToastRack CSS type.
+If you wish to change the location of Toasts, it is possible by targeting the `ToastRack` CSS type.
 For example:
 
 ```scss
