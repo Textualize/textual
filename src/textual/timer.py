@@ -23,7 +23,7 @@ TimerCallback = Union[Callable[[], Awaitable[Any]], Callable[[], Any]]
 
 
 class EventTargetGone(Exception):
-    pass
+    """Raised if the timer event target has been deleted prior to the timer event being sent."""
 
 
 @rich_repr
