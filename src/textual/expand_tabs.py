@@ -67,7 +67,7 @@ def expand_text_tabs_from_widths(line: Text, tab_widths: list[int]) -> Text:
     This will return a new Text instance with tab characters expanded into a
     number of spaces. Each time a tab is encountered, it's expanded into the
     next integer encountered in the `tab_widths` list. Consequently, the length
-    of `tab_widths` should match the number of tab chracters in `line`.
+    of `tab_widths` should match the number of tab characters in `line`.
 
     Args:
         line: The `Text` instance to expand tabs in.
