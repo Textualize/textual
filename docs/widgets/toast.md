@@ -26,7 +26,7 @@ For example:
 ```scss
 ToastRack {
         align: right top;
-    }
+}
 ```
 
 The three severity levels also have corresponding
