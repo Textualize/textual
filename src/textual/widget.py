@@ -3110,6 +3110,9 @@ class Widget(DOMNode):
     def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
         """Applies style attributes to the default renderable.
 
+        This method is called by Textual itself.
+        It is unlikely you will need to call or implement this method.
+
         Returns:
             A new renderable.
         """
