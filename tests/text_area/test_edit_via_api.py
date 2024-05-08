@@ -106,6 +106,27 @@ async def test_insert_character_near_cursor_maintain_selection_offset(
         assert text_area.selection == Selection.cursor(cursor_destination)
 
 
+@pytest.mark.parametrize(
+    "cursor_location,insert_location,cursor_destination",
+    [
+        ((1, 0), (0, 0), (2, 0)),  # API insert before cursor row
+        ((0, 0), (0, 0), (1, 0)),  # API insert right at cursor row
+        ((0, 0), (1, 0), (0, 0)),  # API insert after cursor row
+    ],
+)
+async def test_insert_newline_around_cursor_maintain_selection_offset(
+    cursor_location,
+    insert_location,
+    cursor_destination
+):
+    app = TextAreaApp()
+    async with app.run_test():
+        text_area = app.query_one(TextArea)
+        text_area.move_cursor(cursor_location)
+        text_area.insert("X\n", location=insert_location)
+        assert text_area.selection == Selection.cursor(cursor_destination)
+
+
 async def test_insert_newlines_start():
     app = TextAreaApp()
     async with app.run_test():
