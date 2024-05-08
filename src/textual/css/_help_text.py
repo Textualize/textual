@@ -308,7 +308,7 @@ def color_property_help_text(
     error: Exception | None = None,
 ) -> HelpText:
     """Help text to show when the user supplies an invalid value for a color
-    property. For example, an unparseable color string.
+    property. For example, an unparsable color string.
 
     Args:
         property_name: The name of the property.

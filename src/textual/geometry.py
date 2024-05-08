@@ -282,7 +282,7 @@ class Size(NamedTuple):
         return width > x >= 0 and height > y >= 0
 
     def clamp_offset(self, offset: Offset) -> Offset:
-        """Clamp an offset to fit within the width x heigh.
+        """Clamp an offset to fit within the width x height.
 
         Args:
             offset: An offset.
