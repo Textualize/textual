@@ -177,6 +177,7 @@ class SelectCurrent(Horizontal):
 
     async def _on_click(self, event: events.Click) -> None:
         """Inform ancestor we want to toggle."""
+        event.stop()
         self.post_message(self.Toggle())
 
 
@@ -512,8 +513,9 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     def _select_overlay_dismiss(self, event: SelectOverlay.Dismiss) -> None:
         """Dismiss the overlay."""
         event.stop()
-        self.expanded = False
+
         if not event.lost_focus:
+            self.expanded = False
             # If the overlay didn't lose focus, we want to re-focus the select.
             self.focus()
 
