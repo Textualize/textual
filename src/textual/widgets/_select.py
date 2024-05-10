@@ -516,6 +516,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         event.stop()
         self.expanded = False
         if not event.lost_focus:
+            # If the overlay didn't lose focus, we want to re-focus the select.
             self.focus()
 
     @on(SelectOverlay.UpdateSelection)
