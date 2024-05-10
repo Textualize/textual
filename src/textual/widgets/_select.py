@@ -515,6 +515,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         """Dismiss the overlay."""
         event.stop()
         self.expanded = False
+        if not event.lost_focus:
+            self.focus()
 
     @on(SelectOverlay.UpdateSelection)
     def _update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
