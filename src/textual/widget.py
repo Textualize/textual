@@ -3302,6 +3302,15 @@ class Widget(DOMNode):
             return Style()
         return self.screen.get_style_at(*screen_offset)
 
+    def suppress_click(self) -> None:
+        """Suppress a click event.
+
+        This will prevent a [Click][textual.events.Click] event being sent,
+        if called after a mouse down event and before the click itself.
+
+        """
+        self.app._mouse_down_widget = None
+
     def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
         self.post_message(event)

@@ -90,6 +90,7 @@ class SelectOverlay(OptionList):
     def _on_blur(self, _event: events.Blur) -> None:
         """On blur we want to dismiss the overlay."""
         self.post_message(self.Dismiss(lost_focus=True))
+        self.suppress_click()
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         """Inform parent when an option is selected."""
@@ -513,11 +514,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     def _select_overlay_dismiss(self, event: SelectOverlay.Dismiss) -> None:
         """Dismiss the overlay."""
         event.stop()
-
-        if not event.lost_focus:
-            self.expanded = False
-            # If the overlay didn't lose focus, we want to re-focus the select.
-            self.focus()
+        self.expanded = False
 
     @on(SelectOverlay.UpdateSelection)
     def _update_selection(self, event: SelectOverlay.UpdateSelection) -> None:
