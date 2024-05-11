@@ -625,15 +625,15 @@ class Widget(DOMNode):
         Returns:
             An optional awaitable.
         """
-
+        LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
         if loading:
             loading_indicator = self.get_loading_widget()
-            loading_indicator.add_class("-textual-loading-indicator")
+            loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
             return await_mount
         else:
             for child in self.children:
-                if child.has_class("-textual-loading-indicator"):
+                if child.has_class(LOADING_INDICATOR_CLASS):
                     return child.remove()
             dummy_awaitable: Future[None] = Future()
             dummy_awaitable.set_result(None)
