@@ -10,6 +10,7 @@ from __future__ import annotations
 from typing import ClassVar, Iterable, NamedTuple
 
 from rich.console import RenderableType
+from rich.measure import Measurement
 from rich.padding import Padding
 from rich.repr import Result
 from rich.rule import Rule
@@ -359,6 +360,15 @@ class OptionList(ScrollView, can_focus=True):
         # Finally, cause the highlighted property to settle down based on
         # the state of the option list in regard to its available options.
         self.action_first()
+
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        """Get maximum width of options."""
+        console = self.app.console
+        options = console.options
+        return max(
+            Measurement.get(console, options, option.prompt).maximum
+            for option in self._options
+        )
 
     def _request_content_tracking_refresh(
         self, rescroll_to_highlight: bool = False
