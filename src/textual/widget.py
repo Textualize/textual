@@ -636,7 +636,8 @@ class Widget(DOMNode):
                 if child.has_class(LOADING_INDICATOR_CLASS):
                     return child.remove()
 
-            async def dummy(): ...
+            async def dummy() -> None:
+                """Do nothing if there is no indicator."""
 
             return dummy()
 
