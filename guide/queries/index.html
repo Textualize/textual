@@ -6516,12 +6516,15 @@ window.onload = async (event) => {
 <p>See the <a href="https://github.com/davep/textual-query-sandbox/">Textual Query Sandbox</a> project for an interactive way of experimenting with DOM queries.</p>
 </div>
 <h2 id="query-one">Query one<a class="headerlink" href="#query-one" title="Permanent link">&para;</a></h2>
-<p>The <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.query_one">query_one</a> method gets a single widget in an app or other widget. If you call it with a selector it will return the first matching widget.</p>
-<p>Let's say we have a widget with an ID of <code>send</code> and we want to get a reference to it in our app. We could do this with the following:</p>
+<p>The <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.query_one">query_one</a> method is used to retrieve a single widget that matches a selector or a type.</p>
+<p>Let's say we have a widget with an ID of <code>send</code> and we want to get a reference to it in our app.
+We could do this with the following line of code:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">send_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#send&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>If there is no widget with an ID of <code>send</code>, Textual will raise a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception. Otherwise it will return the matched widget.</p>
-<p>You can also add a second parameter for the expected type.</p>
+<p>This will retrieve a widget with an ID of <code>send</code>, if there is exactly one.
+If there are no matching widgets, Textual will raise a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception.
+If there is more than one match, Textual will raise a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.TooManyMatches">TooManyMatches</a> exception.</p>
+<p>You can also add a second parameter for the expected type, which will ensure that you get the type you are expecting.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">send_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="s2">&quot;#send&quot;</span><span class="p">,</span> <span class="n">Button</span><span class="p">)</span>
 </code></pre></div>
 <p>If the matched widget is <em>not</em> a button (i.e. if <code>isinstance(widget, Button)</code> equals <code>False</code>), Textual will raise a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.WrongType">WrongType</a> exception.</p>
@@ -6529,12 +6532,16 @@ window.onload = async (event) => {
 <p class="admonition-title">Tip</p>
 <p>The second parameter allows type-checkers like MyPy to know the exact return type. Without it, MyPy would only know the result of <code>query_one</code> is a Widget (the base class).</p>
 </div>
+<p>You can also specify a widget type in place of a selector, which will return a widget of that type.
+For instance, the following would return a <code>Button</code> instance (assuming there is a single Button).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">my_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span>
+</code></pre></div>
 <h2 id="making-queries">Making queries<a class="headerlink" href="#making-queries" title="Permanent link">&para;</a></h2>
-<p>Apps and widgets have a <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.query">query</a> method which finds (or queries) widgets. This method returns a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery">DOMQuery</a> object which is a list-like container of widgets.</p>
+<p>Apps and widgets also have a <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.query">query</a> method which finds (or queries) widgets. This method returns a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery">DOMQuery</a> object which is a list-like container of widgets.</p>
 <p>If you call <code>query</code> with no arguments, you will get back a <code>DOMQuery</code> containing all widgets. This method is <em>recursive</em>, meaning it will also return child widgets (as many levels as required).</p>
 <p>Here's how you might iterate over all the widgets in your app:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">():</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">():</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
 </code></pre></div>
 <p>Called on the <code>app</code>, this will retrieve all widgets in the app. If you call the same method on a widget, it will return the children of that widget.</p>
 <div class="admonition note">
@@ -6544,12 +6551,12 @@ window.onload = async (event) => {
 <h3 id="query-selectors">Query selectors<a class="headerlink" href="#query-selectors" title="Permanent link">&para;</a></h3>
 <p>You can call <code>query</code> with a CSS selector. Let's look a few examples:</p>
 <p>If we want to find all the button widgets, we could do something like the following:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">):</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
 </code></pre></div>
 <p>Any selector that works in CSS will work with the <code>query</code> method. For instance, if we want to find all the disabled buttons in a Dialog widget, we could do this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Dialog Button.disabled&quot;</span><span class="p">):</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Dialog Button.disabled&quot;</span><span class="p">):</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -6558,8 +6565,8 @@ window.onload = async (event) => {
 <h3 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h3>
 <p>Query objects have a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.results">results</a> method which is an alternative way of iterating over widgets. If you supply a type (i.e. a Widget class) then this method will generate only objects of that type.</p>
 <p>The following example queries for widgets with the <code>disabled</code> CSS class and iterates over just the Button objects.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">Button</span><span class="p">):</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">for</span> <span class="n">button</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="n">Button</span><span class="p">):</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="nb">print</span><span class="p">(</span><span class="n">button</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -6570,11 +6577,11 @@ window.onload = async (event) => {
 <h2 id="first-and-last">First and last<a class="headerlink" href="#first-and-last" title="Permanent link">&para;</a></h2>
 <p>The <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.first">first</a> and <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.last">last</a> methods return the first or last matching widget from the selector, respectively.</p>
 <p>Here's how we might find the <em>last</em> button in an app:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">last_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">last_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">()</span>
 </code></pre></div>
 <p>If there are no buttons, Textual will raise a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.NoMatches">NoMatches</a> exception. Otherwise it will return a button widget.</p>
 <p>Both <code>first()</code> and <code>last()</code> accept an <code>expect_type</code> argument that should be the class of the widget you are expecting. Let's say we want to get the last widget with class <code>.disabled</code>, and we want to check it really is a button. We could do this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">disabled_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">disabled_button</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">last</span><span class="p">(</span><span class="n">Button</span><span class="p">)</span>
 </code></pre></div>
 <p>The query selects all widgets with a <code>disabled</code> CSS class. The <code>last</code> method gets the last disabled widget and checks it is a <code>Button</code> and not any other kind of widget.</p>
 <p>If the last widget is <em>not</em> a button, Textual will raise a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.WrongType">WrongType</a> exception.</p>
@@ -6585,28 +6592,28 @@ window.onload = async (event) => {
 <h2 id="filter">Filter<a class="headerlink" href="#filter" title="Permanent link">&para;</a></h2>
 <p>Query objects have a <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.filter">filter</a> method which further refines a query. This method will return a new query object with widgets that match both the original query <em>and</em> the new selector.</p>
 <p>Let's say we have a query which gets all the buttons in an app, and we want a new query object with just the disabled buttons. We could write something like this:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Get all the Buttons</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="c1"># Buttons with &#39;disabled&#39; CSS class</span>
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="n">disabled_buttons</span> <span class="o">=</span> <span class="n">buttons_query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Get all the Buttons</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Buttons with &#39;disabled&#39; CSS class</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">disabled_buttons</span> <span class="o">=</span> <span class="n">buttons_query</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Iterating over <code>disabled_buttons</code> will give us all the disabled buttons.</p>
 <h2 id="exclude">Exclude<a class="headerlink" href="#exclude" title="Permanent link">&para;</a></h2>
 <p>Query objects have an <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.exclude">exclude</a> method which is the logical opposite of <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.filter">filter</a>. The <code>exclude</code> method removes any widgets from the query object which match a selector.</p>
 <p>Here's how we could get all the buttons which <em>don't</em> have the <code>disabled</code> class set.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="c1"># Get all the Buttons</span>
-<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="c1"># Remove all the Buttons with the &#39;disabled&#39; CSS class</span>
-<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="n">enabled_buttons</span> <span class="o">=</span> <span class="n">buttons_query</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Get all the Buttons</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a><span class="n">buttons_query</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="c1"># Remove all the Buttons with the &#39;disabled&#39; CSS class</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="n">enabled_buttons</span> <span class="o">=</span> <span class="n">buttons_query</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="s2">&quot;.disabled&quot;</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="loop-free-operations">Loop-free operations<a class="headerlink" href="#loop-free-operations" title="Permanent link">&para;</a></h2>
 <p>Once you have a query object, you can loop over it to call methods on the matched widgets. Query objects also support a number of methods which make an update to every matched widget without an explicit loop.</p>
 <p>For instance, let's say we want to disable all buttons in an app. We could do this by calling <a class="autorefs autorefs-internal" href="../../api/query/#textual.css.query.DOMQuery.add_class">add_class()</a> on a query object.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>This single line is equivalent to the following:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">):</span>
-<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    <span class="n">widget</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">for</span> <span class="n">widget</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot;Button&quot;</span><span class="p">):</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="n">widget</span><span class="o">.</span><span class="n">add_class</span><span class="p">(</span><span class="s2">&quot;disabled&quot;</span><span class="p">)</span>
 </code></pre></div>
 <p>Here are the other loop-free methods on query objects:</p>
 <ul>

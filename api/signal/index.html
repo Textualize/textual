@@ -6383,6 +6383,8 @@ window.onload = async (event) => {
 </code></pre></div>
 
   <div class="doc doc-contents ">
+      <p class="doc doc-class-bases">
+        Bases: <code><a class="autorefs autorefs-external" title="typing.Generic" href="https://docs.python.org/3/library/typing.html#typing.Generic">Generic</a>[<span title="textual.signal.SignalT">SignalT</span>]</code></p>
 
   
       <p>A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs.</p>
@@ -6403,7 +6405,7 @@ window.onload = async (event) => {
           <td>
             <strong><code>owner</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
           </td>
           <td>
             <em>required</em>
@@ -6449,12 +6451,36 @@ window.onload = async (event) => {
   </span>
 
 <a href="#textual.signal.Signal.publish" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">publish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
   
       <p>Publish the signal (invoke subscribed callbacks).</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>data</code></strong>
+            <br>
+                <code><span title="textual.signal.SignalT">SignalT</span></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>An argument to pass to the callbacks.</p></td>
+        </tr>
+    </tbody>
+  </table>
 
   </div>
 
@@ -6494,7 +6520,7 @@ window.onload = async (event) => {
           <td>
             <strong><code>node</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
           </td>
           <td>
             <em>required</em>
@@ -6505,12 +6531,12 @@ window.onload = async (event) => {
           <td>
             <strong><code>callback</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual._types.IgnoreReturnCallbackType" href="../types/#textual.types.IgnoreReturnCallbackType">IgnoreReturnCallbackType</a></code>
+                <code><span title="textual.signal.SignalCallbackType">SignalCallbackType</span></code>
           </td>
           <td>
             <em>required</em>
           </td>
-          <td><p>A callback function which takes no arguments, and returns anything (return type ignored).</p></td>
+          <td><p>A callback function which takes a single argument and returns anything (return type ignored).</p></td>
         </tr>
     </tbody>
   </table>
@@ -6570,7 +6596,7 @@ window.onload = async (event) => {
           <td>
             <strong><code>node</code></strong>
             <br>
-                <code><a class="autorefs autorefs-internal" title="textual.dom.DOMNode" href="../dom_node/#textual.dom.DOMNode">DOMNode</a></code>
+                <code><a class="autorefs autorefs-internal" title="textual.message_pump.MessagePump" href="../message_pump/#textual.message_pump.MessagePump">MessagePump</a></code>
           </td>
           <td>
             <em>required</em>

@@ -5793,6 +5793,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.render" class="md-nav__link">
+    <span class="md-ellipsis">
+      render()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.run" class="md-nav__link">
     <span class="md-ellipsis">
       run()
@@ -8343,6 +8352,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.app.App.render" class="md-nav__link">
+    <span class="md-ellipsis">
+      render()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.app.App.run" class="md-nav__link">
     <span class="md-ellipsis">
       run()
@@ -9015,8 +9033,8 @@ The base screens can be names of screens listed in <a class="autorefs autorefs-i
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.SUB_TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9041,8 +9059,8 @@ See also <a class="autorefs autorefs-internal" href="../screen/#textual.screen.S
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.TITLE" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9141,8 +9159,8 @@ are mapped to hex codes.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.ansi_theme_dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9165,8 +9183,8 @@ are mapped to hex codes.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.ansi_theme_light" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9189,8 +9207,8 @@ are mapped to hex codes.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.app_focus" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -9219,7 +9237,7 @@ get focus when the terminal widget has focus.</p>
   </span>
 
 <a href="#textual.app.App.app_resume_signal" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">app_resume_signal</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;app-resume&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">app_resume_signal</span><span class="p">:</span> <span class="n">Signal</span><span class="p">[</span><span class="n">App</span><span class="p">]</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;app-resume&#39;</span><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -9247,7 +9265,9 @@ perform work after the app has resumed.</p>
   </span>
 
 <a href="#textual.app.App.app_suspend_signal" class="headerlink" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">app_suspend_signal</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;app-suspend&#39;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">app_suspend_signal</span><span class="p">:</span> <span class="n">Signal</span><span class="p">[</span><span class="n">App</span><span class="p">]</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;app-suspend&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
 </code></pre></div>
 
   <div class="doc doc-contents ">
@@ -9362,8 +9382,8 @@ positioning of OS IME and emoji popup menus.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.app.App.dark" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -13303,6 +13323,30 @@ to await the result of the screen.</p></td>
         </tr>
     </tbody>
   </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.app.App.render" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">render</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.app.App.render" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">render</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Render method inherited from widget, to render the screen's background.</p>
+<p>May be override to customize background visuals.</p>
 
   </div>
 

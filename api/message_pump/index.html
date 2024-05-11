@@ -5406,6 +5406,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.message_signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      message_signal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message_pump.MessagePump.call_after_refresh" class="md-nav__link">
     <span class="md-ellipsis">
       call_after_refresh()
@@ -6597,6 +6606,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.message_pump.MessagePump.message_signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      message_signal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.message_pump.MessagePump.call_after_refresh" class="md-nav__link">
     <span class="md-ellipsis">
       call_after_refresh()
@@ -7007,6 +7025,30 @@ window.onload = async (event) => {
   <div class="doc doc-contents ">
   
       <p>The current size of the message queue.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.message_pump.MessagePump.message_signal" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">message_signal</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.message_pump.MessagePump.message_signal" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">message_signal</span><span class="p">:</span> <span class="n">Signal</span><span class="p">[</span><span class="n">Message</span><span class="p">]</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;messages&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Subscribe to this signal to be notified of all messages sent to this widget.</p>
+<p>This is a fairly low-level mechanism, and shouldn't replace regular message handling.</p>
   </div>
 
 </div>
