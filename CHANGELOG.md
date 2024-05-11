@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `SelectionList` issues after removing an option https://github.com/Textualize/textual/pull/4464
 - Fixed `ListView` bugs with the initial index https://github.com/Textualize/textual/pull/4452
+- Fixed `Select` not closing https://github.com/Textualize/textual/pull/4499
+- Fixed setting `loading=False` removing all child loading indicators https://github.com/Textualize/textual/pull/4499
 
 ### Changed
 
@@ -19,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `message_signal` to MessagePump, to listen to events sent to another widget. https://github.com/Textualize/textual/pull/4487
+- Added `Widget.suppress_click` https://github.com/Textualize/textual/pull/4499
 
 ## [0.58.1] - 2024-05-01
 

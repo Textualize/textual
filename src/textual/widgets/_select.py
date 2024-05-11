@@ -90,6 +90,7 @@ class SelectOverlay(OptionList):
     def _on_blur(self, _event: events.Blur) -> None:
         """On blur we want to dismiss the overlay."""
         self.post_message(self.Dismiss(lost_focus=True))
+        self.suppress_click()
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         """Inform parent when an option is selected."""
@@ -177,6 +178,7 @@ class SelectCurrent(Horizontal):
 
     async def _on_click(self, event: events.Click) -> None:
         """Inform ancestor we want to toggle."""
+        event.stop()
         self.post_message(self.Toggle())
 
 

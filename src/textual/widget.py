@@ -625,15 +625,21 @@ class Widget(DOMNode):
         Returns:
             An optional awaitable.
         """
-
+        LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
         if loading:
             loading_indicator = self.get_loading_widget()
-            loading_indicator.add_class("-textual-loading-indicator")
+            loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
             return await_mount
         else:
-            await_remove = self.query(".-textual-loading-indicator").remove()
-            return await_remove
+            for child in self.children:
+                if child.has_class(LOADING_INDICATOR_CLASS):
+                    return child.remove()
+
+            async def dummy() -> None:
+                """Do nothing if there is no indicator."""
+
+            return dummy()
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
@@ -3302,6 +3308,15 @@ class Widget(DOMNode):
             return Style()
         return self.screen.get_style_at(*screen_offset)
 
+    def suppress_click(self) -> None:
+        """Suppress a click event.
+
+        This will prevent a [Click][textual.events.Click] event being sent,
+        if called after a mouse down event and before the click itself.
+
+        """
+        self.app._mouse_down_widget = None
+
     def _forward_event(self, event: events.Event) -> None:
         event._set_forwarded()
         self.post_message(event)
@@ -3519,7 +3534,7 @@ class Widget(DOMNode):
             The `Widget` instance.
         """
 
-        def set_focus(widget: Widget):
+        def set_focus(widget: Widget) -> None:
             """Callback to set the focus."""
             try:
                 widget.screen.set_focus(self, scroll_visible=scroll_visible)
