@@ -70,6 +70,13 @@ class ScrollTo(ScrollMessage, verbose=True):
 
 
 class ScrollBarRender:
+    _vertical_bars: ClassVar[list[str]] = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
+    """Glyphs used for vertical scrollbar ends, for smoother display."""
+    _horizontal_bars: ClassVar[list[str]] = ["▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
+    """Glyphs used for horizontal scrollbar ends, for smoother display."""
+    _blank_glyph: ClassVar[str] = " "
+    """Glyph used for the main body of the scrollbar"""
+
     def __init__(
         self,
         virtual_size: int = 100,
@@ -99,9 +106,9 @@ class ScrollBarRender:
         bar_color: Color = Color.parse("bright_magenta"),
     ) -> Segments:
         if vertical:
-            bars = ["▁", "▂", "▃", "▄", "▅", "▆", "▇", " "]
+            bars = cls._vertical_bars
         else:
-            bars = ["▉", "▊", "▋", "▌", "▍", "▎", "▏", " "]
+            bars = cls._horizontal_bars
 
         back = back_color
         bar = bar_color
@@ -112,7 +119,7 @@ class ScrollBarRender:
 
         _Segment = Segment
         _Style = Style
-        blank = " " * width_thickness
+        blank = cls._blank_glyph * width_thickness
 
         foreground_meta = {"@mouse.down": "grab"}
         if window_size and size and virtual_size and size != virtual_size:
