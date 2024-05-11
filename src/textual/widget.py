@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import Lock, create_task, wait
+from asyncio import Future, Lock, create_task, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -632,8 +632,13 @@ class Widget(DOMNode):
             await_mount = self.mount(loading_indicator)
             return await_mount
         else:
-            await_remove = self.query(".-textual-loading-indicator").remove()
-            return await_remove
+            for child in self.children:
+                if child.has_class("-textual-loading-indicator"):
+                    return child.remove()
+            dummy_awaitable: Future[None] = Future()
+            dummy_awaitable.set_result(None)
+            # Dummy awaitable
+            return dummy_awaitable
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
