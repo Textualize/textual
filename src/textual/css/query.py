@@ -116,7 +116,7 @@ class DOMQuery(Generic[QueryType]):
         from ..widget import Widget
 
         if self._nodes is None:
-            initial_nodes = (
+            initial_nodes = list(
                 self._node.walk_children(Widget) if self._deep else self._node._nodes
             )
             nodes = [

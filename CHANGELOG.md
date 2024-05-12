@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed auto width not working for option lists https://github.com/Textualize/textual/pull/4507
 
+### Added
+
+- Added `DOMNode.query_children` https://github.com/Textualize/textual/pull/4508
+
 ## [0.59.0] - 2024-05-11
 
 ### Fixed
