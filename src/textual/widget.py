@@ -41,8 +41,6 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
 
-from textual.await_complete import AwaitComplete
-
 if TYPE_CHECKING:
     from .app import RenderResult
 
@@ -57,6 +55,7 @@ from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import AnimationLevel
 from .actions import SkipAction
+from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
