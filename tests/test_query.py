@@ -56,6 +56,7 @@ def test_query():
 
     # repeat tests to account for caching
     for repeat in range(3):
+        assert list(app.query_children()) == [main_view, help_view]
         assert list(app.query_children("*")) == [main_view, help_view]
         assert list(app.query_children("#help")) == [help_view]
         assert list(main_view.query_children(".float")) == [sidebar]
