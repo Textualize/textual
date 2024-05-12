@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased 
+
+### Fixed
+
+- Fixed auto width not working for option lists https://github.com/Textualize/textual/pull/4507
+
 ## [0.59.0] - 2024-05-11
 
 ### Fixed
