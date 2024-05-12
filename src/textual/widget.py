@@ -628,16 +628,15 @@ class Widget(DOMNode):
             An optional awaitable.
         """
         LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
+        LOADING_INDICATOR_QUERY = f".{LOADING_INDICATOR_CLASS}"
+        remove_indicator = self.query_children(LOADING_INDICATOR_QUERY).remove()
         if loading:
-            remove_indicator = self.query_children(
-                f".{LOADING_INDICATOR_CLASS}"
-            ).remove()
             loading_indicator = self.get_loading_widget()
             loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
             return AwaitComplete(remove_indicator, await_mount)
         else:
-            return self.query_children(f".{LOADING_INDICATOR_CLASS}").remove()
+            return remove_indicator
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
