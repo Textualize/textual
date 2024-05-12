@@ -1259,6 +1259,35 @@ class DOMNode(MessagePump):
             return DOMQuery[QueryType](self, filter=selector.__name__)
 
     @overload
+    def query_children(self, selector: str | None) -> DOMQuery[Widget]: ...
+
+    @overload
+    def query_children(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
+
+    def query_children(
+        self, selector: str | type[QueryType] | None = None
+    ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
+        """Query the DOM for the immediate children that match a selector or widget type.
+
+        Note that this will not return child widgets more than a single level deep.
+        If you want to a query to potentially match all children in the widget tree,
+        see [query][textual.dom.DOMNode.query].
+
+        Args:
+            selector: A CSS selector, widget type, or `None` for all nodes.
+
+        Returns:
+            A query object.
+        """
+        from .css.query import DOMQuery, QueryType
+        from .widget import Widget
+
+        if isinstance(selector, str) or selector is None:
+            return DOMQuery[Widget](self, deep=False, filter=selector)
+        else:
+            return DOMQuery[QueryType](self, deep=False, filter=selector.__name__)
+
+    @overload
     def query_one(self, selector: str) -> Widget: ...
 
     @overload
