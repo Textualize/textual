@@ -55,6 +55,7 @@ from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
 from ._types import AnimationLevel
 from .actions import SkipAction
+from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
@@ -626,20 +627,15 @@ class Widget(DOMNode):
             An optional awaitable.
         """
         LOADING_INDICATOR_CLASS = "-textual-loading-indicator"
+        LOADING_INDICATOR_QUERY = f".{LOADING_INDICATOR_CLASS}"
+        remove_indicator = self.query_children(LOADING_INDICATOR_QUERY).remove()
         if loading:
             loading_indicator = self.get_loading_widget()
             loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
-            return await_mount
+            return AwaitComplete(remove_indicator, await_mount)
         else:
-            for child in self.children:
-                if child.has_class(LOADING_INDICATOR_CLASS):
-                    return child.remove()
-
-            async def dummy() -> None:
-                """Do nothing if there is no indicator."""
-
-            return dummy()
+            return remove_indicator
 
     async def _watch_loading(self, loading: bool) -> None:
         """Called when the 'loading' reactive is changed."""
