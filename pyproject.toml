@@ -47,6 +47,7 @@ rich = ">=13.3.3"
 typing-extensions = "^4.4.0"
 tree-sitter = { version = "^0.20.1", optional = true }
 tree-sitter-languages = { version = "1.10.2", optional = true }
+mkdocs-git-revision-date-localized-plugin = "^1.2.5"
 
 [tool.poetry.extras]
 syntax = ["tree-sitter", "tree_sitter_languages"]
