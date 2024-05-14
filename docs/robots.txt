@@ -1,1 +1,1 @@
-Sitemap: https://www.textualize.io/sitemap.xml
+Sitemap: https://textual.textualize.io/sitemap.xml
