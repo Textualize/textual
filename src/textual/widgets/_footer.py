@@ -114,6 +114,7 @@ class Footer(Widget):
         for binding, enabled in bindings:
             action_to_bindings[binding.action].append((binding, enabled))
 
+        app_focus = self.app.app_focus
         for _, _bindings in action_to_bindings.items():
             binding, enabled = _bindings[0]
             if binding.key_display is None:
@@ -134,11 +135,11 @@ class Footer(Widget):
                         "@click": f"app.check_bindings('{binding.key}')",
                         "key": binding.key,
                     }
-                    if enabled
+                    if enabled and app_focus
                     else {}
                 ),
             )
-            if not enabled:
+            if not enabled or not app_focus:
                 key_text.stylize("dim")
             text.append_text(key_text)
         return text

@@ -3201,11 +3201,13 @@ class App(Generic[ReturnType], DOMNode):
         """App has focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = True
+        self.bindings_updated_signal.publish(None)
 
     async def _on_app_blur(self, event: events.AppBlur) -> None:
         """App has lost focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = False
+        self.bindings_updated_signal.publish(None)
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
