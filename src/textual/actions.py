@@ -22,7 +22,7 @@ class ActionError(Exception):
 re_action_args = re.compile(r"([\w\.]+)\((.*)\)")
 
 
-@lru_cache(maxsize=128)
+@lru_cache(maxsize=1024)
 def parse(action: str) -> ActionParseResult:
     """Parses an action string.
 
