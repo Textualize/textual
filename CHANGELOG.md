@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.61.0] - Unreleased
+
+### Added
+
+- Added dynamic bindings, implement `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
+
+### Changed
+
+- Actions will no longer check app if they are not handled https://github.com/Textualize/textual/pull/4516
+
 ## [0.60.1] - 2024-05-15
 
 ### Fixed
