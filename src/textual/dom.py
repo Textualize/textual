@@ -1482,6 +1482,24 @@ class DOMNode(MessagePump):
     ) -> Self:
         return self
 
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool:
+        """Check whether an action is enabled.
+
+        Implement this method to add logic for dynamic bindings.
+
+        Args:
+            action: The name of an action.
+            action_parameters: A tuple of any action parameters.
+
+        Returns:
+            `True` if the action is enabled, `False` if it is not.
+        """
+        return True
+
+    def refresh_bindings(self) -> None:
+        """Call when the bindings state may have changed."""
+        self.call_later(self.app.refresh_bindings)
+
     async def action_toggle(self, attribute_name: str) -> None:
         """Toggle an attribute on the node.
 

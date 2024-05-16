@@ -2,11 +2,12 @@ from __future__ import annotations
 
 import ast
 import re
+from functools import lru_cache
 from typing import Any
 
 from typing_extensions import TypeAlias
 
-ActionParseResult: TypeAlias = "tuple[str, tuple[Any, ...]]"
+ActionParseResult: TypeAlias = "tuple[str, str, tuple[Any, ...]]"
 """An action is its name and the arbitrary tuple of its arguments."""
 
 
@@ -21,6 +22,7 @@ class ActionError(Exception):
 re_action_args = re.compile(r"([\w\.]+)\((.*)\)")
 
 
+@lru_cache(maxsize=128)
 def parse(action: str) -> ActionParseResult:
     """Parses an action string.
 
@@ -52,4 +54,6 @@ def parse(action: str) -> ActionParseResult:
         action_name = action
         action_args = ()
 
-    return action_name, action_args
+    namespace, _, action_name = action_name.rpartition(".")
+
+    return namespace, action_name, action_args

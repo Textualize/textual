@@ -27,7 +27,6 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
-from pathlib import PurePath
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -40,11 +39,9 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
-    List,
     Sequence,
     Type,
     TypeVar,
-    Union,
     overload,
 )
 from weakref import WeakKeyDictionary, WeakSet
@@ -81,7 +78,7 @@ from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relati
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
-from .actions import ActionParseResult, SkipAction
+from .actions import SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
@@ -225,14 +222,6 @@ class SuspendNotSupported(Exception):
 
 
 ReturnType = TypeVar("ReturnType")
-
-CSSPathType = Union[
-    str,
-    PurePath,
-    List[Union[str, PurePath]],
-]
-"""Valid ways of specifying paths to CSS files."""
-
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
 
@@ -640,6 +629,11 @@ class App(Generic[ReturnType], DOMNode):
         # Size of previous inline update
         self._previous_inline_height: int | None = None
 
+        self._bindings_updated = False
+        """Indicates that a binding update was requested."""
+        self.bindings_updated_signal: Signal[None] = Signal(self, "bindings_updated")
+        """A signal published when the bindings have been updated"""
+
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
@@ -870,6 +864,8 @@ class App(Generic[ReturnType], DOMNode):
         bindings_map: dict[str, tuple[DOMNode, Binding]] = {}
         for namespace, bindings in self._binding_chain:
             for key, binding in bindings.keys.items():
+                if not self.app._check_action_enabled(binding.action, namespace):
+                    continue
                 if existing_key_and_binding := bindings_map.get(key):
                     _, existing_binding = existing_key_and_binding
                     if binding.priority and not existing_binding.priority:
@@ -878,6 +874,12 @@ class App(Generic[ReturnType], DOMNode):
                     bindings_map[key] = (namespace, binding)
 
         return bindings_map
+
+    def refresh_bindings(self) -> None:
+        """Call to request a refresh of bindings."""
+        self.log.debug("Bindings updated")
+        self._bindings_updated = True
+        self.check_idle()
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -1036,6 +1038,11 @@ class App(Generic[ReturnType], DOMNode):
         else:
             width, height = self.console.size
         return Size(width, height)
+
+    async def _on_idle(self, event: events.Idle) -> None:
+        if self._bindings_updated:
+            self._bindings_updated = False
+            self.bindings_updated_signal.publish(None)
 
     def _get_inline_height(self) -> int:
         """Get the inline height (height when in inline mode).
@@ -3026,10 +3033,46 @@ class App(Generic[ReturnType], DOMNode):
         else:
             await super().on_event(event)
 
+    def _parse_action(
+        self, action: str, default_namespace: DOMNode
+    ) -> tuple[DOMNode, str, tuple[Any, ...]]:
+        """Parse an action.
+
+        Args:
+            action: An action string.
+
+        Raises:
+            ActionError: If there are any errors parsing the action string.
+
+        Returns:
+            A tuple of (node or None, action name, tuple of parameters).
+        """
+        destination, action_name, params = actions.parse(action)
+        action_target: DOMNode | None = None
+        if destination:
+            if destination not in self._action_targets:
+                raise ActionError(f"Action namespace {destination} is not known")
+            action_target = getattr(self, destination)
+        return action_target or default_namespace, action_name, params
+
+    def _check_action_enabled(self, action: str, default_namespace: DOMNode) -> bool:
+        """Check if an action is enabled.
+
+        Args:
+            action: An action string.
+
+        Returns:
+            State of an action.
+        """
+        action_target, action_name, parameters = self._parse_action(
+            action, default_namespace
+        )
+        return action_target.check_action(action_name, parameters)
+
     async def run_action(
         self,
-        action: str | ActionParseResult,
-        default_namespace: object | None = None,
+        action: str,
+        default_namespace: DOMNode | None = None,
     ) -> bool:
         """Perform an [action](/guide/actions).
 
@@ -3043,25 +3086,15 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has been handled.
         """
-        if isinstance(action, str):
-            target, params = actions.parse(action)
-        else:
-            target, params = action
-        implicit_destination = True
-        if "." in target:
-            destination, action_name = target.split(".", 1)
-            if destination not in self._action_targets:
-                raise ActionError(f"Action namespace {destination} is not known")
-            action_target = getattr(self, destination)
-            implicit_destination = True
-        else:
-            action_target = default_namespace if default_namespace is not None else self
-            action_name = target
 
-        handled = await self._dispatch_action(action_target, action_name, params)
-        if not handled and implicit_destination and not isinstance(action_target, App):
-            handled = await self.app._dispatch_action(self.app, action_name, params)
-        return handled
+        action_target, action_name, params = self._parse_action(
+            action, self if default_namespace is None else default_namespace
+        )
+
+        if action_target.check_action(action_name, params):
+            return await self._dispatch_action(action_target, action_name, params)
+        else:
+            return False
 
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
@@ -3089,7 +3122,7 @@ class App(Generic[ReturnType], DOMNode):
             private_method = getattr(namespace, f"_action_{action_name}", None)
             if callable(private_method):
                 await invoke(private_method, *params)
-                return True
+
             public_method = getattr(namespace, f"action_{action_name}", None)
             if callable(public_method):
                 await invoke(public_method, *params)

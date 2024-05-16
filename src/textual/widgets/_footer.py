@@ -71,8 +71,10 @@ class Footer(Widget):
     def _on_mount(self, _: events.Mount) -> None:
         self.watch(self.screen, "focused", self._bindings_changed)
         self.watch(self.screen, "stack_updates", self._bindings_changed)
+        self.app.bindings_updated_signal.subscribe(self, self._bindings_changed)
 
     def _bindings_changed(self, _: Widget | None) -> None:
+        print("!!!")
         self._key_text = None
         self.refresh()
 
