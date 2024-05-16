@@ -44,8 +44,6 @@ class Binding:
     """Description of action."""
     show: bool = True
     """Show the action in Footer, or False to hide."""
-    disabled: bool = False
-    """Binding is disabled (shown but not functional)."""
     key_display: str | None = None
     """How the key should be shown in footer."""
     priority: bool = False
