@@ -73,7 +73,6 @@ class Footer(Widget):
         self.app.bindings_updated_signal.subscribe(self, self._bindings_changed)
 
     def _bindings_changed(self, _: Widget | None) -> None:
-        print("!!!")
         self._key_text = None
         self.refresh()
 
@@ -130,10 +129,14 @@ class Footer(Widget):
                     f" {binding.description} ",
                     highlight_style if hovered else base_style + description_style,
                 ),
-                meta={
-                    "@click": f"app.check_bindings('{binding.key}')",
-                    "key": binding.key,
-                },
+                meta=(
+                    {
+                        "@click": f"app.check_bindings('{binding.key}')",
+                        "key": binding.key,
+                    }
+                    if enabled
+                    else {}
+                ),
             )
             if not enabled:
                 key_text.stylize("dim")
