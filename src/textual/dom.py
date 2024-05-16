@@ -1482,7 +1482,7 @@ class DOMNode(MessagePump):
     ) -> Self:
         return self
 
-    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool:
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
         """Check whether an action is enabled.
 
         Implement this method to add logic for dynamic bindings.
@@ -1492,7 +1492,9 @@ class DOMNode(MessagePump):
             action_parameters: A tuple of any action parameters.
 
         Returns:
-            `True` if the action is enabled, `False` if it is not.
+            `True` if the action is enabled+visible,
+                `False` if the action is disabled+hidden,
+                `None` if the action is disabled+visible (grayed out in footer)
         """
         return True
 

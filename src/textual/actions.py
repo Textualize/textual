@@ -7,7 +7,7 @@ from typing import Any
 
 from typing_extensions import TypeAlias
 
-ActionParseResult: TypeAlias = "tuple[str, str, tuple[Any, ...]]"
+ActionParseResult: TypeAlias = "tuple[str, str, tuple[object, ...]]"
 """An action is its name and the arbitrary tuple of its arguments."""
 
 

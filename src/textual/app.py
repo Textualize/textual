@@ -849,7 +849,7 @@ class App(Generic[ReturnType], DOMNode):
         return focused
 
     @property
-    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
+    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding, bool]]:
         """Get currently active bindings.
 
         If no widget is focused, then app-level bindings are returned.
@@ -861,17 +861,18 @@ class App(Generic[ReturnType], DOMNode):
             A map of keys to a tuple containing the DOMNode and Binding that key corresponds to.
         """
 
-        bindings_map: dict[str, tuple[DOMNode, Binding]] = {}
+        bindings_map: dict[str, tuple[DOMNode, Binding, bool]] = {}
         for namespace, bindings in self._binding_chain:
             for key, binding in bindings.keys.items():
-                if not self.app._check_action_enabled(binding.action, namespace):
+                action_state = self.app._check_action_state(binding.action, namespace)
+                if action_state is False:
                     continue
                 if existing_key_and_binding := bindings_map.get(key):
-                    _, existing_binding = existing_key_and_binding
+                    _, existing_binding, _ = existing_key_and_binding
                     if binding.priority and not existing_binding.priority:
-                        bindings_map[key] = (namespace, binding)
+                        bindings_map[key] = (namespace, binding, bool(action_state))
                 else:
-                    bindings_map[key] = (namespace, binding)
+                    bindings_map[key] = (namespace, binding, bool(action_state))
 
         return bindings_map
 
@@ -3055,7 +3056,9 @@ class App(Generic[ReturnType], DOMNode):
             action_target = getattr(self, destination)
         return action_target or default_namespace, action_name, params
 
-    def _check_action_enabled(self, action: str, default_namespace: DOMNode) -> bool:
+    def _check_action_state(
+        self, action: str, default_namespace: DOMNode
+    ) -> bool | None:
         """Check if an action is enabled.
 
         Args:
@@ -3122,7 +3125,7 @@ class App(Generic[ReturnType], DOMNode):
             private_method = getattr(namespace, f"_action_{action_name}", None)
             if callable(private_method):
                 await invoke(private_method, *params)
-
+                return True
             public_method = getattr(namespace, f"action_{action_name}", None)
             if callable(public_method):
                 await invoke(public_method, *params)

@@ -264,6 +264,12 @@ class Screen(Generic[ScreenResultType], Widget):
             extras.append("_tooltips")
         return (*super().layers, *extras)
 
+    def _watch_focused(self):
+        self.app.refresh_bindings()
+
+    def _watch_stack_updates(self):
+        self.app.refresh_bindings()
+
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
 

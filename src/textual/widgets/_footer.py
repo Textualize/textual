@@ -11,6 +11,7 @@ from .. import events
 if TYPE_CHECKING:
     from ..app import RenderResult
 
+from ..binding import Binding
 from ..reactive import reactive
 from ..widget import Widget
 
@@ -69,8 +70,6 @@ class Footer(Widget):
         self.refresh()
 
     def _on_mount(self, _: events.Mount) -> None:
-        self.watch(self.screen, "focused", self._bindings_changed)
-        self.watch(self.screen, "stack_updates", self._bindings_changed)
         self.app.bindings_updated_signal.subscribe(self, self._bindings_changed)
 
     def _bindings_changed(self, _: Widget | None) -> None:
@@ -105,17 +104,19 @@ class Footer(Widget):
         description_style = self.get_component_rich_style("footer--description")
 
         bindings = [
-            binding
-            for (_, binding) in self.app.namespace_bindings.values()
+            (binding, enabled)
+            for (_, binding, enabled) in self.app.namespace_bindings.values()
             if binding.show
         ]
 
-        action_to_bindings = defaultdict(list)
-        for binding in bindings:
-            action_to_bindings[binding.action].append(binding)
+        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
+            list
+        )
+        for binding, enabled in bindings:
+            action_to_bindings[binding.action].append((binding, enabled))
 
-        for _, bindings in action_to_bindings.items():
-            binding = bindings[0]
+        for _, _bindings in action_to_bindings.items():
+            binding, enabled = _bindings[0]
             if binding.key_display is None:
                 key_display = self.app.get_key_display(binding.key)
                 if key_display is None:
@@ -134,6 +135,8 @@ class Footer(Widget):
                     "key": binding.key,
                 },
             )
+            if not enabled:
+                key_text.stylize("dim")
             text.append_text(key_text)
         return text
 
