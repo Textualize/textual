@@ -3515,7 +3515,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         title: str = "",
         severity: SeverityLevel = "information",
-        timeout: float = NOTIFICATION_TIMEOUT,
+        timeout: float | None = None,
     ) -> None:
         """Create a notification.
 
@@ -3528,7 +3528,7 @@ class App(Generic[ReturnType], DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout (in seconds) for the notification.
+            timeout: The timeout (in seconds) for the notification, or `None` for default.
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
@@ -3563,6 +3563,8 @@ class App(Generic[ReturnType], DOMNode):
             self.notify("It's against my programming to impersonate a deity.", title="")
             ```
         """
+        if timeout is None:
+            timeout = self.NOTIFICATION_TIMEOUT
         notification = Notification(message, title, severity, timeout)
         self.post_message(Notify(notification))
 
