@@ -1253,3 +1253,7 @@ def test_button_with_multiline_label(snap_compare):
 
 def test_margin_multiple(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "margin_multiple.py")
+
+
+def test_dynamic_bindings(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "dynamic_bindings.py")
