@@ -131,7 +131,7 @@ There may be situations where an action is temporarily unavailable due to some i
 For instance, consider an app with a fixed number of pages and actions to go to the next and previous page.
 It doesn't make sense to go to the previous page if we are on the first, or the next page when we are on the last page.
 
-We could easily add this logic to the actions, but the [footer][textual.widgets.Footer] would still display the keys even if they wouldn't do anything.
+We could easily add this logic to the action methods, but the [footer][textual.widgets.Footer] would still display the keys even if they would have no effect.
 The user may wonder why the app is showing keys that don't appear to work.
 
 We can solve this issue by implementing the [`check_action`][textual.dom.DOMNode.check_action] on our app, screen, or widget.
@@ -172,7 +172,7 @@ The actions above call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings
 An alternative to doing this manually is to set `bindings=True` on a [reactive](./reactivity.md), which will refresh the bindings if the reactive changes.
 
 Let's make this change.
-We will also show what the footer will show if we return `None` from `check_action` (rather than `False`):
+We will also demonstrate what the footer will show if we return `None` from `check_action` (rather than `False`):
 
 
 === "actions07.py"
@@ -196,7 +196,7 @@ We will also show what the footer will show if we return `None` from `check_acti
     ```{.textual path="docs/examples/guide/actions/actions07.py"}
     ```
 
-Note how the logic is the same but we don't need to excplictly call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings].
+Note how the logic is the same but we don't need to explicitly call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings].
 The change to `check_action` also causes the disabled footer keys to be grayed out, indicating they are temporarily unavailable.
 
 
