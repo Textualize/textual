@@ -182,8 +182,8 @@ We will also demonstrate what the footer will show if we return `None` from `che
     ```
 
     1. The `bindings=True` causes the footer to refresh when `page_no` changes.
-    2. Returning `None` disables they key in the footer rather than hides it.
-    3. Returning `None` disables they key in the footer rather than hides it.
+    2. Returning `None` disables the key in the footer rather than hides it
+    3. Returning `None` disables the key in the footer rather than hides it.
 
 === "actions06.tcss"
 
