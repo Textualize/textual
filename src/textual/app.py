@@ -3054,7 +3054,11 @@ class App(Generic[ReturnType], DOMNode):
             if destination not in self._action_targets:
                 raise ActionError(f"Action namespace {destination} is not known")
             action_target = getattr(self, destination)
-        return action_target or default_namespace, action_name, params
+        return (
+            (default_namespace if action_target is None else action_target),
+            action_name,
+            params,
+        )
 
     def _check_action_state(
         self, action: str, default_namespace: DOMNode

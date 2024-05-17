@@ -179,8 +179,8 @@ class Screen(Generic[ScreenResultType], Widget):
     """
 
     BINDINGS = [
-        Binding("tab", "focus_next", "Focus Next", show=False),
-        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
+        Binding("tab", "app.focus_next", "Focus Next", show=False),
+        Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
     ]
 
     def __init__(
