@@ -1256,4 +1256,6 @@ def test_margin_multiple(snap_compare):
 
 
 def test_dynamic_bindings(snap_compare):
-    assert snap_compare(SNAPSHOT_APPS_DIR / "dynamic_bindings.py")
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dynamic_bindings.py", press=["a", "b", "c"]
+    )
