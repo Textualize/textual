@@ -142,7 +142,7 @@ It should return one of the following values:
 - `False` to hide the key and prevent the action running.
 - `None` to disable the key (show dimmed), and prevent the action running.
 
-Let's write an app to put this in to practice:
+Let's write an app to put this into practice:
 
 === "actions06.py"
 
