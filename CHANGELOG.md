@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
+- Added `"focused"` action namespace so you can bind a key to an action on the focused widget https://github.com/Textualize/textual/pull/4516
 
 ### Changed
 

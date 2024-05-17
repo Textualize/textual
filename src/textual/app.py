@@ -455,7 +455,7 @@ class App(Generic[ReturnType], DOMNode):
         self._driver: Driver | None = None
         self._exit_renderables: list[RenderableType] = []
 
-        self._action_targets = {"app", "screen"}
+        self._action_targets = {"app", "screen", "focused"}
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
@@ -3037,7 +3037,9 @@ class App(Generic[ReturnType], DOMNode):
         if destination:
             if destination not in self._action_targets:
                 raise ActionError(f"Action namespace {destination} is not known")
-            action_target = getattr(self, destination)
+            action_target = getattr(self, destination, None)
+            if action_target is None:
+                raise ActionError("Action target {destination!r} not available")
         return (
             (default_namespace if action_target is None else action_target),
             action_name,
