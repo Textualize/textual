@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added dynamic bindings, implement `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
+- Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
 
 ### Changed
 
