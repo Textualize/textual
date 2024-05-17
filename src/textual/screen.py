@@ -226,6 +226,11 @@ class Screen(Generic[ScreenResultType], Widget):
         )
         """The signal that is published when the screen's layout is refreshed."""
 
+        self._bindings_updated = False
+        """Indicates that a binding update was requested."""
+        self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
+        """A signal published when the bindings have been updated"""
+
     @property
     def is_modal(self) -> bool:
         """Is the screen modal?"""
@@ -265,10 +270,16 @@ class Screen(Generic[ScreenResultType], Widget):
         return (*super().layers, *extras)
 
     def _watch_focused(self):
-        self.app.refresh_bindings()
+        self.refresh_bindings()
 
     def _watch_stack_updates(self):
-        self.app.refresh_bindings()
+        self.refresh_bindings()
+
+    def refresh_bindings(self) -> None:
+        """Call to request a refresh of bindings."""
+        self.log.debug("Bindings updated")
+        self._bindings_updated = True
+        self.check_idle()
 
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
@@ -671,6 +682,10 @@ class Screen(Generic[ScreenResultType], Widget):
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
+
+        if self._bindings_updated:
+            self._bindings_updated = False
+            self.bindings_updated_signal.publish(self)
 
         if not self.app._batch_count and self.is_current:
             if (

@@ -78,7 +78,7 @@ from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relati
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
-from .actions import SkipAction
+from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
@@ -629,11 +629,6 @@ class App(Generic[ReturnType], DOMNode):
         # Size of previous inline update
         self._previous_inline_height: int | None = None
 
-        self._bindings_updated = False
-        """Indicates that a binding update was requested."""
-        self.bindings_updated_signal: Signal[None] = Signal(self, "bindings_updated")
-        """A signal published when the bindings have been updated"""
-
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
         return str(title)
@@ -876,12 +871,6 @@ class App(Generic[ReturnType], DOMNode):
 
         return bindings_map
 
-    def refresh_bindings(self) -> None:
-        """Call to request a refresh of bindings."""
-        self.log.debug("Bindings updated")
-        self._bindings_updated = True
-        self.check_idle()
-
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
         active_app.set(self)
@@ -1039,11 +1028,6 @@ class App(Generic[ReturnType], DOMNode):
         else:
             width, height = self.console.size
         return Size(width, height)
-
-    async def _on_idle(self, event: events.Idle) -> None:
-        if self._bindings_updated:
-            self._bindings_updated = False
-            self.bindings_updated_signal.publish(None)
 
     def _get_inline_height(self) -> int:
         """Get the inline height (height when in inline mode).
@@ -3036,7 +3020,7 @@ class App(Generic[ReturnType], DOMNode):
 
     def _parse_action(
         self, action: str, default_namespace: DOMNode
-    ) -> tuple[DOMNode, str, tuple[Any, ...]]:
+    ) -> tuple[DOMNode, str, tuple[object, ...]]:
         """Parse an action.
 
         Args:
@@ -3078,7 +3062,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def run_action(
         self,
-        action: str,
+        action: str | ActionParseResult,
         default_namespace: DOMNode | None = None,
     ) -> bool:
         """Perform an [action](/guide/actions).
@@ -3093,10 +3077,14 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has been handled.
         """
-
-        action_target, action_name, params = self._parse_action(
-            action, self if default_namespace is None else default_namespace
-        )
+        if isinstance(action, str):
+            action_target, action_name, params = self._parse_action(
+                action, self if default_namespace is None else default_namespace
+            )
+        else:
+            # assert isinstance(action, tuple)
+            _, action_name, params = action
+            action_target = self
 
         if action_target.check_action(action_name, params):
             return await self._dispatch_action(action_target, action_name, params)
@@ -3144,7 +3132,7 @@ class App(Generic[ReturnType], DOMNode):
         return False
 
     async def _broker_event(
-        self, event_name: str, event: events.Event, default_namespace: object | None
+        self, event_name: str, event: events.Event, default_namespace: DOMNode
     ) -> bool:
         """Allow the app an opportunity to dispatch events to action system.
 
@@ -3166,8 +3154,10 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, str) or (isinstance(action, tuple) and len(action) == 2):
-            await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
+        if isinstance(action, str):
+            await self.run_action(action, default_namespace)
+        elif isinstance(action, tuple) and len(action) == 2:
+            await self.run_action(("", *action), default_namespace)
         elif callable(action):
             await action()
         else:
@@ -3205,13 +3195,13 @@ class App(Generic[ReturnType], DOMNode):
         """App has focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = True
-        self.bindings_updated_signal.publish(None)
+        self.screen.refresh_bindings()
 
     async def _on_app_blur(self, event: events.AppBlur) -> None:
         """App has lost focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = False
-        self.bindings_updated_signal.publish(None)
+        self.screen.refresh_bindings()
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.

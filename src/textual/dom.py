@@ -1500,7 +1500,7 @@ class DOMNode(MessagePump):
 
     def refresh_bindings(self) -> None:
         """Call when the bindings state may have changed."""
-        self.call_later(self.app.refresh_bindings)
+        self.call_later(self.screen.refresh_bindings)
 
     async def action_toggle(self, attribute_name: str) -> None:
         """Toggle an attribute on the node.
