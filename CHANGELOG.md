@@ -12,10 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
 - Added `"focused"` action namespace so you can bind a key to an action on the focused widget https://github.com/Textualize/textual/pull/4516
+- Added "focused" to allowed action namespaces https://github.com/Textualize/textual/pull/4516
 
 ### Changed
 
-- Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled https://github.com/Textualize/textual/pull/4516
+- Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled. This was undocumented anyway, and not that useful. https://github.com/Textualize/textual/pull/4516
 
 ## [0.60.1] - 2024-05-15
 
