@@ -123,7 +123,7 @@ Textual supports the following action namespaces:
 In the previous example if you wanted a link to set the background on the app rather than the widget, we could set a link to `app.set_background('red')`.
 
 
-## Dynamic Actions
+## Dynamic actions
 
 !!! tip "Added in version 0.61.0"
 
