@@ -354,6 +354,9 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
+    NOTIFICATION_TIMEOUT: ClassVar[float] = 5
+    """Default number of seconds to show notifications before removing them."""
+
     COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
         get_system_commands
     }
@@ -3512,7 +3515,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         title: str = "",
         severity: SeverityLevel = "information",
-        timeout: float = Notification.timeout,
+        timeout: float = NOTIFICATION_TIMEOUT,
     ) -> None:
         """Create a notification.
 
