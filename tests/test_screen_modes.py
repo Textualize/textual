@@ -11,9 +11,7 @@ from textual.app import (
     UnknownModeError,
 )
 from textual.screen import ModalScreen, Screen
-from textual.widgets import Footer, Header, Label, RichLog
-
-FRUITS = cycle("apple mango strawberry banana peach pear melon watermelon".split())
+from textual.widgets import Footer, Header, Label
 
 
 class ScreenBindingsMixin(Screen[None]):
@@ -21,7 +19,7 @@ class ScreenBindingsMixin(Screen[None]):
         ("1", "one", "Mode 1"),
         ("2", "two", "Mode 2"),
         ("p", "push", "Push rnd scrn"),
-        ("o", "pop_screen", "Pop"),
+        ("o", "app.pop_screen", "Pop"),
         ("r", "remove", "Remove mode 1"),
     ]
 
@@ -56,12 +54,10 @@ class FruitModal(ModalScreen[str], ScreenBindingsMixin):
     BINDINGS = [("d", "dismiss_fruit", "Dismiss")]
 
     def compose(self) -> ComposeResult:
+        FRUITS = cycle(
+            "apple mango strawberry banana peach pear melon watermelon".split()
+        )
         yield Label(next(FRUITS))
-
-
-class FruitsScreen(ScreenBindingsMixin):
-    def compose(self) -> ComposeResult:
-        yield RichLog()
 
 
 @pytest.fixture

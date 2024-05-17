@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Actions will no longer check app if they are not handled https://github.com/Textualize/textual/pull/4516
+- Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled https://github.com/Textualize/textual/pull/4516
 
 ## [0.60.1] - 2024-05-15
 
