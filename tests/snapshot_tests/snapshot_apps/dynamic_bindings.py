@@ -3,6 +3,8 @@ from textual.widgets import Footer
 
 
 class BindingsApp(App):
+    """Check dynamic actions are displayed in the footer."""
+
     BINDINGS = [
         ("a", "a", "A"),
         ("b", "b", "B"),
@@ -17,17 +19,20 @@ class BindingsApp(App):
             # A is disabled (not show)
             return False
         if action == "c":
-            # A is disabled (shown grayed out)
+            # B is disabled (shown grayed out)
             return None
+        # Everything else is fine
         return True
 
     def action_a(self):
         self.bell()
 
     def action_b(self):
+        # If dynamic actions is working we won't get here
         1 / 0
 
     def action_c(self):
+        # If dynamic actions is working we won't get here
         1 / 0
 
 
