@@ -185,10 +185,10 @@ We will also demonstrate what the footer will show if we return `None` from `che
     2. Returning `None` disables they key in the footer rather than hides it.
     3. Returning `None` disables they key in the footer rather than hides it.
 
-=== "actions07.tcss"
+=== "actions06.tcss"
 
     ```css title="actions06.tcss"
-    --8<-- "docs/examples/guide/actions/actions07.tcss"
+    --8<-- "docs/examples/guide/actions/actions06.tcss"
     ```
 
 === "Output"

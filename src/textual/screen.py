@@ -33,7 +33,7 @@ from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
-from .binding import Binding
+from .binding import ActiveBinding, Binding, _Bindings
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
@@ -280,6 +280,67 @@ class Screen(Generic[ScreenResultType], Widget):
         self.log.debug("Bindings updated")
         self._bindings_updated = True
         self.check_idle()
+
+    @property
+    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+        """Binding chain from this screen."""
+        focused = self.focused
+        if focused is not None and focused.loading:
+            focused = None
+        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+
+        if focused is None:
+            namespace_bindings = [
+                (self, self._bindings),
+                (self.app, self.app._bindings),
+            ]
+        else:
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
+
+        return namespace_bindings
+
+    @property
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+        """The binding chain, ignoring everything before the last modal."""
+        binding_chain = self._binding_chain
+        for index, (node, _bindings) in enumerate(binding_chain, 1):
+            if node.is_modal:
+                return binding_chain[:index]
+        return binding_chain
+
+    @property
+    def active_bindings(self) -> dict[str, ActiveBinding]:
+        """Get currently active bindings for this screen.
+
+        If no widget is focused, then app-level bindings are returned.
+        If a widget is focused, then any bindings present in the screen and app are merged and returned.
+
+        This property may be used to inspect current bindings.
+
+        Returns:
+            A map of keys to a tuple containing (namespace, binding, enabled boolean).
+        """
+
+        bindings_map: dict[str, ActiveBinding] = {}
+        for namespace, bindings in self._modal_binding_chain:
+            for key, binding in bindings.keys.items():
+                action_state = self.app._check_action_state(binding.action, namespace)
+                if action_state is False:
+                    continue
+                if existing_key_and_binding := bindings_map.get(key):
+                    _, existing_binding, _ = existing_key_and_binding
+                    if binding.priority and not existing_binding.priority:
+                        bindings_map[key] = ActiveBinding(
+                            namespace, binding, bool(action_state)
+                        )
+                else:
+                    bindings_map[key] = ActiveBinding(
+                        namespace, binding, bool(action_state)
+                    )
+
+        return bindings_map
 
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.

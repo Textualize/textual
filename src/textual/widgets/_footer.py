@@ -73,7 +73,7 @@ class Footer(Widget):
     def _on_mount(self, _: events.Mount) -> None:
         self.screen.bindings_updated_signal.subscribe(self, self._bindings_changed)
 
-    def _bindings_changed(self, _: Screen) -> None:
+    def _bindings_changed(self, _screen: Screen) -> None:
         self._key_text = None
         self.refresh()
 
@@ -105,7 +105,7 @@ class Footer(Widget):
 
         bindings = [
             (binding, enabled)
-            for (_, binding, enabled) in self.app.namespace_bindings.values()
+            for (_, binding, enabled) in self.screen.active_bindings.values()
             if binding.show
         ]
 

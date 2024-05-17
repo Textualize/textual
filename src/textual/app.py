@@ -80,7 +80,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, BindingType, _Bindings
+from .binding import Binding, BindingType
 from .command import CommandPalette, Provider
 from .css.errors import StylesheetError
 from .css.query import NoMatches
@@ -104,6 +104,7 @@ from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import (
+    ActiveBinding,
     Screen,
     ScreenResultCallbackType,
     ScreenResultType,
@@ -844,7 +845,7 @@ class App(Generic[ReturnType], DOMNode):
         return focused
 
     @property
-    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding, bool]]:
+    def active_bindings(self) -> dict[str, ActiveBinding]:
         """Get currently active bindings.
 
         If no widget is focused, then app-level bindings are returned.
@@ -853,23 +854,9 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            A map of keys to a tuple containing the DOMNode and Binding that key corresponds to.
+            Active binding information
         """
-
-        bindings_map: dict[str, tuple[DOMNode, Binding, bool]] = {}
-        for namespace, bindings in self._binding_chain:
-            for key, binding in bindings.keys.items():
-                action_state = self.app._check_action_state(binding.action, namespace)
-                if action_state is False:
-                    continue
-                if existing_key_and_binding := bindings_map.get(key):
-                    _, existing_binding, _ = existing_key_and_binding
-                    if binding.priority and not existing_binding.priority:
-                        bindings_map[key] = (namespace, binding, bool(action_state))
-                else:
-                    bindings_map[key] = (namespace, binding, bool(action_state))
-
-        return bindings_map
+        return self.screen.active_bindings
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -2930,15 +2917,6 @@ class App(Generic[ReturnType], DOMNode):
 
         return namespace_bindings
 
-    @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
-        """The binding chain, ignoring everything before the last modal."""
-        binding_chain = self._binding_chain
-        for index, (node, _bindings) in enumerate(binding_chain, 1):
-            if node.is_modal:
-                return binding_chain[:index]
-        return binding_chain
-
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
@@ -2953,7 +2931,9 @@ class App(Generic[ReturnType], DOMNode):
             True if the key was handled by a binding, otherwise False
         """
         for namespace, bindings in (
-            reversed(self._binding_chain) if priority else self._modal_binding_chain
+            reversed(self.screen._binding_chain)
+            if priority
+            else self.screen._modal_binding_chain
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
