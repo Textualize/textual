@@ -1485,7 +1485,7 @@ class DOMNode(MessagePump):
     def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
         """Check whether an action is enabled.
 
-        Implement this method to add logic for dynamic bindings.
+        Implement this method to add logic for [dynamic actions](/guide/actions#dynamic-actions) / bindings.
 
         Args:
             action: The name of an action.
@@ -1499,7 +1499,12 @@ class DOMNode(MessagePump):
         return True
 
     def refresh_bindings(self) -> None:
-        """Call when the bindings state may have changed."""
+        """Call to prompt widgets such as the [Footer][textual.widgets.Footer] to update
+        the display of key bindings.
+
+        See [actions](/guide/actions#dynamic-actions) for how to use this method.
+
+        """
         self.call_later(self.screen.refresh_bindings)
 
     async def action_toggle(self, attribute_name: str) -> None:

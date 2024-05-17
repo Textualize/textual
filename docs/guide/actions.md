@@ -118,8 +118,86 @@ Textual supports the following action namespaces:
 
 - `app` invokes actions on the App.
 - `screen` invokes actions on the screen.
+- `focused` invokes actions on the currently focused widget (if there is one).
 
 In the previous example if you wanted a link to set the background on the app rather than the widget, we could set a link to `app.set_background('red')`.
+
+
+## Dynamic Actions
+
+!!! tip "Added in version 0.61.0"
+
+There may be situations where an action is temporarily unavailable due to some internal state within your app.
+For instance, consider an app with a fixed number of pages and actions to go to the next and previous page.
+It doesn't make sense to go to the previous page if we are on the first, or the next page when we are on the last page.
+
+We could easily add this logic to the actions, but the [footer][textual.widgets.Footer] would still display the keys even if they wouldn't do anything.
+The user may wonder why the app is showing keys that don't appear to work.
+
+We can solve this issue by implementing the [`check_action`][textual.dom.DOMNode.check_action] on our app, screen, or widget.
+This method is called with the name of the action and any parameters, prior to running actions or refreshing the footer.
+It should return one of the following values:
+
+- `True` to show the key and run the action as normal.
+- `False` to hide the key and prevent the action running.
+- `None` to disable the key (show dimmed), and prevent he action running.
+
+Let's write an app to put this in to practice:
+
+=== "actions06.py"
+
+    ```python title="actions06.py" hl_lines="27 32 35-43"
+    --8<-- "docs/examples/guide/actions/actions06.py"
+    ```
+
+    1. Prompts the footer to refresh, if bindings change.
+    2. Prompts the footer to refresh, if bindings change.
+    3. Guards the actions from running and also what keys are displayed in the footer.
+
+=== "actions06.tcss"
+
+    ```css title="actions06.tcss"
+    --8<-- "docs/examples/guide/actions/actions06.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/actions/actions06.py"}
+    ```
+
+This app has key bindings for ++n++ and ++p++ to navigate the pages.
+Notice how the keys are hidden from the footer when they would have no effect.
+
+The actions above call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings] to prompt Textual to refresh the footer.
+An alternative to doing this manually is to set `bindings=True` on a [reactive](./reactivity.md), which will refresh the bindings if the reactive changes.
+
+Let's make this change.
+We will also show what the footer will show if we return `None` from `check_action` (rather than `False`):
+
+
+=== "actions07.py"
+
+    ```python title="actions06.py" hl_lines="17 36 38"
+    --8<-- "docs/examples/guide/actions/actions07.py"
+    ```
+
+    1. The `bindings=True` causes the footer to refresh when `page_no` changes.
+    2. Returning `None` disables they key in the footer rather than hides it.
+    3. Returning `None` disables they key in the footer rather than hides it.
+
+=== "actions07.tcss"
+
+    ```css title="actions06.tcss"
+    --8<-- "docs/examples/guide/actions/actions07.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/actions/actions07.py"}
+    ```
+
+Note how the logic is the same but we don't need to excplictly call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings].
+The change to `check_action` also causes the disabled footer keys to be grayed out, indicating they are temporarily unavailable.
 
 
 ## Builtin actions
