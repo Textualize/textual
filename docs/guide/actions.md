@@ -140,7 +140,7 @@ It should return one of the following values:
 
 - `True` to show the key and run the action as normal.
 - `False` to hide the key and prevent the action running.
-- `None` to disable the key (show dimmed), and prevent he action running.
+- `None` to disable the key (show dimmed), and prevent the action running.
 
 Let's write an app to put this in to practice:
 
