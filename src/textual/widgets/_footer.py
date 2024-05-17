@@ -10,6 +10,7 @@ from .. import events
 
 if TYPE_CHECKING:
     from ..app import RenderResult
+    from ..screen import Screen
 
 from ..binding import Binding
 from ..reactive import reactive
@@ -72,7 +73,7 @@ class Footer(Widget):
     def _on_mount(self, _: events.Mount) -> None:
         self.screen.bindings_updated_signal.subscribe(self, self._bindings_changed)
 
-    def _bindings_changed(self, _: Widget | None) -> None:
+    def _bindings_changed(self, _: Screen) -> None:
         self._key_text = None
         self.refresh()
 
