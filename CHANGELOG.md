@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.61.0] - Unreleased
+
+### Added
+
+- Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
+- Added `"focused"` action namespace so you can bind a key to an action on the focused widget https://github.com/Textualize/textual/pull/4516
+- Added "focused" to allowed action namespaces https://github.com/Textualize/textual/pull/4516
+
+### Changed
+
+- Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled. This was undocumented anyway, and not that useful. https://github.com/Textualize/textual/pull/4516
+- Breaking change: Renamed `App.namespace_bindings` to `active_bindings`
+
 ## [0.60.1] - 2024-05-15
 
 ### Fixed
@@ -1951,6 +1965,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.61.0]: https://github.com/Textualize/textual/compare/v0.60.1...v0.61.0
 [0.60.1]: https://github.com/Textualize/textual/compare/v0.60.0...v0.60.1
 [0.60.0]: https://github.com/Textualize/textual/compare/v0.59.0...v0.60.0
 [0.59.0]: https://github.com/Textualize/textual/compare/v0.58.1...v0.59.0

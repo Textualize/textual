@@ -27,7 +27,6 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
-from pathlib import PurePath
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -40,11 +39,9 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
-    List,
     Sequence,
     Type,
     TypeVar,
-    Union,
     overload,
 )
 from weakref import WeakKeyDictionary, WeakSet
@@ -83,7 +80,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, BindingType, _Bindings
+from .binding import Binding, BindingType
 from .command import CommandPalette, Provider
 from .css.errors import StylesheetError
 from .css.query import NoMatches
@@ -107,6 +104,7 @@ from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import (
+    ActiveBinding,
     Screen,
     ScreenResultCallbackType,
     ScreenResultType,
@@ -225,14 +223,6 @@ class SuspendNotSupported(Exception):
 
 
 ReturnType = TypeVar("ReturnType")
-
-CSSPathType = Union[
-    str,
-    PurePath,
-    List[Union[str, PurePath]],
-]
-"""Valid ways of specifying paths to CSS files."""
-
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
 
@@ -364,6 +354,9 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
+    NOTIFICATION_TIMEOUT: ClassVar[float] = 5
+    """Default number of seconds to show notifications before removing them."""
+
     COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
         get_system_commands
     }
@@ -466,7 +459,7 @@ class App(Generic[ReturnType], DOMNode):
         self._driver: Driver | None = None
         self._exit_renderables: list[RenderableType] = []
 
-        self._action_targets = {"app", "screen"}
+        self._action_targets = {"app", "screen", "focused"}
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
@@ -855,7 +848,7 @@ class App(Generic[ReturnType], DOMNode):
         return focused
 
     @property
-    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
+    def active_bindings(self) -> dict[str, ActiveBinding]:
         """Get currently active bindings.
 
         If no widget is focused, then app-level bindings are returned.
@@ -864,20 +857,9 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            A map of keys to a tuple containing the DOMNode and Binding that key corresponds to.
+            Active binding information
         """
-
-        bindings_map: dict[str, tuple[DOMNode, Binding]] = {}
-        for namespace, bindings in self._binding_chain:
-            for key, binding in bindings.keys.items():
-                if existing_key_and_binding := bindings_map.get(key):
-                    _, existing_binding = existing_key_and_binding
-                    if binding.priority and not existing_binding.priority:
-                        bindings_map[key] = (namespace, binding)
-                else:
-                    bindings_map[key] = (namespace, binding)
-
-        return bindings_map
+        return self.screen.active_bindings
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -2938,15 +2920,6 @@ class App(Generic[ReturnType], DOMNode):
 
         return namespace_bindings
 
-    @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
-        """The binding chain, ignoring everything before the last modal."""
-        binding_chain = self._binding_chain
-        for index, (node, _bindings) in enumerate(binding_chain, 1):
-            if node.is_modal:
-                return binding_chain[:index]
-        return binding_chain
-
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
@@ -2961,7 +2934,9 @@ class App(Generic[ReturnType], DOMNode):
             True if the key was handled by a binding, otherwise False
         """
         for namespace, bindings in (
-            reversed(self._binding_chain) if priority else self._modal_binding_chain
+            reversed(self.screen._binding_chain)
+            if priority
+            else self.screen._modal_binding_chain
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
@@ -3026,10 +3001,54 @@ class App(Generic[ReturnType], DOMNode):
         else:
             await super().on_event(event)
 
+    def _parse_action(
+        self, action: str, default_namespace: DOMNode
+    ) -> tuple[DOMNode, str, tuple[object, ...]]:
+        """Parse an action.
+
+        Args:
+            action: An action string.
+
+        Raises:
+            ActionError: If there are any errors parsing the action string.
+
+        Returns:
+            A tuple of (node or None, action name, tuple of parameters).
+        """
+        destination, action_name, params = actions.parse(action)
+        action_target: DOMNode | None = None
+        if destination:
+            if destination not in self._action_targets:
+                raise ActionError(f"Action namespace {destination} is not known")
+            action_target = getattr(self, destination, None)
+            if action_target is None:
+                raise ActionError("Action target {destination!r} not available")
+        return (
+            (default_namespace if action_target is None else action_target),
+            action_name,
+            params,
+        )
+
+    def _check_action_state(
+        self, action: str, default_namespace: DOMNode
+    ) -> bool | None:
+        """Check if an action is enabled.
+
+        Args:
+            action: An action string.
+
+        Returns:
+            State of an action.
+        """
+        action_target, action_name, parameters = self._parse_action(
+            action, default_namespace
+        )
+        return action_target.check_action(action_name, parameters)
+
     async def run_action(
         self,
         action: str | ActionParseResult,
-        default_namespace: object | None = None,
+        default_namespace: DOMNode | None = None,
     ) -> bool:
         """Perform an [action](/guide/actions).
 
@@ -3044,24 +3063,18 @@ class App(Generic[ReturnType], DOMNode):
             True if the event has been handled.
         """
         if isinstance(action, str):
-            target, params = actions.parse(action)
+            action_target, action_name, params = self._parse_action(
+                action, self if default_namespace is None else default_namespace
+            )
         else:
-            target, params = action
-        implicit_destination = True
-        if "." in target:
-            destination, action_name = target.split(".", 1)
-            if destination not in self._action_targets:
-                raise ActionError(f"Action namespace {destination} is not known")
-            action_target = getattr(self, destination)
-            implicit_destination = True
-        else:
-            action_target = default_namespace if default_namespace is not None else self
-            action_name = target
+            # assert isinstance(action, tuple)
+            _, action_name, params = action
+            action_target = self
 
-        handled = await self._dispatch_action(action_target, action_name, params)
-        if not handled and implicit_destination and not isinstance(action_target, App):
-            handled = await self.app._dispatch_action(self.app, action_name, params)
-        return handled
+        if action_target.check_action(action_name, params):
+            return await self._dispatch_action(action_target, action_name, params)
+        else:
+            return False
 
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
@@ -3104,7 +3117,7 @@ class App(Generic[ReturnType], DOMNode):
         return False
 
     async def _broker_event(
-        self, event_name: str, event: events.Event, default_namespace: object | None
+        self, event_name: str, event: events.Event, default_namespace: DOMNode
     ) -> bool:
         """Allow the app an opportunity to dispatch events to action system.
 
@@ -3126,8 +3139,10 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, str) or (isinstance(action, tuple) and len(action) == 2):
-            await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
+        if isinstance(action, str):
+            await self.run_action(action, default_namespace)
+        elif isinstance(action, tuple) and len(action) == 2:
+            await self.run_action(("", *action), default_namespace)
         elif callable(action):
             await action()
         else:
@@ -3165,11 +3180,13 @@ class App(Generic[ReturnType], DOMNode):
         """App has focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = True
+        self.screen.refresh_bindings()
 
     async def _on_app_blur(self, event: events.AppBlur) -> None:
         """App has lost focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = False
+        self.screen.refresh_bindings()
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
@@ -3498,7 +3515,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         title: str = "",
         severity: SeverityLevel = "information",
-        timeout: float = Notification.timeout,
+        timeout: float | None = None,
     ) -> None:
         """Create a notification.
 
@@ -3511,7 +3528,7 @@ class App(Generic[ReturnType], DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout (in seconds) for the notification.
+            timeout: The timeout (in seconds) for the notification, or `None` for default.
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
@@ -3546,6 +3563,8 @@ class App(Generic[ReturnType], DOMNode):
             self.notify("It's against my programming to impersonate a deity.", title="")
             ```
         """
+        if timeout is None:
+            timeout = self.NOTIFICATION_TIMEOUT
         notification = Notification(message, title, severity, timeout)
         self.post_message(Notify(notification))
 
