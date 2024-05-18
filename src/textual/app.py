@@ -861,6 +861,19 @@ class App(Generic[ReturnType], DOMNode):
         """
         return self.screen.active_bindings
 
+    def get_default_screen(self) -> Screen:
+        """Get the default screen.
+
+        This is called when the App is first composed. The returned screen instance
+        will be the first screen on the stack.
+
+        Implement this method if you would like to use a custom Screen as the default screen.
+
+        Returns:
+            A screen instance.
+        """
+        return Screen(id="_default")
+
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
         active_app.set(self)
@@ -2948,7 +2961,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen: Screen[Any] = Screen(id=f"_default")
+            screen: Screen[Any] = self.get_default_screen()
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())

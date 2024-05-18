@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-
 ## [0.61.0] - Unreleased
 
 ### Added
 
+- Added `App.get_default_screen` https://github.com/Textualize/textual/pull/4520
 - Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
 - Added `"focused"` action namespace so you can bind a key to an action on the focused widget https://github.com/Textualize/textual/pull/4516
 - Added "focused" to allowed action namespaces https://github.com/Textualize/textual/pull/4516
@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled. This was undocumented anyway, and not that useful. https://github.com/Textualize/textual/pull/4516
 - Breaking change: Renamed `App.namespace_bindings` to `active_bindings`
+
 
 ## [0.60.1] - 2024-05-15
 
