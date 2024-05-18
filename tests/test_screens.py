@@ -496,3 +496,20 @@ async def test_push_screen_wait_for_dismiss_no_worker() -> None:
     with pytest.raises(NoActiveWorker):
         async with app.run_test() as pilot:
             await pilot.press("x", "y")
+
+
+async def test_default_custom_screen() -> None:
+    """Test we can override the default screen."""
+
+    class CustomScreen(Screen):
+        pass
+
+    class CustomScreenApp(App):
+        def get_default_screen(self) -> Screen:
+            return CustomScreen()
+
+    app = CustomScreenApp()
+    async with app.run_test():
+        assert len(app.screen_stack) == 1
+        assert isinstance(app.screen_stack[0], CustomScreen)
+        assert app.screen is app.screen_stack[0]
