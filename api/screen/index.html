@@ -5613,6 +5613,24 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.active_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      active_bindings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.bindings_updated_signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      bindings_updated_signal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.focus_chain" class="md-nav__link">
     <span class="md-ellipsis">
       focus_chain
@@ -5787,6 +5805,15 @@ window.onload = async (event) => {
   <a href="#textual.screen.Screen.get_widgets_at" class="md-nav__link">
     <span class="md-ellipsis">
       get_widgets_at()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.refresh_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      refresh_bindings()
     </span>
   </a>
   
@@ -6807,6 +6834,24 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.active_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      active_bindings
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.bindings_updated_signal" class="md-nav__link">
+    <span class="md-ellipsis">
+      bindings_updated_signal
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.focus_chain" class="md-nav__link">
     <span class="md-ellipsis">
       focus_chain
@@ -6981,6 +7026,15 @@ window.onload = async (event) => {
   <a href="#textual.screen.Screen.get_widgets_at" class="md-nav__link">
     <span class="md-ellipsis">
       get_widgets_at()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.screen.Screen.refresh_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      refresh_bindings()
     </span>
   </a>
   
@@ -7563,6 +7617,75 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
 
 
+<h3 id="textual.screen.Screen.active_bindings" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">active_bindings</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.active_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">active_bindings</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ActiveBinding</span><span class="p">]</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Get currently active bindings for this screen.</p>
+<p>If no widget is focused, then app-level bindings are returned.
+If a widget is focused, then any bindings present in the screen and app are merged and returned.</p>
+<p>This property may be used to inspect current bindings.</p>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#dict">dict</a>[<a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a>, <a class="autorefs autorefs-internal" title="textual.binding.ActiveBinding" href="../binding/#textual.binding.ActiveBinding">ActiveBinding</a>]</code>
+          </td>
+          <td><p>A map of keys to a tuple containing (namespace, binding, enabled boolean).</p></td>
+        </tr>
+    </tbody>
+  </table>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.screen.Screen.bindings_updated_signal" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">bindings_updated_signal</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.bindings_updated_signal" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">bindings_updated_signal</span><span class="p">:</span> <span class="n">Signal</span><span class="p">[</span><span class="n">Screen</span><span class="p">]</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;bindings_updated&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>A signal published when the bindings have been updated</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.screen.Screen.focus_chain" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">focus_chain</span>
 
@@ -7591,8 +7714,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.focused" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7727,8 +7850,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.stack_updates" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7751,8 +7874,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.sub_title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7775,8 +7898,8 @@ you can set the <a class="autorefs autorefs-internal" href="#textual.screen.Scre
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.screen.Screen.title" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8581,6 +8704,29 @@ if any of the ancestors are focusable. If no ancestors are focusable, then <code
         </tr>
     </tbody>
   </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.screen.Screen.refresh_bindings" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">refresh_bindings</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.refresh_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">refresh_bindings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Call to request a refresh of bindings.</p>
 
   </div>
 

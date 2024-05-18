@@ -5403,6 +5403,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.check_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      check_action()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.data_bind" class="md-nav__link">
     <span class="md-ellipsis">
       data_bind()
@@ -5487,6 +5496,15 @@ window.onload = async (event) => {
   <a href="#textual.dom.DOMNode.query_one" class="md-nav__link">
     <span class="md-ellipsis">
       query_one()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.refresh_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      refresh_bindings()
     </span>
   </a>
   
@@ -7101,6 +7119,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.check_action" class="md-nav__link">
+    <span class="md-ellipsis">
+      check_action()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.dom.DOMNode.data_bind" class="md-nav__link">
     <span class="md-ellipsis">
       data_bind()
@@ -7185,6 +7212,15 @@ window.onload = async (event) => {
   <a href="#textual.dom.DOMNode.query_one" class="md-nav__link">
     <span class="md-ellipsis">
       query_one()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.dom.DOMNode.refresh_bindings" class="md-nav__link">
+    <span class="md-ellipsis">
+      refresh_bindings()
     </span>
   </a>
   
@@ -7590,8 +7626,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.auto_refresh" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7696,8 +7732,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
       <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.classes" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7913,8 +7949,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.display" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7984,8 +8020,8 @@ which includes all Widgets, Screens, and Apps.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.id" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8291,8 +8327,8 @@ the child will also be bold.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
       <small class="doc doc-label doc-label-property"><code>property</code></small>
+      <small class="doc doc-label doc-label-writable"><code>writable</code></small>
   </span>
 
 <a href="#textual.dom.DOMNode.visible" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -8453,6 +8489,84 @@ The valid values include the valid values for the <code>visibility</code> rule a
                 <code><span title="typing_extensions.Self">Self</span></code>
           </td>
           <td><p>Self.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.dom.DOMNode.check_action" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">check_action</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.check_action" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">check_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Check whether an action is enabled.</p>
+<p>Implement this method to add logic for <a href="/guide/actions#dynamic-actions">dynamic actions</a> / bindings.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>action</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>The name of an action.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>action_parameters</code></strong>
+            <br>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>A tuple of any action parameters.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a> | None</code>
+          </td>
+          <td><p><code>True</code> if the action is enabled+visible,
+<code>False</code> if the action is disabled+hidden,
+<code>None</code> if the action is disabled+visible (grayed out in footer)</p></td>
         </tr>
     </tbody>
   </table>
@@ -9107,6 +9221,31 @@ see <a class="autorefs autorefs-internal" href="#textual.dom.DOMNode.query">quer
         </tr>
     </tbody>
   </table>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.dom.DOMNode.refresh_bindings" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">refresh_bindings</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.dom.DOMNode.refresh_bindings" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">refresh_bindings</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Call to prompt widgets such as the <a class="autorefs autorefs-internal" href="../../widgets/footer/#textual.widgets.Footer">Footer</a> to update
+the display of key bindings.</p>
+<p>See <a href="/guide/actions#dynamic-actions">actions</a> for how to use this method.</p>
 
   </div>
 

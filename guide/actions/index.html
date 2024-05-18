@@ -1046,6 +1046,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#dynamic-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dynamic actions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#builtin-actions" class="md-nav__link">
     <span class="md-ellipsis">
       Builtin actions
@@ -6446,6 +6455,15 @@ window.onload = async (event) => {
 </li>
       
         <li class="md-nav__item">
+  <a href="#dynamic-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Dynamic actions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#builtin-actions" class="md-nav__link">
     <span class="md-ellipsis">
       Builtin actions
@@ -7001,8 +7019,477 @@ window.onload = async (event) => {
 <ul>
 <li><code>app</code> invokes actions on the App.</li>
 <li><code>screen</code> invokes actions on the screen.</li>
+<li><code>focused</code> invokes actions on the currently focused widget (if there is one).</li>
 </ul>
 <p>In the previous example if you wanted a link to set the background on the app rather than the widget, we could set a link to <code>app.set_background('red')</code>.</p>
+<h2 id="dynamic-actions">Dynamic actions<a class="headerlink" href="#dynamic-actions" title="Permanent link">&para;</a></h2>
+<div class="admonition tip">
+<p class="admonition-title">Added in version 0.61.0</p>
+</div>
+<p>There may be situations where an action is temporarily unavailable due to some internal state within your app.
+For instance, consider an app with a fixed number of pages and actions to go to the next and previous page.
+It doesn't make sense to go to the previous page if we are on the first, or the next page when we are on the last page.</p>
+<p>We could easily add this logic to the action methods, but the <a class="autorefs autorefs-internal" href="../../widgets/footer/#textual.widgets.Footer">footer</a> would still display the keys even if they would have no effect.
+The user may wonder why the app is showing keys that don't appear to work.</p>
+<p>We can solve this issue by implementing the <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.check_action"><code>check_action</code></a> on our app, screen, or widget.
+This method is called with the name of the action and any parameters, prior to running actions or refreshing the footer.
+It should return one of the following values:</p>
+<ul>
+<li><code>True</code> to show the key and run the action as normal.</li>
+<li><code>False</code> to hide the key and prevent the action running.</li>
+<li><code>None</code> to disable the key (show dimmed), and prevent the action running.</li>
+</ul>
+<p>Let's write an app to put this into practice:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">actions06.py</label><label for="__tabbed_4_2">actions06.tcss</label><label for="__tabbed_4_3">Output</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><span class="filename">actions06.py</span><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">HorizontalScroll</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">textual.reactive</span> <span class="kn">import</span> <span class="n">reactive</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Footer</span><span class="p">,</span> <span class="n">Placeholder</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">PAGES_COUNT</span> <span class="o">=</span> <span class="mi">5</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="k">class</span> <span class="nc">PagesApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>        <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;next&quot;</span><span class="p">,</span> <span class="s2">&quot;Next&quot;</span><span class="p">),</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>        <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;previous&quot;</span><span class="p">,</span> <span class="s2">&quot;Previous&quot;</span><span class="p">),</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    <span class="p">]</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;actions06.tcss&quot;</span>
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="n">page_no</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        <span class="k">with</span> <span class="n">HorizontalScroll</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;page-container&quot;</span><span class="p">):</span>
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>            <span class="k">for</span> <span class="n">page_no</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">PAGES_COUNT</span><span class="p">):</span>
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>                <span class="k">yield</span> <span class="n">Placeholder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Page </span><span class="si">{</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;page-</span><span class="si">{</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>        <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>    <span class="k">def</span> <span class="nf">action_next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_bindings</span><span class="p">()</span>  <span class="c1"># (1)!</span>
+</span><a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#page-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scroll_visible</span><span class="p">()</span>
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>    <span class="k">def</span> <span class="nf">action_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">-=</span> <span class="mi">1</span>
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a><span class="hll">        <span class="bp">self</span><span class="o">.</span><span class="n">refresh_bindings</span><span class="p">()</span>  <span class="c1"># (2)!</span>
+</span><a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#page-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scroll_visible</span><span class="p">()</span>
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a><span class="hll">    <span class="k">def</span> <span class="nf">check_action</span><span class="p">(</span>
+</span><a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a><span class="hll">        <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>
+</span><a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a><span class="hll">    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># (3)!</span>
+</span><a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a><span class="hll"><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if an action may run.&quot;&quot;&quot;</span>
+</span><a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a><span class="hll">        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;next&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">==</span> <span class="n">PAGES_COUNT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+</span><a id="__codelineno-6-40" name="__codelineno-6-40" href="#__codelineno-6-40"></a><span class="hll">            <span class="k">return</span> <span class="kc">False</span>
+</span><a id="__codelineno-6-41" name="__codelineno-6-41" href="#__codelineno-6-41"></a><span class="hll">        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;previous&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><a id="__codelineno-6-42" name="__codelineno-6-42" href="#__codelineno-6-42"></a><span class="hll">            <span class="k">return</span> <span class="kc">False</span>
+</span><a id="__codelineno-6-43" name="__codelineno-6-43" href="#__codelineno-6-43"></a><span class="hll">        <span class="k">return</span> <span class="kc">True</span>
+</span><a id="__codelineno-6-44" name="__codelineno-6-44" href="#__codelineno-6-44"></a>
+<a id="__codelineno-6-45" name="__codelineno-6-45" href="#__codelineno-6-45"></a>
+<a id="__codelineno-6-46" name="__codelineno-6-46" href="#__codelineno-6-46"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-6-47" name="__codelineno-6-47" href="#__codelineno-6-47"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">PagesApp</span><span class="p">()</span>
+<a id="__codelineno-6-48" name="__codelineno-6-48" href="#__codelineno-6-48"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<ol>
+<li>Prompts the footer to refresh, if bindings change.</li>
+<li>Prompts the footer to refresh, if bindings change.</li>
+<li>Guards the actions from running and also what keys are displayed in the footer.</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><span class="filename">actions06.tcss</span><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="p">#</span><span class="nn">page-container</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="err">This</span><span class="w"> </span><span class="err">hides</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">scrollbar</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="n">scrollbar-size</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-2642999578-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-2642999578-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-2642999578-r1 { fill: #c5c8c6 }
+.terminal-2642999578-r2 { fill: #e8e0e7 }
+.terminal-2642999578-r3 { fill: #dde8f3;font-weight: bold }
+.terminal-2642999578-r4 { fill: #ddedf9 }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-2642999578-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-2642999578-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-2642999578-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-2642999578-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">PagesApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-2642999578-clip-terminal)">
+    <rect fill="#53174a" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="123.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="451.4" y="269.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="524.6" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#0053aa" x="0" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="36.6" y="562.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="109.8" y="562.7" width="866.2" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-2642999578-matrix">
+    <text class="terminal-2642999578-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-2642999578-line-0)">
+</text><text class="terminal-2642999578-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-2642999578-line-1)">
+</text><text class="terminal-2642999578-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-2642999578-line-2)">
+</text><text class="terminal-2642999578-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-2642999578-line-3)">
+</text><text class="terminal-2642999578-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-2642999578-line-4)">
+</text><text class="terminal-2642999578-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-2642999578-line-5)">
+</text><text class="terminal-2642999578-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-2642999578-line-6)">
+</text><text class="terminal-2642999578-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-2642999578-line-7)">
+</text><text class="terminal-2642999578-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-2642999578-line-8)">
+</text><text class="terminal-2642999578-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-2642999578-line-9)">
+</text><text class="terminal-2642999578-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-2642999578-line-10)">
+</text><text class="terminal-2642999578-r2" x="451.4" y="288.4" textLength="73.2" clip-path="url(#terminal-2642999578-line-11)">Page&#160;0</text><text class="terminal-2642999578-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-2642999578-line-11)">
+</text><text class="terminal-2642999578-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-2642999578-line-12)">
+</text><text class="terminal-2642999578-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-2642999578-line-13)">
+</text><text class="terminal-2642999578-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-2642999578-line-14)">
+</text><text class="terminal-2642999578-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-2642999578-line-15)">
+</text><text class="terminal-2642999578-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-2642999578-line-16)">
+</text><text class="terminal-2642999578-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-2642999578-line-17)">
+</text><text class="terminal-2642999578-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-2642999578-line-18)">
+</text><text class="terminal-2642999578-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-2642999578-line-19)">
+</text><text class="terminal-2642999578-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-2642999578-line-20)">
+</text><text class="terminal-2642999578-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-2642999578-line-21)">
+</text><text class="terminal-2642999578-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-2642999578-line-22)">
+</text><text class="terminal-2642999578-r3" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-2642999578-line-23)">&#160;N&#160;</text><text class="terminal-2642999578-r4" x="36.6" y="581.2" textLength="73.2" clip-path="url(#terminal-2642999578-line-23)">&#160;Next&#160;</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+</div>
+</div>
+<p>This app has key bindings for <span class="keys"><kbd class="key-n">N</kbd></span> and <span class="keys"><kbd class="key-p">P</kbd></span> to navigate the pages.
+Notice how the keys are hidden from the footer when they would have no effect.</p>
+<p>The actions above call <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.refresh_bindings"><code>refresh_bindings</code></a> to prompt Textual to refresh the footer.
+An alternative to doing this manually is to set <code>bindings=True</code> on a <a href="../reactivity/">reactive</a>, which will refresh the bindings if the reactive changes.</p>
+<p>Let's make this change.
+We will also demonstrate what the footer will show if we return <code>None</code> from <code>check_action</code> (rather than <code>False</code>):</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">actions07.py</label><label for="__tabbed_5_2">actions06.tcss</label><label for="__tabbed_5_3">Output</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><span class="filename">actions06.py</span><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">from</span> <span class="nn">textual.app</span> <span class="kn">import</span> <span class="n">App</span><span class="p">,</span> <span class="n">ComposeResult</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">from</span> <span class="nn">textual.containers</span> <span class="kn">import</span> <span class="n">HorizontalScroll</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">from</span> <span class="nn">textual.reactive</span> <span class="kn">import</span> <span class="n">reactive</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="kn">from</span> <span class="nn">textual.widgets</span> <span class="kn">import</span> <span class="n">Footer</span><span class="p">,</span> <span class="n">Placeholder</span>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">PAGES_COUNT</span> <span class="o">=</span> <span class="mi">5</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="k">class</span> <span class="nc">PagesApp</span><span class="p">(</span><span class="n">App</span><span class="p">):</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a>    <span class="n">BINDINGS</span> <span class="o">=</span> <span class="p">[</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>        <span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;next&quot;</span><span class="p">,</span> <span class="s2">&quot;Next&quot;</span><span class="p">),</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="p">(</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;previous&quot;</span><span class="p">,</span> <span class="s2">&quot;Previous&quot;</span><span class="p">),</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    <span class="p">]</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>    <span class="n">CSS_PATH</span> <span class="o">=</span> <span class="s2">&quot;actions06.tcss&quot;</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a><span class="hll">    <span class="n">page_no</span> <span class="o">=</span> <span class="n">reactive</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">bindings</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># (1)!</span>
+</span><a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>    <span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>        <span class="k">with</span> <span class="n">HorizontalScroll</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;page-container&quot;</span><span class="p">):</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>            <span class="k">for</span> <span class="n">page_no</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">PAGES_COUNT</span><span class="p">):</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>                <span class="k">yield</span> <span class="n">Placeholder</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Page </span><span class="si">{</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;page-</span><span class="si">{</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>        <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>    <span class="k">def</span> <span class="nf">action_next</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">+=</span> <span class="mi">1</span>
+<a id="__codelineno-8-27" name="__codelineno-8-27" href="#__codelineno-8-27"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#page-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scroll_visible</span><span class="p">()</span>
+<a id="__codelineno-8-28" name="__codelineno-8-28" href="#__codelineno-8-28"></a>
+<a id="__codelineno-8-29" name="__codelineno-8-29" href="#__codelineno-8-29"></a>    <span class="k">def</span> <span class="nf">action_previous</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-8-30" name="__codelineno-8-30" href="#__codelineno-8-30"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">-=</span> <span class="mi">1</span>
+<a id="__codelineno-8-31" name="__codelineno-8-31" href="#__codelineno-8-31"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">query_one</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#page-</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">page_no</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">scroll_visible</span><span class="p">()</span>
+<a id="__codelineno-8-32" name="__codelineno-8-32" href="#__codelineno-8-32"></a>
+<a id="__codelineno-8-33" name="__codelineno-8-33" href="#__codelineno-8-33"></a>    <span class="k">def</span> <span class="nf">check_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">object</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<a id="__codelineno-8-34" name="__codelineno-8-34" href="#__codelineno-8-34"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if an action may run.&quot;&quot;&quot;</span>
+<a id="__codelineno-8-35" name="__codelineno-8-35" href="#__codelineno-8-35"></a>        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;next&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">==</span> <span class="n">PAGES_COUNT</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+<a id="__codelineno-8-36" name="__codelineno-8-36" href="#__codelineno-8-36"></a><span class="hll">            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># (2)!</span>
+</span><a id="__codelineno-8-37" name="__codelineno-8-37" href="#__codelineno-8-37"></a>        <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;previous&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">page_no</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+<a id="__codelineno-8-38" name="__codelineno-8-38" href="#__codelineno-8-38"></a><span class="hll">            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># (3)!</span>
+</span><a id="__codelineno-8-39" name="__codelineno-8-39" href="#__codelineno-8-39"></a>        <span class="k">return</span> <span class="kc">True</span>
+<a id="__codelineno-8-40" name="__codelineno-8-40" href="#__codelineno-8-40"></a>
+<a id="__codelineno-8-41" name="__codelineno-8-41" href="#__codelineno-8-41"></a>
+<a id="__codelineno-8-42" name="__codelineno-8-42" href="#__codelineno-8-42"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-8-43" name="__codelineno-8-43" href="#__codelineno-8-43"></a>    <span class="n">app</span> <span class="o">=</span> <span class="n">PagesApp</span><span class="p">()</span>
+<a id="__codelineno-8-44" name="__codelineno-8-44" href="#__codelineno-8-44"></a>    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<ol>
+<li>The <code>bindings=True</code> causes the footer to refresh when <code>page_no</code> changes.</li>
+<li>Returning <code>None</code> disables the key in the footer rather than hides it</li>
+<li>Returning <code>None</code> disables the key in the footer rather than hides it.</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><span class="filename">actions06.tcss</span><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="p">#</span><span class="nn">page-container</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="err">#</span><span class="w"> </span><span class="err">This</span><span class="w"> </span><span class="err">hides</span><span class="w"> </span><span class="err">the</span><span class="w"> </span><span class="err">scrollbar</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="n">scrollbar-size</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<p><svg class="rich-terminal" viewBox="0 0 994 635.5999999999999" xmlns="http://www.w3.org/2000/svg">
+    <!-- Generated with Rich https://www.textualize.io -->
+    <style>
+
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Regular"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Regular.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+    }
+    @font-face {
+        font-family: "Fira Code";
+        src: local("FiraCode-Bold"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff2/FiraCode-Bold.woff2") format("woff2"),
+                url("https://cdnjs.cloudflare.com/ajax/libs/firacode/6.2.0/woff/FiraCode-Bold.woff") format("woff");
+        font-style: bold;
+        font-weight: 700;
+    }
+
+    .terminal-1064340957-matrix {
+        font-family: Fira Code, monospace;
+        font-size: 20px;
+        line-height: 24.4px;
+        font-variant-east-asian: full-width;
+    }
+
+    .terminal-1064340957-title {
+        font-size: 18px;
+        font-weight: bold;
+        font-family: arial;
+    }
+
+    .terminal-1064340957-r1 { fill: #c5c8c6 }
+.terminal-1064340957-r2 { fill: #e8e0e7 }
+.terminal-1064340957-r3 { fill: #dde8f3;font-weight: bold }
+.terminal-1064340957-r4 { fill: #ddedf9 }
+.terminal-1064340957-r5 { fill: #84acd5;font-weight: bold }
+.terminal-1064340957-r6 { fill: #85beea }
+    </style>
+
+    <defs>
+    <clipPath id="terminal-1064340957-clip-terminal">
+      <rect x="0" y="0" width="975.0" height="584.5999999999999" />
+    </clipPath>
+    <clipPath id="terminal-1064340957-line-0">
+    <rect x="0" y="1.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-1">
+    <rect x="0" y="25.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-2">
+    <rect x="0" y="50.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-3">
+    <rect x="0" y="74.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-4">
+    <rect x="0" y="99.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-5">
+    <rect x="0" y="123.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-6">
+    <rect x="0" y="147.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-7">
+    <rect x="0" y="172.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-8">
+    <rect x="0" y="196.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-9">
+    <rect x="0" y="221.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-10">
+    <rect x="0" y="245.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-11">
+    <rect x="0" y="269.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-12">
+    <rect x="0" y="294.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-13">
+    <rect x="0" y="318.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-14">
+    <rect x="0" y="343.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-15">
+    <rect x="0" y="367.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-16">
+    <rect x="0" y="391.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-17">
+    <rect x="0" y="416.3" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-18">
+    <rect x="0" y="440.7" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-19">
+    <rect x="0" y="465.1" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-20">
+    <rect x="0" y="489.5" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-21">
+    <rect x="0" y="513.9" width="976" height="24.65"/>
+            </clipPath>
+<clipPath id="terminal-1064340957-line-22">
+    <rect x="0" y="538.3" width="976" height="24.65"/>
+            </clipPath>
+    </defs>
+
+    <rect fill="#292929" stroke="rgba(255,255,255,0.35)" stroke-width="1" x="1" y="1" width="992" height="633.6" rx="8"/><text class="terminal-1064340957-title" fill="#c5c8c6" text-anchor="middle" x="496" y="27">PagesApp</text>
+            <g transform="translate(26,22)">
+            <circle cx="0" cy="0" r="7" fill="#ff5f57"/>
+            <circle cx="22" cy="0" r="7" fill="#febc2e"/>
+            <circle cx="44" cy="0" r="7" fill="#28c840"/>
+            </g>
+        
+    <g transform="translate(9, 41)" clip-path="url(#terminal-1064340957-clip-terminal)">
+    <rect fill="#53174a" x="0" y="1.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="25.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="50.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="74.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="99.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="123.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="147.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="172.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="196.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="221.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="245.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="451.4" y="269.9" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="524.6" y="269.9" width="451.4" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="294.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="318.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="343.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="367.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="391.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="416.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="440.7" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="465.1" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="489.5" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="513.9" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#53174a" x="0" y="538.3" width="976" height="24.65" shape-rendering="crispEdges"/><rect fill="#0053aa" x="0" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="36.6" y="562.7" width="73.2" height="24.65" shape-rendering="crispEdges"/><rect fill="#0053aa" x="109.8" y="562.7" width="36.6" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="146.4" y="562.7" width="122" height="24.65" shape-rendering="crispEdges"/><rect fill="#0178d4" x="268.4" y="562.7" width="707.6" height="24.65" shape-rendering="crispEdges"/>
+    <g class="terminal-1064340957-matrix">
+    <text class="terminal-1064340957-r1" x="976" y="20" textLength="12.2" clip-path="url(#terminal-1064340957-line-0)">
+</text><text class="terminal-1064340957-r1" x="976" y="44.4" textLength="12.2" clip-path="url(#terminal-1064340957-line-1)">
+</text><text class="terminal-1064340957-r1" x="976" y="68.8" textLength="12.2" clip-path="url(#terminal-1064340957-line-2)">
+</text><text class="terminal-1064340957-r1" x="976" y="93.2" textLength="12.2" clip-path="url(#terminal-1064340957-line-3)">
+</text><text class="terminal-1064340957-r1" x="976" y="117.6" textLength="12.2" clip-path="url(#terminal-1064340957-line-4)">
+</text><text class="terminal-1064340957-r1" x="976" y="142" textLength="12.2" clip-path="url(#terminal-1064340957-line-5)">
+</text><text class="terminal-1064340957-r1" x="976" y="166.4" textLength="12.2" clip-path="url(#terminal-1064340957-line-6)">
+</text><text class="terminal-1064340957-r1" x="976" y="190.8" textLength="12.2" clip-path="url(#terminal-1064340957-line-7)">
+</text><text class="terminal-1064340957-r1" x="976" y="215.2" textLength="12.2" clip-path="url(#terminal-1064340957-line-8)">
+</text><text class="terminal-1064340957-r1" x="976" y="239.6" textLength="12.2" clip-path="url(#terminal-1064340957-line-9)">
+</text><text class="terminal-1064340957-r1" x="976" y="264" textLength="12.2" clip-path="url(#terminal-1064340957-line-10)">
+</text><text class="terminal-1064340957-r2" x="451.4" y="288.4" textLength="73.2" clip-path="url(#terminal-1064340957-line-11)">Page&#160;0</text><text class="terminal-1064340957-r1" x="976" y="288.4" textLength="12.2" clip-path="url(#terminal-1064340957-line-11)">
+</text><text class="terminal-1064340957-r1" x="976" y="312.8" textLength="12.2" clip-path="url(#terminal-1064340957-line-12)">
+</text><text class="terminal-1064340957-r1" x="976" y="337.2" textLength="12.2" clip-path="url(#terminal-1064340957-line-13)">
+</text><text class="terminal-1064340957-r1" x="976" y="361.6" textLength="12.2" clip-path="url(#terminal-1064340957-line-14)">
+</text><text class="terminal-1064340957-r1" x="976" y="386" textLength="12.2" clip-path="url(#terminal-1064340957-line-15)">
+</text><text class="terminal-1064340957-r1" x="976" y="410.4" textLength="12.2" clip-path="url(#terminal-1064340957-line-16)">
+</text><text class="terminal-1064340957-r1" x="976" y="434.8" textLength="12.2" clip-path="url(#terminal-1064340957-line-17)">
+</text><text class="terminal-1064340957-r1" x="976" y="459.2" textLength="12.2" clip-path="url(#terminal-1064340957-line-18)">
+</text><text class="terminal-1064340957-r1" x="976" y="483.6" textLength="12.2" clip-path="url(#terminal-1064340957-line-19)">
+</text><text class="terminal-1064340957-r1" x="976" y="508" textLength="12.2" clip-path="url(#terminal-1064340957-line-20)">
+</text><text class="terminal-1064340957-r1" x="976" y="532.4" textLength="12.2" clip-path="url(#terminal-1064340957-line-21)">
+</text><text class="terminal-1064340957-r1" x="976" y="556.8" textLength="12.2" clip-path="url(#terminal-1064340957-line-22)">
+</text><text class="terminal-1064340957-r3" x="0" y="581.2" textLength="36.6" clip-path="url(#terminal-1064340957-line-23)">&#160;N&#160;</text><text class="terminal-1064340957-r4" x="36.6" y="581.2" textLength="73.2" clip-path="url(#terminal-1064340957-line-23)">&#160;Next&#160;</text><text class="terminal-1064340957-r5" x="109.8" y="581.2" textLength="36.6" clip-path="url(#terminal-1064340957-line-23)">&#160;P&#160;</text><text class="terminal-1064340957-r6" x="146.4" y="581.2" textLength="122" clip-path="url(#terminal-1064340957-line-23)">&#160;Previous&#160;</text>
+    </g>
+    </g>
+</svg>
+</p>
+</div>
+</div>
+</div>
+<p>Note how the logic is the same but we don't need to explicitly call <a class="autorefs autorefs-internal" href="../../api/dom_node/#textual.dom.DOMNode.refresh_bindings"><code>refresh_bindings</code></a>.
+The change to <code>check_action</code> also causes the disabled footer keys to be grayed out, indicating they are temporarily unavailable.</p>
 <h2 id="builtin-actions">Builtin actions<a class="headerlink" href="#builtin-actions" title="Permanent link">&para;</a></h2>
 <p>Textual supports the following builtin actions which are defined on the app.</p>
 <ul>
@@ -7043,7 +7530,7 @@ window.onload = async (event) => {
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">January 31, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">May 17, 2024</span>
   </span>
 
     
