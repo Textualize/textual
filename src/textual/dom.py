@@ -1482,6 +1482,31 @@ class DOMNode(MessagePump):
     ) -> Self:
         return self
 
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        """Check whether an action is enabled.
+
+        Implement this method to add logic for [dynamic actions](/guide/actions#dynamic-actions) / bindings.
+
+        Args:
+            action: The name of an action.
+            action_parameters: A tuple of any action parameters.
+
+        Returns:
+            `True` if the action is enabled+visible,
+                `False` if the action is disabled+hidden,
+                `None` if the action is disabled+visible (grayed out in footer)
+        """
+        return True
+
+    def refresh_bindings(self) -> None:
+        """Call to prompt widgets such as the [Footer][textual.widgets.Footer] to update
+        the display of key bindings.
+
+        See [actions](/guide/actions#dynamic-actions) for how to use this method.
+
+        """
+        self.call_later(self.screen.refresh_bindings)
+
     async def action_toggle(self, attribute_name: str) -> None:
         """Toggle an attribute on the node.
 

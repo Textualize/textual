@@ -4,15 +4,29 @@ from typing import Any, NamedTuple
 
 
 class NoHandler(Exception):
-    pass
+    """Raised when handler isn't found in the meta."""
 
 
 class HandlerArguments(NamedTuple):
+    """Information for event handler."""
+
     modifiers: set[str]
     action: Any
 
 
 def extract_handler_actions(event_name: str, meta: dict[str, Any]) -> HandlerArguments:
+    """Extract action from meta dict.
+
+    Args:
+        event_name: Event to check from.
+        meta: Meta information (stored in Rich Style)
+
+    Raises:
+        NoHandler: If no handler is found.
+
+    Returns:
+        Action information.
+    """
     event_path = event_name.split(".")
     for key, value in meta.items():
         if key.startswith("@"):
@@ -21,7 +35,3 @@ def extract_handler_actions(event_name: str, meta: dict[str, Any]) -> HandlerArg
                 modifiers = name_args[len(event_path) :]
                 return HandlerArguments(set(modifiers), value)
     raise NoHandler(f"No handler for {event_name!r}")
-
-
-if __name__ == "__main__":
-    print(extract_handler_actions("mouse.down", {"@mouse.down.hot": "app.bell()"}))

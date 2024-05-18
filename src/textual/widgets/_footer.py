@@ -10,7 +10,9 @@ from .. import events
 
 if TYPE_CHECKING:
     from ..app import RenderResult
+    from ..screen import Screen
 
+from ..binding import Binding
 from ..reactive import reactive
 from ..widget import Widget
 
@@ -69,10 +71,9 @@ class Footer(Widget):
         self.refresh()
 
     def _on_mount(self, _: events.Mount) -> None:
-        self.watch(self.screen, "focused", self._bindings_changed)
-        self.watch(self.screen, "stack_updates", self._bindings_changed)
+        self.screen.bindings_updated_signal.subscribe(self, self._bindings_changed)
 
-    def _bindings_changed(self, _: Widget | None) -> None:
+    def _bindings_changed(self, _screen: Screen) -> None:
         self._key_text = None
         self.refresh()
 
@@ -103,17 +104,20 @@ class Footer(Widget):
         description_style = self.get_component_rich_style("footer--description")
 
         bindings = [
-            binding
-            for (_, binding) in self.app.namespace_bindings.values()
+            (binding, enabled)
+            for (_, binding, enabled) in self.screen.active_bindings.values()
             if binding.show
         ]
 
-        action_to_bindings = defaultdict(list)
-        for binding in bindings:
-            action_to_bindings[binding.action].append(binding)
+        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
+            list
+        )
+        for binding, enabled in bindings:
+            action_to_bindings[binding.action].append((binding, enabled))
 
-        for _, bindings in action_to_bindings.items():
-            binding = bindings[0]
+        app_focus = self.app.app_focus
+        for _, _bindings in action_to_bindings.items():
+            binding, enabled = _bindings[0]
             if binding.key_display is None:
                 key_display = self.app.get_key_display(binding.key)
                 if key_display is None:
@@ -127,11 +131,17 @@ class Footer(Widget):
                     f" {binding.description} ",
                     highlight_style if hovered else base_style + description_style,
                 ),
-                meta={
-                    "@click": f"app.check_bindings('{binding.key}')",
-                    "key": binding.key,
-                },
+                meta=(
+                    {
+                        "@click": f"app.check_bindings('{binding.key}')",
+                        "key": binding.key,
+                    }
+                    if enabled and app_focus
+                    else {}
+                ),
             )
+            if not enabled or not app_focus:
+                key_text.stylize("dim")
             text.append_text(key_text)
         return text
 

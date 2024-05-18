@@ -77,7 +77,7 @@ from .geometry import (
 from .layouts.vertical import VerticalLayout
 from .message import Message
 from .messages import CallbackType
-from .notifications import Notification, SeverityLevel
+from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
 from .renderables.blank import Blank
@@ -3810,7 +3810,7 @@ class Widget(DOMNode):
         *,
         title: str = "",
         severity: SeverityLevel = "information",
-        timeout: float = Notification.timeout,
+        timeout: float | None = None,
     ) -> None:
         """Create a notification.
 
@@ -3822,9 +3822,21 @@ class Widget(DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout (in seconds) for the notification.
+            timeout: The timeout (in seconds) for the notification, or `None` for default.
 
         See [`App.notify`][textual.app.App.notify] for the full
         documentation for this method.
         """
-        return self.app.notify(message, title=title, severity=severity, timeout=timeout)
+        if timeout is None:
+            return self.app.notify(
+                message,
+                title=title,
+                severity=severity,
+            )
+        else:
+            return self.app.notify(
+                message,
+                title=title,
+                severity=severity,
+                timeout=timeout,
+            )
