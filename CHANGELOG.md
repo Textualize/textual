@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added App.get_default_screen
+- Added `App.get_default_screen` https://github.com/Textualize/textual/pull/4520
 
 ## [0.60.1] - 2024-05-15
 

@@ -888,7 +888,7 @@ class App(Generic[ReturnType], DOMNode):
         Implement this method if you would like to use a custom Screen as the default screen.
 
         Returns:
-            A screen subclass.
+            A screen instance.
         """
         return Screen(id="_default")
 
