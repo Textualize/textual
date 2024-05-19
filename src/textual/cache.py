@@ -103,8 +103,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
             key: Key.
             value: Value.
         """
-        link = self._cache.get(key)
-        if link is None:
+        if self._cache.get(key) is None:
             head = self._head
             if not head:
                 # First link references itself
@@ -148,8 +147,8 @@ class LRUCache(Generic[CacheKey, CacheValue]):
         Returns:
             Either the value or a default.
         """
-        link = self._cache.get(key)
-        if link is None:
+
+        if (link := self._cache.get(key)) is None:
             self.misses += 1
             return default
         if link is not self._head:
@@ -166,7 +165,7 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     def __getitem__(self, key: CacheKey) -> CacheValue:
         link = self._cache.get(key)
-        if link is None:
+        if (link := self._cache.get(key)) is None:
             self.misses += 1
             raise KeyError(key)
         if link is not self._head:
