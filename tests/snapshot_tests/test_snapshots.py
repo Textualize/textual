@@ -1259,3 +1259,8 @@ def test_dynamic_bindings(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "dynamic_bindings.py", press=["a", "b", "c"]
     )
+
+
+def test_grid_gutter(snap_compare):
+    # https://github.com/Textualize/textual/issues/4522
+    assert snap_compare(SNAPSHOT_APPS_DIR / "grid_gutter.py")
