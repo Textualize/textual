@@ -108,7 +108,7 @@ class LinuxInlineDriver(Driver):
         """
         try:
             self.run_input_thread()
-        except BaseException as error:
+        except BaseException:
             import rich.traceback
 
             self._app.call_later(
