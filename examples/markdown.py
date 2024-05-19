@@ -31,6 +31,9 @@ class MarkdownApp(App):
         except FileNotFoundError:
             self.exit(message=f"Unable to load {self.path!r}")
 
+    def on_markdown_viewer_navigator_updated(self) -> None:
+        self.refresh_bindings()
+
     def action_toggle_table_of_contents(self) -> None:
         self.markdown_viewer.show_table_of_contents = (
             not self.markdown_viewer.show_table_of_contents
@@ -41,6 +44,13 @@ class MarkdownApp(App):
 
     async def action_forward(self) -> None:
         await self.markdown_viewer.forward()
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        if action == "forward" and self.markdown_viewer.navigator.end:
+            return None
+        if action == "back" and self.markdown_viewer.navigator.start:
+            return None
+        return True
 
 
 if __name__ == "__main__":

@@ -48,6 +48,16 @@ class Navigator:
             return Path(".")
         return self.stack[self.index]
 
+    @property
+    def start(self) -> bool:
+        """Is the current location at the start of the stack?"""
+        return self.index == 0
+
+    @property
+    def end(self) -> bool:
+        """Is the current location at the end of the stack?"""
+        return self.index >= len(self.stack) - 1
+
     def go(self, path: str | PurePath) -> Path:
         """Go to a new document.
 
@@ -1066,6 +1076,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     navigator: var[Navigator] = var(Navigator)
 
+    class NavigatorUpdated(Message):
+        """Navigator has been changed (clicked link etc)."""
+
     def __init__(
         self,
         markdown: str | None = None,
@@ -1114,16 +1127,19 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         else:
             # We've been asked to go to a file, optionally with an anchor.
             await self.document.load(self.navigator.go(location))
+            self.post_message(self.NavigatorUpdated())
 
     async def back(self) -> None:
         """Go back one level in the history."""
         if self.navigator.back():
             await self.document.load(self.navigator.location)
+            self.post_message(self.NavigatorUpdated())
 
     async def forward(self) -> None:
         """Go forward one level in the history."""
         if self.navigator.forward():
             await self.document.load(self.navigator.location)
+            self.post_message(self.NavigatorUpdated())
 
     async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
         message.stop()
