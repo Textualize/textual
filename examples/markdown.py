@@ -7,6 +7,8 @@ from textual.widgets import Footer, MarkdownViewer
 
 
 class MarkdownApp(App):
+    """A simple Markdown viewer application."""
+
     BINDINGS = [
         ("t", "toggle_table_of_contents", "TOC"),
         ("b", "back", "Back"),
