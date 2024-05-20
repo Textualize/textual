@@ -399,6 +399,10 @@ class Widget(DOMNode):
         might result in a race condition.
         This can be fixed by adding `async with widget.lock:` around the method calls.
         """
+        self._anchored: Widget | None = None
+        """An anchored child widget, or `None` if no child is anchored."""
+        self._anchor_animate: bool = False
+        """Flag to enable animation when scrolling anchored widgets."""
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
@@ -514,6 +518,40 @@ class Widget(DOMNode):
             if not opacity:
                 break
         return opacity
+
+    @property
+    def is_anchored(self) -> bool:
+        """Is this widget anchored?"""
+        return self._parent is not None and self._parent is self
+
+    def anchor(self, *, animate: bool = False) -> None:
+        """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
+        but also keeps it in view if the widget's size changes, or the size of its container changes.
+
+        !!! note
+
+            Anchored widgets will be un-anchored if the users scrolls the container.
+
+        Args:
+            animate: `True` if the scroll should animate, or `False` if it shouldn't.
+        """
+        if self._parent is not None and isinstance(self._parent, Widget):
+            self._parent._anchored = self
+            self._parent._anchor_animate = animate
+            self.check_idle()
+
+    def clear_anchor(self) -> None:
+        """Stop anchoring this widget (a no-op if this widget is not anchored)."""
+        if (
+            self._parent is not None
+            and isinstance(self._parent, Widget)
+            and self._parent._anchored is self
+        ):
+            self._parent._anchored = None
+
+    def _clear_anchor(self) -> None:
+        """Clear an anchored child."""
+        self._anchored = None
 
     def _check_disabled(self) -> bool:
         """Check if the widget is disabled either explicitly by setting `disabled`,
@@ -3178,6 +3216,7 @@ class Widget(DOMNode):
         Returns:
             True if anything changed, or False if nothing changed.
         """
+
         if (
             self._size != size
             or self.virtual_size != virtual_size
@@ -3502,6 +3541,11 @@ class Widget(DOMNode):
         """
         self._check_refresh()
 
+        if self.is_anchored:
+            self.scroll_visible(animate=self._anchor_animate)
+        if self._anchored:
+            self._anchored.scroll_visible(animate=self._anchor_animate)
+
     def _check_refresh(self) -> None:
         """Check if a refresh was requested."""
         if self._parent is not None and not self._closing:
@@ -3702,45 +3746,54 @@ class Widget(DOMNode):
     def _on_mouse_scroll_down(self, event: events.MouseScrollDown) -> None:
         if event.ctrl or event.shift:
             if self.allow_horizontal_scroll:
+                self._clear_anchor()
                 if self._scroll_right_for_pointer(animate=False):
                     event.stop()
         else:
             if self.allow_vertical_scroll:
+                self._clear_anchor()
                 if self._scroll_down_for_pointer(animate=False):
                     event.stop()
 
     def _on_mouse_scroll_up(self, event: events.MouseScrollUp) -> None:
         if event.ctrl or event.shift:
             if self.allow_horizontal_scroll:
+                self._clear_anchor()
                 if self._scroll_left_for_pointer(animate=False):
                     event.stop()
         else:
             if self.allow_vertical_scroll:
+                self._clear_anchor()
                 if self._scroll_up_for_pointer(animate=False):
                     event.stop()
 
     def _on_scroll_to(self, message: ScrollTo) -> None:
         if self._allow_scroll:
+            self._clear_anchor()
             self.scroll_to(message.x, message.y, animate=message.animate, duration=0.1)
             message.stop()
 
     def _on_scroll_up(self, event: ScrollUp) -> None:
         if self.allow_vertical_scroll:
+            self._clear_anchor()
             self.scroll_page_up()
             event.stop()
 
     def _on_scroll_down(self, event: ScrollDown) -> None:
         if self.allow_vertical_scroll:
+            self._clear_anchor()
             self.scroll_page_down()
             event.stop()
 
     def _on_scroll_left(self, event: ScrollLeft) -> None:
         if self.allow_horizontal_scroll:
+            self._clear_anchor()
             self.scroll_page_left()
             event.stop()
 
     def _on_scroll_right(self, event: ScrollRight) -> None:
         if self.allow_horizontal_scroll:
+            self._clear_anchor()
             self.scroll_page_right()
             event.stop()
 
@@ -3767,41 +3820,49 @@ class Widget(DOMNode):
     def action_scroll_home(self) -> None:
         if not self._allow_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_home()
 
     def action_scroll_end(self) -> None:
         if not self._allow_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_end()
 
     def action_scroll_left(self) -> None:
         if not self.allow_horizontal_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_left()
 
     def action_scroll_right(self) -> None:
         if not self.allow_horizontal_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_right()
 
     def action_scroll_up(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_up()
 
     def action_scroll_down(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_down()
 
     def action_page_down(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_page_down()
 
     def action_page_up(self) -> None:
         if not self.allow_vertical_scroll:
             raise SkipAction()
+        self._clear_anchor()
         self.scroll_page_up()
 
     def notify(
