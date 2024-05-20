@@ -1,4 +1,4 @@
-from __future__ import annotation
+from __future__ import annotations
 
 from pathlib import Path
 from sys import argv
