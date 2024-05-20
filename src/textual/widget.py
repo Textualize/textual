@@ -525,8 +525,8 @@ class Widget(DOMNode):
         return self._parent is not None and self._parent is self
 
     def anchor(self, *, animate: bool = False) -> None:
-        """Anchor the widget to the bottom of the screen, which ensure that
-        it will be scrolled in to view if its size or the size of its container changes.
+        """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
+        but also keeps it in view if the widget's size changes, or the size of its container changes.
 
         !!! note
 
@@ -541,7 +541,7 @@ class Widget(DOMNode):
             self.check_idle()
 
     def clear_anchor(self) -> None:
-        """If this widget is anchored, clear the anchor state."""
+        """Stop anchoring this widget (a no-op if this widget is not anchored)."""
         if (
             self._parent is not None
             and isinstance(self._parent, Widget)
