@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `start` and `end` properties to Markdown Navigator
-- Added `Widget.anchor`, `Widget.clear_anchor`, and `Widget.is_anchored`
+- Added `Widget.anchor`, `Widget.clear_anchor`, and `Widget.is_anchored` https://github.com/Textualize/textual/pull/4530
 
 ## [0.61.1] - 2024-05-19
 
