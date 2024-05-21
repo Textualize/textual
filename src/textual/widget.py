@@ -135,6 +135,7 @@ class AwaitMount:
                 if aws:
                     await wait(aws)
                     self._parent.refresh(layout=True)
+                self._parent.app._update_mouse_over()
 
         return await_mount().__await__()
 

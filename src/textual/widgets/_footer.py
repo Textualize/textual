@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from ..screen import Screen
 
 from ..binding import Binding
+from ..containers import HorizontalScroll
 from ..reactive import reactive
 from ..widget import Widget
 from ..widgets import Label
@@ -28,8 +29,23 @@ class FooterKey(Label):
     FooterKey {
         background: $accent;
 
+        &.-disabled {
+            text-style: dim;
+            &:hover {
+                .footer-key--key {            
+                    background: $accent-darken-2;
+                }    
+            }
+        }
+
+        &:hover {
+            .footer-key--key {            
+                background: $secondary;
+            }
+        }
+
         .footer-key--key {            
-            background: $secondary;
+            background: $accent-darken-2;
             text-style: bold;
         }
 
@@ -65,9 +81,12 @@ class FooterKey(Label):
     ) -> int:
         return 1
 
+    async def on_click(self) -> None:
+        await self.app.check_bindings(self.key)
+
 
 @rich.repr.auto
-class Footer(Widget):
+class Footer(HorizontalScroll):
     DEFAULT_CSS = """
     Footer {
         layout: horizontal;
@@ -75,6 +94,7 @@ class Footer(Widget):
         color: $text;
         dock: bottom;
         height: 1;
+        scrollbar-size: 0 0;
     }
     """
 
@@ -88,6 +108,12 @@ class Footer(Widget):
             yield FooterKey(
                 binding.key, binding.description, binding.action, disabled=not enabled
             )
+
+    def on_mount(self) -> None:
+        def bindings_changed(screen) -> None:
+            self.call_later(self.recompose)
+
+        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
 
 @rich.repr.auto
