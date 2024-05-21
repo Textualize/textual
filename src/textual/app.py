@@ -2278,7 +2278,8 @@ class App(Generic[ReturnType], DOMNode):
                 if widget != self.mouse_over:
                     self._set_mouse_over(widget)
 
-        self.call_next(check_mouse)
+        if self.mouse_over is not None:
+            self.call_later(check_mouse)
 
     def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget or disable mouse capture.
@@ -2598,9 +2599,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        async with self.screen.batch():
-            await self.screen.query("*").exclude(".-textual-system").remove()
-            await self.screen.mount_all(compose(self))
+        await self.screen.recompose()
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None

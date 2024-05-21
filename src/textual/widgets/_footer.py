@@ -3,16 +3,14 @@ from __future__ import annotations
 import rich.repr
 from rich.text import Text
 
-from textual.app import ComposeResult
-
-from .. import events
+from ..app import ComposeResult
 from ..containers import ScrollableContainer
 from ..reactive import reactive
-from ..widgets import Label
+from ..widget import Widget
 
 
 @rich.repr.auto
-class FooterKey(Label):
+class FooterKey(Widget):
     COMPONENT_CLASSES = {
         "footer-key--key",
         "footer-key--description",
@@ -20,15 +18,14 @@ class FooterKey(Label):
 
     DEFAULT_CSS = """
     FooterKey {
+        width: auto;
+        height: 1;
         background: $panel;        
-        color: $text-muted;
-    
+        color: $text-muted;        
         .footer-key--key {     
             color: $secondary;                   
             background: $panel;
-            text-style: bold;
-           
-            
+            text-style: bold;                       
         }
 
         &:light .footer-key--key {
@@ -89,11 +86,6 @@ class FooterKey(Label):
         label_text.stylize_before(self.rich_style)
         return label_text
 
-    def get_content_height(
-        self, container: events.Size, viewport: events.Size, width: int
-    ) -> int:
-        return 1
-
     async def on_mouse_up(self) -> None:
         if self._disabled:
             self.app.bell()
@@ -109,18 +101,15 @@ class Footer(ScrollableContainer):
     DEFAULT_CSS = """
     Footer {
         layout: grid;
-        grid-columns: auto;
-        
+        grid-columns: auto;        
         background: $panel;
         color: $text;
         dock: bottom;
         height: 1;
         scrollbar-size: 0 0;
-
         &.-compact {
             grid-gutter: 1;
-        }
-        
+        }        
     }
     """
 
@@ -140,7 +129,7 @@ class Footer(ScrollableContainer):
         self.styles.grid_size_columns = len(bindings)
         for binding, enabled in bindings:
             yield FooterKey(
-                binding.key_display or binding.key,
+                binding.key_display or self.app.get_key_display(binding.key),
                 binding.description,
                 binding.action,
                 disabled=not enabled,
@@ -152,7 +141,8 @@ class Footer(ScrollableContainer):
 
     def on_mount(self) -> None:
         def bindings_changed(screen) -> None:
-            self.call_next(self.recompose)
+            if screen is self.screen:
+                self.call_next(self.recompose)
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
