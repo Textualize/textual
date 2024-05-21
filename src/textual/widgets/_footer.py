@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, ClassVar, Optional
 import rich.repr
 from rich.text import Text
 
+from textual.app import ComposeResult
+
 from .. import events
 
 if TYPE_CHECKING:
@@ -15,10 +17,81 @@ if TYPE_CHECKING:
 from ..binding import Binding
 from ..reactive import reactive
 from ..widget import Widget
+from ..widgets import Label
+
+
+@rich.repr.auto
+class FooterKey(Label):
+    COMPONENT_CLASSES = {"footer-key--key", "footer-key--description"}
+
+    DEFAULT_CSS = """
+    FooterKey {
+        background: $accent;
+
+        .footer-key--key {            
+            background: $secondary;
+            text-style: bold;
+        }
+
+        .footer-key--description {
+            
+        }
+
+        
+    }
+    """
+
+    def __init__(
+        self, key: str, description: str, action: str, disabled: bool = False
+    ) -> None:
+        self.key = key
+        self.description = description
+        self.action = action
+        super().__init__(classes="-disabled" if disabled else "")
+
+    def render(self) -> Text:
+        key_style = self.get_component_rich_style("footer-key--key")
+        description_style = self.get_component_rich_style("footer-key--description")
+        key = self.key
+        description = self.description
+        label_text = Text.assemble(
+            (f" {key} ", key_style), " ", (description, description_style), " "
+        )
+        label_text.stylize_before(self.rich_style)
+        return label_text
+
+    def get_content_height(
+        self, container: events.Size, viewport: events.Size, width: int
+    ) -> int:
+        return 1
 
 
 @rich.repr.auto
 class Footer(Widget):
+    DEFAULT_CSS = """
+    Footer {
+        layout: horizontal;
+        background: $accent;
+        color: $text;
+        dock: bottom;
+        height: 1;
+    }
+    """
+
+    def compose(self) -> ComposeResult:
+        bindings = [
+            (binding, enabled)
+            for (_, binding, enabled) in self.screen.active_bindings.values()
+            if binding.show
+        ]
+        for binding, enabled in bindings:
+            yield FooterKey(
+                binding.key, binding.description, binding.action, disabled=not enabled
+            )
+
+
+@rich.repr.auto
+class XFooter(Widget):
     """A simple footer widget which docks itself to the bottom of the parent container."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
