@@ -2262,6 +2262,13 @@ class App(Generic[ReturnType], DOMNode):
                     self.mouse_over = widget
 
     def _update_mouse_over(self) -> None:
+        """Updates the mouse over after the next refresh.
+
+        This method is called whenever a widget is added or removed, which may change
+        the widget under the mouse.
+
+        """
+
         def check_mouse() -> None:
             try:
                 widget, _ = self.screen.get_widget_at(*self.cursor_position)

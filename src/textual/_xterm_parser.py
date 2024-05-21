@@ -41,9 +41,11 @@ class XTermParser(Parser[events.Event]):
         self.last_x = 0
         self.last_y = 0
 
-        self._debug_log_file = open("keys.log", "wt") if debug else None
+        self._debug_log_file = open("keys.log", "at") if debug else None
 
         super().__init__()
+
+        self.debug_log("---")
 
     def debug_log(self, *args: Any) -> None:  # pragma: no cover
         if self._debug_log_file is not None:
@@ -102,7 +104,7 @@ class XTermParser(Parser[events.Event]):
     the reissued sequence being emitted as key events.
     """
 
-    def parse(self, on_token: TokenCallback) -> Generator[Awaitable, str, None]:
+    def parse(self, _on_token: TokenCallback) -> Generator[Awaitable, str, None]:
         ESC = "\x1b"
         read1 = self.read1
         sequence_to_key_events = self._sequence_to_key_events
@@ -110,6 +112,10 @@ class XTermParser(Parser[events.Event]):
         paste_buffer: list[str] = []
         bracketed_paste = False
         use_prior_escape = False
+
+        def on_token(token):
+            self.debug_log(str(token))
+            _on_token(token)
 
         def on_key_token(event: events.Key) -> None:
             """Token callback wrapper for handling keys.
