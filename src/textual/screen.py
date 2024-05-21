@@ -806,6 +806,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 app.screen.refresh(*self._compositor._dirty_regions)
                 self._compositor._dirty_regions.clear()
                 self._dirty_widgets.clear()
+        app._update_mouse_over(self)
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""

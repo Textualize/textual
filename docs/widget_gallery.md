@@ -90,6 +90,20 @@ A footer to display and interact with key bindings.
 ```
 
 
+## ClassicFooter
+
+The original Footer widget.
+
+!!! warning
+
+    Th has been replaced by `Footer`, and will be removed in Textual v1.0
+
+[ClassicFooter reference](./widgets/classic_footer.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/classic_footer.py" columns="70" lines="12"}
+```
+
+
 ## Header
 
 A header to display the app's title and subtitle.

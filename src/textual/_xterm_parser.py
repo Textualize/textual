@@ -113,7 +113,8 @@ class XTermParser(Parser[events.Event]):
         bracketed_paste = False
         use_prior_escape = False
 
-        def on_token(token):
+        def on_token(token: events.Event) -> None:
+            """Hook to log events."""
             self.debug_log(str(token))
             _on_token(token)
 
