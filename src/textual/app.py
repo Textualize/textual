@@ -2262,12 +2262,16 @@ class App(Generic[ReturnType], DOMNode):
                     self.mouse_over = widget
 
     def _update_mouse_over(self) -> None:
-        try:
-            widget, _ = self.screen.get_widget_at(*self.cursor_position)
-        except NoWidget:
-            pass
-        else:
-            self._set_mouse_over(widget)
+        def check_mouse() -> None:
+            try:
+                widget, _ = self.screen.get_widget_at(*self.cursor_position)
+            except NoWidget:
+                pass
+            else:
+                if widget != self.mouse_over:
+                    self._set_mouse_over(widget)
+
+        self.call_after_refresh(check_mouse)
 
     def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget or disable mouse capture.
@@ -2590,7 +2594,6 @@ class App(Generic[ReturnType], DOMNode):
         async with self.screen.batch():
             await self.screen.query("*").exclude(".-textual-system").remove()
             await self.screen.mount_all(compose(self))
-            self._update_mouse_over
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None

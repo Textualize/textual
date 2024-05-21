@@ -82,6 +82,7 @@ class FooterKey(Label):
         return 1
 
     async def on_click(self) -> None:
+        self.notify(str(self))
         await self.app.check_bindings(self.key)
 
 
@@ -111,7 +112,7 @@ class Footer(HorizontalScroll):
 
     def on_mount(self) -> None:
         def bindings_changed(screen) -> None:
-            self.call_later(self.recompose)
+            self.call_next(self.recompose)
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
