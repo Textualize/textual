@@ -1,5 +1,10 @@
 # ClassicFooter
 
+!!! warning "Deprecated widget"
+
+    This is an older version of the Textual Footer, and will be replaced with [Footer](./footer.md) in Textual v1.0
+
+
 A simple footer widget which is docked to the bottom of its parent container. Displays
 available keybindings for the currently focused widget.
 

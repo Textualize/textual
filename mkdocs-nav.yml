@@ -139,6 +139,7 @@ nav:
       - Widgets:
           - "widgets/button.md"
           - "widgets/checkbox.md"
+          - "widgets/classic_footer.md"
           - "widgets/collapsible.md"
           - "widgets/content_switcher.md"
           - "widgets/data_table.md"

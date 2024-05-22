@@ -29,10 +29,10 @@ class ClassicFooter(Widget):
     """
     | Class | Description |
     | :- | :- |
-    | `footer--description` | Targets the descriptions of the key bindings. |
-    | `footer--highlight` | Targets the highlighted key binding. |
-    | `footer--highlight-key` | Targets the key portion of the highlighted key binding. |
-    | `footer--key` | Targets the key portions of the key bindings. |
+    | `classic-footer--description` | Targets the descriptions of the key bindings. |
+    | `classic-footer--highlight` | Targets the highlighted key binding. |
+    | `classic-footer--highlight-key` | Targets the key portion of the highlighted key binding. |
+    | `classic-footer--key` | Targets the key portions of the key bindings. |
     """
 
     __name__ = "Footer"

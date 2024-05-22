@@ -53,7 +53,7 @@ class FooterKey(Widget):
     }
     """
 
-    capitalize_keys = reactive(False)
+    upper_case_keys = reactive(False)
     ctrl_to_caret = reactive(True)
     compact = reactive(True)
 
@@ -70,7 +70,7 @@ class FooterKey(Widget):
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")
         key = self.key
-        if self.capitalize_keys:
+        if self.upper_case_keys:
             key = key.upper()
         if key.lower().startswith("ctrl+"):
             key = "^" + key.split("+", 1)[1]
@@ -113,7 +113,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     }
     """
 
-    capitalize_keys = reactive(False)
+    upper_case_keys = reactive(False)
     """Capitalize the keys."""
     ctrl_to_caret = reactive(True)
     """Convert ctrl+ prefix to ^"""
@@ -134,7 +134,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
                 binding.action,
                 disabled=not enabled,
             ).data_bind(
-                Footer.capitalize_keys,
+                Footer.upper_case_keys,
                 Footer.ctrl_to_caret,
                 Footer.compact,
             )
