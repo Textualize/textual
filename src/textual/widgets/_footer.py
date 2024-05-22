@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+from collections import defaultdict
+
 import rich.repr
 from rich.text import Text
+
+from textual.binding import Binding
 
 from ..app import ComposeResult
 from ..containers import ScrollableContainer
@@ -132,8 +136,15 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             for (_, binding, enabled) in self.screen.active_bindings.values()
             if binding.show
         ]
-        self.styles.grid_size_columns = len(bindings)
+        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
+            list
+        )
         for binding, enabled in bindings:
+            action_to_bindings[binding.action].append((binding, enabled))
+
+        self.styles.grid_size_columns = len(bindings)
+        for multi_bindings in action_to_bindings.values():
+            binding, enabled = multi_bindings[0]
             yield FooterKey(
                 binding.key,
                 binding.key_display or self.app.get_key_display(binding.key),
