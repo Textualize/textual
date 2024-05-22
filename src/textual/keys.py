@@ -271,7 +271,7 @@ def _get_unicode_name_from_key(key: str) -> str:
 
     This function can be seen as a pseudo-inverse of the function `_character_to_key`.
     """
-    return KEY_TO_UNICODE_NAME.get(key, key.upper())
+    return KEY_TO_UNICODE_NAME.get(key, key)
 
 
 def _get_key_aliases(key: str) -> list[str]:

@@ -245,7 +245,8 @@ class MarkdownH1(MarkdownHeader):
     MarkdownH1 {
         content-align: center middle;             
         text-style: bold;
-        color: $accent;
+        color: $success;
+        &:light {color: $primary;}
     }
     """
 
@@ -257,7 +258,8 @@ class MarkdownH2(MarkdownHeader):
 
     MarkdownH2 {
         text-style: underline;
-        color: $accent;
+        color: $success;
+         &:light {color: $primary;}
       
     }
     """
@@ -270,7 +272,8 @@ class MarkdownH3(MarkdownHeader):
     MarkdownH3 {
        
         text-style: bold;
-        color: $accent;
+        color: $success;
+        &:light {color: $primary;}
         margin: 1 0;
         width: auto;
     }
@@ -344,9 +347,12 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $primary;
+        border-left: outer $success-darken-2;
         margin: 1 0;
         padding: 0 1;
+    }
+    MarkdownBlockQuote:light {
+        border-left: outer $primary;
     }
     MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
@@ -541,6 +547,9 @@ class MarkdownBullet(Widget):
         width: auto;
         color: $success;
         text-style: bold;
+        &:light {
+            color: $primary;
+        }
     }
     """
 
