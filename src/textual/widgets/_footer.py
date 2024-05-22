@@ -141,7 +141,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         for binding, enabled in bindings:
             action_to_bindings[binding.action].append((binding, enabled))
 
-        self.styles.grid_size_columns = len(bindings)
+        self.styles.grid_size_columns = len(action_to_bindings)
         for multi_bindings in action_to_bindings.values():
             binding, enabled = multi_bindings[0]
             yield FooterKey(
