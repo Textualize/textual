@@ -1264,3 +1264,8 @@ def test_dynamic_bindings(snap_compare):
 def test_grid_gutter(snap_compare):
     # https://github.com/Textualize/textual/issues/4522
     assert snap_compare(SNAPSHOT_APPS_DIR / "grid_gutter.py")
+
+
+def test_multi_keys(snap_compare):
+    # https://github.com/Textualize/textual/issues/4542
+    assert snap_compare(SNAPSHOT_APPS_DIR / "multi_keys.py")
