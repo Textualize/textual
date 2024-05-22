@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed display of multiple bindings
+- Fixed display of multiple bindings https://github.com/Textualize/textual/pull/4543
 
 ## [0.63.0] - 2024-05-22
 
