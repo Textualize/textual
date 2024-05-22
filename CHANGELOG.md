@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed actions in links
+- Fixed actions in links https://github.com/Textualize/textual/pull/4540
 
 ### Changed
 
 - Breaking change: New Footer (likely a drop in replacement, unless you have customized styles) https://github.com/Textualize/textual/pull/4537
-- Stylistic changes to Markdown (simpler headers, less margin, etc)
+- Stylistic changes to Markdown (simpler headers, less margin, etc) https://github.com/Textualize/textual/pull/4541
 
 ## [0.62.0] - 2024-05-20
 
