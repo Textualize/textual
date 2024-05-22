@@ -243,10 +243,7 @@ class MarkdownH1(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH1 {
-        # background: $accent-darken-2;
-        # border: wide $background;
-        content-align: center middle;        
-       
+        content-align: center middle;             
         text-style: bold;
         color: $accent;
     }
@@ -259,9 +256,6 @@ class MarkdownH2(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH2 {
-        # background: $panel;
-        # border: wide $background;
-        # text-align: center;
         text-style: underline;
         color: $accent;
       
@@ -350,7 +344,7 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $success;
+        border-left: outer $primary;
         margin: 1 0;
         padding: 0 1;
     }
@@ -493,10 +487,8 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 100%;
-        # margin: 1 0;
-        # background: $panel;
-        # border: wide $background;
+        width: 100%;     
+        background: $panel;        
     }
     """
 
@@ -597,7 +589,10 @@ class MarkdownFence(MarkdownBlock):
         overflow: auto;
         width: 100%;
         height: auto;       
+        max-height: 20;
         color: rgb(210,210,210);
+
+        
     }
 
     MarkdownFence > * {
