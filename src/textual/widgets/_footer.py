@@ -114,9 +114,9 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     """
 
     upper_case_keys = reactive(False)
-    """Capitalize the keys."""
+    """Upper case key display."""
     ctrl_to_caret = reactive(True)
-    """Convert ctrl+ prefix to ^"""
+    """Convert 'ctrl+' prefix to '^'."""
     compact = reactive(False)
     """Display in compact style."""
 
