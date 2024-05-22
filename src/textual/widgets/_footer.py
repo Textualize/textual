@@ -23,36 +23,36 @@ class FooterKey(Widget):
     FooterKey {
         width: auto;
         height: 1;
-        background: $panel;        
-        color: $text-muted;        
-        .footer-key--key {     
-            color: $secondary;                   
+        background: $panel;
+        color: $text-muted;
+        .footer-key--key {
+            color: $secondary;
             background: $panel;
-            text-style: bold;                       
+            text-style: bold;
         }
 
         &:light .footer-key--key {
-            color: $primary; 
-        }        
+            color: $primary;
+        }
 
         &:hover {
             background: $panel-darken-2;
             color: $text;
-            .footer-key--key { 
-                background: $panel-darken-2;              
-            }            
+            .footer-key--key {
+                background: $panel-darken-2;
+            }
         }
 
-        &.-disabled {    
+        &.-disabled {
             text-style: dim;
             background: $panel;
             &:hover {
-                .footer-key--key {            
+                .footer-key--key {
                     background: $panel;
-                }    
-            }        
+                }
+            }
         }
-                   
+
     }
     """
 
@@ -110,7 +110,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     DEFAULT_CSS = """
     Footer {
         layout: grid;
-        grid-columns: auto;        
+        grid-columns: auto;
         background: $panel;
         color: $text;
         dock: bottom;
@@ -118,7 +118,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         scrollbar-size: 0 0;
         &.-compact {
             grid-gutter: 1;
-        }        
+        }
     }
     """
 
