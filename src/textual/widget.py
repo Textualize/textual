@@ -135,6 +135,10 @@ class AwaitMount:
                 if aws:
                     await wait(aws)
                     self._parent.refresh(layout=True)
+                    try:
+                        self._parent.app._update_mouse_over(self._parent.screen)
+                    except NoScreen:
+                        pass
 
         return await_mount().__await__()
 

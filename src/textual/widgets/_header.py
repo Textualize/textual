@@ -34,7 +34,7 @@ class HeaderIcon(Widget):
     async def on_click(self, event: Click) -> None:
         """Launch the command palette when icon is clicked."""
         event.stop()
-        await self.run_action("command_palette")
+        await self.run_action("app.command_palette")
 
     def render(self) -> RenderResult:
         """Render the header icon.

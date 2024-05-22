@@ -2261,6 +2261,29 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     self.mouse_over = widget
 
+    def _update_mouse_over(self, screen: Screen) -> None:
+        """Updates the mouse over after the next refresh.
+
+        This method is called whenever a widget is added or removed, which may change
+        the widget under the mouse.
+
+        """
+
+        if self.mouse_over is None:
+            return
+
+        async def check_mouse() -> None:
+            """Check if the mouse over widget has changed."""
+            try:
+                widget, _ = screen.get_widget_at(*self.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                if widget is not self.mouse_over:
+                    self._set_mouse_over(widget)
+
+        self.call_after_refresh(check_mouse)
+
     def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget or disable mouse capture.
 
@@ -3308,6 +3331,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
+                self._update_mouse_over(self.screen)
                 if parent is not None:
                     parent.refresh(layout=True)
 

@@ -115,6 +115,7 @@ class LinuxDriver(Driver):
         """Enable reporting of mouse events."""
         if not self._mouse:
             return
+
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -244,6 +245,9 @@ class LinuxDriver(Driver):
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
+
+        # Appears to fix an issue enabling mouse support in iTerm 3.5.0
+        self._enable_mouse_support()
 
         # If we need to ask the app to signal that we've come back from a
         # SIGTSTP...

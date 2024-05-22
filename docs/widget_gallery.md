@@ -34,6 +34,21 @@ A classic checkbox control.
 ```{.textual path="docs/examples/widgets/checkbox.py"}
 ```
 
+## ClassicFooter
+
+The original Footer widget.
+
+!!! warning
+
+    Th has been replaced by [`Footer`](#footer), and will be removed in Textual v1.0
+
+[ClassicFooter reference](./widgets/classic_footer.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/classic_footer.py" columns="70" lines="12"}
+```
+
+
+
 ## Collapsible
 
 Content that may be toggled on and off by clicking a title.
@@ -88,6 +103,7 @@ A footer to display and interact with key bindings.
 
 ```{.textual path="docs/examples/widgets/footer.py" columns="70" lines="12"}
 ```
+
 
 
 ## Header

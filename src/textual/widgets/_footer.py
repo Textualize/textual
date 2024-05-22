@@ -1,157 +1,157 @@
 from __future__ import annotations
 
-from collections import defaultdict
-from typing import TYPE_CHECKING, ClassVar, Optional
-
 import rich.repr
 from rich.text import Text
 
-from .. import events
-
-if TYPE_CHECKING:
-    from ..app import RenderResult
-    from ..screen import Screen
-
-from ..binding import Binding
+from ..app import ComposeResult
+from ..containers import ScrollableContainer
 from ..reactive import reactive
 from ..widget import Widget
 
 
 @rich.repr.auto
-class Footer(Widget):
-    """A simple footer widget which docks itself to the bottom of the parent container."""
-
-    COMPONENT_CLASSES: ClassVar[set[str]] = {
-        "footer--description",
-        "footer--key",
-        "footer--highlight",
-        "footer--highlight-key",
+class FooterKey(Widget):
+    COMPONENT_CLASSES = {
+        "footer-key--key",
+        "footer-key--description",
     }
-    """
-    | Class | Description |
-    | :- | :- |
-    | `footer--description` | Targets the descriptions of the key bindings. |
-    | `footer--highlight` | Targets the highlighted key binding. |
-    | `footer--highlight-key` | Targets the key portion of the highlighted key binding. |
-    | `footer--key` | Targets the key portions of the key bindings. |
-    """
 
     DEFAULT_CSS = """
+    FooterKey {
+        width: auto;
+        height: 1;
+        background: $panel;        
+        color: $text-muted;        
+        .footer-key--key {     
+            color: $secondary;                   
+            background: $panel;
+            text-style: bold;                       
+        }
+
+        &:light .footer-key--key {
+            color: $primary; 
+        }        
+
+        &:hover {
+            background: $panel-darken-2;
+            color: $text;
+            .footer-key--key { 
+                background: $panel-darken-2;              
+            }            
+        }
+
+        &.-disabled {    
+            text-style: dim;
+            background: $panel;
+            &:hover {
+                .footer-key--key {            
+                    background: $panel;
+                }    
+            }        
+        }
+                   
+    }
+    """
+
+    upper_case_keys = reactive(False)
+    ctrl_to_caret = reactive(True)
+    compact = reactive(True)
+
+    def __init__(
+        self,
+        key: str,
+        key_display: str,
+        description: str,
+        action: str,
+        disabled: bool = False,
+    ) -> None:
+        self.key = key
+        self.key_display = key_display
+        self.description = description
+        self.action = action
+        self._disabled = disabled
+        super().__init__(classes="-disabled" if disabled else "")
+
+    def render(self) -> Text:
+        key_style = self.get_component_rich_style("footer-key--key")
+        description_style = self.get_component_rich_style("footer-key--description")
+        key_display = self.key_display
+        if self.upper_case_keys:
+            key_display = key_display.upper()
+        if key_display.lower().startswith("ctrl+"):
+            key_display = "^" + key_display.split("+", 1)[1]
+        description = self.description
+        if self.compact:
+            label_text = Text.assemble(
+                (key_display, key_style), " ", (description, description_style)
+            )
+        else:
+            label_text = Text.assemble(
+                (f" {key_display} ", key_style), (description, description_style), " "
+            )
+        label_text.stylize_before(self.rich_style)
+        return label_text
+
+    async def on_mouse_down(self) -> None:
+        if self._disabled:
+            self.app.bell()
+        else:
+            await self.app.check_bindings(self.key)
+
+    def _watch_compact(self, compact: bool) -> None:
+        self.set_class(compact, "-compact")
+
+
+@rich.repr.auto
+class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
+    DEFAULT_CSS = """
     Footer {
-        background: $accent;
+        layout: grid;
+        grid-columns: auto;        
+        background: $panel;
         color: $text;
         dock: bottom;
         height: 1;
-    }
-    Footer > .footer--highlight {
-        background: $accent-darken-1;
-    }
-
-    Footer > .footer--highlight-key {
-        background: $secondary;
-        text-style: bold;
-    }
-
-    Footer > .footer--key {
-        text-style: bold;
-        background: $accent-darken-2;
+        scrollbar-size: 0 0;
+        &.-compact {
+            grid-gutter: 1;
+        }        
     }
     """
 
-    highlight_key: reactive[str | None] = reactive[Optional[str]](None)
+    upper_case_keys = reactive(False)
+    """Upper case key display."""
+    ctrl_to_caret = reactive(True)
+    """Convert 'ctrl+' prefix to '^'."""
+    compact = reactive(False)
+    """Display in compact style."""
 
-    def __init__(self) -> None:
-        super().__init__()
-        self._key_text: Text | None = None
-        self.auto_links = False
-
-    async def watch_highlight_key(self) -> None:
-        """If highlight key changes we need to regenerate the text."""
-        self._key_text = None
-        self.refresh()
-
-    def _on_mount(self, _: events.Mount) -> None:
-        self.screen.bindings_updated_signal.subscribe(self, self._bindings_changed)
-
-    def _bindings_changed(self, _screen: Screen) -> None:
-        self._key_text = None
-        self.refresh()
-
-    def _on_mouse_move(self, event: events.MouseMove) -> None:
-        """Store any key we are moving over."""
-        self.highlight_key = event.style.meta.get("key")
-
-    def _on_leave(self, _: events.Leave) -> None:
-        """Clear any highlight when the mouse leaves the widget"""
-        self.highlight_key = None
-
-    def __rich_repr__(self) -> rich.repr.Result:
-        yield from super().__rich_repr__()
-
-    def _make_key_text(self) -> Text:
-        """Create text containing all the keys."""
-        base_style = self.rich_style
-        text = Text(
-            style=self.rich_style,
-            no_wrap=True,
-            overflow="ellipsis",
-            justify="left",
-            end="",
-        )
-        highlight_style = self.get_component_rich_style("footer--highlight")
-        highlight_key_style = self.get_component_rich_style("footer--highlight-key")
-        key_style = self.get_component_rich_style("footer--key")
-        description_style = self.get_component_rich_style("footer--description")
-
+    def compose(self) -> ComposeResult:
         bindings = [
             (binding, enabled)
             for (_, binding, enabled) in self.screen.active_bindings.values()
             if binding.show
         ]
-
-        action_to_bindings: defaultdict[str, list[tuple[Binding, bool]]] = defaultdict(
-            list
-        )
+        self.styles.grid_size_columns = len(bindings)
         for binding, enabled in bindings:
-            action_to_bindings[binding.action].append((binding, enabled))
-
-        app_focus = self.app.app_focus
-        for _, _bindings in action_to_bindings.items():
-            binding, enabled = _bindings[0]
-            if binding.key_display is None:
-                key_display = self.app.get_key_display(binding.key)
-                if key_display is None:
-                    key_display = binding.key.upper()
-            else:
-                key_display = binding.key_display
-            hovered = self.highlight_key == binding.key
-            key_text = Text.assemble(
-                (f" {key_display} ", highlight_key_style if hovered else key_style),
-                (
-                    f" {binding.description} ",
-                    highlight_style if hovered else base_style + description_style,
-                ),
-                meta=(
-                    {
-                        "@click": f"app.check_bindings('{binding.key}')",
-                        "key": binding.key,
-                    }
-                    if enabled and app_focus
-                    else {}
-                ),
+            yield FooterKey(
+                binding.key,
+                binding.key_display or self.app.get_key_display(binding.key),
+                binding.description,
+                binding.action,
+                disabled=not enabled,
+            ).data_bind(
+                Footer.upper_case_keys,
+                Footer.ctrl_to_caret,
+                Footer.compact,
             )
-            if not enabled or not app_focus:
-                key_text.stylize("dim")
-            text.append_text(key_text)
-        return text
 
-    def notify_style_update(self) -> None:
-        self._key_text = None
+    def on_mount(self) -> None:
+        def bindings_changed(screen) -> None:
+            if screen is self.screen:
+                self.call_next(self.recompose)
 
-    def post_render(self, renderable):
-        return renderable
+        self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
-    def render(self) -> RenderResult:
-        if self._key_text is None:
-            self._key_text = self._make_key_text()
-        return self._key_text
+    def watch_compact(self, compact: bool) -> None:
+        self.set_class(compact, "-compact")

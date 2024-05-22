@@ -744,10 +744,6 @@ class Screen(Generic[ScreenResultType], Widget):
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if self._bindings_updated:
-            self._bindings_updated = False
-            self.bindings_updated_signal.publish(self)
-
         if not self.app._batch_count and self.is_current:
             if (
                 self._layout_required
@@ -760,6 +756,10 @@ class Screen(Generic[ScreenResultType], Widget):
                 return
 
         await self._invoke_and_clear_callbacks()
+
+        if self._bindings_updated:
+            self._bindings_updated = False
+            self.app.call_later(self.bindings_updated_signal.publish, self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
@@ -806,6 +806,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 app.screen.refresh(*self._compositor._dirty_regions)
                 self._compositor._dirty_regions.clear()
                 self._dirty_widgets.clear()
+        app._update_mouse_over(self)
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
