@@ -15,7 +15,6 @@ class MarkdownApp(App):
         ("t", "toggle_table_of_contents", "TOC"),
         ("b", "back", "Back"),
         ("f", "forward", "Forward"),
-        ("ctrl+d", "app.bell", "Bell"),
     ]
 
     path = var(Path(__file__).parent / "demo.md")

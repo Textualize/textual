@@ -58,9 +58,15 @@ class FooterKey(Widget):
     compact = reactive(True)
 
     def __init__(
-        self, key: str, description: str, action: str, disabled: bool = False
+        self,
+        key: str,
+        key_display: str,
+        description: str,
+        action: str,
+        disabled: bool = False,
     ) -> None:
         self.key = key
+        self.key_display = key_display
         self.description = description
         self.action = action
         self._disabled = disabled
@@ -69,24 +75,24 @@ class FooterKey(Widget):
     def render(self) -> Text:
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")
-        key = self.key
+        key_display = self.key_display
         if self.upper_case_keys:
-            key = key.upper()
-        if key.lower().startswith("ctrl+"):
-            key = "^" + key.split("+", 1)[1]
+            key_display = key_display.upper()
+        if key_display.lower().startswith("ctrl+"):
+            key_display = "^" + key_display.split("+", 1)[1]
         description = self.description
         if self.compact:
             label_text = Text.assemble(
-                (key, key_style), " ", (description, description_style)
+                (key_display, key_style), " ", (description, description_style)
             )
         else:
             label_text = Text.assemble(
-                (f" {key} ", key_style), (description, description_style), " "
+                (f" {key_display} ", key_style), (description, description_style), " "
             )
         label_text.stylize_before(self.rich_style)
         return label_text
 
-    async def on_mouse_up(self) -> None:
+    async def on_mouse_down(self) -> None:
         if self._disabled:
             self.app.bell()
         else:
@@ -129,6 +135,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         self.styles.grid_size_columns = len(bindings)
         for binding, enabled in bindings:
             yield FooterKey(
+                binding.key,
                 binding.key_display or self.app.get_key_display(binding.key),
                 binding.description,
                 binding.action,

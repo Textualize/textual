@@ -2282,7 +2282,7 @@ class App(Generic[ReturnType], DOMNode):
                 if widget is not self.mouse_over:
                     self._set_mouse_over(widget)
 
-        self.call_later(check_mouse)
+        self.call_after_refresh(check_mouse)
 
     def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget or disable mouse capture.
