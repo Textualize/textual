@@ -1,5 +1,7 @@
 # Footer
 
+!!! tip "Added in version 0.62.0"
+
 A simple footer widget which is docked to the bottom of its parent container. Displays
 available keybindings for the currently focused widget.
 

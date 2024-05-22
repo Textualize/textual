@@ -97,7 +97,7 @@ class FooterKey(Widget):
 
 
 @rich.repr.auto
-class Footer(ScrollableContainer):
+class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     DEFAULT_CSS = """
     Footer {
         layout: grid;
