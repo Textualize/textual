@@ -231,6 +231,8 @@ class MarkdownHeader(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownHeader {
         color: $text;
+        margin: 2 0 1 0;
+       
     }
     """
 
@@ -241,13 +243,12 @@ class MarkdownH1(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH1 {
-        background: $accent-darken-2;
-        border: wide $background;
-        content-align: center middle;
-
-        padding: 1;
+        # background: $accent-darken-2;
+        # border: wide $background;
+        content-align: center middle;        
+       
         text-style: bold;
-        color: $text;
+        color: $accent;
     }
     """
 
@@ -258,13 +259,12 @@ class MarkdownH2(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH2 {
-        background: $panel;
-        border: wide $background;
-        text-align: center;
+        # background: $panel;
+        # border: wide $background;
+        # text-align: center;
         text-style: underline;
-        color: $text;
-        padding: 1;
-        text-style: bold;
+        color: $accent;
+      
     }
     """
 
@@ -274,10 +274,10 @@ class MarkdownH3(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH3 {
-        background: $surface;
+       
         text-style: bold;
-        color: $text;
-        border-bottom: wide $foreground;
+        color: $accent;
+        margin: 1 0;
         width: auto;
     }
     """
@@ -288,8 +288,9 @@ class MarkdownH4(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH4 {
-        text-style: underline;
+        text-style: bold underline;
         margin: 1 0;
+        color: $text;
     }
     """
 
@@ -302,6 +303,7 @@ class MarkdownH5(MarkdownHeader):
         text-style: bold;
         color: $text;
         margin: 1 0;
+       
     }
     """
 
@@ -492,9 +494,9 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        margin: 1 0;
-        background: $panel;
-        border: wide $background;
+        # margin: 1 0;
+        # background: $panel;
+        # border: wide $background;
     }
     """
 
@@ -594,8 +596,7 @@ class MarkdownFence(MarkdownBlock):
         margin: 1 0;
         overflow: auto;
         width: 100%;
-        height: auto;
-        max-height: 20;
+        height: auto;       
         color: rgb(210,210,210);
     }
 
@@ -661,8 +662,9 @@ class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
         height: auto;
-        margin: 0 4 1 4;
+        margin: 0 2 1 2;
         layout: vertical;
+        color: $text;
     }
     .em {
         text-style: italic;
