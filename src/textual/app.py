@@ -3175,10 +3175,16 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
+
         if isinstance(action, str):
             await self.run_action(action, default_namespace)
         elif isinstance(action, tuple) and len(action) == 2:
-            await self.run_action(("", *action), default_namespace)
+            action_name, action_params = action
+            namespace, parsed_action, _ = actions.parse(action_name)
+            await self.run_action(
+                (namespace, parsed_action, action_params),
+                default_namespace,
+            )
         elif callable(action):
             await action()
         else:
