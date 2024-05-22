@@ -40,7 +40,7 @@ The original Footer widget.
 
 !!! warning
 
-    Th has been replaced by [`Footer`](#footer), and will be removed in Textual v1.0
+    This has been replaced by [`Footer`](#footer), and will be removed in Textual v1.0
 
 [ClassicFooter reference](./widgets/classic_footer.md){ .md-button .md-button--primary }
 
