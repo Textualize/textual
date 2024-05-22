@@ -5,9 +5,8 @@ from collections import defaultdict
 import rich.repr
 from rich.text import Text
 
-from textual.binding import Binding
-
 from ..app import ComposeResult
+from ..binding import Binding
 from ..containers import ScrollableContainer
 from ..reactive import reactive
 from ..widget import Widget
