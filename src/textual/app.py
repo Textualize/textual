@@ -3104,7 +3104,6 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has been handled.
         """
-        print("r", action, default_namespace)
         action_target, action_name, params = self._parse_action(
             action, self if default_namespace is None else default_namespace
         )
