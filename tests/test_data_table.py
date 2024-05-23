@@ -1438,7 +1438,7 @@ async def test_clicking_border_link_doesnt_crash():
 
         def on_mount(self) -> None:
             table = self.query_one(DataTable)
-            table.border_title = "[@click=test_link]Border Link[/]"
+            table.border_title = "[@click=app.test_link]Border Link[/]"
 
         def action_test_link(self) -> None:
             self.link_clicked = True
