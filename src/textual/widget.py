@@ -934,6 +934,8 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+        if not self._is_linked_to_app:
+            raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
         # Check for duplicate IDs in the incoming widgets
         ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
         unique_ids = set(ids_to_mount)
@@ -1121,9 +1123,9 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        if self._parent is not None:
-            async with self.batch():
-                await self.query("*").exclude(".-textual-system").remove()
+        async with self.batch():
+            await self.query("*").exclude(".-textual-system").remove()
+            if self._is_linked_to_app:
                 await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:

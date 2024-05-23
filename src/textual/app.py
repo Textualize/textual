@@ -770,6 +770,11 @@ class App(Generic[ReturnType], DOMNode):
         await self._animator.stop_animation(self, attribute, complete)
 
     @property
+    def is_dom_root(self) -> bool:
+        """Is this a root node (i.e. the App)?"""
+        return True
+
+    @property
     def debug(self) -> bool:
         """Is debug mode enabled?"""
         return "debug" in self.features
