@@ -3038,7 +3038,7 @@ class App(Generic[ReturnType], DOMNode):
             await super().on_event(event)
 
     def _parse_action(
-        self, action: str, default_namespace: DOMNode
+        self, action: str | ActionParseResult, default_namespace: DOMNode
     ) -> tuple[DOMNode, str, tuple[object, ...]]:
         """Parse an action.
 
@@ -3051,7 +3051,11 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A tuple of (node or None, action name, tuple of parameters).
         """
-        destination, action_name, params = actions.parse(action)
+        if isinstance(action, tuple):
+            destination, action_name, params = action
+        else:
+            destination, action_name, params = actions.parse(action)
+
         action_target: DOMNode | None = None
         if destination:
             if destination not in self._action_targets:
@@ -3098,14 +3102,9 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has been handled.
         """
-        if isinstance(action, str):
-            action_target, action_name, params = self._parse_action(
-                action, self if default_namespace is None else default_namespace
-            )
-        else:
-            # assert isinstance(action, tuple)
-            _, action_name, params = action
-            action_target = self
+        action_target, action_name, params = self._parse_action(
+            action, self if default_namespace is None else default_namespace
+        )
 
         if action_target.check_action(action_name, params):
             return await self._dispatch_action(action_target, action_name, params)
