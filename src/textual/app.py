@@ -3051,13 +3051,11 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A tuple of (node or None, action name, tuple of parameters).
         """
-        print(action, default_namespace)
         if isinstance(action, tuple):
             destination, action_name, params = action
         else:
             destination, action_name, params = actions.parse(action)
 
-        print("parse action", destination, action_name, params)
         action_target: DOMNode | None = None
         if destination:
             if destination not in self._action_targets:
