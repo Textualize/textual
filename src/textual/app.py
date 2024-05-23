@@ -3051,10 +3051,13 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             A tuple of (node or None, action name, tuple of parameters).
         """
+        print(action, default_namespace)
         if isinstance(action, tuple):
             destination, action_name, params = action
         else:
             destination, action_name, params = actions.parse(action)
+
+        print("parse action", destination, action_name, params)
         action_target: DOMNode | None = None
         if destination:
             if destination not in self._action_targets:
@@ -3101,7 +3104,7 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has been handled.
         """
-
+        print("r", action, default_namespace)
         action_target, action_name, params = self._parse_action(
             action, self if default_namespace is None else default_namespace
         )
