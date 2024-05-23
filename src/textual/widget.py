@@ -1123,10 +1123,11 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        async with self.batch():
-            await self.query("*").exclude(".-textual-system").remove()
-            if self._is_linked_to_app:
-                await self.mount_all(compose(self))
+        if self._parent is not None:
+            async with self.batch():
+                await self.query("*").exclude(".-textual-system").remove()
+                if self._is_linked_to_app:
+                    await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
