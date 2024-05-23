@@ -114,3 +114,10 @@ async def test_mount_via_app() -> None:
         await pilot.app.mount_all(widgets)
         with pytest.raises(TooManyMatches):
             await pilot.app.mount(Static(), before="Static")
+
+
+def test_mount_error() -> None:
+    """Mounting a widget on an un-mounted widget should raise an error."""
+    with pytest.raises(MountError):
+        widget = Widget()
+        widget.mount(Static())

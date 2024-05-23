@@ -216,6 +216,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._message_queue.qsize()
 
     @property
+    def is_dom_root(self):
+        """Is this a root node (i.e. the App)?"""
+        return False
+
+    @property
     def app(self) -> "App[object]":
         """
         Get the current app.
@@ -238,6 +243,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 node = node._parent
             active_app.set(node)
             return node
+
+    @property
+    def _is_linked_to_app(self) -> bool:
+        """Is this node linked to the app through the DOM?"""
+        node: MessagePump | None = self
+
+        while (node := node._parent) is not None:
+            if node.is_dom_root:
+                return True
+        return False
 
     @property
     def is_parent_active(self) -> bool:
