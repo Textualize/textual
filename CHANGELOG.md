@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed `Footer` grid size https://github.com/Textualize/textual/pull/4545
 
+### Changed
+
+- Attempting to mount on a non-mounted widget now raises a MountError https://github.com/Textualize/textual/pull/4547
+
 ## [0.63.2] - 2024-05-23
 
 ### Fixed
