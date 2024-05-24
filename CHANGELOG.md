@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed `Footer` grid size https://github.com/Textualize/textual/pull/4545
-- Fixed bindings not updated on auto focus
+- Fixed bindings not updated on auto focus https://github.com/Textualize/textual/pull/4551
 
 ### Changed
 
