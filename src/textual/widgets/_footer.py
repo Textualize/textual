@@ -81,7 +81,7 @@ class FooterKey(Widget):
         key_display = self.key_display
         if self.upper_case_keys:
             key_display = key_display.upper()
-        if key_display.lower().startswith("ctrl+"):
+        if self.ctrl_to_caret and key_display.lower().startswith("ctrl+"):
             key_display = "^" + key_display.split("+", 1)[1]
         description = self.description
         if self.compact:
