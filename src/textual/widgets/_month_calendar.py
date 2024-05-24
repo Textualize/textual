@@ -118,6 +118,9 @@ class MonthCalendar(Widget):
     ) -> None:
         event.stop()
         if not self.show_other_months and event.value is None:
+            # TODO: This handling of blank cells is obviously a bit hacky.
+            # Instead this widget should prevent highlighting a blank cell
+            # altogether, either with the keyboard or mouse.
             table = self.query_one(MonthCalendarTable)
             date_coordinate = self._get_date_coordinate(self.date)
             with self.prevent(MonthCalendarTable.CellHighlighted):
