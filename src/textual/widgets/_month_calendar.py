@@ -332,11 +332,17 @@ class MonthCalendar(Widget):
 
     def action_cursor_up(self) -> None:
         table = self.query_one(MonthCalendarTable)
-        table.action_cursor_up()
+        if self.show_other_months and table.cursor_row == 0:
+            self.date -= relativedelta(weeks=1)
+        else:
+            table.action_cursor_up()
 
     def action_cursor_down(self) -> None:
         table = self.query_one(MonthCalendarTable)
-        table.action_cursor_down()
+        if self.show_other_months and table.cursor_row == table.row_count - 1:
+            self.date += relativedelta(weeks=1)
+        else:
+            table.action_cursor_down()
 
     def action_cursor_right(self) -> None:
         table = self.query_one(MonthCalendarTable)

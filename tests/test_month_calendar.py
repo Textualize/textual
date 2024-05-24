@@ -312,7 +312,37 @@ async def test_hover_coordinate_persists_after_first_weekday_changes():
         assert table.hover_coordinate == Coordinate(2, 0)
 
 
-async def test_calendar_updates_if_date_outside_month_highlighted():
+async def test_calendar_updates_when_up_key_pressed_on_first_row():
+    """If `show_other_months` is True, pressing the `up` key when the cursor
+    is on the first row should update the date to the previous week and bring
+    that month into view"""
+
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(MonthCalendarTable)
+        await pilot.press("up")
+        assert month_calendar.date == datetime.date(2021, 5, 27)
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "26"
+
+
+async def test_calendar_updates_when_down_key_pressed_on_last_row():
+    """If `show_other_months` is True, pressing the `down` key when the cursor
+    is on the first row should update the date to the next week and bring
+    that month into view"""
+
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(MonthCalendarTable)
+        # Change the calendar date so the highlighted cell is on the last row
+        month_calendar.date = datetime.date(2021, 5, 31)
+        await pilot.press("down")
+        assert month_calendar.date == datetime.date(2021, 6, 7)
+        assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
+
+
+async def test_calendar_updates_when_date_outside_month_highlighted():
     """If `show_other_months` is True, highlighting a date from the previous
     or next month should update the calendar to bring that entire month into
     view"""
