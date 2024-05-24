@@ -10,6 +10,7 @@ from rich.text import Text
 
 from textual import on
 from textual.app import ComposeResult
+from textual.binding import Binding
 from textual.coordinate import Coordinate
 from textual.events import Mount
 from textual.message import Message
@@ -23,7 +24,19 @@ class InvalidWeekdayNumber(Exception):
     pass
 
 
+class MonthCalendarTable(DataTable, inherit_bindings=False):
+    pass
+
+
 class MonthCalendar(Widget):
+    BINDINGS = [
+        Binding("enter", "select_date", "Select Date", show=False),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
+        Binding("right", "cursor_right", "Cursor Right", show=False),
+        Binding("left", "cursor_left", "Cursor Left", show=False),
+    ]
+
     # TODO: min-width?
     DEFAULT_CSS = """
     MonthCalendar {
@@ -32,7 +45,7 @@ class MonthCalendar(Widget):
         min-height: 7;
     }
 
-    MonthCalendar > DataTable {
+    MonthCalendar > MonthCalendarTable {
         height: auto;
         width: auto;
     }
@@ -92,18 +105,18 @@ class MonthCalendar(Widget):
         self._calendar_dates = self._get_calendar_dates()
 
     def compose(self) -> ComposeResult:
-        yield DataTable(show_cursor=self.show_cursor)
+        yield MonthCalendarTable(show_cursor=self.show_cursor)
 
-    @on(DataTable.CellHighlighted)
+    @on(MonthCalendarTable.CellHighlighted)
     def _on_datatable_cell_highlighted(
         self,
-        event: DataTable.CellHighlighted,
+        event: MonthCalendarTable.CellHighlighted,
     ) -> None:
         event.stop()
         if not self.show_other_months and event.value is None:
-            table = self.query_one(DataTable)
+            table = self.query_one(MonthCalendarTable)
             date_coordinate = self._get_date_coordinate(self.date)
-            with self.prevent(DataTable.CellHighlighted):
+            with self.prevent(MonthCalendarTable.CellHighlighted):
                 table.cursor_coordinate = date_coordinate
         else:
             cursor_row, cursor_column = event.coordinate
@@ -120,14 +133,14 @@ class MonthCalendar(Widget):
 
             self.post_message(MonthCalendar.DateHighlighted(self, self.date))
 
-    @on(DataTable.CellSelected)
+    @on(MonthCalendarTable.CellSelected)
     def _on_datatable_cell_selected(
         self,
-        event: DataTable.CellSelected,
+        event: MonthCalendarTable.CellSelected,
     ) -> None:
         event.stop()
         if not self.show_other_months and event.value is None:
-            table = self.query_one(DataTable)
+            table = self.query_one(MonthCalendarTable)
             table._show_hover_cursor = False
             return
         # We cannot rely on the `event.coordinate` for the selected date,
@@ -138,10 +151,10 @@ class MonthCalendar(Widget):
         # `CellHighlighted` message *before* the `CellSelected` message.
         self.post_message(MonthCalendar.DateSelected(self, self.date))
 
-    @on(DataTable.HeaderSelected)
+    @on(MonthCalendarTable.HeaderSelected)
     def _on_datatable_header_selected(
         self,
-        event: DataTable.HeaderSelected,
+        event: MonthCalendarTable.HeaderSelected,
     ) -> None:
         event.stop()
         pass
@@ -162,7 +175,7 @@ class MonthCalendar(Widget):
         self._update_calendar_table(update_week_header=True)
 
         def hide_hover_cursor_if_blank_cell(hover_coordinate: Coordinate) -> None:
-            table = self.query_one(DataTable)
+            table = self.query_one(MonthCalendarTable)
             try:
                 hover_cell_value = table.get_cell_at(hover_coordinate)
             except CellDoesNotExist:
@@ -172,13 +185,13 @@ class MonthCalendar(Widget):
                 table._set_hover_cursor(False)
 
         self.watch(
-            self.query_one(DataTable),
+            self.query_one(MonthCalendarTable),
             "hover_coordinate",
             hide_hover_cursor_if_blank_cell,
         )
 
     def _update_calendar_table(self, update_week_header: bool) -> None:
-        table = self.query_one(DataTable)
+        table = self.query_one(MonthCalendarTable)
         old_hover_coordinate = table.hover_coordinate
         table.clear()
 
@@ -191,7 +204,7 @@ class MonthCalendar(Widget):
             for day in self._calendar.iterweekdays():
                 table.add_column(day_names[day])
 
-        with self.prevent(DataTable.CellHighlighted):
+        with self.prevent(MonthCalendarTable.CellHighlighted):
             for week in self._calendar_dates:
                 table.add_row(
                     *[
@@ -281,7 +294,7 @@ class MonthCalendar(Widget):
             self._calendar_dates = self._get_calendar_dates()
             self._update_calendar_table(update_week_header=False)
         else:
-            table = self.query_one(DataTable)
+            table = self.query_one(MonthCalendarTable)
             cursor_row, cursor_column = table.cursor_coordinate
             if self._calendar_dates[cursor_row][cursor_column] != new_date:
                 date_coordinate = self._get_date_coordinate(self.date)
@@ -297,7 +310,7 @@ class MonthCalendar(Widget):
     def watch_show_cursor(self, show_cursor: bool) -> None:
         if not self.is_mounted:
             return
-        table = self.query_one(DataTable)
+        table = self.query_one(MonthCalendarTable)
         table.show_cursor = show_cursor
 
     def watch_show_other_months(self) -> None:
@@ -305,3 +318,23 @@ class MonthCalendar(Widget):
         if not self.is_mounted:
             return
         self._update_calendar_table(update_week_header=False)
+
+    def action_select_date(self) -> None:
+        table = self.query_one(MonthCalendarTable)
+        table.action_select_cursor()
+
+    def action_cursor_up(self) -> None:
+        table = self.query_one(MonthCalendarTable)
+        table.action_cursor_up()
+
+    def action_cursor_down(self) -> None:
+        table = self.query_one(MonthCalendarTable)
+        table.action_cursor_down()
+
+    def action_cursor_right(self) -> None:
+        table = self.query_one(MonthCalendarTable)
+        table.action_cursor_right()
+
+    def action_cursor_left(self) -> None:
+        table = self.query_one(MonthCalendarTable)
+        table.action_cursor_left()

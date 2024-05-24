@@ -7,7 +7,8 @@ import pytest
 from textual import on
 from textual.app import App, ComposeResult
 from textual.coordinate import Coordinate
-from textual.widgets import DataTable, MonthCalendar
+from textual.widgets import MonthCalendar
+from textual.widgets._month_calendar import MonthCalendarTable
 from textual.widgets.month_calendar import InvalidWeekdayNumber
 
 
@@ -63,7 +64,7 @@ async def test_calendar_defaults_to_today_if_no_date_provided():
         assert month_calendar.date.month == today.month
         assert month_calendar.date.year == today.year
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         assert table.get_cell_at(table.cursor_coordinate).plain == str(today.day)
 
 
@@ -88,7 +89,7 @@ async def test_calendar_table_week_header():
     app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         actual_labels = [col.label.plain for col in table.columns.values()]
         expected_labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         assert actual_labels == expected_labels
@@ -98,7 +99,7 @@ async def test_calendar_table_days():
     app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         for row, week in enumerate(month_calendar._calendar_dates):
             for column, date in enumerate(week):
                 actual_day = table.get_cell_at(Coordinate(row, column)).plain
@@ -113,7 +114,7 @@ async def test_calendar_table_after_reactive_date_change_to_different_month():
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.date = datetime.date(year=2022, month=10, day=2)
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2022, 9, 26)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -128,7 +129,7 @@ async def test_calendar_table_after_reactive_date_change_within_same_month():
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.date = datetime.date(year=2021, month=6, day=19)
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 5, 31)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -142,7 +143,7 @@ async def test_calendar_table_after_reactive_first_weekday_change():
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         month_calendar.first_weekday = 6  # Sunday
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
 
         actual_labels = [col.label.plain for col in table.columns.values()]
         expected_labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
@@ -160,7 +161,7 @@ async def test_show_cursor():
     app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         assert table.show_cursor is True
         month_calendar.show_cursor = False
         assert table.show_cursor is False
@@ -175,7 +176,7 @@ async def test_previous_year():
         assert month_calendar.date.year == 2020
         assert month_calendar.date.month == 6
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2020, 5, 25)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -191,7 +192,7 @@ async def test_next_year():
         assert month_calendar.date.year == 2022
         assert month_calendar.date.month == 6
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2022, 5, 30)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -207,7 +208,7 @@ async def test_previous_month():
         assert month_calendar.date.year == 2021
         assert month_calendar.date.month == 5
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 4, 26)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -227,7 +228,7 @@ async def test_previous_month_when_month_is_january():
         assert month_calendar.date.year == 2020
         assert month_calendar.date.month == 12
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2020, 11, 30)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -243,7 +244,7 @@ async def test_next_month():
         assert month_calendar.date.year == 2021
         assert month_calendar.date.month == 7
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 6, 28)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -263,7 +264,7 @@ async def test_next_month_when_month_is_december():
         assert month_calendar.date.year == 2022
         assert month_calendar.date.month == 1
 
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         expected_first_monday = datetime.date(2021, 12, 27)
         actual_first_monday = month_calendar._calendar_dates[0][0]
         assert actual_first_monday == expected_first_monday
@@ -291,7 +292,7 @@ async def test_hover_coordinate_persists_after_month_changes():
     app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         await pilot.hover(MonthCalendar, offset=(3, 3))
         assert table.hover_coordinate == Coordinate(2, 0)
 
@@ -303,7 +304,7 @@ async def test_hover_coordinate_persists_after_first_weekday_changes():
     app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         await pilot.hover(MonthCalendar, offset=(3, 3))
         assert table.hover_coordinate == Coordinate(2, 0)
 
@@ -326,7 +327,7 @@ async def test_calendar_updates_if_date_outside_month_highlighted():
     app = ShowOtherMonthsApp()
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         # Sanity check
         assert table.cursor_coordinate == Coordinate(0, 1)
         expected_first_monday = datetime.date(2021, 5, 31)
@@ -369,7 +370,7 @@ async def test_calendar_if_show_other_months_is_false():
     app = HideOtherMonthsApp()
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
 
         expected_messages = [("DateHighlighted", datetime.date(2021, 6, 1))]
         expected_coordinate = Coordinate(0, 1)
@@ -409,7 +410,7 @@ async def test_calendar_after_reactive_show_other_months_change():
     app = ShowOtherMonthsApp()
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
-        table = month_calendar.query_one(DataTable)
+        table = month_calendar.query_one(MonthCalendarTable)
         # Sanity check
         expected_first_monday = datetime.date(2021, 5, 31)
         actual_first_monday = month_calendar._calendar_dates[0][0]
@@ -433,30 +434,31 @@ async def test_clicking_data_table_cell_emits_highlighted_before_selected_messag
     have changed!
     """
 
-    class DataTableApp(App):
+    class MonthCalendarTableApp(App):
         def __init__(self) -> None:
             super().__init__()
             self.messages: list[tuple[str, str]] = []
 
         def compose(self) -> ComposeResult:
-            yield DataTable()
+            yield MonthCalendarTable()
 
         def on_mount(self) -> None:
-            table = self.query_one(DataTable)
-            with self.prevent(DataTable.CellHighlighted):
+            table = self.query_one(MonthCalendarTable)
+            with self.prevent(MonthCalendarTable.CellHighlighted):
                 table.add_columns("Col0", "Col1")
                 table.add_row(*["0/0", "0/1"])
 
-        @on(DataTable.CellHighlighted)
-        @on(DataTable.CellSelected)
+        @on(MonthCalendarTable.CellHighlighted)
+        @on(MonthCalendarTable.CellSelected)
         def record(
-            self, event: DataTable.CellHighlighted | DataTable.CellSelected
+            self,
+            event: MonthCalendarTable.CellHighlighted | MonthCalendarTable.CellSelected,
         ) -> None:
             self.messages.append((event.__class__.__name__, str(event.value)))
 
-    app = DataTableApp()
+    app = MonthCalendarTableApp()
     async with app.run_test() as pilot:
-        await pilot.click(DataTable, offset=(8, 1))
+        await pilot.click(MonthCalendarTable, offset=(8, 1))
         assert app.messages == [
             ("CellHighlighted", "0/1"),
             ("CellSelected", "0/1"),
