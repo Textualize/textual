@@ -112,7 +112,7 @@ class MonthCalendar(Widget):
         yield MonthCalendarTable(show_cursor=self.show_cursor)
 
     @on(MonthCalendarTable.CellHighlighted)
-    def _on_datatable_cell_highlighted(
+    def _on_table_cell_highlighted(
         self,
         event: MonthCalendarTable.CellHighlighted,
     ) -> None:
@@ -138,7 +138,7 @@ class MonthCalendar(Widget):
             self.post_message(MonthCalendar.DateHighlighted(self, self.date))
 
     @on(MonthCalendarTable.CellSelected)
-    def _on_datatable_cell_selected(
+    def _on_table_cell_selected(
         self,
         event: MonthCalendarTable.CellSelected,
     ) -> None:
@@ -156,7 +156,7 @@ class MonthCalendar(Widget):
         self.post_message(MonthCalendar.DateSelected(self, self.date))
 
     @on(MonthCalendarTable.HeaderSelected)
-    def _on_datatable_header_selected(
+    def _on_table_header_selected(
         self,
         event: MonthCalendarTable.HeaderSelected,
     ) -> None:
