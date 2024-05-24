@@ -112,4 +112,4 @@ widget.styles.padding = (1, 2, 3, 4)
 ## See also
 
  - [`box-sizing`](./box_sizing.md) to specify how to account for padding in a widget's dimensions.
- - [`padding`](./margin.md) to add spacing around a widget.
+ - [`margin`](./margin.md) to add spacing around a widget.

@@ -206,14 +206,15 @@ class GridLayout(Layout):
                         if widget.styles.row_span != 1:
                             continue
                         column_width = columns[column][1]
+                        gutter_width, gutter_height = widget.styles.gutter.totals
                         widget_height = apply_height_limits(
                             widget,
                             widget.get_content_height(
                                 size,
                                 viewport,
-                                column_width,
+                                column_width - gutter_width,
                             )
-                            + widget.styles.gutter.height,
+                            + gutter_height,
                         )
                         height = max(height, widget_height)
                 row_scalars[row] = Scalar.from_number(height)

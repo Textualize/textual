@@ -64,8 +64,8 @@ def test_get_key_display_when_used_in_conjunction():
 
     right_square_bracket = _get_key_display("right_square_bracket")
     ctrl_right_square_bracket = _get_key_display("ctrl+right_square_bracket")
-    assert ctrl_right_square_bracket == f"CTRL+{right_square_bracket}"
+    assert ctrl_right_square_bracket == f"ctrl+{right_square_bracket}"
 
     left = _get_key_display("left")
     ctrl_left = _get_key_display("ctrl+left")
-    assert ctrl_left == f"CTRL+{left}"
+    assert ctrl_left == f"ctrl+{left}"

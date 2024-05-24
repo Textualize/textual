@@ -42,6 +42,7 @@ from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive, TooManyComputesError
+from .signal import Signal
 from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
@@ -144,6 +145,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
         self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
+        self._prevented_messages_on_mount = self._prevent_message_types_stack[-1]
+        self.message_signal: Signal[Message] = Signal(self, "messages")
+        """Subscribe to this signal to be notified of all messages sent to this widget.
+        
+        This is a fairly low-level mechanism, and shouldn't replace regular message handling.
+        
+        """
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -208,6 +216,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._message_queue.qsize()
 
     @property
+    def is_dom_root(self):
+        """Is this a root node (i.e. the App)?"""
+        return False
+
+    @property
     def app(self) -> "App[object]":
         """
         Get the current app.
@@ -230,6 +243,16 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 node = node._parent
             active_app.set(node)
             return node
+
+    @property
+    def _is_linked_to_app(self) -> bool:
+        """Is this node linked to the app through the DOM?"""
+        node: MessagePump | None = self
+
+        while (node := node._parent) is not None:
+            if node.is_dom_root:
+                return True
+        return False
 
     @property
     def is_parent_active(self) -> bool:
@@ -350,7 +373,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Make a function call after a delay.
 
         Args:
-            delay: Time to wait before invoking callback.
+            delay: Time (in seconds) to wait before invoking callback.
             callback: Callback to call after time has expired.
             name: Name of the timer (for debug).
             pause: Start timer paused.
@@ -382,7 +405,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Call a function at periodic intervals.
 
         Args:
-            interval: Time between calls.
+            interval: Time (in seconds) between calls.
             callback: Function to call.
             name: Name of the timer object.
             repeat: Number of times to repeat the call or 0 for continuous.
@@ -524,7 +547,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         try:
             await self._dispatch_message(events.Compose())
-            await self._dispatch_message(events.Mount())
+            if self._prevented_messages_on_mount:
+                with self.prevent(*self._prevented_messages_on_mount):
+                    await self._dispatch_message(events.Mount())
+            else:
+                await self._dispatch_message(events.Mount())
             self.check_idle()
             self._post_mount()
         except Exception as error:
@@ -577,6 +604,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 self.app._handle_exception(error)
                 break
             finally:
+                self.message_signal.publish(message)
                 self._message_queue.task_done()
 
                 current_time = time()

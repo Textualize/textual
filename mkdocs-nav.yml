@@ -69,6 +69,7 @@ nav:
           - "events/screen_resume.md"
           - "events/screen_suspend.md"
           - "events/show.md"
+          - "events/unmount.md"
       - Styles:
           - "styles/index.md"
           - "styles/align.md"
@@ -138,6 +139,7 @@ nav:
       - Widgets:
           - "widgets/button.md"
           - "widgets/checkbox.md"
+          - "widgets/classic_footer.md"
           - "widgets/collapsible.md"
           - "widgets/content_switcher.md"
           - "widgets/data_table.md"
@@ -222,6 +224,7 @@ nav:
       - "how-to/design-a-layout.md"
       - "how-to/package-with-hatch.md"
       - "how-to/render-and-compose.md"
+      - "how-to/style-inline-apps.md"
   - "FAQ.md"
   - "roadmap.md"
   - "Blog":

@@ -35,7 +35,6 @@ async def test_keyboard_navigation_with_disabled_items() -> None:
             await pilot.press("up")
 
     assert app.highlighted == [
-        None,
         "1",
         "4",
         "5",

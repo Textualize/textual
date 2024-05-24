@@ -5,21 +5,239 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.63.3] - 2024-05-24
+
+### Fixed
+
+- Fixed `Footer` grid size https://github.com/Textualize/textual/pull/4545
+- Fixed bindings not updated on auto focus https://github.com/Textualize/textual/pull/4551
+
+### Changed
+
+- Attempting to mount on a non-mounted widget now raises a MountError https://github.com/Textualize/textual/pull/4547
+
+## [0.63.2] - 2024-05-23
+
+### Fixed
+
+- Fixed issue with namespaces in links https://github.com/Textualize/textual/pull/4546
+
+## [0.63.1] - 2024-05-22
+
+### Fixed
+
+- Fixed display of multiple bindings https://github.com/Textualize/textual/pull/4543
+
+## [0.63.0] - 2024-05-22
+
+### Fixed
+
+- Fixed actions in links https://github.com/Textualize/textual/pull/4540
+
+### Changed
+
+- Breaking change: New Footer (likely a drop in replacement, unless you have customized styles) https://github.com/Textualize/textual/pull/4537
+- Stylistic changes to Markdown (simpler headers, less margin, etc) https://github.com/Textualize/textual/pull/4541
+
+## [0.62.0] - 2024-05-20
+
+### Added
+
+- Added `start` and `end` properties to Markdown Navigator
+- Added `Widget.anchor`, `Widget.clear_anchor`, and `Widget.is_anchored` https://github.com/Textualize/textual/pull/4530
+
+## [0.61.1] - 2024-05-19
+
+### Fixed
+
+- Fixed auto grid columns ignoring gutter https://github.com/Textualize/textual/issues/4522
+
+## [0.61.0] - 2024-05-18
+
+### Added
+
+- Added `App.get_default_screen` https://github.com/Textualize/textual/pull/4520
+- Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
+- Added `"focused"` action namespace so you can bind a key to an action on the focused widget https://github.com/Textualize/textual/pull/4516
+- Added "focused" to allowed action namespaces https://github.com/Textualize/textual/pull/4516
+
+### Changed
+
+- Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled. This was undocumented anyway, and not that useful. https://github.com/Textualize/textual/pull/4516
+- Breaking change: Renamed `App.namespace_bindings` to `active_bindings`
+
+
+## [0.60.1] - 2024-05-15
+
+### Fixed
+
+- Dependency issue
+
+## [0.60.0] - 2024-05-14 
+
+### Fixed
+
+- Fixed auto width not working for option lists https://github.com/Textualize/textual/pull/4507
+
+### Added
+
+- Added `DOMNode.query_children` https://github.com/Textualize/textual/pull/4508
+
+## [0.59.0] - 2024-05-11
+
+### Fixed
+
+- Fixed `SelectionList` issues after removing an option https://github.com/Textualize/textual/pull/4464
+- Fixed `ListView` bugs with the initial index https://github.com/Textualize/textual/pull/4452
+- Fixed `Select` not closing https://github.com/Textualize/textual/pull/4499
+- Fixed setting `loading=False` removing all child loading indicators https://github.com/Textualize/textual/pull/4499
+
+### Changed
+
+- When displaying a message using `App.exit()`, the console no longer highlights things such as numbers.
+
+### Added
+
+- Added `message_signal` to MessagePump, to listen to events sent to another widget. https://github.com/Textualize/textual/pull/4487
+- Added `Widget.suppress_click` https://github.com/Textualize/textual/pull/4499
+
+## [0.58.1] - 2024-05-01
+
+### Fixed
+
+- Fixed issue with Markdown mounting content lazily https://github.com/Textualize/textual/pull/4466
+- Fixed intermittent issue with scrolling to focus https://github.com/Textualize/textual/commit/567caf8acb196260adf6a0a6250e3ff5093056d0
+- Fixed issue with scrolling to center https://github.com/Textualize/textual/pull/4469
+
+
+## [0.58.0] - 2024-04-25
+
+### Fixed
+
+- Fixed `TextArea` to end mouse selection only if currently selecting https://github.com/Textualize/textual/pull/4436
+- Fixed issue with scroll_to_widget https://github.com/Textualize/textual/pull/4446
+- Fixed issue with margins https://github.com/Textualize/textual/pull/4441
+
+### Changed
+
+- Added argument to signal callbacks https://github.com/Textualize/textual/pull/4438
+
+## [0.57.1] - 2024-04-20
+
+### Fixed
+
+- Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
+- Fixed setting scrollbar colors not updating the scrollbar https://github.com/Textualize/textual/pull/4433
+- Fixed flushing in inline mode https://github.com/Textualize/textual/pull/4435
+
+### Added
+
+- Added `Offset.clamp` and `Size.clamp_offset` https://github.com/Textualize/textual/pull/4435
+
+
+## [0.57.0] - 2024-04-19
+
+### Fixed
+
+- Fixed `Integer` validator missing failure description when not a number https://github.com/Textualize/textual/issues/4413
+- Fixed a crash in `DataTable` if you clicked a link in the border https://github.com/Textualize/textual/issues/4410
+- Fixed issue with cursor position https://github.com/Textualize/textual/pull/4429
+
+### Added
+
+- Added `App.copy_to_clipboard` https://github.com/Textualize/textual/pull/4416
+
+## [0.56.4] - 2024-04-09
+
+### Fixed
+
+- Disabled terminal synchronization in inline mode as it breaks on some terminals
+
+## [0.56.3] - 2024-04-08
+
+### Fixed
+
+- Fixed inline mode not updating https://github.com/Textualize/textual/issues/4403
+
+## [0.56.2] - 2024-04-07
+
+### Fixed
+
+- Fixed inline mode not clearing with multiple screen
+
+## [0.56.1] - 2024-04-07
+
+### Fixed
+
+- Fixed flicker when non-current screen updates https://github.com/Textualize/textual/pull/4401
+
+### Changed
+
+- Removed additional line at the end of an inline app https://github.com/Textualize/textual/pull/4401
+
+## [0.56.0] - 2024-04-06
+
+### Added
+
+- Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
+  
+### Fixed
+
+- Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
+- Fixed issue with priority bindings https://github.com/Textualize/textual/pull/4395
+
+### Changed
+
+- self.prevent can be used in a widget constructor to prevent messages on mount https://github.com/Textualize/textual/pull/4392
+
+
+## [0.55.1] - 2024-04-2
+
+### Fixed
+
+- Fixed mouse escape sequences being generated with `mouse=False` 
+
+## [0.55.0] - 2024-04-1
+
+### Fixed
+
+- Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
+- Reverted auto-width change https://github.com/Textualize/textual/pull/4369
+
+### Changed
+
+- Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
+- Fixed `DataTable` scrolling issues by changing `max-height` back to 100% https://github.com/Textualize/textual/issues/4286
+- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
+
+### Added
+
+- Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
+- Added support for JavaScript, Golang, Rust, Bash, Java and Kotlin to `TextArea` https://github.com/Textualize/textual/pull/4350
+- Added `inline` parameter to `run` and `run_async` to run app inline (under the prompt). https://github.com/Textualize/textual/pull/4343
+- Added `mouse` parameter to disable mouse support https://github.com/Textualize/textual/pull/4343
+
+## [0.54.0] - 2024-03-26
 
 ### Fixed
 
 - Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
+- Fixed issue with flickering scrollbars https://github.com/Textualize/textual/pull/4315
+- Fixed issue where narrow TextArea would repeatedly wrap due to scrollbar appearing/disappearing https://github.com/Textualize/textual/pull/4334
 - Fix progress bar ETA not updating when setting `total` reactive https://github.com/Textualize/textual/pull/4316
-- ProgressBar won't show ETA until there is at least one second of samples https://github.com/Textualize/textual/pull/4316
 
-## [0.53.1] - 2023-03-18
+### Changed
+
+- ProgressBar won't show ETA until there is at least one second of samples https://github.com/Textualize/textual/pull/4316
+- `Input` waits until an edit has been made, after entry to the widget, before offering a suggestion https://github.com/Textualize/textual/pull/4335
+
+## [0.53.1] - 2024-03-18
 
 ### Fixed
 
 - Fixed issue with data binding https://github.com/Textualize/textual/pull/4308
 
-## [0.53.0] - 2023-03-18
+## [0.53.0] - 2024-03-18
 
 ### Added
 
@@ -1795,6 +2013,27 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.63.3]: https://github.com/Textualize/textual/compare/v0.63.2...v0.63.3
+[0.63.2]: https://github.com/Textualize/textual/compare/v0.63.1...v0.63.2
+[0.63.1]: https://github.com/Textualize/textual/compare/v0.63.0...v0.63.1
+[0.63.0]: https://github.com/Textualize/textual/compare/v0.62.0...v0.63.0
+[0.62.0]: https://github.com/Textualize/textual/compare/v0.61.1...v0.62.0
+[0.61.1]: https://github.com/Textualize/textual/compare/v0.61.0...v0.61.1
+[0.61.0]: https://github.com/Textualize/textual/compare/v0.60.1...v0.61.0
+[0.60.1]: https://github.com/Textualize/textual/compare/v0.60.0...v0.60.1
+[0.60.0]: https://github.com/Textualize/textual/compare/v0.59.0...v0.60.0
+[0.59.0]: https://github.com/Textualize/textual/compare/v0.58.1...v0.59.0
+[0.58.1]: https://github.com/Textualize/textual/compare/v0.58.0...v0.58.1
+[0.58.0]: https://github.com/Textualize/textual/compare/v0.57.1...v0.58.0
+[0.57.1]: https://github.com/Textualize/textual/compare/v0.57.0...v0.57.1
+[0.57.0]: https://github.com/Textualize/textual/compare/v0.56.3...v0.57.0
+[0.56.3]: https://github.com/Textualize/textual/compare/v0.56.2...v0.56.3
+[0.56.2]: https://github.com/Textualize/textual/compare/v0.56.1...v0.56.2
+[0.56.1]: https://github.com/Textualize/textual/compare/v0.56.0...v0.56.1
+[0.56.0]: https://github.com/Textualize/textual/compare/v0.55.1...v0.56.0
+[0.55.1]: https://github.com/Textualize/textual/compare/v0.55.0...v0.55.1
+[0.55.0]: https://github.com/Textualize/textual/compare/v0.54.0...v0.55.0
+[0.54.0]: https://github.com/Textualize/textual/compare/v0.53.1...v0.54.0
 [0.53.1]: https://github.com/Textualize/textual/compare/v0.53.0...v0.53.1
 [0.53.0]: https://github.com/Textualize/textual/compare/v0.52.1...v0.53.0
 [0.52.1]: https://github.com/Textualize/textual/compare/v0.52.0...v0.52.1

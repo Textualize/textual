@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
 
@@ -46,6 +47,16 @@ class Navigator:
         if not self.stack:
             return Path(".")
         return self.stack[self.index]
+
+    @property
+    def start(self) -> bool:
+        """Is the current location at the start of the stack?"""
+        return self.index == 0
+
+    @property
+    def end(self) -> bool:
+        """Is the current location at the end of the stack?"""
+        return self.index >= len(self.stack) - 1
 
     def go(self, path: str | PurePath) -> Path:
         """Go to a new document.
@@ -149,7 +160,12 @@ class MarkdownBlock(Static):
         if token.children:
             for child in token.children:
                 if child.type == "text":
-                    content.append(child.content, style_stack[-1])
+                    content.append(
+                        # Ensure repeating spaces and/or tabs get squashed
+                        # down to a single space.
+                        re.sub(r"\s+", " ", child.content),
+                        style_stack[-1],
+                    )
                 if child.type == "hardbreak":
                     content.append("\n")
                 if child.type == "softbreak":
@@ -215,6 +231,8 @@ class MarkdownHeader(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownHeader {
         color: $text;
+        margin: 2 0 1 0;
+       
     }
     """
 
@@ -225,13 +243,10 @@ class MarkdownH1(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH1 {
-        background: $accent-darken-2;
-        border: wide $background;
-        content-align: center middle;
-
-        padding: 1;
+        content-align: center middle;             
         text-style: bold;
-        color: $text;
+        color: $success;
+        &:light {color: $primary;}
     }
     """
 
@@ -242,13 +257,10 @@ class MarkdownH2(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH2 {
-        background: $panel;
-        border: wide $background;
-        text-align: center;
         text-style: underline;
-        color: $text;
-        padding: 1;
-        text-style: bold;
+        color: $success;
+         &:light {color: $primary;}
+      
     }
     """
 
@@ -258,10 +270,11 @@ class MarkdownH3(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH3 {
-        background: $surface;
+       
         text-style: bold;
-        color: $text;
-        border-bottom: wide $foreground;
+        color: $success;
+        &:light {color: $primary;}
+        margin: 1 0;
         width: auto;
     }
     """
@@ -272,8 +285,9 @@ class MarkdownH4(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH4 {
-        text-style: underline;
+        text-style: bold underline;
         margin: 1 0;
+        color: $text;
     }
     """
 
@@ -286,6 +300,7 @@ class MarkdownH5(MarkdownHeader):
         text-style: bold;
         color: $text;
         margin: 1 0;
+       
     }
     """
 
@@ -332,9 +347,12 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $success;
+        border-left: outer $success-darken-2;
         margin: 1 0;
         padding: 0 1;
+    }
+    MarkdownBlockQuote:light {
+        border-left: outer $primary;
     }
     MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
@@ -475,10 +493,8 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 100%;
-        margin: 1 0;
-        background: $panel;
-        border: wide $background;
+        width: 100%;     
+        background: $panel;        
     }
     """
 
@@ -531,10 +547,13 @@ class MarkdownBullet(Widget):
         width: auto;
         color: $success;
         text-style: bold;
+        &:light {
+            color: $primary;
+        }
     }
     """
 
-    symbol = reactive("\u25CF")
+    symbol = reactive("\u25cf")
     """The symbol for the bullet."""
 
     def render(self) -> Text:
@@ -578,9 +597,11 @@ class MarkdownFence(MarkdownBlock):
         margin: 1 0;
         overflow: auto;
         width: 100%;
-        height: auto;
+        height: auto;       
         max-height: 20;
         color: rgb(210,210,210);
+
+        
     }
 
     MarkdownFence > * {
@@ -645,8 +666,9 @@ class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
         height: auto;
-        margin: 0 4 1 4;
+        margin: 0 2 1 2;
         layout: vertical;
+        color: $text;
     }
     .em {
         text-style: italic;
@@ -675,7 +697,7 @@ class Markdown(Widget):
     | `strong` | Target text that is styled inline with strong. |
     """
 
-    BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
+    BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
 
     code_dark_theme: reactive[str] = reactive("material")
     """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
@@ -765,9 +787,9 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    def _on_mount(self, _: Mount) -> None:
+    async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
-            self.update(self._markdown)
+            await self.update(self._markdown)
 
     def _watch_code_dark_theme(self) -> None:
         """React to the dark theme being changed."""
@@ -1060,6 +1082,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     navigator: var[Navigator] = var(Navigator)
 
+    class NavigatorUpdated(Message):
+        """Navigator has been changed (clicked link etc)."""
+
     def __init__(
         self,
         markdown: str | None = None,
@@ -1108,16 +1133,19 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         else:
             # We've been asked to go to a file, optionally with an anchor.
             await self.document.load(self.navigator.go(location))
+            self.post_message(self.NavigatorUpdated())
 
     async def back(self) -> None:
         """Go back one level in the history."""
         if self.navigator.back():
             await self.document.load(self.navigator.location)
+            self.post_message(self.NavigatorUpdated())
 
     async def forward(self) -> None:
         """Go forward one level in the history."""
         if self.navigator.forward():
             await self.document.load(self.navigator.location)
+            self.post_message(self.NavigatorUpdated())
 
     async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
         message.stop()

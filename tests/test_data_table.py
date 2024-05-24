@@ -6,7 +6,7 @@ from rich.text import Text
 
 from textual._wait import wait_for_idle
 from textual.actions import SkipAction
-from textual.app import App, RenderableType
+from textual.app import App, ComposeResult, RenderableType
 from textual.coordinate import Coordinate
 from textual.geometry import Offset
 from textual.message import Message
@@ -1420,3 +1420,31 @@ async def test_move_cursor_respects_animate_parameter():
         await pilot.press("s")
 
     assert scrolls == [True, False]
+
+
+async def test_clicking_border_link_doesnt_crash():
+    """Regression test for https://github.com/Textualize/textual/issues/4410"""
+
+    class DataTableWithBorderLinkApp(App):
+        CSS = """
+        DataTable {
+            border: solid red;
+        }
+        """
+        link_clicked = False
+
+        def compose(self) -> ComposeResult:
+            yield DataTable()
+
+        def on_mount(self) -> None:
+            table = self.query_one(DataTable)
+            table.border_title = "[@click=app.test_link]Border Link[/]"
+
+        def action_test_link(self) -> None:
+            self.link_clicked = True
+
+    app = DataTableWithBorderLinkApp()
+    async with app.run_test() as pilot:
+        # Test clicking the link in the border doesn't crash with KeyError: 'row'
+        await pilot.click(DataTable, offset=(5, 0))
+        assert app.link_clicked is True

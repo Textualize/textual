@@ -16,17 +16,17 @@ For an in-depth look at the grid layout, visit the grid [guide](../../guide/layo
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<a href="./column_span.md">column-span</a>: <a href="../../css_types/integer">&lt;integer&gt;</a>;
+<a href="./column_span/">column-span</a>: <a href="../../../css_types/integer">&lt;integer&gt;</a>;
 
-<a href="./grid_columns.md">grid-columns</a>: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
+<a href="./grid_columns/">grid-columns</a>: <a href="../../../css_types/scalar">&lt;scalar&gt;</a>+;
 
-<a href="./grid_gutter.md">grid-gutter</a>: <a href="../../css_types/scalar">&lt;scalar&gt;</a> [<a href="../../css_types/scalar">&lt;scalar&gt;</a>];
+<a href="./grid_gutter/">grid-gutter</a>: <a href="../../../css_types/scalar">&lt;scalar&gt;</a> [<a href="../../../css_types/scalar">&lt;scalar&gt;</a>];
 
-<a href="./grid_rows.md">grid-rows</a>: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
+<a href="./grid_rows/">grid-rows</a>: <a href="../../../css_types/scalar">&lt;scalar&gt;</a>+;
 
-<a href="./grid_size.md">grid-size</a>: <a href="../../css_types/integer">&lt;integer&gt;</a> [<a href="../../css_types/integer">&lt;integer&gt;</a>];
+<a href="./grid_size/">grid-size</a>: <a href="../../../css_types/integer">&lt;integer&gt;</a> [<a href="../../../css_types/integer">&lt;integer&gt;</a>];
 
-<a href="./row_span.md">row-span</a>: <a href="../../css_types/integer">&lt;integer&gt;</a>;
+<a href="./row_span/">row-span</a>: <a href="../../../css_types/integer">&lt;integer&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 Visit each style's reference page to learn more about how the values are used.

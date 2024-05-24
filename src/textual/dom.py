@@ -1234,7 +1234,7 @@ class DOMNode(MessagePump):
         return cast("list[DOMNode]", nodes)
 
     @overload
-    def query(self, selector: str | None) -> DOMQuery[Widget]: ...
+    def query(self, selector: str | None = None) -> DOMQuery[Widget]: ...
 
     @overload
     def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
@@ -1257,6 +1257,35 @@ class DOMNode(MessagePump):
             return DOMQuery[Widget](self, filter=selector)
         else:
             return DOMQuery[QueryType](self, filter=selector.__name__)
+
+    @overload
+    def query_children(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+
+    @overload
+    def query_children(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
+
+    def query_children(
+        self, selector: str | type[QueryType] | None = None
+    ) -> DOMQuery[Widget] | DOMQuery[QueryType]:
+        """Query the DOM for the immediate children that match a selector or widget type.
+
+        Note that this will not return child widgets more than a single level deep.
+        If you want to a query to potentially match all children in the widget tree,
+        see [query][textual.dom.DOMNode.query].
+
+        Args:
+            selector: A CSS selector, widget type, or `None` for all nodes.
+
+        Returns:
+            A query object.
+        """
+        from .css.query import DOMQuery, QueryType
+        from .widget import Widget
+
+        if isinstance(selector, str) or selector is None:
+            return DOMQuery[Widget](self, deep=False, filter=selector)
+        else:
+            return DOMQuery[QueryType](self, deep=False, filter=selector.__name__)
 
     @overload
     def query_one(self, selector: str) -> Widget: ...
@@ -1452,6 +1481,31 @@ class DOMNode(MessagePump):
         self, *, repaint: bool = True, layout: bool = False, recompose: bool = False
     ) -> Self:
         return self
+
+    def check_action(self, action: str, parameters: tuple[object, ...]) -> bool | None:
+        """Check whether an action is enabled.
+
+        Implement this method to add logic for [dynamic actions](/guide/actions#dynamic-actions) / bindings.
+
+        Args:
+            action: The name of an action.
+            action_parameters: A tuple of any action parameters.
+
+        Returns:
+            `True` if the action is enabled+visible,
+                `False` if the action is disabled+hidden,
+                `None` if the action is disabled+visible (grayed out in footer)
+        """
+        return True
+
+    def refresh_bindings(self) -> None:
+        """Call to prompt widgets such as the [Footer][textual.widgets.Footer] to update
+        the display of key bindings.
+
+        See [actions](/guide/actions#dynamic-actions) for how to use this method.
+
+        """
+        self.call_later(self.screen.refresh_bindings)
 
     async def action_toggle(self, attribute_name: str) -> None:
         """Toggle an attribute on the node.

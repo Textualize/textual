@@ -105,6 +105,7 @@ class Reactive(Generic[ReactiveType]):
         always_update: Call watchers even when the new value equals the old value.
         compute: Run compute methods when attribute is changed.
         recompose: Compose the widget again when the attribute changes.
+        bindings: Refresh bindings when the reactive changes.
     """
 
     _reactives: ClassVar[dict[str, object]] = {}
@@ -119,6 +120,7 @@ class Reactive(Generic[ReactiveType]):
         always_update: bool = False,
         compute: bool = True,
         recompose: bool = False,
+        bindings: bool = False,
     ) -> None:
         self._default = default
         self._layout = layout
@@ -127,6 +129,7 @@ class Reactive(Generic[ReactiveType]):
         self._always_update = always_update
         self._run_compute = compute
         self._recompose = recompose
+        self._bindings = bindings
         self._owner: Type[MessageTarget] | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -289,6 +292,9 @@ class Reactive(Generic[ReactiveType]):
             if self._run_compute:
                 self._compute(obj)
 
+            if self._bindings:
+                obj.refresh_bindings()
+
             # Refresh according to descriptor flags
             if self._layout or self._repaint or self._recompose:
                 obj.refresh(
@@ -367,6 +373,7 @@ class reactive(Reactive[ReactiveType]):
         repaint: Perform a repaint on change.
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
+        bindings: Refresh bindings when the reactive changes.
     """
 
     def __init__(
@@ -378,6 +385,7 @@ class reactive(Reactive[ReactiveType]):
         init: bool = True,
         always_update: bool = False,
         recompose: bool = False,
+        bindings: bool = False,
     ) -> None:
         super().__init__(
             default,
@@ -386,6 +394,7 @@ class reactive(Reactive[ReactiveType]):
             init=init,
             always_update=always_update,
             recompose=recompose,
+            bindings=bindings,
         )
 
 
@@ -396,6 +405,7 @@ class var(Reactive[ReactiveType]):
         default: A default value or callable that returns a default.
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
+        bindings: Refresh bindings when the reactive changes.
     """
 
     def __init__(
@@ -403,6 +413,7 @@ class var(Reactive[ReactiveType]):
         default: ReactiveType | Callable[[], ReactiveType],
         init: bool = True,
         always_update: bool = False,
+        bindings: bool = False,
     ) -> None:
         super().__init__(
             default,
@@ -410,6 +421,7 @@ class var(Reactive[ReactiveType]):
             repaint=False,
             init=init,
             always_update=always_update,
+            bindings=bindings,
         )
 
 

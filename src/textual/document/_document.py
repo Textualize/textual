@@ -171,6 +171,17 @@ class DocumentBase(ABC):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
 
+    @property
+    @abstractmethod
+    def start(self) -> Location:
+        """Returns the location of the start of the document (0, 0)."""
+        return (0, 0)
+
+    @property
+    @abstractmethod
+    def end(self) -> Location:
+        """Returns the location of the end of the document."""
+
     @overload
     def __getitem__(self, line_index: int) -> str: ...
 
@@ -330,6 +341,17 @@ class Document(DocumentBase):
     def line_count(self) -> int:
         """Returns the number of lines in the document."""
         return len(self._lines)
+
+    @property
+    def start(self) -> Location:
+        """Returns the location of the start of the document (0, 0)."""
+        return super().start
+
+    @property
+    def end(self) -> Location:
+        """Returns the location of the end of the document."""
+        last_line = self._lines[-1]
+        return (self.line_count - 1, len(last_line))
 
     def get_index_from_location(self, location: Location) -> int:
         """Given a location, returns the index from the document's text.

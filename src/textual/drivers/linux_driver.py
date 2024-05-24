@@ -32,6 +32,7 @@ class LinuxDriver(Driver):
         app: App,
         *,
         debug: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
     ) -> None:
         """Initialize Linux driver.
@@ -39,9 +40,10 @@ class LinuxDriver(Driver):
         Args:
             app: The App instance.
             debug: Enable debug mode.
+            mouse: Enable mouse support.
             size: Initial size of the terminal or `None` to detect.
         """
-        super().__init__(app, debug=debug, size=size)
+        super().__init__(app, debug=debug, mouse=mouse, size=size)
         self._file = sys.__stderr__
         self.fileno = sys.__stdin__.fileno()
         self.attrs_before: list[Any] | None = None
@@ -111,6 +113,9 @@ class LinuxDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
+        if not self._mouse:
+            return
+
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -133,6 +138,8 @@ class LinuxDriver(Driver):
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
+        if not self._mouse:
+            return
         write = self.write
         write("\x1b[?1000l")  #
         write("\x1b[?1003l")  #
@@ -231,14 +238,16 @@ class LinuxDriver(Driver):
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1003h\n")
-        self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
+        self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
+
+        # Appears to fix an issue enabling mouse support in iTerm 3.5.0
+        self._enable_mouse_support()
 
         # If we need to ask the app to signal that we've come back from a
         # SIGTSTP...
@@ -317,7 +326,7 @@ class LinuxDriver(Driver):
 
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
-            self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
+            self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
             self.flush()
 
     def close(self) -> None:

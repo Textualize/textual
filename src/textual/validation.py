@@ -315,7 +315,7 @@ class Number(Validator):
             A string description of the failure.
         """
         if isinstance(failure, Number.NotANumber):
-            return f"Must be a valid number."
+            return "Must be a valid number."
         elif isinstance(failure, Number.NotInRange):
             if self.minimum is None and self.maximum is not None:
                 return f"Must be less than or equal to {self.maximum}."
@@ -363,8 +363,8 @@ class Integer(Number):
         Returns:
             A string description of the failure.
         """
-        if isinstance(failure, Integer.NotAnInteger):
-            return f"Must be a valid integer."
+        if isinstance(failure, (Integer.NotANumber, Integer.NotAnInteger)):
+            return "Must be a valid integer."
         elif isinstance(failure, Integer.NotInRange):
             if self.minimum is None and self.maximum is not None:
                 return f"Must be less than or equal to {self.maximum}."

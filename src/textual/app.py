@@ -27,7 +27,6 @@ from contextlib import (
 )
 from datetime import datetime
 from functools import partial
-from pathlib import PurePath
 from time import perf_counter
 from typing import (
     TYPE_CHECKING,
@@ -40,12 +39,9 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
-    List,
     Sequence,
     Type,
     TypeVar,
-    Union,
-    cast,
     overload,
 )
 from weakref import WeakKeyDictionary, WeakSet
@@ -92,7 +88,6 @@ from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode, NoScreen
 from .driver import Driver
-from .drivers.headless_driver import HeadlessDriver
 from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
@@ -109,6 +104,7 @@ from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
 from .screen import (
+    ActiveBinding,
     Screen,
     ScreenResultCallbackType,
     ScreenResultType,
@@ -227,14 +223,6 @@ class SuspendNotSupported(Exception):
 
 
 ReturnType = TypeVar("ReturnType")
-
-CSSPathType = Union[
-    str,
-    PurePath,
-    List[Union[str, PurePath]],
-]
-"""Valid ways of specifying paths to CSS files."""
-
 CallThreadReturnType = TypeVar("CallThreadReturnType")
 
 
@@ -366,6 +354,9 @@ class App(Generic[ReturnType], DOMNode):
     ENABLE_COMMAND_PALETTE: ClassVar[bool] = True
     """Should the [command palette][textual.command.CommandPalette] be enabled for the application?"""
 
+    NOTIFICATION_TIMEOUT: ClassVar[float] = 5
+    """Default number of seconds to show notifications before removing them."""
+
     COMMANDS: ClassVar[set[type[Provider] | Callable[[], type[Provider]]]] = {
         get_system_commands
     }
@@ -455,7 +446,7 @@ class App(Generic[ReturnType], DOMNode):
             soft_wrap=False,
         )
         self._workers = WorkerManager(self)
-        self.error_console = Console(markup=False, stderr=True)
+        self.error_console = Console(markup=False, highlight=False, stderr=True)
         self.driver_class = driver_class or self.get_driver_class()
         self._screen_stacks: dict[str, list[Screen[Any]]] = {"_default": []}
         """A stack of screens per mode."""
@@ -468,13 +459,16 @@ class App(Generic[ReturnType], DOMNode):
         self._driver: Driver | None = None
         self._exit_renderables: list[RenderableType] = []
 
-        self._action_targets = {"app", "screen"}
+        self._action_targets = {"app", "screen", "focused"}
         self._animator = Animator(self)
         self._animate = self._animator.bind(self)
         self.mouse_position = Offset(0, 0)
 
         self._mouse_down_widget: Widget | None = None
         """The widget that was most recently mouse downed (used to create click events)."""
+
+        self._previous_cursor_position = Offset(0, 0)
+        """The previous cursor position"""
 
         self.cursor_position = Offset(0, 0)
         """The position of the terminal cursor in screen-space.
@@ -602,7 +596,7 @@ class App(Generic[ReturnType], DOMNode):
         self._original_stderr = sys.__stderr__
         """The original stderr stream (before redirection etc)."""
 
-        self.app_suspend_signal = Signal(self, "app-suspend")
+        self.app_suspend_signal: Signal[App] = Signal(self, "app-suspend")
         """The signal that is published when the app is suspended.
 
         When [`App.suspend`][textual.app.App.suspend] is called this signal
@@ -610,7 +604,7 @@ class App(Generic[ReturnType], DOMNode):
         [subscribe][textual.signal.Signal.subscribe] to this signal to
         perform work before the suspension takes place.
         """
-        self.app_resume_signal = Signal(self, "app-resume")
+        self.app_resume_signal: Signal[App] = Signal(self, "app-resume")
         """The signal that is published when the app is resumed after a suspend.
 
         When the app is resumed after a
@@ -635,6 +629,9 @@ class App(Generic[ReturnType], DOMNode):
         This will be used to restore correct focus when an `AppFocus`
         happens.
         """
+
+        # Size of previous inline update
+        self._previous_inline_height: int | None = None
 
     def validate_title(self, title: Any) -> str:
         """Make sure the title is set to a string."""
@@ -741,7 +738,7 @@ class App(Generic[ReturnType], DOMNode):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation.
-            duration: The duration of the animate.
+            duration: The duration (in seconds) of the animation.
             speed: The speed of the animation.
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
@@ -773,17 +770,27 @@ class App(Generic[ReturnType], DOMNode):
         await self._animator.stop_animation(self, attribute, complete)
 
     @property
+    def is_dom_root(self) -> bool:
+        """Is this a root node (i.e. the App)?"""
+        return True
+
+    @property
     def debug(self) -> bool:
         """Is debug mode enabled?"""
         return "debug" in self.features
 
     @property
     def is_headless(self) -> bool:
-        """Is the driver running in 'headless' mode?
+        """Is the app running in 'headless' mode?
 
         Headless mode is used when running tests with [run_test][textual.app.App.run_test].
         """
         return False if self._driver is None else self._driver.is_headless
+
+    @property
+    def is_inline(self) -> bool:
+        """Is the app running in 'inline' mode?"""
+        return False if self._driver is None else self._driver.is_inline
 
     @property
     def screen_stack(self) -> Sequence[Screen[Any]]:
@@ -846,7 +853,7 @@ class App(Generic[ReturnType], DOMNode):
         return focused
 
     @property
-    def namespace_bindings(self) -> dict[str, tuple[DOMNode, Binding]]:
+    def active_bindings(self) -> dict[str, ActiveBinding]:
         """Get currently active bindings.
 
         If no widget is focused, then app-level bindings are returned.
@@ -855,15 +862,22 @@ class App(Generic[ReturnType], DOMNode):
         This property may be used to inspect current bindings.
 
         Returns:
-            A mapping of keys onto pairs of nodes and bindings.
+            Active binding information
         """
+        return self.screen.active_bindings
 
-        namespace_binding_map: dict[str, tuple[DOMNode, Binding]] = {}
-        for namespace, bindings in reversed(self._binding_chain):
-            for key, binding in bindings.keys.items():
-                namespace_binding_map[key] = (namespace, binding)
+    def get_default_screen(self) -> Screen:
+        """Get the default screen.
 
-        return namespace_binding_map
+        This is called when the App is first composed. The returned screen instance
+        will be the first screen on the stack.
+
+        Implement this method if you would like to use a custom Screen as the default screen.
+
+        Returns:
+            A screen instance.
+        """
+        return Screen(id="_default")
 
     def _set_active(self) -> None:
         """Set this app to be the currently active app."""
@@ -979,6 +993,7 @@ class App(Generic[ReturnType], DOMNode):
 
     @property
     def animator(self) -> Animator:
+        """The animator object."""
         return self._animator
 
     @property
@@ -1021,6 +1036,15 @@ class App(Generic[ReturnType], DOMNode):
         else:
             width, height = self.console.size
         return Size(width, height)
+
+    def _get_inline_height(self) -> int:
+        """Get the inline height (height when in inline mode).
+
+        Returns:
+            Height in lines.
+        """
+        size = self.size
+        return max(screen._get_inline_height(size) for screen in self._screen_stack)
 
     @property
     def log(self) -> Logger:
@@ -1103,6 +1127,24 @@ class App(Generic[ReturnType], DOMNode):
         from .widgets import LoadingIndicator
 
         return LoadingIndicator()
+
+    def copy_to_clipboard(self, text: str) -> None:
+        """Copy text to the clipboard.
+
+        !!! note
+
+            This does not work on macOS Terminal, but will work on most other terminals.
+
+        Args:
+            text: Text you wish to copy to the clipboard.
+        """
+        if self._driver is None:
+            return
+
+        import base64
+
+        base64_text = base64.b64encode(text.encode("utf-8")).decode("utf-8")
+        self._driver.write(f"\x1b]52;c;{base64_text}\a")
 
     def call_from_thread(
         self,
@@ -1444,6 +1486,9 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1451,6 +1496,9 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1501,6 +1549,9 @@ class App(Generic[ReturnType], DOMNode):
             await app._process_messages(
                 ready_callback=None if auto_pilot is None else app_ready,
                 headless=headless,
+                inline=inline,
+                inline_no_clear=inline_no_clear,
+                mouse=mouse,
                 terminal_size=size,
             )
         finally:
@@ -1516,6 +1567,9 @@ class App(Generic[ReturnType], DOMNode):
         self,
         *,
         headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = True,
         size: tuple[int, int] | None = None,
         auto_pilot: AutopilotCallbackType | None = None,
     ) -> ReturnType | None:
@@ -1523,6 +1577,9 @@ class App(Generic[ReturnType], DOMNode):
 
         Args:
             headless: Run in headless mode (no output).
+            inline: Run the app inline (under the prompt).
+            inline_no_clear: Don't clear the app output when exiting an inline app.
+            mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
             auto_pilot: An auto pilot coroutine.
@@ -1538,6 +1595,9 @@ class App(Generic[ReturnType], DOMNode):
             try:
                 await self.run_async(
                     headless=headless,
+                    inline=inline,
+                    inline_no_clear=inline_no_clear,
+                    mouse=mouse,
                     size=size,
                     auto_pilot=auto_pilot,
                 )
@@ -1601,6 +1661,11 @@ class App(Generic[ReturnType], DOMNode):
                     self.stylesheet.update(screen)
 
     def render(self) -> RenderResult:
+        """Render method inherited from widget, to render the screen's background.
+
+        May be override to customize background visuals.
+
+        """
         return Blank(self.styles.background)
 
     ExpectType = TypeVar("ExpectType", bound=Widget)
@@ -2201,6 +2266,29 @@ class App(Generic[ReturnType], DOMNode):
                 finally:
                     self.mouse_over = widget
 
+    def _update_mouse_over(self, screen: Screen) -> None:
+        """Updates the mouse over after the next refresh.
+
+        This method is called whenever a widget is added or removed, which may change
+        the widget under the mouse.
+
+        """
+
+        if self.mouse_over is None:
+            return
+
+        async def check_mouse() -> None:
+            """Check if the mouse over widget has changed."""
+            try:
+                widget, _ = screen.get_widget_at(*self.mouse_position)
+            except NoWidget:
+                pass
+            else:
+                if widget is not self.mouse_over:
+                    self._set_mouse_over(widget)
+
+        self.call_after_refresh(check_mouse)
+
     def capture_mouse(self, widget: Widget | None) -> None:
         """Send all mouse events to the given widget or disable mouse capture.
 
@@ -2293,10 +2381,48 @@ class App(Generic[ReturnType], DOMNode):
 
         self._exit_renderables.clear()
 
+    def _build_driver(
+        self, headless: bool, inline: bool, mouse: bool, size: tuple[int, int] | None
+    ) -> Driver:
+        """Construct a driver instance.
+
+        Args:
+            headless: Request headless driver.
+            inline: Request inline driver.
+            mouse: Request mouse support.
+            size: Initial size.
+
+        Returns:
+            Driver instance.
+        """
+        driver: Driver
+        driver_class: type[Driver]
+        if headless:
+            from .drivers.headless_driver import HeadlessDriver
+
+            driver_class = HeadlessDriver
+        elif inline and not WINDOWS:
+            from .drivers.linux_inline_driver import LinuxInlineDriver
+
+            driver_class = LinuxInlineDriver
+        else:
+            driver_class = self.driver_class
+
+        driver = self._driver = driver_class(
+            self,
+            debug=constants.DEBUG,
+            mouse=mouse,
+            size=size,
+        )
+        return driver
+
     async def _process_messages(
         self,
         ready_callback: CallbackType | None = None,
         headless: bool = False,
+        inline: bool = False,
+        inline_no_clear: bool = False,
+        mouse: bool = True,
         terminal_size: tuple[int, int] | None = None,
         message_hook: Callable[[Message], None] | None = None,
     ) -> None:
@@ -2314,7 +2440,6 @@ class App(Generic[ReturnType], DOMNode):
 
         self.log.system("---")
 
-        self.log.system(driver=self.driver_class)
         self.log.system(loop=asyncio.get_running_loop())
         self.log.system(features=self.features)
         if constants.LOG_FILE is not None:
@@ -2405,16 +2530,13 @@ class App(Generic[ReturnType], DOMNode):
             load_event = events.Load()
             await self._dispatch_message(load_event)
 
-            driver: Driver
-            driver_class = cast(
-                "type[Driver]",
-                HeadlessDriver if headless else self.driver_class,
-            )
-            driver = self._driver = driver_class(
-                self,
-                debug=constants.DEBUG,
+            driver = self._driver = self._build_driver(
+                headless=headless,
+                inline=inline,
+                mouse=mouse,
                 size=terminal_size,
             )
+            self.log(driver=driver)
 
             if not self._exit:
                 driver.start_application_mode()
@@ -2424,6 +2546,15 @@ class App(Generic[ReturnType], DOMNode):
                             await run_process_messages()
 
                 finally:
+                    if self._driver.is_inline:
+                        cursor_x, cursor_y = self._previous_cursor_position
+                        self._driver.write(
+                            Control.move(-cursor_x, -cursor_y + 1).segment.text
+                        )
+                    if inline_no_clear:
+                        console = Console()
+                        console.print(self.screen._compositor)
+                        console.print()
                     driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
@@ -2737,11 +2868,23 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     try:
                         if isinstance(renderable, CompositorUpdate):
-                            cursor_x, cursor_y = self.cursor_position
-                            terminal_sequence = renderable.render_segments(console)
-                            terminal_sequence += Control.move_to(
-                                cursor_x, cursor_y
-                            ).segment.text
+                            cursor_position = self.screen.outer_size.clamp_offset(
+                                self.cursor_position
+                            )
+                            if self._driver.is_inline:
+                                terminal_sequence = Control.move(
+                                    *(-self._previous_cursor_position)
+                                ).segment.text
+                                terminal_sequence += renderable.render_segments(console)
+                                terminal_sequence += Control.move(
+                                    *cursor_position
+                                ).segment.text
+                            else:
+                                terminal_sequence = renderable.render_segments(console)
+                                terminal_sequence += Control.move_to(
+                                    *cursor_position
+                                ).segment.text
+                            self._previous_cursor_position = cursor_position
                         else:
                             segments = console.render(renderable)
                             terminal_sequence = console._render_buffer(segments)
@@ -2818,15 +2961,6 @@ class App(Generic[ReturnType], DOMNode):
 
         return namespace_bindings
 
-    @property
-    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
-        """The binding chain, ignoring everything before the last modal."""
-        binding_chain = self._binding_chain
-        for index, (node, _bindings) in enumerate(binding_chain, 1):
-            if node.is_modal:
-                return binding_chain[:index]
-        return binding_chain
-
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
@@ -2841,7 +2975,9 @@ class App(Generic[ReturnType], DOMNode):
             True if the key was handled by a binding, otherwise False
         """
         for namespace, bindings in (
-            reversed(self._binding_chain) if priority else self._modal_binding_chain
+            reversed(self.screen._binding_chain)
+            if priority
+            else self.screen._modal_binding_chain
         ):
             binding = bindings.keys.get(key)
             if binding is not None and binding.priority == priority:
@@ -2853,7 +2989,7 @@ class App(Generic[ReturnType], DOMNode):
         # Handle input events that haven't been forwarded
         # If the event has been forwarded it may have bubbled up back to the App
         if isinstance(event, events.Compose):
-            screen: Screen[Any] = Screen(id=f"_default")
+            screen: Screen[Any] = self.get_default_screen()
             self._register(self, screen)
             self._screen_stack.append(screen)
             screen.post_message(events.ScreenResume())
@@ -2906,10 +3042,58 @@ class App(Generic[ReturnType], DOMNode):
         else:
             await super().on_event(event)
 
+    def _parse_action(
+        self, action: str | ActionParseResult, default_namespace: DOMNode
+    ) -> tuple[DOMNode, str, tuple[object, ...]]:
+        """Parse an action.
+
+        Args:
+            action: An action string.
+
+        Raises:
+            ActionError: If there are any errors parsing the action string.
+
+        Returns:
+            A tuple of (node or None, action name, tuple of parameters).
+        """
+        if isinstance(action, tuple):
+            destination, action_name, params = action
+        else:
+            destination, action_name, params = actions.parse(action)
+
+        action_target: DOMNode | None = None
+        if destination:
+            if destination not in self._action_targets:
+                raise ActionError(f"Action namespace {destination} is not known")
+            action_target = getattr(self, destination, None)
+            if action_target is None:
+                raise ActionError("Action target {destination!r} not available")
+        return (
+            (default_namespace if action_target is None else action_target),
+            action_name,
+            params,
+        )
+
+    def _check_action_state(
+        self, action: str, default_namespace: DOMNode
+    ) -> bool | None:
+        """Check if an action is enabled.
+
+        Args:
+            action: An action string.
+
+        Returns:
+            State of an action.
+        """
+        action_target, action_name, parameters = self._parse_action(
+            action, default_namespace
+        )
+        return action_target.check_action(action_name, parameters)
+
     async def run_action(
         self,
         action: str | ActionParseResult,
-        default_namespace: object | None = None,
+        default_namespace: DOMNode | None = None,
     ) -> bool:
         """Perform an [action](/guide/actions).
 
@@ -2923,25 +3107,14 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             True if the event has been handled.
         """
-        if isinstance(action, str):
-            target, params = actions.parse(action)
-        else:
-            target, params = action
-        implicit_destination = True
-        if "." in target:
-            destination, action_name = target.split(".", 1)
-            if destination not in self._action_targets:
-                raise ActionError(f"Action namespace {destination} is not known")
-            action_target = getattr(self, destination)
-            implicit_destination = True
-        else:
-            action_target = default_namespace if default_namespace is not None else self
-            action_name = target
+        action_target, action_name, params = self._parse_action(
+            action, self if default_namespace is None else default_namespace
+        )
 
-        handled = await self._dispatch_action(action_target, action_name, params)
-        if not handled and implicit_destination and not isinstance(action_target, App):
-            handled = await self.app._dispatch_action(self.app, action_name, params)
-        return handled
+        if action_target.check_action(action_name, params):
+            return await self._dispatch_action(action_target, action_name, params)
+        else:
+            return False
 
     async def _dispatch_action(
         self, namespace: object, action_name: str, params: Any
@@ -2984,7 +3157,7 @@ class App(Generic[ReturnType], DOMNode):
         return False
 
     async def _broker_event(
-        self, event_name: str, event: events.Event, default_namespace: object | None
+        self, event_name: str, event: events.Event, default_namespace: DOMNode
     ) -> bool:
         """Allow the app an opportunity to dispatch events to action system.
 
@@ -3006,11 +3179,26 @@ class App(Generic[ReturnType], DOMNode):
             return False
         else:
             event.stop()
-        if isinstance(action, (str, tuple)):
-            await self.run_action(action, default_namespace=default_namespace)  # type: ignore[arg-type]
+
+        if isinstance(action, str):
+            await self.run_action(action, default_namespace)
+        elif isinstance(action, tuple) and len(action) == 2:
+            action_name, action_params = action
+            namespace, parsed_action, _ = actions.parse(action_name)
+            await self.run_action(
+                (namespace, parsed_action, action_params),
+                default_namespace,
+            )
         elif callable(action):
             await action()
         else:
+            if isinstance(action, tuple) and self.debug:
+                # It's a tuple and made it this far, which means it'll be a
+                # malformed action. This is a no-op, but let's log that
+                # anyway.
+                log.warning(
+                    f"Can't parse @{event_name} action from style meta; check your console markup syntax"
+                )
             return False
         return True
 
@@ -3038,11 +3226,13 @@ class App(Generic[ReturnType], DOMNode):
         """App has focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = True
+        self.screen.refresh_bindings()
 
     async def _on_app_blur(self, event: events.AppBlur) -> None:
         """App has lost focus."""
         # Required by textual-web to manage focus in a web page.
         self.app_focus = False
+        self.screen.refresh_bindings()
 
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
@@ -3151,6 +3341,7 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
+                self._update_mouse_over(self.screen)
                 if parent is not None:
                     parent.refresh(layout=True)
 
@@ -3214,7 +3405,10 @@ class App(Generic[ReturnType], DOMNode):
                     and self.screen.focused is None
                 ):
                     # ...settle focus back on that widget.
-                    self.screen.set_focus(self._last_focused_on_app_blur)
+                    # Don't scroll the newly focused widget, as this can be quite jarring
+                    self.screen.set_focus(
+                        self._last_focused_on_app_blur, scroll_visible=False
+                    )
             except NoScreen:
                 pass
             # Now that we have focus back on the app and we don't need the
@@ -3333,7 +3527,8 @@ class App(Generic[ReturnType], DOMNode):
         self, message: messages.TerminalSupportsSynchronizedOutput
     ) -> None:
         log.system("SynchronizedOutput mode is supported")
-        self._sync_available = True
+        if self._driver is not None and not self._driver.is_inline:
+            self._sync_available = True
 
     def _begin_update(self) -> None:
         if self._sync_available and self._driver is not None:
@@ -3367,7 +3562,7 @@ class App(Generic[ReturnType], DOMNode):
         *,
         title: str = "",
         severity: SeverityLevel = "information",
-        timeout: float = Notification.timeout,
+        timeout: float | None = None,
     ) -> None:
         """Create a notification.
 
@@ -3380,7 +3575,7 @@ class App(Generic[ReturnType], DOMNode):
             message: The message for the notification.
             title: The title for the notification.
             severity: The severity of the notification.
-            timeout: The timeout for the notification.
+            timeout: The timeout (in seconds) for the notification, or `None` for default.
 
         The `notify` method is used to create an application-wide
         notification, shown in a [`Toast`][textual.widgets._toast.Toast],
@@ -3415,6 +3610,8 @@ class App(Generic[ReturnType], DOMNode):
             self.notify("It's against my programming to impersonate a deity.", title="")
             ```
         """
+        if timeout is None:
+            timeout = self.NOTIFICATION_TIMEOUT
         notification = Notification(message, title, severity, timeout)
         self.post_message(Notify(notification))
 
@@ -3446,12 +3643,12 @@ class App(Generic[ReturnType], DOMNode):
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""
-        self.app_suspend_signal.publish()
+        self.app_suspend_signal.publish(self)
 
     @on(Driver.SignalResume)
     def _resume_signal(self) -> None:
         """Signal that the application is being resumed from a suspension."""
-        self.app_resume_signal.publish()
+        self.app_resume_signal.publish(self)
 
     @contextmanager
     def suspend(self) -> Iterator[None]:

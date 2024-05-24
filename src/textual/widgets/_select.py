@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Generic, Iterable, TypeVar, Union
 
+import rich.repr
 from rich.console import RenderableType
 from rich.text import Text
 
@@ -89,6 +90,7 @@ class SelectOverlay(OptionList):
     def _on_blur(self, _event: events.Blur) -> None:
         """On blur we want to dismiss the overlay."""
         self.post_message(self.Dismiss(lost_focus=True))
+        self.suppress_click()
 
     def on_option_list_option_selected(self, event: OptionList.OptionSelected) -> None:
         """Inform parent when an option is selected."""
@@ -176,6 +178,7 @@ class SelectCurrent(Horizontal):
 
     async def _on_click(self, event: events.Click) -> None:
         """Inform ancestor we want to toggle."""
+        event.stop()
         self.post_message(self.Toggle())
 
 
@@ -256,6 +259,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
     exception.
     """
 
+    @rich.repr.auto
     class Changed(Message):
         """Posted when the select value was changed.
 
@@ -273,6 +277,10 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             """The select widget."""
             self.value = value
             """The value of the Select when it changed."""
+
+        def __rich_repr__(self) -> rich.repr.Result:
+            yield self.select
+            yield self.value
 
         @property
         def control(self) -> Select[SelectType]:

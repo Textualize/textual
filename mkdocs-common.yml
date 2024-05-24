@@ -63,6 +63,7 @@ theme:
         name: Switch to light mode
 
 plugins:
+  git-revision-date-localized:
   search:
   autorefs:
   mkdocstrings:

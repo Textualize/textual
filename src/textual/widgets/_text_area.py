@@ -688,7 +688,8 @@ TextArea {
         self.scroll_cursor_visible()
 
     def _watch_show_vertical_scrollbar(self) -> None:
-        self._rewrap_and_refresh_virtual_size()
+        if self.wrap_width:
+            self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
     def _watch_theme(self, theme: str) -> None:
@@ -968,6 +969,21 @@ TextArea {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
+    def get_line(self, line_index: int) -> Text:
+        """Retrieve the line at the given line index.
+
+        You can stylize the Text object returned here to apply additional
+        styling to TextArea content.
+
+        Args:
+            line_index: The index of the line.
+
+        Returns:
+            A `rich.Text` object containing the requested line.
+        """
+        line_string = self.document.get_line(line_index)
+        return Text(line_string, end="")
+
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
@@ -981,7 +997,6 @@ TextArea {
         if theme:
             theme.apply_css(self)
 
-        document = self.document
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
 
@@ -1005,9 +1020,7 @@ TextArea {
 
         line_index, section_offset = line_info
 
-        # Get the line from the Document.
-        line_string = document.get_line(line_index)
-        line = Text(line_string, end="")
+        line = self.get_line(line_index)
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
@@ -1057,7 +1070,7 @@ TextArea {
 
         highlights = self._highlights
         if highlights and theme:
-            line_bytes = _utf8_encode(line_string)
+            line_bytes = _utf8_encode(line.plain)
             byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
             get_highlight_from_theme = theme.syntax_styles.get
             line_highlights = highlights[line_index]
@@ -1291,27 +1304,27 @@ TextArea {
             return
 
         old_gutter_width = self.gutter_width
-        minimum_from = edits[-1].top
-        maximum_old_end = (0, 0)
-        maximum_new_end = (0, 0)
+        minimum_top = edits[-1].top
+        maximum_old_bottom = (0, 0)
+        maximum_new_bottom = (0, 0)
         for edit in reversed(edits):
             edit.undo(self)
             end_location = (
                 edit._edit_result.end_location if edit._edit_result else (0, 0)
             )
-            if edit.from_location < minimum_from:
-                minimum_from = edit.from_location
-            if end_location > maximum_old_end:
-                maximum_old_end = end_location
-            if edit.to_location > maximum_new_end:
-                maximum_new_end = edit.bottom
+            if edit.top < minimum_top:
+                minimum_top = edit.top
+            if end_location > maximum_old_bottom:
+                maximum_old_bottom = end_location
+            if edit.bottom > maximum_new_bottom:
+                maximum_new_bottom = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                minimum_from, maximum_old_end, maximum_new_end
+                minimum_top, maximum_old_bottom, maximum_new_bottom
             )
 
         self._refresh_size()
@@ -1337,29 +1350,29 @@ TextArea {
             return
 
         old_gutter_width = self.gutter_width
-        minimum_from = edits[0].from_location
-        maximum_old_end = (0, 0)
-        maximum_new_end = (0, 0)
+        minimum_top = edits[0].top
+        maximum_old_bottom = (0, 0)
+        maximum_new_bottom = (0, 0)
         for edit in edits:
             edit.do(self, record_selection=False)
             end_location = (
                 edit._edit_result.end_location if edit._edit_result else (0, 0)
             )
-            if edit.from_location < minimum_from:
-                minimum_from = edit.from_location
-            if end_location > maximum_new_end:
-                maximum_new_end = end_location
-            if edit.to_location > maximum_old_end:
-                maximum_old_end = edit.to_location
+            if edit.top < minimum_top:
+                minimum_top = edit.top
+            if end_location > maximum_new_bottom:
+                maximum_new_bottom = end_location
+            if edit.bottom > maximum_old_bottom:
+                maximum_old_bottom = edit.bottom
 
         new_gutter_width = self.gutter_width
         if old_gutter_width != new_gutter_width:
             self.wrapped_document.wrap(self.wrap_width, self.indent_width)
         else:
             self.wrapped_document.wrap_range(
-                minimum_from,
-                maximum_old_end,
-                maximum_new_end,
+                minimum_top,
+                maximum_old_bottom,
+                maximum_new_bottom,
             )
 
         self._refresh_size()
@@ -1500,17 +1513,18 @@ TextArea {
 
     def _end_mouse_selection(self) -> None:
         """Finalize the selection that has been made using the mouse."""
-        self._selecting = False
-        self.release_mouse()
-        self.record_cursor_width()
-        self._restart_blink()
+        if self._selecting:
+            self._selecting = False
+            self.release_mouse()
+            self.record_cursor_width()
+            self._restart_blink()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         """Finalize the selection that has been made using the mouse."""
         self._end_mouse_selection()
 
     async def _on_hide(self, event: events.Hide) -> None:
-        """Finalize the selection that has been made using the mouse when thew widget is hidden."""
+        """Finalize the selection that has been made using the mouse when the widget is hidden."""
         self._end_mouse_selection()
 
     async def _on_paste(self, event: events.Paste) -> None:
@@ -2025,10 +2039,7 @@ TextArea {
         Returns:
             An EditResult relating to the deletion of all content.
         """
-        document = self.document
-        last_line = document[-1]
-        document_end = (document.line_count, len(last_line))
-        return self.delete((0, 0), document_end, maintain_selection_offset=False)
+        return self.delete((0, 0), self.document.end, maintain_selection_offset=False)
 
     def _delete_via_keyboard(
         self,

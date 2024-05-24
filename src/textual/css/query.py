@@ -55,12 +55,7 @@ ExpectType = TypeVar("ExpectType")
 
 @rich.repr.auto(angular=True)
 class DOMQuery(Generic[QueryType]):
-    __slots__ = [
-        "_node",
-        "_nodes",
-        "_filters",
-        "_excludes",
-    ]
+    __slots__ = ["_node", "_nodes", "_filters", "_excludes", "_deep"]
 
     def __init__(
         self,
@@ -68,6 +63,7 @@ class DOMQuery(Generic[QueryType]):
         *,
         filter: str | None = None,
         exclude: str | None = None,
+        deep: bool = True,
         parent: DOMQuery | None = None,
     ) -> None:
         """Initialize a query object.
@@ -80,6 +76,7 @@ class DOMQuery(Generic[QueryType]):
             node: A DOM node.
             filter: Query to filter children in the node.
             exclude: Query to exclude children in the node.
+            deep: Query should be deep, i.e. recursive.
             parent: The parent query, if this is the result of filtering another query.
 
         Raises:
@@ -94,6 +91,7 @@ class DOMQuery(Generic[QueryType]):
         self._excludes: list[tuple[SelectorSet, ...]] = (
             parent._excludes.copy() if parent else []
         )
+        self._deep = deep
         if filter is not None:
             try:
                 self._filters.append(parse_selectors(filter))
@@ -118,9 +116,12 @@ class DOMQuery(Generic[QueryType]):
         from ..widget import Widget
 
         if self._nodes is None:
+            initial_nodes = list(
+                self._node.walk_children(Widget) if self._deep else self._node._nodes
+            )
             nodes = [
                 node
-                for node in self._node.walk_children(Widget)
+                for node in initial_nodes
                 if all(match(selector_set, node) for selector_set in self._filters)
             ]
             nodes = [
@@ -156,14 +157,20 @@ class DOMQuery(Generic[QueryType]):
     def __rich_repr__(self) -> rich.repr.Result:
         try:
             if self._filters:
-                yield "query", " AND ".join(
-                    ",".join(selector.css for selector in selectors)
-                    for selectors in self._filters
+                yield (
+                    "query",
+                    " AND ".join(
+                        ",".join(selector.css for selector in selectors)
+                        for selectors in self._filters
+                    ),
                 )
             if self._excludes:
-                yield "exclude", " OR ".join(
-                    ",".join(selector.css for selector in selectors)
-                    for selectors in self._excludes
+                yield (
+                    "exclude",
+                    " OR ".join(
+                        ",".join(selector.css for selector in selectors)
+                        for selectors in self._excludes
+                    ),
                 )
         except AttributeError:
             pass
@@ -178,7 +185,12 @@ class DOMQuery(Generic[QueryType]):
             New DOM Query.
         """
 
-        return DOMQuery(self.node, filter=selector, parent=self)
+        return DOMQuery(
+            self.node,
+            filter=selector,
+            deep=self._deep,
+            parent=self,
+        )
 
     def exclude(self, selector: str) -> DOMQuery[QueryType]:
         """Exclude nodes that match a given selector.
@@ -189,7 +201,12 @@ class DOMQuery(Generic[QueryType]):
         Returns:
             New DOM query.
         """
-        return DOMQuery(self.node, exclude=selector, parent=self)
+        return DOMQuery(
+            self.node,
+            exclude=selector,
+            deep=self._deep,
+            parent=self,
+        )
 
     @overload
     def first(self) -> QueryType: ...
