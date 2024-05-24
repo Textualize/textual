@@ -35,6 +35,10 @@ class MonthCalendar(Widget):
         Binding("down", "cursor_down", "Cursor Down", show=False),
         Binding("right", "cursor_right", "Cursor Right", show=False),
         Binding("left", "cursor_left", "Cursor Left", show=False),
+        Binding("pageup", "next_month", "Next month", show=False),
+        Binding("pagedown", "previous_month", "Previous Month", show=False),
+        Binding("ctrl+pageup", "next_year", "Next Year", show=False),
+        Binding("ctrl+pagedown", "previous_year", "Previous Year", show=False),
     ]
 
     # TODO: min-width?
@@ -338,3 +342,15 @@ class MonthCalendar(Widget):
     def action_cursor_left(self) -> None:
         table = self.query_one(MonthCalendarTable)
         table.action_cursor_left()
+
+    def action_next_month(self) -> None:
+        self.next_month()
+
+    def action_previous_month(self) -> None:
+        self.previous_month()
+
+    def action_next_year(self) -> None:
+        self.next_year()
+
+    def action_previous_year(self) -> None:
+        self.previous_year()
