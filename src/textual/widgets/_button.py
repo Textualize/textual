@@ -253,7 +253,7 @@ class Button(Widget, can_focus=True):
         self.press()
 
     def press(self) -> Self:
-        """Animate the button and send the [Pressed][textual.widgets.button.Button.Pressed] message.
+        """Animate the button and send the [Pressed][textual.widgets.Button.Pressed] message.
 
         Can be used to simulate the button being pressed by a user.
 
