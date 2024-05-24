@@ -721,6 +721,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
+        self.call_after_refresh(self.refresh_bindings)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Insert Textual's own internal widgets.

@@ -80,7 +80,7 @@ from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_remove import AwaitRemove
-from .binding import Binding, BindingType
+from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
 from .css.errors import StylesheetError
 from .css.query import NoMatches
