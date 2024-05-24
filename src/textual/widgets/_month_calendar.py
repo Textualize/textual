@@ -107,9 +107,17 @@ class MonthCalendar(Widget):
                 table.cursor_coordinate = date_coordinate
         else:
             cursor_row, cursor_column = event.coordinate
-            highlighted_date = self._calendar_dates[cursor_row][cursor_column]
-            assert isinstance(highlighted_date, datetime.date)
-            self.date = highlighted_date
+            new_date = self._calendar_dates[cursor_row][cursor_column]
+            assert isinstance(new_date, datetime.date)
+            # Avoid possible race condition by setting the `date` reactive
+            # without invoking the watcher. When mashing the arrow keys, this
+            # otherwise would cause the app to lag or freeze entirely.
+            old_date = self.date
+            self.set_reactive(MonthCalendar.date, new_date)
+            if (new_date.month != old_date.month) or (new_date.year != old_date.year):
+                self._calendar_dates = self._get_calendar_dates()
+                self._update_calendar_table(update_week_header=False)
+
             self.post_message(MonthCalendar.DateHighlighted(self, self.date))
 
     @on(DataTable.CellSelected)
