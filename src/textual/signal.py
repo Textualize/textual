@@ -52,7 +52,12 @@ class Signal(Generic[SignalT]):
         yield "name", self._name
         yield "subscriptions", list(self._subscriptions.keys())
 
-    def subscribe(self, node: MessagePump, callback: SignalCallbackType) -> None:
+    def subscribe(
+        self,
+        node: MessagePump,
+        callback: SignalCallbackType,
+        immediate: bool = False,
+    ) -> None:
         """Subscribe a node to this signal.
 
         When the signal is published, the callback will be invoked.
@@ -60,17 +65,32 @@ class Signal(Generic[SignalT]):
         Args:
             node: Node to subscribe.
             callback: A callback function which takes a single argument and returns anything (return type ignored).
+            immediate: Invoke the callback immediately on publish if `True`, otherwise post it to the DOM node to be
+                called once existing messages have been processed.
 
         Raises:
             SignalError: Raised when subscribing a non-mounted widget.
         """
+
         if not node.is_running:
             raise SignalError(
                 f"Node must be running to subscribe to a signal (has {node} been mounted)?"
             )
+
+        if immediate:
+
+            def signal_callback(data: object):
+                """Invoke the callback immediately."""
+                callback(data)
+
+        else:
+
+            def signal_callback(data: object):
+                """Post the callback to the node, to call at the next opertunity."""
+                node.call_next(callback, data)
+
         callbacks = self._subscriptions.setdefault(node, [])
-        if callback not in callbacks:
-            callbacks.append(callback)
+        callbacks.append(signal_callback)
 
     def unsubscribe(self, node: MessagePump) -> None:
         """Unsubscribe a node from this signal.

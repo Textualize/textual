@@ -739,7 +739,9 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_mount(self, event: events.Mount) -> None:
         """Set up the tooltip-clearing signal when we mount."""
-        self.screen_layout_refresh_signal.subscribe(self, self._maybe_clear_tooltip)
+        self.screen_layout_refresh_signal.subscribe(
+            self, self._maybe_clear_tooltip, immediate=True
+        )
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
+from typing import TYPE_CHECKING
 
 import rich.repr
 from rich.text import Text
@@ -10,6 +11,9 @@ from ..binding import Binding
 from ..containers import ScrollableContainer
 from ..reactive import reactive
 from ..widget import Widget
+
+if TYPE_CHECKING:
+    from ..screen import Screen
 
 
 @rich.repr.auto
@@ -157,9 +161,9 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
             )
 
     def on_mount(self) -> None:
-        def bindings_changed(screen) -> None:
+        async def bindings_changed(screen: Screen) -> None:
             if screen is self.screen:
-                self.call_next(self.recompose)
+                await self.recompose()
 
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
