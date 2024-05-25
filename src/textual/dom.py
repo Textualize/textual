@@ -1505,7 +1505,7 @@ class DOMNode(MessagePump):
         See [actions](/guide/actions#dynamic-actions) for how to use this method.
 
         """
-        self.call_later(self.screen.refresh_bindings)
+        self.screen.refresh_bindings()
 
     async def action_toggle(self, attribute_name: str) -> None:
         """Toggle an attribute on the node.
