@@ -65,11 +65,18 @@ class Signal(Generic[SignalT]):
         Args:
             node: Node to subscribe.
             callback: A callback function which takes a single argument and returns anything (return type ignored).
-            immediate: Invoke the callback immediately on publish if `True`, otherwise post it to the DOM node.
+            immediate: Invoke the callback immediately on publish if `True`, otherwise post it to the DOM node to be
+                called once existing messages have been processed.
 
         Raises:
             SignalError: Raised when subscribing a non-mounted widget.
         """
+
+        if not node.is_running:
+            raise SignalError(
+                f"Node must be running to subscribe to a signal (has {node} been mounted)?"
+            )
+
         if immediate:
 
             def signal_callback(data: object):
@@ -82,10 +89,6 @@ class Signal(Generic[SignalT]):
                 """Post the callback to the node, to call at the next opertunity."""
                 node.call_next(callback, data)
 
-        if not node.is_running:
-            raise SignalError(
-                f"Node must be running to subscribe to a signal (has {node} been mounted)?"
-            )
         callbacks = self._subscriptions.setdefault(node, [])
         callbacks.append(signal_callback)
 
