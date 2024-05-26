@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed freeze in recompose from bindings
+- Fixed freeze in recompose from bindings https://github.com/Textualize/textual/pull/4558
 
 ## [0.63.3] - 2024-05-24
 
