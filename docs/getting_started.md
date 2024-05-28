@@ -38,7 +38,7 @@ pip install textual-dev
 
 ### From conda-forge
 
-Textual is also available on [conda-forge](https://conda-forge.org/). The preferred package manager for conda-forge is currently [micromamba](https://mamba.readthedocs.io/en/latest/installation.html#micromamba):
+Textual is also available on [conda-forge](https://conda-forge.org/). The preferred package manager for conda-forge is currently [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html):
 
 ```
 micromamba install -c conda-forge textual
