@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed data table disappearing from tabs
+- Fixed data table disappearing from tabs https://github.com/Textualize/textual/pull/4567
 
 ### Added
 
