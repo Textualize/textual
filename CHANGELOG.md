@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.63.5]
+
+### Fixed
+
+- Fixed data table disappearing from tabs https://github.com/Textualize/textual/pull/4567
+
+### Added
+
+- Added `Styles.is_auto_width` and `Style.is_auto_height`
+
 ## [0.63.4]
 
 ### Added
@@ -2023,6 +2033,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.63.5]: https://github.com/Textualize/textual/compare/v0.63.4...v0.63.5
 [0.63.4]: https://github.com/Textualize/textual/compare/v0.63.3...v0.63.4
 [0.63.3]: https://github.com/Textualize/textual/compare/v0.63.2...v0.63.3
 [0.63.2]: https://github.com/Textualize/textual/compare/v0.63.1...v0.63.2
