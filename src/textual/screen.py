@@ -136,7 +136,7 @@ class Screen(Generic[ScreenResultType], Widget):
     Screen {
         layout: vertical;
         overflow-y: auto;
-        background: $surface;
+        background: $surface;        
         
         &:inline {
             height: auto;

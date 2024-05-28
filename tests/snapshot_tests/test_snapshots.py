@@ -1269,3 +1269,7 @@ def test_grid_gutter(snap_compare):
 def test_multi_keys(snap_compare):
     # https://github.com/Textualize/textual/issues/4542
     assert snap_compare(SNAPSHOT_APPS_DIR / "multi_keys.py")
+
+
+def test_data_table_in_tabs(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_tabs.py")

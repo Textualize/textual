@@ -441,6 +441,18 @@ class StylesBase(ABC):
         height = self.height
         return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
 
+    @property
+    def is_auto_width(self) -> bool:
+        """Does the node have automatic width?"""
+        width = self.width
+        return width is not None and width.unit == Unit.AUTO
+
+    @property
+    def is_auto_height(self) -> bool:
+        """Does the node have automatic height?"""
+        height = self.height
+        return height is not None and height.unit == Unit.AUTO
+
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
         """Check if a rule is set on this Styles object.
