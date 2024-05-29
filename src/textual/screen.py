@@ -721,7 +721,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
-        self.call_after_refresh(self.refresh_bindings)
+        self.refresh_bindings()
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Insert Textual's own internal widgets.
@@ -742,27 +742,29 @@ class Screen(Generic[ScreenResultType], Widget):
         self.screen_layout_refresh_signal.subscribe(
             self, self._maybe_clear_tooltip, immediate=True
         )
+        self.refresh_bindings()
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if not self.app._batch_count and self.is_current:
-            if (
-                self._layout_required
-                or self._scroll_required
-                or self._repaint_required
-                or self._recompose_required
-                or self._dirty_widgets
-            ):
-                self._update_timer.resume()
-                return
+        try:
+            if not self.app._batch_count and self.is_current:
+                if (
+                    self._layout_required
+                    or self._scroll_required
+                    or self._repaint_required
+                    or self._recompose_required
+                    or self._dirty_widgets
+                ):
+                    self._update_timer.resume()
+                    return
 
-        await self._invoke_and_clear_callbacks()
-
-        if self._bindings_updated:
-            self._bindings_updated = False
-            self.app.call_later(self.bindings_updated_signal.publish, self)
+            await self._invoke_and_clear_callbacks()
+        finally:
+            if self._bindings_updated:
+                self._bindings_updated = False
+                self.app.call_later(self.bindings_updated_signal.publish, self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
