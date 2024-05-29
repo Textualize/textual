@@ -5,13 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.63.6]
+## [0.63.6] - 2024-05-29
 
 ### Fixed
 
-- Fixed issue with bindings not refreshing
+- Fixed issue with bindings not refreshing https://github.com/Textualize/textual/pull/4571
 
-## [0.63.5]
+## [0.63.5] - 2024-05-28
 
 ### Fixed
 
@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Added `Styles.is_auto_width` and `Style.is_auto_height`
 
-## [0.63.4]
+## [0.63.4] - 2024-05-26
 
 ### Added
 
