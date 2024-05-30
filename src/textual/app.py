@@ -3362,10 +3362,11 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widgets: Widgets to remove.
         """
+        if not self.is_attached:
+            return
         async with self._dom_lock:
             for widget in widgets:
-                if self.is_attached:
-                    await self._prune_node(widget)
+                await self._prune_node(widget)
 
     async def _prune_node(self, root: Widget) -> None:
         """Remove a node and its children. Children are removed before parents.
