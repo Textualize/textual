@@ -3362,8 +3362,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widgets: Widgets to remove.
         """
-        if not self.is_attached:
-            return
         async with self._dom_lock:
             for widget in widgets:
                 await self._prune_node(widget)
@@ -3375,6 +3373,7 @@ class App(Generic[ReturnType], DOMNode):
             root: Node to remove.
         """
         # Pruning a node that has been removed is a no-op
+
         if root not in self._registry:
             return
 
