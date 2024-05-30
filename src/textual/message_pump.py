@@ -247,8 +247,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
     @property
     def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
+        if self.is_dom_root:
+            return True
         node: MessagePump | None = self
-
         while (node := node._parent) is not None:
             if node.is_dom_root:
                 return True
@@ -479,9 +480,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._closed or self._closing:
             return
         self._closing = True
-        stop_timers = list(self._timers)
-        for timer in stop_timers:
-            timer.stop()
+        await Timer._stop_all(self._timers)
+        # stop_timers = list(self._timers)
+        # for timer in stop_timers:
+        #     timer.stop()
         self._timers.clear()
         await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)
