@@ -111,6 +111,7 @@ from .screen import (
     _SystemModalScreen,
 )
 from .signal import Signal
+from .timer import Timer
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -2522,8 +2523,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     await self.animator.stop()
                 finally:
-                    for timer in list(self._timers):
-                        timer.stop()
+                    await Timer._stop_all(self._timers)
 
         self._running = True
         try:
@@ -3364,7 +3364,8 @@ class App(Generic[ReturnType], DOMNode):
         """
         async with self._dom_lock:
             for widget in widgets:
-                await self._prune_node(widget)
+                if self.is_attached:
+                    await self._prune_node(widget)
 
     async def _prune_node(self, root: Widget) -> None:
         """Remove a node and its children. Children are removed before parents.

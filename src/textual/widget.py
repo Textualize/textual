@@ -935,6 +935,7 @@ class Widget(DOMNode):
             provided a ``MountError`` will be raised.
         """
         if not self.is_attached:
+            return AwaitMount(self, [])
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
         # Check for duplicate IDs in the incoming widgets
         ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
@@ -3716,7 +3717,8 @@ class Widget(DOMNode):
             self.app._handle_exception(error)
         else:
             self._extend_compose(widgets)
-            await self.mount_composed_widgets(widgets)
+            if widgets:
+                await self.mount_composed_widgets(widgets)
 
     async def mount_composed_widgets(self, widgets: list[Widget]) -> None:
         """Called by Textual to mount widgets after compose.

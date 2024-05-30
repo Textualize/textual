@@ -519,8 +519,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            for timer in list(self._timers):
-                timer.stop()
+            await Timer._stop_all(self._timers)
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
@@ -849,6 +848,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return handled
 
     async def on_timer(self, event: events.Timer) -> None:
+        if not self.app._running:
+            return
         event.prevent_default()
         event.stop()
         if event.callback is not None:
