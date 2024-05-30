@@ -104,7 +104,12 @@ class Timer:
             timers: A number of timers.
         """
 
-        async def stop_timer(timer) -> None:
+        async def stop_timer(timer: Timer) -> None:
+            """Stop a timer and wait for it to finish.
+
+            Args:
+                timer: A Timer instance.
+            """
             if timer._task is not None:
                 timer._active.set()
                 timer._task.cancel()
