@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fix traceback on exit https://github.com/Textualize/textual/pull/4575
+
 ## [0.63.6] - 2024-05-29
 
 ### Fixed
