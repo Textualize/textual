@@ -73,6 +73,13 @@ def invoke_watcher(
         value: The new value of the attribute.
     """
     _rich_traceback_omit = True
+
+    from ._context import active_app
+
+    app = active_app.get()
+    if not app._running:
+        return
+
     param_count = count_parameters(watch_function)
     reset_token = active_message_pump.set(watcher_object)
     try:
