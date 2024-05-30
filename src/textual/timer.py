@@ -91,7 +91,12 @@ class Timer:
 
         """
         if self._task is None:
-            raise RuntimeError("Timer has not been started.")
+
+            async def noop() -> None:
+                """A dummy task."""
+
+            return create_task(noop())
+
         self._active.set()
         self._task.cancel()
         return self._task

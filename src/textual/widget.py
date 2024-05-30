@@ -3716,8 +3716,7 @@ class Widget(DOMNode):
             self.app._handle_exception(error)
         else:
             self._extend_compose(widgets)
-            if widgets:
-                await self.mount_composed_widgets(widgets)
+            await self.mount_composed_widgets(widgets)
 
     async def mount_composed_widgets(self, widgets: list[Widget]) -> None:
         """Called by Textual to mount widgets after compose.
@@ -3729,7 +3728,8 @@ class Widget(DOMNode):
         Args:
             widgets: A list of child widgets.
         """
-        await self.mount_all(widgets)
+        if widgets:
+            await self.mount_all(widgets)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Hook to extend composed widgets.
