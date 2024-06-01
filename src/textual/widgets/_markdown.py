@@ -232,7 +232,7 @@ class MarkdownHeader(MarkdownBlock):
     MarkdownHeader {
         color: $text;
         margin: 2 0 1 0;
-       
+
     }
     """
 
@@ -243,7 +243,7 @@ class MarkdownH1(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH1 {
-        content-align: center middle;             
+        content-align: center middle;
         text-style: bold;
         color: $success;
         &:light {color: $primary;}
@@ -260,7 +260,7 @@ class MarkdownH2(MarkdownHeader):
         text-style: underline;
         color: $success;
          &:light {color: $primary;}
-      
+
     }
     """
 
@@ -270,7 +270,7 @@ class MarkdownH3(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH3 {
-       
+
         text-style: bold;
         color: $success;
         &:light {color: $primary;}
@@ -300,7 +300,7 @@ class MarkdownH5(MarkdownHeader):
         text-style: bold;
         color: $text;
         margin: 1 0;
-       
+
     }
     """
 
@@ -493,8 +493,8 @@ class MarkdownTable(MarkdownBlock):
 
     DEFAULT_CSS = """
     MarkdownTable {
-        width: 100%;     
-        background: $panel;        
+        width: 100%;
+        background: $panel;
     }
     """
 
@@ -597,11 +597,11 @@ class MarkdownFence(MarkdownBlock):
         margin: 1 0;
         overflow: auto;
         width: 100%;
-        height: auto;       
+        height: auto;
         max-height: 20;
         color: rgb(210,210,210);
 
-        
+
     }
 
     MarkdownFence > * {
