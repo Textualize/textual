@@ -99,7 +99,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Dependency issue
 
-## [0.60.0] - 2024-05-14 
+## [0.60.0] - 2024-05-14
 
 ### Fixed
 
@@ -206,7 +206,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
-  
+
 ### Fixed
 
 - Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
@@ -221,7 +221,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed mouse escape sequences being generated with `mouse=False` 
+- Fixed mouse escape sequences being generated with `mouse=False`
 
 ## [0.55.0] - 2024-04-1
 
