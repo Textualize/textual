@@ -107,7 +107,7 @@ class _CharFlags(IntFlag):
     """Char is forced to be lowercase"""
 
 
-class _Template:
+class _Template(Validator):
     """Template mask enforcer."""
 
     @dataclass
@@ -181,12 +181,12 @@ class _Template:
         if len(template) > 0:
             self.blank = template[0]
 
-    def validate(self) -> bool:
-        value = self.input.value.ljust(len(self.template), self.blank)
+    def validate(self, value) -> ValidationResult:
+        value = value.ljust(len(self.template), self.blank)
         for c, char_def in zip(value, self.template):
             if (char_def.flags & _CharFlags.REQUIRED) and not char_def.pattern.match(c):
-                return False
-        return True
+                return self.failure("Value does not match template!")
+        return self.success()
 
 
 class Input(Widget, can_focus=True):
@@ -518,6 +518,7 @@ class Input(Widget, can_focus=True):
 
     def _watch_template(self, template: str) -> None:
         """Revalidate when template changes."""
+        self._template = _Template(self, template) if template else None
         self._watch_value(self.value)
 
     def validate(self, value: str) -> ValidationResult | None:
@@ -541,8 +542,12 @@ class Input(Widget, can_focus=True):
             self.set_class(not valid, "-invalid")
             self.set_class(valid, "-valid")
 
+        validators = list(self.validators)
+        if self._template is not None:
+            validators.append(self._template)
+
         # If no validators are supplied, and therefore no validation occurs, we return None.
-        if not self.validators:
+        if not validators:
             self._valid = True
             set_classes()
             return None
@@ -553,7 +558,7 @@ class Input(Widget, can_focus=True):
             return None
 
         validation_results: list[ValidationResult] = [
-            validator.validate(value) for validator in self.validators
+            validator.validate(value) for validator in validators
         ]
         combined_result = ValidationResult.merge(validation_results)
         self._valid = combined_result.is_valid
