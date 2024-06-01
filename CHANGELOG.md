@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed `Markdown.goto_anchor` no longer scrolling the heading into view.
+- Fixed `Markdown.goto_anchor` no longer scrolling the heading into view https://github.com/Textualize/textual/pull/4583
 
 ## [0.63.6] - 2024-05-29
 
