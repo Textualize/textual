@@ -839,7 +839,7 @@ class Markdown(Widget):
         unique = TrackedSlugs()
         for _, title, header_id in self._table_of_contents:
             if unique.slug(title) == anchor:
-                self.parent.scroll_to_widget(self.query_one(f"#{header_id}"), top=True)
+                self.query_one(f"#{header_id}").scroll_visible(top=True)
                 return True
         return False
 
