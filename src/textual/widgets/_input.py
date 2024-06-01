@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar, Iterable
+from enum import IntFlag
+from typing import TYPE_CHECKING, ClassVar, Iterable, Pattern
 
 from rich.cells import cell_len, get_character_cell_size
 from rich.console import Console, ConsoleOptions
@@ -88,6 +89,104 @@ class _InputRenderable:
             line_length,
         )
         yield from line
+
+
+class _CharFlags(IntFlag):
+    """Misc flags for a single template character definition"""
+
+    REQUIRED = 0x1
+    """Is this character required for validation?"""
+
+    SEPARATOR = 0x2
+    """Is this character a separator?"""
+
+    UPPERCASE = 0x4
+    """Char is forced to be uppercase"""
+
+    LOWERCASE = 0x8
+    """Char is forced to be lowercase"""
+
+
+class _Template:
+    """Template mask enforcer."""
+
+    @dataclass
+    class CharDef:
+        """Holds data for a single char of the template mask."""
+
+        pattern: Pattern
+        """Compiled regular expression to check for matches."""
+
+        flags: _CharFlags = _CharFlags()
+        """Flags defining special behaviors"""
+
+    def __init__(self, input: Input, template: str) -> None:
+        self.input = input
+        self.template: list[Pattern] = []
+        self.blank: str = " "
+        escaped = False
+        flags = _CharFlags()
+        template: list[str] = list(template)
+        while len(template) > 0:
+            c = template.pop(0)
+            if escaped:
+                char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
+                escaped = False
+            else:
+                if c == "A":
+                    char = self.CharDef(re.compile(r"[A-Za-z]"), _CharFlags.REQUIRED)
+                elif c == "a":
+                    char = self.CharDef(re.compile(r"[A-Za-z]"), 0)
+                elif c == "N":
+                    char = self.CharDef(re.compile(r"[A-Za-z0-9]"), _CharFlags.REQUIRED)
+                elif c == "n":
+                    char = self.CharDef(re.compile(r"[A-Za-z0-9]"), 0)
+                elif c == "X":
+                    char = self.CharDef(re.compile(r"[^ ]"), _CharFlags.REQUIRED)
+                elif c == "x":
+                    char = self.CharDef(re.compile(r"[^ ]"), 0)
+                elif c == "9":
+                    char = self.CharDef(re.compile(r"[0-9]"), _CharFlags.REQUIRED)
+                elif c == "0":
+                    char = self.CharDef(re.compile(r"[0-9]"), 0)
+                elif c == "D":
+                    char = self.CharDef(re.compile(r"[1-9]"), _CharFlags.REQUIRED)
+                elif c == "d":
+                    char = self.CharDef(re.compile(r"[1-9]"), 0)
+                elif c == "#":
+                    char = self.CharDef(re.compile(r"[0-9+\-]"), 0)
+                elif c == "H":
+                    char = self.CharDef(re.compile(r"[A-Fa-f0-9]"), _CharFlags.REQUIRED)
+                elif c == "h":
+                    char = self.CharDef(re.compile(r"[A-Fa-f0-9]"), 0)
+                elif c == "B":
+                    char = self.CharDef(re.compile(r"[0-1]"), _CharFlags.REQUIRED)
+                elif c == "b":
+                    char = self.CharDef(re.compile(r"[0-1]"), 0)
+                elif c == ">":
+                    flags = (flags | _CharFlags.UPPERCASE) & ~_CharFlags.LOWERCASE
+                elif c == "<":
+                    flags = (flags | _CharFlags.LOWERCASE) & ~_CharFlags.UPPERCASE
+                elif c == "!":
+                    flags = 0
+                elif c == ";":
+                    break
+                elif c == "\\":
+                    escaped = True
+                    continue
+                else:
+                    char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
+            char.flags |= flags
+            template.append(char)
+        if len(template) > 0:
+            self.blank = template[0]
+
+    def validate(self) -> bool:
+        value = self.input.value.ljust(len(self.template), self.blank)
+        for c, char_def in zip(value, self.template):
+            if (char_def.flags & _CharFlags.REQUIRED) and not char_def.pattern.match(c):
+                return False
+        return True
 
 
 class Input(Widget, can_focus=True):
@@ -193,6 +292,8 @@ class Input(Widget, can_focus=True):
     """The maximum length of the input, in characters."""
     valid_empty = var(False)
     """Empty values should pass validation."""
+    template = var("")
+    """Input template currently in use."""
 
     @dataclass
     class Changed(Message):
@@ -257,6 +358,7 @@ class Input(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        template: str = "",
     ) -> None:
         """Initialise the `Input` widget.
 
@@ -289,6 +391,8 @@ class Input(Widget, can_focus=True):
         self.highlighter = highlighter
         self.password = password
         self.suggester = suggester
+        self.template = template
+        self._template = _Template(self, template) if template else None
 
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
@@ -410,6 +514,10 @@ class Input(Widget, can_focus=True):
 
     def _watch_valid_empty(self) -> None:
         """Repeat validation when valid_empty changes."""
+        self._watch_value(self.value)
+
+    def _watch_template(self, template: str) -> None:
+        """Revalidate when template changes."""
         self._watch_value(self.value)
 
     def validate(self, value: str) -> ValidationResult | None:
