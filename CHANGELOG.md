@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed `Markdown.goto_anchor` no longer scrolling the heading into view.
+
 ## [0.63.6] - 2024-05-29
 
 ### Fixed
