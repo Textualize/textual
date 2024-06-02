@@ -130,7 +130,7 @@ class _Template(Validator):
         while len(template) > 0:
             c = template.pop(0)
             if escaped:
-                char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
+                char = None
                 escaped = False
             else:
                 new_flags = {
@@ -177,7 +177,9 @@ class _Template(Validator):
                 elif c == "b":
                     char = self.CharDef(re.compile(r"[0-1]"), 0)
                 else:
-                    char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
+                    char = None
+            if char is None:
+                char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
             char.flags |= flags
             self.template.append(char)
         if len(template) > 0:
