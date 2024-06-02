@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fix traceback on exit https://github.com/Textualize/textual/pull/4575
+- Fixed `Markdown.goto_anchor` no longer scrolling the heading into view https://github.com/Textualize/textual/pull/4583
 
 ## [0.63.6] - 2024-05-29
 
@@ -105,7 +106,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Dependency issue
 
-## [0.60.0] - 2024-05-14 
+## [0.60.0] - 2024-05-14
 
 ### Fixed
 
@@ -212,7 +213,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
-  
+
 ### Fixed
 
 - Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
@@ -227,7 +228,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed mouse escape sequences being generated with `mouse=False` 
+- Fixed mouse escape sequences being generated with `mouse=False`
 
 ## [0.55.0] - 2024-04-1
 
