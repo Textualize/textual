@@ -280,6 +280,13 @@ class _Template(Validator):
         self.input.cursor_position = cursor_position
         self.input.value = value
 
+    def adjust_cursor_position(self) -> None:
+        cursor_position = self.input.cursor_position
+        if (cursor_position < len(self.template)) and (
+            self.template[cursor_position].flags & _CharFlags.SEPARATOR
+        ):
+            self.move_cursor(1)
+
 
 class Input(Widget, can_focus=True):
     """A text input widget."""
@@ -762,6 +769,8 @@ class Input(Widget, can_focus=True):
             cell_offset += cell_width
         else:
             self.cursor_position = len(self.value)
+        if self._template is not None:
+            self._template.adjust_cursor_position()
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
