@@ -132,8 +132,12 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     """Convert 'ctrl+' prefix to '^'."""
     compact = reactive(False)
     """Display in compact style."""
+    _bindings_ready = reactive(False, repaint=False)
+    """True if the bindings are ready to be displayed."""
 
     def compose(self) -> ComposeResult:
+        if not self._bindings_ready:
+            return
         bindings = [
             (binding, enabled)
             for (_, binding, enabled) in self.screen.active_bindings.values()
@@ -162,6 +166,7 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
 
     def on_mount(self) -> None:
         async def bindings_changed(screen: Screen) -> None:
+            self._bindings_ready = True
             if self.is_attached and screen is self.screen:
                 await self.recompose()
 
