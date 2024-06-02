@@ -117,7 +117,7 @@ class _Template(Validator):
         pattern: Pattern
         """Compiled regular expression to check for matches."""
 
-        flags: _CharFlags = _CharFlags()
+        flags: _CharFlags = _CharFlags(0)
         """Flags defining special behaviors"""
 
     def __init__(self, input: Input, template: str) -> None:
@@ -125,7 +125,7 @@ class _Template(Validator):
         self.template: list[Pattern] = []
         self.blank: str = " "
         escaped = False
-        flags = _CharFlags()
+        flags = _CharFlags(0)
         template: list[str] = list(template)
         while len(template) > 0:
             c = template.pop(0)
@@ -133,7 +133,20 @@ class _Template(Validator):
                 char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
                 escaped = False
             else:
-                if c == "A":
+                new_flags = {
+                    ">": _CharFlags.UPPERCASE,
+                    "<": _CharFlags.LOWERCASE,
+                    "!": 0,
+                }.get(c, None)
+                if new_flags is not None:
+                    flags = new_flags
+                    continue
+                elif c == ";":
+                    break
+                elif c == "\\":
+                    escaped = True
+                    continue
+                elif c == "A":
                     char = self.CharDef(re.compile(r"[A-Za-z]"), _CharFlags.REQUIRED)
                 elif c == "a":
                     char = self.CharDef(re.compile(r"[A-Za-z]"), 0)
@@ -163,21 +176,10 @@ class _Template(Validator):
                     char = self.CharDef(re.compile(r"[0-1]"), _CharFlags.REQUIRED)
                 elif c == "b":
                     char = self.CharDef(re.compile(r"[0-1]"), 0)
-                elif c == ">":
-                    flags = (flags | _CharFlags.UPPERCASE) & ~_CharFlags.LOWERCASE
-                elif c == "<":
-                    flags = (flags | _CharFlags.LOWERCASE) & ~_CharFlags.UPPERCASE
-                elif c == "!":
-                    flags = 0
-                elif c == ";":
-                    break
-                elif c == "\\":
-                    escaped = True
-                    continue
                 else:
                     char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR)
             char.flags |= flags
-            template.append(char)
+            self.template.append(char)
         if len(template) > 0:
             self.blank = template[0]
 
@@ -391,8 +393,6 @@ class Input(Widget, can_focus=True):
         self.highlighter = highlighter
         self.password = password
         self.suggester = suggester
-        self.template = template
-        self._template = _Template(self, template) if template else None
 
         # Ensure we always end up with an Iterable of validators
         if isinstance(validators, Validator):
@@ -436,6 +436,9 @@ class Input(Widget, can_focus=True):
                 self.validators.append(Integer())
             elif self.type == "number":
                 self.validators.append(Number())
+
+        self._template = _Template(self, template) if template else None
+        self.template = template
 
         if value is not None:
             self.value = value
