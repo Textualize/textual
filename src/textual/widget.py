@@ -934,15 +934,16 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+        if self._closing:
+            return AwaitMount(self, [])
         if not self.is_attached:
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
         # Check for duplicate IDs in the incoming widgets
-        ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
-        unique_ids = set(ids_to_mount)
-        num_unique_ids = len(unique_ids)
-        num_widgets_with_ids = len(ids_to_mount)
-        if num_unique_ids != num_widgets_with_ids:
-            counter = Counter(widget.id for widget in widgets)
+        ids_to_mount = [
+            widget_id for widget in widgets if (widget_id := widget.id) is not None
+        ]
+        if len(set(ids_to_mount)) != len(ids_to_mount):
+            counter = Counter(ids_to_mount)
             for widget_id, count in counter.items():
                 if count > 1:
                     raise MountError(
@@ -3728,7 +3729,8 @@ class Widget(DOMNode):
         Args:
             widgets: A list of child widgets.
         """
-        await self.mount_all(widgets)
+        if widgets:
+            await self.mount_all(widgets)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Hook to extend composed widgets.

@@ -111,6 +111,7 @@ from .screen import (
     _SystemModalScreen,
 )
 from .signal import Signal
+from .timer import Timer
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
@@ -2522,8 +2523,7 @@ class App(Generic[ReturnType], DOMNode):
                 try:
                     await self.animator.stop()
                 finally:
-                    for timer in list(self._timers):
-                        timer.stop()
+                    await Timer._stop_all(self._timers)
 
         self._running = True
         try:
@@ -3373,6 +3373,7 @@ class App(Generic[ReturnType], DOMNode):
             root: Node to remove.
         """
         # Pruning a node that has been removed is a no-op
+
         if root not in self._registry:
             return
 

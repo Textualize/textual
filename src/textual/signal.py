@@ -109,7 +109,7 @@ class Signal(Generic[SignalT]):
         """
 
         for node, callbacks in list(self._subscriptions.items()):
-            if not node.is_running:
+            if not (node.is_running and node.is_attached):
                 # Removed nodes that are no longer running
                 self._subscriptions.pop(node)
             else:

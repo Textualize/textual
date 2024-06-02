@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fix traceback on exit https://github.com/Textualize/textual/pull/4575
 - Fixed `Markdown.goto_anchor` no longer scrolling the heading into view https://github.com/Textualize/textual/pull/4583
 - Fixed Footer flicker on initial focus https://github.com/Textualize/textual/issues/4573
 

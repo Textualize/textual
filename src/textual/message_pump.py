@@ -247,8 +247,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
     @property
     def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
+        if self.is_dom_root:
+            return True
         node: MessagePump | None = self
-
         while (node := node._parent) is not None:
             if node.is_dom_root:
                 return True
@@ -479,10 +480,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._closed or self._closing:
             return
         self._closing = True
-        stop_timers = list(self._timers)
-        for timer in stop_timers:
-            timer.stop()
-        self._timers.clear()
+        if self._timers:
+            await Timer._stop_all(self._timers)
+            self._timers.clear()
         await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)
         await self._message_queue.put(None)
@@ -519,8 +519,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            for timer in list(self._timers):
-                timer.stop()
+            if self._timers:
+                await Timer._stop_all(self._timers)
+                self._timers.clear()
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
@@ -849,6 +850,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return handled
 
     async def on_timer(self, event: events.Timer) -> None:
+        if not self.app._running:
+            return
         event.prevent_default()
         event.stop()
         if event.callback is not None:
