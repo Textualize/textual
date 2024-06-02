@@ -480,8 +480,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._closed or self._closing:
             return
         self._closing = True
-        await Timer._stop_all(self._timers)
-        self._timers.clear()
+        if self._timers:
+            await Timer._stop_all(self._timers)
+            self._timers.clear()
         await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)
         await self._message_queue.put(None)
@@ -518,7 +519,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            await Timer._stop_all(self._timers)
+            if self._timers:
+                await Timer._stop_all(self._timers)
+                self._timers.clear()
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
