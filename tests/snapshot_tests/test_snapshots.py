@@ -110,6 +110,15 @@ def test_input_suggestions(snap_compare):
     )
 
 
+def test_input_template(snap_compare):
+    async def run_before(pilot):
+        pilot.app.query(Input).first().cursor_blink = False
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "input_template.py", press=["A","B","C","0","1","-","D","E"], run_before=run_before
+    )
+
+
 def test_buttons_render(snap_compare):
     # Testing button rendering. We press tab to focus the first button too.
     assert snap_compare(WIDGET_EXAMPLES_DIR / "button.py", press=["tab"])

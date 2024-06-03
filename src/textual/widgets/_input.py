@@ -204,10 +204,10 @@ class _Template(Validator):
         self.update_mask(input.placeholder)
 
     def validate(self, value) -> ValidationResult:
-        value = value.ljust(len(self.template), self.blank)
-        for c, char_def in zip(value, self.template):
+        full_value = value.ljust(len(self.template), self.blank)
+        for c, char_def in zip(full_value, self.template):
             if (char_def.flags & _CharFlags.REQUIRED) and not char_def.pattern.match(c):
-                return self.failure("Value does not match template!")
+                return self.failure("Value does not match template!", value)
         return self.success()
 
     def insert_separators(self, value, cursor_position) -> tuple[str, int]:
@@ -710,7 +710,8 @@ class Input(Widget, can_focus=True):
     def _watch_template(self, template: str) -> None:
         """Revalidate when template changes."""
         self._template = _Template(self, template) if template else None
-        self._watch_value(self.value)
+        if self.is_mounted:
+            self._watch_value(self.value)
 
     def _watch_placeholder(self, placeholder: str) -> None:
         """Update template display mask when placeholder changes."""
@@ -941,7 +942,12 @@ class Input(Widget, can_focus=True):
 
     def clear(self) -> None:
         """Clear the input."""
-        self.value = ""
+        if self._template is None:
+            value, cursor_position = "", 0
+        else:
+            value, cursor_position = self._template.insert_separators("", 0)
+        self.value = value
+        self.cursor_position = cursor_position
 
     def action_cursor_left(self) -> None:
         """Move the cursor one position to the left."""
