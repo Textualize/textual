@@ -908,47 +908,48 @@ class Markdown(Widget):
             block_id: int = 0
 
             for token in tokens:
-                if token.type == "heading_open":
+                token_type = token.type
+                if token_type == "heading_open":
                     block_id += 1
                     stack_append(HEADINGS[token.tag](self, id=f"block{block_id}"))
-                elif token.type == "hr":
+                elif token_type == "hr":
                     yield MarkdownHorizontalRule(self)
-                elif token.type == "paragraph_open":
+                elif token_type == "paragraph_open":
                     stack_append(MarkdownParagraph(self))
-                elif token.type == "blockquote_open":
+                elif token_type == "blockquote_open":
                     stack_append(MarkdownBlockQuote(self))
-                elif token.type == "bullet_list_open":
+                elif token_type == "bullet_list_open":
                     stack_append(MarkdownBulletList(self))
-                elif token.type == "ordered_list_open":
+                elif token_type == "ordered_list_open":
                     stack_append(MarkdownOrderedList(self))
-                elif token.type == "list_item_open":
+                elif token_type == "list_item_open":
                     if token.info:
-                        stack.append(MarkdownOrderedListItem(self, token.info))
+                        stack_append(MarkdownOrderedListItem(self, token.info))
                     else:
                         item_count = sum(
                             1
                             for block in stack
                             if isinstance(block, MarkdownUnorderedListItem)
                         )
-                        stack.append(
+                        stack_append(
                             MarkdownUnorderedListItem(
                                 self,
                                 self.BULLETS[item_count % len(self.BULLETS)],
                             )
                         )
-                elif token.type == "table_open":
+                elif token_type == "table_open":
                     stack_append(MarkdownTable(self))
-                elif token.type == "tbody_open":
+                elif token_type == "tbody_open":
                     stack_append(MarkdownTBody(self))
-                elif token.type == "thead_open":
+                elif token_type == "thead_open":
                     stack_append(MarkdownTHead(self))
-                elif token.type == "tr_open":
+                elif token_type == "tr_open":
                     stack_append(MarkdownTR(self))
-                elif token.type == "th_open":
+                elif token_type == "th_open":
                     stack_append(MarkdownTH(self))
-                elif token.type == "td_open":
+                elif token_type == "td_open":
                     stack_append(MarkdownTD(self))
-                elif token.type.endswith("_close"):
+                elif token_type.endswith("_close"):
                     block = stack.pop()
                     if token.type == "heading_close":
                         heading = block._text.plain
@@ -958,9 +959,9 @@ class Markdown(Widget):
                         stack[-1]._blocks.append(block)
                     else:
                         yield block
-                elif token.type == "inline":
+                elif token_type == "inline":
                     stack[-1].build_from_token(token)
-                elif token.type in ("fence", "code_block"):
+                elif token_type in ("fence", "code_block"):
                     fence = MarkdownFence(self, token.content.rstrip(), token.info)
                     if stack:
                         stack[-1]._blocks.append(fence)
