@@ -16,7 +16,7 @@ Textual requires that there be at least one screen object and will create one im
 
 You can create a screen by extending the [Screen][textual.screen.Screen] class which you can import from `textual.screen`. The screen may be styled in the same way as other widgets, with the exception that you can't modify the screen's dimensions (as these will always be the size of your terminal).
 
-Let's look at a simple example of writing a screen class to simulate Window's [blue screen of death](https://en.wikipedia.org/wiki/Blue_screen_of_death).
+Let's look at a simple example of writing a screen class to simulate the Windows 9x [blue screen of death](https://en.wikipedia.org/wiki/Blue_screen_of_death).
 
 === "screen01.py"
 
