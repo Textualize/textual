@@ -885,7 +885,6 @@ class Markdown(Widget):
         Returns:
             An optionally awaitable object. Await this to ensure that all children have been mounted.
         """
-        markdown *= 20
         parser = (
             MarkdownIt("gfm-like")
             if self._parser_factory is None
@@ -978,14 +977,16 @@ class Markdown(Widget):
         markdown_block = self.query("MarkdownBlock")
 
         async def await_update() -> None:
-            """Update in a single batch."""
+            """Update in batches."""
             BATCH_SIZE = 200
             batch: list[MarkdownBlock] = []
             tokens = await asyncio.get_running_loop().run_in_executor(
                 None, parser.parse, markdown
             )
 
+            # Lock so that you can't update with more than one document simultaneously
             async with self.lock:
+                # Remove existing blocks for the first batch only
                 removed: bool = False
 
                 async def mount_batch(batch: list[MarkdownBlock]) -> None:
