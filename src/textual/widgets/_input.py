@@ -61,6 +61,7 @@ class _InputRenderable:
         # Add the completion with a faded style.
         value = input.value
         value_length = len(value)
+        template = input._template
         suggestion = input._suggestion
         show_suggestion = len(suggestion) > value_length and input.has_focus
         if show_suggestion:
@@ -68,6 +69,15 @@ class _InputRenderable:
                 suggestion[value_length:],
                 input.get_component_rich_style("input--suggestion"),
             )
+        elif template is not None:
+            style = input.get_component_rich_style("input--placeholder")
+            result += Text(
+                template.mask[value_length:],
+                style,
+            )
+            for index, (c, char_def) in enumerate(zip(value, template.template)):
+                if c == template.blank:
+                    result.stylize(style, index, index + 1)
 
         if self.cursor_visible and input.has_focus:
             if not show_suggestion and input._cursor_at_end:
@@ -120,8 +130,8 @@ class _Template(Validator):
         flags: _CharFlags = _CharFlags(0)
         """Flags defining special behaviors"""
 
-        separator: str = ""
-        """Separator character if this is a separator"""
+        char: str = ""
+        """Mask character (separator or blank or placeholder)"""
 
     def __init__(self, input: Input, template: str) -> None:
         self.input = input
@@ -191,6 +201,7 @@ class _Template(Validator):
             raise ValueError(
                 "Template must contain at least one non-separator character"
             )
+        self.update_mask(input.placeholder)
 
     def validate(self, value) -> ValidationResult:
         value = value.ljust(len(self.template), self.blank)
@@ -205,7 +216,7 @@ class _Template(Validator):
         ):
             value = (
                 value[:cursor_position]
-                + self.template[cursor_position].separator
+                + self.template[cursor_position].char
                 + value[cursor_position + 1 :]
             )
             cursor_position += 1
@@ -216,13 +227,31 @@ class _Template(Validator):
         cursor_position = self.input.cursor_position
         separators = set(
             [
-                char_def.separator
+                char_def.char
                 for char_def in self.template
                 if char_def.flags & _CharFlags.SEPARATOR
             ]
         )
         for c in text:
             if c in separators:
+                if c == self.next_separator(cursor_position):
+                    prev_position = self.prev_separator_position(cursor_position)
+                    if (cursor_position > 0) and (prev_position != cursor_position - 1):
+                        next_position = self.next_separator_position(cursor_position)
+                        while cursor_position < next_position + 1:
+                            if (
+                                self.template[cursor_position].flags
+                                & _CharFlags.SEPARATOR
+                            ):
+                                char = self.template[cursor_position].char
+                            else:
+                                char = self.blank
+                            value = (
+                                value[:cursor_position]
+                                + char
+                                + value[cursor_position + 1 :]
+                            )
+                            cursor_position += 1
                 continue
             if cursor_position >= len(self.template):
                 break
@@ -254,9 +283,11 @@ class _Template(Validator):
             cursor_position += delta
         self.input.cursor_position = cursor_position
 
-    def delete_at_cursor(self) -> None:
+    def delete_at_position(self, position: int | None = None) -> None:
         value = self.input.value
-        cursor_position = self.input.cursor_position
+        if position is None:
+            position = self.input.cursor_position
+        cursor_position = position
         if cursor_position < len(self.template):
             assert (self.template[cursor_position].flags & _CharFlags.SEPARATOR) == 0
             if cursor_position == len(value) - 1:
@@ -280,12 +311,67 @@ class _Template(Validator):
         self.input.cursor_position = cursor_position
         self.input.value = value
 
-    def adjust_cursor_position(self) -> None:
-        cursor_position = self.input.cursor_position
-        if (cursor_position < len(self.template)) and (
-            self.template[cursor_position].flags & _CharFlags.SEPARATOR
-        ):
-            self.move_cursor(1)
+    def at_separator(self, position: int | None = None) -> bool:
+        if position is None:
+            position = self.input.cursor_position
+        if (position >= 0) and (position < len(self.template)):
+            return bool(self.template[position].flags & _CharFlags.SEPARATOR)
+        else:
+            return False
+
+    def prev_separator_position(self, position: int | None = None) -> int | None:
+        if position is None:
+            position = self.input.cursor_position
+        for index in range(position - 1, 0, -1):
+            if self.template[index].flags & _CharFlags.SEPARATOR:
+                return index
+        else:
+            return None
+
+    def next_separator_position(self, position: int | None = None) -> int | None:
+        if position is None:
+            position = self.input.cursor_position
+        for index in range(position + 1, len(self.template)):
+            if self.template[index].flags & _CharFlags.SEPARATOR:
+                return index
+        else:
+            return None
+
+    def next_separator(self, position: int | None = None) -> str | None:
+        position = self.next_separator_position(position)
+        if position is None:
+            return None
+        else:
+            return self.template[position].char
+
+    def display(self, value: str) -> str:
+        result = []
+        for c, char_def in zip(value, self.template):
+            if c == self.blank:
+                c = char_def.char
+            result.append(c)
+        return "".join(result)
+
+    def update_mask(self, placeholder: str) -> None:
+        for index, char_def in enumerate(self.template):
+            if (char_def.flags & _CharFlags.SEPARATOR) == 0:
+                if index < len(placeholder):
+                    char_def.char = placeholder[index]
+                else:
+                    char_def.char = self.blank
+
+    @property
+    def mask(self) -> str:
+        return "".join([c.char for c in self.template])
+
+    @property
+    def blank_mask(self) -> str:
+        return "".join(
+            [
+                self.blank if (c.flags & _CharFlags.SEPARATOR) == 0 else c.char
+                for c in self.template
+            ]
+        )
 
 
 class Input(Widget, can_focus=True):
@@ -486,6 +572,8 @@ class Input(Widget, can_focus=True):
         self._blink_timer: Timer | None = None
         """Timer controlling the blinking of the cursor, instantiated in `on_mount`."""
 
+        self._template: _Template | None = None
+
         self.placeholder = placeholder
         self.highlighter = highlighter
         self.password = password
@@ -534,7 +622,8 @@ class Input(Widget, can_focus=True):
             elif self.type == "number":
                 self.validators.append(Number())
 
-        self._template = _Template(self, template) if template else None
+        if template:
+            self._template = _Template(self, template)
         self.template = template
 
         if (value is not None) or (self._template is not None):
@@ -623,6 +712,12 @@ class Input(Widget, can_focus=True):
         self._template = _Template(self, template) if template else None
         self._watch_value(self.value)
 
+    def _watch_placeholder(self, placeholder: str) -> None:
+        """Update template display mask when placeholder changes."""
+        if self._template is not None:
+            self._template.update_mask(placeholder)
+            self.refresh()
+
     def validate(self, value: str) -> ValidationResult | None:
         """Run all the validators associated with this Input on the supplied value.
 
@@ -682,7 +777,7 @@ class Input(Widget, can_focus=True):
 
     def render(self) -> RenderResult:
         self.view_position = self.view_position
-        if not self.value:
+        if (not self.value) and (self._template is None):
             placeholder = Text(self.placeholder, justify="left")
             placeholder.stylize(self.get_component_rich_style("input--placeholder"))
             if self.has_focus:
@@ -702,7 +797,11 @@ class Input(Widget, can_focus=True):
         if self.password:
             return Text("•" * len(self.value), no_wrap=True, overflow="ignore")
         else:
-            text = Text(self.value, no_wrap=True, overflow="ignore")
+            if self._template is None:
+                value = self.value
+            else:
+                value = self._template.display(self.value)
+            text = Text(value, no_wrap=True, overflow="ignore")
             if self.highlighter is not None:
                 text = self.highlighter(text)
             return text
@@ -769,8 +868,8 @@ class Input(Widget, can_focus=True):
             cell_offset += cell_width
         else:
             self.cursor_position = len(self.value)
-        if self._template is not None:
-            self._template.adjust_cursor_position()
+        if (self._template is not None) and self._template.at_separator():
+            self._template.move_cursor(1)
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
@@ -877,9 +976,16 @@ class Input(Widget, can_focus=True):
 
     def action_cursor_left_word(self) -> None:
         """Move the cursor left to the start of a word."""
-        if self._template:
-            # Template fields do not support word boundaries
-            pass
+        if self._template is not None:
+            if self._template.at_separator(self.cursor_position - 1):
+                position = self._template.prev_separator_position(
+                    self.cursor_position - 1
+                )
+            else:
+                position = self._template.prev_separator_position()
+            if position:
+                position += 1
+            self.cursor_position = position or 0
         elif self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during movement.
@@ -896,9 +1002,10 @@ class Input(Widget, can_focus=True):
 
     def action_cursor_right_word(self) -> None:
         """Move the cursor right to the start of a word."""
-        if self._template:
-            # Template fields do not support word boundaries
-            pass
+        if self._template is not None:
+            position = self._template.next_separator_position()
+            if position is not None:
+                self.cursor_position = position + 1
         elif self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during movement.
@@ -913,7 +1020,7 @@ class Input(Widget, can_focus=True):
     def action_delete_right(self) -> None:
         """Delete one character at the current cursor position."""
         if self._template is not None:
-            self._template.delete_at_cursor()
+            self._template.delete_at_position()
         else:
             value = self.value
             delete_position = self.cursor_position
@@ -925,8 +1032,15 @@ class Input(Widget, can_focus=True):
     def action_delete_right_word(self) -> None:
         """Delete the current character and all rightward to the start of the next word."""
         if self._template:
-            # Template fields do not support word boundaries
-            pass
+            position = self._template.next_separator_position()
+            if position is not None:
+                position += 1
+            else:
+                position = len(self.value)
+            for index in range(self.cursor_position, position):
+                self.cursor_position = index
+                if not self._template.at_separator():
+                    self._template.delete_at_position()
         elif self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during deletion.
@@ -943,9 +1057,6 @@ class Input(Widget, can_focus=True):
 
     def action_delete_right_all(self) -> None:
         """Delete the current character and all characters to the right of the cursor position."""
-        if self._template is not None:
-            # Action not supported in template fields
-            return
         self.value = self.value[: self.cursor_position]
 
     def action_delete_left(self) -> None:
@@ -955,7 +1066,7 @@ class Input(Widget, can_focus=True):
             return
         if self._template is not None:
             self._template.move_cursor(-1)
-            self._template.delete_at_cursor()
+            self._template.delete_at_position()
         elif self.cursor_position == len(self.value):
             # Delete from end
             self.value = self.value[:-1]
@@ -973,9 +1084,22 @@ class Input(Widget, can_focus=True):
         """Delete leftward of the cursor position to the start of a word."""
         if self.cursor_position <= 0:
             return
-        if self._template:
-            # Template fields do not support word boundaries
-            pass
+        if self._template is not None:
+            if self._template.at_separator(self.cursor_position - 1):
+                position = self._template.prev_separator_position(
+                    self.cursor_position - 1
+                )
+            else:
+                position = self._template.prev_separator_position()
+            if position:
+                position += 1
+            else:
+                position = 0
+            for index in range(position, self.cursor_position):
+                self.cursor_position = index
+                if not self._template.at_separator():
+                    self._template.delete_at_position()
+            self.cursor_position = position
         elif self.password:
             # This is a password field so don't give any hints about word
             # boundaries, even during deletion.
@@ -994,11 +1118,19 @@ class Input(Widget, can_focus=True):
 
     def action_delete_left_all(self) -> None:
         """Delete all characters to the left of the cursor position."""
-        if self._template is not None:
-            # Action not supported in template fields
-            return
         if self.cursor_position > 0:
-            self.value = self.value[self.cursor_position :]
+            if self._template is not None:
+                print("*DELETE LEFT ALL")
+                cursor_position = self.cursor_position
+                if cursor_position >= len(self.value):
+                    self.value = ""
+                else:
+                    self.value = (
+                        self._template.blank_mask[:cursor_position]
+                        + self.value[cursor_position:]
+                    )
+            else:
+                self.value = self.value[self.cursor_position :]
             self.cursor_position = 0
 
     async def action_submit(self) -> None:
