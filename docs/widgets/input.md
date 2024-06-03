@@ -116,6 +116,49 @@ as seen for `Palindrome` in the example above.
 
 If you set `valid_empty=True` then empty values will bypass any validators, and empty values will be considered valid.
 
+### Using templates
+
+`Input` supports custom templates that act like validation masks; when specified, a template acts as an additional implicit *[validator][textual.validation.Validator]*, and enables a custom editing mode based on the specified template.
+A template is a string that can contain the following elements:
+
+| Element         | Description                                                                         |
+| --------------- | ----------------------------------------------------------------------------------- |
+| Mask characters | Define the category of input characters that are considered valid in this position. |
+| Meta characters | Various special meanings (see details below).                                       |
+| Separators      | All other characters are regarded as immutable separators.                          |
+
+The following tables shows the mask and meta characters that can be used in an input mask:
+
+| Mask character | Meaning                                                                                          |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| `A`            | Character of the Letter category required, such as `A-Z`, `a-z`.                                 |
+| `a`            | Character of the Letter category permitted but not required.                                     |
+| `N`            | Character of the Letter or Number category required, such as `A-Z`, `a-z`, `0-9`.                |
+| `n`            | Character of the Letter or Number category permitted but not required.                           |
+| `X`            | Any non-blank character required.                                                                |
+| `x`            | Any non-blank character permitted but not required.                                              |
+| `9`            | Character of the Number category required, such as `0-9`.                                        |
+| `0`            | Character of the Number category permitted but not required.                                     |
+| `D`            | Character of the Number category and larger than zero required, such as `1-9`.                   |
+| `d`            | Character of the Number category and larger than zero permitted but not required, such as `1-9`. |
+| `#`            | Character of the Number category, or plus/minus sign permitted but not required.                 |
+| `H`            | Hexadecimal character required. `A-F`, `a-f`, `0-9`.                                             |
+| `h`            | Hexadecimal character permitted but not required.                                                |
+| `B`            | Binary character required. `0-1`.                                                                |
+| `b`            | Binary character permitted but not required.                                                     |
+
+| Meta character | Meaning                                                                          |
+| -------------- | -------------------------------------------------------------------------------- |
+| `>`            | All following alphabetic characters are uppercased.                              |
+| `<`            | All following alphabetic characters are lowercased.                              |
+| `!`            | Switch off case conversion.                                                      |
+| `;c`           | Terminates the input mask and sets the blank character to `c`.                   |
+| `\`            | Use `\` to escape the special characters listed above to use them as separators. |
+
+Any unescaped character that is not a mask or meta character is considered a separator. Blank characters and separators will act as an always visible placeholder, unless a custom `placeholder` is specified.
+While in template mode, only supported characters as specified in the mask are allowed; separators are added automatically at their positions, and moving/deleting by word acts on each group between two separators.
+Required characters as specified in the mask will affect the validity of the input.
+
 ## Reactive Attributes
 
 | Name              | Type   | Default  | Description                                                     |
@@ -129,6 +172,7 @@ If you set `valid_empty=True` then empty values will bypass any validators, and 
 | `type`            | `str`  | `"text"` | The type of the input.                                          |
 | `max_length`      | `int`  | `None`   | Maximum length of the input value.                              |
 | `valid_empty`     | `bool` | `False`  | Allow empty values to bypass validation.                        |
+| `template`        | `str`  | `""`     | Optional template for custom masked input.                      |
 
 ## Messages
 
