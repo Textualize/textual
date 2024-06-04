@@ -20,15 +20,7 @@ from dataclasses import dataclass
 from functools import total_ordering
 from inspect import isclass
 from time import monotonic
-from typing import (
-    TYPE_CHECKING,
-    Any,
-    AsyncGenerator,
-    AsyncIterator,
-    ClassVar,
-    Iterable,
-    Type,
-)
+from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
 
 import rich.repr
 from rich.align import Align
@@ -44,7 +36,7 @@ from .events import Click, Mount
 from .fuzzy import Matcher
 from .message import Message
 from .reactive import var
-from .screen import Screen, ScreenResultType, _SystemModalScreen
+from .screen import Screen, _SystemModalScreen
 from .timer import Timer
 from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
@@ -560,7 +552,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
     @dataclass
     class Closed(Message):
-        result: ScreenResultType
+        option_selected: bool
 
     def __init__(self) -> None:
         """Initialise the command palette."""
@@ -644,6 +636,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
             self._cancel_gather_commands()
+            self.app.post_message(CommandPalette.Closed(option_selected=False))
             self.dismiss()
 
     def _on_mount(self, _: Mount) -> None:
@@ -1108,6 +1101,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
                 self._cancel_gather_commands()
+                self.app.post_message(CommandPalette.Closed(option_selected=True))
                 self.dismiss(self._selected_command.command)
 
     @on(OptionList.OptionHighlighted)
@@ -1122,14 +1116,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             self._list_visible = False
         else:
             self._cancel_gather_commands()
+            self.app.post_message(CommandPalette.Closed(option_selected=False))
             self.dismiss()
-
-    def dismiss(
-        self, result: ScreenResultType | Type[Screen._NoResult] = Screen._NoResult
-    ) -> None:
-        dismiss_value = None if result is Screen._NoResult else result
-        self.app.post_message(CommandPalette.Closed(dismiss_value))
-        super().dismiss(result)
 
     def _action_command_list(self, action: str) -> None:
         """Pass an action on to the [`CommandList`][textual.command.CommandList].
