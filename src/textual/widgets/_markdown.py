@@ -1172,9 +1172,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
         """The [table of contents][textual.widgets.markdown.MarkdownTableOfContents] widget."""
         return self.query_one(MarkdownTableOfContents)
 
-    def _on_mount(self, _: Mount) -> None:
+    async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
-            self.document.update(self._markdown)
+            await self.document.update(self._markdown)
 
     async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""
