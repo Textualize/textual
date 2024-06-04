@@ -1096,10 +1096,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             elif self.cursor_type == "column":
                 self.refresh_column(old_coordinate.column)
                 self._highlight_column(new_coordinate.column)
-            if abs(new_coordinate.row - old_coordinate.row) <= 1:
-                self._scroll_cursor_into_view()
-            else:
+            if self._require_update_dimensions:
                 self.call_after_refresh(self._scroll_cursor_into_view)
+            else:
+                self._scroll_cursor_into_view()
 
     def move_cursor(
         self,
@@ -1138,7 +1138,6 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # of rows then tried to immediately move the cursor.
         # We do this before setting `cursor_coordinate` because its watcher will also
         # schedule a call to `_scroll_cursor_into_view` without optionally animating.
-        # self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
         if self._require_update_dimensions:
             self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
         else:
