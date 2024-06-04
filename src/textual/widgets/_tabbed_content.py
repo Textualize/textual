@@ -9,6 +9,7 @@ from rich.repr import Result
 from rich.text import Text, TextType
 from typing_extensions import Final
 
+from .. import events
 from ..app import ComposeResult
 from ..await_complete import AwaitComplete
 from ..css.query import NoMatches
@@ -196,6 +197,10 @@ class TabPane(Widget):
     class Enabled(TabPaneMessage):
         """Sent when a tab pane is enabled via its reactive `disabled`."""
 
+    @dataclass
+    class Focused(TabPaneMessage):
+        """Sent when a child widget is focused."""
+
     def __init__(
         self,
         title: TextType,
@@ -223,6 +228,10 @@ class TabPane(Widget):
     def _watch_disabled(self, disabled: bool) -> None:
         """Notify the parent `TabbedContent` that a tab pane was enabled/disabled."""
         self.post_message(self.Disabled(self) if disabled else self.Enabled(self))
+
+    def _on_descendant_focus(self, event: events.DescendantFocus):
+        """Tell TabbedContent parent something is focused in this pane."""
+        self.post_message(self.Focused(self))
 
 
 class TabbedContent(Widget):
@@ -506,6 +515,11 @@ class TabbedContent(Widget):
                     ),
                 )
             )
+
+    def _on_tab_pane_focused(self, event: TabPane.Focused) -> None:
+        event.stop()
+        if event.tab_pane.id is not None:
+            self.active = event.tab_pane.id
 
     def _on_tabs_cleared(self, event: Tabs.Cleared) -> None:
         """Called when there are no active tabs. The tabs may have been cleared,
