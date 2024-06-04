@@ -94,7 +94,10 @@ class FooterKey(Widget):
             )
         else:
             label_text = Text.assemble(
-                (f" {key_display} ", key_style), (description, description_style), " "
+                (f" {key_display} ", key_style),
+                " ",
+                (description, description_style),
+                " ",
             )
         label_text.stylize_before(self.rich_style)
         return label_text

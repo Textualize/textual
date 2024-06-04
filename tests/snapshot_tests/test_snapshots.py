@@ -1273,3 +1273,8 @@ def test_multi_keys(snap_compare):
 
 def test_data_table_in_tabs(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_tabs.py")
+
+
+def test_footer_space_between_key_and_description(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4557"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_spacing.py")
