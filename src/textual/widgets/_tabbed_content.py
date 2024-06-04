@@ -517,6 +517,7 @@ class TabbedContent(Widget):
             )
 
     def _on_tab_pane_focused(self, event: TabPane.Focused) -> None:
+        """One of the panes contains a widget that was programmatically focused."""
         event.stop()
         if event.tab_pane.id is not None:
             self.active = event.tab_pane.id
