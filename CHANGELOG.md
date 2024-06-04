@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Fixed DataTable cursor flicker on scroll https://github.com/Textualize/textual/pull/4598
+
+### Changes
+
+- TabbedContent will automatically make tabs active when a widget in a pane is focused https://github.com/Textualize/textual/issues/4593
+
+## [0.64.0] - 2024-06-03
+
+### Fixed
+
 - Fix traceback on exit https://github.com/Textualize/textual/pull/4575
 - Fixed `Markdown.goto_anchor` no longer scrolling the heading into view https://github.com/Textualize/textual/pull/4583
 - Fixed Footer flicker on initial focus https://github.com/Textualize/textual/issues/4573
@@ -2051,6 +2061,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.64.0]: https://github.com/Textualize/textual/compare/v0.63.6...v0.64.0
 [0.63.6]: https://github.com/Textualize/textual/compare/v0.63.5...v0.63.6
 [0.63.5]: https://github.com/Textualize/textual/compare/v0.63.4...v0.63.5
 [0.63.4]: https://github.com/Textualize/textual/compare/v0.63.3...v0.63.4

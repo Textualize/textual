@@ -149,7 +149,6 @@ async def test_update_of_document_posts_table_of_content_update_message() -> Non
     messages: list[str] = []
 
     class TableOfContentApp(App[None]):
-
         def compose(self) -> ComposeResult:
             yield Markdown("# One\n\n#Two\n")
 
@@ -162,6 +161,6 @@ async def test_update_of_document_posts_table_of_content_update_message() -> Non
 
     async with TableOfContentApp().run_test() as pilot:
         assert messages == ["TableOfContentsUpdated"]
-        pilot.app.query_one(Markdown).update("")
+        await pilot.app.query_one(Markdown).update("")
         await pilot.pause()
         assert messages == ["TableOfContentsUpdated", "TableOfContentsUpdated"]
