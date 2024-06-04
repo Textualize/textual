@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changes
 
-- TabbedContent will automatically make tabs active when a widget in a pane is focused
+- TabbedContent will automatically make tabs active when a widget in a pane is focused https://github.com/Textualize/textual/issues/4593
 
 ## [0.64.0] - 2024-06-03
 
