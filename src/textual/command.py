@@ -553,13 +553,12 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     class Opened(Message):
         """Posted to App when the command palette is opened."""
 
-        pass
-
     @dataclass
     class Closed(Message):
         """Posted to App when the command palette is closed."""
 
         option_selected: bool
+        """True if an option was selected, False if the palette was closed without selecting an option."""
 
     def __init__(self) -> None:
         """Initialise the command palette."""
