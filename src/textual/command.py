@@ -20,7 +20,15 @@ from dataclasses import dataclass
 from functools import total_ordering
 from inspect import isclass
 from time import monotonic
-from typing import TYPE_CHECKING, Any, AsyncGenerator, AsyncIterator, ClassVar, Iterable
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    AsyncGenerator,
+    AsyncIterator,
+    ClassVar,
+    Iterable,
+    Type,
+)
 
 import rich.repr
 from rich.align import Align
@@ -34,8 +42,9 @@ from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .fuzzy import Matcher
+from .message import Message
 from .reactive import var
-from .screen import Screen, _SystemModalScreen
+from .screen import Screen, ScreenResultType, _SystemModalScreen
 from .timer import Timer
 from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
@@ -541,6 +550,18 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     _PALETTE_ID: Final[str] = "--command-palette"
     """The internal ID for the command palette."""
 
+    @dataclass
+    class OptionHighlighted(Message):
+        highlighted_event: OptionList.OptionHighlighted
+
+    @dataclass
+    class Opened(Message):
+        pass
+
+    @dataclass
+    class Closed(Message):
+        result: ScreenResultType
+
     def __init__(self) -> None:
         """Initialise the command palette."""
         super().__init__(id=self._PALETTE_ID)
@@ -627,6 +648,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
     def _on_mount(self, _: Mount) -> None:
         """Configure the command palette once the DOM is ready."""
+
+        self.app.post_message(CommandPalette.Opened())
         self._calling_screen = self.app.screen_stack[-2]
 
         match_style = self.get_component_rich_style(
@@ -1091,6 +1114,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
         """Stop any unused events so they don't leak to the application."""
         event.stop()
+        self.app.post_message(CommandPalette.OptionHighlighted(highlighted_event=event))
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
@@ -1099,6 +1123,13 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         else:
             self._cancel_gather_commands()
             self.dismiss()
+
+    def dismiss(
+        self, result: ScreenResultType | Type[Screen._NoResult] = Screen._NoResult
+    ) -> None:
+        dismiss_value = None if result is Screen._NoResult else result
+        self.app.post_message(CommandPalette.Closed(dismiss_value))
+        super().dismiss(result)
 
     def _action_command_list(self, action: str) -> None:
         """Pass an action on to the [`CommandList`][textual.command.CommandList].
