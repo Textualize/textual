@@ -544,14 +544,21 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
     @dataclass
     class OptionHighlighted(Message):
+        """Posted to App when an option is highlighted in the command palette."""
+
         highlighted_event: OptionList.OptionHighlighted
+        """The option highlighted event from the OptionList within the command palette."""
 
     @dataclass
     class Opened(Message):
+        """Posted to App when the command palette is opened."""
+
         pass
 
     @dataclass
     class Closed(Message):
+        """Posted to App when the command palette is closed."""
+
         option_selected: bool
 
     def __init__(self) -> None:
