@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed DataTable cursor flicker on scroll
+- Fixed DataTable cursor flicker on scroll https://github.com/Textualize/textual/pull/4598
 
 ## [0.64.0] - 2024-06-03
 
