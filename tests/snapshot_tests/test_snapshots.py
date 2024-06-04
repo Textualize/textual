@@ -1273,3 +1273,8 @@ def test_multi_keys(snap_compare):
 
 def test_data_table_in_tabs(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_tabs.py")
+
+
+def test_auto_tab_active(snap_compare):
+    # https://github.com/Textualize/textual/issues/4593
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_tab_active.py", press=["space"])
