@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed DataTable cursor flicker on scroll https://github.com/Textualize/textual/pull/4598
+
+### Changes
+
+- TabbedContent will automatically make tabs active when a widget in a pane is focused https://github.com/Textualize/textual/issues/4593
+
 ## [0.64.0] - 2024-06-03
 
 ### Fixed
