@@ -311,6 +311,16 @@ class StylesCache:
         inner = from_color(bgcolor=(base_background + background).rich_color)
         outer = from_color(bgcolor=base_background.rich_color)
 
+        def line_post(segments: Iterable[Segment]) -> Iterable[Segment]:
+            if styles.has_rule("hatch"):
+                character, color = styles.hatch
+                if character != " " and color.a > 0:
+                    hatch_style = Style.from_color(
+                        (background + color).rich_color, background.rich_color
+                    )
+                    segments = apply_hatch(segments, character, hatch_style)
+            return segments
+
         def post(segments: Iterable[Segment]) -> Iterable[Segment]:
             """Post process segments to apply opacity and tint.
 
@@ -327,13 +337,6 @@ class StylesCache:
             except LookupError:
                 ansi_theme = DEFAULT_TERMINAL_THEME
 
-            if styles.has_rule("hatch"):
-                character, color = styles.hatch
-                if character != " " and color.a > 0:
-                    hatch_style = Style.from_color(
-                        (background + color).rich_color, background.rich_color
-                    )
-                    segments = list(apply_hatch(segments, character, hatch_style))
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint, ansi_theme)
             if opacity != 1.0:
@@ -429,6 +432,7 @@ class StylesCache:
                 line = [make_blank(width - 1, background_style), right]
             else:
                 line = [make_blank(width, background_style)]
+            line = line_post(line)
         else:
             # Content with border and padding (C)
             content_y = y - gutter.top
@@ -441,7 +445,7 @@ class StylesCache:
                 line = Segment.apply_style(line, inner)
             if styles.text_opacity != 1.0:
                 line = TextOpacity.process_segments(line, styles.text_opacity)
-            line = line_pad(line, pad_left, pad_right, inner)
+            line = line_post(line_pad(line, pad_left, pad_right, inner))
 
             if border_left or border_right:
                 # Add left / right border

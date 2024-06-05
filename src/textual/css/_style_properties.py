@@ -17,7 +17,7 @@ from rich.style import Style
 from typing_extensions import TypeAlias
 
 from .._border import normalize_border_value
-from ..color import Color, ColorParseError
+from ..color import TRANSPARENT, Color, ColorParseError
 from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
 from ._help_text import (
@@ -1145,7 +1145,7 @@ class HatchProperty:
     """Property to expose hatch style."""
 
     def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
-        return cast("tuple[str, Color]", obj.get_rule("hatch"))
+        return cast("tuple[str, Color]", obj.get_rule("hatch", (" ", TRANSPARENT)))
 
     def __set__(self, obj: StylesBase, value: tuple[str, Color]) -> None:
         obj.set_rule("hatch", value)
