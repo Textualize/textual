@@ -31,7 +31,7 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import VALID_STYLE_FLAGS
+from .constants import HATCHES, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     NULL_SCALAR,
@@ -1147,5 +1147,16 @@ class HatchProperty:
     def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
         return cast("tuple[str, Color]", obj.get_rule("hatch", (" ", TRANSPARENT)))
 
-    def __set__(self, obj: StylesBase, value: tuple[str, Color]) -> None:
-        obj.set_rule("hatch", value)
+    def __set__(self, obj: StylesBase, value: tuple[str, Color | str]) -> None:
+        character, color = value
+        if len(character) != 1:
+            try:
+                character = HATCHES[character]
+            except KeyError:
+                raise ValueError(
+                    f"Expected a character or hatch value here; found {character!r}"
+                ) from None
+        if isinstance(color, str):
+            color = Color.parse(color)
+        hatch = (character, color)
+        obj.set_rule("hatch", hatch)

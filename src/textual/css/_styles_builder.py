@@ -37,6 +37,7 @@ from ._help_text import (
     text_align_help_text,
 )
 from .constants import (
+    HATCHES,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
@@ -1060,13 +1061,7 @@ class StylesBuilder:
         character = " "
         color = TRANSPARENT
         opacity = 1.0
-        HATCHES = {
-            "left": "╲",
-            "right": "╱",
-            "cross": "╳",
-            "horizontal": "─",
-            "vertical": "│",
-        }
+
         for token in tokens:
             if token.name == "token":
                 if token.value not in VALID_HATCH:
