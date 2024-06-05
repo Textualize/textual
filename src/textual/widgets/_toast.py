@@ -210,4 +210,4 @@ class ToastRack(Container, inherit_css=False):
                 )
                 self.scroll_end(animate=False, force=True)
 
-            self.call_later(mount_toasts, new_toasts)
+            self.call_next(mount_toasts, new_toasts)

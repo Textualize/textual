@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from time import sleep
 
+from textual.app import App, ComposeResult
+from textual.binding import Binding
 from textual.notifications import Notification, Notifications
+from textual.screen import ModalScreen
+from textual.widgets import Footer, Label
 
 
 def test_empty_to_start_with() -> None:
@@ -76,3 +80,35 @@ def test_clear() -> None:
     assert len(tester) == 100
     tester.clear()
     assert len(tester) == 0
+
+
+async def test_mount_crash():
+    # https://github.com/Textualize/textual/issues/4607#issuecomment-2150758850
+
+    class MyScreen(ModalScreen[None]):
+        def compose(self) -> ComposeResult:
+            yield Label("MyScreen")
+
+        async def on_resize(self) -> None:
+            await self.recompose()
+
+    class MountCrash(App[None]):
+        BINDINGS = [
+            Binding("p", "push", "Push a new screen"),
+            Binding("n", "notification", "Notification"),
+        ]
+
+        def compose(self) -> ComposeResult:
+            yield Label("App")
+            yield Footer()
+
+        def action_notification(self) -> None:
+            self.notify("Hello, world!", title="Notification message", timeout=10)
+
+        async def action_push(self) -> None:
+            await self.push_screen(MyScreen(), callback=lambda _: None)
+
+    app = MountCrash()
+    async with app.run_test() as pilot:
+        await pilot.press("n", "n")
+        await pilot.press("p")
