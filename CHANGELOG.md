@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added Command Palette Opened, Closed, and OptionHighlighted events https://github.com/Textualize/textual/pull/4600
+- Added hatch style https://github.com/Textualize/textual/pull/4603
 
 ### Fixed
 
@@ -18,10 +19,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changes
 
 - TabbedContent will automatically make tabs active when a widget in a pane is focused https://github.com/Textualize/textual/issues/4593
-
-### Added
-
-- Added hatch style https://github.com/Textualize/textual/pull/4603
 
 ## [0.64.0] - 2024-06-03
 
