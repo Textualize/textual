@@ -1142,6 +1142,8 @@ class AlignProperty:
 
 
 class HatchProperty:
+    """Property to expose hatch style."""
+
     def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
         return cast("tuple[str, Color]", obj.get_rule("hatch"))
 
