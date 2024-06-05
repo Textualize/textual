@@ -202,8 +202,12 @@ class ToastRack(Container, inherit_css=False):
         # If we got any...
         if new_toasts:
             # ...mount them.
-            self.mount_all(
-                ToastHolder(Toast(toast), id=self._toast_id(toast))
-                for toast in new_toasts
-            )
-            self.call_later(self.scroll_end, animate=False, force=True)
+            async def mount_toasts(toasts: list[Notification]) -> None:
+                """Mount new toasts."""
+                await self.mount_all(
+                    ToastHolder(Toast(toast), id=self._toast_id(toast))
+                    for toast in toasts
+                )
+                self.scroll_end(animate=False, force=True)
+
+            self.call_later(mount_toasts, new_toasts)
