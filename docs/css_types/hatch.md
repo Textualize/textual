@@ -13,17 +13,10 @@ The `<hatch>` CSS type represents a character used in the [hatch](../styles/hatc
 | `vertical`   | A vertical line.               |
 
 
-
-
 ## Examples
 
 ### CSS
 
-<!--
-Include a good variety of examples.
-If the type has many different syntaxes, cover all of them.
-Add comments when needed/if helpful.
--->
 
 ```css
 .some-class {
@@ -32,8 +25,6 @@ Add comments when needed/if helpful.
 ```
 
 ### Python
-
-<!-- Same examples as above. -->
 
 ```py
 widget.styles.hatch = ("cross", "red")

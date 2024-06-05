@@ -25,7 +25,7 @@ class HatchApp(App):
 
     #four {
         hatch: vertical $primary;
-        margin: 2 4;
+        margin: 1 2;
         padding: 1 2;
         align: center middle;
         border: solid red;
@@ -33,7 +33,7 @@ class HatchApp(App):
 
     #five {
         hatch: "┼"  $success 50%;
-        margin: 2 4;
+        margin: 1 2;
         align: center middle;
         text-style: bold;
         color: magenta;

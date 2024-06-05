@@ -17,6 +17,7 @@ from rich.style import Style
 from typing_extensions import TypeAlias
 
 from .._border import normalize_border_value
+from .._cells import cell_len
 from ..color import TRANSPARENT, Color, ColorParseError
 from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
@@ -1156,6 +1157,8 @@ class HatchProperty:
                 raise ValueError(
                     f"Expected a character or hatch value here; found {character!r}"
                 ) from None
+        if cell_len(character) != 1:
+            raise ValueError("Hatch character must have a cell length of 1")
         if isinstance(color, str):
             color = Color.parse(color)
         hatch = (character, color)
