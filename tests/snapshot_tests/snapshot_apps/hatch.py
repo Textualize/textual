@@ -26,7 +26,7 @@ class HatchApp(App):
     #four {
         hatch: vertical $primary;
         margin: 2 4;
-        padding: 2 4;
+        padding: 1 2;
         align: center middle;
         border: solid red;
     }

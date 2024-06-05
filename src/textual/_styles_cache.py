@@ -312,13 +312,14 @@ class StylesCache:
         outer = from_color(bgcolor=base_background.rich_color)
 
         def line_post(segments: Iterable[Segment]) -> Iterable[Segment]:
+            """Apply effects to segments inside the border."""
             if styles.has_rule("hatch"):
                 character, color = styles.hatch
                 if character != " " and color.a > 0:
                     hatch_style = Style.from_color(
                         (background + color).rich_color, background.rich_color
                     )
-                    segments = apply_hatch(segments, character, hatch_style)
+                    return apply_hatch(segments, character, hatch_style)
             return segments
 
         def post(segments: Iterable[Segment]) -> Iterable[Segment]:
