@@ -22,7 +22,7 @@ class InputApp(App):
     def compose(self) -> ComposeResult:
         yield Label("Enter a valid credit card number.")
         yield Input(
-            template="9999-9999-9999-9999",  # (2)!
+            template="9999-9999-9999-9999;0",  # (2)!
         )
 
 

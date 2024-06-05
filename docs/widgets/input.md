@@ -150,16 +150,16 @@ The following tables shows the mask and meta characters that can be used in an i
 | `B`            | Binary character required. `0-1`.                                                                |
 | `b`            | Binary character permitted but not required.                                                     |
 
-| Meta character | Meaning                                                                          |
-| -------------- | -------------------------------------------------------------------------------- |
-| `>`            | All following alphabetic characters are uppercased.                              |
-| `<`            | All following alphabetic characters are lowercased.                              |
-| `!`            | Switch off case conversion.                                                      |
-| `;c`           | Terminates the input mask and sets the blank character to `c`.                   |
-| `\`            | Use `\` to escape the special characters listed above to use them as separators. |
+| Meta character | Meaning                                                                              |
+| -------------- | ------------------------------------------------------------------------------------ |
+| `>`            | All following alphabetic characters are uppercased.                                  |
+| `<`            | All following alphabetic characters are lowercased.                                  |
+| `!`            | Switch off case conversion.                                                          |
+| `;c`           | Terminates the input mask and sets the blank character to `c` (escaping not needed). |
+| `\`            | Use `\` to escape the special characters listed above to use them as separators.     |
 
 Any unescaped character that is not a mask or meta character is considered a separator.
-In template editing mode, `Input` will always show a placeholder mask obtained by removing meta characters and replacing mask characters with the _blank_ character of `template`, stylized using the placeholder style; if a `placeholder` parameter is specified, this overrides such a mask.
+In template editing mode, `Input` will always show a placeholder mask obtained by removing meta characters and replacing mask characters with the _blank_ character of `template` (if not specified, space is assumed), stylized using the placeholder style; if a `placeholder` parameter is specified, this overrides such a mask.
 As user types input, only supported characters as specified in the mask are allowed; separators are added automatically at their expected positions, and moving/deleting by word acts on each group between two separators.
 Required characters as specified in the mask will affect the validity of the input.
 
@@ -173,7 +173,7 @@ Click the tabs to see the output at startup, after typing `1` `2` `3` and `4`, a
     ```
 
     1. A template acts as an implicit validator, so we can customize style accordingly.
-    2. In this template, `9` is a required number and `-` is a separator (automatically inserted as you type).
+    2. In this template, `9` is a required number and `-` is a separator (automatically inserted as you type); *blank* character is specified as `0`.
 
 === "Startup"
 
