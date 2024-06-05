@@ -1117,6 +1117,12 @@ class StylesBuilder:
                         "hatch alpha must be given as a percentage.",
                     )
                 opacity = clamp(opacity_scalar.value / 100.0, 0, 1.0)
+            else:
+                self.error(
+                    name,
+                    opacity_token,
+                    f"expected a percentage here; found {opacity_token.value!r}",
+                )
 
         self.styles._rules[name] = (character or " ", color.multiply_alpha(opacity))
 
