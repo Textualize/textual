@@ -1,6 +1,7 @@
 .hatch {
     height: 1fr;
     border: solid $secondary;
+  
     &.cross {
         hatch: cross $success;
     }

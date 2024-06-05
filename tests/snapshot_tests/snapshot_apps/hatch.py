@@ -6,7 +6,7 @@ from textual.containers import Container
 class HatchApp(App):
     CSS = """
     Screen {
-        hatch: right $primary;
+        hatch: right slateblue;
     }
     #one {
         hatch: left $success;

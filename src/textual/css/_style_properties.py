@@ -1148,7 +1148,11 @@ class HatchProperty:
     def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
         return cast("tuple[str, Color]", obj.get_rule("hatch", (" ", TRANSPARENT)))
 
-    def __set__(self, obj: StylesBase, value: tuple[str, Color | str]) -> None:
+    def __set__(self, obj: StylesBase, value: tuple[str, Color | str] | None) -> None:
+        _rich_traceback_omit = True
+        if value is None:
+            obj.clear_rule("hatch")
+            return
         character, color = value
         if len(character) != 1:
             try:
