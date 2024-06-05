@@ -76,7 +76,7 @@ class _InputRenderable:
                 style,
             )
             for index, (c, char_def) in enumerate(zip(value, template.template)):
-                if c == template.blank:
+                if c == " ":
                     result.stylize(style, index, index + 1)
 
         if self.cursor_visible and input.has_focus:
@@ -204,7 +204,7 @@ class _Template(Validator):
         self.update_mask(input.placeholder)
 
     def validate(self, value) -> ValidationResult:
-        full_value = value.ljust(len(self.template), self.blank)
+        full_value = value.ljust(len(self.template), chr(0))
         for c, char_def in zip(full_value, self.template):
             if (char_def.flags & _CharFlags.REQUIRED) and not char_def.pattern.match(c):
                 return self.failure("Value does not match template!", value)
@@ -245,7 +245,7 @@ class _Template(Validator):
                             ):
                                 char = self.template[cursor_position].char
                             else:
-                                char = self.blank
+                                char = " "
                             value = (
                                 value[:cursor_position]
                                 + char
@@ -293,14 +293,12 @@ class _Template(Validator):
             if cursor_position == len(value) - 1:
                 value = value[:cursor_position]
             else:
-                value = (
-                    value[:cursor_position] + self.blank + value[cursor_position + 1 :]
-                )
+                value = value[:cursor_position] + " " + value[cursor_position + 1 :]
         pos = len(value)
         while pos > 0:
             char_def = self.template[pos - 1]
             if ((char_def.flags & _CharFlags.SEPARATOR) == 0) and (
-                value[pos - 1] != self.blank
+                value[pos - 1] != " "
             ):
                 break
             pos -= 1
@@ -347,7 +345,7 @@ class _Template(Validator):
     def display(self, value: str) -> str:
         result = []
         for c, char_def in zip(value, self.template):
-            if c == self.blank:
+            if c == " ":
                 c = char_def.char
             result.append(c)
         return "".join(result)
@@ -365,10 +363,10 @@ class _Template(Validator):
         return "".join([c.char for c in self.template])
 
     @property
-    def blank_mask(self) -> str:
+    def empty_mask(self) -> str:
         return "".join(
             [
-                self.blank if (c.flags & _CharFlags.SEPARATOR) == 0 else c.char
+                " " if (c.flags & _CharFlags.SEPARATOR) == 0 else c.char
                 for c in self.template
             ]
         )
@@ -1133,7 +1131,7 @@ class Input(Widget, can_focus=True):
                     self.value = ""
                 else:
                     self.value = (
-                        self._template.blank_mask[:cursor_position]
+                        self._template.empty_mask[:cursor_position]
                         + self.value[cursor_position:]
                     )
             else:

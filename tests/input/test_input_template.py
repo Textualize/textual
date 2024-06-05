@@ -112,30 +112,30 @@ async def test_key_modification_actions():
         input.value = serial
         assert input.is_valid
         input.action_delete_right()
-        assert input.value == "_BCDE-FGHIJ-KLMNO-PQRST"
+        assert input.value == " BCDE-FGHIJ-KLMNO-PQRST"
         input.cursor_position = 3
         input.action_delete_left()
-        assert input.value == "_B_DE-FGHIJ-KLMNO-PQRST"
+        assert input.value == " B DE-FGHIJ-KLMNO-PQRST"
         input.cursor_position = 6
         input.action_delete_left()
-        assert input.value == "_B_D_-FGHIJ-KLMNO-PQRST"
+        assert input.value == " B D -FGHIJ-KLMNO-PQRST"
         input.cursor_position = 9
         input.action_delete_left_word()
-        assert input.value == "_B_D_-___IJ-KLMNO-PQRST"
+        assert input.value == " B D -   IJ-KLMNO-PQRST"
         input.action_delete_left_word()
-        assert input.value == "_____-___IJ-KLMNO-PQRST"
+        assert input.value == "     -   IJ-KLMNO-PQRST"
         input.cursor_position = 15
         input.action_delete_right_word()
-        assert input.value == "_____-___IJ-KLM__-PQRST"
+        assert input.value == "     -   IJ-KLM  -PQRST"
         input.action_delete_right_word()
-        assert input.value == "_____-___IJ-KLM"
+        assert input.value == "     -   IJ-KLM"
         input.cursor_position = 10
         input.action_delete_right_all()
-        assert input.value == "_____-___I"
+        assert input.value == "     -   I"
         await pilot.press("J")
-        assert input.value == "_____-___IJ-"
+        assert input.value == "     -   IJ-"
         input.action_cursor_left()
         input.action_delete_left_all()
-        assert input.value == "_____-____J-"
+        assert input.value == "     -    J-"
         input.clear()
         assert input.value == ""
