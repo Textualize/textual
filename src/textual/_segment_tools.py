@@ -267,7 +267,7 @@ _re_spaces = re.compile(r"(\s+|\S+)")
 def apply_hatch(
     segments: Iterable[Segment],
     character: str,
-    hash_style: Style,
+    hatch_style: Style,
     _split=_re_spaces.split,
 ) -> Iterable[Segment]:
     """Replace run of spaces with another character + style.
@@ -289,6 +289,6 @@ def apply_hatch(
             for token in _split(text):
                 if token:
                     if token.isspace():
-                        yield _Segment(character * len(token), hash_style)
+                        yield _Segment(character * len(token), hatch_style)
                     else:
                         yield _Segment(token, style)
