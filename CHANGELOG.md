@@ -9,8 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed hot reloading with hatch rule
-- Fixed hatch style parsing
+- Fixed hot reloading with hatch rule https://github.com/Textualize/textual/pull/4606
+- Fixed hatch style parsing https://github.com/Textualize/textual/pull/4606
 
 ## [0.65.0] - 2024-06-05
 
