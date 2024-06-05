@@ -110,5 +110,4 @@ async def test_mount_crash():
 
     app = MountCrash()
     async with app.run_test() as pilot:
-        await pilot.press("n", "n")
-        await pilot.press("p")
+        await pilot.press("n", "n", "n", "p")
