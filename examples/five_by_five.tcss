@@ -44,7 +44,6 @@ GameCell {
     background: $surface;
     border: round $surface-darken-1;
     transition: background $animation-speed $animation-type, color $animation-speed $animation-type;
-    hatch: right $primary 50%;
 }
 
 GameCell:hover {
