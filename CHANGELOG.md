@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added Command Palette Opened, Closed, and OptionHighlighted events https://github.com/Textualize/textual/pull/4600
+
 ### Fixed
 
 - Fixed DataTable cursor flicker on scroll https://github.com/Textualize/textual/pull/4598
