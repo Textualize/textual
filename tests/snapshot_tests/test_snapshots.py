@@ -1287,3 +1287,8 @@ def test_data_table_in_tabs(snap_compare):
 def test_auto_tab_active(snap_compare):
     # https://github.com/Textualize/textual/issues/4593
     assert snap_compare(SNAPSHOT_APPS_DIR / "auto_tab_active.py", press=["space"])
+
+
+def test_hatch(snap_compare):
+    """Test hatch styles."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "hatch.py")
