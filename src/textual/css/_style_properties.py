@@ -17,7 +17,8 @@ from rich.style import Style
 from typing_extensions import TypeAlias
 
 from .._border import normalize_border_value
-from ..color import Color, ColorParseError
+from .._cells import cell_len
+from ..color import TRANSPARENT, Color, ColorParseError
 from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
 from ._help_text import (
@@ -31,7 +32,7 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import VALID_STYLE_FLAGS
+from .constants import HATCHES, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     NULL_SCALAR,
@@ -1139,3 +1140,26 @@ class AlignProperty:
         horizontal, vertical = value
         setattr(obj, self.horizontal, horizontal)
         setattr(obj, self.vertical, vertical)
+
+
+class HatchProperty:
+    """Property to expose hatch style."""
+
+    def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
+        return cast("tuple[str, Color]", obj.get_rule("hatch", (" ", TRANSPARENT)))
+
+    def __set__(self, obj: StylesBase, value: tuple[str, Color | str]) -> None:
+        character, color = value
+        if len(character) != 1:
+            try:
+                character = HATCHES[character]
+            except KeyError:
+                raise ValueError(
+                    f"Expected a character or hatch value here; found {character!r}"
+                ) from None
+        if cell_len(character) != 1:
+            raise ValueError("Hatch character must have a cell length of 1")
+        if isinstance(color, str):
+            color = Color.parse(color)
+        hatch = (character, color)
+        obj.set_rule("hatch", hatch)
