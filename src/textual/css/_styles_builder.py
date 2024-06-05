@@ -6,6 +6,7 @@ from typing import Iterable, NoReturn, Sequence, cast
 import rich.repr
 
 from .._border import BorderValue, normalize_border_value
+from .._cells import cell_len
 from .._duration import _duration_as_seconds
 from .._easing import EASING
 from ..color import TRANSPARENT, Color, ColorParseError
@@ -1081,7 +1082,13 @@ class StylesBuilder:
                     self.error(
                         name,
                         token,
-                        f"Hatch requires a string of length 1; got {token.value!r}",
+                        f"Hatch requires a string of length 1; got {token.value}",
+                    )
+                if cell_len(character) != 1:
+                    self.error(
+                        name,
+                        token,
+                        f"Hatch requires a string with a *cell length* of 1; got {token.value}",
                     )
             elif token.name == "color":
                 try:
