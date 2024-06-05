@@ -1139,3 +1139,11 @@ class AlignProperty:
         horizontal, vertical = value
         setattr(obj, self.horizontal, horizontal)
         setattr(obj, self.vertical, vertical)
+
+
+class HatchProperty:
+    def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
+        return cast("tuple[str, Color]", obj.get_rule("hatch"))
+
+    def __set__(self, obj: StylesBase, value: tuple[str, Color]) -> None:
+        obj.set_rule("hatch", value)

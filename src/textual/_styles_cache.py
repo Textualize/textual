@@ -14,7 +14,7 @@ from ._ansi_theme import DEFAULT_TERMINAL_THEME
 from ._border import get_box, render_border_label, render_row
 from ._context import active_app
 from ._opacity import _apply_opacity
-from ._segment_tools import line_pad, line_trim
+from ._segment_tools import apply_hatch, line_pad, line_trim
 from .color import Color
 from .constants import DEBUG
 from .filter import LineFilter
@@ -320,12 +320,20 @@ class StylesCache:
             Returns:
                 New list of segments
             """
+
             try:
                 app = active_app.get()
                 ansi_theme = app.ansi_theme
             except LookupError:
                 ansi_theme = DEFAULT_TERMINAL_THEME
 
+            if styles.has_rule("hatch"):
+                character, color = styles.hatch
+                if character != " " and color.a > 0:
+                    hatch_style = Style.from_color(
+                        (background + color).rich_color, background.rich_color
+                    )
+                    segments = list(apply_hatch(segments, character, hatch_style))
             if styles.tint.a:
                 segments = Tint.process_segments(segments, styles.tint, ansi_theme)
             if opacity != 1.0:

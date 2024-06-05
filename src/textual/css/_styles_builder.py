@@ -8,7 +8,7 @@ import rich.repr
 from .._border import BorderValue, normalize_border_value
 from .._duration import _duration_as_seconds
 from .._easing import EASING
-from ..color import Color, ColorParseError
+from ..color import TRANSPARENT, Color, ColorParseError
 from ..geometry import Spacing, SpacingDimensions, clamp
 from ..suggestions import get_suggestion
 from ._error_tools import friendly_list
@@ -43,6 +43,7 @@ from .constants import (
     VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_EDGE,
+    VALID_HATCH,
     VALID_KEYLINE,
     VALID_OVERFLOW,
     VALID_OVERLAY,
@@ -1053,6 +1054,53 @@ class StylesBuilder:
             )
         else:
             self.styles._rules[name] = value  # type: ignore
+
+    def process_hatch(self, name: str, tokens: list[Token]) -> None:
+        character = " "
+        color = TRANSPARENT
+        opacity = 1.0
+        HATCHES = {
+            "left": "╲",
+            "right": "╱",
+            "cross": "╳",
+            "horizontal": "─",
+            "vertical": "│",
+        }
+        for token in tokens:
+            if token.name == "token":
+                if token.value not in VALID_HATCH:
+                    self.error(
+                        name,
+                        tokens[0],
+                        string_enum_help_text(name, VALID_HATCH, context="css"),
+                    )
+                character = HATCHES[token.value]
+            elif token.name == "string":
+                character = token.value[1:-1]
+                if len(character) != 1:
+                    self.error(
+                        name,
+                        token,
+                        f"Hatch requires a string of length 1; got {token.value!r}",
+                    )
+            elif token.name == "color":
+                try:
+                    color = Color.parse(token.value)
+                except Exception as error:
+                    self.error(
+                        name,
+                        token,
+                        color_property_help_text(name, context="css", error=error),
+                    )
+            elif token.name == "scalar":
+                opacity_scalar = opacity = Scalar.parse(token.value)
+                if opacity_scalar.unit != Unit.PERCENT:
+                    self.error(
+                        name, token, "hatch alpha must be given as a percentage."
+                    )
+                opacity = clamp(opacity_scalar.value / 100.0, 0, 1.0)
+
+        self.styles._rules[name] = (character, color.multiply_alpha(opacity))
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """
