@@ -172,7 +172,7 @@ Click the tabs to see the output at startup, after typing `1` `2` `3` and `4`, a
     --8<-- "docs/examples/widgets/input_template.py"
     ```
 
-    1. A template acts an implicit validator, so we can customize style accordingly.
+    1. A template acts as an implicit validator, so we can customize style accordingly.
     2. In this template, `9` is a required number and `-` is a separator (automatically inserted as you type).
 
 === "Startup"
