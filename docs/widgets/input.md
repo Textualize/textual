@@ -168,7 +168,7 @@ Click the tabs to see the output at startup, after typing `1` `2` `3` and `4`, a
 
 === "input_template.py"
 
-    ```python hl_lines="8-15 27"
+    ```python hl_lines="6-13 25"
     --8<-- "docs/examples/widgets/input_template.py"
     ```
 
