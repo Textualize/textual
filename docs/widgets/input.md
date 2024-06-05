@@ -116,12 +116,15 @@ as seen for `Palindrome` in the example above.
 
 If you set `valid_empty=True` then empty values will bypass any validators, and empty values will be considered valid.
 
-### Using templates
+### Templates
 
-`Input` supports custom templates that act like validation masks; when specified, a template acts as an additional implicit *[validator][textual.validation.Validator]*, and enables a custom editing mode based on the specified template.
-A template is a string that can contain the following elements:
+When user input must follow specific rules and the value must be formatted accordingly, a `template` can help you.
+Templates are string masks where each element specifies a well defined condition for the corresponding character typed by the user to be accepted.
+For example, `AA-00` specifies a template that forces the input to contain 5 characters maximum, where the first 2 must be letters and the last 2 must be numbers. The `-` is a _separator_ (more on that below), and will be inserted automatically at the right position while the user types.
+Defining a `template` inserts an additional implicit *[validator][textual.validation.Validator]*, and enables a custom editing mode based on the specified template.
+A template can contain three character categories:
 
-| Element         | Description                                                                         |
+| Character       | Description                                                                         |
 | --------------- | ----------------------------------------------------------------------------------- |
 | Mask characters | Define the category of input characters that are considered valid in this position. |
 | Meta characters | Various special meanings (see details below).                                       |
@@ -155,9 +158,40 @@ The following tables shows the mask and meta characters that can be used in an i
 | `;c`           | Terminates the input mask and sets the blank character to `c`.                   |
 | `\`            | Use `\` to escape the special characters listed above to use them as separators. |
 
-Any unescaped character that is not a mask or meta character is considered a separator. Blank characters and separators will act as an always visible placeholder, unless a custom `placeholder` is specified.
-While in template mode, only supported characters as specified in the mask are allowed; separators are added automatically at their positions, and moving/deleting by word acts on each group between two separators.
+Any unescaped character that is not a mask or meta character is considered a separator.
+In template editing mode, `Input` will always show a placeholder mask obtained by removing meta characters and replacing mask characters with the _blank_ character of `template`, stylized using the placeholder style; if a `placeholder` parameter is specified, this overrides such a mask.
+As user types input, only supported characters as specified in the mask are allowed; separators are added automatically at their expected positions, and moving/deleting by word acts on each group between two separators.
 Required characters as specified in the mask will affect the validity of the input.
+
+In the following example we show how to use a template to enter a valid credit card number.
+Click the tabs to see the output at startup, after typing `1` `2` `3` and `4`, and after filling the whole input field.
+
+=== "input_template.py"
+
+    ```python hl_lines="8-15 27"
+    --8<-- "docs/examples/widgets/input_template.py"
+    ```
+
+    1. A template acts an implicit validator, so we can customize style accordingly.
+    2. In this template, `9` is a required number and `-` is a separator (automatically inserted as you type).
+
+=== "Startup"
+
+    ```{.textual path="docs/examples/widgets/input_template.py"}
+    ```
+
+=== "Partial input"
+
+    ```{.textual path="docs/examples/widgets/input_template.py" press="1,2,3,4"}
+    ```
+
+=== "Complete input"
+
+    ```{.textual path="docs/examples/widgets/input_template.py" press="1,2,3,4,5,6,7,8,1,2,3,4,5,6,7,8"}
+    ```
+
+Note that after typing `1` `2` `3` and `4`, `-` is automatically inserted for you since you reached an expected separator. Template can be used alongside `restrict` parameter and *[validators][textual.validation.Validator]* to further refine accepted input.
+
 
 ## Reactive Attributes
 
