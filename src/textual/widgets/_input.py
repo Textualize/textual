@@ -539,11 +539,11 @@ class Input(Widget, can_focus=True):
         validators: Validator | Iterable[Validator] | None = None,
         validate_on: Iterable[InputValidationOn] | None = None,
         valid_empty: bool = False,
+        template: str = "",
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
-        template: str = "",
     ) -> None:
         """Initialise the `Input` widget.
 
@@ -562,6 +562,7 @@ class Input(Widget, can_focus=True):
                 which determine when to do input validation. The default is to do
                 validation for all messages.
             valid_empty: Empty values are valid.
+            template: Optional template string.
             name: Optional name for the input widget.
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
