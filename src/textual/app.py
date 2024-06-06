@@ -103,6 +103,7 @@ from .messages import CallbackType
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
+from .rlock import RLock
 from .screen import (
     ActiveBinding,
     Screen,
@@ -579,7 +580,7 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-        self._dom_lock = asyncio.Lock()
+        self._dom_lock = RLock()
         self._dom_ready = False
         self._batch_count = 0
         self._notifications = Notifications()
@@ -3555,7 +3556,7 @@ class App(Generic[ReturnType], DOMNode):
                 # or one will turn up. Things will work out later.
                 return
             # Update the toast rack.
-            toast_rack.show(self._notifications)
+            self.call_later(toast_rack.show, self._notifications)
 
     def notify(
         self,
