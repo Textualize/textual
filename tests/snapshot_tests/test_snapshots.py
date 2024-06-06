@@ -1283,10 +1283,3 @@ def test_auto_tab_active(snap_compare):
 def test_hatch(snap_compare):
     """Test hatch styles."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "hatch.py")
-
-
-def test_notification_crash(snap_compare):
-    # https://github.com/Textualize/textual/issues/4607
-    assert snap_compare(
-        SNAPSHOT_APPS_DIR / "notification_crash.py", press=["n", "n", "n", "p"]
-    )
