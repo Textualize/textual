@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- `get_content_height` will now return 0 if the renderable is Falsey
+- `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
 
 ## [0.65.2] - 2023-06-06
 
