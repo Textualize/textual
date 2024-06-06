@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed issue with notifications and screen switches https://github.com/Textualize/textual/pull/4615
 
+### Added
+
+- Added textual.rlock.RLock https://github.com/Textualize/textual/pull/4615
+
 ## [0.65.1] - 2024-06-05
 
 ### Fixed
