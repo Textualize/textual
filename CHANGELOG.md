@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.65.2] - 2023-06-06
+
+### Fixed
+
+- Fixed issue with notifications and screen switches https://github.com/Textualize/textual/pull/4615
+
+### Added
+
+- Added textual.rlock.RLock https://github.com/Textualize/textual/pull/4615
+
 ## [0.65.1] - 2024-06-05
 
 ### Fixed
@@ -2069,6 +2079,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.65.2]: https://github.com/Textualize/textual/compare/v0.65.1...v0.65.2
 [0.65.1]: https://github.com/Textualize/textual/compare/v0.65.0...v0.65.1
 [0.65.0]: https://github.com/Textualize/textual/compare/v0.64.0...v0.65.0
 [0.64.0]: https://github.com/Textualize/textual/compare/v0.63.6...v0.64.0

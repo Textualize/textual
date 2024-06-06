@@ -1012,6 +1012,8 @@ class Markdown(Widget):
                         batch.clear()
                 if batch:
                     await mount_batch(batch)
+                if not removed:
+                    await markdown_block.remove()
 
             self._table_of_contents = table_of_contents
 

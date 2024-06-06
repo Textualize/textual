@@ -746,7 +746,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             if message._sender is not None and message._sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
-            if self.is_parent_active and not self._parent._closing:
+            if self.is_parent_active and self.is_attached:
                 message._bubble_to(self._parent)
 
     def check_idle(self) -> None:

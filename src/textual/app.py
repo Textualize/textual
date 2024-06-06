@@ -103,6 +103,7 @@ from .messages import CallbackType
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
+from .rlock import RLock
 from .screen import (
     ActiveBinding,
     Screen,
@@ -579,7 +580,7 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-        self._dom_lock = asyncio.Lock()
+        self._dom_lock = RLock()
         self._dom_ready = False
         self._batch_count = 0
         self._notifications = Notifications()
@@ -2751,23 +2752,24 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        # Close all screens on all stacks:
-        for stack in self._screen_stacks.values():
-            for stack_screen in reversed(stack):
-                if stack_screen._running:
-                    await self._prune_node(stack_screen)
-            stack.clear()
+        async with self._dom_lock:
+            # Close all screens on all stacks:
+            for stack in self._screen_stacks.values():
+                for stack_screen in reversed(stack):
+                    if stack_screen._running:
+                        await self._prune_node(stack_screen)
+                stack.clear()
 
-        # Close pre-defined screens.
-        for screen in self.SCREENS.values():
-            if isinstance(screen, Screen) and screen._running:
-                await self._prune_node(screen)
+            # Close pre-defined screens.
+            for screen in self.SCREENS.values():
+                if isinstance(screen, Screen) and screen._running:
+                    await self._prune_node(screen)
 
-        # Close any remaining nodes
-        # Should be empty by now
-        remaining_nodes = list(self._registry)
-        for child in remaining_nodes:
-            await child._close_messages()
+            # Close any remaining nodes
+            # Should be empty by now
+            remaining_nodes = list(self._registry)
+            for child in remaining_nodes:
+                await child._close_messages()
 
     async def _shutdown(self) -> None:
         self._begin_batch()  # Prevents any layout / repaint while shutting down
@@ -3341,7 +3343,10 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                self._update_mouse_over(self.screen)
+                try:
+                    self._update_mouse_over(self.screen)
+                except ScreenStackError:
+                    pass
                 if parent is not None:
                     parent.refresh(layout=True)
 
@@ -3555,7 +3560,7 @@ class App(Generic[ReturnType], DOMNode):
                 # or one will turn up. Things will work out later.
                 return
             # Update the toast rack.
-            toast_rack.show(self._notifications)
+            self.call_later(toast_rack.show, self._notifications)
 
     def notify(
         self,
