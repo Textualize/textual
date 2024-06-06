@@ -128,6 +128,7 @@ Like [pop_screen](#pop-screen), if the screen being replaced is not installed it
 You can also switch screens with the `"app.switch_screen"` action which accepts the name of the screen to switch to.
 
 
+
 ## Screen opacity
 
 If a screen has a background color with an *alpha* component, then the background color will be blended with the screen beneath it.
@@ -355,3 +356,12 @@ One for a dashboard, one for settings, and one for help.
 We've bound keys to each of these screens, so the user can switch between the screens.
 
 Pressing ++d++, ++s++, or ++h++ switches between these modes.
+
+
+## Screen events
+
+Textual will send a [ScreenSuspend](../events/screen_suspend.md) event to screens that have become inactive due to another screen being pushed, or switching via a mode.
+
+When a screen becomes active, Textual will send a [ScreenResume](../events/screen_resume.md) event to the newly active screen.
+
+These events can be useful if you want to disable processing for a screen that is no longer visible, for example.
