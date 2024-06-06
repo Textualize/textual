@@ -33,7 +33,7 @@ class DictionaryApp(App):
             self.lookup_word(message.value)
         else:
             # Clear the results
-            self.query_one("#results", Markdown).update("")
+            await self.query_one("#results", Markdown).update("")
 
     @work(exclusive=True)
     async def lookup_word(self, word: str) -> None:
