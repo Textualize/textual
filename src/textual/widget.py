@@ -1345,13 +1345,17 @@ class Widget(DOMNode):
 
             renderable = self.render()
             if isinstance(renderable, Text):
-                height = len(
-                    renderable.wrap(
-                        self._console,
-                        width,
-                        no_wrap=renderable.no_wrap,
-                        tab_size=renderable.tab_size or 8,
+                height = (
+                    len(
+                        renderable.wrap(
+                            self._console,
+                            width,
+                            no_wrap=renderable.no_wrap,
+                            tab_size=renderable.tab_size or 8,
+                        )
                     )
+                    if renderable
+                    else 0
                 )
             else:
                 options = self._console.options.update_width(width).update(

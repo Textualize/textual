@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
+
 ## [0.65.2] - 2023-06-06
 
 ### Fixed
