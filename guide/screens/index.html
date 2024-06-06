@@ -1258,6 +1258,15 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#screen-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      Screen events
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -6763,6 +6772,15 @@ window.onload = async (event) => {
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#screen-events" class="md-nav__link">
+    <span class="md-ellipsis">
+      Screen events
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -8972,6 +8990,10 @@ Any calls to <a class="autorefs autorefs-internal" href="../../api/app/#textual.
 One for a dashboard, one for settings, and one for help.
 We've bound keys to each of these screens, so the user can switch between the screens.</p>
 <p>Pressing <span class="keys"><kbd class="key-d">D</kbd></span>, <span class="keys"><kbd class="key-s">S</kbd></span>, or <span class="keys"><kbd class="key-h">H</kbd></span> switches between these modes.</p>
+<h2 id="screen-events">Screen events<a class="headerlink" href="#screen-events" title="Permanent link">&para;</a></h2>
+<p>Textual will send a <a href="../../events/screen_suspend/">ScreenSuspend</a> event to screens that have become inactive due to another screen being pushed, or switching via a mode.</p>
+<p>When a screen becomes active, Textual will send a <a href="../../events/screen_resume/">ScreenResume</a> event to the newly active screen.</p>
+<p>These events can be useful if you want to disable processing for a screen that is no longer visible, for example.</p>
 
 
 
@@ -8992,7 +9014,7 @@ We've bound keys to each of these screens, so the user can switch between the sc
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1-2.1-2M12.5 7v5.2l4 2.4-1 1L11 13V7h1.5M11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2v1.8Z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">January 4, 2024</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">June 6, 2024</span>
   </span>
 
     
