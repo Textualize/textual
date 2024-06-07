@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
-### Changed
+### [0.66.0]
 
 - `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
+- Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
+- `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
+
+### Added
+
+- Added `Screen.is_active` 
 
 ## [0.65.2] - 2023-06-06
 
@@ -2085,6 +2091,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.66.0]: https://github.com/Textualize/textual/compare/v0.65.2...v0.66.0
 [0.65.2]: https://github.com/Textualize/textual/compare/v0.65.1...v0.65.2
 [0.65.1]: https://github.com/Textualize/textual/compare/v0.65.0...v0.65.1
 [0.65.0]: https://github.com/Textualize/textual/compare/v0.64.0...v0.65.0
