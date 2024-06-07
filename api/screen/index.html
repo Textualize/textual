@@ -5718,6 +5718,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.is_active" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_active
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.is_current" class="md-nav__link">
     <span class="md-ellipsis">
       is_current
@@ -6939,6 +6948,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.screen.Screen.is_active" class="md-nav__link">
+    <span class="md-ellipsis">
+      is_active
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.screen.Screen.is_current" class="md-nav__link">
     <span class="md-ellipsis">
       is_current
@@ -7802,6 +7820,29 @@ If a widget is focused, then any bindings present in the screen and app are merg
 
 
 
+<h3 id="textual.screen.Screen.is_active" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">is_active</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+<a href="#textual.screen.Screen.is_active" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">is_active</span><span class="p">:</span> <span class="nb">bool</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Is the screen active (i.e. visible and top of the stack)?</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
 <h3 id="textual.screen.Screen.is_current" class="doc doc-heading">
         <span class="doc doc-object-name doc-attribute-name">is_current</span>
 
@@ -8116,6 +8157,11 @@ There are other reasons why a widget may not be visible.</p>
   <div class="doc doc-contents ">
   
       <p>Dismiss the screen, optionally with a result.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
+this method will return <code>False</code>.</p>
+</div>
 <p>If <code>result</code> is provided and a callback was set when the screen was <a class="autorefs autorefs-internal" href="../app/#textual.app.App.push_screen">pushed</a>, then
 the callback will be invoked with <code>result</code>.</p>
 
@@ -8139,6 +8185,24 @@ the callback will be invoked with <code>result</code>.</p>
             <code><span title="textual.screen.Screen._NoResult">_NoResult</span></code>
           </td>
           <td><p>The optional result to be passed to the result callback.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td><p><code>True</code> if the Screen was dismissed, or <code>False</code> if the Screen wasn't dismissed due to not being active.</p></td>
         </tr>
     </tbody>
   </table>
