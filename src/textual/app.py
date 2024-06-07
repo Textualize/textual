@@ -777,6 +777,11 @@ class App(Generic[ReturnType], DOMNode):
         return True
 
     @property
+    def is_attached(self) -> bool:
+        """Is this node linked to the app through the DOM?"""
+        return True
+
+    @property
     def debug(self) -> bool:
         """Is debug mode enabled?"""
         return "debug" in self.features
