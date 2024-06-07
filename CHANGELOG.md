@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### [0.66.0]
 
 - `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
-- Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations
-- `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`.
+- Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
+- `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
 
 ### Added
 
