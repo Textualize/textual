@@ -250,7 +250,8 @@ class Button(Widget, can_focus=True):
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
-        self.press()
+        if not self.has_class("-active"):
+            self.press()
 
     def press(self) -> Self:
         """Animate the button and send the [Pressed][textual.widgets.Button.Pressed] message.
@@ -278,7 +279,8 @@ class Button(Widget, can_focus=True):
 
     def action_press(self) -> None:
         """Activate a press of the button."""
-        self.press()
+        if not self.has_class("-active"):
+            self.press()
 
     @classmethod
     def success(
