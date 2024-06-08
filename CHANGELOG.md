@@ -14,13 +14,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
 - Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
 - `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
-- Increased window for escape processing to 100ms
-- Tooltips are now hidden when any key is pressed
+- Increased window for escape processing to 100ms https://github.com/Textualize/textual/pull/4625
+- Tooltips are now hidden when any key is pressed https://github.com/Textualize/textual/pull/4625
 
 ### Added
 
 - Added `Screen.is_active` 
-- Added `tooltip` parameter to input widgets
+- Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625
 
 ## [0.65.2] - 2023-06-06
 
