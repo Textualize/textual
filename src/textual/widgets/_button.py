@@ -204,7 +204,7 @@ class Button(Widget, can_focus=True):
 
         self.label = label
         self.variant = variant
-        self.active_effect_duration = 0.3
+        self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
         if tooltip is not None:
             self.tooltip = tooltip
