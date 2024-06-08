@@ -5,9 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
-
-### [0.66.0]
+## [0.66.0] - 2024-06-08
 
 ### Changed
 
@@ -24,7 +22,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
 - Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625
 
-## [0.65.2] - 2023-06-06
+## [0.65.2] - 2024-06-06
 
 ### Fixed
 
