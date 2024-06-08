@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Screen.is_active` 
+- Added `icon` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
 - Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625
 
 ## [0.65.2] - 2023-06-06
