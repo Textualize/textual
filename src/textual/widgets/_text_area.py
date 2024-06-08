@@ -8,6 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
 
+from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Literal
@@ -374,6 +375,7 @@ TextArea {
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Construct a new `TextArea`.
 
@@ -390,6 +392,7 @@ TextArea {
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -457,6 +460,9 @@ TextArea {
 
         # When `app.dark` is toggled, reset the theme (since it caches values).
         self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     @classmethod
     def code_editor(

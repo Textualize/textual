@@ -3035,6 +3035,11 @@ class App(Generic[ReturnType], DOMNode):
                         pass
 
             elif isinstance(event, events.Key):
+                if self.focused:
+                    try:
+                        self.screen._clear_tooltip()
+                    except NoScreen:
+                        pass
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
                     forward_target._forward_event(event)
