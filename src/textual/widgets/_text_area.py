@@ -480,6 +480,7 @@ TextArea {
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> TextArea:
         """Construct a new `TextArea` with sensible defaults for editing code.
 
@@ -497,6 +498,7 @@ TextArea {
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
+            tooltip: Optional tooltip
         """
         return cls(
             text,
@@ -511,6 +513,7 @@ TextArea {
             id=id,
             classes=classes,
             disabled=disabled,
+            tooltip=tooltip,
         )
 
     @staticmethod
