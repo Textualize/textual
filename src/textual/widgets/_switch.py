@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from rich.console import RenderableType
+
 if TYPE_CHECKING:
     from ..app import RenderResult
 from ..binding import Binding, BindingType
@@ -110,6 +112,7 @@ class Switch(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ):
         """Initialise the switch.
 
@@ -120,12 +123,15 @@ class Switch(Widget, can_focus=True):
             id: The ID of the switch in the DOM.
             classes: The CSS classes of the switch.
             disabled: Whether the switch is disabled or not.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         if value:
             self.slider_pos = 1.0
             self.set_reactive(Switch.value, value)
         self._should_animate = animate
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def watch_value(self, value: bool) -> None:
         target_slider_pos = 1.0 if value else 0.0

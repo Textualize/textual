@@ -1189,6 +1189,7 @@ class Screen(Generic[ScreenResultType], Widget):
         if event.is_forwarded:
             return
         event._set_forwarded()
+
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
