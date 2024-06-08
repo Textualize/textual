@@ -184,6 +184,7 @@ class Button(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ):
         """Create a Button widget.
 
@@ -194,6 +195,7 @@ class Button(Widget, can_focus=True):
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -204,6 +206,8 @@ class Button(Widget, can_focus=True):
         self.variant = variant
         self.active_effect_duration = 0.3
         """Amount of time in seconds the button 'press' animation lasts."""
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         try:
