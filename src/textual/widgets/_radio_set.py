@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import ClassVar, Optional
 
 import rich.repr
+from rich.console import RenderableType
 
 from .. import _widget_navigation
 from ..binding import Binding, BindingType
@@ -121,6 +122,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Initialise the radio set.
 
@@ -130,6 +132,7 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             id: The ID of the radio set in the DOM.
             classes: The CSS classes of the radio set.
             disabled: Whether the radio set is disabled or not.
+            tooltip: Optional tooltip.
 
         Note:
             When a `str` label is provided, a
@@ -148,6 +151,8 @@ class RadioSet(Container, can_focus=True, can_focus_children=False):
             classes=classes,
             disabled=disabled,
         )
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def _on_mount(self, _: Mount) -> None:
         """Perform some processing once mounted in the DOM."""
