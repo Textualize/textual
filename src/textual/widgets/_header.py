@@ -139,6 +139,9 @@ class Header(Widget):
     tall: Reactive[bool] = Reactive(False)
     """Set to `True` for a taller header or `False` for a single line header."""
 
+    icon: Reactive[str] = Reactive("⭘")
+    """A character for the icon at the top left."""
+
     def __init__(
         self,
         show_clock: bool = False,
@@ -146,6 +149,7 @@ class Header(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        icon: str | None = None,
     ):
         """Initialise the header widget.
 
@@ -157,9 +161,11 @@ class Header(Widget):
         """
         super().__init__(name=name, id=id, classes=classes)
         self._show_clock = show_clock
+        if icon is not None:
+            self.icon = icon
 
     def compose(self):
-        yield HeaderIcon()
+        yield HeaderIcon().data_bind(Header.icon)
         yield HeaderTitle()
         yield HeaderClock() if self._show_clock else HeaderClockSpace()
 
