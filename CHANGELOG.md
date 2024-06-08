@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Screen.is_active` 
+- Added `tooltip` parameter to input widgets
 
 ## [0.65.2] - 2023-06-06
 
