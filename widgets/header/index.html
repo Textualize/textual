@@ -4291,6 +4291,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._header.Header.icon" class="md-nav__link">
+    <span class="md-ellipsis">
+      icon
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._header.Header.screen_sub_title" class="md-nav__link">
     <span class="md-ellipsis">
       screen_sub_title
@@ -4312,6 +4321,15 @@ window.onload = async (event) => {
   <a href="#textual.widgets._header.Header.tall" class="md-nav__link">
     <span class="md-ellipsis">
       tall
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._header.Header.time_format" class="md-nav__link">
+    <span class="md-ellipsis">
+      time_format
     </span>
   </a>
   
@@ -6530,6 +6548,15 @@ window.onload = async (event) => {
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._header.Header.icon" class="md-nav__link">
+    <span class="md-ellipsis">
+      icon
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._header.Header.screen_sub_title" class="md-nav__link">
     <span class="md-ellipsis">
       screen_sub_title
@@ -6551,6 +6578,15 @@ window.onload = async (event) => {
   <a href="#textual.widgets._header.Header.tall" class="md-nav__link">
     <span class="md-ellipsis">
       tall
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#textual.widgets._header.Header.time_format" class="md-nav__link">
+    <span class="md-ellipsis">
+      time_format
     </span>
   </a>
   
@@ -6992,8 +7028,10 @@ window.onload = async (event) => {
 <a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="o">*</span><span class="p">,</span>
 <a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">):</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    <span class="n">classes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="n">icon</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>    <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="p">):</span>
 </code></pre></div>
 
   <div class="doc doc-contents first">
@@ -7059,6 +7097,28 @@ window.onload = async (event) => {
           </td>
           <td><p>The CSS classes of the header widget.</p></td>
         </tr>
+        <tr>
+          <td>
+            <strong><code>icon</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>Single character to use as an icon, or <code>None</code> for default.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>time_format</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>Time format (used by strftime) for clock, or <code>None</code> for default.</p></td>
+        </tr>
     </tbody>
   </table>
 
@@ -7072,6 +7132,30 @@ window.onload = async (event) => {
 
 
 
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._header.Header.icon" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">icon</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._header.Header.icon" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">icon</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="s1">&#39;⭘&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>A character for the icon at the top left.</p>
+  </div>
+
+</div>
 
 <div class="doc doc-object doc-attribute">
 
@@ -7141,6 +7225,30 @@ window.onload = async (event) => {
   <div class="doc doc-contents ">
   
       <p>Set to <code>True</code> for a taller header or <code>False</code> for a single line header.</p>
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="textual.widgets._header.Header.time_format" class="doc doc-heading">
+        <span class="doc doc-object-name doc-attribute-name">time_format</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+      <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+  </span>
+
+<a href="#textual.widgets._header.Header.time_format" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">time_format</span><span class="p">:</span> <span class="n">Reactive</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Reactive</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%X</span><span class="s1">&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Time format of the clock.</p>
   </div>
 
 </div>
