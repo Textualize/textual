@@ -15,11 +15,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
 - `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
 - Increased window for escape processing to 100ms
-- Added `icon` reactive to Header widget
 
 ### Added
 
 - Added `Screen.is_active` 
+- Added `icon` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
 
 ## [0.65.2] - 2023-06-06
 
