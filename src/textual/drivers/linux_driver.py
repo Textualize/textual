@@ -388,3 +388,5 @@ class LinuxDriver(Driver):
                             self.process_event(event)
         finally:
             selector.close()
+            for event in feed(""):
+                pass

@@ -282,6 +282,10 @@ class XTermParser(Parser[events.Event]):
                     for event in sequence_to_key_events(character):
                         on_key_token(event)
 
+        if self._debug_log_file is not None:
+            self._debug_log_file.close()
+            self._debug_log_file = None
+
     def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
