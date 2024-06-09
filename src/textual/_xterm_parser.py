@@ -304,17 +304,18 @@ class XTermParser(Parser[events.Event]):
             if modifiers:
                 modifier_bits = int(modifiers) - 1
                 MODIFIERS = (
+                    "shift",
                     "alt",
-                    "caps_lock",
                     "ctrl",
                     "hyper",
                     "meta",
+                    "caps_lock",
                     "num_lock",
-                    "shift",
                 )
                 for bit, modifier in zip(range(8), MODIFIERS):
                     if modifier_bits & (1 << bit):
                         key_tokens.append(modifier)
+            key_tokens.sort()
             key_tokens.append(key)
             yield events.Key(
                 f'{"+".join(key_tokens)}', sequence if len(sequence) == 1 else None
