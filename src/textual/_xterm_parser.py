@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
 from typing_extensions import Final
@@ -33,7 +32,7 @@ FOCUSIN: Final[str] = "\x1b[I"
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
 
-_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(\;\d*))?([u~ABCDEFHPQRS])")
+_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQS])")
 
 
 class XTermParser(Parser[events.Event]):
@@ -283,9 +282,7 @@ class XTermParser(Parser[events.Event]):
                     for event in sequence_to_key_events(character):
                         on_key_token(event)
 
-    def _sequence_to_key_events(
-        self, sequence: str, _unicode_name=unicodedata.name
-    ) -> Iterable[events.Key]:
+    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
@@ -296,40 +293,24 @@ class XTermParser(Parser[events.Event]):
         """
 
         if (match := _re_extended_key.match(sequence)) is not None:
-            self.debug_log(str(match.groups()))
             number, modifiers, end = match.groups()
             number = number or 1
-            modifiers = modifiers[1:] if modifiers else ""
-
             if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
                 try:
                     key = _character_to_key(chr(int(number)))
                 except Exception:
                     key = chr(int(number))
-
-            # if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
-            #     self.debug_log("no match")
-            #     if number == "1":
-            #         yield events.Key(Keys.Ignore, sequence)
-            #         return
-            # if number != "1":
-            #     try:
-            #         key = _character_to_key(chr(int(number)))
-            #     except Exception:
-            #         key = chr(int(number))
-
             key_tokens = []
-            # modifiers = modifiers[1:] if modifiers else ""
             if modifiers:
                 modifier_bits = int(modifiers) - 1
                 MODIFIERS = (
-                    "shift",
                     "alt",
+                    "caps_lock",
                     "ctrl",
                     "hyper",
                     "meta",
-                    "caps_lock",
                     "num_lock",
+                    "shift",
                 )
                 for bit, modifier in zip(range(8), MODIFIERS):
                     if modifier_bits & (1 << bit):
