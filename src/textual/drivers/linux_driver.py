@@ -364,8 +364,8 @@ class LinuxDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.1):
-                if events & EVENT_READ:
+            for _key, selector_events in selector.select(0.1):
+                if selector_events & EVENT_READ:
                     return True
             return False
 
