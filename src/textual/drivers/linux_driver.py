@@ -238,7 +238,8 @@ class LinuxDriver(Driver):
             termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
@@ -327,6 +328,9 @@ class LinuxDriver(Driver):
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
             self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
+            self.write(
+                "\x1b[<u"
+            )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
             self.flush()
 
     def close(self) -> None:
@@ -360,8 +364,8 @@ class LinuxDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.01):
-                if events & EVENT_READ:
+            for _key, selector_events in selector.select(0.1):
+                if selector_events & EVENT_READ:
                     return True
             return False
 
@@ -384,3 +388,5 @@ class LinuxDriver(Driver):
                             self.process_event(event)
         finally:
             selector.close()
+            for event in feed(""):
+                pass
