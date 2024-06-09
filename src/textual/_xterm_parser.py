@@ -32,7 +32,7 @@ FOCUSIN: Final[str] = "\x1b[I"
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
 
-_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQS])")
+_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
 
 class XTermParser(Parser[events.Event]):
@@ -300,7 +300,7 @@ class XTermParser(Parser[events.Event]):
                     key = _character_to_key(chr(int(number)))
                 except Exception:
                     key = chr(int(number))
-            key_tokens = []
+            key_tokens: list[str] = []
             if modifiers:
                 modifier_bits = int(modifiers) - 1
                 MODIFIERS = (
@@ -330,6 +330,7 @@ class XTermParser(Parser[events.Event]):
             # to is the ignore key) and the sequence that was ignored as
             # the character.
             yield events.Key(Keys.Ignore, sequence)
+            return
         if isinstance(keys, tuple):
             # If the sequence mapped to a tuple, then it's values from the
             # `Keys` enum. Raise key events from what we find in the tuple.
