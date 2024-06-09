@@ -8,6 +8,7 @@ from typing_extensions import Final
 
 from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
+from ._keyboard_protocol import FUNCTIONAL_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
 from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 
@@ -31,6 +32,8 @@ FOCUSIN: Final[str] = "\x1b[I"
 """Sequence received when the terminal receives focus."""
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
+
+_re_extended_key: Final = re.compile(r"\x1b(\d+);(\d+)([u~])")
 
 
 class XTermParser(Parser[events.Event]):
@@ -291,6 +294,31 @@ class XTermParser(Parser[events.Event]):
         Returns:
             Keys
         """
+
+        if (match := _re_extended_key.match(sequence)) is not None:
+            self.debug_log(str(match))
+            number, modifiers, end = match.groups()
+            if (key := FUNCTIONAL_KEYS.get(f"{number}{end}", None)) is None:
+                self.debug_log("no match")
+                yield events.Key(Keys.Ignore, sequence)
+            else:
+                modifier_bits = int(modifiers) - 1
+                MODIFIERS = (
+                    "shift",
+                    "alt",
+                    "ctrl",
+                    "hyper",
+                    "meta",
+                    "caps_lock",
+                    "num_lock",
+                )
+                key_modifiers = []
+                for bit, modifier in zip(range(8), MODIFIERS):
+                    if modifier_bits & (bit << 1):
+                        key_modifiers.append(modifier)
+                yield events.Key(f'{"-".join(key_modifiers)}-{key}', sequence)
+            return
+
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         # If we're being asked to ignore the key...
         if keys is IGNORE_SEQUENCE:
@@ -320,5 +348,5 @@ class XTermParser(Parser[events.Event]):
                     name = sequence
                 name = KEY_NAME_REPLACEMENTS.get(name, name)
                 yield events.Key(name, sequence)
-            except:
+            except Exception:
                 yield events.Key(sequence, sequence)
