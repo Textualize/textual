@@ -342,6 +342,28 @@ async def test_calendar_updates_when_down_key_pressed_on_last_row():
         assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
 
 
+async def test_cursor_wraps_around_to_previous_or_next_date_in_month():
+    """Pressing the `left`/`right` key when the cursor is on the first/last
+    column should wrap around the cursor to the previous/next date in the
+    month"""
+
+    app = MonthCalendarApp()  # MonthCalendar date is 2021-06-03
+    async with app.run_test() as pilot:
+        month_calendar = pilot.app.query_one(MonthCalendar)
+        table = month_calendar.query_one(MonthCalendarTable)
+        # Change the calendar date so the highlighted cell is on the last column
+        month_calendar.date = datetime.date(2021, 6, 6)
+        assert table.cursor_coordinate == Coordinate(0, 6)
+
+        await pilot.press("right")
+        assert month_calendar.date == datetime.date(2021, 6, 7)
+        assert table.cursor_coordinate == Coordinate(1, 0)
+
+        await pilot.press("left")
+        assert month_calendar.date == datetime.date(2021, 6, 6)
+        assert table.cursor_coordinate == Coordinate(0, 6)
+
+
 async def test_calendar_updates_when_date_outside_month_highlighted():
     """If `show_other_months` is True, highlighting a date from the previous
     or next month should update the calendar to bring that entire month into
