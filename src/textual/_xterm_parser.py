@@ -33,7 +33,7 @@ FOCUSIN: Final[str] = "\x1b[I"
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
 
-_re_extended_key: Final = re.compile(r"\x1b(\d+);(\d+)([u~])")
+_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(\;\d*))?([u~ABCDEFHPQRS])")
 
 
 class XTermParser(Parser[events.Event]):
@@ -296,12 +296,31 @@ class XTermParser(Parser[events.Event]):
         """
 
         if (match := _re_extended_key.match(sequence)) is not None:
-            self.debug_log(str(match))
+            self.debug_log(str(match.groups()))
             number, modifiers, end = match.groups()
-            if (key := FUNCTIONAL_KEYS.get(f"{number}{end}", None)) is None:
-                self.debug_log("no match")
-                yield events.Key(Keys.Ignore, sequence)
-            else:
+            number = number or 1
+            modifiers = modifiers[1:] if modifiers else ""
+
+            if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
+                try:
+                    key = _character_to_key(chr(int(number)))
+                except Exception:
+                    key = chr(int(number))
+
+            # if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
+            #     self.debug_log("no match")
+            #     if number == "1":
+            #         yield events.Key(Keys.Ignore, sequence)
+            #         return
+            # if number != "1":
+            #     try:
+            #         key = _character_to_key(chr(int(number)))
+            #     except Exception:
+            #         key = chr(int(number))
+
+            key_tokens = []
+            # modifiers = modifiers[1:] if modifiers else ""
+            if modifiers:
                 modifier_bits = int(modifiers) - 1
                 MODIFIERS = (
                     "shift",
@@ -312,11 +331,13 @@ class XTermParser(Parser[events.Event]):
                     "caps_lock",
                     "num_lock",
                 )
-                key_modifiers = []
                 for bit, modifier in zip(range(8), MODIFIERS):
-                    if modifier_bits & (bit << 1):
-                        key_modifiers.append(modifier)
-                yield events.Key(f'{"-".join(key_modifiers)}-{key}', sequence)
+                    if modifier_bits & (1 << bit):
+                        key_tokens.append(modifier)
+            key_tokens.append(key)
+            yield events.Key(
+                f'{"+".join(key_tokens)}', sequence if len(sequence) == 1 else None
+            )
             return
 
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
