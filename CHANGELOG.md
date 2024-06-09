@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added support for Kitty's key protocol 
+- Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
 
 ## [0.66.0] - 2024-06-08
 
