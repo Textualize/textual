@@ -322,8 +322,15 @@ async def test_calendar_updates_when_up_key_pressed_on_first_row():
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(MonthCalendarTable)
+        # Sanity check
+        assert table.cursor_coordinate == Coordinate(0, 3)
+
         await pilot.press("up")
         assert month_calendar.date == datetime.date(2021, 5, 27)
+        assert table.cursor_coordinate == Coordinate(4, 3)
+        expected_first_monday = datetime.date(2021, 4, 26)
+        actual_first_monday = month_calendar._calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)).plain == "26"
 
 
@@ -336,8 +343,15 @@ async def test_calendar_updates_when_down_key_pressed_on_last_row():
     async with app.run_test() as pilot:
         month_calendar = pilot.app.query_one(MonthCalendar)
         table = month_calendar.query_one(MonthCalendarTable)
+        # Sanity check
+        assert table.cursor_coordinate == Coordinate(5, 0)
+
         await pilot.press("down")
         assert month_calendar.date == datetime.date(2021, 6, 7)
+        assert table.cursor_coordinate == Coordinate(1, 0)
+        expected_first_monday = datetime.date(2021, 5, 31)
+        actual_first_monday = month_calendar._calendar_dates[0][0]
+        assert actual_first_monday == expected_first_monday
         assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
 
 
