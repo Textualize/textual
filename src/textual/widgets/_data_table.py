@@ -222,17 +222,25 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         Binding("left,h", "cursor_left", "Cursor Left", show=False),
         Binding("pageup", "page_up", "Page Up", show=False),
         Binding("pagedown", "page_down", "Page Down", show=False),
-        Binding("g,home", "scroll_home", "Home", show=False),
-        Binding("G,end", "scroll_end", "End", show=False),
+        Binding("g", "scroll_top", "Top", show=False),
+        Binding("G", "scroll_bottom", "Bottom", show=False),
+        Binding("home", "scroll_home", "Home", show=False),
+        Binding("end", "scroll_end", "End", show=False),
     ]
     """
     | Key(s) | Description |
     | :- | :- |
     | enter | Select cells under the cursor. |
-    | up | Move the cursor up. |
-    | down | Move the cursor down. |
-    | right | Move the cursor right. |
-    | left | Move the cursor left. |
+    | up,k | Move the cursor up. |
+    | down,j | Move the cursor down. |
+    | right,l | Move the cursor right. |
+    | left,h | Move the cursor left. |
+    | pageup | Move one page up. |
+    | pagedown | Move one page down. |
+    | g | Move to the top. |
+    | G | Move to the bottom. |
+    | home | Move to the home position (leftmost column). |
+    | end | Move to the end position (rightmost column). |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -2526,25 +2534,53 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             super().action_page_up()
 
-    def action_scroll_home(self) -> None:
-        """Scroll to the top of the data table."""
+    def action_page_left(self) -> None:
+        """Move the cursor one page left."""
+        self._set_hover_cursor(False)
+        super().scroll_page_left()
+
+    def action_page_right(self) -> None:
+        """Move the cursor one page right."""
+        self._set_hover_cursor(False)
+        super().scroll_page_right()
+
+    def action_scroll_top(self) -> None:
+        """Move the cursor and scroll to the top."""
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            row_index, column_index = self.cursor_coordinate
+            _, column_index = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(0, column_index)
         else:
             super().action_scroll_home()
 
-    def action_scroll_end(self) -> None:
-        """Scroll to the bottom of the data table."""
+    def action_scroll_bottom(self) -> None:
+        """Move the cursor and scroll to the bottom."""
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            row_index, column_index = self.cursor_coordinate
+            _, column_index = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(self.row_count - 1, column_index)
         else:
             super().action_scroll_end()
+
+    def action_scroll_home(self) -> None:
+        """Move the cursor and scroll to the leftmost column."""
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
+            self.move_cursor(column=0)
+        else:
+            self.scroll_x = 0
+
+    def action_scroll_end(self) -> None:
+        """Move the cursor and scroll to the rightmost column."""
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
+            self.move_cursor(column=len(self.columns) - 1)
+        else:
+            self.scroll_x = self.max_scroll_x
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)
