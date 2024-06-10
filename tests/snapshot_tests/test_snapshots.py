@@ -1283,3 +1283,8 @@ def test_auto_tab_active(snap_compare):
 def test_hatch(snap_compare):
     """Test hatch styles."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "hatch.py")
+
+
+def test_rules(snap_compare):
+    """Test rules."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "rules.py")
