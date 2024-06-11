@@ -147,9 +147,6 @@ async def test_key_modification_actions():
         assert input.value == ""
 
 
-@pytest.mark.xfail(
-    reason="Cursor position is not updated correctly when the cursor is after the last separator."
-)
 async def test_cursor_word_right_after_last_separator():
     app = InputApp(">NNN-NNN-NNN-NNNNN;_")
     async with app.run_test():
@@ -157,7 +154,7 @@ async def test_cursor_word_right_after_last_separator():
         input.value = "123-456-789-012"
         input.cursor_position = 13
         input.action_cursor_right_word()
-        assert input.cursor_position == 17
+        assert input.cursor_position == 15
 
 
 async def test_case_conversion_meta_characters():

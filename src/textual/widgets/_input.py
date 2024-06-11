@@ -1013,7 +1013,9 @@ class Input(Widget, can_focus=True):
         """Move the cursor right to the start of a word."""
         if self._template is not None:
             position = self._template.next_separator_position()
-            if position is not None:
+            if position is None:
+                self.cursor_position = len(self._template.mask)
+            else:
                 self.cursor_position = position + 1
         elif self.password:
             # This is a password field so don't give any hints about word
