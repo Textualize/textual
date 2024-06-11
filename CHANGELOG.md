@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Reverts Vim keys in DataTable, provides alternatives
+- Reverts Vim keys in DataTable, provides alternatives https://github.com/Textualize/textual/pull/4638
 
 ## [0.67.0] - 2024-06-11
 
