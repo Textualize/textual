@@ -372,6 +372,9 @@ class App(Generic[ReturnType], DOMNode):
         Binding("ctrl+backslash", "command_palette", show=False, priority=True),
     ]
 
+    CLOSE_TIMEOUT: float | None = 5.0
+    """Timeout waiting for widget's to close, or `None` for no timeout."""
+
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
 
@@ -3396,14 +3399,28 @@ class App(Generic[ReturnType], DOMNode):
 
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
-            close_messages = [
-                child._close_messages(wait=True) for child in children if child._running
+            close_children = [
+                child for child in children if child._running and not child._closing
             ]
+
             # TODO: What if a message pump refuses to exit?
-            if close_messages:
-                await asyncio.gather(*close_messages)
-                for child in children:
-                    self._unregister(child)
+            if close_children:
+                close_messages = [
+                    child._close_messages(wait=True) for child in close_children
+                ]
+                try:
+                    await asyncio.wait_for(
+                        asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
+                    )
+                except asyncio.TimeoutError:
+                    # Likely a deadlock if we get here
+                    # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
+                    raise asyncio.TimeoutError(
+                        f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
+                    ) from None
+                finally:
+                    for child in children:
+                        self._unregister(child)
 
         await root._close_messages(wait=True)
         self._unregister(root)
