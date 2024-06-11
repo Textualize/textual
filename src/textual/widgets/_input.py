@@ -1129,7 +1129,6 @@ class Input(Widget, can_focus=True):
         """Delete all characters to the left of the cursor position."""
         if self.cursor_position > 0:
             if self._template is not None:
-                print("*DELETE LEFT ALL")
                 cursor_position = self.cursor_position
                 if cursor_position >= len(self.value):
                     self.value = ""
