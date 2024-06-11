@@ -6,6 +6,8 @@ from rich.console import RenderableType
 
 if TYPE_CHECKING:
     from ..app import RenderResult
+    from typing_extensions import Self
+
 from ..binding import Binding, BindingType
 from ..events import Click
 from ..geometry import Size
@@ -13,9 +15,6 @@ from ..message import Message
 from ..reactive import reactive
 from ..scrollbar import ScrollBarRender
 from ..widget import Widget
-
-if TYPE_CHECKING:
-    from typing_extensions import Self
 
 
 class Switch(Widget, can_focus=True):
