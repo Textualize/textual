@@ -35,10 +35,10 @@ class MonthCalendar(Widget):
         Binding("down", "next_week", "Next Week", show=False),
         Binding("right", "next_day", "Next Day", show=False),
         Binding("left", "previous_day", "Previous Day", show=False),
-        Binding("pageup", "next_month", "Next month", show=False),
-        Binding("pagedown", "previous_month", "Previous Month", show=False),
-        Binding("ctrl+pageup", "next_year", "Next Year", show=False),
-        Binding("ctrl+pagedown", "previous_year", "Previous Year", show=False),
+        Binding("pageup", "previous_month", "Previous Month", show=False),
+        Binding("pagedown", "next_month", "Next month", show=False),
+        Binding("ctrl+pageup", "previous_year", "Previous Year", show=False),
+        Binding("ctrl+pagedown", "next_year", "Next Year", show=False),
     ]
 
     # TODO: min-width?
