@@ -31,10 +31,10 @@ class MonthCalendarTable(DataTable, inherit_bindings=False):
 class MonthCalendar(Widget):
     BINDINGS = [
         Binding("enter", "select_date", "Select Date", show=False),
-        Binding("up", "cursor_up", "Cursor Up", show=False),
-        Binding("down", "cursor_down", "Cursor Down", show=False),
-        Binding("right", "cursor_right", "Cursor Right", show=False),
-        Binding("left", "cursor_left", "Cursor Left", show=False),
+        Binding("up", "previous_week", "Previous Week", show=False),
+        Binding("down", "next_week", "Next Week", show=False),
+        Binding("right", "next_day", "Next Day", show=False),
+        Binding("left", "previous_day", "Previous Day", show=False),
         Binding("pageup", "next_month", "Next month", show=False),
         Binding("pagedown", "previous_month", "Previous Month", show=False),
         Binding("ctrl+pageup", "next_year", "Next Year", show=False),
@@ -330,21 +330,21 @@ class MonthCalendar(Widget):
         table = self.query_one(MonthCalendarTable)
         table.action_select_cursor()
 
-    def action_cursor_up(self) -> None:
+    def action_previous_week(self) -> None:
         table = self.query_one(MonthCalendarTable)
         if self.show_other_months and table.cursor_row == 0:
             self.date -= relativedelta(weeks=1)
         else:
             table.action_cursor_up()
 
-    def action_cursor_down(self) -> None:
+    def action_next_week(self) -> None:
         table = self.query_one(MonthCalendarTable)
         if self.show_other_months and table.cursor_row == table.row_count - 1:
             self.date += relativedelta(weeks=1)
         else:
             table.action_cursor_down()
 
-    def action_cursor_right(self) -> None:
+    def action_next_day(self) -> None:
         table = self.query_one(MonthCalendarTable)
         if table.cursor_column == len(table.columns) - 1:
             next_date = self.date + relativedelta(days=1)
@@ -353,7 +353,7 @@ class MonthCalendar(Widget):
         else:
             table.action_cursor_right()
 
-    def action_cursor_left(self) -> None:
+    def action_previous_day(self) -> None:
         table = self.query_one(MonthCalendarTable)
         if table.cursor_column == 0:
             previous_date = self.date - relativedelta(days=1)
