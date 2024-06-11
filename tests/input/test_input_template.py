@@ -194,12 +194,12 @@ async def test_only_separators__raises_ValueError():
             await pilot.press("a")
 
 
-async def test_case_conversion_escape():
-    app = InputApp("N\\aN\\B\\cN")
+async def test_custom_separator_escaping():
+    app = InputApp("N\\aN\\N\\cN")
     async with app.run_test() as pilot:
         input = app.query_one(Input)
         await pilot.press("D", "e", "F")
-        assert input.value == "DaeBcF"
+        assert input.value == "DaeNcF"
         assert input.is_valid
 
 
