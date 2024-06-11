@@ -5,11 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.67.0] - 2024-06-11
 
 ### Added
 
 - Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
+
+### Fixed
+
+- Fixed deadlock on shutdown https://github.com/Textualize/textual/pull/4635
 
 ## [0.66.0] - 2024-06-08
 
@@ -2102,6 +2106,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.67.0]: https://github.com/Textualize/textual/compare/v0.66.0...v0.67.0
 [0.66.0]: https://github.com/Textualize/textual/compare/v0.65.2...v0.66.0
 [0.65.2]: https://github.com/Textualize/textual/compare/v0.65.1...v0.65.2
 [0.65.1]: https://github.com/Textualize/textual/compare/v0.65.0...v0.65.1
