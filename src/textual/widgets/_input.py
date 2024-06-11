@@ -44,6 +44,41 @@ _RESTRICT_TYPES = {
 InputType = Literal["integer", "number", "text"]
 
 
+class _CharFlags(IntFlag):
+    """Misc flags for a single template character definition"""
+
+    REQUIRED = 0x1
+    """Is this character required for validation?"""
+
+    SEPARATOR = 0x2
+    """Is this character a separator?"""
+
+    UPPERCASE = 0x4
+    """Char is forced to be uppercase"""
+
+    LOWERCASE = 0x8
+    """Char is forced to be lowercase"""
+
+
+_TEMPLATE_CHARACTERS = {
+    "A": (r"[A-Za-z]", _CharFlags.REQUIRED),
+    "a": (r"[A-Za-z]", None),
+    "N": (r"[A-Za-z0-9]", _CharFlags.REQUIRED),
+    "n": (r"[A-Za-z0-9]", None),
+    "X": (r"[^ ]", _CharFlags.REQUIRED),
+    "x": (r"[^ ]", None),
+    "9": (r"[0-9]", _CharFlags.REQUIRED),
+    "0": (r"[0-9]", None),
+    "D": (r"[1-9]", _CharFlags.REQUIRED),
+    "d": (r"[1-9]", None),
+    "#": (r"[0-9+\-]", None),
+    "H": (r"[A-Fa-f0-9]", _CharFlags.REQUIRED),
+    "h": (r"[A-Fa-f0-9]", None),
+    "B": (r"[0-1]", _CharFlags.REQUIRED),
+    "b": (r"[0-1]", None),
+}
+
+
 class _InputRenderable:
     """Render the input content."""
 
@@ -101,22 +136,6 @@ class _InputRenderable:
         yield from line
 
 
-class _CharFlags(IntFlag):
-    """Misc flags for a single template character definition"""
-
-    REQUIRED = 0x1
-    """Is this character required for validation?"""
-
-    SEPARATOR = 0x2
-    """Is this character a separator?"""
-
-    UPPERCASE = 0x4
-    """Char is forced to be uppercase"""
-
-    LOWERCASE = 0x8
-    """Char is forced to be lowercase"""
-
-
 class _Template(Validator):
     """Template mask enforcer."""
 
@@ -124,7 +143,7 @@ class _Template(Validator):
     class CharDef:
         """Holds data for a single char of the template mask."""
 
-        pattern: Pattern
+        pattern: Pattern[str]
         """Compiled regular expression to check for matches."""
 
         flags: _CharFlags = _CharFlags(0)
@@ -133,19 +152,26 @@ class _Template(Validator):
         char: str = ""
         """Mask character (separator or blank or placeholder)"""
 
-    def __init__(self, input: Input, template: str) -> None:
+    def __init__(self, input: Input, template_str: str) -> None:
         self.input = input
-        self.template: list[Pattern] = []
+        self.template: list[_Template.CharDef] = []
         self.blank: str = " "
         escaped = False
         flags = _CharFlags(0)
-        template: list[str] = list(template)
-        while len(template) > 0:
-            c = template.pop(0)
+        template_chars: list[str] = list(template_str)
+
+        while template_chars:
+            c = template_chars.pop(0)
             if escaped:
-                char = None
+                char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR, c)
                 escaped = False
             else:
+                if c == "\\":
+                    escaped = True
+                    continue
+                elif c == ";":
+                    break
+
                 new_flags = {
                     ">": _CharFlags.UPPERCASE,
                     "<": _CharFlags.LOWERCASE,
@@ -154,63 +180,37 @@ class _Template(Validator):
                 if new_flags is not None:
                     flags = new_flags
                     continue
-                elif c == ";":
-                    break
-                elif c == "\\":
-                    escaped = True
-                    continue
-                elif c == "A":
-                    char = self.CharDef(re.compile(r"[A-Za-z]"), _CharFlags.REQUIRED)
-                elif c == "a":
-                    char = self.CharDef(re.compile(r"[A-Za-z]"))
-                elif c == "N":
-                    char = self.CharDef(re.compile(r"[A-Za-z0-9]"), _CharFlags.REQUIRED)
-                elif c == "n":
-                    char = self.CharDef(re.compile(r"[A-Za-z0-9]"))
-                elif c == "X":
-                    char = self.CharDef(re.compile(r"[^ ]"), _CharFlags.REQUIRED)
-                elif c == "x":
-                    char = self.CharDef(re.compile(r"[^ ]"))
-                elif c == "9":
-                    char = self.CharDef(re.compile(r"[0-9]"), _CharFlags.REQUIRED)
-                elif c == "0":
-                    char = self.CharDef(re.compile(r"[0-9]"))
-                elif c == "D":
-                    char = self.CharDef(re.compile(r"[1-9]"), _CharFlags.REQUIRED)
-                elif c == "d":
-                    char = self.CharDef(re.compile(r"[1-9]"))
-                elif c == "#":
-                    char = self.CharDef(re.compile(r"[0-9+\-]"))
-                elif c == "H":
-                    char = self.CharDef(re.compile(r"[A-Fa-f0-9]"), _CharFlags.REQUIRED)
-                elif c == "h":
-                    char = self.CharDef(re.compile(r"[A-Fa-f0-9]"))
-                elif c == "B":
-                    char = self.CharDef(re.compile(r"[0-1]"), _CharFlags.REQUIRED)
-                elif c == "b":
-                    char = self.CharDef(re.compile(r"[0-1]"))
+
+                pattern, required_flag = _TEMPLATE_CHARACTERS.get(c, (None, None))
+                if pattern:
+                    char_flags = _CharFlags.REQUIRED if required_flag else _CharFlags(0)
+                    char = self.CharDef(re.compile(pattern), char_flags)
                 else:
-                    char = None
-            if char is None:
-                char = self.CharDef(re.compile(re.escape(c)), _CharFlags.SEPARATOR, c)
+                    char = self.CharDef(
+                        re.compile(re.escape(c)), _CharFlags.SEPARATOR, c
+                    )
+
             char.flags |= flags
             self.template.append(char)
-        if len(template) > 0:
-            self.blank = template[0]
-        if all([char.flags & _CharFlags.SEPARATOR for char in self.template]):
+
+        if template_chars:
+            self.blank = template_chars[0]
+
+        if all(char.flags & _CharFlags.SEPARATOR for char in self.template):
             raise ValueError(
                 "Template must contain at least one non-separator character"
             )
+
         self.update_mask(input.placeholder)
 
-    def validate(self, value) -> ValidationResult:
+    def validate(self, value: str) -> ValidationResult:
         full_value = value.ljust(len(self.template), chr(0))
         for c, char_def in zip(full_value, self.template):
             if (char_def.flags & _CharFlags.REQUIRED) and not char_def.pattern.match(c):
                 return self.failure("Value does not match template!", value)
         return self.success()
 
-    def insert_separators(self, value, cursor_position) -> tuple[str, int]:
+    def insert_separators(self, value: str, cursor_position: int) -> tuple[str, int]:
         while cursor_position < len(self.template) and (
             self.template[cursor_position].flags & _CharFlags.SEPARATOR
         ):
