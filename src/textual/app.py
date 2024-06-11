@@ -3396,14 +3396,20 @@ class App(Generic[ReturnType], DOMNode):
 
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
+            close_children = [
+                child for child in children if child._running and not child._closing
+            ]
             close_messages = [
-                child._close_messages(wait=True)
-                for child in children
-                if child._running and not child._closing
+                child._close_messages(wait=True) for child in close_children
             ]
             # TODO: What if a message pump refuses to exit?
             if close_messages:
-                await asyncio.gather(*close_messages)
+                try:
+                    await asyncio.wait_for(asyncio.gather(*close_messages), 3)
+                except asyncio.TimeoutError:
+                    sys.__stderr__.write(
+                        f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
+                    )
                 for child in children:
                     self._unregister(child)
 
