@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
+- Added `App.CLOSE_TIMEOUT` https://github.com/Textualize/textual/pull/4635
 
 ### Fixed
 
