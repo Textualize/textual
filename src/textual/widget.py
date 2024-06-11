@@ -3890,6 +3890,18 @@ class Widget(DOMNode):
         self._clear_anchor()
         self.scroll_page_up()
 
+    def action_page_left(self) -> None:
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self._clear_anchor()
+        self.scroll_page_left()
+
+    def action_page_right(self) -> None:
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self._clear_anchor()
+        self.scroll_page_right()
+
     def notify(
         self,
         message: str,
