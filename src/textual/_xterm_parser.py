@@ -32,7 +32,7 @@ FOCUSIN: Final[str] = "\x1b[I"
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
 
-_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQS])")
+_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
 
 class XTermParser(Parser[events.Event]):
@@ -239,6 +239,21 @@ class XTermParser(Parser[events.Event]):
                         break
 
                     if not bracketed_paste:
+                        # Check cursor position report
+                        if (
+                            cursor_position_match := _re_cursor_position.match(sequence)
+                        ) is not None:
+                            row, column = cursor_position_match.groups()
+                            # Cursor position report conflicts with f3 key
+                            # If it is a keypress, "row" will be 1, so ignore
+                            if int(row) != 1:
+                                on_token(
+                                    events.CursorPosition(
+                                        x=int(column) - 1, y=int(row) - 1
+                                    )
+                                )
+                                break
+
                         # Was it a pressed key event that we received?
                         key_events = list(sequence_to_key_events(sequence))
                         for key_event in key_events:
@@ -265,16 +280,6 @@ class XTermParser(Parser[events.Event]):
                                 and int(mode_report_match["setting_parameter"]) > 0
                             ):
                                 on_token(messages.TerminalSupportsSynchronizedOutput())
-                            break
-
-                        # Or a cursor position query?
-                        if (
-                            cursor_position_match := _re_cursor_position.match(sequence)
-                        ) is not None:
-                            row, column = cursor_position_match.groups()
-                            on_token(
-                                events.CursorPosition(x=int(column) - 1, y=int(row) - 1)
-                            )
                             break
 
             else:
