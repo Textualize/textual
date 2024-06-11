@@ -363,13 +363,17 @@ class MonthCalendar(Widget):
             table.action_cursor_left()
 
     def action_next_month(self) -> None:
-        self.next_month()
+        if self.show_other_months:
+            self.next_month()
 
     def action_previous_month(self) -> None:
-        self.previous_month()
+        if self.show_other_months:
+            self.previous_month()
 
     def action_next_year(self) -> None:
-        self.next_year()
+        if self.show_other_months:
+            self.next_year()
 
     def action_previous_year(self) -> None:
-        self.previous_year()
+        if self.show_other_months:
+            self.previous_year()
