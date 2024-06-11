@@ -3414,10 +3414,9 @@ class App(Generic[ReturnType], DOMNode):
                 except asyncio.TimeoutError:
                     # Likely a deadlock if we get here
                     # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
-                    if sys.__stderr__ is not None:
-                        sys.__stderr__.write(
-                            f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
-                        )
+                    raise asyncio.TimeoutError(
+                        f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
+                    ) from None
                 for child in children:
                     self._unregister(child)
 
