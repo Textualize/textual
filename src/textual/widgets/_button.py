@@ -184,6 +184,7 @@ class Button(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ):
         """Create a Button widget.
 
@@ -194,6 +195,7 @@ class Button(Widget, can_focus=True):
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -202,8 +204,10 @@ class Button(Widget, can_focus=True):
 
         self.label = label
         self.variant = variant
-        self.active_effect_duration = 0.3
+        self.active_effect_duration = 0.2
         """Amount of time in seconds the button 'press' animation lasts."""
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         try:
@@ -250,7 +254,8 @@ class Button(Widget, can_focus=True):
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
-        self.press()
+        if not self.has_class("-active"):
+            self.press()
 
     def press(self) -> Self:
         """Animate the button and send the [Pressed][textual.widgets.Button.Pressed] message.
@@ -278,7 +283,8 @@ class Button(Widget, can_focus=True):
 
     def action_press(self) -> None:
         """Activate a press of the button."""
-        self.press()
+        if not self.has_class("-active"):
+            self.press()
 
     @classmethod
     def success(

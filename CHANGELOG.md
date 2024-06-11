@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.67.1] - 2024-06-12
+
+### Changed
+
+- Reverts Vim keys in DataTable, provides alternatives https://github.com/Textualize/textual/pull/4638
+
+## [0.67.0] - 2024-06-11
+
+### Added
+
+- Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
+- `ctrl+pageup`/`ctrl+pagedown` will scroll page left/right in DataTable https://github.com/Textualize/textual/pull/4633
+- `g`/`G` will scroll to the top/bottom of the DataTable https://github.com/Textualize/textual/pull/4633
+- Added simple `hjkl` key bindings to move the cursor in DataTable https://github.com/Textualize/textual/pull/4633
+
+### Changed
+
+- `home` and `end` now works horizontally instead of vertically in DataTable https://github.com/Textualize/textual/pull/4633
+- `Tree` and `DirectoryTree` nodes now have a bigger click target, spanning the full line https://github.com/Textualize/textual/pull/4636
+
+### Fixed
+
+- Fixed pageup/pagedown behavior in DataTable https://github.com/Textualize/textual/pull/4633
+- Added `App.CLOSE_TIMEOUT` https://github.com/Textualize/textual/pull/4635
+- Fixed deadlock on shutdown https://github.com/Textualize/textual/pull/4635
+
+## [0.66.0] - 2024-06-08
+
+### Changed
+
+- `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
+- Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
+- `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
+- Increased window for escape processing to 100ms https://github.com/Textualize/textual/pull/4625
+- Tooltips are now hidden when any key is pressed https://github.com/Textualize/textual/pull/4625
+
+### Added
+
+- Added `Screen.is_active` 
+- Added `icon` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625
+
+## [0.65.2] - 2024-06-06
+
+### Fixed
+
+- Fixed issue with notifications and screen switches https://github.com/Textualize/textual/pull/4615
+
+### Added
+
+- Added textual.rlock.RLock https://github.com/Textualize/textual/pull/4615
+
 ## [0.65.1] - 2024-06-05
 
 ### Fixed
@@ -2073,6 +2126,10 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.67.1]: https://github.com/Textualize/textual/compare/v0.67.0...v0.67.1
+[0.67.0]: https://github.com/Textualize/textual/compare/v0.66.0...v0.67.0
+[0.66.0]: https://github.com/Textualize/textual/compare/v0.65.2...v0.66.0
+[0.65.2]: https://github.com/Textualize/textual/compare/v0.65.1...v0.65.2
 [0.65.1]: https://github.com/Textualize/textual/compare/v0.65.0...v0.65.1
 [0.65.0]: https://github.com/Textualize/textual/compare/v0.64.0...v0.65.0
 [0.64.0]: https://github.com/Textualize/textual/compare/v0.63.6...v0.64.0

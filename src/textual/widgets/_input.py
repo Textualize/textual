@@ -542,6 +542,7 @@ class Input(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Initialise the `Input` widget.
 
@@ -565,6 +566,7 @@ class Input(Widget, can_focus=True):
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
             disabled: Whether the input is disabled or not.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -629,6 +631,8 @@ class Input(Widget, can_focus=True):
             if self._template is not None:
                 value, _ = self._template.insert_separators(value or "", 0)
             self.value = value
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""

@@ -103,6 +103,7 @@ from .messages import CallbackType
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
+from .rlock import RLock
 from .screen import (
     ActiveBinding,
     Screen,
@@ -371,6 +372,9 @@ class App(Generic[ReturnType], DOMNode):
         Binding("ctrl+backslash", "command_palette", show=False, priority=True),
     ]
 
+    CLOSE_TIMEOUT: float | None = 5.0
+    """Timeout waiting for widget's to close, or `None` for no timeout."""
+
     title: Reactive[str] = Reactive("", compute=False)
     sub_title: Reactive[str] = Reactive("", compute=False)
 
@@ -579,7 +583,7 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-        self._dom_lock = asyncio.Lock()
+        self._dom_lock = RLock()
         self._dom_ready = False
         self._batch_count = 0
         self._notifications = Notifications()
@@ -773,6 +777,11 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def is_dom_root(self) -> bool:
         """Is this a root node (i.e. the App)?"""
+        return True
+
+    @property
+    def is_attached(self) -> bool:
+        """Is this node linked to the app through the DOM?"""
         return True
 
     @property
@@ -2751,23 +2760,24 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        # Close all screens on all stacks:
-        for stack in self._screen_stacks.values():
-            for stack_screen in reversed(stack):
-                if stack_screen._running:
-                    await self._prune_node(stack_screen)
-            stack.clear()
+        async with self._dom_lock:
+            # Close all screens on all stacks:
+            for stack in self._screen_stacks.values():
+                for stack_screen in reversed(stack):
+                    if stack_screen._running:
+                        await self._prune_node(stack_screen)
+                stack.clear()
 
-        # Close pre-defined screens.
-        for screen in self.SCREENS.values():
-            if isinstance(screen, Screen) and screen._running:
-                await self._prune_node(screen)
+            # Close pre-defined screens.
+            for screen in self.SCREENS.values():
+                if isinstance(screen, Screen) and screen._running:
+                    await self._prune_node(screen)
 
-        # Close any remaining nodes
-        # Should be empty by now
-        remaining_nodes = list(self._registry)
-        for child in remaining_nodes:
-            await child._close_messages()
+            # Close any remaining nodes
+            # Should be empty by now
+            remaining_nodes = list(self._registry)
+            for child in remaining_nodes:
+                await child._close_messages()
 
     async def _shutdown(self) -> None:
         self._begin_batch()  # Prevents any layout / repaint while shutting down
@@ -3028,6 +3038,11 @@ class App(Generic[ReturnType], DOMNode):
                         pass
 
             elif isinstance(event, events.Key):
+                if self.focused:
+                    try:
+                        self.screen._clear_tooltip()
+                    except NoScreen:
+                        pass
                 if not await self.check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
                     forward_target._forward_event(event)
@@ -3341,7 +3356,10 @@ class App(Generic[ReturnType], DOMNode):
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
-                self._update_mouse_over(self.screen)
+                try:
+                    self._update_mouse_over(self.screen)
+                except ScreenStackError:
+                    pass
                 if parent is not None:
                     parent.refresh(layout=True)
 
@@ -3381,14 +3399,28 @@ class App(Generic[ReturnType], DOMNode):
 
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
-            close_messages = [
-                child._close_messages(wait=True) for child in children if child._running
+            close_children = [
+                child for child in children if child._running and not child._closing
             ]
+
             # TODO: What if a message pump refuses to exit?
-            if close_messages:
-                await asyncio.gather(*close_messages)
-                for child in children:
-                    self._unregister(child)
+            if close_children:
+                close_messages = [
+                    child._close_messages(wait=True) for child in close_children
+                ]
+                try:
+                    await asyncio.wait_for(
+                        asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
+                    )
+                except asyncio.TimeoutError:
+                    # Likely a deadlock if we get here
+                    # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
+                    raise asyncio.TimeoutError(
+                        f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
+                    ) from None
+                finally:
+                    for child in children:
+                        self._unregister(child)
 
         await root._close_messages(wait=True)
         self._unregister(root)
@@ -3555,7 +3587,7 @@ class App(Generic[ReturnType], DOMNode):
                 # or one will turn up. Things will work out later.
                 return
             # Update the toast rack.
-            toast_rack.show(self._notifications)
+            self.call_later(toast_rack.show, self._notifications)
 
     def notify(
         self,

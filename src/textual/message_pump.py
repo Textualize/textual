@@ -247,8 +247,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
     @property
     def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
-        if self.is_dom_root:
-            return True
         node: MessagePump | None = self
         while (node := node._parent) is not None:
             if node.is_dom_root:
@@ -746,7 +744,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             if message._sender is not None and message._sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
-            if self.is_parent_active and not self._parent._closing:
+            if self.is_parent_active and self.is_attached:
                 message._bubble_to(self._parent)
 
     def check_idle(self) -> None:

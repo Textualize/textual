@@ -298,6 +298,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ):
         """Initialize the Select control.
 
@@ -315,6 +316,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
             id: The ID of the control in the DOM.
             classes: The CSS classes of the control.
             disabled: Whether the control is disabled or not.
+            tooltip: Optional tooltip.
 
         Raises:
             EmptySelectError: If no options are provided and `allow_blank` is `False`.
@@ -324,6 +326,8 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         self.prompt = prompt
         self._value = value
         self._setup_variables_for_options(options)
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     @classmethod
     def from_values(

@@ -192,11 +192,11 @@ async def test_cursor_movement_with_home_pagedown_etc(show_header):
         await pilot.pause()
         assert table.cursor_coordinate == Coordinate(0, 1)
 
-        await pilot.press("end")
-        await pilot.pause()
-        assert table.cursor_coordinate == Coordinate(2, 1)
-
         await pilot.press("home")
+        await pilot.pause()
+        assert table.cursor_coordinate == Coordinate(0, 0)
+
+        await pilot.press("end")
         await pilot.pause()
         assert table.cursor_coordinate == Coordinate(0, 1)
 

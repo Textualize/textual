@@ -97,7 +97,7 @@ The following example contains a `TabbedContent` with three tabs.
 ## Styling
 
 The `TabbedContent` widget is composed of two main sub-widgets: a
-[`Tabs`](tabs.md) and a [`ContentSwitcher`]((content_switcher.md)); you can
+[`Tabs`](tabs.md) and a [`ContentSwitcher`](content_switcher.md); you can
 style them accordingly.
 
 The tabs within the `Tabs` widget will have prefixed IDs; each ID being the

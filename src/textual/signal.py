@@ -17,8 +17,8 @@ import rich.repr
 from textual import log
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .message_pump import MessagePump
-
 SignalT = TypeVar("SignalT")
 
 SignalCallbackType = Union[
@@ -34,7 +34,7 @@ class SignalError(Exception):
 class Signal(Generic[SignalT]):
     """A signal that a widget may subscribe to, in order to invoke callbacks when an associated event occurs."""
 
-    def __init__(self, owner: MessagePump, name: str) -> None:
+    def __init__(self, owner: DOMNode, name: str) -> None:
         """Initialize a signal.
 
         Args:
@@ -107,6 +107,12 @@ class Signal(Generic[SignalT]):
             data: An argument to pass to the callbacks.
 
         """
+        # Don't publish if the DOM is not ready or shutting down
+        if not self._owner.is_attached:
+            return
+        for ancestor_node in self._owner.ancestors_with_self:
+            if not ancestor_node.is_running:
+                return
 
         for node, callbacks in list(self._subscriptions.items()):
             if not (node.is_running and node.is_attached):

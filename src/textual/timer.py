@@ -118,7 +118,10 @@ class Timer:
             if timer._task is not None:
                 timer._active.set()
                 timer._task.cancel()
-                await timer._task
+                try:
+                    await timer._task
+                except CancelledError:
+                    pass
 
         await gather(*[stop_timer(timer) for timer in list(timers)])
 

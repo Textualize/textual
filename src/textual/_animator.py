@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     """Animation keys are the id of the object and the attribute being animated."""
 
 EasingFunction = Callable[[float], float]
-"""Signature for a function that parametrises animation speed.
+"""Signature for a function that parametrizes animation speed.
 
 An easing function must map the interval [0, 1] into the interval [0, 1].
 """

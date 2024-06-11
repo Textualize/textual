@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import Lock, create_task, wait
+from asyncio import create_task, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -81,6 +81,7 @@ from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
 from .renderables.blank import Blank
+from .rlock import RLock
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -396,7 +397,7 @@ class Widget(DOMNode):
         if self.BORDER_SUBTITLE:
             self.border_subtitle = self.BORDER_SUBTITLE
 
-        self.lock = Lock()
+        self.lock = RLock()
         """`asyncio` lock to be used to synchronize the state of the widget.
 
         Two different tasks might call methods on a widget at the same time, which
@@ -1344,13 +1345,17 @@ class Widget(DOMNode):
 
             renderable = self.render()
             if isinstance(renderable, Text):
-                height = len(
-                    renderable.wrap(
-                        self._console,
-                        width,
-                        no_wrap=renderable.no_wrap,
-                        tab_size=renderable.tab_size or 8,
+                height = (
+                    len(
+                        renderable.wrap(
+                            self._console,
+                            width,
+                            no_wrap=renderable.no_wrap,
+                            tab_size=renderable.tab_size or 8,
+                        )
                     )
+                    if renderable
+                    else 0
                 )
             else:
                 options = self._console.options.update_width(width).update(
@@ -3550,7 +3555,6 @@ class Widget(DOMNode):
                 self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
             except NoActiveAppError:
                 pass
-
         return super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
@@ -3885,6 +3889,18 @@ class Widget(DOMNode):
             raise SkipAction()
         self._clear_anchor()
         self.scroll_page_up()
+
+    def action_page_left(self) -> None:
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self._clear_anchor()
+        self.scroll_page_left()
+
+    def action_page_right(self) -> None:
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self._clear_anchor()
+        self.scroll_page_right()
 
     def notify(
         self,

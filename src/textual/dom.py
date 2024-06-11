@@ -746,8 +746,7 @@ class DOMNode(MessagePump):
         append = result.append
 
         node: DOMNode = self
-        while isinstance(node._parent, DOMNode):
-            node = node._parent
+        while isinstance((node := node._parent), DOMNode):
             append(node)
         return result[::-1]
 
@@ -1078,12 +1077,11 @@ class DOMNode(MessagePump):
         Returns:
             A list of nodes.
         """
-        nodes: list[MessagePump | None] = []
+        nodes: list[MessagePump | None] = [self]
         add_node = nodes.append
         node: MessagePump | None = self
-        while node is not None:
+        while (node := node._parent) is not None:
             add_node(node)
-            node = node._parent
         return cast("list[DOMNode]", nodes)
 
     @property
@@ -1093,7 +1091,12 @@ class DOMNode(MessagePump):
         Returns:
             A list of nodes.
         """
-        return self.ancestors_with_self[1:]
+        nodes: list[MessagePump | None] = []
+        add_node = nodes.append
+        node: MessagePump | None = self
+        while (node := node._parent) is not None:
+            add_node(node)
+        return cast("list[DOMNode]", nodes)
 
     @property
     def displayed_children(self) -> list[Widget]:

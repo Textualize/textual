@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import re
-import unicodedata
 from typing import Any, Callable, Generator, Iterable
 
 from typing_extensions import Final
 
 from . import events, messages
 from ._ansi_sequences import ANSI_SEQUENCES_KEYS, IGNORE_SEQUENCE
+from ._keyboard_protocol import FUNCTIONAL_KEYS
 from ._parser import Awaitable, Parser, TokenCallback
 from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 
@@ -31,6 +31,8 @@ FOCUSIN: Final[str] = "\x1b[I"
 """Sequence received when the terminal receives focus."""
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
+
+_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
 
 class XTermParser(Parser[events.Event]):
@@ -237,6 +239,21 @@ class XTermParser(Parser[events.Event]):
                         break
 
                     if not bracketed_paste:
+                        # Check cursor position report
+                        if (
+                            cursor_position_match := _re_cursor_position.match(sequence)
+                        ) is not None:
+                            row, column = cursor_position_match.groups()
+                            # Cursor position report conflicts with f3 key
+                            # If it is a keypress, "row" will be 1, so ignore
+                            if int(row) != 1:
+                                on_token(
+                                    events.CursorPosition(
+                                        x=int(column) - 1, y=int(row) - 1
+                                    )
+                                )
+                                break
+
                         # Was it a pressed key event that we received?
                         key_events = list(sequence_to_key_events(sequence))
                         for key_event in key_events:
@@ -265,24 +282,16 @@ class XTermParser(Parser[events.Event]):
                                 on_token(messages.TerminalSupportsSynchronizedOutput())
                             break
 
-                        # Or a cursor position query?
-                        if (
-                            cursor_position_match := _re_cursor_position.match(sequence)
-                        ) is not None:
-                            row, column = cursor_position_match.groups()
-                            on_token(
-                                events.CursorPosition(x=int(column) - 1, y=int(row) - 1)
-                            )
-                            break
-
             else:
                 if not bracketed_paste:
                     for event in sequence_to_key_events(character):
                         on_key_token(event)
 
-    def _sequence_to_key_events(
-        self, sequence: str, _unicode_name=unicodedata.name
-    ) -> Iterable[events.Key]:
+        if self._debug_log_file is not None:
+            self._debug_log_file.close()
+            self._debug_log_file = None
+
+    def _sequence_to_key_events(self, sequence: str) -> Iterable[events.Key]:
         """Map a sequence of code points on to a sequence of keys.
 
         Args:
@@ -291,6 +300,37 @@ class XTermParser(Parser[events.Event]):
         Returns:
             Keys
         """
+
+        if (match := _re_extended_key.match(sequence)) is not None:
+            number, modifiers, end = match.groups()
+            number = number or 1
+            if not (key := FUNCTIONAL_KEYS.get(f"{number}{end}", "")):
+                try:
+                    key = _character_to_key(chr(int(number)))
+                except Exception:
+                    key = chr(int(number))
+            key_tokens: list[str] = []
+            if modifiers:
+                modifier_bits = int(modifiers) - 1
+                MODIFIERS = (
+                    "shift",
+                    "alt",
+                    "ctrl",
+                    "hyper",
+                    "meta",
+                    "caps_lock",
+                    "num_lock",
+                )
+                for bit, modifier in zip(range(8), MODIFIERS):
+                    if modifier_bits & (1 << bit):
+                        key_tokens.append(modifier)
+            key_tokens.sort()
+            key_tokens.append(key)
+            yield events.Key(
+                f'{"+".join(key_tokens)}', sequence if len(sequence) == 1 else None
+            )
+            return
+
         keys = ANSI_SEQUENCES_KEYS.get(sequence)
         # If we're being asked to ignore the key...
         if keys is IGNORE_SEQUENCE:
@@ -299,6 +339,7 @@ class XTermParser(Parser[events.Event]):
             # to is the ignore key) and the sequence that was ignored as
             # the character.
             yield events.Key(Keys.Ignore, sequence)
+            return
         if isinstance(keys, tuple):
             # If the sequence mapped to a tuple, then it's values from the
             # `Keys` enum. Raise key events from what we find in the tuple.
@@ -320,5 +361,5 @@ class XTermParser(Parser[events.Event]):
                     name = sequence
                 name = KEY_NAME_REPLACEMENTS.get(name, name)
                 yield events.Key(name, sequence)
-            except:
+            except Exception:
                 yield events.Key(sequence, sequence)
