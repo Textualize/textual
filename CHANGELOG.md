@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - `home` and `end` now works horizontally instead of vertically in DataTable https://github.com/Textualize/textual/pull/4633
+- `Tree` and `DirectoryTree` nodes now have a bigger click target, spanning the full line https://github.com/Textualize/textual/pull/4636
 
 ### Fixed
 
