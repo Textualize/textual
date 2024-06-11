@@ -27,7 +27,7 @@ FUNCTIONAL_KEYS = {
     "1Q": "f2",
     "12~": "f2",
     "13~": "f3",
-    "1R": "f3",
+    # "1R": "f3",  # Conflicts with reporting cursor position
     "1S": "f4",
     "14~": "f4",
     "15~": "f5",

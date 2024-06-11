@@ -193,7 +193,7 @@ class LinuxDriver(Driver):
 
         loop = asyncio.get_running_loop()
 
-        def send_size_event():
+        def send_size_event() -> None:
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)

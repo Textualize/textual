@@ -32,7 +32,7 @@ FOCUSIN: Final[str] = "\x1b[I"
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
 
-_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
+_re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQS])")
 
 
 class XTermParser(Parser[events.Event]):
