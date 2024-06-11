@@ -3402,11 +3402,12 @@ class App(Generic[ReturnType], DOMNode):
             close_children = [
                 child for child in children if child._running and not child._closing
             ]
-            close_messages = [
-                child._close_messages(wait=True) for child in close_children
-            ]
+
             # TODO: What if a message pump refuses to exit?
-            if close_messages:
+            if close_children:
+                close_messages = [
+                    child._close_messages(wait=True) for child in close_children
+                ]
                 try:
                     await asyncio.wait_for(
                         asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
@@ -3417,8 +3418,9 @@ class App(Generic[ReturnType], DOMNode):
                     raise asyncio.TimeoutError(
                         f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
                     ) from None
-                for child in children:
-                    self._unregister(child)
+                finally:
+                    for child in children:
+                        self._unregister(child)
 
         await root._close_messages(wait=True)
         self._unregister(root)
