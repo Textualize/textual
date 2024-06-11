@@ -216,21 +216,31 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
-        Binding("up", "cursor_up", "Cursor Up", show=False),
-        Binding("down", "cursor_down", "Cursor Down", show=False),
-        Binding("right", "cursor_right", "Cursor Right", show=False),
-        Binding("left", "cursor_left", "Cursor Left", show=False),
+        Binding("up,k", "cursor_up", "Cursor Up", show=False),
+        Binding("down,j", "cursor_down", "Cursor Down", show=False),
+        Binding("right,l", "cursor_right", "Cursor Right", show=False),
+        Binding("left,h", "cursor_left", "Cursor Left", show=False),
         Binding("pageup", "page_up", "Page Up", show=False),
         Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("g", "scroll_top", "Top", show=False),
+        Binding("G", "scroll_bottom", "Bottom", show=False),
+        Binding("home", "scroll_home", "Home", show=False),
+        Binding("end", "scroll_end", "End", show=False),
     ]
     """
     | Key(s) | Description |
     | :- | :- |
     | enter | Select cells under the cursor. |
-    | up | Move the cursor up. |
-    | down | Move the cursor down. |
-    | right | Move the cursor right. |
-    | left | Move the cursor left. |
+    | up,k | Move the cursor up. |
+    | down,j | Move the cursor down. |
+    | right,l | Move the cursor right. |
+    | left,h | Move the cursor left. |
+    | pageup | Move one page up. |
+    | pagedown | Move one page down. |
+    | g | Move to the top. |
+    | G | Move to the bottom. |
+    | home | Move to the home position (leftmost column). |
+    | end | Move to the end position (rightmost column). |
     """
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -755,7 +765,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         y-coordinate, we can index into this list to find which row that y-coordinate
         lands on, and the y-offset *within* that row. The length of the returned list
         is therefore the total height of all rows within the DataTable."""
-        y_offsets = []
+        y_offsets: list[tuple[RowKey, int]] = []
         if self._update_count in self._offset_cache:
             y_offsets = self._offset_cache[self._update_count]
         else:
@@ -1096,6 +1106,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             elif self.cursor_type == "column":
                 self.refresh_column(old_coordinate.column)
                 self._highlight_column(new_coordinate.column)
+
             if self._require_update_dimensions:
                 self.call_after_refresh(self._scroll_cursor_into_view)
             else:
@@ -1107,6 +1118,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         row: int | None = None,
         column: int | None = None,
         animate: bool = False,
+        scroll: bool = True,
     ) -> None:
         """Move the cursor to the given position.
 
@@ -1123,6 +1135,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             row: The new row to move the cursor to.
             column: The new column to move the cursor to.
             animate: Whether to animate the change of coordinates.
+            scroll: Scroll the cursor into view after moving.
         """
 
         cursor_row, cursor_column = self.cursor_coordinate
@@ -1138,10 +1151,11 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         # of rows then tried to immediately move the cursor.
         # We do this before setting `cursor_coordinate` because its watcher will also
         # schedule a call to `_scroll_cursor_into_view` without optionally animating.
-        if self._require_update_dimensions:
-            self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
-        else:
-            self._scroll_cursor_into_view(animate=animate)
+        if scroll:
+            if self._require_update_dimensions:
+                self.call_after_refresh(self._scroll_cursor_into_view, animate=animate)
+            else:
+                self._scroll_cursor_into_view(animate=animate)
 
         self.cursor_coordinate = destination
 
@@ -2422,7 +2436,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         else:
             region = self._get_cell_region(self.cursor_coordinate)
 
-        self.scroll_to_region(region, animate=animate, spacing=fixed_offset)
+        self.scroll_to_region(region, animate=animate, spacing=fixed_offset, force=True)
 
     def _set_hover_cursor(self, active: bool) -> None:
         """Set whether the hover cursor (the faint cursor you see when you
@@ -2445,7 +2459,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     async def _on_click(self, event: events.Click) -> None:
         self._set_hover_cursor(True)
         meta = event.style.meta
-        if not "row" in meta or not "column" in meta:
+        if "row" not in meta or "column" not in meta:
             return
 
         row_index = meta["row"]
@@ -2476,21 +2490,23 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Move the cursor one page down."""
         self._set_hover_cursor(False)
         if self.show_cursor and self.cursor_type in ("cell", "row"):
-            height = self.size.height - (self.header_height if self.show_header else 0)
+            height = self.scrollable_content_region.height - (
+                self.header_height if self.show_header else 0
+            )
 
             # Determine how many rows constitutes a "page"
             offset = 0
             rows_to_scroll = 0
-            row_index, column_index = self.cursor_coordinate
+            row_index, _ = self.cursor_coordinate
             for ordered_row in self.ordered_rows[row_index:]:
                 offset += ordered_row.height
+                rows_to_scroll += 1
                 if offset > height:
                     break
-                rows_to_scroll += 1
 
-            self.cursor_coordinate = Coordinate(
-                row_index + rows_to_scroll - 1, column_index
-            )
+            target_row = row_index + rows_to_scroll - 1
+            self.scroll_relative(y=height, animate=False, force=True)
+            self.move_cursor(row=target_row, scroll=False)
         else:
             super().action_page_down()
 
@@ -2498,43 +2514,73 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         """Move the cursor one page up."""
         self._set_hover_cursor(False)
         if self.show_cursor and self.cursor_type in ("cell", "row"):
-            height = self.size.height - (self.header_height if self.show_header else 0)
+            height = self.scrollable_content_region.height - (
+                self.header_height if self.show_header else 0
+            )
 
             # Determine how many rows constitutes a "page"
             offset = 0
             rows_to_scroll = 0
-            row_index, column_index = self.cursor_coordinate
+            row_index, _ = self.cursor_coordinate
             for ordered_row in self.ordered_rows[: row_index + 1]:
                 offset += ordered_row.height
+                rows_to_scroll += 1
                 if offset > height:
                     break
-                rows_to_scroll += 1
 
-            self.cursor_coordinate = Coordinate(
-                row_index - rows_to_scroll + 1, column_index
-            )
+            target_row = row_index - rows_to_scroll + 1
+            self.scroll_relative(y=-height, animate=False)
+            self.move_cursor(row=target_row, scroll=False)
         else:
             super().action_page_up()
 
-    def action_scroll_home(self) -> None:
-        """Scroll to the top of the data table."""
+    def action_page_left(self) -> None:
+        """Move the cursor one page left."""
+        self._set_hover_cursor(False)
+        super().scroll_page_left()
+
+    def action_page_right(self) -> None:
+        """Move the cursor one page right."""
+        self._set_hover_cursor(False)
+        super().scroll_page_right()
+
+    def action_scroll_top(self) -> None:
+        """Move the cursor and scroll to the top."""
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            row_index, column_index = self.cursor_coordinate
+            _, column_index = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(0, column_index)
         else:
             super().action_scroll_home()
 
-    def action_scroll_end(self) -> None:
-        """Scroll to the bottom of the data table."""
+    def action_scroll_bottom(self) -> None:
+        """Move the cursor and scroll to the bottom."""
         self._set_hover_cursor(False)
         cursor_type = self.cursor_type
         if self.show_cursor and (cursor_type == "cell" or cursor_type == "row"):
-            row_index, column_index = self.cursor_coordinate
+            _, column_index = self.cursor_coordinate
             self.cursor_coordinate = Coordinate(self.row_count - 1, column_index)
         else:
             super().action_scroll_end()
+
+    def action_scroll_home(self) -> None:
+        """Move the cursor and scroll to the leftmost column."""
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
+            self.move_cursor(column=0)
+        else:
+            self.scroll_x = 0
+
+    def action_scroll_end(self) -> None:
+        """Move the cursor and scroll to the rightmost column."""
+        self._set_hover_cursor(False)
+        cursor_type = self.cursor_type
+        if self.show_cursor and (cursor_type == "cell" or cursor_type == "column"):
+            self.move_cursor(column=len(self.columns) - 1)
+        else:
+            self.scroll_x = self.max_scroll_x
 
     def action_cursor_up(self) -> None:
         self._set_hover_cursor(False)

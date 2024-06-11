@@ -10,10 +10,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
-- Added `App.CLOSE_TIMEOUT` https://github.com/Textualize/textual/pull/4635
+- `ctrl+pageup`/`ctrl+pagedown` will scroll page left/right in DataTable https://github.com/Textualize/textual/pull/4633
+- `g`/`G` will scroll to the top/bottom of the DataTable https://github.com/Textualize/textual/pull/4633
+- Added simple `hjkl` key bindings to move the cursor in DataTable https://github.com/Textualize/textual/pull/4633
+
+### Changed
+
+- `home` and `end` now works horizontally instead of vertically in DataTable https://github.com/Textualize/textual/pull/4633
 
 ### Fixed
 
+- Fixed pageup/pagedown behavior in DataTable https://github.com/Textualize/textual/pull/4633
+- Added `App.CLOSE_TIMEOUT` https://github.com/Textualize/textual/pull/4635
 - Fixed deadlock on shutdown https://github.com/Textualize/textual/pull/4635
 
 ## [0.66.0] - 2024-06-08
