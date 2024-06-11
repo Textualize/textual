@@ -160,7 +160,7 @@ class Game(Screen):
     BINDINGS = [
         Binding("n", "new_game", "New Game"),
         Binding("question_mark", "app.push_screen('help')", "Help", key_display="?"),
-        Binding("q", "quit", "Quit"),
+        Binding("q", "app.quit", "Quit"),
         Binding("up,w,k", "navigate(-1,0)", "Move Up", False),
         Binding("down,s,j", "navigate(1,0)", "Move Down", False),
         Binding("left,a,h", "navigate(0,-1)", "Move Left", False),

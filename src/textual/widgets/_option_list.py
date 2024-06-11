@@ -285,6 +285,7 @@ class OptionList(ScrollView, can_focus=True):
         classes: str | None = None,
         disabled: bool = False,
         wrap: bool = True,
+        tooltip: RenderableType | None = None,
     ):
         """Initialise the option list.
 
@@ -295,6 +296,7 @@ class OptionList(ScrollView, can_focus=True):
             classes: The CSS classes of the option list.
             disabled: Whether the option list is disabled or not.
             wrap: Should prompts be auto-wrapped?
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -360,6 +362,9 @@ class OptionList(ScrollView, can_focus=True):
         # Finally, cause the highlighted property to settle down based on
         # the state of the option list in regard to its available options.
         self.action_first()
+
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def get_content_width(self, container: Size, viewport: Size) -> int:
         """Get maximum width of options."""

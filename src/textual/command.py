@@ -34,6 +34,7 @@ from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .fuzzy import Matcher
+from .message import Message
 from .reactive import var
 from .screen import Screen, _SystemModalScreen
 from .timer import Timer
@@ -541,6 +542,24 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     _PALETTE_ID: Final[str] = "--command-palette"
     """The internal ID for the command palette."""
 
+    @dataclass
+    class OptionHighlighted(Message):
+        """Posted to App when an option is highlighted in the command palette."""
+
+        highlighted_event: OptionList.OptionHighlighted
+        """The option highlighted event from the OptionList within the command palette."""
+
+    @dataclass
+    class Opened(Message):
+        """Posted to App when the command palette is opened."""
+
+    @dataclass
+    class Closed(Message):
+        """Posted to App when the command palette is closed."""
+
+        option_selected: bool
+        """True if an option was selected, False if the palette was closed without selecting an option."""
+
     def __init__(self) -> None:
         """Initialise the command palette."""
         super().__init__(id=self._PALETTE_ID)
@@ -623,10 +642,13 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
             self._cancel_gather_commands()
+            self.app.post_message(CommandPalette.Closed(option_selected=False))
             self.dismiss()
 
     def _on_mount(self, _: Mount) -> None:
         """Configure the command palette once the DOM is ready."""
+
+        self.app.post_message(CommandPalette.Opened())
         self._calling_screen = self.app.screen_stack[-2]
 
         match_style = self.get_component_rich_style(
@@ -1085,12 +1107,14 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
                 self._cancel_gather_commands()
+                self.app.post_message(CommandPalette.Closed(option_selected=True))
                 self.dismiss(self._selected_command.command)
 
     @on(OptionList.OptionHighlighted)
     def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
         """Stop any unused events so they don't leak to the application."""
         event.stop()
+        self.app.post_message(CommandPalette.OptionHighlighted(highlighted_event=event))
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
@@ -1098,6 +1122,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             self._list_visible = False
         else:
             self._cancel_gather_commands()
+            self.app.post_message(CommandPalette.Closed(option_selected=False))
             self.dismiss()
 
     def _action_command_list(self, action: str) -> None:

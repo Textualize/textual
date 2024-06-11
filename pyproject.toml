@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual"
-version = "0.63.3"
+version = "0.67.1"
 homepage = "https://github.com/Textualize/textual"
 repository = "https://github.com/Textualize/textual"
 documentation = "https://textual.textualize.io/"

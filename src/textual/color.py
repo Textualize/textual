@@ -598,6 +598,8 @@ WHITE: Final = Color(255, 255, 255)
 """A constant for pure white."""
 BLACK: Final = Color(0, 0, 0)
 """A constant for pure black."""
+TRANSPARENT: Final = Color.parse("transparent")
+"""A constant for transparent."""
 
 
 def rgb_to_lab(rgb: Color) -> Lab:

@@ -5,6 +5,115 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.67.1] - 2024-06-12
+
+### Changed
+
+- Reverts Vim keys in DataTable, provides alternatives https://github.com/Textualize/textual/pull/4638
+
+## [0.67.0] - 2024-06-11
+
+### Added
+
+- Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
+- `ctrl+pageup`/`ctrl+pagedown` will scroll page left/right in DataTable https://github.com/Textualize/textual/pull/4633
+- `g`/`G` will scroll to the top/bottom of the DataTable https://github.com/Textualize/textual/pull/4633
+- Added simple `hjkl` key bindings to move the cursor in DataTable https://github.com/Textualize/textual/pull/4633
+
+### Changed
+
+- `home` and `end` now works horizontally instead of vertically in DataTable https://github.com/Textualize/textual/pull/4633
+- `Tree` and `DirectoryTree` nodes now have a bigger click target, spanning the full line https://github.com/Textualize/textual/pull/4636
+
+### Fixed
+
+- Fixed pageup/pagedown behavior in DataTable https://github.com/Textualize/textual/pull/4633
+- Added `App.CLOSE_TIMEOUT` https://github.com/Textualize/textual/pull/4635
+- Fixed deadlock on shutdown https://github.com/Textualize/textual/pull/4635
+
+## [0.66.0] - 2024-06-08
+
+### Changed
+
+- `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
+- Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
+- `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
+- Increased window for escape processing to 100ms https://github.com/Textualize/textual/pull/4625
+- Tooltips are now hidden when any key is pressed https://github.com/Textualize/textual/pull/4625
+
+### Added
+
+- Added `Screen.is_active` 
+- Added `icon` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625
+
+## [0.65.2] - 2024-06-06
+
+### Fixed
+
+- Fixed issue with notifications and screen switches https://github.com/Textualize/textual/pull/4615
+
+### Added
+
+- Added textual.rlock.RLock https://github.com/Textualize/textual/pull/4615
+
+## [0.65.1] - 2024-06-05
+
+### Fixed
+
+- Fixed hot reloading with hatch rule https://github.com/Textualize/textual/pull/4606
+- Fixed hatch style parsing https://github.com/Textualize/textual/pull/4606
+
+## [0.65.0] - 2024-06-05
+
+### Added
+
+- Added Command Palette Opened, Closed, and OptionHighlighted events https://github.com/Textualize/textual/pull/4600
+- Added hatch style https://github.com/Textualize/textual/pull/4603
+
+### Fixed
+
+- Fixed DataTable cursor flicker on scroll https://github.com/Textualize/textual/pull/4598
+
+### Changes
+
+- TabbedContent will automatically make tabs active when a widget in a pane is focused https://github.com/Textualize/textual/issues/4593
+
+## [0.64.0] - 2024-06-03
+
+### Fixed
+
+- Fix traceback on exit https://github.com/Textualize/textual/pull/4575
+- Fixed `Markdown.goto_anchor` no longer scrolling the heading into view https://github.com/Textualize/textual/pull/4583
+- Fixed Footer flicker on initial focus https://github.com/Textualize/textual/issues/4573
+
+## [0.63.6] - 2024-05-29
+
+### Fixed
+
+- Fixed issue with bindings not refreshing https://github.com/Textualize/textual/pull/4571
+
+## [0.63.5] - 2024-05-28
+
+### Fixed
+
+- Fixed data table disappearing from tabs https://github.com/Textualize/textual/pull/4567
+
+### Added
+
+- Added `Styles.is_auto_width` and `Style.is_auto_height`
+
+## [0.63.4] - 2024-05-26
+
+### Added
+
+- Added `immediate` switch to `Signal.publish`
+
+### Fixed
+
+- Fixed freeze in recompose from bindings https://github.com/Textualize/textual/pull/4558
+
 ## [0.63.3] - 2024-05-24
 
 ### Fixed
@@ -73,7 +182,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Dependency issue
 
-## [0.60.0] - 2024-05-14 
+## [0.60.0] - 2024-05-14
 
 ### Fixed
 
@@ -180,7 +289,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
-  
+
 ### Fixed
 
 - Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
@@ -195,7 +304,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed mouse escape sequences being generated with `mouse=False` 
+- Fixed mouse escape sequences being generated with `mouse=False`
 
 ## [0.55.0] - 2024-04-1
 
@@ -2013,6 +2122,16 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.67.1]: https://github.com/Textualize/textual/compare/v0.67.0...v0.67.1
+[0.67.0]: https://github.com/Textualize/textual/compare/v0.66.0...v0.67.0
+[0.66.0]: https://github.com/Textualize/textual/compare/v0.65.2...v0.66.0
+[0.65.2]: https://github.com/Textualize/textual/compare/v0.65.1...v0.65.2
+[0.65.1]: https://github.com/Textualize/textual/compare/v0.65.0...v0.65.1
+[0.65.0]: https://github.com/Textualize/textual/compare/v0.64.0...v0.65.0
+[0.64.0]: https://github.com/Textualize/textual/compare/v0.63.6...v0.64.0
+[0.63.6]: https://github.com/Textualize/textual/compare/v0.63.5...v0.63.6
+[0.63.5]: https://github.com/Textualize/textual/compare/v0.63.4...v0.63.5
+[0.63.4]: https://github.com/Textualize/textual/compare/v0.63.3...v0.63.4
 [0.63.3]: https://github.com/Textualize/textual/compare/v0.63.2...v0.63.3
 [0.63.2]: https://github.com/Textualize/textual/compare/v0.63.1...v0.63.2
 [0.63.1]: https://github.com/Textualize/textual/compare/v0.63.0...v0.63.1

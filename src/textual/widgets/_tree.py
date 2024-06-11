@@ -1089,6 +1089,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             else:
                 line_style = base_style
 
+            line_style += Style(meta={"line": y})
+
             guides = Text(style=line_style)
             guides_append = guides.append
 
@@ -1124,7 +1126,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 )
 
             label = self.render_label(line.path[-1], line_style, label_style).copy()
-            label.stylize(Style(meta={"node": line.node._id, "line": y}))
+            label.stylize(Style(meta={"node": line.node._id}))
             guides.append(label)
 
             segments = list(guides.render(self.app.console))

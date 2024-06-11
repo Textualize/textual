@@ -48,8 +48,8 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
             calls.add("resume signal")
 
         def on_mount(self) -> None:
-            self.app_suspend_signal.subscribe(self, self.on_suspend)
-            self.app_resume_signal.subscribe(self, self.on_resume)
+            self.app_suspend_signal.subscribe(self, self.on_suspend, immediate=True)
+            self.app_resume_signal.subscribe(self, self.on_resume, immediate=True)
 
     async with SuspendApp(driver_class=HeadlessSuspendDriver).run_test(
         headless=False

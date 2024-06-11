@@ -22,6 +22,7 @@ from ._style_properties import (
     ColorProperty,
     DockProperty,
     FractionalProperty,
+    HatchProperty,
     IntegerProperty,
     KeylineProperty,
     LayoutProperty,
@@ -185,6 +186,8 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_color: Color
     border_subtitle_background: Color
     border_subtitle_style: Style
+
+    hatch: tuple[str, Color]
 
     overlay: Overlay
     constrain: Constrain
@@ -355,6 +358,8 @@ class StylesBase(ABC):
     border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()
 
+    hatch = HatchProperty()
+
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
     )
@@ -440,6 +445,18 @@ class StylesBase(ABC):
         """Does the node have a relative width?"""
         height = self.height
         return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+
+    @property
+    def is_auto_width(self) -> bool:
+        """Does the node have automatic width?"""
+        width = self.width
+        return width is not None and width.unit == Unit.AUTO
+
+    @property
+    def is_auto_height(self) -> bool:
+        """Does the node have automatic height?"""
+        height = self.height
+        return height is not None and height.unit == Unit.AUTO
 
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
@@ -1064,6 +1081,9 @@ class Styles(StylesBase):
             keyline_type, keyline_color = self.keyline
             if keyline_type != "none":
                 append_declaration("keyline", f"{keyline_type}, {keyline_color.css}")
+        if "hatch" in rules:
+            hatch_character, hatch_color = self.hatch
+            append_declaration("hatch", f'"{hatch_character}" {hatch_color.css}')
         lines.sort()
         return lines
 

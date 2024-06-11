@@ -136,7 +136,7 @@ class Screen(Generic[ScreenResultType], Widget):
     Screen {
         layout: vertical;
         overflow-y: auto;
-        background: $surface;
+        background: $surface;        
         
         &:inline {
             height: auto;
@@ -341,6 +341,14 @@ class Screen(Generic[ScreenResultType], Widget):
                     )
 
         return bindings_map
+
+    @property
+    def is_active(self) -> bool:
+        """Is the screen active (i.e. visible and top of the stack)?"""
+        try:
+            return self.app.screen is self
+        except Exception:
+            return False
 
     def render(self) -> RenderableType:
         """Render method inherited from widget, used to render the screen's background.
@@ -721,7 +729,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
-        self.call_after_refresh(self.refresh_bindings)
+        self.refresh_bindings()
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Insert Textual's own internal widgets.
@@ -739,28 +747,32 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_mount(self, event: events.Mount) -> None:
         """Set up the tooltip-clearing signal when we mount."""
-        self.screen_layout_refresh_signal.subscribe(self, self._maybe_clear_tooltip)
+        self.screen_layout_refresh_signal.subscribe(
+            self, self._maybe_clear_tooltip, immediate=True
+        )
+        self.refresh_bindings()
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if not self.app._batch_count and self.is_current:
-            if (
-                self._layout_required
-                or self._scroll_required
-                or self._repaint_required
-                or self._recompose_required
-                or self._dirty_widgets
-            ):
-                self._update_timer.resume()
-                return
+        try:
+            if not self.app._batch_count and self.is_current:
+                if (
+                    self._layout_required
+                    or self._scroll_required
+                    or self._repaint_required
+                    or self._recompose_required
+                    or self._dirty_widgets
+                ):
+                    self._update_timer.resume()
+                    return
 
-        await self._invoke_and_clear_callbacks()
-
-        if self._bindings_updated:
-            self._bindings_updated = False
-            self.app.call_later(self.bindings_updated_signal.publish, self)
+            await self._invoke_and_clear_callbacks()
+        finally:
+            if self._bindings_updated:
+                self._bindings_updated = False
+                self.app.call_later(self.bindings_updated_signal.publish, self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
@@ -1177,6 +1189,7 @@ class Screen(Generic[ScreenResultType], Widget):
         if event.is_forwarded:
             return
         event._set_forwarded()
+
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
@@ -1211,8 +1224,13 @@ class Screen(Generic[ScreenResultType], Widget):
     class _NoResult:
         """Class used to mark that there is no result."""
 
-    def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
+    def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> bool:
         """Dismiss the screen, optionally with a result.
+
+        !!! note
+
+            Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
+            this method will return `False`.
 
         If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
@@ -1220,20 +1238,20 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             result: The optional result to be passed to the result callback.
 
+        Returns:
+            `True` if the Screen was dismissed, or `False` if the Screen wasn't dismissed due to not being active.
+
         Raises:
             ScreenStackError: If trying to dismiss a screen that is not at the top of
                 the stack.
 
         """
-        if self is not self.app.screen:
-            from .app import ScreenStackError
-
-            raise ScreenStackError(
-                f"Can't dismiss screen {self} that's not at the top of the stack."
-            )
+        if not self.is_active:
+            return False
         if result is not self._NoResult and self._result_callbacks:
             self._result_callbacks[-1](cast(ScreenResultType, result))
         self.app.pop_screen()
+        return True
 
     def action_dismiss(
         self, result: ScreenResultType | Type[_NoResult] = _NoResult

@@ -127,7 +127,7 @@ class LinuxInlineDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.01):
+            for _key, events in selector.select(0.1):
                 if events & EVENT_READ:
                     return True
             return False

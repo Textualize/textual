@@ -6,9 +6,10 @@ from typing import Iterable, NoReturn, Sequence, cast
 import rich.repr
 
 from .._border import BorderValue, normalize_border_value
+from .._cells import cell_len
 from .._duration import _duration_as_seconds
 from .._easing import EASING
-from ..color import Color, ColorParseError
+from ..color import TRANSPARENT, Color, ColorParseError
 from ..geometry import Spacing, SpacingDimensions, clamp
 from ..suggestions import get_suggestion
 from ._error_tools import friendly_list
@@ -36,6 +37,7 @@ from ._help_text import (
     text_align_help_text,
 )
 from .constants import (
+    HATCHES,
     VALID_ALIGN_HORIZONTAL,
     VALID_ALIGN_VERTICAL,
     VALID_BORDER,
@@ -43,6 +45,7 @@ from .constants import (
     VALID_CONSTRAIN,
     VALID_DISPLAY,
     VALID_EDGE,
+    VALID_HATCH,
     VALID_KEYLINE,
     VALID_OVERFLOW,
     VALID_OVERLAY,
@@ -1053,6 +1056,75 @@ class StylesBuilder:
             )
         else:
             self.styles._rules[name] = value  # type: ignore
+
+    def process_hatch(self, name: str, tokens: list[Token]) -> None:
+        if not tokens:
+            return
+        character: str | None = None
+        color = TRANSPARENT
+        opacity = 1.0
+
+        if len(tokens) not in (2, 3):
+            self.error(name, tokens[0], "2 or 3 values expected here")
+
+        character_token, color_token, *opacity_tokens = tokens
+
+        if character_token.name == "token":
+            if character_token.value not in VALID_HATCH:
+                self.error(
+                    name,
+                    tokens[0],
+                    string_enum_help_text(name, VALID_HATCH, context="css"),
+                )
+            character = HATCHES[character_token.value]
+        elif character_token.name == "string":
+            character = character_token.value[1:-1]
+            if len(character) != 1:
+                self.error(
+                    name,
+                    character_token,
+                    f"Hatch type requires a string of length 1; got {character_token.value}",
+                )
+            if cell_len(character) != 1:
+                self.error(
+                    name,
+                    character_token,
+                    f"Hatch type requires a string with a *cell length* of 1; got {character_token.value}",
+                )
+
+        if color_token.name in ("color", "token"):
+            try:
+                color = Color.parse(color_token.value)
+            except Exception as error:
+                self.error(
+                    name,
+                    color_token,
+                    color_property_help_text(name, context="css", error=error),
+                )
+        else:
+            self.error(
+                name, color_token, f"Expected a color; found {color_token.value!r}"
+            )
+
+        if opacity_tokens:
+            opacity_token = opacity_tokens[0]
+            if opacity_token.name == "scalar":
+                opacity_scalar = opacity = Scalar.parse(opacity_token.value)
+                if opacity_scalar.unit != Unit.PERCENT:
+                    self.error(
+                        name,
+                        opacity_token,
+                        "hatch alpha must be given as a percentage.",
+                    )
+                opacity = clamp(opacity_scalar.value / 100.0, 0, 1.0)
+            else:
+                self.error(
+                    name,
+                    opacity_token,
+                    f"expected a percentage here; found {opacity_token.value!r}",
+                )
+
+        self.styles._rules[name] = (character or " ", color.multiply_alpha(opacity))
 
     def _get_suggested_property_name_for_rule(self, rule_name: str) -> str | None:
         """

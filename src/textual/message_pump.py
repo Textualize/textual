@@ -245,10 +245,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             return node
 
     @property
-    def _is_linked_to_app(self) -> bool:
+    def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
         node: MessagePump | None = self
-
         while (node := node._parent) is not None:
             if node.is_dom_root:
                 return True
@@ -274,19 +273,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             A logger.
         """
         return self.app._logger
-
-    @property
-    def is_attached(self) -> bool:
-        """Is the node attached to the app via the DOM?"""
-        from .app import App
-
-        node = self
-
-        while not isinstance(node, App):
-            if node._parent is None:
-                return False
-            node = node._parent
-        return True
 
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
@@ -492,10 +478,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._closed or self._closing:
             return
         self._closing = True
-        stop_timers = list(self._timers)
-        for timer in stop_timers:
-            timer.stop()
-        self._timers.clear()
+        if self._timers:
+            await Timer._stop_all(self._timers)
+            self._timers.clear()
         await self._message_queue.put(events.Unmount())
         Reactive._reset_object(self)
         await self._message_queue.put(None)
@@ -532,8 +517,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            for timer in list(self._timers):
-                timer.stop()
+            if self._timers:
+                await Timer._stop_all(self._timers)
+                self._timers.clear()
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
@@ -758,7 +744,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             if message._sender is not None and message._sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
-            if self.is_parent_active and not self._parent._closing:
+            if self.is_parent_active and self.is_attached:
                 message._bubble_to(self._parent)
 
     def check_idle(self) -> None:
@@ -862,6 +848,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return handled
 
     async def on_timer(self, event: events.Timer) -> None:
+        if not self.app._running:
+            return
         event.prevent_default()
         event.stop()
         if event.callback is not None:

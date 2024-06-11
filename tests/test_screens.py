@@ -300,8 +300,7 @@ async def test_dismiss_non_top_screen():
     app = MyApp()
     async with app.run_test() as pilot:
         await pilot.press("p")
-        with pytest.raises(ScreenStackError):
-            app.bottom.dismiss()
+        assert not app.bottom.dismiss()
 
 
 async def test_dismiss_action():

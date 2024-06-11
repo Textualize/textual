@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import Lock, create_task, wait
+from asyncio import create_task, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -81,6 +81,7 @@ from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
 from .renderables.blank import Blank
+from .rlock import RLock
 from .strip import Strip
 from .walk import walk_depth_first
 
@@ -396,7 +397,7 @@ class Widget(DOMNode):
         if self.BORDER_SUBTITLE:
             self.border_subtitle = self.BORDER_SUBTITLE
 
-        self.lock = Lock()
+        self.lock = RLock()
         """`asyncio` lock to be used to synchronize the state of the widget.
 
         Two different tasks might call methods on a widget at the same time, which
@@ -934,15 +935,16 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        if not self._is_linked_to_app:
+        if self._closing:
+            return AwaitMount(self, [])
+        if not self.is_attached:
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
         # Check for duplicate IDs in the incoming widgets
-        ids_to_mount = [widget.id for widget in widgets if widget.id is not None]
-        unique_ids = set(ids_to_mount)
-        num_unique_ids = len(unique_ids)
-        num_widgets_with_ids = len(ids_to_mount)
-        if num_unique_ids != num_widgets_with_ids:
-            counter = Counter(widget.id for widget in widgets)
+        ids_to_mount = [
+            widget_id for widget in widgets if (widget_id := widget.id) is not None
+        ]
+        if len(set(ids_to_mount)) != len(ids_to_mount):
+            counter = Counter(ids_to_mount)
             for widget_id, count in counter.items():
                 if count > 1:
                     raise MountError(
@@ -1123,11 +1125,12 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        if self._parent is not None:
-            async with self.batch():
-                await self.query("*").exclude(".-textual-system").remove()
-                if self._is_linked_to_app:
-                    await self.mount_all(compose(self))
+        if not self.is_attached:
+            return
+        async with self.batch():
+            await self.query("*").exclude(".-textual-system").remove()
+            if self.is_attached:
+                await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
@@ -1210,13 +1213,19 @@ class Widget(DOMNode):
                 min_width -= gutter.width
             content_width = max(content_width, min_width, Fraction(0))
 
-        if styles.max_width is not None:
+        if styles.max_width is not None and not (
+            container.width == 0
+            and not styles.max_width.is_cells
+            and self._parent is not None
+            and self._parent.styles.is_auto_width
+        ):
             # Restrict to maximum width, if set
             max_width = styles.max_width.resolve(
                 container - margin.totals, viewport, width_fraction
             )
             if is_border_box:
                 max_width -= gutter.width
+
             content_width = min(content_width, max_width)
 
         content_width = max(Fraction(0), content_width)
@@ -1254,7 +1263,12 @@ class Widget(DOMNode):
                 min_height -= gutter.height
             content_height = max(content_height, min_height, Fraction(0))
 
-        if styles.max_height is not None:
+        if styles.max_height is not None and not (
+            container.height == 0
+            and not styles.max_height.is_cells
+            and self._parent is not None
+            and self._parent.styles.is_auto_height
+        ):
             # Restrict maximum height, if set
             max_height = styles.max_height.resolve(
                 container - margin.totals, viewport, height_fraction
@@ -1331,13 +1345,17 @@ class Widget(DOMNode):
 
             renderable = self.render()
             if isinstance(renderable, Text):
-                height = len(
-                    renderable.wrap(
-                        self._console,
-                        width,
-                        no_wrap=renderable.no_wrap,
-                        tab_size=renderable.tab_size or 8,
+                height = (
+                    len(
+                        renderable.wrap(
+                            self._console,
+                            width,
+                            no_wrap=renderable.no_wrap,
+                            tab_size=renderable.tab_size or 8,
+                        )
                     )
+                    if renderable
+                    else 0
                 )
             else:
                 options = self._console.options.update_width(width).update(
@@ -3537,7 +3555,6 @@ class Widget(DOMNode):
                 self.log.warning(self, f"IS NOT RUNNING, {message!r} not sent")
             except NoActiveAppError:
                 pass
-
         return super().post_message(message)
 
     async def _on_idle(self, event: events.Idle) -> None:
@@ -3716,7 +3733,8 @@ class Widget(DOMNode):
         Args:
             widgets: A list of child widgets.
         """
-        await self.mount_all(widgets)
+        if widgets:
+            await self.mount_all(widgets)
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Hook to extend composed widgets.
@@ -3871,6 +3889,18 @@ class Widget(DOMNode):
             raise SkipAction()
         self._clear_anchor()
         self.scroll_page_up()
+
+    def action_page_left(self) -> None:
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self._clear_anchor()
+        self.scroll_page_left()
+
+    def action_page_right(self) -> None:
+        if not self.allow_horizontal_scroll:
+            raise SkipAction()
+        self._clear_anchor()
+        self.scroll_page_right()
 
     def notify(
         self,
