@@ -6,7 +6,7 @@ from enum import IntFlag
 from typing import TYPE_CHECKING, ClassVar, Iterable, Pattern
 
 from rich.cells import cell_len, get_character_cell_size
-from rich.console import Console, ConsoleOptions
+from rich.console import Console, ConsoleOptions, RenderableType
 from rich.console import RenderResult as RichRenderResult
 from rich.highlighter import Highlighter
 from rich.segment import Segment
