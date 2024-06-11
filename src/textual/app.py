@@ -3397,7 +3397,9 @@ class App(Generic[ReturnType], DOMNode):
         for children in reversed(node_children):
             # Closing children can be done asynchronously.
             close_messages = [
-                child._close_messages(wait=True) for child in children if child._running
+                child._close_messages(wait=True)
+                for child in children
+                if child._running and not child._closing
             ]
             # TODO: What if a message pump refuses to exit?
             if close_messages:
