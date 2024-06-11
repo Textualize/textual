@@ -216,14 +216,14 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
 
     BINDINGS: ClassVar[list[BindingType]] = [
         Binding("enter", "select_cursor", "Select", show=False),
-        Binding("up,k", "cursor_up", "Cursor Up", show=False),
-        Binding("down,j", "cursor_down", "Cursor Down", show=False),
-        Binding("right,l", "cursor_right", "Cursor Right", show=False),
-        Binding("left,h", "cursor_left", "Cursor Left", show=False),
+        Binding("up", "cursor_up", "Cursor Up", show=False),
+        Binding("down", "cursor_down", "Cursor Down", show=False),
+        Binding("right", "cursor_right", "Cursor Right", show=False),
+        Binding("left", "cursor_left", "Cursor Left", show=False),
         Binding("pageup", "page_up", "Page Up", show=False),
         Binding("pagedown", "page_down", "Page Down", show=False),
-        Binding("g", "scroll_top", "Top", show=False),
-        Binding("G", "scroll_bottom", "Bottom", show=False),
+        Binding("ctrl+home", "scroll_top", "Top", show=False),
+        Binding("ctrl+end", "scroll_bottom", "Bottom", show=False),
         Binding("home", "scroll_home", "Home", show=False),
         Binding("end", "scroll_end", "End", show=False),
     ]
@@ -237,8 +237,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | left,h | Move the cursor left. |
     | pageup | Move one page up. |
     | pagedown | Move one page down. |
-    | g | Move to the top. |
-    | G | Move to the bottom. |
+    | ctrl+home | Move to the top. |
+    | ctrl+end | Move to the bottom. |
     | home | Move to the home position (leftmost column). |
     | end | Move to the end position (rightmost column). |
     """
