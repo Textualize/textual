@@ -24,7 +24,7 @@ from ..css._error_tools import friendly_list
 from ..events import Blur, Focus, Mount
 from ..geometry import Offset, Size
 from ..message import Message
-from ..reactive import reactive, var
+from ..reactive import Reactive, reactive, var
 from ..suggester import Suggester, SuggestionReady
 from ..timer import Timer
 from ..validation import ValidationResult, Validator
@@ -454,7 +454,7 @@ class Input(Widget, can_focus=True):
     """
 
     cursor_blink = reactive(True, init=False)
-    value = reactive("", layout=True, init=False)
+    value: Reactive[str] = reactive("", layout=True, init=False)
     input_scroll_offset = reactive(0)
     cursor_position = reactive(0)
     view_position = reactive(0)

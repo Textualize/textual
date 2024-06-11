@@ -1,13 +1,19 @@
+from typing import Union
+
+import pytest
+
 from textual import on
 from textual.app import App, ComposeResult
 from textual.validation import Failure, ValidationResult
 from textual.widgets import Input
 
+InputEvent = Union[Input.Changed, Input.Submitted]
 
-class InputApp(App):
-    def __init__(self, template, placeholder=""):
+
+class InputApp(App[None]):
+    def __init__(self, template: str, placeholder: str = ""):
         super().__init__()
-        self.messages = []
+        self.messages: list[InputEvent] = []
         self.template = template
         self.placeholder = placeholder
 
@@ -16,7 +22,7 @@ class InputApp(App):
 
     @on(Input.Changed)
     @on(Input.Submitted)
-    def on_changed_or_submitted(self, event):
+    def on_changed_or_submitted(self, event: InputEvent) -> None:
         self.messages.append(event)
 
 
@@ -88,7 +94,7 @@ async def test_editing():
 async def test_key_movement_actions():
     serial = "ABCDE-FGHIJ-KLMNO-PQRST"
     app = InputApp(">NNNNN-NNNNN-NNNNN-NNNNN;_")
-    async with app.run_test() as pilot:
+    async with app.run_test():
         input = app.query_one(Input)
         input.value = serial
         assert input.is_valid
@@ -139,3 +145,77 @@ async def test_key_modification_actions():
         assert input.value == "     -    J-"
         input.clear()
         assert input.value == ""
+
+
+@pytest.mark.xfail(
+    reason="Cursor position is not updated correctly when the cursor is after the last separator."
+)
+async def test_cursor_word_right_after_last_separator():
+    app = InputApp(">NNN-NNN-NNN-NNNNN;_")
+    async with app.run_test():
+        input = app.query_one(Input)
+        input.value = "123-456-789-012"
+        input.cursor_position = 13
+        input.action_cursor_right_word()
+        assert input.cursor_position == 17
+
+
+async def test_case_conversion_meta_characters():
+    app = InputApp("NN<-N!N>N")
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+        await pilot.press("a", "B", "C", "D", "e")
+        assert input.value == "aB-cDE"
+        assert input.is_valid
+
+
+async def test_case_conversion_override():
+    app = InputApp(">-<NN")
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+        await pilot.press("a", "B")
+        assert input.value == "-ab"
+        assert input.is_valid
+
+
+async def test_case_conversion_cancel():
+    app = InputApp("-!N-")
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+        await pilot.press("a")
+        assert input.value == "-a-"
+        assert input.is_valid
+
+
+async def test_only_separators__raises_ValueError():
+    app = InputApp("---")
+    with pytest.raises(ValueError):
+        async with app.run_test() as pilot:
+            await pilot.press("a")
+
+
+async def test_case_conversion_escape():
+    app = InputApp("N\\aN\\B\\cN")
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+        await pilot.press("D", "e", "F")
+        assert input.value == "DaeBcF"
+        assert input.is_valid
+
+
+async def test_digits_not_required():
+    app = InputApp("00;_")
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+        await pilot.press("a", "1")
+        assert input.value == "1"
+        assert input.is_valid
+
+
+async def test_digits_required():
+    app = InputApp("99;_")
+    async with app.run_test() as pilot:
+        input = app.query_one(Input)
+        await pilot.press("a", "1")
+        assert input.value == "1"
+        assert not input.is_valid
