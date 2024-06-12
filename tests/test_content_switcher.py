@@ -107,3 +107,16 @@ async def test_set_current_to_unknown_id() -> None:
         )
         with pytest.raises(NoMatches):
             pilot.app.query_one(ContentSwitcher).current = "does-not-exist"
+
+
+async def test_add_content() -> None:
+    async with SwitcherApp().run_test() as pilot:
+        switcher = pilot.app.query_one(ContentSwitcher)
+        await switcher.add_content(Widget(id="foo"))
+        assert not switcher.query_one("#foo").display
+        await switcher.add_content(Widget(), id="bar", set_current=True)
+        assert not switcher.query_one("#foo").display
+        assert switcher.query_one("#bar").display
+        assert switcher.current == "bar"
+        with pytest.raises(ValueError):
+            switcher.add_content(Widget())

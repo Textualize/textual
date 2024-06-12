@@ -21,7 +21,7 @@ def partition(
     """
 
     result: tuple[list[T], list[T]] = ([], [])
-    appends = (result[0].append, result[1].append)
+    appends = (result[1].append, result[0].append)
     for value in iterable:
-        appends[1 if predicate(value) else 0](value)
+        appends[not predicate(value)](value)
     return result
