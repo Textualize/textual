@@ -782,7 +782,7 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
-        return True
+        return not self._exit
 
     @property
     def debug(self) -> bool:
@@ -2564,6 +2564,7 @@ class App(Generic[ReturnType], DOMNode):
                         console = Console()
                         console.print(self.screen._compositor)
                         console.print()
+
                     driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)

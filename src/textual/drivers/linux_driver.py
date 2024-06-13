@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 import rich.repr
 
 from .. import events
+from .._parser import ParseError
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -327,7 +328,7 @@ class LinuxDriver(Driver):
 
             # Alt screen false, show cursor
             self.write("\x1b[?1049l" + "\x1b[?25h")
-            self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
+            self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
             self.write(
                 "\x1b[<u"
             )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
@@ -375,18 +376,26 @@ class LinuxDriver(Driver):
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
+        eof = False
 
         try:
-            while not self.exit_event.is_set():
+            while not eof and not self.exit_event.is_set():
                 selector_events = selector.select(0.1)
                 for _selector_key, mask in selector_events:
                     if mask & EVENT_READ:
                         unicode_data = decode(
                             read(fileno, 1024), final=self.exit_event.is_set()
                         )
+                        if not unicode_data:
+                            # This can occur if the stdin is piped
+                            eof = True
+                            break
                         for event in feed(unicode_data):
                             self.process_event(event)
         finally:
             selector.close()
-            for event in feed(""):
+            try:
+                for event in feed(""):
+                    pass
+            except ParseError:
                 pass
