@@ -115,7 +115,7 @@ class LinuxDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
-        if not self._mouse or not self.input_tty:
+        if not self._mouse:
             return
 
         write = self.write
@@ -132,17 +132,15 @@ class LinuxDriver(Driver):
 
     def _enable_bracketed_paste(self) -> None:
         """Enable bracketed paste mode."""
-        if self.input_tty:
-            self.write("\x1b[?2004h")
+        self.write("\x1b[?2004h")
 
     def _disable_bracketed_paste(self) -> None:
         """Disable bracketed paste mode."""
-        if self.input_tty:
-            self.write("\x1b[?2004l")
+        self.write("\x1b[?2004l")
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
-        if not self._mouse or not self.input_tty:
+        if not self._mouse:
             return
         write = self.write
         write("\x1b[?1000l")  #
@@ -244,11 +242,10 @@ class LinuxDriver(Driver):
             except termios.error:
                 pass
 
-        if self.input_tty:
-            self.write("\x1b[?25l")  # Hide cursor
-            self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
-            self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-            self.flush()
+        self.write("\x1b[?25l")  # Hide cursor
+        self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
@@ -340,12 +337,11 @@ class LinuxDriver(Driver):
 
         # Alt screen false, show cursor
         self.write("\x1b[?1049l")
-        if self.input_tty:
-            self.write("\x1b[?25h")
-            self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
-            self.write(
-                "\x1b[<u"
-            )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.write("\x1b[?25h")
+        self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
+        self.write(
+            "\x1b[<u"
+        )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.flush()
 
     def close(self) -> None:
