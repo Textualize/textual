@@ -3410,6 +3410,7 @@ class App(Generic[ReturnType], DOMNode):
                     child._close_messages(wait=True) for child in close_children
                 ]
                 try:
+                    # Close all the children
                     await asyncio.wait_for(
                         asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
                     )
@@ -3417,7 +3418,7 @@ class App(Generic[ReturnType], DOMNode):
                     # Likely a deadlock if we get here
                     # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
                     raise asyncio.TimeoutError(
-                        f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
+                        f"Timeout waiting for {close_children!r} to close; possible deadlock (consider changing App.CLOSE_TIMEOUT)\n"
                     ) from None
                 finally:
                     for child in children:

@@ -1,3 +1,8 @@
+"""
+Called by test_pipe.py
+
+"""
+
 from textual.app import App
 from textual.binding import Binding
 from textual.widgets import Footer
