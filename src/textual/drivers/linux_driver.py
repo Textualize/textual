@@ -47,6 +47,7 @@ class LinuxDriver(Driver):
         super().__init__(app, debug=debug, mouse=mouse, size=size)
         self._file = sys.__stderr__
         self.fileno = sys.__stdin__.fileno()
+        self.input_tty = sys.__stdin__.isatty()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
@@ -114,7 +115,7 @@ class LinuxDriver(Driver):
 
     def _enable_mouse_support(self) -> None:
         """Enable reporting of mouse events."""
-        if not self._mouse:
+        if not self._mouse or not self.input_tty:
             return
 
         write = self.write
@@ -131,15 +132,17 @@ class LinuxDriver(Driver):
 
     def _enable_bracketed_paste(self) -> None:
         """Enable bracketed paste mode."""
-        self.write("\x1b[?2004h")
+        if self.input_tty:
+            self.write("\x1b[?2004h")
 
     def _disable_bracketed_paste(self) -> None:
         """Disable bracketed paste mode."""
-        self.write("\x1b[?2004l")
+        if self.input_tty:
+            self.write("\x1b[?2004l")
 
     def _disable_mouse_support(self) -> None:
         """Disable reporting of mouse events."""
-        if not self._mouse:
+        if not self._mouse or not self.input_tty:
             return
         write = self.write
         write("\x1b[?1000l")  #
@@ -236,12 +239,16 @@ class LinuxDriver(Driver):
             # defaults to ASCII EOT = Ctrl-D = 4.)
             newattr[tty.CC][termios.VMIN] = 1
 
-            termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
+            try:
+                termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
+            except termios.error:
+                pass
 
-        self.write("\x1b[?25l")  # Hide cursor
-        self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
-        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-        self.flush()
+        if self.input_tty:
+            self.write("\x1b[?25l")  # Hide cursor
+            self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
+            self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+            self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
@@ -265,6 +272,8 @@ class LinuxDriver(Driver):
         # Terminals should ignore this sequence if not supported.
         # Apple terminal doesn't, and writes a single 'p' in to the terminal,
         # so we will make a special case for Apple terminal (which doesn't support sync anyway).
+        if not self.input_tty:
+            return
         if os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
             self.write("\033[?2026$p")
             self.flush()
@@ -310,8 +319,11 @@ class LinuxDriver(Driver):
                 if self._key_thread is not None:
                     self._key_thread.join()
                 self.exit_event.clear()
-                termios.tcflush(self.fileno, termios.TCIFLUSH)
-        except Exception as error:
+                try:
+                    termios.tcflush(self.fileno, termios.TCIFLUSH)
+                except termios.error:
+                    pass
+        except Exception:
             # TODO: log this
             pass
 
@@ -327,11 +339,13 @@ class LinuxDriver(Driver):
                 pass
 
             # Alt screen false, show cursor
-            self.write("\x1b[?1049l" + "\x1b[?25h")
-            self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
-            self.write(
-                "\x1b[<u"
-            )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+            self.write("\x1b[?1049l")
+            if self.input_tty:
+                self.write("\x1b[?25h")
+                self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
+                self.write(
+                    "\x1b[<u"
+                )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
             self.flush()
 
     def close(self) -> None:
