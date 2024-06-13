@@ -46,6 +46,7 @@ class DictionaryApp(App):
                 results = response.json()
             except Exception:
                 self.query_one("#results", Markdown).update(response.text)
+                return
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)
