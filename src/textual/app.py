@@ -782,7 +782,7 @@ class App(Generic[ReturnType], DOMNode):
     @property
     def is_attached(self) -> bool:
         """Is this node linked to the app through the DOM?"""
-        return not self._exit
+        return True
 
     @property
     def debug(self) -> bool:
