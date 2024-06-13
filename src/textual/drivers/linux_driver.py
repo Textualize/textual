@@ -338,15 +338,15 @@ class LinuxDriver(Driver):
             except termios.error:
                 pass
 
-            # Alt screen false, show cursor
-            self.write("\x1b[?1049l")
-            if self.input_tty:
-                self.write("\x1b[?25h")
-                self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
-                self.write(
-                    "\x1b[<u"
-                )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
-            self.flush()
+        # Alt screen false, show cursor
+        self.write("\x1b[?1049l")
+        if self.input_tty:
+            self.write("\x1b[?25h")
+            self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
+            self.write(
+                "\x1b[<u"
+            )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.flush()
 
     def close(self) -> None:
         """Perform cleanup."""
