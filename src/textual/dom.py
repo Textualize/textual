@@ -293,9 +293,11 @@ class DOMNode(MessagePump):
         Args:
             node: A node to copy state from.
         """
-        for key in node._reactives:
-            if key in self._reactives:
-                setattr(self, key, getattr(node, key))
+        for key, reactive in node._reactives.items():
+            if reactive.state:
+                if key in self._reactives:
+                    if hasattr(node, reactive.internal_name):
+                        setattr(self, key, getattr(node, key))
 
     def _initialize_data_bind(self) -> None:
         """initialize a data binding.

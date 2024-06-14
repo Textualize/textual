@@ -2718,7 +2718,9 @@ class App(Generic[ReturnType], DOMNode):
         for widget in widget_list:
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
-            if widget not in self._registry:
+            if widget in self._registry:
+                parent._nodes._move_to_end(widget)
+            else:
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
                     self._register(widget, *widget._nodes, cache=cache)

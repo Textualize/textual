@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Recompose will now keep widgets with matching IDs (with the same parent)
+- Added `state` to Reactive
+
 ## [0.68.0] - 2024-06-14
 
 ### Added
