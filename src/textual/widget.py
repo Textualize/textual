@@ -1005,6 +1005,8 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+        if self.app._exit:
+            return AwaitMount(self, [])
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
