@@ -76,3 +76,31 @@ def compose(node: App | Widget) -> list[Widget]:
         app._compose_stacks.pop()
         app._composed.pop()
     return nodes
+
+
+def recompose(node: App | Widget) -> tuple[list[Widget], set[Widget]]:
+    """Recompose a node (nodes with a matching nodes will have their state copied).
+
+    Args:
+        Node to be recomposed.
+
+    Returns:
+        A list of new nodes, and a list of nodes to be removed.
+    """
+    children: list[Widget] = list(
+        child for child in node.children if not child.has_class("-textual-system")
+    )
+    children_by_id = {child.id: child for child in children if child.id is not None}
+    new_children: list[Widget] = []
+    remove_children: set[Widget] = set(children)
+    for node in compose(node):
+        if node.id is None:
+            new_children.append(node)
+        else:
+            if (existing_child := children_by_id.pop(node.id, None)) is not None:
+                new_children.append(existing_child)
+                remove_children.discard(existing_child)
+                existing_child.copy_state(node)
+            else:
+                new_children.append(node)
+    return (new_children, remove_children)

@@ -284,6 +284,19 @@ class DOMNode(MessagePump):
             self.call_later(self._initialize_data_bind)
         return self
 
+    def copy_state(self, node: DOMNode) -> None:
+        """Copy the state from another node.
+
+        The default implementation will copy over reactives with the same name,
+        but this method may be override for different strategies.
+
+        Args:
+            node: A node to copy state from.
+        """
+        for key in node._reactives:
+            if key in self._reactives:
+                setattr(self, key, getattr(node, key))
+
     def _initialize_data_bind(self) -> None:
         """initialize a data binding.
 

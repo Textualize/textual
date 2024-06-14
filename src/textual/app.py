@@ -70,6 +70,7 @@ from ._ansi_sequences import SYNC_END, SYNC_START
 from ._ansi_theme import ALABASTER, MONOKAI
 from ._callback import invoke
 from ._compose import compose
+from ._compose import recompose as recompose_node
 from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
@@ -2620,9 +2621,12 @@ class App(Generic[ReturnType], DOMNode):
         if self._exit:
             return
         try:
-            async with self.screen.batch():
-                await self.screen.query("*").exclude(".-textual-system").remove()
-                await self.screen.mount_all(compose(self))
+            new_children, remove_children = recompose_node(self.screen)
+            print("new", new_children)
+            print("remove", remove_children)
+            await self.app._remove_nodes(list(remove_children), self.screen)
+            if self.screen.is_attached:
+                await self.screen.mount_all(new_children)
         except ScreenStackError:
             pass
 
