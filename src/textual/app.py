@@ -2618,8 +2618,11 @@ class App(Generic[ReturnType], DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
+
         if self._exit:
             return
+        await self.screen.recompose()
+        return
         try:
             new_children, remove_children = recompose_node(self.screen)
             print("new", new_children)

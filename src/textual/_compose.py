@@ -88,19 +88,22 @@ def recompose(node: App | Widget) -> tuple[list[Widget], set[Widget]]:
         A list of new nodes, and a list of nodes to be removed.
     """
     children: list[Widget] = list(
-        child for child in node.children if not child.has_class("-textual-system")
+        child for child in node._nodes if not child.has_class("-textual-system")
     )
     children_by_id = {child.id: child for child in children if child.id is not None}
     new_children: list[Widget] = []
     remove_children: set[Widget] = set(children)
-    for node in compose(node):
-        if node.id is None:
-            new_children.append(node)
+    print("?", node)
+    for compose_node in compose(node):
+        print("!!", compose_node)
+        if (
+            compose_node.id is not None
+            and (existing_child := children_by_id.pop(compose_node.id, None))
+            is not None
+        ):
+            new_children.append(existing_child)
+            remove_children.discard(existing_child)
+            existing_child.copy_state(compose_node)
         else:
-            if (existing_child := children_by_id.pop(node.id, None)) is not None:
-                new_children.append(existing_child)
-                remove_children.discard(existing_child)
-                existing_child.copy_state(node)
-            else:
-                new_children.append(node)
+            new_children.append(compose_node)
     return (new_children, remove_children)
