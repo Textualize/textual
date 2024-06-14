@@ -83,6 +83,7 @@ class FooterKey(Widget):
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")
         key_display = self.key_display
+        key_padding = self.get_component_styles("footer-key--key").padding
         if self.upper_case_keys:
             key_display = key_display.upper()
         if self.ctrl_to_caret and key_display.lower().startswith("ctrl+"):
@@ -94,7 +95,10 @@ class FooterKey(Widget):
             )
         else:
             label_text = Text.assemble(
-                (f" {key_display} ", key_style), (description, description_style), " "
+                (f" {key_display} ", key_style),
+                " " * key_padding.right,
+                (description, description_style),
+                " ",
             )
         label_text.stylize_before(self.rich_style)
         return label_text
