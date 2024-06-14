@@ -78,11 +78,14 @@ def compose(node: App | Widget) -> list[Widget]:
     return nodes
 
 
-def recompose(node: App | Widget) -> tuple[list[Widget], set[Widget]]:
+def recompose(
+    node: App | Widget, compose_node: App | Widget | None = None
+) -> tuple[list[Widget], set[Widget]]:
     """Recompose a node (nodes with a matching nodes will have their state copied).
 
     Args:
-        Node to be recomposed.
+        node: Node to be recomposed.
+        compose_node: Node where new nodes are composed, or `None` for the same node.
 
     Returns:
         A list of new nodes, and a list of nodes to be removed.
@@ -93,9 +96,7 @@ def recompose(node: App | Widget) -> tuple[list[Widget], set[Widget]]:
     children_by_id = {child.id: child for child in children if child.id is not None}
     new_children: list[Widget] = []
     remove_children: set[Widget] = set(children)
-    print("?", node)
-    for compose_node in compose(node):
-        print("!!", compose_node)
+    for compose_node in compose(node if compose_node is None else compose_node):
         if (
             compose_node.id is not None
             and (existing_child := children_by_id.pop(compose_node.id, None))

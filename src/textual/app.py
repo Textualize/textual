@@ -2621,15 +2621,14 @@ class App(Generic[ReturnType], DOMNode):
 
         if self._exit:
             return
-        await self.screen.recompose()
-        return
+
         try:
-            new_children, remove_children = recompose_node(self.screen)
-            print("new", new_children)
-            print("remove", remove_children)
-            await self.app._remove_nodes(list(remove_children), self.screen)
-            if self.screen.is_attached:
-                await self.screen.mount_all(new_children)
+            screen = self.screen
+            new_children, remove_children = recompose_node(screen, self)
+            async with screen.batch():
+                await self.app._remove_nodes(list(remove_children), self.screen)
+                if self.screen.is_attached:
+                    await self.screen.mount_all(new_children)
         except ScreenStackError:
             pass
 

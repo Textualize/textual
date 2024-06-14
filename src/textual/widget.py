@@ -1132,15 +1132,10 @@ class Widget(DOMNode):
             return
         async with self.batch():
             new_children, remove_children = recompose_node(self)
-            print("widget new", new_children)
-            print("widget remove", remove_children)
-            await self.app._remove_nodes(list(remove_children), self)
+            if remove_children:
+                await self.app._remove_nodes(list(remove_children), self)
             if self.is_attached:
                 await self.mount_all(new_children)
-
-            # await self.query("*").exclude(".-textual-system").remove()
-            # if self.is_attached:
-            #     await self.mount_all(compose(self))
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.
