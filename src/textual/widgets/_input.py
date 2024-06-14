@@ -204,11 +204,20 @@ class _Template(Validator):
         self.update_mask(input.placeholder)
 
     def validate(self, value: str) -> ValidationResult:
-        full_value = value.ljust(len(self.template), chr(0))
-        for c, char_def in zip(full_value, self.template):
-            if (char_def.flags & _CharFlags.REQUIRED) and not char_def.pattern.match(c):
-                return self.failure("Value does not match template!", value)
-        return self.success()
+        if self.check(value.ljust(len(self.template), chr(0)), False):
+            return self.success()
+        else:
+            return self.failure("Value does not match template!", value)
+
+    def check(self, value: str, allow_space: bool) -> bool:
+        for c, char_def in zip(value, self.template):
+            if (
+                (char_def.flags & _CharFlags.REQUIRED)
+                and (not char_def.pattern.match(c))
+                and ((c != " ") or not allow_space)
+            ):
+                return False
+        return True
 
     def insert_separators(self, value: str, cursor_position: int) -> tuple[str, int]:
         while cursor_position < len(self.template) and (
@@ -659,6 +668,13 @@ class Input(Widget, can_focus=True):
         width = self.content_size.width
         new_view_position = max(0, min(view_position, self.cursor_width - width))
         return new_view_position
+
+    def validate_value(self, value: str) -> str:
+        if self._template is None:
+            return value
+        if not self._template.check(value, True):
+            raise ValueError("Value does not match template!")
+        return value[: len(self._template.mask)]
 
     def _watch_cursor_position(self) -> None:
         width = self.content_size.width
