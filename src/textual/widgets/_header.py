@@ -7,6 +7,7 @@ from datetime import datetime
 from rich.text import Text
 
 from ..app import RenderResult
+from ..dom import NoScreen
 from ..events import Click, Mount
 from ..reactive import Reactive
 from ..widget import Widget
@@ -213,10 +214,16 @@ class Header(Widget):
 
     def _on_mount(self, _: Mount) -> None:
         async def set_title() -> None:
-            self.query_one(HeaderTitle).text = self.screen_title
+            try:
+                self.query_one(HeaderTitle).text = self.screen_title
+            except NoScreen:
+                pass
 
         async def set_sub_title() -> None:
-            self.query_one(HeaderTitle).sub_text = self.screen_sub_title
+            try:
+                self.query_one(HeaderTitle).sub_text = self.screen_sub_title
+            except NoScreen:
+                pass
 
         self.watch(self.app, "title", set_title)
         self.watch(self.app, "sub_title", set_sub_title)

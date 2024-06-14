@@ -79,13 +79,13 @@ class Signal(Generic[SignalT]):
 
         if immediate:
 
-            def signal_callback(data: object):
+            def signal_callback(data: object) -> None:
                 """Invoke the callback immediately."""
                 callback(data)
 
         else:
 
-            def signal_callback(data: object):
+            def signal_callback(data: object) -> None:
                 """Post the callback to the node, to call at the next opertunity."""
                 node.call_next(callback, data)
 

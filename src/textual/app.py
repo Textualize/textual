@@ -2564,6 +2564,7 @@ class App(Generic[ReturnType], DOMNode):
                         console = Console()
                         console.print(self.screen._compositor)
                         console.print()
+
                     driver.stop_application_mode()
         except Exception as error:
             self._handle_exception(error)
@@ -2616,9 +2617,14 @@ class App(Generic[ReturnType], DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        async with self.screen.batch():
-            await self.screen.query("*").exclude(".-textual-system").remove()
-            await self.screen.mount_all(compose(self))
+        if self._exit:
+            return
+        try:
+            async with self.screen.batch():
+                await self.screen.query("*").exclude(".-textual-system").remove()
+                await self.screen.mount_all(compose(self))
+        except ScreenStackError:
+            pass
 
     def _register_child(
         self, parent: DOMNode, child: Widget, before: int | None, after: int | None
@@ -3409,6 +3415,7 @@ class App(Generic[ReturnType], DOMNode):
                     child._close_messages(wait=True) for child in close_children
                 ]
                 try:
+                    # Close all the children
                     await asyncio.wait_for(
                         asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
                     )
@@ -3416,7 +3423,7 @@ class App(Generic[ReturnType], DOMNode):
                     # Likely a deadlock if we get here
                     # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
                     raise asyncio.TimeoutError(
-                        f"Timeout waiting for {close_children!r} to close; possible deadlock\n"
+                        f"Timeout waiting for {close_children!r} to close; possible deadlock (consider changing App.CLOSE_TIMEOUT)\n"
                     ) from None
                 finally:
                     for child in children:
