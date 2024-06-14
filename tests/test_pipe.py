@@ -14,7 +14,8 @@ def test_deadlock():
     """Regression test for https://github.com/Textualize/textual/issues/4643"""
     app_path = (Path(__file__) / "../deadlock.py").resolve().absolute()
     result = subprocess.run(
-        f'echo q | python "{app_path}"', shell=True, capture_output=True
+        f'echo q | "{sys.executable}" "{app_path}"', shell=True, capture_output=True
     )
     print(result.stdout)
+    print(result.stderr)
     assert result.returncode == 0
