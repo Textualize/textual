@@ -3138,7 +3138,7 @@ class App(Generic[ReturnType], DOMNode):
             return False
 
     async def _dispatch_action(
-        self, namespace: object, action_name: str, params: Any
+        self, namespace: DOMNode, action_name: str, params: Any
     ) -> bool:
         """Dispatch an action to an action method.
 
@@ -3159,6 +3159,7 @@ class App(Generic[ReturnType], DOMNode):
             params=params,
         )
 
+        reset_active_message_pump = active_message_pump.set(namespace)
         try:
             private_method = getattr(namespace, f"_action_{action_name}", None)
             if callable(private_method):
@@ -3175,6 +3176,8 @@ class App(Generic[ReturnType], DOMNode):
         except SkipAction:
             # The action method raised this to explicitly not handle the action
             log.system(f"<action> {action_name!r} skipped.")
+        finally:
+            active_message_pump.reset(reset_active_message_pump)
         return False
 
     async def _broker_event(

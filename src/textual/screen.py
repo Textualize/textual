@@ -69,6 +69,7 @@ ScreenResultCallbackType = Union[
 """Type of a screen result callback function."""
 
 
+@rich.repr.auto
 class ResultCallback(Generic[ScreenResultType]):
     """Holds the details of a callback."""
 
