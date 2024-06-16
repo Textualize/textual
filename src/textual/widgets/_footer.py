@@ -103,7 +103,7 @@ class FooterKey(Widget):
         if self._disabled:
             self.app.bell()
         else:
-            await self.app.check_bindings(self.key)
+            self.app.simulate_key(self.key)
 
     def _watch_compact(self, compact: bool) -> None:
         self.set_class(compact, "-compact")

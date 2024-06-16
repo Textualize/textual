@@ -2977,11 +2977,20 @@ class App(Generic[ReturnType], DOMNode):
 
         return namespace_bindings
 
+    def simulate_key(self, key: str) -> None:
+        """Simulate a key press.
+
+        This will perform the same action as if the user had pressed the key.
+
+        Args:
+            key: Key to simulate. May also be the name of a key, e.g. "space".
+        """
+        self.call_later(self.check_bindings, key)
+
     async def check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
-        This method is used internally by the bindings system, but may be called directly
-        if you wish to *simulate* a key being pressed.
+        This method is used internally by the bindings system.
 
         Args:
             key: A key.
@@ -3159,7 +3168,6 @@ class App(Generic[ReturnType], DOMNode):
             params=params,
         )
 
-        reset_active_message_pump = active_message_pump.set(namespace)
         try:
             private_method = getattr(namespace, f"_action_{action_name}", None)
             if callable(private_method):
@@ -3176,8 +3184,7 @@ class App(Generic[ReturnType], DOMNode):
         except SkipAction:
             # The action method raised this to explicitly not handle the action
             log.system(f"<action> {action_name!r} skipped.")
-        finally:
-            active_message_pump.reset(reset_active_message_pump)
+
         return False
 
     async def _broker_event(
