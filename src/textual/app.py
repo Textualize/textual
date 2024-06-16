@@ -3472,7 +3472,9 @@ class App(Generic[ReturnType], DOMNode):
             self.screen.set_focus(None)
 
     async def action_simulate_key(self, key: str) -> None:
-        """An [action](/guide/actions) to handle a key press using the binding system.
+        """An [action](/guide/actions) to simulate a key press.
+
+        This will invoke the same actions as if the user had pressed the key.
 
         Args:
             key: The key to process.
