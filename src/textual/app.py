@@ -3471,7 +3471,7 @@ class App(Generic[ReturnType], DOMNode):
             # Remove focus for now.
             self.screen.set_focus(None)
 
-    async def action_simulate_ky(self, key: str) -> None:
+    async def action_simulate_key(self, key: str) -> None:
         """An [action](/guide/actions) to handle a key press using the binding system.
 
         Args:
