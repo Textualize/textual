@@ -2985,9 +2985,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             key: Key to simulate. May also be the name of a key, e.g. "space".
         """
-        self.call_later(self.check_bindings, key)
+        self.call_later(self._check_bindings, key)
 
-    async def check_bindings(self, key: str, priority: bool = False) -> bool:
+    async def _check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
         This method is used internally by the bindings system.
@@ -3058,7 +3058,7 @@ class App(Generic[ReturnType], DOMNode):
                         self.screen._clear_tooltip()
                     except NoScreen:
                         pass
-                if not await self.check_bindings(event.key, priority=True):
+                if not await self._check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
                     forward_target._forward_event(event)
             else:
@@ -3240,7 +3240,7 @@ class App(Generic[ReturnType], DOMNode):
         message.stop()
 
     async def _on_key(self, event: events.Key) -> None:
-        if not (await self.check_bindings(event.key)):
+        if not (await self._check_bindings(event.key)):
             await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
@@ -3471,14 +3471,13 @@ class App(Generic[ReturnType], DOMNode):
             # Remove focus for now.
             self.screen.set_focus(None)
 
-    async def action_check_bindings(self, key: str) -> None:
+    async def action_simulate_ky(self, key: str) -> None:
         """An [action](/guide/actions) to handle a key press using the binding system.
 
         Args:
             key: The key to process.
         """
-        if not await self.check_bindings(key, priority=True):
-            await self.check_bindings(key, priority=False)
+        self.simulate_key(key)
 
     async def action_quit(self) -> None:
         """An [action](/guide/actions) to quit the app as soon as possible."""

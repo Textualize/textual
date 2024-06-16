@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed issue with pop_screen launched from an action https://github.com/Textualize/textual/pull/4657
 
+### Changed
+
+- `App.check_bindings` is now private
+- `App.action_check_bindings` is now `App.action_simulate_key`
+
 ## [0.68.0] - 2024-06-14
 
 ### Added
