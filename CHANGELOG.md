@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [0.69.0] - 2024-06-16
+
+### Added
+
+- Added `App.simulate_key` https://github.com/Textualize/textual/pull/4657
+
+### Fixed
+
+- Fixed issue with pop_screen launched from an action https://github.com/Textualize/textual/pull/4657
+
+### Changed
+
+- `App.check_bindings` is now private
+- `App.action_check_bindings` is now `App.action_simulate_key`
+
 ## [0.68.0] - 2024-06-14
 
 ### Added
@@ -2132,6 +2148,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.69.0]: https://github.com/Textualize/textual/compare/v0.68.0...v0.69.0
 [0.68.0]: https://github.com/Textualize/textual/compare/v0.67.1...v0.68.0
 [0.67.1]: https://github.com/Textualize/textual/compare/v0.67.0...v0.67.1
 [0.67.0]: https://github.com/Textualize/textual/compare/v0.66.0...v0.67.0
