@@ -215,7 +215,7 @@ Textual supports the following builtin actions which are defined on the app.
 - [action_quit][textual.app.App.action_quit]
 - [action_remove_class][textual.app.App.action_remove_class]
 - [action_screenshot][textual.app.App.action_screenshot]
-- [action_simulate_key][textual.app.App.ction_simulate_ky]
+- [action_simulate_key][textual.app.App.action_simulate_key]
 - [action_suspend_process][textual.app.App.action_suspend_process]
 - [action_switch_screen][textual.app.App.action_switch_screen]
 - [action_toggle_class][textual.app.App.action_toggle_class]
