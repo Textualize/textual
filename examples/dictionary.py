@@ -13,7 +13,7 @@ from textual.widgets import Input, Markdown
 
 
 class DictionaryApp(App):
-    """Searches ab dictionary API as-you-type."""
+    """Searches a dictionary API as-you-type."""
 
     CSS_PATH = "dictionary.tcss"
 
