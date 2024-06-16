@@ -10,11 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `App.simulate_key`
+- Added `App.simulate_key` https://github.com/Textualize/textual/pull/4657
 
 ### Fixed
 
-- Fixed issue with pop_screen launched from an action
+- Fixed issue with pop_screen launched from an action https://github.com/Textualize/textual/pull/4657
 
 ## [0.68.0] - 2024-06-14
 
