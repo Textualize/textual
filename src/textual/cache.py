@@ -8,7 +8,7 @@ These are used in Textual to avoid recalculating expensive operations, such as r
 
 from __future__ import annotations
 
-from typing import Dict, Generic, KeysView, TypeVar, overload
+from typing import TYPE_CHECKING, Dict, Generic, KeysView, TypeVar, overload
 
 CacheKey = TypeVar("CacheKey")
 CacheValue = TypeVar("CacheValue")
@@ -127,13 +127,15 @@ class LRUCache(Generic[CacheKey, CacheValue]):
 
     __setitem__ = set
 
-    @overload
-    def get(self, key: CacheKey) -> CacheValue | None: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get(
-        self, key: CacheKey, default: DefaultValue
-    ) -> CacheValue | DefaultValue: ...
+        @overload
+        def get(self, key: CacheKey) -> CacheValue | None: ...
+
+        @overload
+        def get(
+            self, key: CacheKey, default: DefaultValue
+        ) -> CacheValue | DefaultValue: ...
 
     def get(
         self, key: CacheKey, default: DefaultValue | None = None
@@ -267,13 +269,15 @@ class FIFOCache(Generic[CacheKey, CacheValue]):
 
     __setitem__ = set
 
-    @overload
-    def get(self, key: CacheKey) -> CacheValue | None: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get(
-        self, key: CacheKey, default: DefaultValue
-    ) -> CacheValue | DefaultValue: ...
+        @overload
+        def get(self, key: CacheKey) -> CacheValue | None: ...
+
+        @overload
+        def get(
+            self, key: CacheKey, default: DefaultValue
+        ) -> CacheValue | DefaultValue: ...
 
     def get(
         self, key: CacheKey, default: DefaultValue | None = None

@@ -14,10 +14,18 @@ A widget which displays a notification message.
 You can customize the style of Toasts by targeting the `Toast` [CSS type](../guide/CSS.md#type-selector).
 For example:
 
-
 ```scss
 Toast {
     padding: 3;
+}
+```
+
+If you wish to change the location of Toasts, it is possible by targeting the `ToastRack` CSS type.
+For example:
+
+```scss
+ToastRack {
+        align: right top;
 }
 ```
 

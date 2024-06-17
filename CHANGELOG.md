@@ -11,6 +11,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Recompose will now keep widgets with matching IDs (with the same parent)
 - Added `state` to Reactive
+  
+### Fixed
+
+- Fixed erroneous mouse 'ButtonDown' reporting for mouse movement when any-event mode is enabled in xterm. https://github.com/Textualize/textual/pull/3647
+
+## [0.69.0] - 2024-06-16
+
+### Added
+
+- Added `App.simulate_key` https://github.com/Textualize/textual/pull/4657
+
+### Fixed
+
+- Fixed issue with pop_screen launched from an action https://github.com/Textualize/textual/pull/4657
+
+### Changed
+
+- `App.check_bindings` is now private
+- `App.action_check_bindings` is now `App.action_simulate_key`
 
 ## [0.68.0] - 2024-06-14
 
@@ -570,6 +589,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed CSS watcher crash if file becomes unreadable (even temporarily) https://github.com/Textualize/textual/pull/4079
 - Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 - Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
+
 
 ## [0.47.1] - 2024-01-05
 
@@ -2139,6 +2159,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.69.0]: https://github.com/Textualize/textual/compare/v0.68.0...v0.69.0
 [0.68.0]: https://github.com/Textualize/textual/compare/v0.67.1...v0.68.0
 [0.67.1]: https://github.com/Textualize/textual/compare/v0.67.0...v0.67.1
 [0.67.0]: https://github.com/Textualize/textual/compare/v0.66.0...v0.67.0

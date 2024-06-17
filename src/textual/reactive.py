@@ -224,15 +224,19 @@ class Reactive(Generic[ReactiveType]):
         default = self._default
         setattr(owner, f"_default_{name}", default)
 
-    @overload
-    def __get__(
-        self: Reactive[ReactiveType], obj: ReactableType, obj_type: type[ReactableType]
-    ) -> ReactiveType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __get__(
-        self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
-    ) -> Reactive[ReactiveType]: ...
+        @overload
+        def __get__(
+            self: Reactive[ReactiveType],
+            obj: ReactableType,
+            obj_type: type[ReactableType],
+        ) -> ReactiveType: ...
+
+        @overload
+        def __get__(
+            self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
+        ) -> Reactive[ReactiveType]: ...
 
     def __get__(
         self: Reactive[ReactiveType],

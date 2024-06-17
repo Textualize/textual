@@ -145,11 +145,13 @@ class DOMQuery(Generic[QueryType]):
     def __reversed__(self) -> Iterator[QueryType]:
         return reversed(self.nodes)
 
-    @overload
-    def __getitem__(self, index: int) -> QueryType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __getitem__(self, index: slice) -> list[QueryType]: ...
+        @overload
+        def __getitem__(self, index: int) -> QueryType: ...
+
+        @overload
+        def __getitem__(self, index: slice) -> list[QueryType]: ...
 
     def __getitem__(self, index: int | slice) -> QueryType | list[QueryType]:
         return self.nodes[index]
@@ -208,11 +210,13 @@ class DOMQuery(Generic[QueryType]):
             parent=self,
         )
 
-    @overload
-    def first(self) -> QueryType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def first(self, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def first(self) -> QueryType: ...
+
+        @overload
+        def first(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def first(
         self, expect_type: type[ExpectType] | None = None
@@ -242,11 +246,13 @@ class DOMQuery(Generic[QueryType]):
         else:
             raise NoMatches(f"No nodes match {self!r} on {self.node!r}")
 
-    @overload
-    def only_one(self) -> QueryType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def only_one(self, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def only_one(self) -> QueryType: ...
+
+        @overload
+        def only_one(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def only_one(
         self, expect_type: type[ExpectType] | None = None
@@ -287,11 +293,13 @@ class DOMQuery(Generic[QueryType]):
             pass
         return the_one
 
-    @overload
-    def last(self) -> QueryType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def last(self, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def last(self) -> QueryType: ...
+
+        @overload
+        def last(self, expect_type: type[ExpectType]) -> ExpectType: ...
 
     def last(
         self, expect_type: type[ExpectType] | None = None
@@ -318,11 +326,13 @@ class DOMQuery(Generic[QueryType]):
             )
         return last
 
-    @overload
-    def results(self) -> Iterator[QueryType]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]: ...
+        @overload
+        def results(self) -> Iterator[QueryType]: ...
+
+        @overload
+        def results(self, filter_type: type[ExpectType]) -> Iterator[ExpectType]: ...
 
     def results(
         self, filter_type: type[ExpectType] | None = None

@@ -687,11 +687,15 @@ class Widget(DOMNode):
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
-    @overload
-    def get_child_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def get_child_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_child_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -721,13 +725,15 @@ class Widget(DOMNode):
             )
         return child
 
-    @overload
-    def get_widget_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_widget_by_id(
-        self, id: str, expect_type: type[ExpectType]
-    ) -> ExpectType: ...
+        @overload
+        def get_widget_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_widget_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1011,23 +1017,25 @@ class Widget(DOMNode):
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
-    @overload
-    def move_child(
-        self,
-        child: int | Widget,
-        *,
-        before: int | Widget,
-        after: None = None,
-    ) -> None: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def move_child(
-        self,
-        child: int | Widget,
-        *,
-        after: int | Widget,
-        before: None = None,
-    ) -> None: ...
+        @overload
+        def move_child(
+            self,
+            child: int | Widget,
+            *,
+            before: int | Widget,
+            after: None = None,
+        ) -> None: ...
+
+        @overload
+        def move_child(
+            self,
+            child: int | Widget,
+            *,
+            after: int | Widget,
+            before: None = None,
+        ) -> None: ...
 
     def move_child(
         self,
