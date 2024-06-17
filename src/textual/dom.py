@@ -1183,24 +1183,26 @@ class DOMNode(MessagePump):
 
     WalkType = TypeVar("WalkType", bound="DOMNode")
 
-    @overload
-    def walk_children(
-        self,
-        filter_type: type[WalkType],
-        *,
-        with_self: bool = False,
-        method: WalkMethod = "depth",
-        reverse: bool = False,
-    ) -> list[WalkType]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def walk_children(
-        self,
-        *,
-        with_self: bool = False,
-        method: WalkMethod = "depth",
-        reverse: bool = False,
-    ) -> list[DOMNode]: ...
+        @overload
+        def walk_children(
+            self,
+            filter_type: type[WalkType],
+            *,
+            with_self: bool = False,
+            method: WalkMethod = "depth",
+            reverse: bool = False,
+        ) -> list[WalkType]: ...
+
+        @overload
+        def walk_children(
+            self,
+            *,
+            with_self: bool = False,
+            method: WalkMethod = "depth",
+            reverse: bool = False,
+        ) -> list[DOMNode]: ...
 
     def walk_children(
         self,
@@ -1236,11 +1238,13 @@ class DOMNode(MessagePump):
             nodes.reverse()
         return cast("list[DOMNode]", nodes)
 
-    @overload
-    def query(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
+        @overload
+        def query(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+
+        @overload
+        def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
     def query(
         self, selector: str | type[QueryType] | None = None
@@ -1261,11 +1265,13 @@ class DOMNode(MessagePump):
         else:
             return DOMQuery[QueryType](self, filter=selector.__name__)
 
-    @overload
-    def query_children(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def query_children(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
+        @overload
+        def query_children(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+
+        @overload
+        def query_children(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
     def query_children(
         self, selector: str | type[QueryType] | None = None
@@ -1290,14 +1296,18 @@ class DOMNode(MessagePump):
         else:
             return DOMQuery[QueryType](self, deep=False, filter=selector.__name__)
 
-    @overload
-    def query_one(self, selector: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def query_one(self, selector: type[QueryType]) -> QueryType: ...
+        @overload
+        def query_one(self, selector: str) -> Widget: ...
 
-    @overload
-    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType: ...
+        @overload
+        def query_one(self, selector: type[QueryType]) -> QueryType: ...
+
+        @overload
+        def query_one(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType: ...
 
     def query_one(
         self,

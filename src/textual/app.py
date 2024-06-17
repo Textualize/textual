@@ -1680,11 +1680,15 @@ class App(Generic[ReturnType], DOMNode):
 
     ExpectType = TypeVar("ExpectType", bound=Widget)
 
-    @overload
-    def get_child_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def get_child_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_child_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1709,13 +1713,15 @@ class App(Generic[ReturnType], DOMNode):
             else self.screen.get_child_by_id(id, expect_type)
         )
 
-    @overload
-    def get_widget_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_widget_by_id(
-        self, id: str, expect_type: type[ExpectType]
-    ) -> ExpectType: ...
+        @overload
+        def get_widget_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_widget_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -2044,21 +2050,23 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"{screen} REMOVED")
         return screen
 
-    @overload
-    def push_screen(
-        self,
-        screen: Screen[ScreenResultType] | str,
-        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
-        wait_for_dismiss: Literal[False] = False,
-    ) -> AwaitMount: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def push_screen(
-        self,
-        screen: Screen[ScreenResultType] | str,
-        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
-        wait_for_dismiss: Literal[True] = True,
-    ) -> asyncio.Future[ScreenResultType]: ...
+        @overload
+        def push_screen(
+            self,
+            screen: Screen[ScreenResultType] | str,
+            callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+            wait_for_dismiss: Literal[False] = False,
+        ) -> AwaitMount: ...
+
+        @overload
+        def push_screen(
+            self,
+            screen: Screen[ScreenResultType] | str,
+            callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+            wait_for_dismiss: Literal[True] = True,
+        ) -> asyncio.Future[ScreenResultType]: ...
 
     def push_screen(
         self,
@@ -2120,13 +2128,15 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return await_mount
 
-    @overload
-    async def push_screen_wait(
-        self, screen: Screen[ScreenResultType]
-    ) -> ScreenResultType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    async def push_screen_wait(self, screen: str) -> Any: ...
+        @overload
+        async def push_screen_wait(
+            self, screen: Screen[ScreenResultType]
+        ) -> ScreenResultType: ...
+
+        @overload
+        async def push_screen_wait(self, screen: str) -> Any: ...
 
     async def push_screen_wait(
         self, screen: Screen[ScreenResultType] | str
