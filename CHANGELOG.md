@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed erroneous mouse 'ButtonDown' reporting for mouse movement when any-event mode is enabled in xterm. https://github.com/Textualize/textual/pull/3647
 
 ## [0.69.0] - 2024-06-16
 
@@ -579,7 +584,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed CSS watcher crash if file becomes unreadable (even temporarily) https://github.com/Textualize/textual/pull/4079
 - Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
 - Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
-- Fixed erroneous mouse 'ButtonDown' reporting for mouse movement when any-event mode is enabled in xterm. https://github.com/Textualize/textual/pull/3647
 
 
 ## [0.47.1] - 2024-01-05
