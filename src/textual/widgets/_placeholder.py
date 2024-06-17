@@ -143,6 +143,7 @@ class Placeholder(Widget):
         Returns:
             The value to render.
         """
+        return str(id(self))
         return self._renderables[self.variant]
 
     def cycle_variant(self) -> Self:

@@ -128,6 +128,16 @@ class NodeList(Sequence["Widget"]):
         if widget in self._nodes_set:
             self._nodes.remove(widget)
             self._nodes.append(widget)
+            self._updates += 1
+
+    def _replace(self, widget: Widget, new_widget: Widget) -> bool:
+        try:
+            index = self._nodes.index(widget)
+        except ValueError:
+            return False
+        else:
+            self._nodes[index] = new_widget
+        return True
 
     def _ensure_unique_id(self, widget_id: str) -> None:
         if widget_id in self._nodes_by_id:

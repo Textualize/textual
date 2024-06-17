@@ -78,6 +78,26 @@ def compose(node: App | Widget) -> list[Widget]:
     return nodes
 
 
+def _pending_children(
+    node: Widget, children_by_id: dict[str, Widget]
+) -> dict[str, Widget]:
+    def recurse_children(widget: Widget):
+        children: list[Widget] = list(
+            child
+            for child in widget._pending_children
+            if not child.has_class("-textual-system")
+        )
+
+        if widget.id is not None and widget.id not in children_by_id:
+            children_by_id[widget.id] = widget
+        for child in children:
+            recurse_children(child)
+
+    recurse_children(node)
+
+    return children_by_id
+
+
 def recompose(
     node: App | Widget, compose_node: App | Widget | None = None
 ) -> tuple[list[Widget], set[Widget]]:
@@ -96,7 +116,25 @@ def recompose(
     children_by_id = {child.id: child for child in children if child.id is not None}
     new_children: list[Widget] = []
     remove_children: set[Widget] = set(children)
+
+    composed = compose(node if compose_node is None else compose_node)
+
     for compose_node in compose(node if compose_node is None else compose_node):
+        _pending_children(compose_node, children_by_id)
+
+    def recurse_pending(node: Widget) -> None:
+        print("recurse", node, children_by_id)
+        for child in list(node._nodes):
+            if child.id is not None and child.id in children_by_id:
+                print(1)
+                existing_child = children_by_id.pop(child.id)
+                if node._nodes._replace(child, existing_child):
+                    remove_children.add(child)
+            else:
+                print(2)
+                recurse_pending(child)
+
+    for compose_node in composed:
         if (
             compose_node.id is not None
             and (existing_child := children_by_id.pop(compose_node.id, None))
@@ -107,4 +145,9 @@ def recompose(
             existing_child.copy_state(compose_node)
         else:
             new_children.append(compose_node)
+            recurse_pending(node)
+
+    node.log(children_by_id)
+    print(new_children, remove_children)
+
     return (new_children, remove_children)

@@ -9,6 +9,7 @@ from rich.text import Text
 from ..app import ComposeResult
 from ..binding import Binding
 from ..containers import ScrollableContainer
+from ..dom import NoScreen
 from ..reactive import reactive
 from ..widget import Widget
 
@@ -173,7 +174,10 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
         self.screen.bindings_updated_signal.subscribe(self, bindings_changed)
 
     def on_unmount(self) -> None:
-        self.screen.bindings_updated_signal.unsubscribe(self)
+        try:
+            self.screen.bindings_updated_signal.unsubscribe(self)
+        except NoScreen:
+            pass
 
     def watch_compact(self, compact: bool) -> None:
         self.set_class(compact, "-compact")
