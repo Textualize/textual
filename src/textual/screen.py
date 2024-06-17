@@ -165,7 +165,8 @@ class Screen(Generic[ScreenResultType], Widget):
     """
 
     focused: Reactive[Widget | None] = Reactive(None)
-    """The focused [widget][textual.widget.Widget] or `None` for no focus."""
+    """The focused [widget][textual.widget.Widget] or `None` for no focus.
+    To set focus, do not update this value directly. Use [set_focus][textual.screen.Screen.set_focus] instead."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
     """An integer that updates when the screen is resumed."""
     sub_title: Reactive[str | None] = Reactive(None, compute=False)
