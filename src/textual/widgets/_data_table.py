@@ -1540,6 +1540,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             self._updated_cells.add(CellKey(row_key, column_key))
 
         self._require_update_dimensions = True
+        self._update_count += 1
         self.check_idle()
 
         return column_key
