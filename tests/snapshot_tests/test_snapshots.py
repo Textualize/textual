@@ -1290,6 +1290,11 @@ def test_rules(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "rules.py")
 
 
+def test_footer_compact(snap_compare):
+    """Test Footer in the compact style"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_compact.py")
+
+
 def test_footer_classic_styling(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4557"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "footer_classic_styling.py")
