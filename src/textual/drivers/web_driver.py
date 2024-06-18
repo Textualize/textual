@@ -147,7 +147,7 @@ class WebDriver(Driver):
         self._enable_bracketed_paste()
         self.flush()
         self._key_thread.start()
-        self._app.post_message(events.AppBlur())
+        self._app.call_later(self._app.post_message, events.AppBlur())
 
     def disable_input(self) -> None:
         """Disable further input."""
