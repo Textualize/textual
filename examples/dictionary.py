@@ -22,11 +22,6 @@ class DictionaryApp(App):
         with VerticalScroll(id="results-container"):
             yield Markdown(id="results")
 
-    def on_mount(self) -> None:
-        """Called when app starts."""
-        # Give the input focus, so we can start typing straight away
-        self.query_one(Input).focus()
-
     async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""
         if message.value:
