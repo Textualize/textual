@@ -631,7 +631,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
                 yield CommandList()
                 yield LoadingIndicator()
 
-    def _on_click(self, event: Click) -> None:
+    def _on_click(self, event: Click) -> None:  # type: ignore[override]
         """Handle the click event.
 
         Args:
@@ -664,7 +664,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             provider._post_init()
         self._gather_commands("")
 
-    async def _on_unmount(self) -> None:
+    async def _on_unmount(self) -> None:  # type: ignore[override]
         """Shutdown providers when command palette is closed."""
         if self._providers:
             await wait(

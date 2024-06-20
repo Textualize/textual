@@ -1197,6 +1197,7 @@ class RenderStyles(StylesBase):
         )
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield self.node
         for rule_name in RULE_NAMES:
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
