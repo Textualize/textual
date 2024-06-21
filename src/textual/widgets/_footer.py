@@ -97,24 +97,14 @@ class FooterKey(Widget):
         if self.ctrl_to_caret and key_display.lower().startswith("ctrl+"):
             key_display = "^" + key_display.split("+", 1)[1]
         description = self.description
-        if self.compact:
-            label_text = Text.assemble(
-                (
-                    " " * key_padding.left + key_display + " " * key_padding.right,
-                    key_style,
-                ),
-                " " * key_margin.right,
-                (description, description_style),
-            )
-        else:
-            label_text = Text.assemble(
-                (
-                    " " * key_padding.left + key_display + " " * key_padding.right,
-                    key_style,
-                ),
-                " " * key_margin.right,
-                (description, description_style),
-            )
+        label_text = Text.assemble(
+            (
+                " " * key_padding.left + key_display + " " * key_padding.right,
+                key_style,
+            ),
+            " " * key_margin.right,
+            (description, description_style),
+        )
         label_text.stylize_before(self.rich_style)
         return label_text
 
