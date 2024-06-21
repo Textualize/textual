@@ -34,6 +34,7 @@ class FooterKey(Widget):
             background: $panel;
             text-style: bold;
             margin-right: 0;
+            padding: 0 1;
         }
 
         &:light .footer-key--key {
@@ -60,6 +61,7 @@ class FooterKey(Widget):
 
         &.-compact .footer-key--key {
             margin-right: 1;
+            padding: 0;
         }
 
     }
@@ -89,7 +91,7 @@ class FooterKey(Widget):
         description_style = self.get_component_rich_style("footer-key--description")
         key_display = self.key_display
         key_margin = self.get_component_styles("footer-key--key").margin
-        # key_padding = self.get_component_styles("footer-key--key").padding
+        key_padding = self.get_component_styles("footer-key--key").padding
         if self.upper_case_keys:
             key_display = key_display.upper()
         if self.ctrl_to_caret and key_display.lower().startswith("ctrl+"):
@@ -97,13 +99,19 @@ class FooterKey(Widget):
         description = self.description
         if self.compact:
             label_text = Text.assemble(
-                (key_display, key_style),
+                (
+                    " " * key_padding.left + key_display + " " * key_padding.right,
+                    key_style,
+                ),
                 " " * key_margin.right,
                 (description, description_style),
             )
         else:
             label_text = Text.assemble(
-                (f" {key_display} ", key_style),
+                (
+                    " " * key_padding.left + key_display + " " * key_padding.right,
+                    key_style,
+                ),
                 " " * key_margin.right,
                 (description, description_style),
                 " ",
