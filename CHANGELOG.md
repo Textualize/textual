@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Added
+
+- Added `Footer` component style handling of margins/padding for the key https://github.com/Textualize/textual/pull/4651
+
 ## [0.70.0] - 2024-06-19
 
 ### Fixed
