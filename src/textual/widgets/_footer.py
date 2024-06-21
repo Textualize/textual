@@ -114,7 +114,6 @@ class FooterKey(Widget):
                 ),
                 " " * key_margin.right,
                 (description, description_style),
-                " ",
             )
         label_text.stylize_before(self.rich_style)
         return label_text
@@ -135,14 +134,12 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     Footer {
         layout: grid;
         grid-columns: auto;
+        grid-gutter: 1;
         background: $panel;
         color: $text;
         dock: bottom;
         height: 1;
         scrollbar-size: 0 0;
-        &.-compact {
-            grid-gutter: 1;
-        }
     }
     """
 
