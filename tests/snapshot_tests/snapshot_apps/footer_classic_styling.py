@@ -6,7 +6,7 @@ class ClassicFooterStylingApp(App):
     """
     This app attempts to replicate the styling of the classic footer in
     Textual before v0.63.0, in particular the distinct background color
-    for the binding keys and padding between the key and binding description.
+    for the binding keys and spacing between the key and binding description.
 
     Regression test for https://github.com/Textualize/textual/issues/4557
     """
