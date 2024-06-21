@@ -1680,11 +1680,15 @@ class App(Generic[ReturnType], DOMNode):
 
     ExpectType = TypeVar("ExpectType", bound=Widget)
 
-    @overload
-    def get_child_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def get_child_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_child_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -1709,13 +1713,15 @@ class App(Generic[ReturnType], DOMNode):
             else self.screen.get_child_by_id(id, expect_type)
         )
 
-    @overload
-    def get_widget_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_widget_by_id(
-        self, id: str, expect_type: type[ExpectType]
-    ) -> ExpectType: ...
+        @overload
+        def get_widget_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_widget_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -2044,21 +2050,23 @@ class App(Generic[ReturnType], DOMNode):
             self.log.system(f"{screen} REMOVED")
         return screen
 
-    @overload
-    def push_screen(
-        self,
-        screen: Screen[ScreenResultType] | str,
-        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
-        wait_for_dismiss: Literal[False] = False,
-    ) -> AwaitMount: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def push_screen(
-        self,
-        screen: Screen[ScreenResultType] | str,
-        callback: ScreenResultCallbackType[ScreenResultType] | None = None,
-        wait_for_dismiss: Literal[True] = True,
-    ) -> asyncio.Future[ScreenResultType]: ...
+        @overload
+        def push_screen(
+            self,
+            screen: Screen[ScreenResultType] | str,
+            callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+            wait_for_dismiss: Literal[False] = False,
+        ) -> AwaitMount: ...
+
+        @overload
+        def push_screen(
+            self,
+            screen: Screen[ScreenResultType] | str,
+            callback: ScreenResultCallbackType[ScreenResultType] | None = None,
+            wait_for_dismiss: Literal[True] = True,
+        ) -> asyncio.Future[ScreenResultType]: ...
 
     def push_screen(
         self,
@@ -2120,13 +2128,15 @@ class App(Generic[ReturnType], DOMNode):
         else:
             return await_mount
 
-    @overload
-    async def push_screen_wait(
-        self, screen: Screen[ScreenResultType]
-    ) -> ScreenResultType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    async def push_screen_wait(self, screen: str) -> Any: ...
+        @overload
+        async def push_screen_wait(
+            self, screen: Screen[ScreenResultType]
+        ) -> ScreenResultType: ...
+
+        @overload
+        async def push_screen_wait(self, screen: str) -> Any: ...
 
     async def push_screen_wait(
         self, screen: Screen[ScreenResultType] | str
@@ -2977,11 +2987,20 @@ class App(Generic[ReturnType], DOMNode):
 
         return namespace_bindings
 
-    async def check_bindings(self, key: str, priority: bool = False) -> bool:
+    def simulate_key(self, key: str) -> None:
+        """Simulate a key press.
+
+        This will perform the same action as if the user had pressed the key.
+
+        Args:
+            key: Key to simulate. May also be the name of a key, e.g. "space".
+        """
+        self.call_later(self._check_bindings, key)
+
+    async def _check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
 
-        This method is used internally by the bindings system, but may be called directly
-        if you wish to *simulate* a key being pressed.
+        This method is used internally by the bindings system.
 
         Args:
             key: A key.
@@ -3049,7 +3068,7 @@ class App(Generic[ReturnType], DOMNode):
                         self.screen._clear_tooltip()
                     except NoScreen:
                         pass
-                if not await self.check_bindings(event.key, priority=True):
+                if not await self._check_bindings(event.key, priority=True):
                     forward_target = self.focused or self.screen
                     forward_target._forward_event(event)
             else:
@@ -3138,7 +3157,7 @@ class App(Generic[ReturnType], DOMNode):
             return False
 
     async def _dispatch_action(
-        self, namespace: object, action_name: str, params: Any
+        self, namespace: DOMNode, action_name: str, params: Any
     ) -> bool:
         """Dispatch an action to an action method.
 
@@ -3175,6 +3194,7 @@ class App(Generic[ReturnType], DOMNode):
         except SkipAction:
             # The action method raised this to explicitly not handle the action
             log.system(f"<action> {action_name!r} skipped.")
+
         return False
 
     async def _broker_event(
@@ -3230,7 +3250,7 @@ class App(Generic[ReturnType], DOMNode):
         message.stop()
 
     async def _on_key(self, event: events.Key) -> None:
-        if not (await self.check_bindings(event.key)):
+        if not (await self._check_bindings(event.key)):
             await self.dispatch_key(event)
 
     async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
@@ -3461,14 +3481,15 @@ class App(Generic[ReturnType], DOMNode):
             # Remove focus for now.
             self.screen.set_focus(None)
 
-    async def action_check_bindings(self, key: str) -> None:
-        """An [action](/guide/actions) to handle a key press using the binding system.
+    async def action_simulate_key(self, key: str) -> None:
+        """An [action](/guide/actions) to simulate a key press.
+
+        This will invoke the same actions as if the user had pressed the key.
 
         Args:
             key: The key to process.
         """
-        if not await self.check_bindings(key, priority=True):
-            await self.check_bindings(key, priority=False)
+        self.simulate_key(key)
 
     async def action_quit(self) -> None:
         """An [action](/guide/actions) to quit the app as soon as possible."""

@@ -137,7 +137,7 @@ class ClassicFooter(Widget):
                 ),
                 meta=(
                     {
-                        "@click": f"app.check_bindings('{binding.key}')",
+                        "@click": f"app.simulate_key('{binding.key}')",
                         "key": binding.key,
                     }
                     if enabled and app_focus
