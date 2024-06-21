@@ -22,7 +22,7 @@ class ClassicFooterStylingApp(App):
             .footer-key--key {
                 background: $accent-darken-2;
                 color: $text;
-                padding-right: 1;
+                margin-right: 1;
             }
         }
     }
