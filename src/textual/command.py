@@ -440,9 +440,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         align-horizontal: center;
     }
 
-    CommandPalette > .command-palette--help-text {
-        background: transparent;
-        color: $text-muted;
+    CommandPalette > .command-palette--help-text {           
+        text-style: dim;       
     }
 
     CommandPalette:dark > .command-palette--highlight {
@@ -934,9 +933,10 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
         # We'll potentially use the help text style a lot so let's grab it
         # the once for use in the loop further down.
-        help_style = self._sans_background(
-            self.get_component_rich_style("command-palette--help-text")
+        help_style = self.get_component_rich_style(
+            "command-palette--help-text", partial=True
         )
+        self.log(help_style)
 
         # The list to hold on to the commands we've gathered from the
         # command providers.
@@ -996,7 +996,9 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                prompt = Group(prompt, Text(hit.help, style=help_style))
+                help_text = Text(hit.help)
+                help_text.stylize(help_style)
+                prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
 
             # Before we go making any changes to the UI, we do a quick
