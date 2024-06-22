@@ -109,7 +109,7 @@ from .screen import (
     Screen,
     ScreenResultCallbackType,
     ScreenResultType,
-    _SystemModalScreen,
+    SystemModalScreen,
 )
 from .signal import Signal
 from .timer import Timer
@@ -696,7 +696,7 @@ class App(Generic[ReturnType], DOMNode):
                 next(
                     screen
                     for screen in reversed(self._screen_stack)
-                    if not isinstance(screen, _SystemModalScreen)
+                    if not isinstance(screen, SystemModalScreen)
                 ),
             )
         except StopIteration:

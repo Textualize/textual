@@ -36,7 +36,7 @@ from .events import Click, Mount
 from .fuzzy import Matcher
 from .message import Message
 from .reactive import var
-from .screen import Screen, _SystemModalScreen
+from .screen import Screen, SystemModalScreen
 from .timer import Timer
 from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
@@ -349,12 +349,13 @@ class CommandList(OptionList, can_focus=False):
     CommandList {
         visibility: hidden;
         border-top: blank;
-        border-bottom: hkey $primary;
+        border-bottom: hkey $background;
         border-left: none;
         border-right: none;
         height: auto;
         max-height: 70vh;
         background: $panel;
+        padding: 0;
     }
 
     CommandList:focus {
@@ -374,7 +375,7 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option {
-        padding-left: 1;
+        padding-left: 2;
     }
     """
 
@@ -416,7 +417,7 @@ class CommandInput(Input):
     """
 
 
-class CommandPalette(_SystemModalScreen[CallbackType]):
+class CommandPalette(SystemModalScreen[CallbackType]):
     """The Textual command palette."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -431,17 +432,19 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     """
 
     DEFAULT_CSS = """
+    
+   
     CommandPalette:inline {
         /* If the command palette is invoked in inline mode, we may need additional lines. */
         min-height: 20;
     }
     CommandPalette {
-        background: $background 30%;
-        align-horizontal: center;
+        background: $background 50%;
+        align-horizontal: center;      
     }
 
     CommandPalette > .command-palette--help-text {           
-        text-style: dim;       
+        text-style: dim not bold;       
     }
 
     CommandPalette:dark > .command-palette--highlight {
@@ -455,15 +458,15 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
     CommandPalette > Vertical {
         margin-top: 3;
-        width: 90%;
+        # width: 90%;
         height: 100%;
-        visibility: hidden;
+        visibility: hidden;      
     }
 
     CommandPalette #--input {
         height: auto;
         visibility: visible;
-        border: hkey $primary;
+        border: hkey $background;
         background: $panel;
     }
 
@@ -623,7 +626,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         with Vertical():
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Command Palette Search...")
+                yield CommandInput(placeholder="Search for commands…")
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):

@@ -848,7 +848,10 @@ class OptionList(ScrollView, can_focus=True):
             style,
             self.scrollable_content_region.width - self._left_gutter_width(),
         )
-        strip = strips[y_offset]
+        try:
+            strip = strips[y_offset]
+        except IndexError:
+            return Strip([])
         return strip
 
     def scroll_to_highlight(self, top: bool = False) -> None:
