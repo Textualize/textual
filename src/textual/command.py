@@ -439,7 +439,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         min-height: 20;
     }
     CommandPalette {
-        background: $background 50%;
+        background: $background 80%;
         align-horizontal: center;      
     }
 
@@ -457,8 +457,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
     }
 
     CommandPalette > Vertical {
-        margin-top: 3;
-        # width: 90%;
+        margin-top: 3; 
         height: 100%;
         visibility: hidden;      
     }
