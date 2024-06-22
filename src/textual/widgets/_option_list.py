@@ -562,12 +562,10 @@ class OptionList(ScrollView, can_focus=True):
             for option_id, option_index in self._option_ids.items()
             if option_index != index
         }
-        # self._refresh_content_tracking(force=True)
         self._refresh_lines()
         # Force a re-validation of the highlight.
         self.highlighted = self.highlighted
         self._mouse_hovering_over = None
-        # self.refresh()
 
     def remove_option(self, option_id: str) -> Self:
         """Remove the option with the given ID.

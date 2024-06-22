@@ -852,41 +852,6 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             for search in searches:
                 search.cancel()
 
-    @staticmethod
-    def _sans_background(style: Style) -> Style:
-        """Returns the given style minus the background color.
-
-        Args:
-            style: The style to remove the color from.
-
-        Returns:
-            The given style, minus its background.
-        """
-        # Here we're pulling out all of the styles *minus* the background.
-        # This should probably turn into a utility method on Style
-        # eventually. The reason for this is we want the developer to be
-        # able to style the help text with a component class, but we want
-        # the background to always be the background at any given moment in
-        # the context of an OptionList. At the moment this act of copying
-        # sans bgcolor seems to be the only way to achieve this.
-        return Style(
-            blink2=style.blink2,
-            blink=style.blink,
-            bold=style.bold,
-            color=style.color,
-            conceal=style.conceal,
-            dim=style.dim,
-            encircle=style.encircle,
-            frame=style.frame,
-            italic=style.italic,
-            link=style.link,
-            overline=style.overline,
-            reverse=style.reverse,
-            strike=style.strike,
-            underline2=style.underline2,
-            underline=style.underline,
-        )
-
     def _refresh_command_list(
         self, command_list: CommandList, commands: list[Command], clear_current: bool
     ) -> None:
@@ -936,7 +901,6 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         help_style = self.get_component_rich_style(
             "command-palette--help-text", partial=True
         )
-        self.log(help_style)
 
         # The list to hold on to the commands we've gathered from the
         # command providers.
