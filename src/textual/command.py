@@ -356,6 +356,7 @@ class CommandList(OptionList, can_focus=False):
         max-height: 70vh;
         background: $panel;
         padding: 0;
+        text-style: bold;
     }
 
     CommandList:focus {
