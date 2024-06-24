@@ -79,6 +79,7 @@ from ._types import AnimationLevel
 from ._wait import wait_for_idle
 from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
+from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .binding import Binding, BindingType, _Bindings
 from .command import CommandPalette, Provider
@@ -1569,8 +1570,10 @@ class App(Generic[ReturnType], DOMNode):
                 if auto_pilot_task is not None:
                     await auto_pilot_task
             finally:
-                await app._shutdown()
-
+                try:
+                    await asyncio.shield(app._shutdown())
+                except asyncio.CancelledError:
+                    pass
         return app.return_value
 
     def run(
@@ -1910,7 +1913,7 @@ class App(Generic[ReturnType], DOMNode):
 
         self.MODES[mode] = base_screen
 
-    def remove_mode(self, mode: str) -> None:
+    def remove_mode(self, mode: str) -> AwaitComplete:
         """Removes a mode from the app.
 
         Screens that are running in the stack of that mode are scheduled for pruning.
@@ -1930,12 +1933,16 @@ class App(Generic[ReturnType], DOMNode):
             del self.MODES[mode]
 
         if mode not in self._screen_stacks:
-            return
+            return AwaitComplete.nothing()
 
         stack = self._screen_stacks[mode]
         del self._screen_stacks[mode]
-        for screen in reversed(stack):
-            self._replace_screen(screen)
+
+        async def remove_screens():
+            for screen in reversed(stack):
+                await self._replace_screen(screen)
+
+        return AwaitComplete(remove_screens()).call_next(self)
 
     def is_screen_installed(self, screen: Screen | str) -> bool:
         """Check if a given screen has been installed.
@@ -2030,7 +2037,7 @@ class App(Generic[ReturnType], DOMNode):
             self.stylesheet.reparse()
             self.stylesheet.update(self)
 
-    def _replace_screen(self, screen: Screen) -> Screen:
+    async def _replace_screen(self, screen: Screen) -> Screen:
         """Handle the replaced screen.
 
         Args:
@@ -2046,7 +2053,7 @@ class App(Generic[ReturnType], DOMNode):
         if not self.is_screen_installed(screen) and all(
             screen not in stack for stack in self._screen_stacks.values()
         ):
-            screen.remove()
+            await screen.remove()
             self.log.system(f"{screen} REMOVED")
         return screen
 
@@ -2151,9 +2158,10 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             The screen's result.
         """
+        await self._flush_next_callbacks()
         return await self.push_screen(screen, wait_for_dismiss=True)
 
-    def switch_screen(self, screen: Screen | str) -> AwaitMount:
+    def switch_screen(self, screen: Screen | str) -> AwaitComplete:
         """Switch to another [screen](/guide/screens) by replacing the top of the screen stack with a new screen.
 
         Args:
@@ -2164,19 +2172,23 @@ class App(Generic[ReturnType], DOMNode):
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
 
-        next_screen, await_mount = self._get_screen(screen)
-        if screen is self.screen or next_screen is self.screen:
-            self.log.system(f"Screen {screen} is already current.")
-            return AwaitMount(self.screen, [])
+        async def do_switch() -> None:
+            next_screen, await_mount = self._get_screen(screen)
+            if screen is self.screen or next_screen is self.screen:
+                self.log.system(f"Screen {screen} is already current.")
+                return
 
-        previous_screen = self._replace_screen(self._screen_stack.pop())
-        previous_screen._pop_result_callback()
-        self._load_screen_css(next_screen)
-        self._screen_stack.append(next_screen)
-        self.screen.post_message(events.ScreenResume())
-        self.screen._push_result_callback(self.screen, None)
-        self.log.system(f"{self.screen} is current (SWITCHED)")
-        return await_mount
+            await await_mount()
+
+            previous_screen = await self._replace_screen(self._screen_stack.pop())
+            previous_screen._pop_result_callback()
+            self._load_screen_css(next_screen)
+            self._screen_stack.append(next_screen)
+            self.screen.post_message(events.ScreenResume())
+            self.screen._push_result_callback(self.screen, None)
+            self.log.system(f"{self.screen} is current (SWITCHED)")
+
+        return AwaitComplete(do_switch()).call_next(self)
 
     def install_screen(self, screen: Screen, name: str) -> None:
         """Install a screen.
@@ -2238,22 +2250,26 @@ class App(Generic[ReturnType], DOMNode):
                     return name
         return None
 
-    def pop_screen(self) -> Screen[object]:
+    def pop_screen(self) -> AwaitComplete:
         """Pop the current [screen](/guide/screens) from the stack, and switch to the previous screen.
 
         Returns:
             The screen that was replaced.
         """
+
         screen_stack = self._screen_stack
         if len(screen_stack) <= 1:
             raise ScreenStackError(
                 "Can't pop screen; there must be at least one screen on the stack"
             )
-        previous_screen = self._replace_screen(screen_stack.pop())
-        previous_screen._pop_result_callback()
-        self.screen.post_message(events.ScreenResume())
-        self.log.system(f"{self.screen} is active")
-        return previous_screen
+
+        async def do_pop() -> None:
+            previous_screen = await self._replace_screen(screen_stack.pop())
+            previous_screen._pop_result_callback()
+            self.screen.post_message(events.ScreenResume())
+            self.log.system(f"{self.screen} is active")
+
+        return AwaitComplete(do_pop()).call_next(self)
 
     def set_focus(self, widget: Widget | None, scroll_visible: bool = True) -> None:
         """Focus (or unfocus) a widget. A focused widget will receive key events first.
@@ -2354,6 +2370,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
+        self.log.error(error)
         self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
@@ -3408,7 +3425,7 @@ class App(Generic[ReturnType], DOMNode):
         """
         async with self._dom_lock:
             for widget in widgets:
-                await self._prune_node(widget)
+                await asyncio.shield(self._prune_node(widget))
 
     async def _prune_node(self, root: Widget) -> None:
         """Remove a node and its children. Children are removed before parents.
