@@ -1938,7 +1938,8 @@ class App(Generic[ReturnType], DOMNode):
         stack = self._screen_stacks[mode]
         del self._screen_stacks[mode]
 
-        async def remove_screens():
+        async def remove_screens() -> None:
+            """Remove screens."""
             for screen in reversed(stack):
                 await self._replace_screen(screen)
 
@@ -2173,6 +2174,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         async def do_switch() -> None:
+            """Task to perform switch."""
             next_screen, await_mount = self._get_screen(screen)
             if screen is self.screen or next_screen is self.screen:
                 self.log.system(f"Screen {screen} is already current.")
@@ -2264,6 +2266,7 @@ class App(Generic[ReturnType], DOMNode):
             )
 
         async def do_pop() -> None:
+            """Task to pop the screen."""
             previous_screen = await self._replace_screen(screen_stack.pop())
             previous_screen._pop_result_callback()
             self.screen.post_message(events.ScreenResume())
@@ -2370,7 +2373,6 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             error: An exception instance.
         """
-        self.log.error(error)
         self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
