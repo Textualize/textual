@@ -170,7 +170,7 @@ class DirectoryTree(Tree[DirEntry]):
             node.data.loaded = True
             self._load_queue.put_nowait(node)
 
-        return AwaitComplete(self, self._load_queue.join())
+        return AwaitComplete(self._load_queue.join())
 
     def reload(self) -> AwaitComplete:
         """Reload the `DirectoryTree` contents.
