@@ -2173,22 +2173,25 @@ class App(Generic[ReturnType], DOMNode):
                 f"switch_screen requires a Screen instance or str; not {screen!r}"
             )
 
+        next_screen, await_mount = self._get_screen(screen)
+        if screen is self.screen or next_screen is self.screen:
+            self.log.system(f"Screen {screen} is already current.")
+            return AwaitComplete.nothing()
+
+        top_screen = self._screen_stack.pop()
+
+        top_screen._pop_result_callback()
+        self._load_screen_css(next_screen)
+        self._screen_stack.append(next_screen)
+        self.screen.post_message(events.ScreenResume())
+        self.screen._push_result_callback(self.screen, None)
+        self.log.system(f"{self.screen} is current (SWITCHED)")
+
         async def do_switch() -> None:
             """Task to perform switch."""
-            next_screen, await_mount = self._get_screen(screen)
-            if screen is self.screen or next_screen is self.screen:
-                self.log.system(f"Screen {screen} is already current.")
-                return
 
             await await_mount()
-
-            previous_screen = await self._replace_screen(self._screen_stack.pop())
-            previous_screen._pop_result_callback()
-            self._load_screen_css(next_screen)
-            self._screen_stack.append(next_screen)
-            self.screen.post_message(events.ScreenResume())
-            self.screen._push_result_callback(self.screen, None)
-            self.log.system(f"{self.screen} is current (SWITCHED)")
+            await self._replace_screen(top_screen)
 
         return AwaitComplete(do_switch()).call_next(self)
 
@@ -2265,12 +2268,14 @@ class App(Generic[ReturnType], DOMNode):
                 "Can't pop screen; there must be at least one screen on the stack"
             )
 
+        previous_screen = screen_stack.pop()
+        previous_screen._pop_result_callback()
+        self.screen.post_message(events.ScreenResume())
+        self.log.system(f"{self.screen} is active")
+
         async def do_pop() -> None:
             """Task to pop the screen."""
-            previous_screen = await self._replace_screen(screen_stack.pop())
-            previous_screen._pop_result_callback()
-            self.screen.post_message(events.ScreenResume())
-            self.log.system(f"{self.screen} is active")
+            await self._replace_screen(previous_screen)
 
         return AwaitComplete(do_pop()).call_next(self)
 
@@ -3326,12 +3331,18 @@ class App(Generic[ReturnType], DOMNode):
         # remove and ensure that, if one of them is the focused widget,
         # focus gets moved to somewhere else.
         dedupe_to_remove = set(everything_to_remove)
-        if self.screen.focused in dedupe_to_remove:
-            self.screen._reset_focus(
-                self.screen.focused,
-                [to_remove for to_remove in dedupe_to_remove if to_remove.can_focus],
-            )
-
+        try:
+            if self.screen.focused in dedupe_to_remove:
+                self.screen._reset_focus(
+                    self.screen.focused,
+                    [
+                        to_remove
+                        for to_remove in dedupe_to_remove
+                        if to_remove.can_focus
+                    ],
+                )
+        except ScreenStackError:
+            pass
         # Next, we go through the set of widgets we've been asked to remove
         # and try and find the minimal collection of widgets that will
         # result in everything else that should be removed, being removed.
