@@ -1322,7 +1322,7 @@ class ModalScreen(Screen[ScreenResultType]):
         self._modal = True
 
 
-class _SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
+class SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
     """A variant of `ModalScreen` for internal use.
 
     This version of `ModalScreen` allows us to build system-level screens;

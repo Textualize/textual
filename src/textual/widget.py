@@ -366,7 +366,7 @@ class Widget(DOMNode):
         )
 
         self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
+        self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
@@ -789,7 +789,7 @@ class Widget(DOMNode):
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
 
-    def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
+    def get_component_rich_style(self, *names: str, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
@@ -800,13 +800,13 @@ class Widget(DOMNode):
             A Rich style object.
         """
 
-        if name not in self._rich_style_cache:
-            component_styles = self.get_component_styles(name)
+        if names not in self._rich_style_cache:
+            component_styles = self.get_component_styles(*names)
             style = component_styles.rich_style
             partial_style = component_styles.partial_rich_style
-            self._rich_style_cache[name] = (style, partial_style)
+            self._rich_style_cache[names] = (style, partial_style)
 
-        style, partial_style = self._rich_style_cache[name]
+        style, partial_style = self._rich_style_cache[names]
 
         return partial_style if partial else style
 
