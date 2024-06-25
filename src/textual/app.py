@@ -3275,6 +3275,15 @@ class App(Generic[ReturnType], DOMNode):
         self.app_focus = False
         self.screen.refresh_bindings()
 
+    def _is_dark_color(self, r: int, g: int, b: int) -> bool:
+        # perceived brightness formula
+        perceived_brightness = 0.2126 * r + 0.7152 * g + 0.0722 * b
+        return perceived_brightness < 128
+
+    async def _on_background_color(self, event: events.BackgroundColor) -> None:
+        """Background color detected"""
+        self.dark = self._is_dark_color(event.r & 0xFF, event.g & 0xFF, event.b & 0xFF)
+
     def _detach_from_dom(self, widgets: list[Widget]) -> list[Widget]:
         """Detach a list of widgets from the DOM.
 

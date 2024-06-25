@@ -707,3 +707,14 @@ class Print(Event, bubble=False):
     def __rich_repr__(self) -> rich.repr.Result:
         yield self.text
         yield self.stderr
+
+
+@dataclass
+class BackgroundColor(Event, bubble=False):
+    """Internal event used when background color of the terminal is
+    detected
+    """
+
+    r: int
+    g: int
+    b: int

@@ -14,7 +14,7 @@ from .keys import KEY_NAME_REPLACEMENTS, Keys, _character_to_key
 # When trying to determine whether the current sequence is a supported/valid
 # escape sequence, at which length should we give up and consider our search
 # to be unsuccessful?
-_MAX_SEQUENCE_SEARCH_THRESHOLD = 20
+_MAX_SEQUENCE_SEARCH_THRESHOLD = 24
 
 _re_mouse_event = re.compile("^" + re.escape("\x1b[") + r"(<?[\d;]+[mM]|M...)\Z")
 _re_terminal_mode_response = re.compile(
@@ -31,6 +31,10 @@ FOCUSIN: Final[str] = "\x1b[I"
 """Sequence received when the terminal receives focus."""
 FOCUSOUT: Final[str] = "\x1b[O"
 """Sequence received when focus is lost from the terminal."""
+BG_COLOR: Final[str] = "\x1b]11;rgb:"
+"""Sequence received with information on terminal background color"""
+BG_COLOR_LEN: Final[int] = len(BG_COLOR) + 14
+"""Length of background color sequence"""
 
 _re_extended_key: Final = re.compile(r"\x1b\[(?:(\d+)(?:;(\d+))?)?([u~ABCDEFHPQRS])")
 
@@ -237,6 +241,19 @@ class XTermParser(Parser[events.Event]):
 
                     if sequence == BRACKETED_PASTE_END:
                         bracketed_paste = False
+                        break
+
+                    if sequence.startswith(BG_COLOR) and len(sequence) == BG_COLOR_LEN:
+                        rgb_str = sequence[len(BG_COLOR) :]
+                        rgb = rgb_str.split("/")
+                        if len(rgb) == 3:
+                            r = int(rgb[0], 16)
+                            g = int(rgb[1], 16)
+                            b = int(rgb[2], 16)
+                            self.debug_log(
+                                f"Detected BG_COLOR response {r:02x}/{g:02x}/{b:02x}"
+                            )
+                            on_token(events.BackgroundColor(r, g, b))
                         break
 
                     if not bracketed_paste:
