@@ -104,7 +104,7 @@ cd textual/examples/
 python code_browser.py ../
 ```
 
-
+Also, the tree of directories under `docs/examples/` contains hundreds of examples for all parts of Textual. 
 
 
 ## Need help?

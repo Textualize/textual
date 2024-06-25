@@ -9,6 +9,11 @@ Welcome to the Textual widget gallery.
 
 We have many more widgets planned, or you can [build your own](./guide/widgets.md).
 
+Most of the code demonstrating each widget is fully working&mdash;you could cut and paste it if you wanted to.
+
+Although it is probably easier to check out the [Textual repository](https://github.com/Textualize/textual) and navigate to the `docs/examples/widgets` directory and run the examples from there.
+
+The tree of directories under `docs/examples/` contains of hundreds of examples for all parts of Textual.  There are also complete applications in Textual's `examples/` directory. 
 
 !!! info
 
