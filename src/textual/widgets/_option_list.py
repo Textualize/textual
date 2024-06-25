@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Iterable, NamedTuple, Self
+from typing import TYPE_CHECKING, ClassVar, Iterable, NamedTuple
 
 import rich.repr
 from rich.console import RenderableType
@@ -8,7 +8,6 @@ from rich.measure import Measurement
 from rich.padding import Padding
 from rich.rule import Rule
 from rich.style import NULL_STYLE, Style
-from typing_extensions import TypeAlias
 
 from .. import _widget_navigation, events
 from .._widget_navigation import Direction
@@ -19,6 +18,9 @@ from ..message import Message
 from ..reactive import reactive
 from ..scroll_view import ScrollView
 from ..strip import Strip
+
+if TYPE_CHECKING:
+    from typing_extensions import Self
 
 
 class DuplicateID(Exception):
