@@ -33,6 +33,7 @@ from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
+from .await_complete import AwaitComplete
 from .binding import ActiveBinding, Binding, _Bindings
 from .css.match import match
 from .css.parse import parse_selectors
@@ -1226,13 +1227,15 @@ class Screen(Generic[ScreenResultType], Widget):
     class _NoResult:
         """Class used to mark that there is no result."""
 
-    def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> bool:
+    def dismiss(
+        self, result: ScreenResultType | Type[_NoResult] = _NoResult
+    ) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
 
         !!! note
 
             Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
-            this method will return `False`.
+            this method will raise a `ScreenError`.
 
         If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
@@ -1240,22 +1243,22 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             result: The optional result to be passed to the result callback.
 
-        Returns:
-            `True` if the Screen was dismissed, or `False` if the Screen wasn't dismissed due to not being active.
-
         Raises:
+            ScreenError: If the screen being dismissed is not active.
             ScreenStackError: If trying to dismiss a screen that is not at the top of
                 the stack.
 
         """
         if not self.is_active:
-            return False
+            from .app import ScreenError
+
+            raise ScreenError("Screen is not active")
         if result is not self._NoResult and self._result_callbacks:
             self._result_callbacks[-1](cast(ScreenResultType, result))
-        self.app.pop_screen()
-        return True
+        await_pop = self.app.pop_screen()
+        return await_pop
 
-    def action_dismiss(
+    async def action_dismiss(
         self, result: ScreenResultType | Type[_NoResult] = _NoResult
     ) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
@@ -1263,6 +1266,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             result: The optional result to be passed to the result callback.
         """
+        await self._flush_next_callbacks()
         self.dismiss(result)
 
     def can_view(self, widget: Widget) -> bool:
