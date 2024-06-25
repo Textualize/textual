@@ -804,7 +804,7 @@ class Widget(DOMNode):
             component_styles = self.get_component_styles(*names)
             style = component_styles.rich_style
             partial_style = component_styles.partial_rich_style
-            self._rich_style_cache[*names] = (style, partial_style)
+            self._rich_style_cache[names] = (style, partial_style)
 
         style, partial_style = self._rich_style_cache[names]
 
