@@ -676,7 +676,7 @@ class Widget(DOMNode):
             loading_indicator = self.get_loading_widget()
             loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
-            return AwaitComplete(remove_indicator, await_mount)
+            return AwaitComplete(remove_indicator, await_mount).call_next(self)
         else:
             return remove_indicator
 

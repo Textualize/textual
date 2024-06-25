@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Changed
+
+- Breaking change: `App.push_screen` now returns an Awaitable rather than a screen. https://github.com/Textualize/textual/pull/4672
+- Breaking change: `Screen.dismiss` now returns an Awaitable rather than a bool. https://github.com/Textualize/textual/pull/4672
+
+
 ## [0.70.0] - 2024-06-19
 
 ### Fixed

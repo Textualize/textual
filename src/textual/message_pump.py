@@ -493,7 +493,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 running_widget = None
 
             if running_widget is None or running_widget is not self:
-                await self._task
+                try:
+                    await self._task
+                except CancelledError:
+                    pass
 
     def _start_messages(self) -> None:
         """Start messages task."""
