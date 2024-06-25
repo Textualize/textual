@@ -354,7 +354,7 @@ class CommandList(OptionList, can_focus=False):
         border-right: none;
         height: auto;
         max-height: 70vh;
-        background: $panel;
+        background: transparent;
         padding: 0;
         text-style: bold;
     }
@@ -372,7 +372,7 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option-highlighted {
-        background: $accent;
+        background: $primary;
     }
 
     CommandList > .option-list--option {
@@ -412,7 +412,7 @@ class CommandInput(Input):
     CommandInput, CommandInput:focus {
         border: blank;
         width: 1fr;
-        background: $panel;
+        background: transparent;
         padding-left: 0;
     }
     """
@@ -460,14 +460,15 @@ class CommandPalette(SystemModalScreen[CallbackType]):
     CommandPalette > Vertical {
         margin-top: 3; 
         height: 100%;
-        visibility: hidden;      
+        visibility: hidden;
+        background: $primary 20%;      
     }
 
     CommandPalette #--input {
         height: auto;
         visibility: visible;
         border: hkey $background;
-        background: $panel;
+        # background: $panel;
     }
 
     CommandPalette #--input.--list-visible {
@@ -492,7 +493,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
     CommandPalette LoadingIndicator {
         height: auto;
         visibility: hidden;
-        background: $panel;
+        # background: $panel;
         border-bottom: hkey $primary;
     }
 
@@ -720,7 +721,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
                 command_list = self.query_one(CommandList)
                 command_list.add_option(
                     Option(
-                        Align.center(Text("No matches found")),
+                        Align.center(Text("No matches found", style="not bold")),
                         disabled=True,
                         id=self._NO_MATCHES,
                     )
