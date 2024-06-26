@@ -1839,7 +1839,7 @@ class App(Generic[ReturnType], DOMNode):
         return self.mount(*widgets, before=before, after=after)
 
     def _init_mode(self, mode: str) -> AwaitMount:
-        """Do internal initialisation of a new screen stack mode.
+        """Do internal initialization of a new screen stack mode.
 
         Args:
             mode: Name of the mode.
