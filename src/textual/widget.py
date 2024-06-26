@@ -1137,6 +1137,7 @@ class Widget(DOMNode):
         """
         if not self.is_attached:
             return
+
         async with self.batch():
             await self.query("*").exclude(".-textual-system").remove()
             if self.is_attached:

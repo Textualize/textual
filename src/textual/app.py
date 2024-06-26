@@ -2817,6 +2817,7 @@ class App(Generic[ReturnType], DOMNode):
             # Close any remaining nodes
             # Should be empty by now
             remaining_nodes = list(self._registry)
+
             for child in remaining_nodes:
                 await child._close_messages()
 
@@ -3438,8 +3439,9 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             widgets: Widgets to remove.
         """
-        async with self._dom_lock:
-            for widget in widgets:
+
+        for widget in widgets:
+            async with self._dom_lock:
                 await asyncio.shield(self._prune_node(widget))
 
     async def _prune_node(self, root: Widget) -> None:
