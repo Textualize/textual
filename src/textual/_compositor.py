@@ -1048,7 +1048,7 @@ class Compositor:
         self._dirty_regions.clear()
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
-        render_strips = [Strip.join(chop.values()).simplify() for chop in chops]
+        render_strips = [Strip.join(chop.values()) for chop in chops]
         return LayoutUpdate(render_strips, screen_region)
 
     def render_partial_update(self) -> ChopsUpdate | None:
