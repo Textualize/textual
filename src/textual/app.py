@@ -1574,6 +1574,7 @@ class App(Generic[ReturnType], DOMNode):
                     await asyncio.shield(app._shutdown())
                 except asyncio.CancelledError:
                     pass
+
         return app.return_value
 
     def run(
@@ -2825,6 +2826,7 @@ class App(Generic[ReturnType], DOMNode):
         self._running = False
         if driver is not None:
             driver.disable_input()
+
         await self._close_all()
         await self._close_messages()
 
@@ -2848,7 +2850,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_exit_app(self) -> None:
         self._begin_batch()  # Prevent repaint / layout while shutting down
-        await self._message_queue.put(None)
+        self._message_queue.put_nowait(None)
 
     def refresh(
         self,
