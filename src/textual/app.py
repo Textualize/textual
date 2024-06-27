@@ -1245,7 +1245,7 @@ class App(Generic[ReturnType], DOMNode):
             safe_box=False,
         )
         screen_render = self.screen._compositor.render_update(
-            full=True, screen_stack=self.app._background_screens
+            full=True, screen_stack=self.app._background_screens, simplify=True
         )
         console.print(screen_render)
         return console.export_svg(title=title or self.title)
