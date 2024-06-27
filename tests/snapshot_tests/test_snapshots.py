@@ -1288,3 +1288,9 @@ def test_hatch(snap_compare):
 def test_rules(snap_compare):
     """Test rules."""
     assert snap_compare(SNAPSHOT_APPS_DIR / "rules.py")
+
+
+def test_grid_auto(snap_compare):
+    """Test grid with keyline and auto-dimension."""
+    # https://github.com/Textualize/textual/issues/4678
+    assert snap_compare(SNAPSHOT_APPS_DIR / "grid_auto.py")
