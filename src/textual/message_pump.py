@@ -483,9 +483,9 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._timers:
             await Timer._stop_all(self._timers)
             self._timers.clear()
-        await self._message_queue.put(events.Unmount())
+        self._message_queue.put_nowait(events.Unmount())
         Reactive._reset_object(self)
-        await self._message_queue.put(None)
+        self._message_queue.put_nowait(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
             try:
                 running_widget = active_message_pump.get()
@@ -493,7 +493,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 running_widget = None
 
             if running_widget is None or running_widget is not self:
-                await self._task
+                try:
+                    await self._task
+                except CancelledError:
+                    pass
 
     def _start_messages(self) -> None:
         """Start messages task."""

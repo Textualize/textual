@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Changed
+
+- Snapshot tests will normalize SVG output so that changes with no visual impact don't break snapshots, but this release will break most of them.
+- Breaking change: `App.push_screen` now returns an Awaitable rather than a screen. https://github.com/Textualize/textual/pull/4672
+- Breaking change: `Screen.dismiss` now returns an Awaitable rather than a bool. https://github.com/Textualize/textual/pull/4672
+
+### Fixed
+
+- Fixed grid + keyline when the grid has auto dimensions https://github.com/Textualize/textual/pull/4680
+
 ### Added
 
 - Added `Footer` component style handling of margins/padding for the key https://github.com/Textualize/textual/pull/4651

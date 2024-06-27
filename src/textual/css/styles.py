@@ -660,9 +660,15 @@ class StylesBase(ABC):
             Rich Style object.
         """
         style = Style(
-            color=(self.color.rich_color if self.has_rule("color") else None),
+            color=(
+                self.color.rich_color
+                if self.has_rule("color") and self.color.a > 0
+                else None
+            ),
             bgcolor=(
-                self.background.rich_color if self.has_rule("background") else None
+                self.background.rich_color
+                if self.has_rule("background") and self.background.a > 0
+                else None
             ),
         )
         style += self.text_style
@@ -1197,6 +1203,7 @@ class RenderStyles(StylesBase):
         )
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield self.node
         for rule_name in RULE_NAMES:
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)
