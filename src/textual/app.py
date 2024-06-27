@@ -3412,6 +3412,12 @@ class App(Generic[ReturnType], DOMNode):
                 finished_event: Event to set when complete.
             """
             try:
+                if not self._running:
+                    # It does not make sense to remove nodes if we are
+                    # closing the whole application. This also prevents
+                    # a deadlock on `self._dom_lock`, which
+                    # `self._prune_nodes` would try to acquire.
+                    return
                 await self._prune_nodes(widgets)
             finally:
                 finished_event.set()
