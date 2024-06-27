@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 from .._resolve import resolve
 from ..css.scalar import Scalar
-from ..geometry import NULL_SPACING, Region, Size, Spacing
+from ..geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -32,8 +32,9 @@ class GridLayout(Layout):
         viewport = parent.screen.size
         keyline_style, keyline_color = styles.keyline
         offset = (0, 0)
+        gutter_spacing: Spacing | None
         if keyline_style == "none":
-            gutter_spacing = NULL_SPACING
+            gutter_spacing = None
         else:
             size -= (2, 2)
             offset = (1, 1)
@@ -257,7 +258,13 @@ class GridLayout(Layout):
             )
             add_placement(
                 WidgetPlacement(
-                    region + offset, margin.grow_maximum(gutter_spacing), widget
+                    region + offset,
+                    (
+                        margin
+                        if gutter_spacing is None
+                        else margin.grow_maximum(gutter_spacing)
+                    ),
+                    widget,
                 )
             )
             add_widget(widget)
