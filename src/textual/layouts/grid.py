@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Iterable
 from .._layout import ArrangeResult, Layout, WidgetPlacement
 from .._resolve import resolve
 from ..css.scalar import Scalar
-from ..geometry import Region, Size
+from ..geometry import Region, Size, Spacing
 
 if TYPE_CHECKING:
     from ..widget import Widget
@@ -32,9 +32,18 @@ class GridLayout(Layout):
         viewport = parent.screen.size
         keyline_style, keyline_color = styles.keyline
         offset = (0, 0)
-        if keyline_style != "none":
+        gutter_spacing: Spacing | None
+        if keyline_style == "none":
+            gutter_spacing = None
+        else:
             size -= (2, 2)
             offset = (1, 1)
+            gutter_spacing = Spacing(
+                gutter_vertical,
+                gutter_horizontal,
+                gutter_vertical,
+                gutter_horizontal,
+            )
 
         def cell_coords(column_count: int) -> Iterable[tuple[int, int]]:
             """Iterate over table coordinates ad infinitum.
@@ -227,6 +236,7 @@ class GridLayout(Layout):
         add_widget = widgets.append
         max_column = len(columns) - 1
         max_row = len(rows) - 1
+
         for widget, (column, row, column_span, row_span) in cell_size_map.items():
             x = columns[column][0]
             if row > max_row:
@@ -246,7 +256,17 @@ class GridLayout(Layout):
                 .clip_size(cell_size)
                 .shrink(margin)
             )
-            add_placement(WidgetPlacement(region + offset, margin, widget))
+            add_placement(
+                WidgetPlacement(
+                    region + offset,
+                    (
+                        margin
+                        if gutter_spacing is None
+                        else margin.grow_maximum(gutter_spacing)
+                    ),
+                    widget,
+                )
+            )
             add_widget(widget)
 
         return placements
