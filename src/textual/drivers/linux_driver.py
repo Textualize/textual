@@ -401,7 +401,7 @@ class LinuxDriver(Driver):
             """
             for last, (_selector_key, mask) in loop_last(selector_events):
                 if mask & EVENT_READ:
-                    unicode_data = decode(read(fileno, 1024), final=final and last)
+                    unicode_data = decode(read(fileno, 1024 * 4), final=final and last)
                     if not unicode_data:
                         # This can occur if the stdin is piped
                         break
