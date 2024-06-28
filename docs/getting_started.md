@@ -104,8 +104,9 @@ cd textual/examples/
 python code_browser.py ../
 ```
 
+### Widget examples
 
-
+In addition to the example apps, you can also find the code listings used to generate the screenshots in these docs in the `docs/examples` directory.
 
 ## Need help?
 
