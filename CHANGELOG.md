@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed grid + keyline when the grid has auto dimensions https://github.com/Textualize/textual/pull/4680
 - Fixed mouse code leakage https://github.com/Textualize/textual/pull/4681
+- Fixed link inside markdown table not posting a `Markdown.LinkClicked` message https://github.com/Textualize/textual/issues/4683
 
 
 ## [0.70.0] - 2024-06-19
