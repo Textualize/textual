@@ -487,6 +487,11 @@ class MarkdownTableContent(Widget):
                 table.add_row(*row)
         return table
 
+    async def action_link(self, href: str) -> None:
+        """Pass a link action on to the MarkdownTable parent."""
+        if isinstance(self.parent, MarkdownTable):
+            await self.parent.action_link(href)
+
 
 class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
