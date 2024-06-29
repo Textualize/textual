@@ -2319,7 +2319,7 @@ class App(Generic[ReturnType], DOMNode):
 
         """
 
-        if self.mouse_over is None:
+        if self.mouse_over is None or not screen.is_active:
             return
 
         async def check_mouse() -> None:
