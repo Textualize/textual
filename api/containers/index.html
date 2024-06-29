@@ -5253,6 +5253,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._content_switcher.ContentSwitcher.add_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      add_content()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._content_switcher.ContentSwitcher.watch_current" class="md-nav__link">
     <span class="md-ellipsis">
       watch_current()
@@ -6660,6 +6669,15 @@ window.onload = async (event) => {
 </li>
         
           <li class="md-nav__item">
+  <a href="#textual.widgets._content_switcher.ContentSwitcher.add_content" class="md-nav__link">
+    <span class="md-ellipsis">
+      add_content()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#textual.widgets._content_switcher.ContentSwitcher.watch_current" class="md-nav__link">
     <span class="md-ellipsis">
       watch_current()
@@ -7378,8 +7396,8 @@ Children that have no ID will be hidden and ignored.</p>
 
   
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
       <small class="doc doc-label doc-label-class-attribute"><code>class-attribute</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 <a href="#textual.widgets._content_switcher.ContentSwitcher.current" class="headerlink" title="Permanent link">&para;</a></h3>
@@ -7426,6 +7444,93 @@ Children that have no ID will be hidden and ignored.</p>
 </div>
 
 
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="textual.widgets._content_switcher.ContentSwitcher.add_content" class="doc doc-heading">
+        <span class="doc doc-object-name doc-function-name">add_content</span>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method"><code>method</code></small>
+  </span>
+
+<a href="#textual.widgets._content_switcher.ContentSwitcher.add_content" class="headerlink" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">add_content</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="nb">id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">set_current</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Add new content to the <code>ContentSwitcher</code>.</p>
+
+  <h5>Parameters</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Default</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+            <strong><code>widget</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-internal" title="textual.widget.Widget" href="../widget/#textual.widget.Widget">Widget</a></code>
+          </td>
+          <td>
+            <em>required</em>
+          </td>
+          <td><p>A Widget to add.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>id</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a> | None</code>
+          </td>
+          <td>
+            <code>None</code>
+          </td>
+          <td><p>ID for the widget, or <code>None</code> if the widget already has an ID.</p></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>set_current</code></strong>
+            <br>
+                <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></code>
+          </td>
+          <td>
+            <code>False</code>
+          </td>
+          <td><p>Set the new widget as current (which will cause it to display).</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  <h5>Returns</h5>
+  <table>
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td>
+                <code><a class="autorefs autorefs-internal" title="textual.await_complete.AwaitComplete" href="../await_complete/#textual.await_complete.AwaitComplete">AwaitComplete</a></code>
+          </td>
+          <td><p>An awaitable to wait for the new content to be mounted.</p></td>
+        </tr>
+    </tbody>
+  </table>
+
+  </div>
+
+</div>
 
 <div class="doc doc-object doc-function">
 
