@@ -293,7 +293,7 @@ class Worker(Generic[ResultType]):
             return asyncio.run(do_work())
 
         def run_coroutine(
-            work: Callable[[], Coroutine[None, None, ResultType]]
+            work: Callable[[], Coroutine[None, None, ResultType]],
         ) -> ResultType:
             """Set the active worker and await coroutine."""
             return run_awaitable(work())
