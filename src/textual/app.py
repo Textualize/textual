@@ -12,7 +12,6 @@ import importlib
 import inspect
 import io
 import os
-import platform
 import signal
 import sys
 import threading
@@ -132,8 +131,7 @@ if TYPE_CHECKING:
     from .pilot import Pilot
     from .widget import MountError  # type: ignore  # noqa: F401
 
-PLATFORM = platform.system()
-WINDOWS = PLATFORM == "Windows"
+WINDOWS = sys.platform == "win32"
 
 # asyncio will warn against resources not being cleared
 if constants.DEBUG:
