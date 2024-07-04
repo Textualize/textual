@@ -2,7 +2,7 @@
 
 A widget to display text in a table.  This includes the ability to update data, use a cursor to navigate data, respond to mouse clicks, delete rows or columns, and individually render each cell as a Rich Text renderable.  DataTable provides an efficiently displayed and updated table capable for most applications.
 
-Specific applications may have custom rules for formatting, numbers, repopulating tables after searching or filtering, and responding to selections.  The widget provides rich events to interface with custom logic.
+Specific applications may have custom rules for formatting, numbers, repopulating tables after searching or filtering, and responding to selections.  The widget emits events to interface with custom logic.
 
 - [x] Focusable
 - [ ] Container
@@ -61,9 +61,20 @@ If you want to change the table based solely on coordinates, you can use the [co
 
 ### Cursors
 
-The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
-Three types of cursors are supported: `cell`, `row`, and `column`.
-Change the cursor type by assigning to the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.
+A cursor allows navigating within a table with the keyboard or mouse.   There are four cursor types:  by cell (the default), by row, by column, and having no cursor.  Change the cursor type by assigning to 
+the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.  The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
+
+Using the keyboard, arrow keys,  ++page-up++, ++page-down++, ++home++ and ++end++ move cursor highlight, emitting a [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] 
+message, then enter selects the cell, emitting a [`CellSelected`][textual.widgets.DataTable.CellSelected] message.  If the 
+`cursor_type` is row, then [`RowHighlighted`][textual.widgets.DataTable.RowHighlighted] and [`RowSelected`][textual.widgets.DataTable.RowSelected]
+are emitted, similarly for  [`ColumnHighlighted`][textual.widgets.DataTable.ColumnHighlighted] and [`ColumnSelected`][textual.widgets.DataTable.ColumnSelected].
+
+When moving the mouse over the table, a [`MouseMove`][textual.events.MouseMove] event is emitted, the cell hovered over is styled,
+and the [`hover_coordinate`][textual.widgets.DataTable.hover_coordinate] reactive attribute is updated.  Clicking the mouse
+then emits the [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] and  [`CellSelected`][textual.widgets.DataTable.CellSelected]
+events. 
+
+A new table starts with no cell highlighted, i.e., row and column are zero.  You can force the first item to highlight with `move_cursor(row=1, column=1)`.  All row and column indexes start at one.
 
 === "Column Cursor"
 
@@ -80,14 +91,17 @@ Change the cursor type by assigning to the [`cursor_type`][textual.widgets.DataT
     ```{.textual path="docs/examples/widgets/data_table_cursors.py" press="c,c"}
     ```
 
+=== "No Cursor"
+
+    ```{.textual path="docs/examples/widgets/data_table_cursors.py" press="c,c,c"}
+    ```
+
 === "data_table_cursors.py"
 
     ```python
     --8<-- "docs/examples/widgets/data_table_cursors.py"
     ```
 
-You can change the position of the cursor using the arrow keys, ++page-up++, ++page-down++, ++home++ and ++end++,
-or by assigning to the `cursor_coordinate` reactive attribute.
 
 ### Updating data
 

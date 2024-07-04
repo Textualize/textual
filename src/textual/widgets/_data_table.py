@@ -264,8 +264,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | `datatable--header` | Target the header of the data table. |
     | `datatable--header-cursor` | Target cells highlighted by the cursor. |
     | `datatable--header-hover` | Target hovered header or row label cells. |
-    | `datatable--even-row` | Target even rows (row indices start at 0). |
-    | `datatable--odd-row` | Target odd rows (row indices start at 0). |
+    | `datatable--even-row` | Target even rows (row indices start at 0) if zebra_stripes. |
+    | `datatable--odd-row` | Target odd rows (row indices start at 0) if zebra_stripes. |
     """
 
     DEFAULT_CSS = """
