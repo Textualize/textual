@@ -58,6 +58,7 @@ Keys are important because cells in a data table can change location due to fact
 Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.
 
 If you want to change the table based solely on coordinates, you can use the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
+Alternately, many functions take coordinates, such as [`refresh_coordinate`][textual.widgets.DataTable.refresh_coordinate] or [`update_cell_at`][textual.widgets.DataTable.update_cell_at].
 
 ### Cursors
 
@@ -164,7 +165,7 @@ The DataTable rows can be sorted using the  [`sort`][textual.widgets.DataTable.s
 There are three methods of using [`sort`][textual.widgets.DataTable.sort]:
 
 * By Column.  Pass columns in as parameters to sort by the natural order of one or more columns.  Specify a column using either a [`ColumnKey`][textual.widgets.data_table.ColumnKey] instance or the `key` you supplied to [`add_column`][textual.widgets.DataTable.add_column].  For example, `sort("country", "region")` would sort by country, and, when the country values are equal, by region.
-* By Key function.  Pass a function as the `key` parameter to sort, similar to the [key function parameter](https://docs.python.org/3/howto/sorting.html#key-functions)  of Python's [`sorted()](https://docs.python.org/3/library/functions.html#sorted) built-in.   The function will be called once per row with a tuple of all row values.
+* By Key function.  Pass a function as the `key` parameter to sort, similar to the [key function parameter](https://docs.python.org/3/howto/sorting.html#key-functions)  of Python's [`sorted`](https://docs.python.org/3/library/functions.html#sorted) built-in.   The function will be called once per row with a tuple of all row values.
 * By both Column and Key function.   You can specify which columns to include as parameters to your key function.  For example, `sort("hours", "rate", key=lambda h, r: h*r)` passes two values to the key function for each row.
 
 The `reverse` argument reverses the order of your sort.  Note that correct sorting may require your key function to undo your formatting.
