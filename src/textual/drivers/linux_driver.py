@@ -249,6 +249,7 @@ class LinuxDriver(Driver):
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
+        self.write("\x1b]11;?\x07")  # Detect background color
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()

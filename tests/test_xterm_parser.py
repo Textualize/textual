@@ -91,7 +91,7 @@ def test_cant_match_escape_sequence_too_long(parser):
     """The sequence did not match, and we hit the maximum sequence search
     length threshold, so each character should be issued as a key-press instead.
     """
-    sequence = "\x1b[123456789123456789123"
+    sequence = "\x1b[123456789123456789123456"
     events = list(parser.feed(sequence))
 
     # Every character in the sequence is converted to a key press
