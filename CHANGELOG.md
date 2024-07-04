@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed issue with `Tabs` where a disabled tab could still be activated by clicking the underline https://github.com/Textualize/textual/issues/4701
+
 ## [0.71.0] - 2024-06-29
 
 ### Changed
