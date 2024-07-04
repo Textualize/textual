@@ -188,7 +188,7 @@ The example below shows how to attach simple numbered labels to rows.
 | `show_row_labels`   | `bool`                                      | `True`             | Show the row labels (if applicable)                   |
 | `fixed_rows`        | `int`                                       | `0`                | Number of fixed rows (rows which do not scroll)       |
 | `fixed_columns`     | `int`                                       | `0`                | Number of fixed columns (columns which do not scroll) |
-| `zebra_stripes`     | `bool`                                      | `False`            | Display alternating colors on rows                    |
+| `zebra_stripes`     | `bool`                                      | `False`            | Style with alternating colors on rows                 |
 | `header_height`     | `int`                                       | `1`                | Height of header row                                  |
 | `show_cursor`       | `bool`                                      | `True`             | Show the cursor                                       |
 | `cursor_type`       | `str`                                       | `"cell"`           | One of `"cell"`, `"row"`, `"column"`, or `"none"`     |

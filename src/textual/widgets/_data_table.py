@@ -720,7 +720,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.fixed_columns = fixed_columns
         """The number of columns to fix (prevented from scrolling)."""
         self.zebra_stripes = zebra_stripes
-        """Apply zebra effect on row backgrounds (light, dark, light, dark, ...)."""
+        """Apply alternating styles, datatable--even-row and datatable-odd-row, to create a zebra effect, e.g., 
+        alternating light and dark backgrounds."""
         self.show_cursor = show_cursor
         """Show/hide both the keyboard and hover cursor."""
         self.cursor_foreground_priority = cursor_foreground_priority
