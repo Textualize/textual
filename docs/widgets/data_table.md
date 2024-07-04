@@ -64,7 +64,7 @@ If you want to change the table based solely on coordinates, you can use the [co
 A cursor allows navigating within a table with the keyboard or mouse.   There are four cursor types:  by cell (the default), by row, by column, and having no cursor.  Change the cursor type by assigning to 
 the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.  The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
 
-Using the keyboard, arrow keys,  ++page-up++, ++page-down++, ++home++ and ++end++ move cursor highlight, emitting a [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] 
+Using the keyboard, arrow keys,  ++page-up++, ++page-down++, ++home++ and ++end++ move the cursor highlight, emitting a [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] 
 message, then enter selects the cell, emitting a [`CellSelected`][textual.widgets.DataTable.CellSelected] message.  If the 
 `cursor_type` is row, then [`RowHighlighted`][textual.widgets.DataTable.RowHighlighted] and [`RowSelected`][textual.widgets.DataTable.RowSelected]
 are emitted, similarly for  [`ColumnHighlighted`][textual.widgets.DataTable.ColumnHighlighted] and [`ColumnSelected`][textual.widgets.DataTable.ColumnSelected].
@@ -159,12 +159,16 @@ visible as you scroll through the data table.
 
 ### Sorting
 
-The `DataTable` can be sorted using the [sort][textual.widgets.DataTable.sort] method. In order to sort your data by a column, you can provide the `key` you supplied to the `add_column` method or a `ColumnKey`. You can then pass one more column keys to the `sort` method to sort by one or more columns.
+The DataTable rows can be sorted using the  [`sort`][textual.widgets.DataTable.sort]  method.
 
-Additionally, you can sort your `DataTable` with a custom function (or other callable) via the `key` argument. Similar to the `key` parameter of the built-in [sorted()](https://docs.python.org/3/library/functions.html#sorted) function, your function (or other callable) should take a single argument (row) and return a key to use for sorting purposes.
+There are three methods of using [`sort`][textual.widgets.DataTable.sort]:
 
-Providing both `columns` and `key` will limit the row information sent to your `key` function (or other callable) to only the columns specified.
+* By Column.  Pass columns in as parameters to sort by the natural order of one or more columns.  Specify a column using either a [`ColumnKey`][textual.widgets.data_table.ColumnKey] instance or the `key` you supplied to [`add_column`][textual.widgets.DataTable.add_column].  For example, `sort("country", "region")` would sort by country, and, when the country values are equal, by region.
+* By Key function.  Pass a function as the `key` parameter to sort, similar to the [key function parameter](https://docs.python.org/3/howto/sorting.html#key-functions)  of Python's [`sorted()](https://docs.python.org/3/library/functions.html#sorted) built-in.   The function will be called once per row with a tuple of all row values.
+* By both Column and Key function.   You can specify which columns to include as parameters to your key function.  For example, `sort("hours", "rate", key=lambda h, r: h*r)` passes two values to the key function for each row.
 
+The `reverse` argument reverses the order of your sort.  Note that correct sorting may require your key function to undo your formatting.
+ 
 === "Output"
 
     ```{.textual path="docs/examples/widgets/data_table_sort.py"}
@@ -176,14 +180,14 @@ Providing both `columns` and `key` will limit the row information sent to your `
     --8<-- "docs/examples/widgets/data_table_sort.py"
     ```
 
-### Labelled rows
+### Labeled rows
 
 A "label" can be attached to a row using the [add_row][textual.widgets.DataTable.add_row] method.
 This will add an extra column to the left of the table which the cursor cannot interact with.
 This column is similar to the leftmost column in a spreadsheet containing the row numbers.
 The example below shows how to attach simple numbered labels to rows.
 
-=== "Labelled rows"
+=== "Labeled rows"
 
     ```{.textual path="docs/examples/widgets/data_table_labels.py"}
     ```
