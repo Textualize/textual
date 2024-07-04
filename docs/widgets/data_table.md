@@ -1,6 +1,8 @@
 # DataTable
 
-A table widget optimized for displaying a lot of data.
+A widget to display text in a table.  This includes the ability to update data, use a cursor to navigate data, respond to mouse clicks, delete rows or columns, and individually render each cell as a Rich Text renderable.  DataTable provides an efficiently displayed and updated table capable for most applications.
+
+Specific applications may have custom rules for formatting, numbers, repopulating tables after searching or filtering, and responding to selections.  The widget provides rich events to interface with custom logic.
 
 - [x] Focusable
 - [ ] Container
