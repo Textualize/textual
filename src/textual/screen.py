@@ -775,7 +775,7 @@ class Screen(Generic[ScreenResultType], Widget):
         finally:
             if self._bindings_updated:
                 self._bindings_updated = False
-                self.app.call_later(self.bindings_updated_signal.publish, self)
+                self.bindings_updated_signal.publish(self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
