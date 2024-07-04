@@ -673,7 +673,7 @@ class Tabs(Widget, can_focus=True):
         offset = event.offset + (0, -1)
         self.focus()
         for tab in self.query(Tab):
-            if offset in tab.region:
+            if offset in tab.region and not tab.disabled:
                 self._activate_tab(tab)
                 break
 
