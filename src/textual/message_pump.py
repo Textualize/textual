@@ -673,6 +673,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         ]
         for cls in self.__class__.__mro__:
             if message._no_default_action:
+                message._no_default_action = False
                 break
             # Try decorated handlers first
             decorated_handlers = cast(
