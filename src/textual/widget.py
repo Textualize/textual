@@ -409,6 +409,8 @@ class Widget(DOMNode):
         self._anchor_animate: bool = False
         """Flag to enable animation when scrolling anchored widgets."""
 
+        self._prune: Widget | None = None
+
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
 
@@ -3459,11 +3461,10 @@ class Widget(DOMNode):
         Returns:
             An awaitable object that waits for the widget to be removed.
         """
-
-        await_remove = self.app._remove_nodes([self], self.parent)
+        await_remove = self.app._prune(self)
         return await_remove
 
-    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitComplete:
         """Remove the immediate children of this Widget from the DOM.
 
         Args:
@@ -3478,8 +3479,8 @@ class Widget(DOMNode):
         children_to_remove = [
             child for child in self.children if match(parsed_selectors, child)
         ]
-        await_remove = self.app._remove_nodes(children_to_remove, self)
-        return await_remove
+        await_complete = self.app._prune(self, children_to_remove)
+        return await_complete
 
     @asynccontextmanager
     async def batch(self) -> AsyncGenerator[None, None]:
@@ -3567,6 +3568,15 @@ class Widget(DOMNode):
             except NoActiveAppError:
                 pass
         return super().post_message(message)
+
+    async def on_prune(self, event: messages.Prune) -> None:
+        if self._parent is not None and event.root is not self:
+            self._prune = event.root
+        await self._close_messages()
+
+    async def _message_loop_exit(self) -> None:
+        if self._prune is not None and self._parent is not None:
+            self.post_message(messages.Prune(self._prune))
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

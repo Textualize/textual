@@ -522,9 +522,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            if self._timers:
-                await Timer._stop_all(self._timers)
-                self._timers.clear()
+            try:
+                if self._timers:
+                    await Timer._stop_all(self._timers)
+                    self._timers.clear()
+            finally:
+                await self._message_loop_exit()
+
+    async def _message_loop_exit(self) -> None:
+        pass
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.

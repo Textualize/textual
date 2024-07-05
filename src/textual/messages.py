@@ -9,12 +9,22 @@ from .geometry import Region
 from .message import Message
 
 if TYPE_CHECKING:
+    from .dom import DOMNode
     from .widget import Widget
 
 
 @rich.repr.auto
 class CloseMessages(Message, verbose=True):
     """Requests message pump to close."""
+
+
+@rich.repr.auto
+class Prune(Message, verbose=True):
+    root: DOMNode
+
+    def __init__(self, root: DOMNode) -> None:
+        super().__init__()
+        self.root = root
 
 
 @rich.repr.auto

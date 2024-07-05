@@ -99,7 +99,7 @@ from .keys import (
     _get_key_display,
     _get_unicode_name_from_key,
 )
-from .messages import CallbackType
+from .messages import CallbackType, Prune
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
@@ -2804,13 +2804,13 @@ class App(Generic[ReturnType], DOMNode):
             for stack in self._screen_stacks.values():
                 for stack_screen in reversed(stack):
                     if stack_screen._running:
-                        await self._prune_node(stack_screen)
+                        await self._prune(stack_screen)
                 stack.clear()
 
             # Close pre-defined screens.
             for screen in self.SCREENS.values():
                 if isinstance(screen, Screen) and screen._running:
-                    await self._prune_node(screen)
+                    await self._prune(screen)
 
             # Close any remaining nodes
             # Should be empty by now
@@ -3387,102 +3387,125 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _remove_nodes(
-        self, widgets: list[Widget], parent: DOMNode | None
+    def _prune(
+        self, root: DOMNode, children: list[Widget] | None = None
     ) -> AwaitRemove:
-        """Remove nodes from DOM, and return an awaitable that awaits cleanup.
+        stack: list[DOMNode] = []
+        if children is None:
+            stack.append(root)
+        else:
+            stack.extend(children)
+        nodes = []
 
-        Args:
-            widgets: List of nodes to remove.
-            parent: Parent node of widgets, or None for no parent.
+        while stack:
+            node = stack.pop()
+            if node._nodes:
+                stack.extend(node._nodes)
+            else:
+                nodes.append(node)
+                node.post_message(Prune(root))
 
-        Returns:
-            Awaitable that returns when the nodes have been fully removed.
-        """
+        assert root._task is not None
+        await_complete = AwaitRemove([node._task for node in nodes])
 
-        async def prune_widgets_task(
-            widgets: list[Widget], finished_event: asyncio.Event
-        ) -> None:
-            """Prune widgets as a background task.
+        return await_complete
 
-            Args:
-                widgets: Widgets to prune.
-                finished_event: Event to set when complete.
-            """
-            try:
-                await self._prune_nodes(widgets)
-            finally:
-                finished_event.set()
-                try:
-                    self._update_mouse_over(self.screen)
-                except ScreenStackError:
-                    pass
-                if parent is not None:
-                    parent.refresh(layout=True)
+    # def _remove_nodes(
+    #     self, widgets: list[Widget], parent: DOMNode | None
+    # ) -> AwaitRemove:
+    #     """Remove nodes from DOM, and return an awaitable that awaits cleanup.
 
-        removed_widgets = self._detach_from_dom(widgets)
+    #     Args:
+    #         widgets: List of nodes to remove.
+    #         parent: Parent node of widgets, or None for no parent.
 
-        finished_event = asyncio.Event()
-        remove_task = create_task(
-            prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
-        )
+    #     Returns:
+    #         Awaitable that returns when the nodes have been fully removed.
+    #     """
 
-        await_remove = AwaitRemove(finished_event, remove_task)
-        self.call_next(await_remove)
-        return await_remove
+    #     async def prune_widgets_task(
+    #         widgets: list[Widget], finished_event: asyncio.Event
+    #     ) -> None:
+    #         """Prune widgets as a background task.
 
-    async def _prune_nodes(self, widgets: list[Widget]) -> None:
-        """Remove nodes and children.
+    #         Args:
+    #             widgets: Widgets to prune.
+    #             finished_event: Event to set when complete.
+    #         """
+    #         try:
+    #             await self._prune_nodes(widgets)
+    #         finally:
+    #             finished_event.set()
+    #             try:
+    #                 self._update_mouse_over(self.screen)
+    #             except ScreenStackError:
+    #                 pass
+    #             if parent is not None:
+    #                 parent.refresh(layout=True)
 
-        Args:
-            widgets: Widgets to remove.
-        """
+    #     removed_widgets = self._detach_from_dom(widgets)
 
-        for widget in widgets:
-            async with self._dom_lock:
-                await asyncio.shield(self._prune_node(widget))
+    #     finished_event = asyncio.Event()
+    #     remove_task = create_task(
+    #         prune_widgets_task(removed_widgets, finished_event), name="prune nodes"
+    #     )
 
-    async def _prune_node(self, root: Widget) -> None:
-        """Remove a node and its children. Children are removed before parents.
+    #     await_remove = AwaitRemove(finished_event, remove_task)
+    #     self.call_next(await_remove)
+    #     return await_remove
 
-        Args:
-            root: Node to remove.
-        """
-        # Pruning a node that has been removed is a no-op
+    # async def _prune_nodes(self, widgets: list[Widget]) -> None:
+    #     """Remove nodes and children.
 
-        if root not in self._registry:
-            return
+    #     Args:
+    #         widgets: Widgets to remove.
+    #     """
 
-        node_children = list(self._walk_children(root))
+    #     for widget in widgets:
+    #         async with self._dom_lock:
+    #             await asyncio.shield(self._prune_node(widget))
 
-        for children in reversed(node_children):
-            # Closing children can be done asynchronously.
-            close_children = [
-                child for child in children if child._running and not child._closing
-            ]
+    # async def _prune_node(self, root: Widget) -> None:
+    #     """Remove a node and its children. Children are removed before parents.
 
-            # TODO: What if a message pump refuses to exit?
-            if close_children:
-                close_messages = [
-                    child._close_messages(wait=True) for child in close_children
-                ]
-                try:
-                    # Close all the children
-                    await asyncio.wait_for(
-                        asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
-                    )
-                except asyncio.TimeoutError:
-                    # Likely a deadlock if we get here
-                    # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
-                    raise asyncio.TimeoutError(
-                        f"Timeout waiting for {close_children!r} to close; possible deadlock (consider changing App.CLOSE_TIMEOUT)\n"
-                    ) from None
-                finally:
-                    for child in children:
-                        self._unregister(child)
+    #     Args:
+    #         root: Node to remove.
+    #     """
+    #     # Pruning a node that has been removed is a no-op
 
-        await root._close_messages(wait=True)
-        self._unregister(root)
+    #     if root not in self._registry:
+    #         return
+
+    #     node_children = list(self._walk_children(root))
+
+    #     for children in reversed(node_children):
+    #         # Closing children can be done asynchronously.
+    #         close_children = [
+    #             child for child in children if child._running and not child._closing
+    #         ]
+
+    #         # TODO: What if a message pump refuses to exit?
+    #         if close_children:
+    #             close_messages = [
+    #                 child._close_messages(wait=True) for child in close_children
+    #             ]
+    #             try:
+    #                 # Close all the children
+    #                 await asyncio.wait_for(
+    #                     asyncio.gather(*close_messages), self.CLOSE_TIMEOUT
+    #                 )
+    #             except asyncio.TimeoutError:
+    #                 # Likely a deadlock if we get here
+    #                 # If not a deadlock, increase CLOSE_TIMEOUT, or set it to None
+    #                 raise asyncio.TimeoutError(
+    #                     f"Timeout waiting for {close_children!r} to close; possible deadlock (consider changing App.CLOSE_TIMEOUT)\n"
+    #                 ) from None
+    #             finally:
+    #                 for child in children:
+    #                     self._unregister(child)
+
+    #     await root._close_messages(wait=True)
+    #     self._unregister(root)
 
     def _watch_app_focus(self, focus: bool) -> None:
         """Respond to changes in app focus."""
