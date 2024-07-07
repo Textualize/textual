@@ -3568,11 +3568,9 @@ class Widget(DOMNode):
         return super().post_message(message)
 
     async def on_prune(self, event: messages.Prune) -> None:
-        self.log("ON PRUNE", self)
-        # if not self._pruning:
-        #     return
-        if not self._nodes:
-            await self._close_messages(wait=False)
+        if not self._pruning:
+            return
+        await self._close_messages(wait=False)
 
     async def _message_loop_exit(self) -> None:
         if (parent := self._parent) is None:
@@ -3581,7 +3579,7 @@ class Widget(DOMNode):
         parent._nodes._remove(self)
         self.app._registry.remove(self)
 
-        if parent._pruning:
+        if parent._pruning and not len(parent._nodes):
             parent.post_message(Prune())
         self._detach()
 
