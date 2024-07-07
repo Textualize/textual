@@ -1294,3 +1294,8 @@ def test_grid_auto(snap_compare):
     """Test grid with keyline and auto-dimension."""
     # https://github.com/Textualize/textual/issues/4678
     assert snap_compare(SNAPSHOT_APPS_DIR / "grid_auto.py")
+
+
+def test_option_list_scrolling_with_multiline_options(snap_compare):
+    # https://github.com/Textualize/textual/issues/4705
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py", press=["up"])
