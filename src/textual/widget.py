@@ -76,7 +76,7 @@ from .geometry import (
 )
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from .messages import CallbackType
+from .messages import CallbackType, Prune
 from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
@@ -408,8 +408,6 @@ class Widget(DOMNode):
         """An anchored child widget, or `None` if no child is anchored."""
         self._anchor_animate: bool = False
         """Flag to enable animation when scrolling anchored widgets."""
-
-        self._prune: Widget | None = None
 
     virtual_size: Reactive[Size] = Reactive(Size(0, 0), layout=True)
     """The virtual (scrollable) [size][textual.geometry.Size] of the widget."""
@@ -3464,7 +3462,7 @@ class Widget(DOMNode):
         await_remove = self.app._prune(self)
         return await_remove
 
-    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitComplete:
+    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
         """Remove the immediate children of this Widget from the DOM.
 
         Args:
@@ -3479,8 +3477,8 @@ class Widget(DOMNode):
         children_to_remove = [
             child for child in self.children if match(parsed_selectors, child)
         ]
-        await_complete = self.app._prune(self, children_to_remove)
-        return await_complete
+        await_remove = self.app._prune(*children_to_remove)
+        return await_remove
 
     @asynccontextmanager
     async def batch(self) -> AsyncGenerator[None, None]:
@@ -3570,13 +3568,24 @@ class Widget(DOMNode):
         return super().post_message(message)
 
     async def on_prune(self, event: messages.Prune) -> None:
-        if self._parent is not None and event.root is not self:
-            self._prune = event.root
-        await self._close_messages()
+        print("ON PRUNE", self)
+        # if not self._pruning:
+        #     return
+        if not self._nodes:
+            await self._close_messages(wait=False)
 
     async def _message_loop_exit(self) -> None:
-        if self._prune is not None and self._parent is not None:
-            self.post_message(messages.Prune(self._prune))
+        print("_message loop exit", self)
+        if (parent := self._parent) is None:
+            return
+        assert isinstance(parent, DOMNode)
+        parent._nodes._remove(self)
+        self.app._registry.remove(self)
+
+        if parent._pruning:
+            print("pruning parent", parent)
+            parent.post_message(Prune())
+        self._detach()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

@@ -262,7 +262,7 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
         for index in indices:
             items_to_remove.append(items[index])
 
-        await_remove = self.app._prune(self, tems_to_remove)
+        await_remove = self.app._prune(*items_to_remove)
         return await_remove
 
     def action_select_cursor(self) -> None:

@@ -206,6 +206,8 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
 
+        self._pruning = False
+
         super().__init__()
 
     def set_reactive(

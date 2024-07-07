@@ -9,7 +9,6 @@ from .geometry import Region
 from .message import Message
 
 if TYPE_CHECKING:
-    from .dom import DOMNode
     from .widget import Widget
 
 
@@ -19,12 +18,8 @@ class CloseMessages(Message, verbose=True):
 
 
 @rich.repr.auto
-class Prune(Message, verbose=True):
-    root: DOMNode
-
-    def __init__(self, root: DOMNode) -> None:
-        super().__init__()
-        self.root = root
+class Prune(Message, verbose=True, bubble=False):
+    """Ask the node to prune (remove from DOM)."""
 
 
 @rich.repr.auto

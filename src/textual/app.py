@@ -103,7 +103,6 @@ from .messages import CallbackType, Prune
 from .notifications import Notification, Notifications, Notify, SeverityLevel
 from .reactive import Reactive
 from .renderables.blank import Blank
-from .rlock import RLock
 from .screen import (
     ActiveBinding,
     Screen,
@@ -582,7 +581,7 @@ class App(Generic[ReturnType], DOMNode):
             else None
         )
         self._screenshot: str | None = None
-        self._dom_lock = RLock()
+        # self._dom_lock = RLock()
         self._dom_ready = False
         self._batch_count = 0
         self._notifications = Notifications()
@@ -2799,25 +2798,32 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        async with self._dom_lock:
-            # Close all screens on all stacks:
-            for stack in self._screen_stacks.values():
-                for stack_screen in reversed(stack):
-                    if stack_screen._running:
-                        await self._prune(stack_screen)
-                stack.clear()
+        print("_close_all")
 
-            # Close pre-defined screens.
-            for screen in self.SCREENS.values():
-                if isinstance(screen, Screen) and screen._running:
-                    await self._prune(screen)
+        # async with self._dom_lock:
+        # Close all screens on all stacks:
+        for stack in self._screen_stacks.values():
+            for stack_screen in reversed(stack):
+                if stack_screen._running:
+                    await self._prune(stack_screen)
+            stack.clear()
 
-            # Close any remaining nodes
-            # Should be empty by now
-            remaining_nodes = list(self._registry)
+        print(1)
 
-            for child in remaining_nodes:
-                await child._close_messages()
+        # Close pre-defined screens.
+        for screen in self.SCREENS.values():
+            if isinstance(screen, Screen) and screen._running:
+                await self._prune(screen)
+
+        print(2)
+        # Close any remaining nodes
+        # Should be empty by now
+        remaining_nodes = list(self._registry)
+
+        for child in remaining_nodes:
+            await child._close_messages()
+
+        print(3)
 
     async def _shutdown(self) -> None:
         self._begin_batch()  # Prevents any layout / repaint while shutting down
@@ -3387,27 +3393,38 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _prune(
-        self, root: DOMNode, children: list[Widget] | None = None
-    ) -> AwaitRemove:
-        stack: list[DOMNode] = []
-        if children is None:
-            stack.append(root)
-        else:
-            stack.extend(children)
-        nodes = []
-
+    def _prune(self, *nodes: DOMNode) -> AwaitRemove:
+        self.log("_prune", nodes)
+        stack: list[DOMNode] = [*nodes]
+        pruning_nodes = []
         while stack:
             node = stack.pop()
             if node._nodes:
+                self.log("prune", node._nodes)
+                for prune_node in node._nodes:
+                    pruning_nodes.append(prune_node)
+                    prune_node._pruning = True
                 stack.extend(node._nodes)
             else:
-                nodes.append(node)
-                node.post_message(Prune(root))
+                self.log("leaf prune", node)
+                pruning_nodes.append(node)
+                node._pruning = True
+                node.post_message(Prune())
 
-        assert root._task is not None
-        await_complete = AwaitRemove([node._task for node in nodes])
+        try:
+            for node in pruning_nodes:
+                if node.screen.focused is node:
+                    node.screen._reset_focus(node, pruning_nodes)
+                    break
+        except NoScreen:
+            pass
 
+        self.log(nodes)
+        self.log([task for node in nodes if (task := node._task) is not None])
+        await_complete = AwaitRemove(
+            [task for node in nodes if (task := node._task) is not None]
+        )
+        self.call_next(await_complete)
         return await_complete
 
     # def _remove_nodes(
