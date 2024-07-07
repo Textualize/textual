@@ -20,7 +20,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing_extensions import Self, TypeAlias
 
 
 class DuplicateID(Exception):
