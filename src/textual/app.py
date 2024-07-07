@@ -2798,9 +2798,6 @@ class App(Generic[ReturnType], DOMNode):
     async def _close_all(self) -> None:
         """Close all message pumps."""
 
-        print("_close_all")
-
-        # async with self._dom_lock:
         # Close all screens on all stacks:
         for stack in self._screen_stacks.values():
             for stack_screen in reversed(stack):
@@ -2808,22 +2805,17 @@ class App(Generic[ReturnType], DOMNode):
                     await self._prune(stack_screen)
             stack.clear()
 
-        print(1)
-
         # Close pre-defined screens.
         for screen in self.SCREENS.values():
             if isinstance(screen, Screen) and screen._running:
                 await self._prune(screen)
 
-        print(2)
         # Close any remaining nodes
         # Should be empty by now
         remaining_nodes = list(self._registry)
 
         for child in remaining_nodes:
             await child._close_messages()
-
-        print(3)
 
     async def _shutdown(self) -> None:
         self._begin_batch()  # Prevents any layout / repaint while shutting down
@@ -3393,22 +3385,17 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _prune(self, *nodes: DOMNode) -> AwaitRemove:
-        self.log("_prune", nodes)
-        stack: list[DOMNode] = [*nodes]
-        pruning_nodes = []
+    def _prune(self, *nodes: Widget) -> AwaitRemove:
+        stack: list[Widget] = [*nodes]
+        pruning_nodes: list[Widget] = []
         while stack:
             node = stack.pop()
+            node._pruning = True
             if node._nodes:
-                self.log("prune", node._nodes)
-                for prune_node in node._nodes:
-                    pruning_nodes.append(prune_node)
-                    prune_node._pruning = True
+                pruning_nodes.extend(node._nodes)
                 stack.extend(node._nodes)
             else:
-                self.log("leaf prune", node)
                 pruning_nodes.append(node)
-                node._pruning = True
                 node.post_message(Prune())
 
         try:
@@ -3419,8 +3406,6 @@ class App(Generic[ReturnType], DOMNode):
         except NoScreen:
             pass
 
-        self.log(nodes)
-        self.log([task for node in nodes if (task := node._task) is not None])
         await_complete = AwaitRemove(
             [task for node in nodes if (task := node._task) is not None]
         )

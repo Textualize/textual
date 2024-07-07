@@ -410,21 +410,7 @@ class DOMQuery(Generic[QueryType]):
             An awaitable object that waits for the widgets to be removed.
         """
         app = active_app.get()
-        if self._nodes:
-            return app._prune(*self._nodes)
-        return AwaitRemove([])
-
-        # async def remove_nodes() -> None:
-        #     if self._nodes:
-        #         await app._prune(*self._nodes)
-        #         # await gather(*[app._prune(node) for node in self._nodes])
-
-        # await_complete = AwaitComplete(remove_nodes())
-        # self._node.call_next(await_complete)
-        # return await_complete
-
-        # await_remove = app._prune(self._node)
-        # return await_remove
+        return app._prune(*self.nodes)
 
     def set_styles(
         self, css: str | None = None, **update_styles

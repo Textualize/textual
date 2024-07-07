@@ -108,7 +108,7 @@ class Signal(Generic[SignalT]):
 
         """
         # Don't publish if the DOM is not ready or shutting down
-        if not self._owner.is_attached:
+        if not self._owner.is_attached or self._owner._pruning:
             return
         for ancestor_node in self._owner.ancestors_with_self:
             if not ancestor_node.is_running:
