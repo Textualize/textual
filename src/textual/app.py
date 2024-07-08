@@ -1457,6 +1457,11 @@ class App(Generic[ReturnType], DOMNode):
             app_ready_event.set()
 
         async def run_app(app: App) -> None:
+            """Run the apps message loop.
+
+            Args:
+                app: App to run.
+            """
             if message_hook is not None:
                 message_hook_context_var.set(message_hook)
             app._loop = asyncio.get_running_loop()
@@ -3386,23 +3391,18 @@ class App(Generic[ReturnType], DOMNode):
                 push(child)
 
     def _prune(self, *nodes: Widget) -> AwaitRemove:
-        stack: list[Widget] = [*nodes]
-        pruning_nodes: list[Widget] = []
+        pruning_nodes: set[Widget] = {*nodes}
         for node in nodes:
             node.post_message(Prune())
-        while stack:
-            node = stack.pop()
-            node._pruning = True
-            if node._nodes:
-                pruning_nodes.extend(node._nodes)
-                stack.extend(node._nodes)
-            else:
-                pruning_nodes.append(node)
+            for child in node.walk_children(with_self=True):
+                assert isinstance(child, Widget)
+                child._pruning = True
+                pruning_nodes.add(child)
 
         try:
             for node in pruning_nodes:
                 if node.screen.focused is node:
-                    node.screen._reset_focus(node, pruning_nodes)
+                    node.screen._reset_focus(node, list(pruning_nodes))
                     break
         except NoScreen:
             pass

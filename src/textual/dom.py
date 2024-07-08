@@ -786,7 +786,9 @@ class DOMNode(MessagePump):
             my_widget.display = False  # Hide my_widget
             ```
         """
-        return self.styles.display != "none" and not (self._closing or self._closed)
+        return self.styles.display != "none" and not (
+            self._closing or self._closed or self._pruning
+        )
 
     @display.setter
     def display(self, new_val: bool | str) -> None:

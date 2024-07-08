@@ -3459,6 +3459,7 @@ class Widget(DOMNode):
         Returns:
             An awaitable object that waits for the widget to be removed.
         """
+        # assert asyncio.current_task() is not self._task
         await_remove = self.app._prune(self)
         return await_remove
 
@@ -3576,7 +3577,7 @@ class Widget(DOMNode):
         for node in children:
             node.post_message(Prune())
         await gather(*[node._task for node in children if node._task is not None])
-
+        await self._dispatch_message(events.Unmount())
         assert isinstance(parent, DOMNode)
         parent._nodes._remove(self)
         self.app._registry.discard(self)

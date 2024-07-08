@@ -49,5 +49,6 @@ async def test_unmount():
         "UnmountWidget#top-True-0",
         "MyScreen#main",
     ]
+    print(unmount_ids)
 
     assert unmount_ids == expected
