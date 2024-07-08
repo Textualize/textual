@@ -3459,8 +3459,7 @@ class Widget(DOMNode):
         Returns:
             An awaitable object that waits for the widget to be removed.
         """
-        # assert asyncio.current_task() is not self._task
-        await_remove = self.app._prune(self)
+        await_remove = self.app._prune(self, parent=self._parent)
         return await_remove
 
     def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
@@ -3478,7 +3477,7 @@ class Widget(DOMNode):
         children_to_remove = [
             child for child in self.children if match(parsed_selectors, child)
         ]
-        await_remove = self.app._prune(*children_to_remove)
+        await_remove = self.app._prune(*children_to_remove, parent=self._parent)
         return await_remove
 
     @asynccontextmanager
@@ -3582,6 +3581,7 @@ class Widget(DOMNode):
         parent._nodes._remove(self)
         self.app._registry.discard(self)
         self._detach()
+        self._pruning = False
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

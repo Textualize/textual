@@ -465,9 +465,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
-        self.app.screen._invoke_later(
-            message.callback, message._sender or active_message_pump.get()
-        )
+        if self.app._running:
+            self.app.screen._invoke_later(
+                message.callback, message._sender or active_message_pump.get()
+            )
 
     async def _close_messages(self, wait: bool = True) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
@@ -477,7 +478,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._timers:
             await Timer._stop_all(self._timers)
             self._timers.clear()
-        # self._message_queue.put_nowait(events.Unmount())
         Reactive._reset_object(self)
         self._message_queue.put_nowait(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:

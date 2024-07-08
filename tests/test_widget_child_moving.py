@@ -137,9 +137,14 @@ async def test_move_before_end_of_child_list() -> None:
 async def test_move_before_permutations() -> None:
     """Test the different permutations of moving one widget before another."""
     widgets = [Widget(id=f"widget-{n}") for n in range(10)]
-    perms = ((1, 0), (widgets[1], 0), (1, widgets[0]), (widgets[1], widgets[0]))
+    perms = (
+        (1, 0),
+        (widgets[1], 0),
+        (1, widgets[0]),
+        (widgets[1], widgets[0]),
+    )
     for child, target in perms:
-        async with App().run_test() as pilot:
+        async with App[None]().run_test() as pilot:
             container = Widget(*widgets)
             await pilot.app.mount(container)
             container.move_child(child, before=target)
@@ -153,9 +158,13 @@ async def test_move_after_permutations() -> None:
     widgets = [Widget(id=f"widget-{n}") for n in range(10)]
     perms = ((0, 1), (widgets[0], 1), (0, widgets[1]), (widgets[0], widgets[1]))
     for child, target in perms:
-        async with App().run_test() as pilot:
+        async with App[None]().run_test() as pilot:
             container = Widget(*widgets)
             await pilot.app.mount(container)
+            await pilot.pause()
+
+            print(1, container.children)
+            print(2, child)
             container.move_child(child, after=target)
             assert container._nodes[0].id == "widget-1"
             assert container._nodes[1].id == "widget-0"

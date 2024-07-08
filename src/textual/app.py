@@ -3390,7 +3390,7 @@ class App(Generic[ReturnType], DOMNode):
             for child in widget._nodes:
                 push(child)
 
-    def _prune(self, *nodes: Widget) -> AwaitRemove:
+    def _prune(self, *nodes: Widget, parent: DOMNode | None = None) -> AwaitRemove:
         pruning_nodes: set[Widget] = {*nodes}
         for node in nodes:
             node.post_message(Prune())
@@ -3407,8 +3407,22 @@ class App(Generic[ReturnType], DOMNode):
         except NoScreen:
             pass
 
+        def post_mount() -> None:
+            """Called after removing children."""
+
+            if parent is not None:
+                try:
+                    screen = parent.screen
+                except (ScreenStackError, NoScreen):
+                    pass
+                else:
+                    if screen._running:
+                        self._update_mouse_over(screen)
+                finally:
+                    parent.refresh(layout=True)
+
         await_complete = AwaitRemove(
-            [task for node in nodes if (task := node._task) is not None]
+            [task for node in nodes if (task := node._task) is not None], post_mount
         )
         self.call_next(await_complete)
         return await_complete
