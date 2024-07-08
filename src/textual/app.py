@@ -3404,15 +3404,18 @@ class App(Generic[ReturnType], DOMNode):
         pruning_nodes: set[Widget] = {*nodes}
         for node in nodes:
             node.post_message(Prune())
-            for child in node.walk_children(with_self=True):
-                assert isinstance(child, Widget)
-                child._pruning = True
-                pruning_nodes.add(child)
+            pruning_nodes.update(node.walk_children(with_self=True))
+
+        try:
+            screen = nodes[0].screen
+        except (ScreenStackError, NoScreen):
+            pass
+        else:
+            if screen.focused and screen.focused in pruning_nodes:
+                screen._reset_focus(screen.focused, list(pruning_nodes))
 
         for node in pruning_nodes:
-            if node.screen.focused is node:
-                node.screen._reset_focus(node, list(pruning_nodes))
-                break
+            node._pruning = True
 
         def post_mount() -> None:
             """Called after removing children."""
