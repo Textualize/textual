@@ -1294,3 +1294,8 @@ def test_grid_auto(snap_compare):
     """Test grid with keyline and auto-dimension."""
     # https://github.com/Textualize/textual/issues/4678
     assert snap_compare(SNAPSHOT_APPS_DIR / "grid_auto.py")
+
+
+def test_bindings_screen_overrides_show(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4382"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "bindings_screen_overrides_show.py")
