@@ -3388,6 +3388,8 @@ class App(Generic[ReturnType], DOMNode):
     def _prune(self, *nodes: Widget) -> AwaitRemove:
         stack: list[Widget] = [*nodes]
         pruning_nodes: list[Widget] = []
+        for node in nodes:
+            node.post_message(Prune())
         while stack:
             node = stack.pop()
             node._pruning = True
@@ -3396,7 +3398,6 @@ class App(Generic[ReturnType], DOMNode):
                 stack.extend(node._nodes)
             else:
                 pruning_nodes.append(node)
-                node.post_message(Prune())
 
         try:
             for node in pruning_nodes:

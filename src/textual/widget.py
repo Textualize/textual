@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import create_task, wait
+from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -3568,19 +3568,18 @@ class Widget(DOMNode):
         return super().post_message(message)
 
     async def on_prune(self, event: messages.Prune) -> None:
-        if not self._pruning:
-            return
         await self._close_messages(wait=False)
 
     async def _message_loop_exit(self) -> None:
-        if (parent := self._parent) is None:
-            return
+        parent = self._parent
+        children = list(self.children)
+        for node in children:
+            node.post_message(Prune())
+        await gather(*[node._task for node in children if node._task is not None])
+
         assert isinstance(parent, DOMNode)
         parent._nodes._remove(self)
-        self.app._registry.remove(self)
-
-        if parent._pruning and not len(parent._nodes):
-            parent.post_message(Prune())
+        self.app._registry.discard(self)
         self._detach()
 
     async def _on_idle(self, event: events.Idle) -> None:
