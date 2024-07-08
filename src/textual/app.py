@@ -2747,6 +2747,9 @@ class App(Generic[ReturnType], DOMNode):
 
         apply_stylesheet = self.stylesheet.apply
         for widget in widget_list:
+            widget._closing = False
+            widget._closed = False
+            widget._pruning = False
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
             if widget not in self._registry:

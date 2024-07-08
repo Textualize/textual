@@ -3581,7 +3581,6 @@ class Widget(DOMNode):
         parent._nodes._remove(self)
         self.app._registry.discard(self)
         self._detach()
-        self._pruning = False
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
