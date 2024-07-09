@@ -941,7 +941,7 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        if self._closing:
+        if self._closing or self._pruning:
             return AwaitMount(self, [])
         if not self.is_attached:
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
@@ -1135,7 +1135,7 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        if not self.is_attached:
+        if not self.is_attached or self._pruning:
             return
 
         async with self.batch():
