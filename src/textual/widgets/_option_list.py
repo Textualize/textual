@@ -20,7 +20,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing_extensions import Self, TypeAlias
 
 
 class DuplicateID(Exception):
@@ -454,7 +454,9 @@ class OptionList(ScrollView, can_focus=True):
             renderable = Padding(renderable, padding)
         lines = self.app.console.render_lines(renderable, options, style=style)
 
-        style_meta = Style.from_meta({"option": option_index})
+        style_meta = Style.from_meta(
+            {"option": option_index} if option_index != -1 else None
+        )
         strips = [Strip(line, width).apply_style(style_meta) for line in lines]
         self._content_render_cache[cache_key] = strips
         return strips
