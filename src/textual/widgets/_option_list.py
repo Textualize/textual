@@ -366,10 +366,10 @@ class OptionList(ScrollView, can_focus=True):
                     )
                 )
 
+                self._spans.append(OptionLineSpan(len(self._lines), height))
                 self._lines.extend(
                     (option_index, y_offset) for y_offset in range(height)
                 )
-                self._spans.append(OptionLineSpan(option_index, height))
                 option_index += 1
             else:
                 self._lines.append(OptionLineSpan(-1, 0))
