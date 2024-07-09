@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import create_task, wait
+from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -76,7 +76,7 @@ from .geometry import (
 )
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from .messages import CallbackType
+from .messages import CallbackType, Prune
 from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
@@ -941,7 +941,7 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        if self._closing:
+        if self._closing or self._pruning:
             return AwaitMount(self, [])
         if not self.is_attached:
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
@@ -1135,7 +1135,7 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        if not self.is_attached:
+        if not self.is_attached or self._pruning:
             return
 
         async with self.batch():
@@ -3459,8 +3459,7 @@ class Widget(DOMNode):
         Returns:
             An awaitable object that waits for the widget to be removed.
         """
-
-        await_remove = self.app._remove_nodes([self], self.parent)
+        await_remove = self.app._prune(self, parent=self._parent)
         return await_remove
 
     def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
@@ -3478,7 +3477,7 @@ class Widget(DOMNode):
         children_to_remove = [
             child for child in self.children if match(parsed_selectors, child)
         ]
-        await_remove = self.app._remove_nodes(children_to_remove, self)
+        await_remove = self.app._prune(*children_to_remove, parent=self._parent)
         return await_remove
 
     @asynccontextmanager
@@ -3567,6 +3566,28 @@ class Widget(DOMNode):
             except NoActiveAppError:
                 pass
         return super().post_message(message)
+
+    async def on_prune(self, event: messages.Prune) -> None:
+        """Close message loop when asked to prune."""
+        await self._close_messages(wait=False)
+
+    async def _message_loop_exit(self) -> None:
+        """Clean up DOM tree."""
+        parent = self._parent
+        # Post messages to children, asking them to prune
+        children = [*self.children, *self._get_virtual_dom()]
+        for node in children:
+            node.post_message(Prune())
+
+        # Wait for child nodes to exit
+        await gather(*[node._task for node in children if node._task is not None])
+        # Send unmount event
+        await self._dispatch_message(events.Unmount())
+        assert isinstance(parent, DOMNode)
+        # Finalize removal from DOM
+        parent._nodes._remove(self)
+        self.app._registry.discard(self)
+        self._detach()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

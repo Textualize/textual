@@ -2,33 +2,36 @@
 An *optionally* awaitable object returned by methods that remove widgets.
 """
 
-from asyncio import Event, Task
+from __future__ import annotations
+
+import asyncio
+from asyncio import Task, gather
 from typing import Generator
+
+from ._callback import invoke
+from ._types import CallbackType
 
 
 class AwaitRemove:
-    """An awaitable returned by a method that removes DOM nodes.
+    """An awaitable that waits for nodes to be removed."""
 
-    Returned by [Widget.remove][textual.widget.Widget.remove] and
-    [DOMQuery.remove][textual.css.query.DOMQuery.remove].
-    """
-
-    def __init__(self, finished_flag: Event, task: Task) -> None:
-        """Initialise the instance of ``AwaitRemove``.
-
-        Args:
-            finished_flag: The asyncio event to wait on.
-            task: The task which does the remove (required to keep a reference).
-        """
-        self.finished_flag = finished_flag
-        self._task = task
+    def __init__(
+        self, tasks: list[Task], post_remove: CallbackType | None = None
+    ) -> None:
+        self._tasks = tasks
+        self._post_remove = post_remove
 
     async def __call__(self) -> None:
         await self
 
     def __await__(self) -> Generator[None, None, None]:
+        current_task = asyncio.current_task()
+        tasks = [task for task in self._tasks if task is not current_task]
+
         async def await_prune() -> None:
             """Wait for the prune operation to finish."""
-            await self.finished_flag.wait()
+            await gather(*tasks)
+            if self._post_remove is not None:
+                await invoke(self._post_remove)
 
         return await_prune().__await__()
