@@ -20,7 +20,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing_extensions import Self, TypeAlias
 
 
 class DuplicateID(Exception):
@@ -193,6 +193,15 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option-hover-highlighted",
         "option-list--separator",
     }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `option-list--option-disabled` | Target disabled options. |
+    | `option-list--option-highlighted` | Target the highlighted option. |
+    | `option-list--option-hover` | Target an option that has the mouse over it. |
+    | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
+    | `option-list--separator` | Target the separators. |
+    """
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
