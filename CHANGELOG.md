@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- More predictable DOM removals.
+- More predictable DOM removals. https://github.com/Textualize/textual/pull/4708
 
 ## [0.71.0] - 2024-06-29
 
