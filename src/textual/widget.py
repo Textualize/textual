@@ -3571,6 +3571,7 @@ class Widget(DOMNode):
         await self._close_messages(wait=False)
 
     async def _message_loop_exit(self) -> None:
+        """Clean up DOM tree."""
         parent = self._parent
         children = [*self.children, *self._get_virtual_dom()]
         for node in children:

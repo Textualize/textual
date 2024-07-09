@@ -524,7 +524,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 await self._message_loop_exit()
 
     async def _message_loop_exit(self) -> None:
-        pass
+        """Called when the message loop has completed."""
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
