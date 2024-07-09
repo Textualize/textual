@@ -3568,18 +3568,23 @@ class Widget(DOMNode):
         return super().post_message(message)
 
     async def on_prune(self, event: messages.Prune) -> None:
+        """Close message loop when asked to prune."""
         await self._close_messages(wait=False)
 
     async def _message_loop_exit(self) -> None:
         """Clean up DOM tree."""
         parent = self._parent
+        # Post messages to children, asking them to prune
         children = [*self.children, *self._get_virtual_dom()]
         for node in children:
             node.post_message(Prune())
 
+        # Wait for child nodes to exit
         await gather(*[node._task for node in children if node._task is not None])
+        # Send unmount event
         await self._dispatch_message(events.Unmount())
         assert isinstance(parent, DOMNode)
+        # Finalize removal from DOM
         parent._nodes._remove(self)
         self.app._registry.discard(self)
         self._detach()
