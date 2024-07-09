@@ -20,7 +20,7 @@ from ..scroll_view import ScrollView
 from ..strip import Strip
 
 if TYPE_CHECKING:
-    from typing_extensions import Self
+    from typing_extensions import Self, TypeAlias
 
 
 class DuplicateID(Exception):
@@ -193,6 +193,15 @@ class OptionList(ScrollView, can_focus=True):
         "option-list--option-hover-highlighted",
         "option-list--separator",
     }
+    """
+    | Class | Description |
+    | :- | :- |
+    | `option-list--option-disabled` | Target disabled options. |
+    | `option-list--option-highlighted` | Target the highlighted option. |
+    | `option-list--option-hover` | Target an option that has the mouse over it. |
+    | `option-list--option-hover-highlighted` | Target a highlighted option that has the mouse over it. |
+    | `option-list--separator` | Target the separators. |
+    """
 
     highlighted: reactive[int | None] = reactive["int | None"](None)
     """The index of the currently-highlighted option, or `None` if no option is highlighted."""
@@ -357,10 +366,10 @@ class OptionList(ScrollView, can_focus=True):
                     )
                 )
 
+                self._spans.append(OptionLineSpan(len(self._lines), height))
                 self._lines.extend(
                     (option_index, y_offset) for y_offset in range(height)
                 )
-                self._spans.append(OptionLineSpan(option_index, height))
                 option_index += 1
             else:
                 self._lines.append(OptionLineSpan(-1, 0))
@@ -408,7 +417,11 @@ class OptionList(ScrollView, can_focus=True):
             event: The click event.
         """
         clicked_option: int | None = event.style.meta.get("option")
-        if clicked_option is not None and not self._options[clicked_option].disabled:
+        if (
+            clicked_option is not None
+            and clicked_option >= 0
+            and not self._options[clicked_option].disabled
+        ):
             self.highlighted = clicked_option
             self.action_select()
 
@@ -456,6 +469,7 @@ class OptionList(ScrollView, can_focus=True):
 
         style_meta = Style.from_meta({"option": option_index})
         strips = [Strip(line, width).apply_style(style_meta) for line in lines]
+
         self._content_render_cache[cache_key] = strips
         return strips
 

@@ -640,7 +640,7 @@ class App(Generic[ReturnType], DOMNode):
         return str(title)
 
     def validate_sub_title(self, sub_title: Any) -> str:
-        """Make sure the sub-title is set to a string."""
+        """Make sure the subtitle is set to a string."""
         return str(sub_title)
 
     @property
@@ -666,7 +666,7 @@ class App(Generic[ReturnType], DOMNode):
 
         Non-zero codes indicate errors.
         A value of 1 means the app exited with a fatal error.
-        If the app wasn't exited yet, this will be `None`.
+        If the app hasn't exited yet, this will be `None`.
 
         Example:
             The return code can be used to exit the process via `sys.exit`.
@@ -1078,7 +1078,7 @@ class App(Generic[ReturnType], DOMNode):
     ) -> None:
         """Write to logs or devtools.
 
-        Positional args will logged. Keyword args will be prefixed with the key.
+        Positional args will be logged. Keyword args will be prefixed with the key.
 
         Example:
             ```python
@@ -1513,7 +1513,7 @@ class App(Generic[ReturnType], DOMNode):
             mouse: Enable mouse support.
             size: Force terminal size to `(WIDTH, HEIGHT)`,
                 or None to auto-detect.
-            auto_pilot: An auto pilot coroutine.
+            auto_pilot: An autopilot coroutine.
 
         Returns:
             App return value.
@@ -1676,9 +1676,9 @@ class App(Generic[ReturnType], DOMNode):
                     self.stylesheet.update(screen)
 
     def render(self) -> RenderResult:
-        """Render method inherited from widget, to render the screen's background.
+        """Render method, inherited from widget, to render the screen's background.
 
-        May be override to customize background visuals.
+        May be overridden to customize background visuals.
 
         """
         return Blank(self.styles.background)
@@ -1698,7 +1698,7 @@ class App(Generic[ReturnType], DOMNode):
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
     ) -> ExpectType | Widget:
-        """Get the first child (immediate descendent) of this DOMNode with the given ID.
+        """Get the first child (immediate descendant) of this DOMNode with the given ID.
 
         Args:
             id: The ID of the node to search for.
@@ -2226,14 +2226,14 @@ class App(Generic[ReturnType], DOMNode):
     def uninstall_screen(self, screen: Screen | str) -> str | None:
         """Uninstall a screen.
 
-        If the screen was not previously installed then this method is a null-op.
+        If the screen was not previously installed, then this method is a null-op.
         Uninstalling a screen allows Textual to delete it when it is popped or switched.
         Note that uninstalling a screen is only required if you have previously installed it
         with [install_screen][textual.app.App.install_screen].
         Textual will also uninstall screens automatically on exit.
 
         Args:
-            screen: The screen to uninstall or the name of a installed screen.
+            screen: The screen to uninstall or the name of an installed screen.
 
         Returns:
             The name of the screen that was uninstalled, or None if no screen was uninstalled.
@@ -2694,7 +2694,7 @@ class App(Generic[ReturnType], DOMNode):
                 # position (for now) of meaning "okay really what I mean is
                 # do an append, like if I'd asked to add with no before or
                 # after". So... we insert before the next item in the node
-                # list, iff after isn't -1.
+                # list, if after isn't -1.
                 parent._nodes._insert(after + 1, child)
             else:
                 # At this point we appear to not be adding before or after,
@@ -2780,7 +2780,7 @@ class App(Generic[ReturnType], DOMNode):
             await self.devtools.disconnect()
 
     def _start_widget(self, parent: Widget, widget: Widget) -> None:
-        """Start a widget (run it's task) so that it can receive messages.
+        """Start a widget (run its task) so that it can receive messages.
 
         Args:
             parent: The parent of the Widget.

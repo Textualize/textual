@@ -1296,6 +1296,11 @@ def test_grid_auto(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "grid_auto.py")
 
 
+def test_option_list_scrolling_with_multiline_options(snap_compare):
+    # https://github.com/Textualize/textual/issues/4705
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py", press=["up"])
+
 def test_bindings_screen_overrides_show(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4382"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "bindings_screen_overrides_show.py")
+
