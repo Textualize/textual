@@ -5,11 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.72.0] - Unreleased
+## [0.72.0] - 2024-07-09
 
 ### Changed
 
 - More predictable DOM removals. https://github.com/Textualize/textual/pull/4708
+
+### Fixed
+
+- Fixed clicking separator in OptionList moving cursor https://github.com/Textualize/textual/issues/4710
+- Fixed scrolling issue in OptionList https://github.com/Textualize/textual/pull/4709
 
 ## [0.71.0] - 2024-06-29
 
