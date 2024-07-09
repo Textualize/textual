@@ -206,6 +206,8 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
 
+        self._pruning = False
+
         super().__init__()
 
     def set_reactive(
@@ -784,7 +786,9 @@ class DOMNode(MessagePump):
             my_widget.display = False  # Hide my_widget
             ```
         """
-        return self.styles.display != "none" and not (self._closing or self._closed)
+        return self.styles.display != "none" and not (
+            self._closing or self._closed or self._pruning
+        )
 
     @display.setter
     def display(self, new_val: bool | str) -> None:
