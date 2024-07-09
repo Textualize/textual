@@ -408,7 +408,11 @@ class OptionList(ScrollView, can_focus=True):
             event: The click event.
         """
         clicked_option: int | None = event.style.meta.get("option")
-        if clicked_option is not None and not self._options[clicked_option].disabled:
+        if (
+            clicked_option is not None
+            and clicked_option >= 0
+            and not self._options[clicked_option].disabled
+        ):
             self.highlighted = clicked_option
             self.action_select()
 
@@ -454,11 +458,9 @@ class OptionList(ScrollView, can_focus=True):
             renderable = Padding(renderable, padding)
         lines = self.app.console.render_lines(renderable, options, style=style)
 
-        if option_index == -1:
-            strips = [Strip(line, width) for line in lines]
-        else:
-            style_meta = Style.from_meta({"option": option_index})
-            strips = [Strip(line, width).apply_style(style_meta) for line in lines]
+        style_meta = Style.from_meta({"option": option_index})
+        strips = [Strip(line, width).apply_style(style_meta) for line in lines]
+
         self._content_render_cache[cache_key] = strips
         return strips
 
