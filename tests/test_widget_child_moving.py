@@ -163,8 +163,6 @@ async def test_move_after_permutations() -> None:
             await pilot.app.mount(container)
             await pilot.pause()
 
-            print(1, container.children)
-            print(2, child)
             container.move_child(child, after=target)
             assert container._nodes[0].id == "widget-1"
             assert container._nodes[1].id == "widget-0"
