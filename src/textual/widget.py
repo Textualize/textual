@@ -3572,9 +3572,10 @@ class Widget(DOMNode):
 
     async def _message_loop_exit(self) -> None:
         parent = self._parent
-        children = list(self.children)
+        children = [*self.children, *self._get_virtual_dom()]
         for node in children:
             node.post_message(Prune())
+
         await gather(*[node._task for node in children if node._task is not None])
         await self._dispatch_message(events.Unmount())
         assert isinstance(parent, DOMNode)

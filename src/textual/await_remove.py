@@ -2,6 +2,8 @@
 An *optionally* awaitable object returned by methods that remove widgets.
 """
 
+from __future__ import annotations
+
 import asyncio
 from asyncio import Task, gather
 from typing import Generator
@@ -11,7 +13,11 @@ from ._types import CallbackType
 
 
 class AwaitRemove:
-    def __init__(self, tasks: list[Task], post_remove: CallbackType) -> None:
+    """An awaitable that waits for nodes to be removed."""
+
+    def __init__(
+        self, tasks: list[Task], post_remove: CallbackType | None = None
+    ) -> None:
         self._tasks = tasks
         self._post_remove = post_remove
 
@@ -25,7 +31,7 @@ class AwaitRemove:
         async def await_prune() -> None:
             """Wait for the prune operation to finish."""
             await gather(*tasks)
-            if self._post_remove:
+            if self._post_remove is not None:
                 await invoke(self._post_remove)
 
         return await_prune().__await__()

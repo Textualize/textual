@@ -2820,7 +2820,6 @@ class App(Generic[ReturnType], DOMNode):
         # Close any remaining nodes
         # Should be empty by now
         remaining_nodes = list(self._registry)
-
         for child in remaining_nodes:
             await child._close_messages()
 
@@ -3401,6 +3400,8 @@ class App(Generic[ReturnType], DOMNode):
         Returns:
             Optional awaitable.
         """
+        if not nodes:
+            return AwaitRemove([])
         pruning_nodes: set[Widget] = {*nodes}
         for node in nodes:
             node.post_message(Prune())
