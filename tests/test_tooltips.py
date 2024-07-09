@@ -7,7 +7,6 @@ from textual.widgets import Static
 
 
 class TooltipApp(App[None]):
-
     CSS = """
     Static {
         width: 1fr;

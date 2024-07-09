@@ -108,14 +108,14 @@ class Signal(Generic[SignalT]):
 
         """
         # Don't publish if the DOM is not ready or shutting down
-        if not self._owner.is_attached:
+        if not self._owner.is_attached or self._owner._pruning:
             return
         for ancestor_node in self._owner.ancestors_with_self:
             if not ancestor_node.is_running:
                 return
 
         for node, callbacks in list(self._subscriptions.items()):
-            if not (node.is_running and node.is_attached):
+            if not (node.is_running and node.is_attached) or node._pruning:
                 # Removed nodes that are no longer running
                 self._subscriptions.pop(node)
             else:

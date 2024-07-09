@@ -369,11 +369,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Returns:
             A timer object.
         """
+
         timer = Timer(
             self,
             delay,
             name=name or f"set_timer#{Timer._timer_count}",
-            callback=callback,
+            callback=None if callback is None else partial(self.call_next, callback),
             repeat=0,
             pause=pause,
         )
@@ -464,16 +465,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
-        self.app.screen._invoke_later(
-            message.callback, message._sender or active_message_pump.get()
-        )
-
-    def _close_messages_no_wait(self) -> None:
-        """Request the message queue to immediately exit."""
-        self._message_queue.put_nowait(messages.CloseMessages())
-
-    async def _on_close_messages(self, message: messages.CloseMessages) -> None:
-        await self._close_messages()
+        if self.app._running:
+            self.app.screen._invoke_later(
+                message.callback, message._sender or active_message_pump.get()
+            )
 
     async def _close_messages(self, wait: bool = True) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
@@ -483,7 +478,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
         if self._timers:
             await Timer._stop_all(self._timers)
             self._timers.clear()
-        self._message_queue.put_nowait(events.Unmount())
         Reactive._reset_object(self)
         self._message_queue.put_nowait(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
@@ -522,9 +516,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            if self._timers:
-                await Timer._stop_all(self._timers)
-                self._timers.clear()
+            try:
+                if self._timers:
+                    await Timer._stop_all(self._timers)
+                    self._timers.clear()
+            finally:
+                await self._message_loop_exit()
+
+    async def _message_loop_exit(self) -> None:
+        """Called when the message loop has completed."""
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
@@ -556,6 +556,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _post_mount(self):
         """Called after the object has been mounted."""
+
+    def _close_messages_no_wait(self) -> None:
+        """Request the message queue to immediately exit."""
+        self._message_queue.put_nowait(messages.CloseMessages())
+
+    async def _on_close_messages(self, message: messages.CloseMessages) -> None:
+        await self._close_messages()
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
@@ -802,6 +809,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return True
 
     async def on_callback(self, event: events.Callback) -> None:
+        if self.app._closing:
+            return
         await invoke(event.callback)
 
     # TODO: Does dispatch_key belong on message pump?
