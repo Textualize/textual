@@ -1308,4 +1308,4 @@ def test_bindings_screen_overrides_show(snap_compare):
 
 def test_scroll_visible_with_margin(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/2181"""
-    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible_margin.py")
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible_margin.py", press=["x"])
