@@ -1188,7 +1188,7 @@ def test_example_color_command(snap_compare):
     """Test the color_command example."""
     assert snap_compare(
         EXAMPLES_DIR / "color_command.py",
-        press=["ctrl+backslash", "r", "e", "d", "down", "down", "enter"],
+        press=["ctrl+backslash", "r", "e", "d", "down", "enter"],
     )
 
 
