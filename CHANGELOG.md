@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed scroll_visible with margin https://github.com/Textualize/textual/pull/4719
+
 ## [0.72.0] - 2024-07-09
 
 ### Changed
