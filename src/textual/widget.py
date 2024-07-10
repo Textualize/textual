@@ -2781,6 +2781,8 @@ class Widget(DOMNode):
             region = (
                 (
                     region.translate(-scroll_offset)
+                    .translate(container.styles.margin.top_left)
+                    .translate(container.styles.border.spacing.top_left)
                     .translate(-widget.scroll_offset)
                     .translate(container.virtual_region_with_margin.offset)
                 )

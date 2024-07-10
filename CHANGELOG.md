@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
 
+### Fixed
+
+- Fixed scroll_visible with margin https://github.com/Textualize/textual/pull/4719
+
 ## [0.72.0] - 2024-07-09
 
 ### Changed
