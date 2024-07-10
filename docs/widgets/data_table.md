@@ -2,7 +2,7 @@
 
 A widget to display text in a table.  This includes the ability to update data, use a cursor to navigate data, respond to mouse clicks, delete rows or columns, and individually render each cell as a Rich Text renderable.  DataTable provides an efficiently displayed and updated table capable for most applications.
 
-Specific applications may have custom rules for formatting, numbers, repopulating tables after searching or filtering, and responding to selections.  The widget emits events to interface with custom logic.
+Applications may have custom rules for formatting, numbers, repopulating tables after searching or filtering, and responding to selections.  The widget emits events to interface with custom logic.
 
 - [x] Focusable
 - [ ] Container
@@ -57,13 +57,15 @@ The method [add_column][textual.widgets.DataTable.add_column] also accepts a `ke
 Keys are important because cells in a data table can change location due to factors like row deletion and sorting.
 Thus, using keys instead of coordinates allows us to refer to data without worrying about its current location in the table.
 
-If you want to change the table based solely on coordinates, you can use the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method to convert a coordinate to a _cell key_, which is a `(row_key, column_key)` pair.
-Alternately, many functions take coordinates, such as [`refresh_coordinate`][textual.widgets.DataTable.refresh_coordinate] or [`update_cell_at`][textual.widgets.DataTable.update_cell_at].
+If you want to change the table based solely on coordinates, you may need to convert that coordinate to a cell key first using the [coordinate_to_cell_key][textual.widgets.DataTable.coordinate_to_cell_key] method.
 
 ### Cursors
 
-A cursor allows navigating within a table with the keyboard or mouse.   There are four cursor types:  by cell (the default), by row, by column, and having no cursor.  Change the cursor type by assigning to 
-the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.  The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
+A cursor allows navigating within a table with the keyboard or mouse. There are four cursor types: `"cell"` (the default), `"row"`, `"column"`, and `"none"`.
+
+ Change the cursor type by assigning to 
+the [`cursor_type`][textual.widgets.DataTable.cursor_type] reactive attribute.  
+The coordinate of the cursor is exposed via the [`cursor_coordinate`][textual.widgets.DataTable.cursor_coordinate] reactive attribute.
 
 Using the keyboard, arrow keys,  ++page-up++, ++page-down++, ++home++ and ++end++ move the cursor highlight, emitting a [`CellHighlighted`][textual.widgets.DataTable.CellHighlighted] 
 message, then enter selects the cell, emitting a [`CellSelected`][textual.widgets.DataTable.CellSelected] message.  If the 
@@ -106,7 +108,7 @@ A new table starts with no cell highlighted, i.e., row and column are zero.  You
 
 ### Updating data
 
-Cells can be updated in the `DataTable` by using the [update_cell][textual.widgets.DataTable.update_cell] and [update_cell_at][textual.widgets.DataTable.update_cell_at] methods.
+Cells can be updated using the [update_cell][textual.widgets.DataTable.update_cell] and [update_cell_at][textual.widgets.DataTable.update_cell_at] methods.
 
 ### Removing data
 
