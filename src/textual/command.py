@@ -865,7 +865,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
             clear_current: Should the current content of the list be cleared first?
         """
         # For the moment, this is a fairly naive approach to populating the
-        # command list with a sorted list of commands. Every time we add a
+        # command list with a list of commands. Every time we add a
         # new one we're nuking the list of options and populating them
         # again. If this turns out to not be a great approach, we may try
         # and get a lot smarter with this (ideally OptionList will grow a
@@ -876,7 +876,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
             if command_list.highlighted is not None and not clear_current
             else None
         )
-        command_list.clear_options().add_options(sorted(commands, reverse=True))
+        command_list.clear_options().add_options(commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
         self._list_visible = bool(command_list.option_count)
