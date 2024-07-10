@@ -2387,7 +2387,7 @@ class App(Generic[ReturnType], DOMNode):
         self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
-        if self.is_headless and self._exception is None:
+        if self._exception is None:
             self._exception = error
             self._exception_event.set()
 
