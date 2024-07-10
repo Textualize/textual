@@ -3263,8 +3263,6 @@ class App(Generic[ReturnType], DOMNode):
                 (namespace, parsed_action, action_params),
                 default_namespace,
             )
-        elif callable(action):
-            await action()
         else:
             if isinstance(action, tuple) and self.debug:
                 # It's a tuple and made it this far, which means it'll be a
