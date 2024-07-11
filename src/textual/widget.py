@@ -3239,6 +3239,7 @@ class Widget(DOMNode):
         from .app import ScreenStackError
 
         if disabled and self.mouse_over:
+            # Ensure widget gets a Leave if it is disabled while hovered
             self._message_queue.put_nowait(events.Leave())
         try:
             screen = self.screen
