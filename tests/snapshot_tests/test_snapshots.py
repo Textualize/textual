@@ -1301,10 +1301,33 @@ def test_footer_compact(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "footer_toggle_compact.py")
 
 
+def test_footer_compact_with_hover(snap_compare):
+    """Test Footer in the compact style when the mouse is hovering over a keybinding"""
+
+    async def run_before(pilot) -> None:
+        await pilot.hover("Footer", offset=(0, 0))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", run_before=run_before
+    )
+
+
 def test_footer_standard_after_reactive_change(snap_compare):
     """Test Footer in the standard style after `compact` reactive change"""
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", press=["ctrl+t"]
+    )
+
+
+def test_footer_standard_with_hover(snap_compare):
+    """Test Footer in the standard style when the mouse is hovering over a keybinding"""
+
+    async def run_before(pilot) -> None:
+        await pilot.press("ctrl+t")
+        await pilot.hover("Footer", offset=(0, 0))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", run_before=run_before
     )
 
 
