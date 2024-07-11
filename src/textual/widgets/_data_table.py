@@ -231,10 +231,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | Key(s) | Description |
     | :- | :- |
     | enter | Select cells under the cursor. |
-    | up,k | Move the cursor up. |
-    | down,j | Move the cursor down. |
-    | right,l | Move the cursor right. |
-    | left,h | Move the cursor left. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
+    | right | Move the cursor right. |
+    | left | Move the cursor left. |
     | pageup | Move one page up. |
     | pagedown | Move one page down. |
     | ctrl+home | Move to the top. |
