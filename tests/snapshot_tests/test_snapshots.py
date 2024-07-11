@@ -1298,7 +1298,14 @@ def test_grid_auto(snap_compare):
 
 def test_footer_compact(snap_compare):
     """Test Footer in the compact style"""
-    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_compact.py")
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_toggle_compact.py")
+
+
+def test_footer_standard_after_reactive_change(snap_compare):
+    """Test Footer in the standard style after `compact` reactive change"""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", press=["ctrl+t"]
+    )
 
 
 def test_footer_classic_styling(snap_compare):
