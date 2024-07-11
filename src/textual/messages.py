@@ -18,6 +18,11 @@ class CloseMessages(Message, verbose=True):
 
 
 @rich.repr.auto
+class Prune(Message, verbose=True, bubble=False):
+    """Ask the node to prune (remove from DOM)."""
+
+
+@rich.repr.auto
 class ExitApp(Message, verbose=True):
     """Exit the app."""
 

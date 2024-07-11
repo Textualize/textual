@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import create_task, wait
+from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -76,7 +76,7 @@ from .geometry import (
 )
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from .messages import CallbackType
+from .messages import CallbackType, Prune
 from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
@@ -366,7 +366,7 @@ class Widget(DOMNode):
         )
 
         self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
+        self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
@@ -676,7 +676,7 @@ class Widget(DOMNode):
             loading_indicator = self.get_loading_widget()
             loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
-            return AwaitComplete(remove_indicator, await_mount)
+            return AwaitComplete(remove_indicator, await_mount).call_next(self)
         else:
             return remove_indicator
 
@@ -789,7 +789,7 @@ class Widget(DOMNode):
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
 
-    def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
+    def get_component_rich_style(self, *names: str, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
@@ -800,13 +800,13 @@ class Widget(DOMNode):
             A Rich style object.
         """
 
-        if name not in self._rich_style_cache:
-            component_styles = self.get_component_styles(name)
+        if names not in self._rich_style_cache:
+            component_styles = self.get_component_styles(*names)
             style = component_styles.rich_style
             partial_style = component_styles.partial_rich_style
-            self._rich_style_cache[name] = (style, partial_style)
+            self._rich_style_cache[names] = (style, partial_style)
 
-        style, partial_style = self._rich_style_cache[name]
+        style, partial_style = self._rich_style_cache[names]
 
         return partial_style if partial else style
 
@@ -941,7 +941,7 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        if self._closing:
+        if self._closing or self._pruning:
             return AwaitMount(self, [])
         if not self.is_attached:
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
@@ -1135,8 +1135,9 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        if not self.is_attached:
+        if not self.is_attached or self._pruning:
             return
+
         async with self.batch():
             await self.query("*").exclude(".-textual-system").remove()
             if self.is_attached:
@@ -1633,6 +1634,15 @@ class Widget(DOMNode):
             Content area size.
         """
         return self.content_region.size
+
+    @property
+    def scrollable_size(self) -> Size:
+        """The size of the scrollable content.
+
+        Returns:
+            Scrollable content size.
+        """
+        return self.scrollable_content_region.size
 
     @property
     def outer_size(self) -> Size:
@@ -2771,6 +2781,8 @@ class Widget(DOMNode):
             region = (
                 (
                     region.translate(-scroll_offset)
+                    .translate(container.styles.margin.top_left)
+                    .translate(container.styles.border.spacing.top_left)
                     .translate(-widget.scroll_offset)
                     .translate(container.virtual_region_with_margin.offset)
                 )
@@ -3458,8 +3470,7 @@ class Widget(DOMNode):
         Returns:
             An awaitable object that waits for the widget to be removed.
         """
-
-        await_remove = self.app._remove_nodes([self], self.parent)
+        await_remove = self.app._prune(self, parent=self._parent)
         return await_remove
 
     def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
@@ -3477,7 +3488,7 @@ class Widget(DOMNode):
         children_to_remove = [
             child for child in self.children if match(parsed_selectors, child)
         ]
-        await_remove = self.app._remove_nodes(children_to_remove, self)
+        await_remove = self.app._prune(*children_to_remove, parent=self._parent)
         return await_remove
 
     @asynccontextmanager
@@ -3566,6 +3577,28 @@ class Widget(DOMNode):
             except NoActiveAppError:
                 pass
         return super().post_message(message)
+
+    async def on_prune(self, event: messages.Prune) -> None:
+        """Close message loop when asked to prune."""
+        await self._close_messages(wait=False)
+
+    async def _message_loop_exit(self) -> None:
+        """Clean up DOM tree."""
+        parent = self._parent
+        # Post messages to children, asking them to prune
+        children = [*self.children, *self._get_virtual_dom()]
+        for node in children:
+            node.post_message(Prune())
+
+        # Wait for child nodes to exit
+        await gather(*[node._task for node in children if node._task is not None])
+        # Send unmount event
+        await self._dispatch_message(events.Unmount())
+        assert isinstance(parent, DOMNode)
+        # Finalize removal from DOM
+        parent._nodes._remove(self)
+        self.app._registry.discard(self)
+        self._detach()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.

@@ -491,3 +491,22 @@ async def test_mouse_navigation_messages():
             "on_tabs_tab_activated",
             "on_tabs_tab_activated",
         ]
+
+
+async def test_disabled_tab_is_not_activated_by_clicking_underline():
+    """Regression test for https://github.com/Textualize/textual/issues/4701"""
+
+    class DisabledTabApp(App):
+        def compose(self) -> ComposeResult:
+            yield Tabs(
+                Tab("Enabled", id="enabled"),
+                Tab("Disabled", id="disabled", disabled=True),
+            )
+
+    app = DisabledTabApp()
+    async with app.run_test() as pilot:
+        # Click the underline beneath the disabled tab
+        await pilot.click(Tabs, offset=(14, 2))
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "enabled"

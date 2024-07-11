@@ -16,7 +16,7 @@ ROWS = [
     (10, "Darren Burns", "Scotland", 51.84),
 ]
 
-cursors = cycle(["column", "row", "cell"])
+cursors = cycle(["column", "row", "cell", "none"])
 
 
 class TableApp(App):

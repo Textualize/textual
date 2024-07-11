@@ -206,6 +206,8 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
 
+        self._pruning = False
+
         super().__init__()
 
     def set_reactive(
@@ -484,7 +486,7 @@ class DOMNode(MessagePump):
             ]
         )
 
-    def get_component_styles(self, name: str) -> RenderStyles:
+    def get_component_styles(self, *names: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
 
         Args:
@@ -496,9 +498,16 @@ class DOMNode(MessagePump):
         Returns:
             A Styles object.
         """
-        if name not in self._component_styles:
-            raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
-        styles = self._component_styles[name]
+        styles = RenderStyles(self, Styles(), Styles())
+        for name in names:
+            if name not in self._component_styles:
+                raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
+            component_styles = self._component_styles[name]
+            styles.node = component_styles.node
+            styles.base.merge(component_styles.base)
+            styles.inline.merge(component_styles.inline)
+            styles._updates += 1
+
         return styles
 
     def _post_mount(self):
@@ -777,7 +786,9 @@ class DOMNode(MessagePump):
             my_widget.display = False  # Hide my_widget
             ```
         """
-        return self.styles.display != "none" and not (self._closing or self._closed)
+        return self.styles.display != "none" and not (
+            self._closing or self._closed or self._pruning
+        )
 
     @display.setter
     def display(self, new_val: bool | str) -> None:

@@ -4,6 +4,9 @@ from asyncio import Future, gather
 from typing import Any, Awaitable, Generator
 
 import rich.repr
+from typing_extensions import Self
+
+from .message_pump import MessagePump
 
 
 @rich.repr.auto(angular=True)
@@ -17,6 +20,15 @@ class AwaitComplete:
             awaitables: One or more awaitables to run concurrently.
         """
         self._future: Future[Any] = gather(*awaitables)
+
+    def call_next(self, node: MessagePump) -> Self:
+        """Await after the next message.
+
+        Args:
+            node: The node which created the object.
+        """
+        node.call_next(self)
+        return self
 
     async def __call__(self) -> Any:
         return await self

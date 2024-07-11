@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed issue with `Tabs` where disabled tabs could still be activated by clicking the underline https://github.com/Textualize/textual/issues/4701
+- Fixed scroll_visible with margin https://github.com/Textualize/textual/pull/4719
+
+### Changed
+
+- "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
+
+## [0.72.0] - 2024-07-09
+
+### Changed
+
+- More predictable DOM removals. https://github.com/Textualize/textual/pull/4708
+
+### Fixed
+
+- Fixed clicking separator in OptionList moving cursor https://github.com/Textualize/textual/issues/4710
+- Fixed scrolling issue in OptionList https://github.com/Textualize/textual/pull/4709
+
+## [0.71.0] - 2024-06-29
+
+### Changed
+
+- Snapshot tests will normalize SVG output so that changes with no visual impact don't break snapshots, but this release will break most of them.
+- Breaking change: `App.push_screen` now returns an Awaitable rather than a screen. https://github.com/Textualize/textual/pull/4672
+- Breaking change: `Screen.dismiss` now returns an Awaitable rather than a bool. https://github.com/Textualize/textual/pull/4672
+
+### Fixed
+
+- Fixed grid + keyline when the grid has auto dimensions https://github.com/Textualize/textual/pull/4680
+- Fixed mouse code leakage https://github.com/Textualize/textual/pull/4681
+- Fixed link inside markdown table not posting a `Markdown.LinkClicked` message https://github.com/Textualize/textual/issues/4683
+- Fixed issue with mouse movements on non-active screen https://github.com/Textualize/textual/pull/4688
+
+
 ## [0.70.0] - 2024-06-19
 
 ### Fixed
@@ -2154,6 +2192,8 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.72.0]: https://github.com/Textualize/textual/compare/v0.71.0...v0.72.0
+[0.71.0]: https://github.com/Textualize/textual/compare/v0.70.0...v0.71.0
 [0.70.0]: https://github.com/Textualize/textual/compare/v0.69.0...v0.70.0
 [0.69.0]: https://github.com/Textualize/textual/compare/v0.68.0...v0.69.0
 [0.68.0]: https://github.com/Textualize/textual/compare/v0.67.1...v0.68.0
