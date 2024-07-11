@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `Footer` component style handling of margins/padding for the key https://github.com/Textualize/textual/pull/4651
+- Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
 
 ## [0.72.0] - 2024-07-09
 
