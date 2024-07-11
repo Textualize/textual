@@ -3234,19 +3234,23 @@ class Widget(DOMNode):
         """Update from CSS if has focus state changes."""
         self._update_styles()
 
-    def watch_disabled(self) -> None:
+    def watch_disabled(self, disabled: bool) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
         from .app import ScreenStackError
 
+        if disabled and self.mouse_over:
+            self._message_queue.put_nowait(events.Leave())
         try:
+            screen = self.screen
             if (
-                self.disabled
-                and self.app.focused is not None
-                and self in self.app.focused.ancestors_with_self
+                disabled
+                and screen.focused is not None
+                and self in screen.focused.ancestors_with_self
             ):
-                self.app.focused.blur()
+                screen.focused.blur()
         except (ScreenStackError, NoActiveAppError):
             pass
+
         self._update_styles()
 
     def _size_updated(
