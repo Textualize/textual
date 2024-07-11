@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+
 ### Fixed
 
 - Fixed issue with `Tabs` where disabled tabs could still be activated by clicking the underline https://github.com/Textualize/textual/issues/4701
