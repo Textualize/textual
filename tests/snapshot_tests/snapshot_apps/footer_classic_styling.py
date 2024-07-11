@@ -22,7 +22,10 @@ class ClassicFooterStylingApp(App):
             .footer-key--key {
                 background: $accent-darken-2;
                 color: $text;
-                margin-right: 1;
+            }
+
+            .footer-key--description {
+                padding: 0 1;
             }
         }
     }
