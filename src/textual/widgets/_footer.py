@@ -96,7 +96,6 @@ class FooterKey(Widget):
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")
         key_display = self.key_display
-        # key_margin = self.get_component_styles("footer-key--key").margin
         key_padding = self.get_component_styles("footer-key--key").padding
         description_padding = self.get_component_styles(
             "footer-key--description"
