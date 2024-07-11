@@ -1636,6 +1636,15 @@ class Widget(DOMNode):
         return self.content_region.size
 
     @property
+    def scrollable_size(self) -> Size:
+        """The size of the scrollable content.
+
+        Returns:
+            Scrollable content size.
+        """
+        return self.scrollable_content_region.size
+
+    @property
     def outer_size(self) -> Size:
         """The size of the widget (including padding and border).
 
@@ -2772,6 +2781,8 @@ class Widget(DOMNode):
             region = (
                 (
                     region.translate(-scroll_offset)
+                    .translate(container.styles.margin.top_left)
+                    .translate(container.styles.border.spacing.top_left)
                     .translate(-widget.scroll_offset)
                     .translate(container.virtual_region_with_margin.offset)
                 )

@@ -231,10 +231,10 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | Key(s) | Description |
     | :- | :- |
     | enter | Select cells under the cursor. |
-    | up,k | Move the cursor up. |
-    | down,j | Move the cursor down. |
-    | right,l | Move the cursor right. |
-    | left,h | Move the cursor left. |
+    | up | Move the cursor up. |
+    | down | Move the cursor down. |
+    | right | Move the cursor right. |
+    | left | Move the cursor left. |
     | pageup | Move one page up. |
     | pagedown | Move one page down. |
     | ctrl+home | Move to the top. |
@@ -264,8 +264,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
     | `datatable--header` | Target the header of the data table. |
     | `datatable--header-cursor` | Target cells highlighted by the cursor. |
     | `datatable--header-hover` | Target hovered header or row label cells. |
-    | `datatable--even-row` | Target even rows (row indices start at 0). |
-    | `datatable--odd-row` | Target odd rows (row indices start at 0). |
+    | `datatable--even-row` | Target even rows (row indices start at 0) if zebra_stripes. |
+    | `datatable--odd-row` | Target odd rows (row indices start at 0) if zebra_stripes. |
     """
 
     DEFAULT_CSS = """
@@ -720,7 +720,8 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         self.fixed_columns = fixed_columns
         """The number of columns to fix (prevented from scrolling)."""
         self.zebra_stripes = zebra_stripes
-        """Apply zebra effect on row backgrounds (light, dark, light, dark, ...)."""
+        """Apply alternating styles, datatable--even-row and datatable-odd-row, to create a zebra effect, e.g., 
+        alternating light and dark backgrounds."""
         self.show_cursor = show_cursor
         """Show/hide both the keyboard and hover cursor."""
         self.cursor_foreground_priority = cursor_foreground_priority

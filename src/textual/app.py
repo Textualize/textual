@@ -1461,15 +1461,19 @@ class App(Generic[ReturnType], DOMNode):
             Args:
                 app: App to run.
             """
-            if message_hook is not None:
-                message_hook_context_var.set(message_hook)
-            app._loop = asyncio.get_running_loop()
-            app._thread_id = threading.get_ident()
-            await app._process_messages(
-                ready_callback=on_app_ready,
-                headless=headless,
-                terminal_size=size,
-            )
+
+            try:
+                if message_hook is not None:
+                    message_hook_context_var.set(message_hook)
+                app._loop = asyncio.get_running_loop()
+                app._thread_id = threading.get_ident()
+                await app._process_messages(
+                    ready_callback=on_app_ready,
+                    headless=headless,
+                    terminal_size=size,
+                )
+            finally:
+                app_ready_event.set()
 
         # Launch the app in the "background"
         active_message_pump.set(app)
@@ -2383,7 +2387,7 @@ class App(Generic[ReturnType], DOMNode):
         self._return_code = 1
         # If we're running via pilot and this is the first exception encountered,
         # take note of it so that we can re-raise for test frameworks later.
-        if self.is_headless and self._exception is None:
+        if self._exception is None:
             self._exception = error
             self._exception_event.set()
 
@@ -3259,8 +3263,6 @@ class App(Generic[ReturnType], DOMNode):
                 (namespace, parsed_action, action_params),
                 default_namespace,
             )
-        elif callable(action):
-            await action()
         else:
             if isinstance(action, tuple) and self.debug:
                 # It's a tuple and made it this far, which means it'll be a

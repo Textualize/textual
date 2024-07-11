@@ -366,7 +366,11 @@ class Pilot(Generic[ReturnType]):
         Raises:
             WaitForScreenTimeout: If the screen and its children didn't finish processing within the timeout.
         """
-        children = [self.app, *self.app.screen.walk_children(with_self=True)]
+        try:
+            screen = self.app.screen
+        except Exception:
+            return False
+        children = [self.app, *screen.walk_children(with_self=True)]
         count = 0
         count_zero_event = asyncio.Event()
 
