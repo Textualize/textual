@@ -353,6 +353,8 @@ the `show_line_numbers` attribute to `True` or `False`.
 
 Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
 
+You can also change the start line number (the topmost line number in the gutter) by setting the `line_number_start` reactive attribute.
+
 ### Extending `TextArea`
 
 Sometimes, you may wish to subclass `TextArea` to add some extra functionality.
@@ -506,6 +508,7 @@ A detailed view of these classes is out of scope, but do note that a lot of the 
 | `theme`                | `str`                    | `"css"`       | The theme to use.                                                |
 | `selection`            | `Selection`              | `Selection()` | The current selection.                                           |
 | `show_line_numbers`    | `bool`                   | `False`       | Show or hide line numbers.                                       |
+| `line_number_start`    | `int`                    | `1`           | The start line number in the gutter.                            |
 | `indent_width`         | `int`                    | `4`           | The number of spaces to indent and width of tabs.                |
 | `match_cursor_bracket` | `bool`                   | `True`        | Enable/disable highlighting matching brackets under cursor.      |
 | `cursor_blink`         | `bool`                   | `True`        | Enable/disable blinking of the cursor when the widget has focus. |
