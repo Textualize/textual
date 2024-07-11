@@ -75,7 +75,7 @@ class FooterKey(Widget):
 
     upper_case_keys = reactive(False)
     ctrl_to_caret = reactive(True)
-    compact = reactive(True, layout=True)
+    compact = reactive(True)
 
     def __init__(
         self,
