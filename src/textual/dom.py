@@ -258,7 +258,7 @@ class DOMNode(MessagePump):
 
         internal_name = f"_reactive_{reactive.name}"
         value = getattr(self, internal_name)
-        reactive._set(self, value)
+        reactive._set(self, value, always=True)
 
     def data_bind(
         self,
