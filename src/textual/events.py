@@ -560,7 +560,8 @@ class Enter(Event, bubble=False, verbose=True):
 
 
 class Leave(Event, bubble=False, verbose=True):
-    """Sent when the mouse is moved away from a widget.
+    """Sent when the mouse is moved away from a widget, or if a widget is
+    programmatically disabled while hovered.
 
     - [ ] Bubbles
     - [X] Verbose

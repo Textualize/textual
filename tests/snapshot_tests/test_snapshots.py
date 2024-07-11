@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual.pilot import Pilot
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
 from textual.widgets import RichLog, TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
@@ -1315,3 +1316,15 @@ def test_bindings_screen_overrides_show(snap_compare):
 def test_scroll_visible_with_margin(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/2181"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible_margin.py", press=["x"])
+
+
+def test_programmatic_disable_button(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3130"""
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.hover("#disable-btn")
+        await pilot.press("space")
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "programmatic_disable_button.py", run_before=run_before
+    )
