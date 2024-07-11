@@ -124,12 +124,14 @@ class Footer(ScrollableContainer, can_focus=False, can_focus_children=False):
     Footer {
         layout: grid;
         grid-columns: auto;
-        grid-gutter: 1;
         background: $panel;
         color: $text;
         dock: bottom;
         height: 1;
         scrollbar-size: 0 0;
+        &.-compact {
+            grid-gutter: 1;
+        }
     }
     """
 
