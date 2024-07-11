@@ -247,7 +247,7 @@ class DOMNode(MessagePump):
             ```
 
         Textual will automatically detect when a reactive is set to a new value, but it is unable
-        to detect if a value is _mutated_ (such as updating a list, dict, or attribute of an).
+        to detect if a value is _mutated_ (such as updating a list, dict, or attribute of an object).
         If you do wish to use a collection or other mutable object in a reactive, then you can call
         this method after your reactive is updated. This will ensure that all the reactive _superpowers_
         work.
