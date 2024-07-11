@@ -237,6 +237,19 @@ class DOMNode(MessagePump):
             )
         setattr(self, f"_reactive_{reactive.name}", value)
 
+    def mutate_reactive(self, reactive: Reactive[ReactiveType]) -> None:
+        """Force an update to a mutable reactive.
+
+        This will invoke any associated watchers.
+
+        Args:
+            reactive (_type_): _description_
+        """
+
+        internal_name = f"_reactive_{reactive.name}"
+        value = getattr(self, internal_name)
+        reactive._set(self, value)
+
     def data_bind(
         self,
         *reactives: Reactive[Any],
