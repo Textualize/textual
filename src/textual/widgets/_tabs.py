@@ -510,7 +510,7 @@ class Tabs(Widget, can_focus=True):
             An optionally awaitable object that waits for the tab to be removed.
         """
         if not tab_or_id:
-            return AwaitComplete(self.app._remove_nodes([], None))
+            return AwaitComplete()
 
         if isinstance(tab_or_id, Tab):
             remove_tab = tab_or_id
@@ -518,7 +518,7 @@ class Tabs(Widget, can_focus=True):
             try:
                 remove_tab = self.query_one(f"#tabs-list > #{tab_or_id}", Tab)
             except NoMatches:
-                return AwaitComplete(self.app._remove_nodes([], None))
+                return AwaitComplete()
 
         removing_active_tab = remove_tab.has_class("-active")
         next_tab = self._next_active
@@ -673,7 +673,7 @@ class Tabs(Widget, can_focus=True):
         offset = event.offset + (0, -1)
         self.focus()
         for tab in self.query(Tab):
-            if offset in tab.region:
+            if offset in tab.region and not tab.disabled:
                 self._activate_tab(tab)
                 break
 

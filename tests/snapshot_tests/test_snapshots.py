@@ -1188,7 +1188,7 @@ def test_example_color_command(snap_compare):
     """Test the color_command example."""
     assert snap_compare(
         EXAMPLES_DIR / "color_command.py",
-        press=["ctrl+backslash", "r", "e", "d", "down", "down", "enter"],
+        press=["ctrl+backslash", "r", "e", "d", "down", "enter"],
     )
 
 
@@ -1304,3 +1304,18 @@ def test_footer_compact(snap_compare):
 def test_footer_classic_styling(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4557"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "footer_classic_styling.py")
+
+
+def test_option_list_scrolling_with_multiline_options(snap_compare):
+    # https://github.com/Textualize/textual/issues/4705
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py", press=["up"])
+
+
+def test_bindings_screen_overrides_show(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4382"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "bindings_screen_overrides_show.py")
+
+
+def test_scroll_visible_with_margin(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/2181"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible_margin.py", press=["x"])

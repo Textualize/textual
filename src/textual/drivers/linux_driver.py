@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any
 import rich.repr
 
 from .. import events
+from .._loop import loop_last
 from .._parser import ParseError
 from .._xterm_parser import XTermParser
 from ..driver import Driver
@@ -386,22 +387,33 @@ class LinuxDriver(Driver):
         utf8_decoder = getincrementaldecoder("utf-8")().decode
         decode = utf8_decoder
         read = os.read
-        eof = False
+
+        def process_selector_events(
+            selector_events: list[tuple[selectors.SelectorKey, int]],
+            final: bool = False,
+        ) -> None:
+            """Process events from selector.
+
+            Args:
+                selector_events: List of selector events.
+                final: True if this is the last call.
+
+            """
+            for last, (_selector_key, mask) in loop_last(selector_events):
+                if mask & EVENT_READ:
+                    unicode_data = decode(read(fileno, 1024 * 4), final=final and last)
+                    if not unicode_data:
+                        # This can occur if the stdin is piped
+                        break
+                    for event in feed(unicode_data):
+                        self.process_event(event)
 
         try:
-            while not eof and not self.exit_event.is_set():
-                selector_events = selector.select(0.1)
-                for _selector_key, mask in selector_events:
-                    if mask & EVENT_READ:
-                        unicode_data = decode(
-                            read(fileno, 1024), final=self.exit_event.is_set()
-                        )
-                        if not unicode_data:
-                            # This can occur if the stdin is piped
-                            eof = True
-                            break
-                        for event in feed(unicode_data):
-                            self.process_event(event)
+            while not self.exit_event.is_set():
+                process_selector_events(selector.select(0.1))
+
+            process_selector_events(selector.select(0.1), final=True)
+
         finally:
             selector.close()
             try:

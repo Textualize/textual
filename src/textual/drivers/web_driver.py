@@ -14,7 +14,6 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-import platform
 import signal
 import sys
 from codecs import getincrementaldecoder
@@ -29,7 +28,7 @@ from ..geometry import Size
 from ._byte_stream import ByteStream
 from ._input_reader import InputReader
 
-WINDOWS = platform.system() == "Windows"
+WINDOWS = sys.platform == "win32"
 
 
 class _ExitInput(Exception):
