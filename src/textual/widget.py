@@ -107,6 +107,8 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 _NULL_STYLE = Style()
+_MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Leave)
+_MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
 class AwaitMount:
@@ -1782,11 +1784,13 @@ class Widget(DOMNode):
     @property
     def _self_or_ancestors_disabled(self) -> bool:
         """Is this widget or any of its ancestors disabled?"""
-        return any(
-            node.disabled
-            for node in self.ancestors_with_self
-            if isinstance(node, Widget)
-        )
+
+        node: Widget | None = self
+        while isinstance(node, Widget) and not node.is_dom_root:
+            if node.disabled:
+                return True
+            node = node._parent  # type:ignore[assignment]
+        return False
 
     @property
     def focusable(self) -> bool:
@@ -3714,20 +3718,20 @@ class Widget(DOMNode):
             `True` if the message will be sent, or `False` if it is disabled.
         """
         # Do the normal checking and get out if that fails.
-        if not super().check_message_enabled(message):
+        if not super().check_message_enabled(message) or self._is_prevented(
+            type(message)
+        ):
             return False
-        message_type = type(message)
-        if self._is_prevented(message_type):
-            return False
+
         # Mouse scroll events should always go through, this allows mouse
         # wheel scrolling to pass through disabled widgets.
-        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+        if isinstance(message, _MOUSE_EVENTS_ALLOW_IF_DISABLED):
             return True
         # Otherwise, if this is any other mouse event, the widget receiving
         # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
-            if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
+            if isinstance(message, _MOUSE_EVENTS_DISALLOW_IF_DISABLED)
             else True
         )
 
