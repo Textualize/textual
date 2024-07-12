@@ -390,6 +390,24 @@ In practice, this means that Textual can detect changes to basic types (int, flo
 
 You can still use collections and other mutable objects in reactives, but you will need to call [`mutate_reactive`][textual.dom.DOMNode.mutate_reactive] after making changes for the reactive superpowers to work.
 
+Here's an example, that uses a reactive list:
+
+=== "set_reactive03.py"
+
+    ```python hl_lines="16"
+    --8<-- "docs/examples/guide/reactivity/set_reactive03.py"
+    ```
+
+    1. Creates a reactive list of strings.
+    2. Explicitly mutate the reactive list.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/reactivity/set_reactive03.py" press="W,i,l,l,enter"}
+    ```
+
+Note the call to `mutate_reactive`. Without it, the display would not update when a new name is appended to the list.
+
 ## Data binding
 
 Reactive attributes from one widget may be *bound* (connected) to another widget, so that changes to a single reactive will automatically update another widget (potentially more than one).
