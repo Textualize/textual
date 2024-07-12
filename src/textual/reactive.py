@@ -287,7 +287,7 @@ class Reactive(Generic[ReactiveType]):
         if callable(public_validate_function):
             value = public_validate_function(value)
         # If the value has changed, or this is the first time setting the value
-        if always or current_value != value or self._always_update:
+        if always or self._always_update or current_value != value:
             # Store the internal value
             setattr(obj, self.internal_name, value)
 
