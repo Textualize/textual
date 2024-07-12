@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
-- Added `DOMNode.mutate_reactive`
+- Added `DOMNode.mutate_reactive` https://github.com/Textualize/textual/pull/4731
 
 ### Fixed
 

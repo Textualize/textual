@@ -383,6 +383,13 @@ The following app contains a fix for this issue:
 
 The line `self.set_reactive(Greeter.greeting, greeting)` sets the `greeting` attribute but doesn't immediately invoke the watcher.
 
+## Mutable reactives
+
+Textual can detect when you set a reactive to a new value, but it can't detect when you _mutate_ a value.
+In practice, this means that Textual can detect changes to basic types (int, float, str, etc.), but not if you update a collection, such as a list or dict. 
+
+You can still use collections and other mutable objects in reactives, but you will need to call [`mutate_reactive`][textual.dom.DOMNode.mutate_reactive] after making changes for the reactive superpowers to work.
+
 ## Data binding
 
 Reactive attributes from one widget may be *bound* (connected) to another widget, so that changes to a single reactive will automatically update another widget (potentially more than one).
