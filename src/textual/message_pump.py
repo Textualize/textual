@@ -258,9 +258,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
     @property
     def is_parent_active(self) -> bool:
         """Is the parent active?"""
-        return bool(
-            self._parent and not self._parent._closed and not self._parent._closing
-        )
+        parent = self._parent
+        return bool(parent is not None and not parent._closed and not parent._closing)
 
     @property
     def is_running(self) -> bool:
