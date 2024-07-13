@@ -314,9 +314,8 @@ async def test_hover_coordinate_persists_after_first_weekday_changes():
 
 
 async def test_calendar_updates_when_up_key_pressed_on_first_row():
-    """If `show_other_months` is True, pressing the `up` key when the cursor
-    is on the first row should update the date to the previous week and bring
-    that month into view"""
+    """Pressing the `up` key when the cursor is on the first row should update
+    the date to the previous week and bring that month into view"""
 
     app = MonthCalendarApp(date=datetime.date(2021, 6, 3))
     async with app.run_test() as pilot:
@@ -335,9 +334,8 @@ async def test_calendar_updates_when_up_key_pressed_on_first_row():
 
 
 async def test_calendar_updates_when_down_key_pressed_on_last_row():
-    """If `show_other_months` is True, pressing the `down` key when the cursor
-    is on the last row should update the date to the next week and bring
-    that month into view"""
+    """Pressing the `down` key when the cursor is on the last row should update
+    the date to the next week and bring that month into view"""
 
     app = MonthCalendarApp(date=datetime.date(2021, 5, 31))
     async with app.run_test() as pilot:
@@ -355,10 +353,9 @@ async def test_calendar_updates_when_down_key_pressed_on_last_row():
         assert table.get_cell_at(Coordinate(0, 0)).plain == "31"
 
 
-async def test_cursor_wraps_around_to_previous_or_next_date_in_month():
+async def test_cursor_wraps_around_to_previous_or_next_date():
     """Pressing the `left`/`right` key when the cursor is on the first/last
-    column should wrap around the cursor to the previous/next date in the
-    month"""
+    column should wrap around the cursor to the previous/next date"""
 
     app = MonthCalendarApp(date=datetime.date(2021, 6, 6))
     async with app.run_test() as pilot:
@@ -376,9 +373,8 @@ async def test_cursor_wraps_around_to_previous_or_next_date_in_month():
 
 
 async def test_calendar_updates_when_date_outside_month_highlighted():
-    """If `show_other_months` is True, highlighting a date from the previous
-    or next month should update the calendar to bring that entire month into
-    view"""
+    """Highlighting a date from the previous or next month should update the
+    calendar to bring that entire month into view"""
 
     app = MonthCalendarApp(
         date=datetime.date(2021, 6, 1),
@@ -427,11 +423,6 @@ async def test_calendar_if_show_other_months_is_false():
         assert month_calendar.date == expected_date
         assert table.cursor_coordinate == expected_coordinate
         assert app.messages == expected_messages
-
-        await pilot.press("left")
-        assert table.cursor_coordinate == expected_coordinate
-        assert app.messages == expected_messages
-        assert month_calendar.date == expected_date
 
         await pilot.click(MonthCalendar, offset=(3, 1))
         assert table.cursor_coordinate == expected_coordinate

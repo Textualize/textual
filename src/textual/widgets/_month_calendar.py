@@ -331,49 +331,25 @@ class MonthCalendar(Widget):
         table.action_select_cursor()
 
     def action_previous_week(self) -> None:
-        table = self.query_one(MonthCalendarTable)
-        if self.show_other_months and table.cursor_row == 0:
-            self.date -= relativedelta(weeks=1)
-        else:
-            table.action_cursor_up()
+        self.date -= relativedelta(weeks=1)
 
     def action_next_week(self) -> None:
-        table = self.query_one(MonthCalendarTable)
-        if self.show_other_months and table.cursor_row == table.row_count - 1:
-            self.date += relativedelta(weeks=1)
-        else:
-            table.action_cursor_down()
+        self.date += relativedelta(weeks=1)
 
     def action_next_day(self) -> None:
-        table = self.query_one(MonthCalendarTable)
-        if table.cursor_column == len(table.columns) - 1:
-            next_date = self.date + relativedelta(days=1)
-            if self.show_other_months or next_date.month == self.date.month:
-                self.date = next_date
-        else:
-            table.action_cursor_right()
+        self.date += relativedelta(days=1)
 
     def action_previous_day(self) -> None:
-        table = self.query_one(MonthCalendarTable)
-        if table.cursor_column == 0:
-            previous_date = self.date - relativedelta(days=1)
-            if self.show_other_months or previous_date.month == self.date.month:
-                self.date = previous_date
-        else:
-            table.action_cursor_left()
+        self.date -= relativedelta(days=1)
 
     def action_next_month(self) -> None:
-        if self.show_other_months:
-            self.next_month()
+        self.next_month()
 
     def action_previous_month(self) -> None:
-        if self.show_other_months:
-            self.previous_month()
+        self.previous_month()
 
     def action_next_year(self) -> None:
-        if self.show_other_months:
-            self.next_year()
+        self.next_year()
 
     def action_previous_year(self) -> None:
-        if self.show_other_months:
-            self.previous_year()
+        self.previous_year()
