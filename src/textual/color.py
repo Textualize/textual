@@ -223,6 +223,7 @@ class Color(NamedTuple):
         return color
 
     @property
+    @lru_cache(1024)
     def rich_color(self) -> RichColor:
         """This color encoded in Rich's Color class.
 
