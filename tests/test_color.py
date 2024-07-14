@@ -247,7 +247,7 @@ def test_gradient():
         (0, Color(255, 0, 0)),
         (0.5, "blue"),
         (1, Color(0, 255, 0)),
-        accuracy=11,
+        quality=11,
     )
 
     assert gradient.get_color(-1) == Color(255, 0, 0)

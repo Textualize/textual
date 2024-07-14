@@ -551,7 +551,7 @@ class Color(NamedTuple):
 class Gradient:
     """Defines a color gradient."""
 
-    def __init__(self, *stops: tuple[float, Color | str], accuracy: int = 200) -> None:
+    def __init__(self, *stops: tuple[float, Color | str], quality: int = 200) -> None:
         """Create a color gradient that blends colors to form a spectrum.
 
         A gradient is defined by a sequence of "stops" consisting of a tuple containing a float and a color.
@@ -559,13 +559,13 @@ class Gradient:
         Colors may be given as a [Color][textual.color.Color] instance, or a string that
         can be parsed into a Color (with [Color.parse][textual.color.Color.parse]).
 
-        The accuracy argument can be treated as the quality of a gradient.
+        The quality of the argument defines the number of _steps_ in the gradient.
         200 was chosen so that there was no obvious banding in [LinearGradient][textual.renderables.gradient.LinearGradient].
         Higher values are unlikely to yield any benefit, but lower values may result in quicker rendering.
 
         Args:
             stops: Color stops.
-            accuracy: The accuracy of the colors (the number of steps in the gradient).
+            quality: The number of steps in the gradient.
 
         Raises:
             ValueError: If any stops are missing (must be at least a stop for 0 and 1).
@@ -587,7 +587,7 @@ class Gradient:
             raise ValueError("First stop must be 0.")
         if self._stops[-1][0] != 1.0:
             raise ValueError("Last stop must be 1.")
-        self._accuracy = accuracy
+        self._quality = quality
         self._colors: list[Color] | None = None
         self._rich_colors: list[RichColor] | None = None
 
@@ -595,14 +595,14 @@ class Gradient:
     def colors(self) -> list[Color]:
         """A list of colors in the gradient."""
         position = 0
-        accuracy = self._accuracy
+        quality = self._quality
 
         if self._colors is None:
             colors: list[Color] = []
             add_color = colors.append
             (stop1, color1), (stop2, color2) = self._stops[0:2]
-            for step_position in range(accuracy):
-                step = step_position / (accuracy - 1)
+            for step_position in range(quality):
+                step = step_position / (quality - 1)
                 while step > stop2:
                     position += 1
                     (stop1, color1), (stop2, color2) = self._stops[
@@ -610,7 +610,7 @@ class Gradient:
                     ]
                 add_color(color1.blend(color2, (step - stop1) / (stop2 - stop1)))
             self._colors = colors
-        assert len(self._colors) == self._accuracy
+        assert len(self._colors) == self._quality
         return self._colors
 
     @property
@@ -631,8 +631,8 @@ class Gradient:
         Returns:
             A Textual color.
         """
-        accuracy = self._accuracy - 1
-        color_index = int(clamp(position * accuracy, 0, accuracy))
+        quality = self._quality - 1
+        color_index = int(clamp(position * quality, 0, quality))
         return self.colors[color_index]
 
     def get_rich_color(self, position: float) -> RichColor:
@@ -646,8 +646,8 @@ class Gradient:
         Returns:
             A (Rich) color.
         """
-        accuracy = self._accuracy - 1
-        color_index = int(clamp(position * accuracy, 0, accuracy))
+        quality = self._quality - 1
+        color_index = int(clamp(position * quality, 0, quality))
         return self.rich_colors[color_index]
 
 
