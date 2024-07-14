@@ -10,8 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
-- Added "accuracy" parameter to `textual.color.Gradient`
-- Added `textual.color.Gradient.get_rich_color`
+- Added "accuracy" parameter to `textual.color.Gradient` https://github.com/Textualize/textual/pull/4739
+- Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
 
 ### Fixed
 
