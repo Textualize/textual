@@ -560,7 +560,7 @@ class Gradient:
         can be parsed into a Color (with [Color.parse][textual.color.Color.parse]).
 
         The accuracy argument can be treated as the quality of a gradient.
-        200 was chosen so that there was no obvious banding.
+        200 was chosen so that there was no obvious banding in [LinearGradient][textual.renderables.gradient.LinearGradient].
         Higher values are unlikely to yield any benefit, but lower values may result in quicker rendering.
 
         Args:
