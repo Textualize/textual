@@ -559,6 +559,10 @@ class Gradient:
         Colors may be given as a [Color][textual.color.Color] instance, or a string that
         can be parsed into a Color (with [Color.parse][textual.color.Color.parse]).
 
+        The accuracy argument can be treated as the quality of a gradient.
+        200 was chosen so that there was no obvious banding.
+        Higher values are unlikely to yield any benefit, but lower values may result in quicker rendering.
+
         Args:
             stops: Color stops.
             accuracy: The accuracy of the colors (the number of steps in the gradient).
