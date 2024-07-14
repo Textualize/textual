@@ -615,7 +615,7 @@ class Gradient:
 
     @property
     def rich_colors(self) -> list[RichColor]:
-        """I list of colors in the gradient (for the Rich library)."""
+        """A list of colors in the gradient (for the Rich library)."""
         if self._rich_colors is None:
             self._rich_colors = [color.rich_color for color in self.colors]
         return self._rich_colors
