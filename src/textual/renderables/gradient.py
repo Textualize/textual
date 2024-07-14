@@ -74,10 +74,8 @@ class LinearGradient:
 
         new_line = Segment.line()
 
-        color_gradient = self._color_gradient
-
         _Segment = Segment
-        get_color = color_gradient.get_rich_color
+        get_color = self._color_gradient.get_rich_color
         from_color = Style.from_color
 
         for line_y in range(height):
