@@ -598,8 +598,8 @@ class Gradient:
             add_color = colors.append
             (stop1, color1), (stop2, color2) = self._stops[0:2]
             for step_position in range(accuracy):
-                step = step_position / accuracy
-                while step >= stop2:
+                step = step_position / (accuracy - 1)
+                while step > stop2:
                     position += 1
                     (stop1, color1), (stop2, color2) = self._stops[
                         position : position + 2
@@ -627,7 +627,8 @@ class Gradient:
         Returns:
             A Textual color.
         """
-        color_index = int(clamp(position, 0, 1) * (self._accuracy - 1))
+        accuracy = self._accuracy - 1
+        color_index = int(clamp(position * accuracy, 0, accuracy))
         return self.colors[color_index]
 
     def get_rich_color(self, position: float) -> RichColor:
@@ -641,7 +642,8 @@ class Gradient:
         Returns:
             A (Rich) color.
         """
-        color_index = int(clamp(position, 0, 1) * (self._accuracy - 1))
+        accuracy = self._accuracy - 1
+        color_index = int(clamp(position * accuracy, 0, accuracy))
         return self.rich_colors[color_index]
 
 
