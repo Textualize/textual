@@ -196,7 +196,7 @@ def default_cell_formatter(
     elif isinstance(obj, float):
         content = f"{obj:.2f}"
     else:
-        content = str(obj)
+        return obj
 
     if height:
         # Let's throw away lines which definitely won't appear in the cell
@@ -1648,9 +1648,7 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
             for column, cell in zip_longest(self.ordered_columns, cells)
         }
 
-        label = Text.from_markup(label) if isinstance(label, str) else label
-        if label is not None:
-            label.no_wrap = height == 1
+        label = Text.from_markup(label, end="") if isinstance(label, str) else label
 
         # Rows with auto-height get a height of 0 because 1) we need an integer height
         # to do some intermediate computations and 2) because 0 doesn't impact the data
