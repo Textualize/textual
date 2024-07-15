@@ -3478,22 +3478,33 @@ class Widget(DOMNode):
         await_remove = self.app._prune(self, parent=self._parent)
         return await_remove
 
-    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+    def remove_children(
+        self, selector: str | type[QueryType] | Iterable[Widget] = "*"
+    ) -> AwaitRemove:
         """Remove the immediate children of this Widget from the DOM.
 
         Args:
-            selector: A CSS selector to specify which direct children to remove.
+            selector: A CSS selector or iterable of widgets to remove.
 
         Returns:
             An awaitable object that waits for the direct children to be removed.
         """
-        if not isinstance(selector, str):
+
+        if callable(selector) and issubclass(selector, Widget):
             selector = selector.__name__
-        parsed_selectors = parse_selectors(selector)
-        children_to_remove = [
-            child for child in self.children if match(parsed_selectors, child)
-        ]
-        await_remove = self.app._prune(*children_to_remove, parent=self._parent)
+
+        children_to_remove: Iterable[Widget]
+
+        if isinstance(selector, str):
+            parsed_selectors = parse_selectors(selector)
+            children_to_remove = [
+                child for child in self.children if match(parsed_selectors, child)
+            ]
+        else:
+            children_to_remove = selector
+        await_remove = self.app._prune(
+            *children_to_remove, parent=cast(DOMNode, self._parent)
+        )
         return await_remove
 
     @asynccontextmanager
