@@ -1328,3 +1328,8 @@ def test_programmatic_disable_button(snap_compare):
     assert snap_compare(
         SNAPSHOT_APPS_DIR / "programmatic_disable_button.py", run_before=run_before
     )
+
+
+def test_toggle_style_order(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3421"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "toggle_style_order.py")
