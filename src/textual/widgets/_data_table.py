@@ -9,6 +9,7 @@ from typing import Any, Callable, ClassVar, Generic, Iterable, NamedTuple, TypeV
 import rich.repr
 from rich.console import RenderableType
 from rich.padding import Padding
+from rich.protocol import is_renderable
 from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text, TextType
@@ -191,10 +192,14 @@ def default_cell_formatter(
         A renderable to be displayed which represents the data.
     """
     # Get the string which will be displayed in the cell.
+    possible_markup = False
     if isinstance(obj, str):
+        possible_markup = True
         content = obj
     elif isinstance(obj, float):
         content = f"{obj:.2f}"
+    elif not is_renderable(obj):
+        content = str(obj)
     else:
         return obj
 
@@ -206,6 +211,10 @@ def default_cell_formatter(
         if trim_position != -1 and trim_position != len(content) - 1:
             content = content[:trim_position]
 
+    if possible_markup:
+        text = Text.from_markup(content, end="")
+        text.no_wrap = not wrap
+        return text
     return Text(content, no_wrap=not wrap, end="")
 
 
