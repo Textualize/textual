@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 
 ### Fixed
 
