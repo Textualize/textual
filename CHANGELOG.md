@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
 - Added "quality" parameter to `textual.color.Gradient` https://github.com/Textualize/textual/pull/4739
 - Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
+- `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735
 - Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 
 ### Fixed
@@ -19,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issue with `Tabs` where disabled tabs could still be activated by clicking the underline https://github.com/Textualize/textual/issues/4701
 - Fixed scroll_visible with margin https://github.com/Textualize/textual/pull/4719
 - Fixed programmatically disabling button stuck in hover state https://github.com/Textualize/textual/pull/4724
+- Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 
 ### Changed
 
