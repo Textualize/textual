@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
+- `TreeNodeSelected` messages are now posted before `TreeNodeExpanded` messages
+when an expandable node is selected https://github.com/Textualize/textual/pull/4753
 
 ## [0.72.0] - 2024-07-09
 
