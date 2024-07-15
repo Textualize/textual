@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
 - `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735
+- Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 
 ### Fixed
 
