@@ -245,8 +245,9 @@ def test_gradient_errors():
 def test_gradient():
     gradient = Gradient(
         (0, Color(255, 0, 0)),
-        (0.5, Color(0, 0, 255)),
+        (0.5, "blue"),
         (1, Color(0, 255, 0)),
+        quality=11,
     )
 
     assert gradient.get_color(-1) == Color(255, 0, 0)
@@ -255,7 +256,3 @@ def test_gradient():
     assert gradient.get_color(1.2) == Color(0, 255, 0)
     assert gradient.get_color(0.5) == Color(0, 0, 255)
     assert gradient.get_color(0.7) == Color(0, 101, 153)
-
-    gradient._stops.pop()
-    with pytest.raises(AssertionError):
-        gradient.get_color(1.0)

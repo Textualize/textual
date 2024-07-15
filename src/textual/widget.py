@@ -59,6 +59,7 @@ from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
+from .color import Color
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
@@ -107,6 +108,8 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 _NULL_STYLE = Style()
+_MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Leave)
+_MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
 class AwaitMount:
@@ -803,6 +806,14 @@ class Widget(DOMNode):
         if names not in self._rich_style_cache:
             component_styles = self.get_component_styles(*names)
             style = component_styles.rich_style
+            text_opacity = component_styles.text_opacity
+            if text_opacity < 1 and style.bgcolor is not None:
+                style += Style.from_color(
+                    (
+                        Color.from_rich_color(style.bgcolor)
+                        + component_styles.color.multiply_alpha(text_opacity)
+                    ).rich_color
+                )
             partial_style = component_styles.partial_rich_style
             self._rich_style_cache[names] = (style, partial_style)
 
@@ -1782,11 +1793,13 @@ class Widget(DOMNode):
     @property
     def _self_or_ancestors_disabled(self) -> bool:
         """Is this widget or any of its ancestors disabled?"""
-        return any(
-            node.disabled
-            for node in self.ancestors_with_self
-            if isinstance(node, Widget)
-        )
+
+        node: Widget | None = self
+        while isinstance(node, Widget) and not node.is_dom_root:
+            if node.disabled:
+                return True
+            node = node._parent  # type:ignore[assignment]
+        return False
 
     @property
     def focusable(self) -> bool:
@@ -3478,22 +3491,33 @@ class Widget(DOMNode):
         await_remove = self.app._prune(self, parent=self._parent)
         return await_remove
 
-    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+    def remove_children(
+        self, selector: str | type[QueryType] | Iterable[Widget] = "*"
+    ) -> AwaitRemove:
         """Remove the immediate children of this Widget from the DOM.
 
         Args:
-            selector: A CSS selector to specify which direct children to remove.
+            selector: A CSS selector or iterable of widgets to remove.
 
         Returns:
             An awaitable object that waits for the direct children to be removed.
         """
-        if not isinstance(selector, str):
+
+        if callable(selector) and issubclass(selector, Widget):
             selector = selector.__name__
-        parsed_selectors = parse_selectors(selector)
-        children_to_remove = [
-            child for child in self.children if match(parsed_selectors, child)
-        ]
-        await_remove = self.app._prune(*children_to_remove, parent=self._parent)
+
+        children_to_remove: Iterable[Widget]
+
+        if isinstance(selector, str):
+            parsed_selectors = parse_selectors(selector)
+            children_to_remove = [
+                child for child in self.children if match(parsed_selectors, child)
+            ]
+        else:
+            children_to_remove = selector
+        await_remove = self.app._prune(
+            *children_to_remove, parent=cast(DOMNode, self._parent)
+        )
         return await_remove
 
     @asynccontextmanager
@@ -3714,20 +3738,20 @@ class Widget(DOMNode):
             `True` if the message will be sent, or `False` if it is disabled.
         """
         # Do the normal checking and get out if that fails.
-        if not super().check_message_enabled(message):
+        if not super().check_message_enabled(message) or self._is_prevented(
+            type(message)
+        ):
             return False
-        message_type = type(message)
-        if self._is_prevented(message_type):
-            return False
+
         # Mouse scroll events should always go through, this allows mouse
         # wheel scrolling to pass through disabled widgets.
-        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+        if isinstance(message, _MOUSE_EVENTS_ALLOW_IF_DISABLED):
             return True
         # Otherwise, if this is any other mouse event, the widget receiving
         # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
-            if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
+            if isinstance(message, _MOUSE_EVENTS_DISALLOW_IF_DISABLED)
             else True
         )
 
