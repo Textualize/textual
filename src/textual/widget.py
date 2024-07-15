@@ -41,8 +41,6 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
 
-from .color import Color
-
 if TYPE_CHECKING:
     from .app import RenderResult
 
@@ -61,6 +59,7 @@ from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
+from .color import Color
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
