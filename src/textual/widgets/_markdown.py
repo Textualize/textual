@@ -5,6 +5,7 @@ import re
 from functools import partial
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
+from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -781,7 +782,7 @@ class Markdown(Widget):
             super().__init__()
             self.markdown: Markdown = markdown
             """The `Markdown` widget containing the link clicked."""
-            self.href: str = href
+            self.href: str = unquote(href)
             """The link that was selected."""
 
         @property

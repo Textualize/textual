@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
+- `Markdown.LinkClicked.href` is now automatically unquoted
 
 ## [0.72.0] - 2024-07-09
 
