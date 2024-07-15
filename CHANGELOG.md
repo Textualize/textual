@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
 - `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735
 - Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
+- Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
 
 ### Fixed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed programmatically disabling button stuck in hover state https://github.com/Textualize/textual/pull/4724
 - Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 - Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
+- Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
 
 ### Changed
 
