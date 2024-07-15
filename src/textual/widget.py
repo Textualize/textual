@@ -59,6 +59,7 @@ from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
+from .color import Color
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
@@ -805,6 +806,14 @@ class Widget(DOMNode):
         if names not in self._rich_style_cache:
             component_styles = self.get_component_styles(*names)
             style = component_styles.rich_style
+            text_opacity = component_styles.text_opacity
+            if text_opacity < 1 and style.bgcolor is not None:
+                style += Style.from_color(
+                    (
+                        Color.from_rich_color(style.bgcolor)
+                        + component_styles.color.multiply_alpha(text_opacity)
+                    ).rich_color
+                )
             partial_style = component_styles.partial_rich_style
             self._rich_style_cache[names] = (style, partial_style)
 
