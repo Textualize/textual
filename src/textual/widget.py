@@ -41,7 +41,7 @@ from rich.style import Style
 from rich.text import Text
 from typing_extensions import Self
 
-from textual.color import Color
+from .color import Color
 
 if TYPE_CHECKING:
     from .app import RenderResult
