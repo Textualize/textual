@@ -58,8 +58,8 @@ async def test_tree_node_selected_message() -> None:
         await pilot.press("enter")
         await pilot.pause()
         assert pilot.app.messages == [
-            ("NodeExpanded", "test-tree"),
             ("NodeSelected", "test-tree"),
+            ("NodeExpanded", "test-tree"),
         ]
 
 
@@ -151,8 +151,8 @@ async def test_tree_node_highlighted_message() -> None:
         await pilot.press("enter", "down")
         await pilot.pause()
         assert pilot.app.messages == [
-            ("NodeExpanded", "test-tree"),
             ("NodeSelected", "test-tree"),
+            ("NodeExpanded", "test-tree"),
             ("NodeHighlighted", "test-tree"),
         ]
 
