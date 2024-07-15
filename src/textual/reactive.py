@@ -262,7 +262,7 @@ class Reactive(Generic[ReactiveType]):
         else:
             return getattr(obj, internal_name)
 
-    def __set__(self, obj: Reactable, value: ReactiveType) -> None:
+    def _set(self, obj: Reactable, value: ReactiveType, always: bool = False) -> None:
         _rich_traceback_omit = True
 
         if not hasattr(obj, "_id"):
@@ -287,7 +287,7 @@ class Reactive(Generic[ReactiveType]):
         if callable(public_validate_function):
             value = public_validate_function(value)
         # If the value has changed, or this is the first time setting the value
-        if current_value != value or self._always_update:
+        if always or self._always_update or current_value != value:
             # Store the internal value
             setattr(obj, self.internal_name, value)
 
@@ -307,6 +307,11 @@ class Reactive(Generic[ReactiveType]):
                     layout=self._layout,
                     recompose=self._recompose,
                 )
+
+    def __set__(self, obj: Reactable, value: ReactiveType) -> None:
+        _rich_traceback_omit = True
+
+        self._set(obj, value)
 
     @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:
