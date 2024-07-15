@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735
 - Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 - Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
+- - Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
 
 ### Fixed
 
@@ -31,6 +32,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
 - `TreeNodeSelected` messages are now posted before `TreeNodeExpanded` messages
 when an expandable node is selected https://github.com/Textualize/textual/pull/4753
+- `Markdown.LinkClicked.href` is now automatically unquoted https://github.com/Textualize/textual/pull/4749
+
 
 ## [0.72.0] - 2024-07-09
 
@@ -57,7 +60,6 @@ when an expandable node is selected https://github.com/Textualize/textual/pull/4
 - Fixed mouse code leakage https://github.com/Textualize/textual/pull/4681
 - Fixed link inside markdown table not posting a `Markdown.LinkClicked` message https://github.com/Textualize/textual/issues/4683
 - Fixed issue with mouse movements on non-active screen https://github.com/Textualize/textual/pull/4688
-
 
 ## [0.70.0] - 2024-06-19
 
