@@ -258,11 +258,8 @@ class ListView(VerticalScroll, can_focus=True, can_focus_children=False):
             An awaitable object that waits for the direct children to be removed.
         """
         items = self.query("ListItem")
-        items_to_remove = []
-        for index in indices:
-            items_to_remove.append(items[index])
-
-        await_remove = self.app._prune(*items_to_remove, parent=self)
+        items_to_remove = [items[index] for index in indices]
+        await_remove = self.remove_children(items_to_remove)
         return await_remove
 
     def action_select_cursor(self) -> None:

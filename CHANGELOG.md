@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735
 
 ### Fixed
 
