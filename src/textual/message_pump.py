@@ -297,8 +297,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             `True` if the message will be sent, or `False` if it is disabled.
         """
 
-        enabled = type(message) not in self._disabled_messages
-        return enabled
+        return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
         """Disable message types from being processed."""

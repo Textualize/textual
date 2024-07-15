@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Added `DOMNode.mutate_reactive` https://github.com/Textualize/textual/pull/4731
 - Added "quality" parameter to `textual.color.Gradient` https://github.com/Textualize/textual/pull/4739
 - Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
 - `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735

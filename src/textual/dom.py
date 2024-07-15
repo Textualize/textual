@@ -221,7 +221,7 @@ class DOMNode(MessagePump):
             ```
 
         Args:
-            name: Name of reactive attribute.
+            reactive: A reactive property (use the class scope syntax, i.e. `MyClass.my_reactive`).
             value: New value of reactive.
 
         Raises:
@@ -236,6 +236,29 @@ class DOMNode(MessagePump):
                 "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
             )
         setattr(self, f"_reactive_{reactive.name}", value)
+
+    def mutate_reactive(self, reactive: Reactive[ReactiveType]) -> None:
+        """Force an update to a mutable reactive.
+
+        Example:
+            ```python
+            self.reactive_name_list.append("Jessica")
+            self.mutate_reactive(MyClass.reactive_name_list)
+            ```
+
+        Textual will automatically detect when a reactive is set to a new value, but it is unable
+        to detect if a value is _mutated_ (such as updating a list, dict, or attribute of an object).
+        If you do wish to use a collection or other mutable object in a reactive, then you can call
+        this method after your reactive is updated. This will ensure that all the reactive _superpowers_
+        work.
+
+        Args:
+            reactive: A reactive property (use the class scope syntax, i.e. `MyClass.my_reactive`).
+        """
+
+        internal_name = f"_reactive_{reactive.name}"
+        value = getattr(self, internal_name)
+        reactive._set(self, value, always=True)
 
     def data_bind(
         self,
