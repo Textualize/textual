@@ -154,21 +154,21 @@ class CellKey(NamedTuple):
         yield "column_key", self.column_key
 
 
-def _find_nth_newline(string: str, n: int) -> int:
-    """Find the nth newline character in a string.
+def _find_newline(string: str, number: int) -> int:
+    """Find newline number n (the nth newline) in a string.
 
     Args:
         string: The string to search.
-        n: The nth newline character to find.
+        number: The nth newline character to find.
 
     Returns:
         The index of the nth newline character, or -1 if not found.
     """
-    if not string or n < 1:
+    if not string or number < 1:
         return -1
 
     pos = -1
-    for _ in range(n):
+    for _ in range(number):
         pos = string.find("\n", pos + 1)
         if pos == -1:
             break
@@ -207,7 +207,7 @@ def default_cell_formatter(
         # Let's throw away lines which definitely won't appear in the cell
         # after wrapping using the height constraint. A cell can only grow
         # vertically after wrapping occurs, so this is a safe operation.
-        trim_position = _find_nth_newline(content, height)
+        trim_position = _find_newline(content, height)
         if trim_position != -1 and trim_position != len(content) - 1:
             content = content[:trim_position]
 
