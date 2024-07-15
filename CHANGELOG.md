@@ -29,6 +29,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
 - `Markdown.LinkClicked.href` is now automatically unquoted https://github.com/Textualize/textual/pull/4749
 
+### Added
+
+- Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
+
 ## [0.72.0] - 2024-07-09
 
 ### Changed
@@ -54,7 +58,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed mouse code leakage https://github.com/Textualize/textual/pull/4681
 - Fixed link inside markdown table not posting a `Markdown.LinkClicked` message https://github.com/Textualize/textual/issues/4683
 - Fixed issue with mouse movements on non-active screen https://github.com/Textualize/textual/pull/4688
-
 
 ## [0.70.0] - 2024-06-19
 

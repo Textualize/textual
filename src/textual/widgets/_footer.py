@@ -33,6 +33,11 @@ class FooterKey(Widget):
             color: $secondary;
             background: $panel;
             text-style: bold;
+            padding: 0 1;
+        }
+
+        .footer-key--description {
+            padding: 0 1 0 0;
         }
 
         &:light .footer-key--key {
@@ -57,6 +62,14 @@ class FooterKey(Widget):
             }
         }
 
+        &.-compact {
+            .footer-key--key {
+                padding: 0;
+            }
+            .footer-key--description {
+                padding: 0 0 0 1;
+            }
+        }
     }
     """
 
@@ -83,19 +96,27 @@ class FooterKey(Widget):
         key_style = self.get_component_rich_style("footer-key--key")
         description_style = self.get_component_rich_style("footer-key--description")
         key_display = self.key_display
+        key_padding = self.get_component_styles("footer-key--key").padding
+        description_padding = self.get_component_styles(
+            "footer-key--description"
+        ).padding
         if self.upper_case_keys:
             key_display = key_display.upper()
         if self.ctrl_to_caret and key_display.lower().startswith("ctrl+"):
             key_display = "^" + key_display.split("+", 1)[1]
         description = self.description
-        if self.compact:
-            label_text = Text.assemble(
-                (key_display, key_style), " ", (description, description_style)
-            )
-        else:
-            label_text = Text.assemble(
-                (f" {key_display} ", key_style), (description, description_style), " "
-            )
+        label_text = Text.assemble(
+            (
+                " " * key_padding.left + key_display + " " * key_padding.right,
+                key_style,
+            ),
+            (
+                " " * description_padding.left
+                + description
+                + " " * description_padding.right,
+                description_style,
+            ),
+        )
         label_text.stylize_before(self.rich_style)
         return label_text
 

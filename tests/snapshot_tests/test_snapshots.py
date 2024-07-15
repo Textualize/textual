@@ -1303,6 +1303,46 @@ def test_grid_auto(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "grid_auto.py")
 
 
+def test_footer_compact(snap_compare):
+    """Test Footer in the compact style"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_toggle_compact.py")
+
+
+def test_footer_compact_with_hover(snap_compare):
+    """Test Footer in the compact style when the mouse is hovering over a keybinding"""
+
+    async def run_before(pilot) -> None:
+        await pilot.hover("Footer", offset=(0, 0))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", run_before=run_before
+    )
+
+
+def test_footer_standard_after_reactive_change(snap_compare):
+    """Test Footer in the standard style after `compact` reactive change"""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", press=["ctrl+t"]
+    )
+
+
+def test_footer_standard_with_hover(snap_compare):
+    """Test Footer in the standard style when the mouse is hovering over a keybinding"""
+
+    async def run_before(pilot) -> None:
+        await pilot.press("ctrl+t")
+        await pilot.hover("Footer", offset=(0, 0))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", run_before=run_before
+    )
+
+
+def test_footer_classic_styling(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4557"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_classic_styling.py")
+
+
 def test_option_list_scrolling_with_multiline_options(snap_compare):
     # https://github.com/Textualize/textual/issues/4705
     assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py", press=["up"])
