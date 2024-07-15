@@ -1576,6 +1576,9 @@ class DataTable(ScrollView, Generic[CellType], can_focus=True):
         #  If we don't do this, users will be required to call add_column(s)
         #  Before they call add_row.
 
+        if len(cells) > len(self.ordered_columns):
+            raise ValueError("More values provided than there are columns.")
+
         row_index = self.row_count
         # Map the key of this row to its current index
         self._row_locations[row_key] = row_index
