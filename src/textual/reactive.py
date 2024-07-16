@@ -221,15 +221,19 @@ class Reactive(Generic[ReactiveType]):
         default = self._default
         setattr(owner, f"_default_{name}", default)
 
-    @overload
-    def __get__(
-        self: Reactive[ReactiveType], obj: ReactableType, obj_type: type[ReactableType]
-    ) -> ReactiveType: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __get__(
-        self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
-    ) -> Reactive[ReactiveType]: ...
+        @overload
+        def __get__(
+            self: Reactive[ReactiveType],
+            obj: ReactableType,
+            obj_type: type[ReactableType],
+        ) -> ReactiveType: ...
+
+        @overload
+        def __get__(
+            self: Reactive[ReactiveType], obj: None, obj_type: type[ReactableType]
+        ) -> Reactive[ReactiveType]: ...
 
     def __get__(
         self: Reactive[ReactiveType],
@@ -258,7 +262,7 @@ class Reactive(Generic[ReactiveType]):
         else:
             return getattr(obj, internal_name)
 
-    def __set__(self, obj: Reactable, value: ReactiveType) -> None:
+    def _set(self, obj: Reactable, value: ReactiveType, always: bool = False) -> None:
         _rich_traceback_omit = True
 
         if not hasattr(obj, "_id"):
@@ -283,7 +287,7 @@ class Reactive(Generic[ReactiveType]):
         if callable(public_validate_function):
             value = public_validate_function(value)
         # If the value has changed, or this is the first time setting the value
-        if current_value != value or self._always_update:
+        if always or self._always_update or current_value != value:
             # Store the internal value
             setattr(obj, self.internal_name, value)
 
@@ -303,6 +307,11 @@ class Reactive(Generic[ReactiveType]):
                     layout=self._layout,
                     recompose=self._recompose,
                 )
+
+    def __set__(self, obj: Reactable, value: ReactiveType) -> None:
+        _rich_traceback_omit = True
+
+        self._set(obj, value)
 
     @classmethod
     def _check_watchers(cls, obj: Reactable, name: str, old_value: Any) -> None:

@@ -206,6 +206,8 @@ class DOMNode(MessagePump):
             dict[str, tuple[MessagePump, Reactive | object]] | None
         ) = None
 
+        self._pruning = False
+
         super().__init__()
 
     def set_reactive(
@@ -219,7 +221,7 @@ class DOMNode(MessagePump):
             ```
 
         Args:
-            name: Name of reactive attribute.
+            reactive: A reactive property (use the class scope syntax, i.e. `MyClass.my_reactive`).
             value: New value of reactive.
 
         Raises:
@@ -234,6 +236,29 @@ class DOMNode(MessagePump):
                 "No reactive called {name!r}; Have you called super().__init__(...) in the {self.__class__.__name__} constructor?"
             )
         setattr(self, f"_reactive_{reactive.name}", value)
+
+    def mutate_reactive(self, reactive: Reactive[ReactiveType]) -> None:
+        """Force an update to a mutable reactive.
+
+        Example:
+            ```python
+            self.reactive_name_list.append("Jessica")
+            self.mutate_reactive(MyClass.reactive_name_list)
+            ```
+
+        Textual will automatically detect when a reactive is set to a new value, but it is unable
+        to detect if a value is _mutated_ (such as updating a list, dict, or attribute of an object).
+        If you do wish to use a collection or other mutable object in a reactive, then you can call
+        this method after your reactive is updated. This will ensure that all the reactive _superpowers_
+        work.
+
+        Args:
+            reactive: A reactive property (use the class scope syntax, i.e. `MyClass.my_reactive`).
+        """
+
+        internal_name = f"_reactive_{reactive.name}"
+        value = getattr(self, internal_name)
+        reactive._set(self, value, always=True)
 
     def data_bind(
         self,
@@ -484,7 +509,7 @@ class DOMNode(MessagePump):
             ]
         )
 
-    def get_component_styles(self, name: str) -> RenderStyles:
+    def get_component_styles(self, *names: str) -> RenderStyles:
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
 
         Args:
@@ -496,9 +521,16 @@ class DOMNode(MessagePump):
         Returns:
             A Styles object.
         """
-        if name not in self._component_styles:
-            raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
-        styles = self._component_styles[name]
+        styles = RenderStyles(self, Styles(), Styles())
+        for name in names:
+            if name not in self._component_styles:
+                raise KeyError(f"No {name!r} key in COMPONENT_CLASSES")
+            component_styles = self._component_styles[name]
+            styles.node = component_styles.node
+            styles.base.merge(component_styles.base)
+            styles.inline.merge(component_styles.inline)
+            styles._updates += 1
+
         return styles
 
     def _post_mount(self):
@@ -777,7 +809,9 @@ class DOMNode(MessagePump):
             my_widget.display = False  # Hide my_widget
             ```
         """
-        return self.styles.display != "none" and not (self._closing or self._closed)
+        return self.styles.display != "none" and not (
+            self._closing or self._closed or self._pruning
+        )
 
     @display.setter
     def display(self, new_val: bool | str) -> None:
@@ -1183,24 +1217,26 @@ class DOMNode(MessagePump):
 
     WalkType = TypeVar("WalkType", bound="DOMNode")
 
-    @overload
-    def walk_children(
-        self,
-        filter_type: type[WalkType],
-        *,
-        with_self: bool = False,
-        method: WalkMethod = "depth",
-        reverse: bool = False,
-    ) -> list[WalkType]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def walk_children(
-        self,
-        *,
-        with_self: bool = False,
-        method: WalkMethod = "depth",
-        reverse: bool = False,
-    ) -> list[DOMNode]: ...
+        @overload
+        def walk_children(
+            self,
+            filter_type: type[WalkType],
+            *,
+            with_self: bool = False,
+            method: WalkMethod = "depth",
+            reverse: bool = False,
+        ) -> list[WalkType]: ...
+
+        @overload
+        def walk_children(
+            self,
+            *,
+            with_self: bool = False,
+            method: WalkMethod = "depth",
+            reverse: bool = False,
+        ) -> list[DOMNode]: ...
 
     def walk_children(
         self,
@@ -1236,11 +1272,13 @@ class DOMNode(MessagePump):
             nodes.reverse()
         return cast("list[DOMNode]", nodes)
 
-    @overload
-    def query(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
+        @overload
+        def query(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+
+        @overload
+        def query(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
     def query(
         self, selector: str | type[QueryType] | None = None
@@ -1261,11 +1299,13 @@ class DOMNode(MessagePump):
         else:
             return DOMQuery[QueryType](self, filter=selector.__name__)
 
-    @overload
-    def query_children(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def query_children(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
+        @overload
+        def query_children(self, selector: str | None = None) -> DOMQuery[Widget]: ...
+
+        @overload
+        def query_children(self, selector: type[QueryType]) -> DOMQuery[QueryType]: ...
 
     def query_children(
         self, selector: str | type[QueryType] | None = None
@@ -1290,14 +1330,18 @@ class DOMNode(MessagePump):
         else:
             return DOMQuery[QueryType](self, deep=False, filter=selector.__name__)
 
-    @overload
-    def query_one(self, selector: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def query_one(self, selector: type[QueryType]) -> QueryType: ...
+        @overload
+        def query_one(self, selector: str) -> Widget: ...
 
-    @overload
-    def query_one(self, selector: str, expect_type: type[QueryType]) -> QueryType: ...
+        @overload
+        def query_one(self, selector: type[QueryType]) -> QueryType: ...
+
+        @overload
+        def query_one(
+            self, selector: str, expect_type: type[QueryType]
+        ) -> QueryType: ...
 
     def query_one(
         self,

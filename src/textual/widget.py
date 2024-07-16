@@ -4,7 +4,7 @@ The base class for widgets.
 
 from __future__ import annotations
 
-from asyncio import create_task, wait
+from asyncio import create_task, gather, wait
 from collections import Counter
 from contextlib import asynccontextmanager
 from fractions import Fraction
@@ -59,6 +59,7 @@ from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
 from .box_model import BoxModel
 from .cache import FIFOCache
+from .color import Color
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, WrongType
@@ -76,7 +77,7 @@ from .geometry import (
 )
 from .layouts.vertical import VerticalLayout
 from .message import Message
-from .messages import CallbackType
+from .messages import CallbackType, Prune
 from .notifications import SeverityLevel
 from .reactive import Reactive
 from .render import measure
@@ -107,6 +108,8 @@ _JUSTIFY_MAP: dict[str, JustifyMethod] = {
 
 
 _NULL_STYLE = Style()
+_MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Leave)
+_MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
 class AwaitMount:
@@ -366,7 +369,7 @@ class Widget(DOMNode):
         )
 
         self._styles_cache = StylesCache()
-        self._rich_style_cache: dict[str, tuple[Style, Style]] = {}
+        self._rich_style_cache: dict[tuple[str, ...], tuple[Style, Style]] = {}
 
         self._tooltip: RenderableType | None = None
         """The tooltip content."""
@@ -676,7 +679,7 @@ class Widget(DOMNode):
             loading_indicator = self.get_loading_widget()
             loading_indicator.add_class(LOADING_INDICATOR_CLASS)
             await_mount = self.mount(loading_indicator)
-            return AwaitComplete(remove_indicator, await_mount)
+            return AwaitComplete(remove_indicator, await_mount).call_next(self)
         else:
             return remove_indicator
 
@@ -686,11 +689,15 @@ class Widget(DOMNode):
 
     ExpectType = TypeVar("ExpectType", bound="Widget")
 
-    @overload
-    def get_child_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_child_by_id(self, id: str, expect_type: type[ExpectType]) -> ExpectType: ...
+        @overload
+        def get_child_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_child_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_child_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -720,13 +727,15 @@ class Widget(DOMNode):
             )
         return child
 
-    @overload
-    def get_widget_by_id(self, id: str) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def get_widget_by_id(
-        self, id: str, expect_type: type[ExpectType]
-    ) -> ExpectType: ...
+        @overload
+        def get_widget_by_id(self, id: str) -> Widget: ...
+
+        @overload
+        def get_widget_by_id(
+            self, id: str, expect_type: type[ExpectType]
+        ) -> ExpectType: ...
 
     def get_widget_by_id(
         self, id: str, expect_type: type[ExpectType] | None = None
@@ -783,7 +792,7 @@ class Widget(DOMNode):
                 return child
         raise NoMatches(f"No immediate child of type {expect_type}; {self._nodes}")
 
-    def get_component_rich_style(self, name: str, *, partial: bool = False) -> Style:
+    def get_component_rich_style(self, *names: str, partial: bool = False) -> Style:
         """Get a *Rich* style for a component.
 
         Args:
@@ -794,13 +803,21 @@ class Widget(DOMNode):
             A Rich style object.
         """
 
-        if name not in self._rich_style_cache:
-            component_styles = self.get_component_styles(name)
+        if names not in self._rich_style_cache:
+            component_styles = self.get_component_styles(*names)
             style = component_styles.rich_style
+            text_opacity = component_styles.text_opacity
+            if text_opacity < 1 and style.bgcolor is not None:
+                style += Style.from_color(
+                    (
+                        Color.from_rich_color(style.bgcolor)
+                        + component_styles.color.multiply_alpha(text_opacity)
+                    ).rich_color
+                )
             partial_style = component_styles.partial_rich_style
-            self._rich_style_cache[name] = (style, partial_style)
+            self._rich_style_cache[names] = (style, partial_style)
 
-        style, partial_style = self._rich_style_cache[name]
+        style, partial_style = self._rich_style_cache[names]
 
         return partial_style if partial else style
 
@@ -935,7 +952,7 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
-        if self._closing:
+        if self._closing or self._pruning:
             return AwaitMount(self, [])
         if not self.is_attached:
             raise MountError(f"Can't mount widget(s) before {self!r} is mounted")
@@ -1005,26 +1022,30 @@ class Widget(DOMNode):
             Only one of ``before`` or ``after`` can be provided. If both are
             provided a ``MountError`` will be raised.
         """
+        if self.app._exit:
+            return AwaitMount(self, [])
         await_mount = self.mount(*widgets, before=before, after=after)
         return await_mount
 
-    @overload
-    def move_child(
-        self,
-        child: int | Widget,
-        *,
-        before: int | Widget,
-        after: None = None,
-    ) -> None: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def move_child(
-        self,
-        child: int | Widget,
-        *,
-        after: int | Widget,
-        before: None = None,
-    ) -> None: ...
+        @overload
+        def move_child(
+            self,
+            child: int | Widget,
+            *,
+            before: int | Widget,
+            after: None = None,
+        ) -> None: ...
+
+        @overload
+        def move_child(
+            self,
+            child: int | Widget,
+            *,
+            after: int | Widget,
+            before: None = None,
+        ) -> None: ...
 
     def move_child(
         self,
@@ -1125,8 +1146,9 @@ class Widget(DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
-        if not self.is_attached:
+        if not self.is_attached or self._pruning:
             return
+
         async with self.batch():
             await self.query("*").exclude(".-textual-system").remove()
             if self.is_attached:
@@ -1625,6 +1647,15 @@ class Widget(DOMNode):
         return self.content_region.size
 
     @property
+    def scrollable_size(self) -> Size:
+        """The size of the scrollable content.
+
+        Returns:
+            Scrollable content size.
+        """
+        return self.scrollable_content_region.size
+
+    @property
     def outer_size(self) -> Size:
         """The size of the widget (including padding and border).
 
@@ -1762,11 +1793,13 @@ class Widget(DOMNode):
     @property
     def _self_or_ancestors_disabled(self) -> bool:
         """Is this widget or any of its ancestors disabled?"""
-        return any(
-            node.disabled
-            for node in self.ancestors_with_self
-            if isinstance(node, Widget)
-        )
+
+        node: Widget | None = self
+        while isinstance(node, Widget) and not node.is_dom_root:
+            if node.disabled:
+                return True
+            node = node._parent  # type:ignore[assignment]
+        return False
 
     @property
     def focusable(self) -> bool:
@@ -2761,6 +2794,8 @@ class Widget(DOMNode):
             region = (
                 (
                     region.translate(-scroll_offset)
+                    .translate(container.styles.margin.top_left)
+                    .translate(container.styles.border.spacing.top_left)
                     .translate(-widget.scroll_offset)
                     .translate(container.virtual_region_with_margin.offset)
                 )
@@ -3212,19 +3247,24 @@ class Widget(DOMNode):
         """Update from CSS if has focus state changes."""
         self._update_styles()
 
-    def watch_disabled(self) -> None:
+    def watch_disabled(self, disabled: bool) -> None:
         """Update the styles of the widget and its children when disabled is toggled."""
         from .app import ScreenStackError
 
+        if disabled and self.mouse_over:
+            # Ensure widget gets a Leave if it is disabled while hovered
+            self._message_queue.put_nowait(events.Leave())
         try:
+            screen = self.screen
             if (
-                self.disabled
-                and self.app.focused is not None
-                and self in self.app.focused.ancestors_with_self
+                disabled
+                and screen.focused is not None
+                and self in screen.focused.ancestors_with_self
             ):
-                self.app.focused.blur()
-        except (ScreenStackError, NoActiveAppError):
+                screen.focused.blur()
+        except (ScreenStackError, NoActiveAppError, NoScreen):
             pass
+
         self._update_styles()
 
     def _size_updated(
@@ -3448,26 +3488,36 @@ class Widget(DOMNode):
         Returns:
             An awaitable object that waits for the widget to be removed.
         """
-
-        await_remove = self.app._remove_nodes([self], self.parent)
+        await_remove = self.app._prune(self, parent=self._parent)
         return await_remove
 
-    def remove_children(self, selector: str | type[QueryType] = "*") -> AwaitRemove:
+    def remove_children(
+        self, selector: str | type[QueryType] | Iterable[Widget] = "*"
+    ) -> AwaitRemove:
         """Remove the immediate children of this Widget from the DOM.
 
         Args:
-            selector: A CSS selector to specify which direct children to remove.
+            selector: A CSS selector or iterable of widgets to remove.
 
         Returns:
             An awaitable object that waits for the direct children to be removed.
         """
-        if not isinstance(selector, str):
+
+        if callable(selector) and issubclass(selector, Widget):
             selector = selector.__name__
-        parsed_selectors = parse_selectors(selector)
-        children_to_remove = [
-            child for child in self.children if match(parsed_selectors, child)
-        ]
-        await_remove = self.app._remove_nodes(children_to_remove, self)
+
+        children_to_remove: Iterable[Widget]
+
+        if isinstance(selector, str):
+            parsed_selectors = parse_selectors(selector)
+            children_to_remove = [
+                child for child in self.children if match(parsed_selectors, child)
+            ]
+        else:
+            children_to_remove = selector
+        await_remove = self.app._prune(
+            *children_to_remove, parent=cast(DOMNode, self._parent)
+        )
         return await_remove
 
     @asynccontextmanager
@@ -3556,6 +3606,28 @@ class Widget(DOMNode):
             except NoActiveAppError:
                 pass
         return super().post_message(message)
+
+    async def on_prune(self, event: messages.Prune) -> None:
+        """Close message loop when asked to prune."""
+        await self._close_messages(wait=False)
+
+    async def _message_loop_exit(self) -> None:
+        """Clean up DOM tree."""
+        parent = self._parent
+        # Post messages to children, asking them to prune
+        children = [*self.children, *self._get_virtual_dom()]
+        for node in children:
+            node.post_message(Prune())
+
+        # Wait for child nodes to exit
+        await gather(*[node._task for node in children if node._task is not None])
+        # Send unmount event
+        await self._dispatch_message(events.Unmount())
+        assert isinstance(parent, DOMNode)
+        # Finalize removal from DOM
+        parent._nodes._remove(self)
+        self.app._registry.discard(self)
+        self._detach()
 
     async def _on_idle(self, event: events.Idle) -> None:
         """Called when there are no more events on the queue.
@@ -3666,20 +3738,20 @@ class Widget(DOMNode):
             `True` if the message will be sent, or `False` if it is disabled.
         """
         # Do the normal checking and get out if that fails.
-        if not super().check_message_enabled(message):
+        if not super().check_message_enabled(message) or self._is_prevented(
+            type(message)
+        ):
             return False
-        message_type = type(message)
-        if self._is_prevented(message_type):
-            return False
+
         # Mouse scroll events should always go through, this allows mouse
         # wheel scrolling to pass through disabled widgets.
-        if isinstance(message, (events.MouseScrollDown, events.MouseScrollUp)):
+        if isinstance(message, _MOUSE_EVENTS_ALLOW_IF_DISABLED):
             return True
         # Otherwise, if this is any other mouse event, the widget receiving
         # the event must not be disabled at this moment.
         return (
             not self._self_or_ancestors_disabled
-            if isinstance(message, (events.MouseEvent, events.Enter, events.Leave))
+            if isinstance(message, _MOUSE_EVENTS_DISALLOW_IF_DISABLED)
             else True
         )
 

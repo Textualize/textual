@@ -14,7 +14,6 @@ from __future__ import annotations
 import asyncio
 import json
 import os
-import platform
 import signal
 import sys
 from codecs import getincrementaldecoder
@@ -29,7 +28,7 @@ from ..geometry import Size
 from ._byte_stream import ByteStream
 from ._input_reader import InputReader
 
-WINDOWS = platform.system() == "Windows"
+WINDOWS = sys.platform == "win32"
 
 
 class _ExitInput(Exception):
@@ -147,7 +146,7 @@ class WebDriver(Driver):
         self._enable_bracketed_paste()
         self.flush()
         self._key_thread.start()
-        self._app.post_message(events.AppBlur())
+        self._app.call_later(self._app.post_message, events.AppBlur())
 
     def disable_input(self) -> None:
         """Disable further input."""

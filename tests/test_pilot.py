@@ -6,6 +6,7 @@ from textual import events, work
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Center, Middle
+from textual.css.errors import StylesheetError
 from textual.pilot import OutOfBounds
 from textual.screen import Screen
 from textual.widgets import Button, Label
@@ -395,3 +396,14 @@ async def test_pilot_resize_terminal():
         await pilot.pause()
         assert app.size == (27, 15)
         assert app.screen.size == (27, 15)
+
+
+async def test_fail_early():
+    # https://github.com/Textualize/textual/issues/3282
+    class MyApp(App):
+        CSS_PATH = "foo.tcss"
+
+    app = MyApp()
+    with pytest.raises(StylesheetError):
+        async with app.run_test() as pilot:
+            await pilot.press("enter")

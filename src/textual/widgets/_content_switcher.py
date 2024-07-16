@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+from ..await_complete import AwaitComplete
 from ..containers import Container
 from ..css.query import NoMatches
 from ..events import Mount
@@ -98,3 +99,34 @@ class ContentSwitcher(Container):
                     pass
             if new:
                 self.get_child_by_id(new).display = True
+
+    def add_content(
+        self, widget: Widget, *, id: str | None = None, set_current: bool = False
+    ) -> AwaitComplete:
+        """Add new content to the `ContentSwitcher`.
+
+        Args:
+            widget: A Widget to add.
+            id: ID for the widget, or `None` if the widget already has an ID.
+            set_current: Set the new widget as current (which will cause it to display).
+
+        Returns:
+            An awaitable to wait for the new content to be mounted.
+        """
+        if id is not None and widget.id != id:
+            widget.id = id
+
+        if not widget.id:
+            raise ValueError(
+                "Widget must have an ID (or set id parameter when calling add_content)"
+            )
+
+        async def _add_content() -> None:
+            """Add new widget and potentially change the current widget."""
+            widget.display = False
+            with self.app.batch_update():
+                await self.mount(widget)
+                if set_current:
+                    self.current = widget.id
+
+        return AwaitComplete(_add_content())

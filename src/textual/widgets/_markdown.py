@@ -5,6 +5,7 @@ import re
 from functools import partial
 from pathlib import Path, PurePath
 from typing import Callable, Iterable, Optional
+from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -487,6 +488,11 @@ class MarkdownTableContent(Widget):
                 table.add_row(*row)
         return table
 
+    async def action_link(self, href: str) -> None:
+        """Pass a link action on to the MarkdownTable parent."""
+        if isinstance(self.parent, MarkdownTable):
+            await self.parent.action_link(href)
+
 
 class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
@@ -776,7 +782,7 @@ class Markdown(Widget):
             super().__init__()
             self.markdown: Markdown = markdown
             """The `Markdown` widget containing the link clicked."""
-            self.href: str = href
+            self.href: str = unquote(href)
             """The link that was selected."""
 
         @property
