@@ -25,7 +25,21 @@ class InvalidWeekdayNumber(Exception):
 
 
 class MonthCalendarTable(DataTable, inherit_bindings=False):
-    pass
+    # TODO: Ideally we want to hide that there's a DataTable underneath the
+    # `MonthCalendar` widget. Is there any mechanism so component classes could be
+    # defined in the parent and substitute the component styles in the child?
+    # For example, allow styling the table header using `.month-calendar--header`
+    # rather than `.datatable--header`?
+    DEFAULT_CSS = """
+    MonthCalendarTable {
+        height: auto;
+        width: auto;
+
+        .datatable--header {
+            background: $surface;
+        }
+    }
+    """
 
 
 class MonthCalendar(Widget):
@@ -47,13 +61,16 @@ class MonthCalendar(Widget):
         height: auto;
         width: auto;
         min-height: 7;
-    }
 
-    MonthCalendar > MonthCalendarTable {
-        height: auto;
-        width: auto;
+        .month-calendar--outside-month {
+            color: gray;
+        }
     }
     """
+
+    COMPONENT_CLASSES = {
+        "month-calendar--outside-month",
+    }
 
     date: Reactive[datetime.date] = Reactive(datetime.date.today())
     first_weekday: Reactive[int] = Reactive(0)
@@ -284,7 +301,10 @@ class MonthCalendar(Widget):
     def _format_day(self, date: datetime.date) -> Text:
         formatted_day = Text(str(date.day), justify="center")
         if date.month != self.date.month:
-            formatted_day.style = "grey37"
+            outside_month_style = self.get_component_rich_style(
+                "month-calendar--outside-month", partial=True
+            )
+            formatted_day.stylize(outside_month_style)
         return formatted_day
 
     def validate_first_weekday(self, first_weekday: int) -> int:
