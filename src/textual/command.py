@@ -625,7 +625,9 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         with Vertical():
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Search for commands…")
+                input = CommandInput(placeholder="Search for commands…")
+                input.focus()
+                yield input
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):

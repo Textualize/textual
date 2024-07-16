@@ -47,6 +47,7 @@ class ColorBlock(Static):
 class ColorApp(App):
     """Experiment with the command palette."""
 
+    AUTO_FOCUS = None
     COMMANDS = App.COMMANDS | {ColorCommands}
     TITLE = "Press ctrl + \\ and type a color"
 
