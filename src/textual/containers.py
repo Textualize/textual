@@ -106,7 +106,7 @@ class Horizontal(Widget, inherit_bindings=False):
 
 
 class HorizontalScroll(ScrollableContainer):
-    """A container with horizontal layout and an automatic scrollbar on the Y axis."""
+    """A container with horizontal layout and an automatic scrollbar on the X axis."""
 
     DEFAULT_CSS = """
     HorizontalScroll {
