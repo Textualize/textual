@@ -42,6 +42,7 @@ from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive, TooManyComputesError
+from .signal import Signal
 from .timer import Timer, TimerCallback
 
 if TYPE_CHECKING:
@@ -144,6 +145,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """
         self._next_callbacks: list[events.Callback] = []
         self._thread_id: int = threading.get_ident()
+        self._prevented_messages_on_mount = self._prevent_message_types_stack[-1]
+        self.message_signal: Signal[Message] = Signal(self, "messages")
+        """Subscribe to this signal to be notified of all messages sent to this widget.
+        
+        This is a fairly low-level mechanism, and shouldn't replace regular message handling.
+        
+        """
 
     @property
     def _prevent_message_types_stack(self) -> list[set[type[Message]]]:
@@ -208,6 +216,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return self._message_queue.qsize()
 
     @property
+    def is_dom_root(self):
+        """Is this a root node (i.e. the App)?"""
+        return False
+
+    @property
     def app(self) -> "App[object]":
         """
         Get the current app.
@@ -232,11 +245,21 @@ class MessagePump(metaclass=_MessagePumpMeta):
             return node
 
     @property
+    def is_attached(self) -> bool:
+        """Is this node linked to the app through the DOM?"""
+        if self.app._exit:
+            return False
+        node: MessagePump | None = self
+        while (node := node._parent) is not None:
+            if node.is_dom_root:
+                return True
+        return False
+
+    @property
     def is_parent_active(self) -> bool:
         """Is the parent active?"""
-        return bool(
-            self._parent and not self._parent._closed and not self._parent._closing
-        )
+        parent = self._parent
+        return bool(parent is not None and not parent._closed and not parent._closing)
 
     @property
     def is_running(self) -> bool:
@@ -251,19 +274,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             A logger.
         """
         return self.app._logger
-
-    @property
-    def is_attached(self) -> bool:
-        """Is the node attached to the app via the DOM?"""
-        from .app import App
-
-        node = self
-
-        while not isinstance(node, App):
-            if node._parent is None:
-                return False
-            node = node._parent
-        return True
 
     def _attach(self, parent: MessagePump) -> None:
         """Set the parent, and therefore attach this node to the tree.
@@ -286,6 +296,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Returns:
             `True` if the message will be sent, or `False` if it is disabled.
         """
+
         return type(message) not in self._disabled_messages
 
     def disable_messages(self, *messages: type[Message]) -> None:
@@ -358,11 +369,12 @@ class MessagePump(metaclass=_MessagePumpMeta):
         Returns:
             A timer object.
         """
+
         timer = Timer(
             self,
             delay,
             name=name or f"set_timer#{Timer._timer_count}",
-            callback=callback,
+            callback=None if callback is None else partial(self.call_next, callback),
             repeat=0,
             pause=pause,
         )
@@ -453,29 +465,21 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _on_invoke_later(self, message: messages.InvokeLater) -> None:
         # Forward InvokeLater message to the Screen
-        self.app.screen._invoke_later(
-            message.callback, message._sender or active_message_pump.get()
-        )
-
-    def _close_messages_no_wait(self) -> None:
-        """Request the message queue to immediately exit."""
-        self._message_queue.put_nowait(messages.CloseMessages())
-
-    async def _on_close_messages(self, message: messages.CloseMessages) -> None:
-        await self._close_messages()
+        if self.app._running:
+            self.app.screen._invoke_later(
+                message.callback, message._sender or active_message_pump.get()
+            )
 
     async def _close_messages(self, wait: bool = True) -> None:
         """Close message queue, and optionally wait for queue to finish processing."""
         if self._closed or self._closing:
             return
         self._closing = True
-        stop_timers = list(self._timers)
-        for timer in stop_timers:
-            timer.stop()
-        self._timers.clear()
-        await self._message_queue.put(events.Unmount())
+        if self._timers:
+            await Timer._stop_all(self._timers)
+            self._timers.clear()
         Reactive._reset_object(self)
-        await self._message_queue.put(None)
+        self._message_queue.put_nowait(None)
         if wait and self._task is not None and asyncio.current_task() != self._task:
             try:
                 running_widget = active_message_pump.get()
@@ -483,7 +487,10 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 running_widget = None
 
             if running_widget is None or running_widget is not self:
-                await self._task
+                try:
+                    await self._task
+                except CancelledError:
+                    pass
 
     def _start_messages(self) -> None:
         """Start messages task."""
@@ -509,8 +516,15 @@ class MessagePump(metaclass=_MessagePumpMeta):
             pass
         finally:
             self._running = False
-            for timer in list(self._timers):
-                timer.stop()
+            try:
+                if self._timers:
+                    await Timer._stop_all(self._timers)
+                    self._timers.clear()
+            finally:
+                await self._message_loop_exit()
+
+    async def _message_loop_exit(self) -> None:
+        """Called when the message loop has completed."""
 
     async def _pre_process(self) -> bool:
         """Procedure to run before processing messages.
@@ -524,7 +538,11 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
         try:
             await self._dispatch_message(events.Compose())
-            await self._dispatch_message(events.Mount())
+            if self._prevented_messages_on_mount:
+                with self.prevent(*self._prevented_messages_on_mount):
+                    await self._dispatch_message(events.Mount())
+            else:
+                await self._dispatch_message(events.Mount())
             self.check_idle()
             self._post_mount()
         except Exception as error:
@@ -538,6 +556,13 @@ class MessagePump(metaclass=_MessagePumpMeta):
 
     def _post_mount(self):
         """Called after the object has been mounted."""
+
+    def _close_messages_no_wait(self) -> None:
+        """Request the message queue to immediately exit."""
+        self._message_queue.put_nowait(messages.CloseMessages())
+
+    async def _on_close_messages(self, message: messages.CloseMessages) -> None:
+        await self._close_messages()
 
     async def _process_messages_loop(self) -> None:
         """Process messages until the queue is closed."""
@@ -577,6 +602,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 self.app._handle_exception(error)
                 break
             finally:
+                self.message_signal.publish(message)
                 self._message_queue.task_done()
 
                 current_time = time()
@@ -730,7 +756,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             if message._sender is not None and message._sender == self._parent:
                 # parent is sender, so we stop propagation after parent
                 message.stop()
-            if self.is_parent_active and not self._parent._closing:
+            if self.is_parent_active and self.is_attached:
                 message._bubble_to(self._parent)
 
     def check_idle(self) -> None:
@@ -783,6 +809,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return True
 
     async def on_callback(self, event: events.Callback) -> None:
+        if self.app._closing:
+            return
         await invoke(event.callback)
 
     # TODO: Does dispatch_key belong on message pump?
@@ -834,6 +862,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         return handled
 
     async def on_timer(self, event: events.Timer) -> None:
+        if not self.app._running:
+            return
         event.prevent_default()
         event.stop()
         if event.callback is not None:

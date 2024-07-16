@@ -114,3 +114,12 @@ async def test_options_are_available_soon() -> None:
     selection = Selection("", 0, id="some_id")
     selection_list = SelectionList[int](selection)
     assert selection_list.get_option("some_id") is selection
+
+
+async def test_removing_option_updates_indexes() -> None:
+    async with SelectionListApp().run_test() as pilot:
+        selections = pilot.app.query_one(SelectionList)
+        assert selections._values == {n: n for n in range(5)}
+
+        selections.remove_option_at_index(0)
+        assert selections._values == {n + 1: n for n in range(4)}

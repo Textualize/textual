@@ -1,0 +1,20 @@
+.hatch {
+    height: 1fr;
+    border: solid $secondary;
+  
+    &.cross {
+        hatch: cross $success;
+    }
+    &.horizontal {
+        hatch: horizontal $success 80%;
+    }
+    &.custom {
+        hatch: "T" $success 60%;
+    }
+    &.left {
+        hatch: left $success 40%;
+    }
+    &.right {
+        hatch: right $success 20%;
+    }
+}

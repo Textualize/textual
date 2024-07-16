@@ -9,7 +9,7 @@ The `link-style` style sets the text style for the link text.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-link-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
+link-style: <a href="../../../css_types/text_style">&lt;text-style&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 `link-style` will take all the values specified and will apply that styling to text that is enclosed by a Textual action link.
@@ -63,5 +63,5 @@ widget.styles.link_style = "bold italic reverse"
 
 ## See also
 
- - [`link-style-hover](./link_style_hover.md) to set the style of link text when the mouse pointer is over it.
+ - [`link-style-hover`](./link_style_hover.md) to set the style of link text when the mouse pointer is over it.
  - [`text-style`](../text_style.md) to set the style of text in a widget.

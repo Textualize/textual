@@ -22,6 +22,7 @@ from ._style_properties import (
     ColorProperty,
     DockProperty,
     FractionalProperty,
+    HatchProperty,
     IntegerProperty,
     KeylineProperty,
     LayoutProperty,
@@ -31,6 +32,7 @@ from ._style_properties import (
     OverflowProperty,
     ScalarListProperty,
     ScalarProperty,
+    ScrollbarColorProperty,
     SpacingProperty,
     StringEnumProperty,
     StyleFlagsProperty,
@@ -185,6 +187,8 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_background: Color
     border_subtitle_style: Style
 
+    hatch: tuple[str, Color]
+
     overlay: Overlay
     constrain: Constrain
 
@@ -288,15 +292,15 @@ class StylesBase(ABC):
     transitions = TransitionsProperty()
 
     tint = ColorProperty("transparent")
-    scrollbar_color = ColorProperty("ansi_bright_magenta")
-    scrollbar_color_hover = ColorProperty("ansi_yellow")
-    scrollbar_color_active = ColorProperty("ansi_bright_yellow")
+    scrollbar_color = ScrollbarColorProperty("ansi_bright_magenta")
+    scrollbar_color_hover = ScrollbarColorProperty("ansi_yellow")
+    scrollbar_color_active = ScrollbarColorProperty("ansi_bright_yellow")
 
-    scrollbar_corner_color = ColorProperty("#666666")
+    scrollbar_corner_color = ScrollbarColorProperty("#666666")
 
-    scrollbar_background = ColorProperty("#555555")
-    scrollbar_background_hover = ColorProperty("#444444")
-    scrollbar_background_active = ColorProperty("black")
+    scrollbar_background = ScrollbarColorProperty("#555555")
+    scrollbar_background_hover = ScrollbarColorProperty("#444444")
+    scrollbar_background_active = ScrollbarColorProperty("black")
 
     scrollbar_gutter = StringEnumProperty(
         VALID_SCROLLBAR_GUTTER, "auto", layout=True, refresh_children=True
@@ -353,6 +357,8 @@ class StylesBase(ABC):
     border_subtitle_color = ColorProperty(Color(255, 255, 255, 0))
     border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()
+
+    hatch = HatchProperty()
 
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
@@ -439,6 +445,18 @@ class StylesBase(ABC):
         """Does the node have a relative width?"""
         height = self.height
         return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+
+    @property
+    def is_auto_width(self) -> bool:
+        """Does the node have automatic width?"""
+        width = self.width
+        return width is not None and width.unit == Unit.AUTO
+
+    @property
+    def is_auto_height(self) -> bool:
+        """Does the node have automatic height?"""
+        height = self.height
+        return height is not None and height.unit == Unit.AUTO
 
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
@@ -642,9 +660,15 @@ class StylesBase(ABC):
             Rich Style object.
         """
         style = Style(
-            color=(self.color.rich_color if self.has_rule("color") else None),
+            color=(
+                self.color.rich_color
+                if self.has_rule("color") and self.color.a > 0
+                else None
+            ),
             bgcolor=(
-                self.background.rich_color if self.has_rule("background") else None
+                self.background.rich_color
+                if self.has_rule("background") and self.background.a > 0
+                else None
             ),
         )
         style += self.text_style
@@ -1063,6 +1087,9 @@ class Styles(StylesBase):
             keyline_type, keyline_color = self.keyline
             if keyline_type != "none":
                 append_declaration("keyline", f"{keyline_type}, {keyline_color.css}")
+        if "hatch" in rules:
+            hatch_character, hatch_color = self.hatch
+            append_declaration("hatch", f'"{hatch_character}" {hatch_color.css}')
         lines.sort()
         return lines
 
@@ -1176,6 +1203,7 @@ class RenderStyles(StylesBase):
         )
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield self.node
         for rule_name in RULE_NAMES:
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)

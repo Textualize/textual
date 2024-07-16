@@ -138,7 +138,7 @@ class CssSource(NamedTuple):
 
 @rich.repr.auto(angular=True)
 class Stylesheet:
-    """A Stylsheet generated from Textual CSS."""
+    """A Stylesheet generated from Textual CSS."""
 
     def __init__(self, *, variables: dict[str, str] | None = None) -> None:
         self._rules: list[RuleSet] = []

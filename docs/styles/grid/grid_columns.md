@@ -9,7 +9,7 @@ The `grid-columns` style allows to define the width of the columns of the grid.
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-grid-columns: <a href="../../css_types/scalar">&lt;scalar&gt;</a>+;
+grid-columns: <a href="../../../css_types/scalar">&lt;scalar&gt;</a>+;
 --8<-- "docs/snippets/syntax_block_end.md"
 
 The `grid-columns` style takes one or more [`<scalar>`](../../css_types/scalar.md) that specify the length of the columns of the grid.

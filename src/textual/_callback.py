@@ -48,7 +48,7 @@ async def _invoke(callback: Callable, *params: object) -> Any:
     return result
 
 
-async def invoke(callback: Callable[[], Any], *params: object) -> Any:
+async def invoke(callback: Callable[..., Any], *params: object) -> Any:
     """Invoke a callback with an arbitrary number of parameters.
 
     Args:

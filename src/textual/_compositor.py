@@ -148,8 +148,9 @@ class LayoutUpdate(CompositorUpdate):
 class InlineUpdate(CompositorUpdate):
     """A renderable to write an inline update."""
 
-    def __init__(self, strips: list[Strip]) -> None:
+    def __init__(self, strips: list[Strip], clear: bool = False) -> None:
         self.strips = strips
+        self.clear = clear
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -175,11 +176,11 @@ class InlineUpdate(CompositorUpdate):
             append(strip.render(console))
             if not last:
                 append("\n")
-        append("\n\x1b[J")  # Clear down
+        if self.clear:
+            append("\n\x1b[J")  # Clear down
         if len(self.strips) > 1:
-            append(
-                f"\x1b[{len(self.strips)}A\r"
-            )  # Move cursor back to original position
+            back_lines = len(self.strips) if self.clear else len(self.strips) - 1
+            append(f"\x1b[{back_lines}A\r")  # Move cursor back to original position
         else:
             append("\r")
         append("\x1b[6n")  # Query new cursor position
@@ -977,25 +978,39 @@ class Compositor:
 
         for widget, region, clip in widget_regions:
             if contains_region(clip, region):
-                yield region, clip, widget.render_lines(
-                    _Region(0, 0, region.width, region.height)
+                yield (
+                    region,
+                    clip,
+                    widget.render_lines(_Region(0, 0, region.width, region.height)),
                 )
             else:
                 new_x, new_y, new_width, new_height = intersection(region, clip)
                 if new_width and new_height:
-                    yield region, clip, widget.render_lines(
-                        _Region(
-                            new_x - region.x, new_y - region.y, new_width, new_height
-                        )
+                    yield (
+                        region,
+                        clip,
+                        widget.render_lines(
+                            _Region(
+                                new_x - region.x,
+                                new_y - region.y,
+                                new_width,
+                                new_height,
+                            )
+                        ),
                     )
 
     def render_update(
-        self, full: bool = False, screen_stack: list[Screen] | None = None
+        self,
+        full: bool = False,
+        screen_stack: list[Screen] | None = None,
+        simplify: bool = False,
     ) -> RenderableType | None:
         """Render an update renderable.
 
         Args:
+            full: Perform a full update if `True`, otherwise a partial update.
             screen_stack: Screen stack list. Defaults to None.
+            simplify: Simplify segments.
 
         Returns:
             A renderable for the update, or `None` if no update was required.
@@ -1004,27 +1019,35 @@ class Compositor:
         visible_screen_stack.set([] if screen_stack is None else screen_stack)
         screen_region = self.size.region
         if full or screen_region in self._dirty_regions:
-            return self.render_full_update()
+            return self.render_full_update(simplify=simplify)
         else:
             return self.render_partial_update()
 
     def render_inline(
-        self, size: Size, screen_stack: list[Screen] | None = None
+        self,
+        size: Size,
+        screen_stack: list[Screen] | None = None,
+        clear: bool = False,
     ) -> RenderableType:
         """Render an inline update.
 
         Args:
             size: Inline size.
             screen_stack: Screen stack list. Defaults to None.
+            clear: Also clear below the inline update (set when size decreases).
 
         Returns:
             A renderable.
         """
         visible_screen_stack.set([] if screen_stack is None else screen_stack)
-        return InlineUpdate(self.render_strips(size))
+        strips = self.render_strips(size)
+        return InlineUpdate(strips, clear=clear)
 
-    def render_full_update(self) -> LayoutUpdate:
+    def render_full_update(self, simplify: bool = False) -> LayoutUpdate:
         """Render a full update.
+
+        Args:
+            simplify: Simplify the segments (combine contiguous segments).
 
         Returns:
             A LayoutUpdate renderable.
@@ -1033,7 +1056,11 @@ class Compositor:
         self._dirty_regions.clear()
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
-        render_strips = [Strip.join(chop.values()) for chop in chops]
+        if simplify:
+            render_strips = [Strip.join(chop.values()).simplify() for chop in chops]
+        else:
+            render_strips = [Strip.join(chop.values()) for chop in chops]
+
         return LayoutUpdate(render_strips, screen_region)
 
     def render_partial_update(self) -> ChopsUpdate | None:

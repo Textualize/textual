@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
@@ -130,6 +131,7 @@ class ToggleButton(Static, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Initialise the toggle.
 
@@ -141,6 +143,7 @@ class ToggleButton(Static, can_focus=True):
             id: The ID of the toggle in the DOM.
             classes: The CSS classes of the toggle.
             disabled: Whether the button is disabled or not.
+            tooltip: RenderableType | None = None,
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._button_first = button_first
@@ -148,6 +151,8 @@ class ToggleButton(Static, can_focus=True):
         with self.prevent(self.Changed):
             self.value = value
         self._label = self._make_label(label)
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def _make_label(self, label: TextType) -> Text:
         """Make a `Text` label from a `TextType` value.
@@ -164,6 +169,7 @@ class ToggleButton(Static, can_focus=True):
             label = label.split()[0]
         except IndexError:
             pass
+
         return label
 
     @property
@@ -211,7 +217,9 @@ class ToggleButton(Static, can_focus=True):
         """
         button = self._button
         label = self._label.copy()
-        label.stylize(self.get_component_rich_style("toggle--label", partial=True))
+        label.stylize_before(
+            self.get_component_rich_style("toggle--label", partial=True)
+        )
         spacer = " " if label else ""
         return Text.assemble(
             *(

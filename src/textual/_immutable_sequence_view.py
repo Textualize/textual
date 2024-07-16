@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from sys import maxsize
-from typing import Generic, Iterator, Sequence, TypeVar, overload
+from typing import TYPE_CHECKING, Generic, Iterator, Sequence, TypeVar, overload
 
 T = TypeVar("T")
 
@@ -19,11 +19,13 @@ class ImmutableSequenceView(Generic[T]):
         """
         self._wrap = wrap
 
-    @overload
-    def __getitem__(self, index: int) -> T: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __getitem__(self, index: slice) -> ImmutableSequenceView[T]: ...
+        @overload
+        def __getitem__(self, index: int) -> T: ...
+
+        @overload
+        def __getitem__(self, index: slice) -> ImmutableSequenceView[T]: ...
 
     def __getitem__(self, index: int | slice) -> T | ImmutableSequenceView[T]:
         return (

@@ -78,7 +78,7 @@ async def test_remove_move_focus():
         assert pilot.app.focused == buttons[9]
 
 
-async def test_widget_remove_order():
+async def test_widget_remove_order() -> None:
     """A Widget.remove of a top-level widget should cause bottom-first removal."""
 
     removals: list[str] = []

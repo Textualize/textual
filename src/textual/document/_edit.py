@@ -81,8 +81,16 @@ class Edit:
         )
 
         row_offset = new_edit_to_row - edit_bottom_row
-        target_selection_start_row = selection_start_row + row_offset
-        target_selection_end_row = selection_end_row + row_offset
+        target_selection_start_row = (
+            selection_start_row + row_offset
+            if edit_bottom_row <= selection_start_row
+            else selection_start_row
+        )
+        target_selection_end_row = (
+            selection_end_row + row_offset
+            if edit_bottom_row <= selection_end_row
+            else selection_end_row
+        )
 
         if self.maintain_selection_offset:
             self._updated_selection = Selection(

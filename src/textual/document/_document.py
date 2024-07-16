@@ -182,11 +182,13 @@ class DocumentBase(ABC):
     def end(self) -> Location:
         """Returns the location of the end of the document."""
 
-    @overload
-    def __getitem__(self, line_index: int) -> str: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __getitem__(self, line_index: slice) -> list[str]: ...
+        @overload
+        def __getitem__(self, line_index: int) -> str: ...
+
+        @overload
+        def __getitem__(self, line_index: slice) -> list[str]: ...
 
     @abstractmethod
     def __getitem__(self, line_index: int | slice) -> str | list[str]:
@@ -351,7 +353,7 @@ class Document(DocumentBase):
     def end(self) -> Location:
         """Returns the location of the end of the document."""
         last_line = self._lines[-1]
-        return (self.line_count, len(last_line))
+        return (self.line_count - 1, len(last_line))
 
     def get_index_from_location(self, location: Location) -> int:
         """Given a location, returns the index from the document's text.

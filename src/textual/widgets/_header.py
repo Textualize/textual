@@ -7,6 +7,7 @@ from datetime import datetime
 from rich.text import Text
 
 from ..app import RenderResult
+from ..dom import NoScreen
 from ..events import Click, Mount
 from ..reactive import Reactive
 from ..widget import Widget
@@ -34,7 +35,7 @@ class HeaderIcon(Widget):
     async def on_click(self, event: Click) -> None:
         """Launch the command palette when icon is clicked."""
         event.stop()
-        await self.run_action("command_palette")
+        await self.run_action("app.command_palette")
 
     def render(self) -> RenderResult:
         """Render the header icon.
@@ -77,6 +78,8 @@ class HeaderClock(HeaderClockSpace):
     }
     """
 
+    time_format: Reactive[str] = Reactive("%X")
+
     def _on_mount(self, _: Mount) -> None:
         self.set_interval(1, callback=self.refresh, name=f"update header clock")
 
@@ -86,7 +89,7 @@ class HeaderClock(HeaderClockSpace):
         Returns:
             The rendered clock.
         """
-        return Text(datetime.now().time().strftime("%X"))
+        return Text(datetime.now().time().strftime(self.time_format))
 
 
 class HeaderTitle(Widget):
@@ -139,6 +142,12 @@ class Header(Widget):
     tall: Reactive[bool] = Reactive(False)
     """Set to `True` for a taller header or `False` for a single line header."""
 
+    icon: Reactive[str] = Reactive("⭘")
+    """A character for the icon at the top left."""
+
+    time_format: Reactive[str] = Reactive("%X")
+    """Time format of the clock."""
+
     def __init__(
         self,
         show_clock: bool = False,
@@ -146,6 +155,8 @@ class Header(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        icon: str | None = None,
+        time_format: str | None = None,
     ):
         """Initialise the header widget.
 
@@ -154,14 +165,24 @@ class Header(Widget):
             name: The name of the header widget.
             id: The ID of the header widget in the DOM.
             classes: The CSS classes of the header widget.
+            icon: Single character to use as an icon, or `None` for default.
+            time_format: Time format (used by strftime) for clock, or `None` for default.
         """
         super().__init__(name=name, id=id, classes=classes)
         self._show_clock = show_clock
+        if icon is not None:
+            self.icon = icon
+        if time_format is not None:
+            self.time_format = time_format
 
     def compose(self):
-        yield HeaderIcon()
+        yield HeaderIcon().data_bind(Header.icon)
         yield HeaderTitle()
-        yield HeaderClock() if self._show_clock else HeaderClockSpace()
+        yield (
+            HeaderClock().data_bind(Header.time_format)
+            if self._show_clock
+            else HeaderClockSpace()
+        )
 
     def watch_tall(self, tall: bool) -> None:
         self.set_class(tall, "-tall")
@@ -193,10 +214,16 @@ class Header(Widget):
 
     def _on_mount(self, _: Mount) -> None:
         async def set_title() -> None:
-            self.query_one(HeaderTitle).text = self.screen_title
+            try:
+                self.query_one(HeaderTitle).text = self.screen_title
+            except NoScreen:
+                pass
 
         async def set_sub_title() -> None:
-            self.query_one(HeaderTitle).sub_text = self.screen_sub_title
+            try:
+                self.query_one(HeaderTitle).sub_text = self.screen_sub_title
+            except NoScreen:
+                pass
 
         self.watch(self.app, "title", set_title)
         self.watch(self.app, "sub_title", set_sub_title)

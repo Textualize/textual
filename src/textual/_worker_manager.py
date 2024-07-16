@@ -175,5 +175,7 @@ class WorkerManager:
         Args:
             workers: An iterable of workers or None to wait for all workers in the manager.
         """
-
-        await asyncio.gather(*[worker.wait() for worker in (workers or self)])
+        try:
+            await asyncio.gather(*[worker.wait() for worker in (workers or self)])
+        except asyncio.CancelledError:
+            pass

@@ -5,7 +5,7 @@ import threading
 import pytest
 
 from textual import work
-from textual.app import App, ComposeResult, ScreenStackError
+from textual.app import App, ComposeResult, ScreenError, ScreenStackError
 from textual.events import MouseMove
 from textual.geometry import Offset
 from textual.screen import Screen
@@ -110,7 +110,7 @@ async def test_screens():
     # Check screen stack is empty
     assert app.screen_stack == []
     # Push a screen
-    app.push_screen("screen1")
+    await app.push_screen("screen1")
     # Check it is on the stack
     assert app.screen_stack == [screen1]
     # Check it is current
@@ -119,21 +119,21 @@ async def test_screens():
     assert app.children == (screen1,)
 
     # Switch to another screen
-    app.switch_screen("screen2")
+    await app.switch_screen("screen2")
     # Check it has changed the stack and that it is current
     assert app.screen_stack == [screen2]
     assert app.screen is screen2
     assert app.children == (screen2,)
 
     # Push another screen
-    app.push_screen("screen3")
+    await app.push_screen("screen3")
     assert app.screen_stack == [screen2, screen3]
     assert app.screen is screen3
     # Only the current screen is in children
     assert app.children == (screen3,)
 
     # Pop a screen
-    assert app.pop_screen() is screen3
+    await app.pop_screen()
     assert app.screen is screen2
     assert app.screen_stack == [screen2]
 
@@ -293,15 +293,16 @@ async def test_auto_focus_skips_non_focusable_widgets():
 async def test_dismiss_non_top_screen():
     class MyApp(App[None]):
         async def key_p(self) -> None:
-            self.bottom, top = Screen(), Screen()
+            self.bottom = Screen()
+            top = Screen()
             await self.push_screen(self.bottom)
             await self.push_screen(top)
 
     app = MyApp()
     async with app.run_test() as pilot:
         await pilot.press("p")
-        with pytest.raises(ScreenStackError):
-            app.bottom.dismiss()
+        with pytest.raises(ScreenError):
+            await app.bottom.dismiss()
 
 
 async def test_dismiss_action():
@@ -496,3 +497,20 @@ async def test_push_screen_wait_for_dismiss_no_worker() -> None:
     with pytest.raises(NoActiveWorker):
         async with app.run_test() as pilot:
             await pilot.press("x", "y")
+
+
+async def test_default_custom_screen() -> None:
+    """Test we can override the default screen."""
+
+    class CustomScreen(Screen):
+        pass
+
+    class CustomScreenApp(App):
+        def get_default_screen(self) -> Screen:
+            return CustomScreen()
+
+    app = CustomScreenApp()
+    async with app.run_test():
+        assert len(app.screen_stack) == 1
+        assert isinstance(app.screen_stack[0], CustomScreen)
+        assert app.screen is app.screen_stack[0]

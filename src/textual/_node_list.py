@@ -157,11 +157,13 @@ class NodeList(Sequence["Widget"]):
     def __reversed__(self) -> Iterator[Widget]:
         return reversed(self._nodes)
 
-    @overload
-    def __getitem__(self, index: int) -> Widget: ...
+    if TYPE_CHECKING:
 
-    @overload
-    def __getitem__(self, index: slice) -> list[Widget]: ...
+        @overload
+        def __getitem__(self, index: int) -> Widget: ...
+
+        @overload
+        def __getitem__(self, index: slice) -> list[Widget]: ...
 
     def __getitem__(self, index: int | slice) -> Widget | list[Widget]:
         return self._nodes[index]

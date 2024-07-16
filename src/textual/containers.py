@@ -47,6 +47,8 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
         Binding("end", "scroll_end", "Scroll End", show=False),
         Binding("pageup", "page_up", "Page Up", show=False),
         Binding("pagedown", "page_down", "Page Down", show=False),
+        Binding("ctrl+pageup", "page_left", "Page Left", show=False),
+        Binding("ctrl+pagedown", "page_right", "Page Right", show=False),
     ]
     """Keyboard bindings for scrollable containers.
 
@@ -60,6 +62,8 @@ class ScrollableContainer(Widget, can_focus=True, inherit_bindings=False):
     | end | Scroll to the end position, if scrolling is available. |
     | pageup | Scroll up one page, if vertical scrolling is available. |
     | pagedown | Scroll down one page, if vertical scrolling is available. |
+    | ctrl+pageup | Scroll left one page, if horizontal scrolling is available. |
+    | ctrl+pagedown | Scroll right one page, if horizontal scrolling is available. |
     """
 
 
@@ -102,7 +106,7 @@ class Horizontal(Widget, inherit_bindings=False):
 
 
 class HorizontalScroll(ScrollableContainer):
-    """A container with horizontal layout and an automatic scrollbar on the Y axis."""
+    """A container with horizontal layout and an automatic scrollbar on the X axis."""
 
     DEFAULT_CSS = """
     HorizontalScroll {

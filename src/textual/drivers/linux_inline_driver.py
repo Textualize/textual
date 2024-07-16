@@ -24,7 +24,6 @@ if TYPE_CHECKING:
 
 @rich.repr.auto(angular=True)
 class LinuxInlineDriver(Driver):
-
     def __init__(
         self,
         app: App,
@@ -109,7 +108,7 @@ class LinuxInlineDriver(Driver):
         """
         try:
             self.run_input_thread()
-        except BaseException as error:
+        except BaseException:
             import rich.traceback
 
             self._app.call_later(
@@ -128,7 +127,7 @@ class LinuxInlineDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.01):
+            for _key, events in selector.select(0.1):
                 if events & EVENT_READ:
                     return True
             return False
@@ -157,30 +156,41 @@ class LinuxInlineDriver(Driver):
             selector.close()
 
     def start_application_mode(self) -> None:
-
         loop = asyncio.get_running_loop()
 
-        def send_size_event() -> None:
+        def send_size_event(clear: bool = False) -> None:
+            """Send the resize event, optionally clearing the screen.
+
+            Args:
+                clear: Clear the screen.
+            """
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
             event = events.Resize(textual_size, textual_size)
+
+            async def update_size() -> None:
+                """Update the screen size."""
+                if clear:
+                    self.write("\x1b[2J")
+                await self._app._post_message(event)
+
             asyncio.run_coroutine_threadsafe(
-                self._app._post_message(event),
+                update_size(),
                 loop=loop,
             )
 
-            def on_terminal_resize(signum, stack) -> None:
-                self.write("\x1b[2J")
-                self.flush()
-                send_size_event()
+        def on_terminal_resize(signum, stack) -> None:
+            send_size_event(clear=True)
 
-            signal.signal(signal.SIGWINCH, on_terminal_resize)
+        signal.signal(signal.SIGWINCH, on_terminal_resize)
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1004h\n")  # Enable FocusIn/FocusOut.
+        self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
 
         self._enable_mouse_support()
+        self.write("\n")
+        self.flush()
         try:
             self.attrs_before = termios.tcgetattr(self.fileno)
         except termios.error:
@@ -207,6 +217,17 @@ class LinuxInlineDriver(Driver):
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
+        self._request_terminal_sync_mode_support()
+        self._enable_bracketed_paste()
+
+    def _request_terminal_sync_mode_support(self) -> None:
+        """Writes an escape sequence to query the terminal support for the sync protocol."""
+        # Terminals should ignore this sequence if not supported.
+        # Apple terminal doesn't, and writes a single 'p' in to the terminal,
+        # so we will make a special case for Apple terminal (which doesn't support sync anyway).
+        if os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
+            self.write("\033[?2026$p")
+            self.flush()
 
     @classmethod
     def _patch_lflag(cls, attrs: int) -> int:
@@ -255,12 +276,16 @@ class LinuxInlineDriver(Driver):
             # TODO: log this
             pass
 
+    def flush(self):
+        """Flush any buffered data."""
+        self._file.flush()
+
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
         self._disable_bracketed_paste()
         self.disable_input()
 
-        self.write("\x1b[A\x1b[J")
+        self.write("\x1b[2A\x1b[J")
 
         if self.attrs_before is not None:
             try:
@@ -269,6 +294,6 @@ class LinuxInlineDriver(Driver):
                 pass
 
             self.write("\x1b[?25h")  # Show cursor
-            self.write("\033[?1004l\n")  # Disable FocusIn/FocusOut.
+            self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
 
         self.flush()

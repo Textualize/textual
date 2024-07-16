@@ -1,10 +1,9 @@
 import asyncio
-import platform
+import sys
 from asyncio import sleep as asyncio_sleep
 from time import monotonic, perf_counter
 
-PLATFORM = platform.system()
-WINDOWS = PLATFORM == "Windows"
+WINDOWS = sys.platform == "win32"
 
 
 if WINDOWS:

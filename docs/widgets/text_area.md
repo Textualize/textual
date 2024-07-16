@@ -353,6 +353,8 @@ the `show_line_numbers` attribute to `True` or `False`.
 
 Setting this attribute will immediately repaint the `TextArea` to reflect the new value.
 
+You can also change the start line number (the topmost line number in the gutter) by setting the `line_number_start` reactive attribute.
+
 ### Extending `TextArea`
 
 Sometimes, you may wish to subclass `TextArea` to add some extra functionality.
@@ -481,7 +483,7 @@ We can freely edit the text, and the syntax highlighting will update immediately
 Recall that we map names (like `@heading`) from the tree-sitter highlight query to Rich style objects inside the `TextAreaTheme.syntax_styles` dictionary.
 If you notice some highlights are missing after registering a language, the issue may be:
 
-1. The current `TextAreaTheme` doesn't contain a mapping for the name in the highlight query. Adding a new to `syntax_styles` should resolve the issue.
+1. The current `TextAreaTheme` doesn't contain a mapping for the name in the highlight query. Adding a new key-value pair to `syntax_styles` should resolve the issue.
 2. The highlight query doesn't assign a name to the pattern you expect to be highlighted. In this case you'll need to update the highlight query to assign to the name.
 
 !!! tip
@@ -506,6 +508,7 @@ A detailed view of these classes is out of scope, but do note that a lot of the 
 | `theme`                | `str`                    | `"css"`       | The theme to use.                                                |
 | `selection`            | `Selection`              | `Selection()` | The current selection.                                           |
 | `show_line_numbers`    | `bool`                   | `False`       | Show or hide line numbers.                                       |
+| `line_number_start`    | `int`                    | `1`           | The start line number in the gutter.                            |
 | `indent_width`         | `int`                    | `4`           | The number of spaces to indent and width of tabs.                |
 | `match_cursor_bracket` | `bool`                   | `True`        | Enable/disable highlighting matching brackets under cursor.      |
 | `cursor_blink`         | `bool`                   | `True`        | Enable/disable blinking of the cursor when the widget has focus. |

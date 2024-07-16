@@ -210,7 +210,7 @@ async def test_screen_css_switch_screen_type_by_name():
     class MyApp(SwitchBaseApp):
         SCREENS = {"screenwithcss": ScreenWithCSS}
 
-        def key_p(self):
+        async def key_p(self):
             self.switch_screen("screenwithcss")
 
         def key_o(self):

@@ -99,7 +99,6 @@ class Driver(ABC):
                 and not event.button
                 and self._last_move_event is not None
             ):
-
                 # Deduplicate self._down_buttons while preserving order.
                 buttons = list(dict.fromkeys(self._down_buttons).keys())
                 self._down_buttons.clear()

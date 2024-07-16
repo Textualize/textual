@@ -33,42 +33,42 @@ class WorkerDeclarationError(Exception):
     """An error in the declaration of a worker method."""
 
 
-@overload
-def work(
-    method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
-    *,
-    name: str = "",
-    group: str = "default",
-    exit_on_error: bool = True,
-    exclusive: bool = False,
-    description: str | None = None,
-    thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
+if TYPE_CHECKING:
 
+    @overload
+    def work(
+        method: Callable[FactoryParamSpec, Coroutine[None, None, ReturnType]],
+        *,
+        name: str = "",
+        group: str = "default",
+        exit_on_error: bool = True,
+        exclusive: bool = False,
+        description: str | None = None,
+        thread: bool = False,
+    ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
 
-@overload
-def work(
-    method: Callable[FactoryParamSpec, ReturnType],
-    *,
-    name: str = "",
-    group: str = "default",
-    exit_on_error: bool = True,
-    exclusive: bool = False,
-    description: str | None = None,
-    thread: bool = False,
-) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
+    @overload
+    def work(
+        method: Callable[FactoryParamSpec, ReturnType],
+        *,
+        name: str = "",
+        group: str = "default",
+        exit_on_error: bool = True,
+        exclusive: bool = False,
+        description: str | None = None,
+        thread: bool = False,
+    ) -> Callable[FactoryParamSpec, "Worker[ReturnType]"]: ...
 
-
-@overload
-def work(
-    *,
-    name: str = "",
-    group: str = "default",
-    exit_on_error: bool = True,
-    exclusive: bool = False,
-    description: str | None = None,
-    thread: bool = False,
-) -> Decorator[..., ReturnType]: ...
+    @overload
+    def work(
+        *,
+        name: str = "",
+        group: str = "default",
+        exit_on_error: bool = True,
+        exclusive: bool = False,
+        description: str | None = None,
+        thread: bool = False,
+    ) -> Decorator[..., ReturnType]: ...
 
 
 def work(
@@ -103,7 +103,7 @@ def work(
         method: (
             Callable[DecoratorParamSpec, ReturnType]
             | Callable[DecoratorParamSpec, Coroutine[None, None, ReturnType]]
-        )
+        ),
     ) -> Callable[DecoratorParamSpec, Worker[ReturnType]]:
         """The decorator."""
 

@@ -4,6 +4,7 @@ Tools for processing Segments, or lists of Segments.
 
 from __future__ import annotations
 
+import re
 from typing import Iterable
 
 from rich.segment import Segment
@@ -258,3 +259,36 @@ def align_lines(
 
     if bottom_blank_lines:
         yield from blank_lines(bottom_blank_lines)
+
+
+_re_spaces = re.compile(r"(\s+|\S+)")
+
+
+def apply_hatch(
+    segments: Iterable[Segment],
+    character: str,
+    hatch_style: Style,
+    _split=_re_spaces.split,
+) -> Iterable[Segment]:
+    """Replace run of spaces with another character + style.
+
+    Args:
+        segments: Segments to process.
+        character: Character to replace spaces.
+        hatch_style: Style of replacement characters.
+
+    Yields:
+        Segments.
+    """
+    _Segment = Segment
+    for segment in segments:
+        if " " not in segment.text:
+            yield segment
+        else:
+            text, style, _ = segment
+            for token in _split(text):
+                if token:
+                    if token.isspace():
+                        yield _Segment(character * len(token), hatch_style)
+                    else:
+                        yield _Segment(token, style)

@@ -33,7 +33,8 @@ from ._compositor import Compositor, MapGeometry
 from ._context import active_message_pump, visible_screen_stack
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import CallbackType
-from .binding import Binding
+from .await_complete import AwaitComplete
+from .binding import ActiveBinding, Binding, _Bindings
 from .css.match import match
 from .css.parse import parse_selectors
 from .css.query import NoMatches, QueryType
@@ -69,6 +70,7 @@ ScreenResultCallbackType = Union[
 """Type of a screen result callback function."""
 
 
+@rich.repr.auto
 class ResultCallback(Generic[ScreenResultType]):
     """Holds the details of a callback."""
 
@@ -136,7 +138,7 @@ class Screen(Generic[ScreenResultType], Widget):
     Screen {
         layout: vertical;
         overflow-y: auto;
-        background: $surface;
+        background: $surface;        
         
         &:inline {
             height: auto;
@@ -164,7 +166,8 @@ class Screen(Generic[ScreenResultType], Widget):
     """
 
     focused: Reactive[Widget | None] = Reactive(None)
-    """The focused [widget][textual.widget.Widget] or `None` for no focus."""
+    """The focused [widget][textual.widget.Widget] or `None` for no focus.
+    To set focus, do not update this value directly. Use [set_focus][textual.screen.Screen.set_focus] instead."""
     stack_updates: Reactive[int] = Reactive(0, repaint=False)
     """An integer that updates when the screen is resumed."""
     sub_title: Reactive[str | None] = Reactive(None, compute=False)
@@ -179,8 +182,8 @@ class Screen(Generic[ScreenResultType], Widget):
     """
 
     BINDINGS = [
-        Binding("tab", "focus_next", "Focus Next", show=False),
-        Binding("shift+tab", "focus_previous", "Focus Previous", show=False),
+        Binding("tab", "app.focus_next", "Focus Next", show=False),
+        Binding("shift+tab", "app.focus_previous", "Focus Previous", show=False),
     ]
 
     def __init__(
@@ -221,8 +224,15 @@ class Screen(Generic[ScreenResultType], Widget):
         self.title = self.TITLE
         self.sub_title = self.SUB_TITLE
 
-        self.screen_layout_refresh_signal = Signal(self, "layout-refresh")
+        self.screen_layout_refresh_signal: Signal[Screen] = Signal(
+            self, "layout-refresh"
+        )
         """The signal that is published when the screen's layout is refreshed."""
+
+        self._bindings_updated = False
+        """Indicates that a binding update was requested."""
+        self.bindings_updated_signal: Signal[Screen] = Signal(self, "bindings_updated")
+        """A signal published when the bindings have been updated"""
 
     @property
     def is_modal(self) -> bool:
@@ -262,7 +272,93 @@ class Screen(Generic[ScreenResultType], Widget):
             extras.append("_tooltips")
         return (*super().layers, *extras)
 
+    def _watch_focused(self):
+        self.refresh_bindings()
+
+    def _watch_stack_updates(self):
+        self.refresh_bindings()
+
+    def refresh_bindings(self) -> None:
+        """Call to request a refresh of bindings."""
+        self.log.debug("Bindings updated")
+        self._bindings_updated = True
+        self.check_idle()
+
+    @property
+    def _binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+        """Binding chain from this screen."""
+        focused = self.focused
+        if focused is not None and focused.loading:
+            focused = None
+        namespace_bindings: list[tuple[DOMNode, _Bindings]]
+
+        if focused is None:
+            namespace_bindings = [
+                (self, self._bindings),
+                (self.app, self.app._bindings),
+            ]
+        else:
+            namespace_bindings = [
+                (node, node._bindings) for node in focused.ancestors_with_self
+            ]
+
+        return namespace_bindings
+
+    @property
+    def _modal_binding_chain(self) -> list[tuple[DOMNode, _Bindings]]:
+        """The binding chain, ignoring everything before the last modal."""
+        binding_chain = self._binding_chain
+        for index, (node, _bindings) in enumerate(binding_chain, 1):
+            if node.is_modal:
+                return binding_chain[:index]
+        return binding_chain
+
+    @property
+    def active_bindings(self) -> dict[str, ActiveBinding]:
+        """Get currently active bindings for this screen.
+
+        If no widget is focused, then app-level bindings are returned.
+        If a widget is focused, then any bindings present in the screen and app are merged and returned.
+
+        This property may be used to inspect current bindings.
+
+        Returns:
+            A map of keys to a tuple containing (namespace, binding, enabled boolean).
+        """
+
+        bindings_map: dict[str, ActiveBinding] = {}
+        for namespace, bindings in self._modal_binding_chain:
+            for key, binding in bindings.keys.items():
+                action_state = self.app._check_action_state(binding.action, namespace)
+                if action_state is False:
+                    continue
+                if existing_key_and_binding := bindings_map.get(key):
+                    _, existing_binding, _ = existing_key_and_binding
+                    if binding.priority and not existing_binding.priority:
+                        bindings_map[key] = ActiveBinding(
+                            namespace, binding, bool(action_state)
+                        )
+                else:
+                    bindings_map[key] = ActiveBinding(
+                        namespace, binding, bool(action_state)
+                    )
+
+        return bindings_map
+
+    @property
+    def is_active(self) -> bool:
+        """Is the screen active (i.e. visible and top of the stack)?"""
+        try:
+            return self.app.screen is self
+        except Exception:
+            return False
+
     def render(self) -> RenderableType:
+        """Render method inherited from widget, used to render the screen's background.
+
+        Returns:
+            Background renderable.
+        """
         background = self.styles.background
         try:
             base_screen = visible_screen_stack.get().pop()
@@ -270,10 +366,13 @@ class Screen(Generic[ScreenResultType], Widget):
             base_screen = None
 
         if base_screen is not None and background.a < 1:
+            # If background is translucent, render a background screen
             return BackgroundScreen(base_screen, background)
 
         if background.is_transparent:
+            # If the background is transparent, defer to App.render
             return self.app.render()
+        # Render a screen of a solid color.
         return Blank(background)
 
     def get_offset(self, widget: Widget) -> Offset:
@@ -618,21 +717,22 @@ class Screen(Generic[ScreenResultType], Widget):
                 # Change focus
                 self.focused = widget
                 # Send focus event
+                widget.post_message(events.Focus())
+                focused = widget
+
                 if scroll_visible:
 
                     def scroll_to_center(widget: Widget) -> None:
                         """Scroll to center (after a refresh)."""
-                        if widget.has_focus and not self.screen.can_view(widget):
-                            self.screen.scroll_to_center(widget, origin_visible=True)
+                        if self.focused is widget and not self.can_view(widget):
+                            self.scroll_to_center(widget, origin_visible=True)
 
-                    self.call_after_refresh(scroll_to_center, widget)
-
-                widget.post_message(events.Focus())
-                focused = widget
+                    self.call_later(scroll_to_center, widget)
 
                 self.log.debug(widget, "was focused")
 
         self._update_focus_styles(focused, blurred)
+        self.refresh_bindings()
 
     def _extend_compose(self, widgets: list[Widget]) -> None:
         """Insert Textual's own internal widgets.
@@ -650,52 +750,79 @@ class Screen(Generic[ScreenResultType], Widget):
 
     def _on_mount(self, event: events.Mount) -> None:
         """Set up the tooltip-clearing signal when we mount."""
-        self.screen_layout_refresh_signal.subscribe(self, self._maybe_clear_tooltip)
+        self.screen_layout_refresh_signal.subscribe(
+            self, self._maybe_clear_tooltip, immediate=True
+        )
+        self.refresh_bindings()
 
     async def _on_idle(self, event: events.Idle) -> None:
         # Check for any widgets marked as 'dirty' (needs a repaint)
         event.prevent_default()
 
-        if not self.app._batch_count and self.is_current:
-            if (
-                self._layout_required
-                or self._scroll_required
-                or self._repaint_required
-                or self._recompose_required
-                or self._dirty_widgets
-            ):
-                self._update_timer.resume()
-                return
+        try:
+            if not self.app._batch_count and self.is_current:
+                if (
+                    self._layout_required
+                    or self._scroll_required
+                    or self._repaint_required
+                    or self._recompose_required
+                    or self._dirty_widgets
+                ):
+                    self._update_timer.resume()
+                    return
 
-        await self._invoke_and_clear_callbacks()
+            await self._invoke_and_clear_callbacks()
+        finally:
+            if self._bindings_updated:
+                self._bindings_updated = False
+                self.app.call_later(self.bindings_updated_signal.publish, self)
 
     def _compositor_refresh(self) -> None:
         """Perform a compositor refresh."""
 
-        if self.app.is_inline:
-            size = self.app.size
-            self.app._display(
-                self,
-                self._compositor.render_inline(
-                    Size(size.width, self._get_inline_height(size)),
-                    screen_stack=self.app._background_screens,
-                ),
-            )
-            self._dirty_widgets.clear()
-            self._compositor._dirty_regions.clear()
+        app = self.app
 
-        elif self is self.app.screen:
-            # Top screen
-            update = self._compositor.render_update(
-                screen_stack=self.app._background_screens
-            )
-            self.app._display(self, update)
-            self._dirty_widgets.clear()
-        elif self in self.app._background_screens and self._compositor._dirty_regions:
-            # Background screen
-            self.app.screen.refresh(*self._compositor._dirty_regions)
-            self._compositor._dirty_regions.clear()
-            self._dirty_widgets.clear()
+        if app.is_inline:
+            if self is app.screen:
+                inline_height = app._get_inline_height()
+                clear = (
+                    app._previous_inline_height is not None
+                    and inline_height < app._previous_inline_height
+                )
+                app._display(
+                    self,
+                    self._compositor.render_inline(
+                        app.size.with_height(inline_height),
+                        screen_stack=app._background_screens,
+                        clear=clear,
+                    ),
+                )
+                app._previous_inline_height = inline_height
+                self._dirty_widgets.clear()
+                self._compositor._dirty_regions.clear()
+            elif (
+                self in self.app._background_screens and self._compositor._dirty_regions
+            ):
+                app.screen.refresh(*self._compositor._dirty_regions)
+                self._compositor._dirty_regions.clear()
+                self._dirty_widgets.clear()
+
+        else:
+            if self is app.screen:
+                # Top screen
+                update = self._compositor.render_update(
+                    screen_stack=app._background_screens
+                )
+                app._display(self, update)
+                self._dirty_widgets.clear()
+            elif (
+                self in self.app._background_screens and self._compositor._dirty_regions
+            ):
+                # Background screen
+                app.screen.refresh(*self._compositor._dirty_regions)
+                self._compositor._dirty_regions.clear()
+                self._dirty_widgets.clear()
+        app._update_mouse_over(self)
 
     def _on_timer_update(self) -> None:
         """Called by the _update_timer."""
@@ -775,7 +902,7 @@ class Screen(Generic[ScreenResultType], Widget):
         """Refresh the layout (can change size and positions of widgets)."""
         size = self.outer_size if size is None else size
         if self.app.is_inline:
-            size = Size(size.width, self._get_inline_height(self.app.size))
+            size = size.with_height(self.app._get_inline_height())
         if not size:
             return
         self._compositor.update_widgets(self._dirty_widgets)
@@ -843,7 +970,7 @@ class Screen(Generic[ScreenResultType], Widget):
             self._compositor_refresh()
 
         if self.app._dom_ready:
-            self.screen_layout_refresh_signal.publish()
+            self.screen_layout_refresh_signal.publish(self.screen)
         else:
             self.app.post_message(events.Ready())
             self.app._dom_ready = True
@@ -889,7 +1016,7 @@ class Screen(Generic[ScreenResultType], Widget):
             inline_height = max(inline_height, int(min_height.resolve(size, size)))
         if max_height is not None:
             inline_height = min(inline_height, int(max_height.resolve(size, size)))
-        inline_height = min(self.app.size.height - 1, inline_height)
+        inline_height = min(self.app.size.height, inline_height)
         return inline_height
 
     def _screen_resized(self, size: Size):
@@ -948,7 +1075,7 @@ class Screen(Generic[ScreenResultType], Widget):
                 self._tooltip_timer.stop()
             tooltip.display = False
 
-    def _maybe_clear_tooltip(self) -> None:
+    def _maybe_clear_tooltip(self, _) -> None:
         """Check if the widget under the mouse cursor still pertains to the tooltip.
 
         If they differ, the tooltip will be removed.
@@ -1065,6 +1192,7 @@ class Screen(Generic[ScreenResultType], Widget):
         if event.is_forwarded:
             return
         event._set_forwarded()
+
         if isinstance(event, (events.Enter, events.Leave)):
             self.post_message(event)
 
@@ -1099,8 +1227,15 @@ class Screen(Generic[ScreenResultType], Widget):
     class _NoResult:
         """Class used to mark that there is no result."""
 
-    def dismiss(self, result: ScreenResultType | Type[_NoResult] = _NoResult) -> None:
+    def dismiss(
+        self, result: ScreenResultType | Type[_NoResult] = _NoResult
+    ) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
+
+        !!! note
+
+            Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
+            this method will raise a `ScreenError`.
 
         If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
@@ -1109,21 +1244,21 @@ class Screen(Generic[ScreenResultType], Widget):
             result: The optional result to be passed to the result callback.
 
         Raises:
+            ScreenError: If the screen being dismissed is not active.
             ScreenStackError: If trying to dismiss a screen that is not at the top of
                 the stack.
 
         """
-        if self is not self.app.screen:
-            from .app import ScreenStackError
+        if not self.is_active:
+            from .app import ScreenError
 
-            raise ScreenStackError(
-                f"Can't dismiss screen {self} that's not at the top of the stack."
-            )
+            raise ScreenError("Screen is not active")
         if result is not self._NoResult and self._result_callbacks:
             self._result_callbacks[-1](cast(ScreenResultType, result))
-        self.app.pop_screen()
+        await_pop = self.app.pop_screen()
+        return await_pop
 
-    def action_dismiss(
+    async def action_dismiss(
         self, result: ScreenResultType | Type[_NoResult] = _NoResult
     ) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
@@ -1131,6 +1266,7 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             result: The optional result to be passed to the result callback.
         """
+        await self._flush_next_callbacks()
         self.dismiss(result)
 
     def can_view(self, widget: Widget) -> bool:
@@ -1186,7 +1322,7 @@ class ModalScreen(Screen[ScreenResultType]):
         self._modal = True
 
 
-class _SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
+class SystemModalScreen(ModalScreen[ScreenResultType], inherit_css=False):
     """A variant of `ModalScreen` for internal use.
 
     This version of `ModalScreen` allows us to build system-level screens;

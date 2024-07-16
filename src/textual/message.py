@@ -146,4 +146,5 @@ class Message:
         Args:
             widget: Target of bubble.
         """
+        self._no_default_action = False
         widget.post_message(self)

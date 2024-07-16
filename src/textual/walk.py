@@ -17,21 +17,22 @@ if TYPE_CHECKING:
     WalkType = TypeVar("WalkType", bound=DOMNode)
 
 
-@overload
-def walk_depth_first(
-    root: DOMNode,
-    *,
-    with_root: bool = True,
-) -> Iterable[DOMNode]: ...
+if TYPE_CHECKING:
 
+    @overload
+    def walk_depth_first(
+        root: DOMNode,
+        *,
+        with_root: bool = True,
+    ) -> Iterable[DOMNode]: ...
 
-@overload
-def walk_depth_first(
-    root: WalkType,
-    filter_type: type[WalkType],
-    *,
-    with_root: bool = True,
-) -> Iterable[WalkType]: ...
+    @overload
+    def walk_depth_first(
+        root: WalkType,
+        filter_type: type[WalkType],
+        *,
+        with_root: bool = True,
+    ) -> Iterable[WalkType]: ...
 
 
 def walk_depth_first(
@@ -65,31 +66,31 @@ def walk_depth_first(
     if with_root and isinstance(root, check_type):
         yield root
     while stack:
-        node = next(stack[-1], None)
-        if node is None:
+        if (node := next(stack[-1], None)) is None:
             pop()
         else:
             if isinstance(node, check_type):
                 yield node
-            if node.children:
-                push(iter(node.children))
+            if children := node._nodes:
+                push(iter(children))
 
 
-@overload
-def walk_breadth_first(
-    root: DOMNode,
-    *,
-    with_root: bool = True,
-) -> Iterable[DOMNode]: ...
+if TYPE_CHECKING:
 
+    @overload
+    def walk_breadth_first(
+        root: DOMNode,
+        *,
+        with_root: bool = True,
+    ) -> Iterable[DOMNode]: ...
 
-@overload
-def walk_breadth_first(
-    root: WalkType,
-    filter_type: type[WalkType],
-    *,
-    with_root: bool = True,
-) -> Iterable[WalkType]: ...
+    @overload
+    def walk_breadth_first(
+        root: WalkType,
+        filter_type: type[WalkType],
+        *,
+        with_root: bool = True,
+    ) -> Iterable[WalkType]: ...
 
 
 def walk_breadth_first(
@@ -127,4 +128,4 @@ def walk_breadth_first(
         node = popleft()
         if isinstance(node, check_type):
             yield node
-        extend(node.children)
+        extend(node._nodes)

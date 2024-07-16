@@ -39,17 +39,17 @@ async def test_suspend_supported(capfd: pytest.CaptureFixture[str]) -> None:
             calls.add("resume")
 
     class SuspendApp(App[None]):
-        def on_suspend(self) -> None:
+        def on_suspend(self, _) -> None:
             nonlocal calls
             calls.add("suspend signal")
 
-        def on_resume(self) -> None:
+        def on_resume(self, _) -> None:
             nonlocal calls
             calls.add("resume signal")
 
         def on_mount(self) -> None:
-            self.app_suspend_signal.subscribe(self, self.on_suspend)
-            self.app_resume_signal.subscribe(self, self.on_resume)
+            self.app_suspend_signal.subscribe(self, self.on_suspend, immediate=True)
+            self.app_resume_signal.subscribe(self, self.on_resume, immediate=True)
 
     async with SuspendApp(driver_class=HeadlessSuspendDriver).run_test(
         headless=False
