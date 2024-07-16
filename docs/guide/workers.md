@@ -10,6 +10,9 @@ There are many interesting uses for Textual which require reading data from an i
 When an app requests data from the network it is important that it doesn't prevent the user interface from updating.
 In other words, the requests should be concurrent (happen at the same time) as the UI updates.
 
+This is also true for anything that could take a significant time (more than a few milliseconds) to complete.
+For instance, reading from a [subprocess](https://docs.python.org/3/library/asyncio-subprocess.html#asyncio-subprocess) or doing compute heavy work.
+
 Managing this concurrency is a tricky topic, in any language or framework.
 Even for experienced developers, there are gotchas which could make your app lock up or behave oddly.
 Textual's Worker API makes concurrency far less error prone and easier to reason about.
@@ -26,10 +29,10 @@ The following app uses [httpx](https://www.python-httpx.org/) to get the current
     --8<-- "docs/examples/guide/workers/weather01.py"
     ```
 
-=== "weather.css"
+=== "weather.tcss"
 
-    ```sass title="weather.css"
-    --8<-- "docs/examples/guide/workers/weather.css"
+    ```css title="weather.tcss"
+    --8<-- "docs/examples/guide/workers/weather.tcss"
     ```
 
 === "Output"
@@ -158,7 +161,7 @@ The second difference is that you can't cancel threads in the same way as corout
 Let's demonstrate thread workers by replacing `httpx` with `urllib.request` (in the standard library).
 The `urllib` module is not async aware, so we will need to use threads:
 
-```python title="weather05.py" hl_lines="1 26-43"
+```python title="weather05.py" hl_lines="1-2 27-44"
 --8<-- "docs/examples/guide/workers/weather05.py"
 ```
 

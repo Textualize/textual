@@ -16,19 +16,19 @@ You won't typically need to do this, as the default themes have carefully chosen
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<a href="./scrollbar_background">scrollbar-background</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_background">scrollbar-background</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./scrollbar_background_active">scrollbar-background-active</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_background_active">scrollbar-background-active</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./scrollbar_background_hover">scrollbar-background-hover</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_background_hover">scrollbar-background-hover</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./scrollbar_color">scrollbar-color</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_color">scrollbar-color</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./scrollbar_color_active">scrollbar-color-active</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_color_active">scrollbar-color-active</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./scrollbar_color_hover">scrollbar-color-hover</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_color_hover">scrollbar-color-hover</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 
-<a href="./scrollbar_corner_color">scrollbar-corner-color</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_corner_color">scrollbar-corner-color</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
 Visit each style's reference page to learn more about how the values are used.
@@ -49,8 +49,8 @@ The right panel sets `scrollbar-background`, `scrollbar-color`, and `scrollbar-c
     --8<-- "docs/examples/styles/scrollbars.py"
     ```
 
-=== "scrollbars.css"
+=== "scrollbars.tcss"
 
-    ```sass
-    --8<-- "docs/examples/styles/scrollbars.css"
+    ```css
+    --8<-- "docs/examples/styles/scrollbars.tcss"
     ```

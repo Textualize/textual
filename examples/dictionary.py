@@ -13,19 +13,14 @@ from textual.widgets import Input, Markdown
 
 
 class DictionaryApp(App):
-    """Searches ab dictionary API as-you-type."""
+    """Searches a dictionary API as-you-type."""
 
-    CSS_PATH = "dictionary.css"
+    CSS_PATH = "dictionary.tcss"
 
     def compose(self) -> ComposeResult:
         yield Input(placeholder="Search for a word")
         with VerticalScroll(id="results-container"):
             yield Markdown(id="results")
-
-    def on_mount(self) -> None:
-        """Called when app starts."""
-        # Give the input focus, so we can start typing straight away
-        self.query_one(Input).focus()
 
     async def on_input_changed(self, message: Input.Changed) -> None:
         """A coroutine to handle a text changed message."""
@@ -33,7 +28,7 @@ class DictionaryApp(App):
             self.lookup_word(message.value)
         else:
             # Clear the results
-            self.query_one("#results", Markdown).update("")
+            await self.query_one("#results", Markdown).update("")
 
     @work(exclusive=True)
     async def lookup_word(self, word: str) -> None:
@@ -46,6 +41,7 @@ class DictionaryApp(App):
                 results = response.json()
             except Exception:
                 self.query_one("#results", Markdown).update(response.text)
+                return
 
         if word == self.query_one(Input).value:
             markdown = self.make_word_markdown(results)

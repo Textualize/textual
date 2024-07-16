@@ -2,7 +2,6 @@ import pytest
 
 from textual.app import App
 from textual.containers import Grid
-from textual.screen import Screen
 from textual.widgets import Label
 
 

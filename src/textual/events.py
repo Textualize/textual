@@ -13,6 +13,7 @@ textual console -v
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Type, TypeVar
 
 import rich.repr
@@ -54,11 +55,19 @@ class Shutdown(Event):
     pass
 
 
+@dataclass
+class CursorPosition(Event, bubble=False):
+    """Internal event used to retrieve the terminal's cursor position."""
+
+    x: int
+    y: int
+
+
 class Load(Event, bubble=False):
     """
     Sent when the App is running but *before* the terminal is in application mode.
 
-    Use this event to run any set up that doesn't require any visuals such as loading
+    Use this event to run any setup that doesn't require any visuals such as loading
     configuration and binding keys.
 
     - [ ] Bubbles
@@ -109,8 +118,11 @@ class Resize(Event, bubble=False):
         container_size: Size | None = None,
     ) -> None:
         self.size = size
+        """The new size of the Widget."""
         self.virtual_size = virtual_size
+        """The virtual size (scrollable size) of the Widget."""
         self.container_size = size if container_size is None else container_size
+        """The size of the Widget's container widget."""
         super().__init__()
 
     def can_replace(self, message: "Message") -> bool:
@@ -124,6 +136,9 @@ class Resize(Event, bubble=False):
 
 class Compose(Event, bubble=False, verbose=True):
     """Sent to a widget to request it to compose and mount children.
+
+    This event is used internally by Textual.
+    You won't typically need to explicitly handle it,
 
     - [ ] Bubbles
     - [X] Verbose
@@ -139,7 +154,7 @@ class Mount(Event, bubble=False, verbose=False):
 
 
 class Unmount(Event, bubble=False, verbose=False):
-    """Sent when a widget is unmounted and may not longer receive messages.
+    """Sent when a widget is unmounted and may no longer receive messages.
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -147,7 +162,7 @@ class Unmount(Event, bubble=False, verbose=False):
 
 
 class Show(Event, bubble=False):
-    """Sent when a widget has become visible.
+    """Sent when a widget is first displayed.
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -160,13 +175,17 @@ class Hide(Event, bubble=False):
     - [ ] Bubbles
     - [ ] Verbose
 
-    A widget may be hidden by setting its `visible` flag to `False`, if it is no longer in a layout,
-    or if it has been offset beyond the edges of the terminal.
+    Sent when any of the following conditions apply:
+
+    - The widget is removed from the DOM.
+    - The widget is no longer displayed because it has been scrolled or clipped from the terminal or its container.
+    - The widget has its `display` attribute set to `False`.
+    - The widget's `display` style is set to `"none"`.
     """
 
 
 class Ready(Event, bubble=False):
-    """Sent to the app when the DOM is ready.
+    """Sent to the `App` when the DOM is ready and the first frame has been displayed.
 
     - [ ] Bubbles
     - [ ] Verbose
@@ -189,6 +208,7 @@ class MouseCapture(Event, bubble=False):
     def __init__(self, mouse_position: Offset) -> None:
         super().__init__()
         self.mouse_position = mouse_position
+        """The position of the mouse when captured."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
@@ -208,6 +228,7 @@ class MouseRelease(Event, bubble=False):
     def __init__(self, mouse_position: Offset) -> None:
         super().__init__()
         self.mouse_position = mouse_position
+        """The position of the mouse when released."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield None, self.mouse_position
@@ -226,10 +247,7 @@ class Key(InputEvent):
 
     Args:
         key: The key that was pressed.
-        character: A printable character or ``None`` if it is not printable.
-
-    Attributes:
-        aliases: The aliases for the key, including the key itself.
+        character: A printable character or `None` if it is not printable.
     """
 
     __slots__ = ["key", "character", "aliases"]
@@ -237,10 +255,13 @@ class Key(InputEvent):
     def __init__(self, key: str, character: str | None) -> None:
         super().__init__()
         self.key = key
+        """The key that was pressed."""
         self.character = (
             (key if len(key) == 1 else None) if character is None else character
         )
+        """A printable character or ``None`` if it is not printable."""
         self.aliases: list[str] = _get_key_aliases(key)
+        """The aliases for the key, including the key itself."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "key", self.key
@@ -264,7 +285,7 @@ class Key(InputEvent):
         """Check if the key is printable (produces a unicode character).
 
         Returns:
-            True if the key is printable.
+            `True` if the key is printable.
         """
         return False if self.character is None else self.character.isprintable()
 
@@ -327,15 +348,25 @@ class MouseEvent(InputEvent, bubble=True):
     ) -> None:
         super().__init__()
         self.x = x
+        """The relative x coordinate."""
         self.y = y
+        """The relative y coordinate."""
         self.delta_x = delta_x
+        """Change in x since the last message."""
         self.delta_y = delta_y
+        """Change in y since the last message."""
         self.button = button
+        """Indexed of the pressed button."""
         self.shift = shift
+        """`True` if the shift key is pressed."""
         self.meta = meta
+        """`True` if the meta key is pressed."""
         self.ctrl = ctrl
+        """`True` if the ctrl key is pressed."""
         self.screen_x = x if screen_x is None else screen_x
+        """The absolute x coordinate."""
         self.screen_y = y if screen_y is None else screen_y
+        """The absolute y coordinate."""
         self._style = style or Style()
 
     @classmethod
@@ -380,20 +411,12 @@ class MouseEvent(InputEvent, bubble=True):
 
     @property
     def screen_offset(self) -> Offset:
-        """Mouse coordinate relative to the screen.
-
-        Returns:
-            Mouse coordinate.
-        """
+        """Mouse coordinate relative to the screen."""
         return Offset(self.screen_x, self.screen_y)
 
     @property
     def delta(self) -> Offset:
-        """Mouse coordinate delta (change since last event).
-
-        Returns:
-            Mouse coordinate.
-        """
+        """Mouse coordinate delta (change since last event)."""
         return Offset(self.delta_x, self.delta_y)
 
     @property
@@ -416,6 +439,19 @@ class MouseEvent(InputEvent, bubble=True):
         """
         if self.screen_offset not in widget.content_region:
             return None
+        return self.get_content_offset_capture(widget)
+
+    def get_content_offset_capture(self, widget: Widget) -> Offset:
+        """Get offset from a widget's content area.
+
+        This method works even if the offset is outside the widget content region.
+
+        Args:
+            widget: Widget receiving the event.
+
+        Returns:
+            An offset where the origin is at the top left of the content area.
+        """
         return self.offset - widget.gutter.top_left
 
     def _apply_offset(self, x: int, y: int) -> MouseEvent:
@@ -435,10 +471,10 @@ class MouseEvent(InputEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseMove(MouseEvent, bubble=False, verbose=True):
+class MouseMove(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse cursor moves.
 
-    - [ ] Bubbles
+    - [X] Bubbles
     - [X] Verbose
     """
 
@@ -462,7 +498,7 @@ class MouseUp(MouseEvent, bubble=True, verbose=True):
 
 
 @rich.repr.auto
-class MouseScrollDown(MouseEvent, bubble=True):
+class MouseScrollDown(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *down*.
 
     - [X] Bubbles
@@ -471,7 +507,7 @@ class MouseScrollDown(MouseEvent, bubble=True):
 
 
 @rich.repr.auto
-class MouseScrollUp(MouseEvent, bubble=True):
+class MouseScrollUp(MouseEvent, bubble=True, verbose=True):
     """Sent when the mouse wheel is scrolled *up*.
 
     - [X] Bubbles
@@ -524,7 +560,8 @@ class Enter(Event, bubble=False, verbose=True):
 
 
 class Leave(Event, bubble=False, verbose=True):
-    """Sent when the mouse is moved away from a widget.
+    """Sent when the mouse is moved away from a widget, or if a widget is
+    programmatically disabled while hovered.
 
     - [ ] Bubbles
     - [X] Verbose
@@ -534,7 +571,7 @@ class Leave(Event, bubble=False, verbose=True):
 class Focus(Event, bubble=False):
     """Sent when a widget is focussed.
 
-    - [X] Bubbles
+    - [ ] Bubbles
     - [ ] Verbose
     """
 
@@ -542,11 +579,36 @@ class Focus(Event, bubble=False):
 class Blur(Event, bubble=False):
     """Sent when a widget is blurred (un-focussed).
 
-    - [X] Bubbles
+    - [ ] Bubbles
     - [ ] Verbose
     """
 
 
+class AppFocus(Event, bubble=False):
+    """Sent when the app has focus.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    Note:
+        Only available when running within a terminal that supports
+        `FocusIn`, or when running via textual-web.
+    """
+
+
+class AppBlur(Event, bubble=False):
+    """Sent when the app loses focus.
+
+    - [ ] Bubbles
+    - [ ] Verbose
+
+    Note:
+        Only available when running within a terminal that supports
+        `FocusOut`, or when running via textual-web.
+    """
+
+
+@dataclass
 class DescendantFocus(Event, bubble=True, verbose=True):
     """Sent when a child widget is focussed.
 
@@ -554,13 +616,30 @@ class DescendantFocus(Event, bubble=True, verbose=True):
     - [X] Verbose
     """
 
+    widget: Widget
+    """The widget that was focused."""
 
+    @property
+    def control(self) -> Widget:
+        """The widget that was focused (alias of `widget`)."""
+        return self.widget
+
+
+@dataclass
 class DescendantBlur(Event, bubble=True, verbose=True):
     """Sent when a child widget is blurred.
 
     - [X] Bubbles
     - [X] Verbose
     """
+
+    widget: Widget
+    """The widget that was blurred."""
+
+    @property
+    def control(self) -> Widget:
+        """The widget that was blurred (alias of `widget`)."""
+        return self.widget
 
 
 @rich.repr.auto
@@ -581,6 +660,7 @@ class Paste(Event, bubble=True):
     def __init__(self, text: str) -> None:
         super().__init__()
         self.text = text
+        """The text that was pasted."""
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "text", self.text
@@ -604,18 +684,27 @@ class ScreenSuspend(Event, bubble=False):
 
 @rich.repr.auto
 class Print(Event, bubble=False):
-    """Sent to a widget that is capturing prints.
+    """Sent to a widget that is capturing [`print`][print].
 
     - [ ] Bubbles
     - [ ] Verbose
 
     Args:
         text: Text that was printed.
-        stderr: True if the print was to stderr, or False for stdout.
+        stderr: `True` if the print was to stderr, or `False` for stdout.
 
+    Note:
+        Python's [`print`][print] output can be captured with
+        [`App.begin_capture_print`][textual.app.App.begin_capture_print].
     """
 
     def __init__(self, text: str, stderr: bool = False) -> None:
         super().__init__()
         self.text = text
+        """The text that was printed."""
         self.stderr = stderr
+        """`True` if the print was to stderr, or `False` for stdout."""
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield self.text
+        yield self.stderr

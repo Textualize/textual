@@ -30,8 +30,8 @@ my_selection_list: SelectionList[int] =  SelectionList(*selections)
 ## Examples
 
 A selection list is designed to be built up of single-line prompts (which
-can be [Rich renderables](/guide/widgets/#rich-renderables)) and an
-associated unique value.
+can be [Rich `Text`](https://rich.readthedocs.io/en/stable/text.html)) and
+an associated unique value.
 
 ### Selections as tuples
 
@@ -52,10 +52,10 @@ optionally contain a flag for the initial selected state of the option.
 
     1. Note that the `SelectionList` is typed as `int`, for the type of the values.
 
-=== "selection_list.css"
+=== "selection_list.tcss"
 
-    ~~~python
-    --8<-- "docs/examples/widgets/selection_list.css"
+    ~~~css
+    --8<-- "docs/examples/widgets/selection_list.tcss"
     ~~~
 
 ### Selections as Selection objects
@@ -76,10 +76,10 @@ Alternatively, selections can be passed in as
 
     1. Note that the `SelectionList` is typed as `int`, for the type of the values.
 
-=== "selection_list.css"
+=== "selection_list.tcss"
 
-    ~~~python
-    --8<-- "docs/examples/widgets/selection_list.css"
+    ~~~css
+    --8<-- "docs/examples/widgets/selection_list.tcss"
     ~~~
 
 ### Handling changes to the selections
@@ -103,10 +103,10 @@ collection of selected values:
 
     1. Note that the `SelectionList` is typed as `str`, for the type of the values.
 
-=== "selection_list.css"
+=== "selection_list.tcss"
 
-    ~~~python
-    --8<-- "docs/examples/widgets/selection_list_selected.css"
+    ~~~css
+    --8<-- "docs/examples/widgets/selection_list_selected.tcss"
     ~~~
 
 ## Reactive Attributes
@@ -117,15 +117,8 @@ collection of selected values:
 
 ## Messages
 
-The following messages will be posted as the user interacts with the list:
-
 - [SelectionList.SelectionHighlighted][textual.widgets.SelectionList.SelectionHighlighted]
 - [SelectionList.SelectionToggled][textual.widgets.SelectionList.SelectionToggled]
-
-The following message will be posted if the content of
-[`selected`][textual.widgets.SelectionList.selected] changes, either by user
-interaction or by API calls:
-
 - [SelectionList.SelectedChanged][textual.widgets.SelectionList.SelectedChanged]
 
 ## Bindings

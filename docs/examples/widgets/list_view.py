@@ -1,10 +1,9 @@
 from textual.app import App, ComposeResult
-from textual.widgets import ListView, ListItem, Label, Footer
+from textual.widgets import Footer, Label, ListItem, ListView
 
 
 class ListViewExample(App):
-
-    CSS_PATH = "list_view.css"
+    CSS_PATH = "list_view.tcss"
 
     def compose(self) -> ComposeResult:
         yield ListView(

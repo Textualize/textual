@@ -1,16 +1,17 @@
-willmcgugan:
-  name: Will McGugan
-  description: CEO / code-monkey
-  avatar: https://github.com/willmcgugan.png
-darrenburns:
-  name: Darren Burns
-  description: Code-monkey
-  avatar: https://github.com/darrenburns.png
-davep:
-  name: Dave Pearson
-  description: Code-monkey
-  avatar: https://github.com/davep.png
-rodrigo:
-  name: Rodrigo Girão Serrão
-  description: Code-monkey
-  avatar: https://github.com/rodrigogiraoserrao.png
+authors:
+  willmcgugan:
+    name: Will McGugan
+    description: CEO / code-monkey
+    avatar: https://github.com/willmcgugan.png
+  darrenburns:
+    name: Darren Burns
+    description: Code-monkey
+    avatar: https://github.com/darrenburns.png
+  davep:
+    name: Dave Pearson
+    description: Code-monkey
+    avatar: https://github.com/davep.png
+  rodrigo:
+    name: Rodrigo Girão Serrão
+    description: Code-monkey
+    avatar: https://github.com/rodrigogiraoserrao.png

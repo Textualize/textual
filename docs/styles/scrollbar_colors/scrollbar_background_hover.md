@@ -5,10 +5,10 @@ The `scrollbar-background-hover` style sets the background color of the scrollba
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<a href="./scrollbar_background_hover">scrollbar-background-hover</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_background_hover">scrollbar-background-hover</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`scrollbar-background-hover` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the background color of a scrollbar when the cursor is over it.
+`scrollbar-background-hover` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the background color of a scrollbar when the cursor is over it.
 
 ## Example
 
@@ -27,15 +27,15 @@ The `scrollbar-background-hover` style sets the background color of the scrollba
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
-    ```sass hl_lines="4"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    ```css hl_lines="4"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-background-hover: purple;
 ```
 
@@ -50,5 +50,5 @@ widget.styles.scrollbar_background_hover = "purple"
 ## See also
 
  - [`scrollbar-background`](./scrollbar_background.md) to set the background color of scrollbars.
- - [`scrollbar-bakcground-active`](./scrollbar_color_active.md) to set the scrollbar bakcground color when the scrollbar is being dragged.
+ - [`scrollbar-background-active`](./scrollbar_color_active.md) to set the scrollbar background color when the scrollbar is being dragged.
  - [`scrollbar-color-hover`](./scrollbar_color_hover.md) to set the scrollbar color when the mouse pointer is over it.

@@ -124,7 +124,7 @@ class INPUT_RECORD(Structure):
     _fields_ = [("EventType", wintypes.WORD), ("Event", InputEvent)]
 
 
-def _set_console_mode(file: IO, mode: int) -> bool:
+def set_console_mode(file: IO, mode: int) -> bool:
     """Set the console mode for a given file (stdout or stdin).
 
     Args:
@@ -139,7 +139,7 @@ def _set_console_mode(file: IO, mode: int) -> bool:
     return success
 
 
-def _get_console_mode(file: IO) -> int:
+def get_console_mode(file: IO) -> int:
     """Get the console mode for a given file (stdout or stdin)
 
     Args:
@@ -161,25 +161,25 @@ def enable_application_mode() -> Callable[[], None]:
         A callable that will restore terminal to previous state.
     """
 
-    terminal_in = sys.stdin
-    terminal_out = sys.stdout
+    terminal_in = sys.__stdin__
+    terminal_out = sys.__stdout__
 
-    current_console_mode_in = _get_console_mode(terminal_in)
-    current_console_mode_out = _get_console_mode(terminal_out)
+    current_console_mode_in = get_console_mode(terminal_in)
+    current_console_mode_out = get_console_mode(terminal_out)
 
     def restore() -> None:
         """Restore console mode to previous settings"""
-        _set_console_mode(terminal_in, current_console_mode_in)
-        _set_console_mode(terminal_out, current_console_mode_out)
+        set_console_mode(terminal_in, current_console_mode_in)
+        set_console_mode(terminal_out, current_console_mode_out)
 
-    _set_console_mode(
+    set_console_mode(
         terminal_out, current_console_mode_out | ENABLE_VIRTUAL_TERMINAL_PROCESSING
     )
-    _set_console_mode(terminal_in, ENABLE_VIRTUAL_TERMINAL_INPUT)
+    set_console_mode(terminal_in, ENABLE_VIRTUAL_TERMINAL_INPUT)
     return restore
 
 
-def _wait_for_handles(handles: List[HANDLE], timeout: int = -1) -> Optional[HANDLE]:
+def wait_for_handles(handles: List[HANDLE], timeout: int = -1) -> Optional[HANDLE]:
     """
     Waits for multiple handles. (Similar to 'select') Returns the handle which is ready.
     Returns `None` on timeout.
@@ -244,7 +244,7 @@ class EventMonitor(threading.Thread):
 
             while not exit_requested():
                 # Wait for new events
-                if _wait_for_handles([hIn], 200) is None:
+                if wait_for_handles([hIn], 200) is None:
                     # No new events
                     continue
 
@@ -264,7 +264,7 @@ class EventMonitor(threading.Thread):
                         # Key event, store unicode char in keys list
                         key_event = input_record.Event.KeyEvent
                         key = key_event.uChar.UnicodeChar
-                        if key_event.bKeyDown or key == "\x1b":
+                        if key_event.bKeyDown:
                             if (
                                 key_event.dwControlKeyState
                                 and key_event.wVirtualKeyCode == 0
@@ -278,7 +278,12 @@ class EventMonitor(threading.Thread):
 
                 if keys:
                     # Process keys
-                    for event in parser.feed("".join(keys)):
+                    #
+                    # https://github.com/Textualize/textual/issues/3178 has
+                    # the context for the encode/decode here.
+                    for event in parser.feed(
+                        "".join(keys).encode("utf-16", "surrogatepass").decode("utf-16")
+                    ):
                         self.process_event(event)
                 if new_size is not None:
                     # Process changed size

@@ -2,21 +2,28 @@
 
 In the previous chapter we introduced the [DOM](../guide/CSS.md#the-dom) which is how Textual apps keep track of widgets. We saw how you can apply styles to the DOM with CSS [selectors](./CSS.md#selectors).
 
-Selectors are a very useful idea and can do more that apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
+Selectors are a very useful idea and can do more than apply styles. We can also find widgets in Python code with selectors, and make updates to widgets in a simple expressive way. Let's look at how!
+
+!!! tip
+
+    See the [Textual Query Sandbox](https://github.com/davep/textual-query-sandbox/) project for an interactive way of experimenting with DOM queries.
 
 ## Query one
 
-The [query_one][textual.dom.DOMNode.query_one] method gets a single widget in an app or other widget. If you call it with a selector it will return the first matching widget.
+The [query_one][textual.dom.DOMNode.query_one] method is used to retrieve a single widget that matches a selector or a type.
 
-Let's say we have a widget with an ID of `send` and we want to get a reference to it in our app. We could do this with the following:
+Let's say we have a widget with an ID of `send` and we want to get a reference to it in our app.
+We could do this with the following line of code:
 
 ```python
 send_button = self.query_one("#send")
 ```
 
-If there is no widget with an ID of `send`, Textual will raise a [NoMatches][textual.css.query.NoMatches] exception. Otherwise it will return the matched widget.
+This will retrieve a widget with an ID of `send`, if there is exactly one.
+If there are no matching widgets, Textual will raise a [NoMatches][textual.css.query.NoMatches] exception.
+If there is more than one match, Textual will raise a [TooManyMatches][textual.css.query.TooManyMatches] exception.
 
-You can also add a second parameter for the expected type.
+You can also add a second parameter for the expected type, which will ensure that you get the type you are expecting.
 
 ```python
 send_button = self.query_one("#send", Button)
@@ -28,9 +35,16 @@ If the matched widget is *not* a button (i.e. if `isinstance(widget, Button)` eq
 
     The second parameter allows type-checkers like MyPy to know the exact return type. Without it, MyPy would only know the result of `query_one` is a Widget (the base class).
 
+You can also specify a widget type in place of a selector, which will return a widget of that type.
+For instance, the following would return a `Button` instance (assuming there is a single Button).
+
+```python
+my_button = self.query_one(Button)
+```
+
 ## Making queries
 
-Apps and widgets have a [query][textual.dom.DOMNode.query] method which finds (or queries) widgets. This method returns a [DOMQuery][textual.css.query.DOMQuery] object which is a list-like container of widgets.
+Apps and widgets also have a [query][textual.dom.DOMNode.query] method which finds (or queries) widgets. This method returns a [DOMQuery][textual.css.query.DOMQuery] object which is a list-like container of widgets.
 
 If you call `query` with no arguments, you will get back a `DOMQuery` containing all widgets. This method is *recursive*, meaning it will also return child widgets (as many levels as required).
 
@@ -116,7 +130,7 @@ If the last widget is *not* a button, Textual will raise a [WrongType][textual.c
 
 ## Filter
 
-Query objects have a [filter][textual.css.query.DOMQuery.filter] method which further refines a query. This method will return a new query object with widgets that match both the original query _and_ the new selector
+Query objects have a [filter][textual.css.query.DOMQuery.filter] method which further refines a query. This method will return a new query object with widgets that match both the original query _and_ the new selector.
 
 Let's say we have a query which gets all the buttons in an app, and we want a new query object with just the disabled buttons. We could write something like this:
 
@@ -161,10 +175,12 @@ for widget in self.query("Button"):
 
 Here are the other loop-free methods on query objects:
 
-- [set_class][textual.css.query.DOMQuery.set_class] Sets a CSS class (or classes) on matched widgets.
 - [add_class][textual.css.query.DOMQuery.add_class] Adds a CSS class (or classes) to matched widgets.
-- [remove_class][textual.css.query.DOMQuery.remove_class] Removes a CSS class (or classes) from matched widgets.
-- [toggle_class][textual.css.query.DOMQuery.toggle_class] Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.
-- [remove][textual.css.query.DOMQuery.remove] Removes matched widgets from the DOM.
+- [blur][textual.css.query.DOMQuery.focus] Blurs (removes focus) from matching widgets.
+- [focus][textual.css.query.DOMQuery.focus] Focuses the first matching widgets.
 - [refresh][textual.css.query.DOMQuery.refresh] Refreshes matched widgets.
-
+- [remove_class][textual.css.query.DOMQuery.remove_class] Removes a CSS class (or classes) from matched widgets.
+- [remove][textual.css.query.DOMQuery.remove] Removes matched widgets from the DOM.
+- [set_class][textual.css.query.DOMQuery.set_class] Sets a CSS class (or classes) on matched widgets.
+- [set][textual.css.query.DOMQuery.set] Sets common attributes on a widget.
+- [toggle_class][textual.css.query.DOMQuery.toggle_class] Sets a CSS class (or classes) if it is not set, or removes the class (or classes) if they are set on the matched widgets.

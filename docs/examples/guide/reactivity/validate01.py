@@ -5,7 +5,7 @@ from textual.widgets import Button, RichLog
 
 
 class ValidateApp(App):
-    CSS_PATH = "validate01.css"
+    CSS_PATH = "validate01.tcss"
 
     count = reactive(0)
 
@@ -30,7 +30,7 @@ class ValidateApp(App):
             self.count += 1
         else:
             self.count -= 1
-        self.query_one(RichLog).write(f"{self.count=}")
+        self.query_one(RichLog).write(f"count = {self.count}")
 
 
 if __name__ == "__main__":

@@ -1,6 +1,7 @@
+from rich.style import Style
 from rich.text import Span
 
-from textual._fuzzy import Matcher
+from textual.fuzzy import Matcher
 
 
 def test_match():
@@ -28,13 +29,12 @@ def test_highlight():
     matcher = Matcher("foo.bar")
 
     spans = matcher.highlight("foo/egg.bar").spans
-    print(spans)
     assert spans == [
-        Span(0, 1, "bold"),
-        Span(1, 2, "bold"),
-        Span(2, 3, "bold"),
-        Span(7, 8, "bold"),
-        Span(8, 9, "bold"),
-        Span(9, 10, "bold"),
-        Span(10, 11, "bold"),
+        Span(0, 1, Style(reverse=True)),
+        Span(1, 2, Style(reverse=True)),
+        Span(2, 3, Style(reverse=True)),
+        Span(7, 8, Style(reverse=True)),
+        Span(8, 9, Style(reverse=True)),
+        Span(9, 10, Style(reverse=True)),
+        Span(10, 11, Style(reverse=True)),
     ]

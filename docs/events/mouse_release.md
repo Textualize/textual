@@ -1,16 +1,13 @@
-# MouseRelease
-
-The `MouseRelease` event is sent to a widget when it is no longer receiving mouse events outside of its borders.
-
-- [ ] Bubbles
-- [ ] Verbose
-
-## Attributes
-
-| attribute        | type   | purpose                                       |
-|------------------|--------|-----------------------------------------------|
-| `mouse_position` | Offset | Mouse coordinates when the mouse was released |
-
-## Code
+---
+title: MouseRelease
+---
 
 ::: textual.events.MouseRelease
+    options:
+      heading_level: 1
+
+## See also
+
+- [capture_mouse][textual.widget.Widget.capture_mouse]
+- [release_mouse][textual.widget.Widget.release_mouse]
+- [MouseCapture](mouse_capture.md)

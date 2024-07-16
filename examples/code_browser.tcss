@@ -1,0 +1,30 @@
+Screen {
+    background: $surface-darken-1;
+    &:inline {
+        height: 50vh;
+    }
+}
+
+#tree-view {
+    display: none;
+    scrollbar-gutter: stable;
+    overflow: auto;
+    width: auto;
+    height: 100%;
+    dock: left;
+}
+
+CodeBrowser.-show-tree #tree-view {
+    display: block;
+    max-width: 50%;
+}
+
+
+#code-view {
+    overflow: auto scroll;
+    min-width: 100%;
+    hatch: right $primary;   
+}
+#code {
+    width: auto;
+}

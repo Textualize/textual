@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, ClassVar
 
+from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text, TextType
 
@@ -32,7 +33,7 @@ class ToggleButton(Static, can_focus=True):
     """
 
     BINDINGS: ClassVar[list[BindingType]] = [
-        Binding("enter,space", "toggle", "Toggle", show=False),
+        Binding("enter,space", "toggle_button", "Toggle", show=False),
     ]
     """
     | Key(s) | Description |
@@ -94,16 +95,16 @@ class ToggleButton(Static, can_focus=True):
 
     /* Light mode overrides. */
 
-    App.-light-mode ToggleButton > .toggle--button {
+    ToggleButton:light > .toggle--button {
         color: $background;
         background: $foreground 10%;
     }
 
-    App.-light-mode ToggleButton:focus > .toggle--button {
+    ToggleButton:light:focus > .toggle--button {
         background: $foreground 25%;
     }
 
-    App.-light-mode ToggleButton.-on > .toggle--button {
+    ToggleButton:light.-on > .toggle--button {
         color: $primary;
     }
     """  # TODO: https://github.com/Textualize/textual/issues/1780
@@ -130,6 +131,7 @@ class ToggleButton(Static, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Initialise the toggle.
 
@@ -141,23 +143,44 @@ class ToggleButton(Static, can_focus=True):
             id: The ID of the toggle in the DOM.
             classes: The CSS classes of the toggle.
             disabled: Whether the button is disabled or not.
+            tooltip: RenderableType | None = None,
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
         self._button_first = button_first
         # NOTE: Don't send a Changed message in response to the initial set.
         with self.prevent(self.Changed):
             self.value = value
-        self._label = Text.from_markup(label) if isinstance(label, str) else label
+        self._label = self._make_label(label)
+        if tooltip is not None:
+            self.tooltip = tooltip
+
+    def _make_label(self, label: TextType) -> Text:
+        """Make a `Text` label from a `TextType` value.
+
+        Args:
+            label: The source value for the label.
+
+        Returns:
+            A `Text` rendering of the label for use in the button.
+        """
+        label = Text.from_markup(label) if isinstance(label, str) else label
         try:
             # Only use the first line if it's a multi-line label.
-            self._label = self._label.split()[0]
+            label = label.split()[0]
         except IndexError:
             pass
+
+        return label
 
     @property
     def label(self) -> Text:
         """The label associated with the button."""
         return self._label
+
+    @label.setter
+    def label(self, label: TextType) -> None:
+        self._label = self._make_label(label)
+        self.refresh(layout=True)
 
     @property
     def _button(self) -> Text:
@@ -194,7 +217,9 @@ class ToggleButton(Static, can_focus=True):
         """
         button = self._button
         label = self._label.copy()
-        label.stylize(self.get_component_rich_style("toggle--label", partial=True))
+        label.stylize_before(
+            self.get_component_rich_style("toggle--label", partial=True)
+        )
         spacer = " " if label else ""
         return Text.assemble(
             *(
@@ -221,7 +246,7 @@ class ToggleButton(Static, can_focus=True):
         self.value = not self.value
         return self
 
-    def action_toggle(self) -> None:
+    def action_toggle_button(self) -> None:
         """Toggle the value of the widget when called as an action.
 
         This would normally be used for a keyboard binding.
@@ -232,7 +257,7 @@ class ToggleButton(Static, can_focus=True):
         """Toggle the value of the widget when clicked with the mouse."""
         self.toggle()
 
-    class Changed(Message, bubble=True):
+    class Changed(Message):
         """Posted when the value of the toggle button changes."""
 
         def __init__(self, toggle_button: ToggleButton, value: bool) -> None:

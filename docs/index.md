@@ -1,11 +1,19 @@
-# Introduction
+---
+hide:
+  - toc
+  - navigation
+---
+
+!!! tip inline end
+
+    See the navigation links in the header or side-bar.
+
+    Click :octicons-three-bars-16: (top left) on mobile.
+
+
+# Welcome
 
 Welcome to the [Textual](https://github.com/Textualize/textual) framework documentation.
-
-!!! tip
-
-    See the navigation links in the header or side-bars. Click the :octicons-three-bars-16: button (top left) on mobile.
-
 
 [Get started](./getting_started.md){ .md-button .md-button--primary } or go straight to the [Tutorial](./tutorial.md)
 
@@ -16,7 +24,7 @@ Welcome to the [Textual](https://github.com/Textualize/textual) framework docume
 Textual is a *Rapid Application Development* framework for Python, built by [Textualize.io](https://www.textualize.io).
 
 
-Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal and (*coming soon*) a web browser.
+Build sophisticated user interfaces with a simple Python API. Run your apps in the terminal *or* a [web browser](https://github.com/Textualize/textual-web)!
 
 
 
@@ -69,20 +77,102 @@ Build sophisticated user interfaces with a simple Python API. Run your apps in t
 
 </div>
 
+---
+
+<div>
+<a href="https://github.com/Textualize/toolong">
+--8<-- "docs/images/screenshots/toolong.svg"
+</a>
+</div>
+
+---
+
+<div>
+<a href="https://github.com/textualize/frogmouth">
+--8<-- "docs/images/screenshots/frogmouth.svg"
+</a>
+</div>
+
+---
+
+<div>
+<a href="https://github.com/bloomberg/memray">
+--8<-- "docs/images/screenshots/memray.svg"
+</a>
+</div>
+
+---
 
 
-```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
-```
+<a href="https://github.com/charles-001/dolphie">
 
-```{.textual path="examples/pride.py"}
-```
+![Dolphie](https://www.textualize.io/static/img/dolphie.png)
 
-```{.textual path="docs/examples/tutorial/stopwatch.py" columns="100" lines="30" press="d,tab,enter"}
-```
+</a>
 
 
-```{.textual path="docs/examples/guide/layout/combining_layouts.py" columns="100", lines="30"}
-```
+---
 
-```{.textual path="docs/examples/app/widgets01.py"}
-```
+<div>
+<a href="https://harlequin.sh">
+--8<-- "docs/images/screenshots/harlequin.svg"
+</a>
+</div>
+
+
+
+---
+
+
+=== "Stopwatch tutorial"
+
+    <div class="textual-web-demo" data-app="tutorial"></div>
+
+
+=== "stopwatch.py"
+
+    ```python 
+    --8<-- "docs/examples/tutorial/stopwatch.py"
+    ```
+
+=== "stopwatch.tcss"
+
+    ```css
+    --8<-- "examples/calculator.tcss"
+    ```
+
+
+---
+
+
+=== "Pride example"
+
+    ```{.textual path="examples/pride.py"}
+    ```
+
+=== "pride.py"
+
+    ```py
+    --8<-- "examples/pride.py"
+    ```
+
+
+
+---
+
+=== "Calculator example"
+
+    ```{.textual path="examples/calculator.py" columns=100 lines=41 press="3,.,1,4,5,9,2,wait:400"}
+    ```
+
+=== "calculator.py"
+
+    ```python
+    --8<-- "examples/calculator.py"
+    ```
+
+=== "calculator.tcss"
+
+    ```css
+    --8<-- "examples/calculator.tcss"
+    ```

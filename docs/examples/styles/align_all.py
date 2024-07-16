@@ -6,7 +6,7 @@ from textual.widgets import Label
 class AlignAllApp(App):
     """App that illustrates all alignments."""
 
-    CSS_PATH = "align_all.css"
+    CSS_PATH = "align_all.tcss"
 
     def compose(self) -> ComposeResult:
         yield Container(Label("left top"), id="left-top")
@@ -18,3 +18,7 @@ class AlignAllApp(App):
         yield Container(Label("left bottom"), id="left-bottom")
         yield Container(Label("center bottom"), id="center-bottom")
         yield Container(Label("right bottom"), id="right-bottom")
+
+
+if __name__ == "__main__":
+    AlignAllApp().run()

@@ -9,14 +9,1061 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added ability to animate offset with tuple or str https://github.com/Textualize/textual/issues/3028
+- `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Added `DOMNode.mutate_reactive` https://github.com/Textualize/textual/pull/4731
+- Added "quality" parameter to `textual.color.Gradient` https://github.com/Textualize/textual/pull/4739
+- Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
+- `Widget.remove_children` now accepts an iterable if widgets in addition to a selector https://github.com/Textualize/textual/issues/4735
+- Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
+- Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
+- Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
+- Added ability to animate `widget.styles.offset` with `tuple` or `str` https://github.com/Textualize/textual/issues/3028
+
+### Fixed
+
+- Fixed issue with `Tabs` where disabled tabs could still be activated by clicking the underline https://github.com/Textualize/textual/issues/4701
+- Fixed scroll_visible with margin https://github.com/Textualize/textual/pull/4719
+- Fixed programmatically disabling button stuck in hover state https://github.com/Textualize/textual/pull/4724
+- Fixed `DataTable` poor performance on startup and focus change when rows contain multi-line content https://github.com/Textualize/textual/pull/4748
+- Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
+- Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
+- Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
+
+### Changed
+
+- "Discover" hits in the command palette are no longer sorted alphabetically https://github.com/Textualize/textual/pull/4720
+- `TreeNodeSelected` messages are now posted before `TreeNodeExpanded` messages
+when an expandable node is selected https://github.com/Textualize/textual/pull/4753
+- `Markdown.LinkClicked.href` is now automatically unquoted https://github.com/Textualize/textual/pull/4749
+
+
+## [0.72.0] - 2024-07-09
+
+### Changed
+
+- More predictable DOM removals. https://github.com/Textualize/textual/pull/4708
+
+### Fixed
+
+- Fixed clicking separator in OptionList moving cursor https://github.com/Textualize/textual/issues/4710
+- Fixed scrolling issue in OptionList https://github.com/Textualize/textual/pull/4709
+
+## [0.71.0] - 2024-06-29
+
+### Changed
+
+- Snapshot tests will normalize SVG output so that changes with no visual impact don't break snapshots, but this release will break most of them.
+- Breaking change: `App.push_screen` now returns an Awaitable rather than a screen. https://github.com/Textualize/textual/pull/4672
+- Breaking change: `Screen.dismiss` now returns an Awaitable rather than a bool. https://github.com/Textualize/textual/pull/4672
+
+### Fixed
+
+- Fixed grid + keyline when the grid has auto dimensions https://github.com/Textualize/textual/pull/4680
+- Fixed mouse code leakage https://github.com/Textualize/textual/pull/4681
+- Fixed link inside markdown table not posting a `Markdown.LinkClicked` message https://github.com/Textualize/textual/issues/4683
+- Fixed issue with mouse movements on non-active screen https://github.com/Textualize/textual/pull/4688
+
+## [0.70.0] - 2024-06-19
+
+### Fixed
+
+- Fixed erroneous mouse 'ButtonDown' reporting for mouse movement when any-event mode is enabled in xterm. https://github.com/Textualize/textual/pull/3647
+
+## [0.69.0] - 2024-06-16
+
+### Added
+
+- Added `App.simulate_key` https://github.com/Textualize/textual/pull/4657
+
+### Fixed
+
+- Fixed issue with pop_screen launched from an action https://github.com/Textualize/textual/pull/4657
+
+### Changed
+
+- `App.check_bindings` is now private
+- `App.action_check_bindings` is now `App.action_simulate_key`
+
+## [0.68.0] - 2024-06-14
+
+### Added
+
+- Added `ContentSwitcher.add_content`
+
+### Fixed
+
+- Improved handling of non-tty input https://github.com/Textualize/textual/pull/4647
+
+## [0.67.1] - 2024-06-12
+
+### Changed
+
+- Reverts Vim keys in DataTable, provides alternatives https://github.com/Textualize/textual/pull/4638
+
+## [0.67.0] - 2024-06-11
+
+### Added
+
+- Added support for Kitty's key protocol https://github.com/Textualize/textual/pull/4631
+- `ctrl+pageup`/`ctrl+pagedown` will scroll page left/right in DataTable https://github.com/Textualize/textual/pull/4633
+- `g`/`G` will scroll to the top/bottom of the DataTable https://github.com/Textualize/textual/pull/4633
+- Added simple `hjkl` key bindings to move the cursor in DataTable https://github.com/Textualize/textual/pull/4633
+
+### Changed
+
+- `home` and `end` now works horizontally instead of vertically in DataTable https://github.com/Textualize/textual/pull/4633
+- `Tree` and `DirectoryTree` nodes now have a bigger click target, spanning the full line https://github.com/Textualize/textual/pull/4636
+
+### Fixed
+
+- Fixed pageup/pagedown behavior in DataTable https://github.com/Textualize/textual/pull/4633
+- Added `App.CLOSE_TIMEOUT` https://github.com/Textualize/textual/pull/4635
+- Fixed deadlock on shutdown https://github.com/Textualize/textual/pull/4635
+
+## [0.66.0] - 2024-06-08
+
+### Changed
+
+- `get_content_height` will now return 0 if the renderable is Falsey https://github.com/Textualize/textual/pull/4617
+- Buttons may not be pressed within their "active_effect_duration" to prevent inadvertent activations https://github.com/Textualize/textual/pull/4621
+- `Screen.dismiss` is now a noop if the screen isn't active. Previously it would raise a `ScreenStackError`, now it returns `False`. https://github.com/Textualize/textual/pull/4621
+- Increased window for escape processing to 100ms https://github.com/Textualize/textual/pull/4625
+- Tooltips are now hidden when any key is pressed https://github.com/Textualize/textual/pull/4625
+
+### Added
+
+- Added `Screen.is_active` 
+- Added `icon` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `time_format` reactive to Header widget https://github.com/Textualize/textual/pull/4627
+- Added `tooltip` parameter to input widgets https://github.com/Textualize/textual/pull/4625
+
+## [0.65.2] - 2024-06-06
+
+### Fixed
+
+- Fixed issue with notifications and screen switches https://github.com/Textualize/textual/pull/4615
+
+### Added
+
+- Added textual.rlock.RLock https://github.com/Textualize/textual/pull/4615
+
+## [0.65.1] - 2024-06-05
+
+### Fixed
+
+- Fixed hot reloading with hatch rule https://github.com/Textualize/textual/pull/4606
+- Fixed hatch style parsing https://github.com/Textualize/textual/pull/4606
+
+## [0.65.0] - 2024-06-05
+
+### Added
+
+- Added Command Palette Opened, Closed, and OptionHighlighted events https://github.com/Textualize/textual/pull/4600
+- Added hatch style https://github.com/Textualize/textual/pull/4603
+
+### Fixed
+
+- Fixed DataTable cursor flicker on scroll https://github.com/Textualize/textual/pull/4598
+
+### Changes
+
+- TabbedContent will automatically make tabs active when a widget in a pane is focused https://github.com/Textualize/textual/issues/4593
+
+## [0.64.0] - 2024-06-03
+
+### Fixed
+
+- Fix traceback on exit https://github.com/Textualize/textual/pull/4575
+- Fixed `Markdown.goto_anchor` no longer scrolling the heading into view https://github.com/Textualize/textual/pull/4583
+- Fixed Footer flicker on initial focus https://github.com/Textualize/textual/issues/4573
+
+## [0.63.6] - 2024-05-29
+
+### Fixed
+
+- Fixed issue with bindings not refreshing https://github.com/Textualize/textual/pull/4571
+
+## [0.63.5] - 2024-05-28
+
+### Fixed
+
+- Fixed data table disappearing from tabs https://github.com/Textualize/textual/pull/4567
+
+### Added
+
+- Added `Styles.is_auto_width` and `Style.is_auto_height`
+
+## [0.63.4] - 2024-05-26
+
+### Added
+
+- Added `immediate` switch to `Signal.publish`
+
+### Fixed
+
+- Fixed freeze in recompose from bindings https://github.com/Textualize/textual/pull/4558
+
+## [0.63.3] - 2024-05-24
+
+### Fixed
+
+- Fixed `Footer` grid size https://github.com/Textualize/textual/pull/4545
+- Fixed bindings not updated on auto focus https://github.com/Textualize/textual/pull/4551
+
+### Changed
+
+- Attempting to mount on a non-mounted widget now raises a MountError https://github.com/Textualize/textual/pull/4547
+
+## [0.63.2] - 2024-05-23
+
+### Fixed
+
+- Fixed issue with namespaces in links https://github.com/Textualize/textual/pull/4546
+
+## [0.63.1] - 2024-05-22
+
+### Fixed
+
+- Fixed display of multiple bindings https://github.com/Textualize/textual/pull/4543
+
+## [0.63.0] - 2024-05-22
+
+### Fixed
+
+- Fixed actions in links https://github.com/Textualize/textual/pull/4540
+
+### Changed
+
+- Breaking change: New Footer (likely a drop in replacement, unless you have customized styles) https://github.com/Textualize/textual/pull/4537
+- Stylistic changes to Markdown (simpler headers, less margin, etc) https://github.com/Textualize/textual/pull/4541
+
+## [0.62.0] - 2024-05-20
+
+### Added
+
+- Added `start` and `end` properties to Markdown Navigator
+- Added `Widget.anchor`, `Widget.clear_anchor`, and `Widget.is_anchored` https://github.com/Textualize/textual/pull/4530
+
+## [0.61.1] - 2024-05-19
+
+### Fixed
+
+- Fixed auto grid columns ignoring gutter https://github.com/Textualize/textual/issues/4522
+
+## [0.61.0] - 2024-05-18
+
+### Added
+
+- Added `App.get_default_screen` https://github.com/Textualize/textual/pull/4520
+- Added dynamic binding via `DOMNode.check_action` https://github.com/Textualize/textual/pull/4516
+- Added `"focused"` action namespace so you can bind a key to an action on the focused widget https://github.com/Textualize/textual/pull/4516
+- Added "focused" to allowed action namespaces https://github.com/Textualize/textual/pull/4516
+
+### Changed
+
+- Breaking change: Actions (as used in bindings) will no longer check the app if they are unhandled. This was undocumented anyway, and not that useful. https://github.com/Textualize/textual/pull/4516
+- Breaking change: Renamed `App.namespace_bindings` to `active_bindings`
+
+
+## [0.60.1] - 2024-05-15
+
+### Fixed
+
+- Dependency issue
+
+## [0.60.0] - 2024-05-14
+
+### Fixed
+
+- Fixed auto width not working for option lists https://github.com/Textualize/textual/pull/4507
+
+### Added
+
+- Added `DOMNode.query_children` https://github.com/Textualize/textual/pull/4508
+
+## [0.59.0] - 2024-05-11
+
+### Fixed
+
+- Fixed `SelectionList` issues after removing an option https://github.com/Textualize/textual/pull/4464
+- Fixed `ListView` bugs with the initial index https://github.com/Textualize/textual/pull/4452
+- Fixed `Select` not closing https://github.com/Textualize/textual/pull/4499
+- Fixed setting `loading=False` removing all child loading indicators https://github.com/Textualize/textual/pull/4499
+
+### Changed
+
+- When displaying a message using `App.exit()`, the console no longer highlights things such as numbers.
+
+### Added
+
+- Added `message_signal` to MessagePump, to listen to events sent to another widget. https://github.com/Textualize/textual/pull/4487
+- Added `Widget.suppress_click` https://github.com/Textualize/textual/pull/4499
+
+## [0.58.1] - 2024-05-01
+
+### Fixed
+
+- Fixed issue with Markdown mounting content lazily https://github.com/Textualize/textual/pull/4466
+- Fixed intermittent issue with scrolling to focus https://github.com/Textualize/textual/commit/567caf8acb196260adf6a0a6250e3ff5093056d0
+- Fixed issue with scrolling to center https://github.com/Textualize/textual/pull/4469
+
+
+## [0.58.0] - 2024-04-25
+
+### Fixed
+
+- Fixed `TextArea` to end mouse selection only if currently selecting https://github.com/Textualize/textual/pull/4436
+- Fixed issue with scroll_to_widget https://github.com/Textualize/textual/pull/4446
+- Fixed issue with margins https://github.com/Textualize/textual/pull/4441
+
+### Changed
+
+- Added argument to signal callbacks https://github.com/Textualize/textual/pull/4438
+
+## [0.57.1] - 2024-04-20
+
+### Fixed
+
+- Fixed an off-by-one error in the line number of the `Document.end` property https://github.com/Textualize/textual/issues/4426
+- Fixed setting scrollbar colors not updating the scrollbar https://github.com/Textualize/textual/pull/4433
+- Fixed flushing in inline mode https://github.com/Textualize/textual/pull/4435
+
+### Added
+
+- Added `Offset.clamp` and `Size.clamp_offset` https://github.com/Textualize/textual/pull/4435
+
+
+## [0.57.0] - 2024-04-19
+
+### Fixed
+
+- Fixed `Integer` validator missing failure description when not a number https://github.com/Textualize/textual/issues/4413
+- Fixed a crash in `DataTable` if you clicked a link in the border https://github.com/Textualize/textual/issues/4410
+- Fixed issue with cursor position https://github.com/Textualize/textual/pull/4429
+
+### Added
+
+- Added `App.copy_to_clipboard` https://github.com/Textualize/textual/pull/4416
+
+## [0.56.4] - 2024-04-09
+
+### Fixed
+
+- Disabled terminal synchronization in inline mode as it breaks on some terminals
+
+## [0.56.3] - 2024-04-08
+
+### Fixed
+
+- Fixed inline mode not updating https://github.com/Textualize/textual/issues/4403
+
+## [0.56.2] - 2024-04-07
+
+### Fixed
+
+- Fixed inline mode not clearing with multiple screen
+
+## [0.56.1] - 2024-04-07
+
+### Fixed
+
+- Fixed flicker when non-current screen updates https://github.com/Textualize/textual/pull/4401
+
+### Changed
+
+- Removed additional line at the end of an inline app https://github.com/Textualize/textual/pull/4401
+
+## [0.56.0] - 2024-04-06
+
+### Added
+
+- Added `Size.with_width` and `Size.with_height` https://github.com/Textualize/textual/pull/4393
+
+### Fixed
+
+- Fixed issue with inline mode and multiple screens https://github.com/Textualize/textual/pull/4393
+- Fixed issue with priority bindings https://github.com/Textualize/textual/pull/4395
+
+### Changed
+
+- self.prevent can be used in a widget constructor to prevent messages on mount https://github.com/Textualize/textual/pull/4392
+
+
+## [0.55.1] - 2024-04-2
+
+### Fixed
+
+- Fixed mouse escape sequences being generated with `mouse=False`
+
+## [0.55.0] - 2024-04-1
+
+### Fixed
+
+- Fix priority bindings not appearing in footer when key clashes with focused widget https://github.com/Textualize/textual/pull/4342
+- Reverted auto-width change https://github.com/Textualize/textual/pull/4369
+
+### Changed
+
+- Exceptions inside `Widget.compose` or workers weren't bubbling up in tests https://github.com/Textualize/textual/issues/4282
+- Fixed `DataTable` scrolling issues by changing `max-height` back to 100% https://github.com/Textualize/textual/issues/4286
+- Fixed `Button` not rendering correctly with console markup https://github.com/Textualize/textual/issues/4328
+
+### Added
+
+- Added `Document.start` and `end` location properties for convenience https://github.com/Textualize/textual/pull/4267
+- Added support for JavaScript, Golang, Rust, Bash, Java and Kotlin to `TextArea` https://github.com/Textualize/textual/pull/4350
+- Added `inline` parameter to `run` and `run_async` to run app inline (under the prompt). https://github.com/Textualize/textual/pull/4343
+- Added `mouse` parameter to disable mouse support https://github.com/Textualize/textual/pull/4343
+
+## [0.54.0] - 2024-03-26
+
+### Fixed
+
+- Fixed a crash in `TextArea` when undoing an edit to a selection the selection was made backwards https://github.com/Textualize/textual/issues/4301
+- Fixed issue with flickering scrollbars https://github.com/Textualize/textual/pull/4315
+- Fixed issue where narrow TextArea would repeatedly wrap due to scrollbar appearing/disappearing https://github.com/Textualize/textual/pull/4334
+- Fix progress bar ETA not updating when setting `total` reactive https://github.com/Textualize/textual/pull/4316
+
+### Changed
+
+- ProgressBar won't show ETA until there is at least one second of samples https://github.com/Textualize/textual/pull/4316
+- `Input` waits until an edit has been made, after entry to the widget, before offering a suggestion https://github.com/Textualize/textual/pull/4335
+
+## [0.53.1] - 2024-03-18
+
+### Fixed
+
+- Fixed issue with data binding https://github.com/Textualize/textual/pull/4308
+
+## [0.53.0] - 2024-03-18
+
+### Added
+
+- Mapping of ANSI colors to hex codes configurable via `App.ansi_theme_dark` and `App.ansi_theme_light` https://github.com/Textualize/textual/pull/4192
+- `Pilot.resize_terminal` to resize the terminal in testing https://github.com/Textualize/textual/issues/4212
+- Added `sort_children` method https://github.com/Textualize/textual/pull/4244
+- Support for pseudo-classes in nested TCSS https://github.com/Textualize/textual/issues/4039
+
+### Fixed
+
+- Fixed `TextArea.code_editor` missing recently added attributes https://github.com/Textualize/textual/pull/4172
+- Fixed `Sparkline` not working with data in a `deque` https://github.com/Textualize/textual/issues/3899
+- Tooltips are now cleared when the related widget is no longer under them https://github.com/Textualize/textual/issues/3045
+- Simplified tree-sitter highlight queries for HTML, which also seems to fix segfault issue https://github.com/Textualize/textual/pull/4195
+- Fixed `DirectoryTree.path` no longer reacting to new values https://github.com/Textualize/textual/issues/4208
+- Fixed content size cache with Pretty widget https://github.com/Textualize/textual/pull/4211
+- Fixed `grid-gutter` interaction with Pretty widget https://github.com/Textualize/textual/pull/4219
+- Fixed `TextArea` styling issue on alternate screens https://github.com/Textualize/textual/pull/4220
+- Fixed writing to invisible `RichLog` https://github.com/Textualize/textual/pull/4223
+- Fixed `RichLog.min_width` not being used https://github.com/Textualize/textual/pull/4223
+- Rename `CollapsibleTitle.action_toggle` to `action_toggle_collapsible` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/pull/4221
+- Markdown component classes weren't refreshed when watching for CSS https://github.com/Textualize/textual/issues/3464
+- Rename `Switch.action_toggle` to `action_toggle_switch` to fix clash with `DOMNode.action_toggle` https://github.com/Textualize/textual/issues/4262
+- Fixed `OptionList.OptionHighlighted` leaking out of `Select` https://github.com/Textualize/textual/issues/4224
+- Fixed `Tab` enable/disable messages leaking into `TabbedContent` https://github.com/Textualize/textual/issues/4233
+- Fixed a style leak from `TabbedContent` https://github.com/Textualize/textual/issues/4232
+- Fixed active hidden scrollbars not releasing the mouse https://github.com/Textualize/textual/issues/4274
+- Fixed the mouse not being released when hiding a `TextArea` while mouse selection is happening https://github.com/Textualize/textual/issues/4292
+- Fix mouse scrolling not working when mouse cursor is over a disabled child widget https://github.com/Textualize/textual/issues/4242
+
+### Changed
+
+- Clicking a non focusable widget focus ancestors https://github.com/Textualize/textual/pull/4236
+- BREAKING: widget class names must start with a capital letter or an underscore `_` https://github.com/Textualize/textual/pull/4252
+- BREAKING: for many widgets, messages are now sent when programmatic changes that mirror user input are made https://github.com/Textualize/textual/pull/4256
+  - Changed `Collapsible`
+  - Changed `Markdown`
+  - Changed `Select`
+  - Changed `SelectionList`
+  - Changed `TabbedContent`
+  - Changed `Tabs`
+  - Changed `TextArea`
+  - Changed `Tree`
+- Improved ETA calculation for ProgressBar https://github.com/Textualize/textual/pull/4271
+- BREAKING: `AppFocus` and `AppBlur` are now posted when the terminal window gains or loses focus, if the terminal supports this https://github.com/Textualize/textual/pull/4265
+  - When the terminal window loses focus, the currently-focused widget will also lose focus.
+  - When the terminal window regains focus, the previously-focused widget will regain focus.
+- TextArea binding for <kbd>ctrl</kbd>+<kbd>k</kbd> will now delete the line if the line is empty https://github.com/Textualize/textual/issues/4277
+- The active tab (in `Tabs`) / tab pane (in `TabbedContent`) can now be unset https://github.com/Textualize/textual/issues/4241
+
+## [0.52.1] - 2024-02-20
+
+### Fixed
+
+- Fixed the check for animation level in `LoadingIndicator` https://github.com/Textualize/textual/issues/4188
+
+## [0.52.0] - 2024-02-19
+
+### Changed
+
+- Textual now writes to stderr rather than stdout https://github.com/Textualize/textual/pull/4177
+
+### Added
+
+- Added an `asyncio` lock attribute `Widget.lock` to be used to synchronize widget state https://github.com/Textualize/textual/issues/4134
+- Added support for environment variable `TEXTUAL_ANIMATIONS` to control what animations Textual displays https://github.com/Textualize/textual/pull/4062
+- Add attribute `App.animation_level` to control whether animations on that app run or not https://github.com/Textualize/textual/pull/4062
+- Added support for a `TEXTUAL_SCREENSHOT_LOCATION` environment variable to specify the location of an automated screenshot https://github.com/Textualize/textual/pull/4181/
+- Added support for a `TEXTUAL_SCREENSHOT_FILENAME` environment variable to specify the filename of an automated screenshot https://github.com/Textualize/textual/pull/4181/
+- Added an `asyncio` lock attribute `Widget.lock` to be used to synchronize widget state https://github.com/Textualize/textual/issues/4134
+- `Widget.remove_children` now accepts a CSS selector to specify which children to remove https://github.com/Textualize/textual/pull/4183
+- `Widget.batch` combines widget locking and app update batching https://github.com/Textualize/textual/pull/4183
+
+## [0.51.0] - 2024-02-15
+
+### Added
+
+- TextArea now has `read_only` mode https://github.com/Textualize/textual/pull/4151
+- Add some syntax highlighting to TextArea default theme https://github.com/Textualize/textual/pull/4149
+- Add undo and redo to TextArea https://github.com/Textualize/textual/pull/4124
+- Added support for command palette command discoverability https://github.com/Textualize/textual/pull/4154
+
+### Fixed
+
+- Fixed out-of-view `Tab` not being scrolled into view when `Tabs.active` is assigned https://github.com/Textualize/textual/issues/4150
+- Fixed `TabbedContent.TabActivate` not being posted when `TabbedContent.active` is assigned https://github.com/Textualize/textual/issues/4150
+
+### Changed
+
+- Breaking change: Renamed `TextArea.tab_behaviour` to `TextArea.tab_behavior` https://github.com/Textualize/textual/pull/4124
+- `TextArea.theme` now defaults to `"css"` instead of None, and is no longer optional https://github.com/Textualize/textual/pull/4157
+
+### Fixed
+
+- Improve support for selector lists in nested TCSS https://github.com/Textualize/textual/issues/3969
+- Improve support for rule declarations after nested TCSS rule sets https://github.com/Textualize/textual/issues/3999
+
+## [0.50.1] - 2024-02-09
+
+### Fixed
+
+- Fixed tint applied to ANSI colors https://github.com/Textualize/textual/pull/4142
+
+## [0.50.0] - 2024-02-08
+
+### Fixed
+
+- Fixed issue with ANSI colors not being converted to truecolor https://github.com/Textualize/textual/pull/4138
+- Fixed duplicate watch methods being attached to DOM nodes https://github.com/Textualize/textual/pull/4030
+- Fixed using `watch` to create additional watchers would trigger other watch methods https://github.com/Textualize/textual/issues/3878
+
+### Added
+
+- Added support for configuring dark and light themes for code in `Markdown` https://github.com/Textualize/textual/issues/3997
+
+## [0.49.0] - 2024-02-07
+
+### Fixed
+
+- Fixed scrolling in long `OptionList` by adding max height of 100% https://github.com/Textualize/textual/issues/4021
+- Fixed `DirectoryTree.clear_node` not clearing the node specified https://github.com/Textualize/textual/issues/4122
+
+### Changed
+
+- `DirectoryTree.reload` and `DirectoryTree.reload_node` now preserve state when reloading https://github.com/Textualize/textual/issues/4056
+- Fixed a crash in the TextArea when performing a backward replace https://github.com/Textualize/textual/pull/4126
+- Fixed selection not updating correctly when pasting while there's a non-zero selection https://github.com/Textualize/textual/pull/4126
+- Breaking change: `TextArea` will not use `Escape` to shift focus if the `tab_behaviour` is the default https://github.com/Textualize/textual/issues/4110
+- `TextArea` cursor will now be invisible before first focus https://github.com/Textualize/textual/pull/4128
+- Fix toggling `TextArea.cursor_blink` reactive when widget does not have focus https://github.com/Textualize/textual/pull/4128
+
+### Added
+
+- Added DOMQuery.set https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.set_reactive https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.data_bind https://github.com/Textualize/textual/pull/4075
+- Added DOMNode.action_toggle https://github.com/Textualize/textual/pull/4075
+- Added Worker.cancelled_event https://github.com/Textualize/textual/pull/4075
+- `Tree` (and `DirectoryTree`) grew an attribute `lock` that can be used for synchronization across coroutines https://github.com/Textualize/textual/issues/4056
+
+
+## [0.48.2] - 2024-02-02
+
+### Fixed
+
+- Fixed a hang in the Linux driver when connected to a pipe https://github.com/Textualize/textual/issues/4104
+- Fixed broken `OptionList` `Option.id` mappings https://github.com/Textualize/textual/issues/4101
+
+### Changed
+
+- Breaking change: keyboard navigation in `RadioSet`, `ListView`, `OptionList`, and `SelectionList`, no longer allows highlighting disabled items https://github.com/Textualize/textual/issues/3881
+
+## [0.48.1] - 2024-02-01
+
+### Fixed
+
+- `TextArea` uses CSS theme by default instead of `monokai` https://github.com/Textualize/textual/pull/4091
+
+## [0.48.0] - 2024-02-01
+
+### Changed
+
+- Breaking change: Significant changes to `TextArea.__init__` default values/behaviour https://github.com/Textualize/textual/pull/3933
+  - `soft_wrap=True` - soft wrapping is now enabled by default.
+  - `show_line_numbers=False` - line numbers are now disabled by default.
+  - `tab_behaviour="focus"` - pressing the tab key now switches focus instead of indenting by default.
+- Breaking change: `TextArea` default theme changed to CSS, and default styling changed https://github.com/Textualize/textual/pull/4074
+- Breaking change: `DOMNode.has_pseudo_class` now accepts a single name only https://github.com/Textualize/textual/pull/3970
+- Made `textual.cache` (formerly `textual._cache`) public https://github.com/Textualize/textual/pull/3976
+- `Tab.label` can now be used to change the label of a tab https://github.com/Textualize/textual/pull/3979
+- Changed the default notification timeout from 3 to 5 seconds https://github.com/Textualize/textual/pull/4059
+- Prior scroll animations are now cancelled on new scrolls https://github.com/Textualize/textual/pull/4081
+
+### Added
+
+- Added `DOMNode.has_pseudo_classes` https://github.com/Textualize/textual/pull/3970
+- Added `Widget.allow_focus` and `Widget.allow_focus_children` https://github.com/Textualize/textual/pull/3989
+- Added `TextArea.soft_wrap` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.tab_behaviour` reactive attribute added https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.code_editor` classmethod/alternative constructor https://github.com/Textualize/textual/pull/3933
+- Added `TextArea.wrapped_document` attribute which can convert between wrapped visual coordinates and locations https://github.com/Textualize/textual/pull/3933
+- Added `show_line_numbers` to `TextArea.__init__` https://github.com/Textualize/textual/pull/3933
+- Added component classes allowing `TextArea` to be styled using CSS https://github.com/Textualize/textual/pull/4074
+- Added `Query.blur` and `Query.focus` https://github.com/Textualize/textual/pull/4012
+- Added `MessagePump.message_queue_size` https://github.com/Textualize/textual/pull/4012
+- Added `TabbedContent.active_pane` https://github.com/Textualize/textual/pull/4012
+- Added `App.suspend` https://github.com/Textualize/textual/pull/4064
+- Added `App.action_suspend_process` https://github.com/Textualize/textual/pull/4064
+
+
+### Fixed
+
+- Parameter `animate` from `DataTable.move_cursor` was being ignored https://github.com/Textualize/textual/issues/3840
+- Fixed a crash if `DirectoryTree.show_root` was set before the DOM was fully available https://github.com/Textualize/textual/issues/2363
+- Live reloading of TCSS wouldn't apply CSS changes to screens under the top screen of the stack https://github.com/Textualize/textual/issues/3931
+- `SelectionList` option IDs are usable as soon as the widget is instantiated https://github.com/Textualize/textual/issues/3903
+- Fix issue with `Strip.crop` when crop window start aligned with strip end https://github.com/Textualize/textual/pull/3998
+- Fixed Strip.crop_extend https://github.com/Textualize/textual/pull/4011
+- Fix for percentage dimensions https://github.com/Textualize/textual/pull/4037
+- Fixed a crash if the `TextArea` language was set but tree-sitter language binaries were not installed https://github.com/Textualize/textual/issues/4045
+- Ensuring `TextArea.SelectionChanged` message only sends when the updated selection is different https://github.com/Textualize/textual/pull/3933
+- Fixed declaration after nested rule set causing a parse error https://github.com/Textualize/textual/pull/4012
+- ID and class validation was too lenient https://github.com/Textualize/textual/issues/3954
+- Fixed CSS watcher crash if file becomes unreadable (even temporarily) https://github.com/Textualize/textual/pull/4079
+- Fixed display of keys when used in conjunction with other keys https://github.com/Textualize/textual/pull/3050
+- Fixed double detection of <kbd>Escape</kbd> on Windows https://github.com/Textualize/textual/issues/4038
+
+
+## [0.47.1] - 2024-01-05
+
+### Fixed
+
+- Fixed nested specificity https://github.com/Textualize/textual/pull/3963
+
+## [0.47.0] - 2024-01-04
+
+### Fixed
+
+- `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
+- Fixed auto width text not processing markup https://github.com/Textualize/textual/issues/3918
+- Fixed `Tree.clear` not retaining the root's expanded state https://github.com/Textualize/textual/issues/3557
+
+### Changed
+
+- Breaking change: `Widget.move_child` parameters `before` and `after` are now keyword-only https://github.com/Textualize/textual/pull/3896
+- Style tweak to toasts https://github.com/Textualize/textual/pull/3955
+
+### Added
+
+- Added textual.lazy https://github.com/Textualize/textual/pull/3936
+- Added App.push_screen_wait https://github.com/Textualize/textual/pull/3955
+- Added nesting of CSS https://github.com/Textualize/textual/pull/3946
+
+## [0.46.0] - 2023-12-17
+
+### Fixed
+
+- Disabled radio buttons could be selected with the keyboard https://github.com/Textualize/textual/issues/3839
+- Fixed zero width scrollbars causing content to disappear https://github.com/Textualize/textual/issues/3886
+
+### Changed
+
+- The tabs within a `TabbedContent` now prefix their IDs to stop any clash with their associated `TabPane` https://github.com/Textualize/textual/pull/3815
+- Breaking change: `tab` is no longer a `@on` decorator selector for `TabbedContent.TabActivated` -- use `pane` instead https://github.com/Textualize/textual/pull/3815
+
+### Added
+
+- Added `Collapsible.title` reactive attribute https://github.com/Textualize/textual/pull/3830
+- Added a `pane` attribute to `TabbedContent.TabActivated` https://github.com/Textualize/textual/pull/3815
+- Added caching of rules attributes and `cache` parameter to Stylesheet.apply https://github.com/Textualize/textual/pull/3880
+
+## [0.45.1] - 2023-12-12
+
+### Fixed
+
+- Fixed issues where styles wouldn't update if changed in mount. https://github.com/Textualize/textual/pull/3860
+
+## [0.45.0] - 2023-12-12
+
+### Fixed
+
+- Fixed `DataTable.update_cell` not raising an error with an invalid column key https://github.com/Textualize/textual/issues/3335
+- Fixed `Input` showing suggestions when not focused https://github.com/Textualize/textual/pull/3808
+- Fixed loading indicator not covering scrollbars https://github.com/Textualize/textual/pull/3816
+
+### Removed
+
+- Removed renderables/align.py which was no longer used.
+
+### Changed
+
+- Dropped ALLOW_CHILDREN flag introduced in 0.43.0 https://github.com/Textualize/textual/pull/3814
+- Widgets with an auto height in an auto height container will now expand if they have no siblings https://github.com/Textualize/textual/pull/3814
+- Breaking change: Removed `limit_rules` from Stylesheet.apply https://github.com/Textualize/textual/pull/3844
+
+### Added
+
+- Added `get_loading_widget` to Widget and App customize the loading widget. https://github.com/Textualize/textual/pull/3816
+- Added messages `Collapsible.Expanded` and `Collapsible.Collapsed` that inherit from `Collapsible.Toggled`. https://github.com/Textualize/textual/issues/3824
+
+## [0.44.1] - 2023-12-4
+
+### Fixed
+
+- Fixed slow scrolling when there are many widgets https://github.com/Textualize/textual/pull/3801
+
+## [0.44.0] - 2023-12-1
+
+### Changed
+
+- Breaking change: Dropped 3.7 support https://github.com/Textualize/textual/pull/3766
+- Breaking changes https://github.com/Textualize/textual/issues/1530
+ - `link-hover-background` renamed to `link-background-hover`
+ - `link-hover-color` renamed to `link-color-hover`
+ - `link-hover-style` renamed to `link-style-hover`
+- `Tree` now forces a scroll when `scroll_to_node` is called https://github.com/Textualize/textual/pull/3786
+- Brought rxvt's use of shift-numpad keys in line with most other terminals https://github.com/Textualize/textual/pull/3769
+
+### Added
+
+- Added support for Ctrl+Fn and Ctrl+Shift+Fn keys in urxvt https://github.com/Textualize/textual/pull/3737
+- Friendly error messages when trying to mount non-widgets https://github.com/Textualize/textual/pull/3780
+- Added `Select.from_values` class method that can be used to initialize a Select control with an iterator of values https://github.com/Textualize/textual/pull/3743
+
+### Fixed
+
+- Fixed NoWidget when mouse goes outside window https://github.com/Textualize/textual/pull/3790
+- Removed spurious print statements from press_keys https://github.com/Textualize/textual/issues/3785
+
+## [0.43.2] - 2023-11-29
+
+### Fixed
+
+- Fixed NoWidget error https://github.com/Textualize/textual/pull/3779
+
+## [0.43.1] - 2023-11-29
+
+### Fixed
+
+- Fixed clicking on scrollbar moves TextArea cursor https://github.com/Textualize/textual/issues/3763
+
+## [0.43.0] - 2023-11-28
+
+### Fixed
+
+- Fixed mouse targeting issue in `TextArea` when tabs were not fully expanded https://github.com/Textualize/textual/pull/3725
+- Fixed `Select` not updating after changing the `prompt` reactive https://github.com/Textualize/textual/issues/2983
+- Fixed flicker when updating Markdown https://github.com/Textualize/textual/pull/3757
+
+### Added
+
+- Added experimental Canvas class https://github.com/Textualize/textual/pull/3669/
+- Added `keyline` rule https://github.com/Textualize/textual/pull/3669/
+- Widgets can now have an ALLOW_CHILDREN (bool) classvar to disallow adding children to a widget https://github.com/Textualize/textual/pull/3758
+- Added the ability to set the `label` property of a `Checkbox` https://github.com/Textualize/textual/pull/3765
+- Added the ability to set the `label` property of a `RadioButton` https://github.com/Textualize/textual/pull/3765
+- Added support for various modified edit and navigation keys in urxvt https://github.com/Textualize/textual/pull/3739
+- Added app focus/blur for textual-web https://github.com/Textualize/textual/pull/3767
+
+### Changed
+
+- Method `MarkdownTableOfContents.set_table_of_contents` renamed to `MarkdownTableOfContents.rebuild_table_of_contents` https://github.com/Textualize/textual/pull/3730
+- Exception `Tree.UnknownNodeID` moved out of `Tree`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Exception `TreeNode.RemoveRootError` moved out of `TreeNode`, import from `textual.widgets.tree` https://github.com/Textualize/textual/pull/3730
+- Optimized startup time https://github.com/Textualize/textual/pull/3753
+- App.COMMANDS or Screen.COMMANDS can now accept a callable which returns a command palette provider https://github.com/Textualize/textual/pull/3756
+
+## [0.42.0] - 2023-11-22
+
+### Fixed
+
+- Duplicate CSS errors when parsing CSS from a screen https://github.com/Textualize/textual/issues/3581
+- Added missing `blur` pseudo class https://github.com/Textualize/textual/issues/3439
+- Fixed visual glitched characters on Windows due to Python limitation https://github.com/Textualize/textual/issues/2548
+- Fixed `ScrollableContainer` to receive focus https://github.com/Textualize/textual/pull/3632
+- Fixed app-level queries causing a crash when the command palette is active https://github.com/Textualize/textual/issues/3633
+- Fixed outline not rendering correctly in some scenarios (e.g. on Button widgets) https://github.com/Textualize/textual/issues/3628
+- Fixed live-reloading of screen CSS https://github.com/Textualize/textual/issues/3454
+- `Select.value` could be in an invalid state https://github.com/Textualize/textual/issues/3612
+- Off-by-one in CSS error reporting https://github.com/Textualize/textual/issues/3625
+- Loading indicators and app notifications overlapped in the wrong order https://github.com/Textualize/textual/issues/3677
+- Widgets being loaded are disabled and have their scrolling explicitly disabled too https://github.com/Textualize/textual/issues/3677
+- Method render on a widget could be called before mounting said widget https://github.com/Textualize/textual/issues/2914
+
+### Added
+
+- Exceptions to `textual.widgets.select` https://github.com/Textualize/textual/pull/3614
+  - `InvalidSelectValueError` for when setting a `Select` to an invalid value
+  - `EmptySelectError` when creating/setting a `Select` to have no options when `allow_blank` is `False`
+- `Select` methods https://github.com/Textualize/textual/pull/3614
+  - `clear`
+  - `is_blank`
+- Constant `Select.BLANK` to flag an empty selection https://github.com/Textualize/textual/pull/3614
+- Added `restrict`, `type`, `max_length`, and `valid_empty` to Input https://github.com/Textualize/textual/pull/3657
+- Added `Pilot.mouse_down` to simulate `MouseDown` events https://github.com/Textualize/textual/pull/3495
+- Added `Pilot.mouse_up` to simulate `MouseUp` events https://github.com/Textualize/textual/pull/3495
+- Added `Widget.is_mounted` property https://github.com/Textualize/textual/pull/3709
+- Added `TreeNode.refresh` https://github.com/Textualize/textual/pull/3639
+
+### Changed
+
+- CSS error reporting will no longer provide links to the files in question https://github.com/Textualize/textual/pull/3582
+- inline CSS error reporting will report widget/class variable where the CSS was read from https://github.com/Textualize/textual/pull/3582
+- Breaking change: `Tree.refresh_line` has now become an internal https://github.com/Textualize/textual/pull/3639
+- Breaking change: Setting `Select.value` to `None` no longer clears the selection (See `Select.BLANK` and `Select.clear`) https://github.com/Textualize/textual/pull/3614
+- Breaking change: `Button` no longer inherits from `Static`, now it inherits directly from `Widget` https://github.com/Textualize/textual/issues/3603
+- Rich markup in markdown headings is now escaped when building the TOC https://github.com/Textualize/textual/issues/3689
+- Mechanics behind mouse clicks. See [this](https://github.com/Textualize/textual/pull/3495#issue-1934915047) for more details. https://github.com/Textualize/textual/pull/3495
+- Breaking change: max/min-width/height now includes padding and border. https://github.com/Textualize/textual/pull/3712
+
+## [0.41.0] - 2023-10-31
+
+### Fixed
+
+- Fixed `Input.cursor_blink` reactive not changing blink state after `Input` was mounted https://github.com/Textualize/textual/pull/3498
+- Fixed `Tabs.active` attribute value not being re-assigned after removing a tab or clearing https://github.com/Textualize/textual/pull/3498
+- Fixed `DirectoryTree` race-condition crash when changing path https://github.com/Textualize/textual/pull/3498
+- Fixed issue with `LRUCache.discard` https://github.com/Textualize/textual/issues/3537
+- Fixed `DataTable` not scrolling to rows that were just added https://github.com/Textualize/textual/pull/3552
+- Fixed cache bug with `DataTable.update_cell` https://github.com/Textualize/textual/pull/3551
+- Fixed CSS errors being repeated https://github.com/Textualize/textual/pull/3566
+- Fix issue with chunky highlights on buttons https://github.com/Textualize/textual/pull/3571
+- Fixed `OptionList` event leakage from `CommandPalette` to `App`.
+- Fixed crash in `LoadingIndicator` https://github.com/Textualize/textual/pull/3498
+- Fixed crash when `Tabs` appeared as a descendant of `TabbedContent` in the DOM https://github.com/Textualize/textual/pull/3602
+- Fixed the command palette cancelling other workers https://github.com/Textualize/textual/issues/3615
+
+### Added
+
+- Add Document `get_index_from_location` / `get_location_from_index` https://github.com/Textualize/textual/pull/3410
+- Add setter for `TextArea.text` https://github.com/Textualize/textual/discussions/3525
+- Added `key` argument to the `DataTable.sort()` method, allowing the table to be sorted using a custom function (or other callable) https://github.com/Textualize/textual/pull/3090
+- Added `initial` to all css rules, which restores default (i.e. value from DEFAULT_CSS) https://github.com/Textualize/textual/pull/3566
+- Added HorizontalPad to pad.py https://github.com/Textualize/textual/pull/3571
+- Added `AwaitComplete` class, to be used for optionally awaitable return values https://github.com/Textualize/textual/pull/3498
+
+### Changed
+
+- Breaking change: `Button.ACTIVE_EFFECT_DURATION` classvar converted to `Button.active_effect_duration` attribute https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Input.blink_timer` made private (renamed to `Input._blink_timer`) https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Input.cursor_blink` reactive updated to not run on mount (now `init=False`) https://github.com/Textualize/textual/pull/3498
+- Breaking change: `AwaitTabbedContent` class removed https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Tabs.remove_tab` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- Breaking change: `Tabs.clear` now returns an `AwaitComplete` instead of an `AwaitRemove` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.add_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.remove_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `TabbedContent.clear_pane` now returns an `AwaitComplete` instead of an `AwaitTabbedContent` https://github.com/Textualize/textual/pull/3498
+- `Tabs.add_tab` now returns an `AwaitComplete` instead of an `AwaitMount` https://github.com/Textualize/textual/pull/3498
+- `DirectoryTree.reload` now returns an `AwaitComplete`, which may be awaited to ensure the node has finished being processed by the internal queue https://github.com/Textualize/textual/pull/3498
+- `Tabs.remove_tab` now returns an `AwaitComplete`, which may be awaited to ensure the tab is unmounted and internal state is updated https://github.com/Textualize/textual/pull/3498
+- `App.switch_mode` now returns an `AwaitMount`, which may be awaited to ensure the screen is mounted https://github.com/Textualize/textual/pull/3498
+- Buttons will now display multiple lines, and have auto height https://github.com/Textualize/textual/pull/3539
+- DataTable now has a max-height of 100vh rather than 100%, which doesn't work with auto
+- Breaking change: empty rules now result in an error https://github.com/Textualize/textual/pull/3566
+- Improved startup time by caching CSS parsing https://github.com/Textualize/textual/pull/3575
+- Workers are now created/run in a thread-safe way https://github.com/Textualize/textual/pull/3586
+
+## [0.40.0] - 2023-10-11
+
+### Added
+
+- Added `loading` reactive property to widgets https://github.com/Textualize/textual/pull/3509
+
+## [0.39.0] - 2023-10-10
+
+### Fixed
+
+- `Pilot.click`/`Pilot.hover` can't use `Screen` as a selector https://github.com/Textualize/textual/issues/3395
+- App exception when a `Tree` is initialized/mounted with `disabled=True` https://github.com/Textualize/textual/issues/3407
+- Fixed `print` locations not being correctly reported in `textual console` https://github.com/Textualize/textual/issues/3237
+- Fix location of IME and emoji popups https://github.com/Textualize/textual/pull/3408
+- Fixed application freeze when pasting an emoji into an application on Windows https://github.com/Textualize/textual/issues/3178
+- Fixed duplicate option ID handling in the `OptionList` https://github.com/Textualize/textual/issues/3455
+- Fix crash when removing and updating DataTable cell at same time https://github.com/Textualize/textual/pull/3487
+- Fixed fractional styles to allow integer values https://github.com/Textualize/textual/issues/3414
+- Stop eating stdout/stderr in headless mode - print works again in tests https://github.com/Textualize/textual/pull/3486
+
+### Added
+
+- `OutOfBounds` exception to be raised by `Pilot` https://github.com/Textualize/textual/pull/3360
+- `TextArea.cursor_screen_offset` property for getting the screen-relative position of the cursor https://github.com/Textualize/textual/pull/3408
+- `Input.cursor_screen_offset` property for getting the screen-relative position of the cursor https://github.com/Textualize/textual/pull/3408
+- Reactive `cell_padding` (and respective parameter) to define horizontal cell padding in data table columns https://github.com/Textualize/textual/issues/3435
+- Added `Input.clear` method https://github.com/Textualize/textual/pull/3430
+- Added `TextArea.SelectionChanged` and `TextArea.Changed` messages https://github.com/Textualize/textual/pull/3442
+- Added `wait_for_dismiss` parameter to `App.push_screen` https://github.com/Textualize/textual/pull/3477
+- Allow scrollbar-size to be set to 0 to achieve scrollable containers with no visible scrollbars https://github.com/Textualize/textual/pull/3488
+
+### Changed
+
+- Breaking change: tree-sitter and tree-sitter-languages dependencies moved to `syntax` extra https://github.com/Textualize/textual/pull/3398
+- `Pilot.click`/`Pilot.hover` now raises `OutOfBounds` when clicking outside visible screen https://github.com/Textualize/textual/pull/3360
+- `Pilot.click`/`Pilot.hover` now return a Boolean indicating whether the click/hover landed on the widget that matches the selector https://github.com/Textualize/textual/pull/3360
+- Added a delay to when the `No Matches` message appears in the command palette, thus removing a flicker https://github.com/Textualize/textual/pull/3399
+- Timer callbacks are now typed more loosely https://github.com/Textualize/textual/issues/3434
+
+## [0.38.1] - 2023-09-21
+
+### Fixed
+
+- Hotfix - added missing highlight files in build distribution https://github.com/Textualize/textual/pull/3370
+
+## [0.38.0] - 2023-09-21
+
+### Added
+
+- Added a TextArea https://github.com/Textualize/textual/pull/2931
+- Added :dark and :light pseudo classes
+
+### Fixed
+
+- Fixed `DataTable` not updating component styles on hot-reloading https://github.com/Textualize/textual/issues/3312
+
+### Changed
+
+- Breaking change: CSS in DEFAULT_CSS is now automatically scoped to the widget (set SCOPED_CSS=False) to disable
+- Breaking change: Changed `Markdown.goto_anchor` to return a boolean (if the anchor was found) instead of `None` https://github.com/Textualize/textual/pull/3334
+
+## [0.37.1] - 2023-09-16
+
+### Fixed
+
+- Fixed the command palette crashing with a `TimeoutError` in any Python before 3.11 https://github.com/Textualize/textual/issues/3320
+- Fixed `Input` event leakage from `CommandPalette` to `App`.
+
+## [0.37.0] - 2023-09-15
+
+### Added
+
+- Added the command palette https://github.com/Textualize/textual/pull/3058
+- `Input` is now validated when focus moves out of it https://github.com/Textualize/textual/pull/3193
+- Attribute `Input.validate_on` (and `__init__` parameter of the same name) to customise when validation occurs https://github.com/Textualize/textual/pull/3193
+- Screen-specific (sub-)title attributes https://github.com/Textualize/textual/pull/3199:
+  - `Screen.TITLE`
+  - `Screen.SUB_TITLE`
+  - `Screen.title`
+  - `Screen.sub_title`
+- Properties `Header.screen_title` and `Header.screen_sub_title` https://github.com/Textualize/textual/pull/3199
+- Added `DirectoryTree.DirectorySelected` message https://github.com/Textualize/textual/issues/3200
+- Added `widgets.Collapsible` contributed by Sunyoung Yoo https://github.com/Textualize/textual/pull/2989
+
+### Fixed
+
+- Fixed a crash when removing an option from an `OptionList` while the mouse is hovering over the last option https://github.com/Textualize/textual/issues/3270
+- Fixed a crash in `MarkdownViewer` when clicking on a link that contains an anchor https://github.com/Textualize/textual/issues/3094
+- Fixed wrong message pump in pop_screen https://github.com/Textualize/textual/pull/3315
+
+### Changed
+
+- Widget.notify and App.notify are now thread-safe https://github.com/Textualize/textual/pull/3275
+- Breaking change: Widget.notify and App.notify now return None https://github.com/Textualize/textual/pull/3275
+- App.unnotify is now private (renamed to App._unnotify) https://github.com/Textualize/textual/pull/3275
+- `Markdown.load` will now attempt to scroll to a related heading if an anchor is provided https://github.com/Textualize/textual/pull/3244
+- `ProgressBar` explicitly supports being set back to its indeterminate state https://github.com/Textualize/textual/pull/3286
+
+## [0.36.0] - 2023-09-05
+
+### Added
+
+- TCSS styles `layer` and `layers` can be strings https://github.com/Textualize/textual/pull/3169
+- `App.return_code` for the app return code https://github.com/Textualize/textual/pull/3202
+- Added `animate` switch to `Tree.scroll_to_line` and `Tree.scroll_to_node` https://github.com/Textualize/textual/pull/3210
+- Added `Rule` widget https://github.com/Textualize/textual/pull/3209
+- Added App.current_mode to get the current mode https://github.com/Textualize/textual/pull/3233
+
+### Changed
+
+- Reactive callbacks are now scheduled on the message pump of the reactable that is watching instead of the owner of reactive attribute https://github.com/Textualize/textual/pull/3065
+- Callbacks scheduled with `call_next` will now have the same prevented messages as when the callback was scheduled https://github.com/Textualize/textual/pull/3065
+- Added `cursor_type` to the `DataTable` constructor.
+- Fixed `push_screen` not updating Screen.CSS styles https://github.com/Textualize/textual/issues/3217
+- `DataTable.add_row` accepts `height=None` to automatically compute optimal height for a row https://github.com/Textualize/textual/pull/3213
+
+### Fixed
+
+- Fixed flicker when calling pop_screen multiple times https://github.com/Textualize/textual/issues/3126
+- Fixed setting styles.layout not updating https://github.com/Textualize/textual/issues/3047
+- Fixed flicker when scrolling tree up or down a line https://github.com/Textualize/textual/issues/3206
+
+## [0.35.1]
+
+### Fixed
+
+- Fixed flash of 80x24 interface in textual-web
+
+## [0.35.0]
+
+### Added
+
+- Ability to enable/disable tabs via the reactive `disabled` in tab panes https://github.com/Textualize/textual/pull/3152
+- Textual-web driver support for Windows
+
+### Fixed
+
+- Could not hide/show/disable/enable tabs in nested `TabbedContent` https://github.com/Textualize/textual/pull/3150
+
+## [0.34.0] - 2023-08-22
+
+### Added
+
+- Methods `TabbedContent.disable_tab` and `TabbedContent.enable_tab` https://github.com/Textualize/textual/pull/3112
+- Methods `Tabs.disable` and `Tabs.enable` https://github.com/Textualize/textual/pull/3112
+- Messages `Tab.Disabled`, `Tab.Enabled`, `Tabs.TabDisabled` and `Tabs.Enabled` https://github.com/Textualize/textual/pull/3112
+- Methods `TabbedContent.hide_tab` and `TabbedContent.show_tab` https://github.com/Textualize/textual/pull/3112
+- Methods `Tabs.hide` and `Tabs.show` https://github.com/Textualize/textual/pull/3112
+- Messages `Tabs.TabHidden` and `Tabs.TabShown` https://github.com/Textualize/textual/pull/3112
+- Added `ListView.extend` method to append multiple items https://github.com/Textualize/textual/pull/3012
+
+### Changed
+
+- grid-columns and grid-rows now accept an `auto` token to detect the optimal size https://github.com/Textualize/textual/pull/3107
+- LoadingIndicator now has a minimum height of 1 line.
+
+### Fixed
+
+- Fixed auto height container with default grid-rows https://github.com/Textualize/textual/issues/1597
+- Fixed `page_up` and `page_down` bug in `DataTable` when `show_header = False` https://github.com/Textualize/textual/pull/3093
+- Fixed issue with visible children inside invisible container when moving focus https://github.com/Textualize/textual/issues/3053
+
+## [0.33.0] - 2023-08-15
 
 ### Fixed
 
 - Fixed unintuitive sizing behaviour of TabbedContent https://github.com/Textualize/textual/issues/2411
 - Fixed relative units not always expanding auto containers https://github.com/Textualize/textual/pull/3059
 - Fixed background refresh https://github.com/Textualize/textual/issues/3055
+- Fixed `SelectionList.clear_options` https://github.com/Textualize/textual/pull/3075
+- `MouseMove` events bubble up from widgets. `App` and `Screen` receive `MouseMove` events even if there's no Widget under the cursor. https://github.com/Textualize/textual/issues/2905
+- Fixed click on double-width char https://github.com/Textualize/textual/issues/2968
 
+### Changed
+
+- Breaking change: `DOMNode.visible` now takes into account full DOM to report whether a node is visible or not.
+
+### Removed
+
+- Property `Widget.focusable_children` https://github.com/Textualize/textual/pull/3070
+
+### Added
+
+- Added an interface for replacing prompt of an individual option in an `OptionList` https://github.com/Textualize/textual/issues/2603
+- Added `DirectoryTree.reload_node` method https://github.com/Textualize/textual/issues/2757
+- Added widgets.Digit https://github.com/Textualize/textual/pull/3073
+- Added `BORDER_TITLE` and `BORDER_SUBTITLE` classvars to Widget https://github.com/Textualize/textual/pull/3097
+
+### Changed
+
+- DescendantBlur and DescendantFocus can now be used with @on decorator
 
 ## [0.32.0] - 2023-08-03
 
@@ -1165,6 +2212,78 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.72.0]: https://github.com/Textualize/textual/compare/v0.71.0...v0.72.0
+[0.71.0]: https://github.com/Textualize/textual/compare/v0.70.0...v0.71.0
+[0.70.0]: https://github.com/Textualize/textual/compare/v0.69.0...v0.70.0
+[0.69.0]: https://github.com/Textualize/textual/compare/v0.68.0...v0.69.0
+[0.68.0]: https://github.com/Textualize/textual/compare/v0.67.1...v0.68.0
+[0.67.1]: https://github.com/Textualize/textual/compare/v0.67.0...v0.67.1
+[0.67.0]: https://github.com/Textualize/textual/compare/v0.66.0...v0.67.0
+[0.66.0]: https://github.com/Textualize/textual/compare/v0.65.2...v0.66.0
+[0.65.2]: https://github.com/Textualize/textual/compare/v0.65.1...v0.65.2
+[0.65.1]: https://github.com/Textualize/textual/compare/v0.65.0...v0.65.1
+[0.65.0]: https://github.com/Textualize/textual/compare/v0.64.0...v0.65.0
+[0.64.0]: https://github.com/Textualize/textual/compare/v0.63.6...v0.64.0
+[0.63.6]: https://github.com/Textualize/textual/compare/v0.63.5...v0.63.6
+[0.63.5]: https://github.com/Textualize/textual/compare/v0.63.4...v0.63.5
+[0.63.4]: https://github.com/Textualize/textual/compare/v0.63.3...v0.63.4
+[0.63.3]: https://github.com/Textualize/textual/compare/v0.63.2...v0.63.3
+[0.63.2]: https://github.com/Textualize/textual/compare/v0.63.1...v0.63.2
+[0.63.1]: https://github.com/Textualize/textual/compare/v0.63.0...v0.63.1
+[0.63.0]: https://github.com/Textualize/textual/compare/v0.62.0...v0.63.0
+[0.62.0]: https://github.com/Textualize/textual/compare/v0.61.1...v0.62.0
+[0.61.1]: https://github.com/Textualize/textual/compare/v0.61.0...v0.61.1
+[0.61.0]: https://github.com/Textualize/textual/compare/v0.60.1...v0.61.0
+[0.60.1]: https://github.com/Textualize/textual/compare/v0.60.0...v0.60.1
+[0.60.0]: https://github.com/Textualize/textual/compare/v0.59.0...v0.60.0
+[0.59.0]: https://github.com/Textualize/textual/compare/v0.58.1...v0.59.0
+[0.58.1]: https://github.com/Textualize/textual/compare/v0.58.0...v0.58.1
+[0.58.0]: https://github.com/Textualize/textual/compare/v0.57.1...v0.58.0
+[0.57.1]: https://github.com/Textualize/textual/compare/v0.57.0...v0.57.1
+[0.57.0]: https://github.com/Textualize/textual/compare/v0.56.3...v0.57.0
+[0.56.3]: https://github.com/Textualize/textual/compare/v0.56.2...v0.56.3
+[0.56.2]: https://github.com/Textualize/textual/compare/v0.56.1...v0.56.2
+[0.56.1]: https://github.com/Textualize/textual/compare/v0.56.0...v0.56.1
+[0.56.0]: https://github.com/Textualize/textual/compare/v0.55.1...v0.56.0
+[0.55.1]: https://github.com/Textualize/textual/compare/v0.55.0...v0.55.1
+[0.55.0]: https://github.com/Textualize/textual/compare/v0.54.0...v0.55.0
+[0.54.0]: https://github.com/Textualize/textual/compare/v0.53.1...v0.54.0
+[0.53.1]: https://github.com/Textualize/textual/compare/v0.53.0...v0.53.1
+[0.53.0]: https://github.com/Textualize/textual/compare/v0.52.1...v0.53.0
+[0.52.1]: https://github.com/Textualize/textual/compare/v0.52.0...v0.52.1
+[0.52.0]: https://github.com/Textualize/textual/compare/v0.51.0...v0.52.0
+[0.51.0]: https://github.com/Textualize/textual/compare/v0.50.1...v0.51.0
+[0.50.1]: https://github.com/Textualize/textual/compare/v0.50.0...v0.50.1
+[0.50.0]: https://github.com/Textualize/textual/compare/v0.49.0...v0.50.0
+[0.49.1]: https://github.com/Textualize/textual/compare/v0.49.0...v0.49.1
+[0.49.0]: https://github.com/Textualize/textual/compare/v0.48.2...v0.49.0
+[0.48.2]: https://github.com/Textualize/textual/compare/v0.48.1...v0.48.2
+[0.48.1]: https://github.com/Textualize/textual/compare/v0.48.0...v0.48.1
+[0.48.0]: https://github.com/Textualize/textual/compare/v0.47.1...v0.48.0
+[0.47.1]: https://github.com/Textualize/textual/compare/v0.47.0...v0.47.1
+[0.47.0]: https://github.com/Textualize/textual/compare/v0.46.0...v0.47.0
+[0.46.0]: https://github.com/Textualize/textual/compare/v0.45.1...v0.46.0
+[0.45.1]: https://github.com/Textualize/textual/compare/v0.45.0...v0.45.1
+[0.45.0]: https://github.com/Textualize/textual/compare/v0.44.1...v0.45.0
+[0.44.1]: https://github.com/Textualize/textual/compare/v0.44.0...v0.44.1
+[0.44.0]: https://github.com/Textualize/textual/compare/v0.43.2...v0.44.0
+[0.43.2]: https://github.com/Textualize/textual/compare/v0.43.1...v0.43.2
+[0.43.1]: https://github.com/Textualize/textual/compare/v0.43.0...v0.43.1
+[0.43.0]: https://github.com/Textualize/textual/compare/v0.42.0...v0.43.0
+[0.42.0]: https://github.com/Textualize/textual/compare/v0.41.0...v0.42.0
+[0.41.0]: https://github.com/Textualize/textual/compare/v0.40.0...v0.41.0
+[0.40.0]: https://github.com/Textualize/textual/compare/v0.39.0...v0.40.0
+[0.39.0]: https://github.com/Textualize/textual/compare/v0.38.1...v0.39.0
+[0.38.1]: https://github.com/Textualize/textual/compare/v0.38.0...v0.38.1
+[0.38.0]: https://github.com/Textualize/textual/compare/v0.37.1...v0.38.0
+[0.37.1]: https://github.com/Textualize/textual/compare/v0.37.0...v0.37.1
+[0.37.0]: https://github.com/Textualize/textual/compare/v0.36.0...v0.37.0
+[0.36.0]: https://github.com/Textualize/textual/compare/v0.35.1...v0.36.0
+[0.35.1]: https://github.com/Textualize/textual/compare/v0.35.0...v0.35.1
+[0.35.0]: https://github.com/Textualize/textual/compare/v0.34.0...v0.35.0
+[0.34.0]: https://github.com/Textualize/textual/compare/v0.33.0...v0.34.0
+[0.33.0]: https://github.com/Textualize/textual/compare/v0.32.0...v0.33.0
+[0.32.0]: https://github.com/Textualize/textual/compare/v0.31.0...v0.32.0
 [0.31.0]: https://github.com/Textualize/textual/compare/v0.30.0...v0.31.0
 [0.30.0]: https://github.com/Textualize/textual/compare/v0.29.0...v0.30.0
 [0.29.0]: https://github.com/Textualize/textual/compare/v0.28.1...v0.29.0

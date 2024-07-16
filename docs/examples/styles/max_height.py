@@ -4,6 +4,8 @@ from textual.widgets import Placeholder
 
 
 class MaxHeightApp(App):
+    CSS_PATH = "max_height.tcss"
+
     def compose(self):
         yield Horizontal(
             Placeholder("max-height: 10w", id="p1"),
@@ -13,4 +15,6 @@ class MaxHeightApp(App):
         )
 
 
-app = MaxHeightApp(css_path="max_height.css")
+if __name__ == "__main__":
+    app = MaxHeightApp()
+    app.run()

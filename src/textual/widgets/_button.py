@@ -1,17 +1,26 @@
 from __future__ import annotations
 
 from functools import partial
+from typing import TYPE_CHECKING, cast
 
 import rich.repr
+from rich.cells import cell_len
+from rich.console import ConsoleRenderable, RenderableType
 from rich.text import Text, TextType
 from typing_extensions import Literal, Self
 
 from .. import events
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..binding import Binding
 from ..css._error_tools import friendly_list
+from ..geometry import Size
 from ..message import Message
+from ..pad import HorizontalPad
 from ..reactive import reactive
-from ..widgets import Static
+from ..widget import Widget
 
 ButtonVariant = Literal["default", "primary", "success", "warning", "error"]
 """The names of the valid button variants.
@@ -26,139 +35,125 @@ class InvalidButtonVariant(Exception):
     """Exception raised if an invalid button variant is used."""
 
 
-class Button(Static, can_focus=True):
+class Button(Widget, can_focus=True):
     """A simple clickable button."""
 
     DEFAULT_CSS = """
     Button {
         width: auto;
         min-width: 16;
-        height: 3;
+        height: auto;
         background: $panel;
         color: $text;
         border: none;
         border-top: tall $panel-lighten-2;
         border-bottom: tall $panel-darken-3;
+        text-align: center;
         content-align: center middle;
         text-style: bold;
-    }
 
-    Button:focus {
-        text-style: bold reverse;
-    }
+        &:focus {
+            text-style: bold reverse;
+        }
+        &:hover {
+            border-top: tall $panel;
+            background: $panel-darken-2;
+            color: $text;
+        }
+        &.-active {
+            background: $panel;
+            border-bottom: tall $panel-lighten-2;
+            border-top: tall $panel-darken-2;
+            tint: $background 30%;
+        }
 
-    Button:hover {
-        border-top: tall $panel;
-        background: $panel-darken-2;
-        color: $text;
-    }
+        &.-primary {
+            background: $primary;
+            color: $text;
+            border-top: tall $primary-lighten-3;
+            border-bottom: tall $primary-darken-3;
 
-    Button.-active {
-        background: $panel;
-        border-bottom: tall $panel-lighten-2;
-        border-top: tall $panel-darken-2;
-        tint: $background 30%;
-    }
+            &:hover {
+                background: $primary-darken-2;
+                color: $text;
+                border-top: tall $primary;
+            }
 
-    /* Primary variant */
-    Button.-primary {
-        background: $primary;
-        color: $text;
-        border-top: tall $primary-lighten-3;
-        border-bottom: tall $primary-darken-3;
+            &.-active {
+                background: $primary;
+                border-bottom: tall $primary-lighten-3;
+                border-top: tall $primary-darken-3;
+            }
+        }
 
-    }
+        &.-success {
+            background: $success;
+            color: $text;
+            border-top: tall $success-lighten-2;
+            border-bottom: tall $success-darken-3;
 
-    Button.-primary:hover {
-        background: $primary-darken-2;
-        color: $text;
-        border-top: tall $primary;
-    }
+            &:hover {
+                background: $success-darken-2;
+                color: $text;
+                border-top: tall $success;
+            }
 
-    Button.-primary.-active {
-        background: $primary;
-        border-bottom: tall $primary-lighten-3;
-        border-top: tall $primary-darken-3;
-    }
+            &.-active {
+                background: $success;
+                border-bottom: tall $success-lighten-2;
+                border-top: tall $success-darken-2;
+            }
+        }
 
+        &.-warning{
+            background: $warning;
+            color: $text;
+            border-top: tall $warning-lighten-2;
+            border-bottom: tall $warning-darken-3;
 
-    /* Success variant */
-    Button.-success {
-        background: $success;
-        color: $text;
-        border-top: tall $success-lighten-2;
-        border-bottom: tall $success-darken-3;
-    }
+            &:hover {
+                background: $warning-darken-2;
+                color: $text;
+                border-top: tall $warning;
+            }
 
-    Button.-success:hover {
-        background: $success-darken-2;
-        color: $text;
-        border-top: tall $success;
-    }
+            &.-active {
+                background: $warning;
+                border-bottom: tall $warning-lighten-2;
+                border-top: tall $warning-darken-2;
+            }
+        }
 
-    Button.-success.-active {
-        background: $success;
-        border-bottom: tall $success-lighten-2;
-        border-top: tall $success-darken-2;
-    }
+        &.-error {
+            background: $error;
+            color: $text;
+            border-top: tall $error-lighten-2;
+            border-bottom: tall $error-darken-3;
 
+            &:hover {
+                background: $error-darken-1;
+                color: $text;
+                border-top: tall $error;
+            }
 
-    /* Warning variant */
-    Button.-warning {
-        background: $warning;
-        color: $text;
-        border-top: tall $warning-lighten-2;
-        border-bottom: tall $warning-darken-3;
-    }
-
-    Button.-warning:hover {
-        background: $warning-darken-2;
-        color: $text;
-        border-top: tall $warning;
-
-    }
-
-    Button.-warning.-active {
-        background: $warning;
-        border-bottom: tall $warning-lighten-2;
-        border-top: tall $warning-darken-2;
-    }
-
-
-    /* Error variant */
-    Button.-error {
-        background: $error;
-        color: $text;
-        border-top: tall $error-lighten-2;
-        border-bottom: tall $error-darken-3;
-
-    }
-
-    Button.-error:hover {
-        background: $error-darken-1;
-        color: $text;
-        border-top: tall $error;
-    }
-
-    Button.-error.-active {
-        background: $error;
-        border-bottom: tall $error-lighten-2;
-        border-top: tall $error-darken-2;
+            &.-active {
+                background: $error;
+                border-bottom: tall $error-lighten-2;
+                border-top: tall $error-darken-2;
+            }
+        }
     }
     """
 
     BINDINGS = [Binding("enter", "press", "Press Button", show=False)]
 
-    ACTIVE_EFFECT_DURATION = 0.3
-    """When buttons are clicked they get the `-active` class for this duration (in seconds)"""
-
     label: reactive[TextType] = reactive[TextType]("")
     """The text label that appears within the button."""
 
-    variant = reactive("default")
+    variant = reactive("default", init=False)
     """The variant name for the button."""
 
-    class Pressed(Message, bubble=True):
+    class Pressed(Message):
         """Event sent when a `Button` is pressed.
 
         Can be handled using `on_button_pressed` in a subclass of
@@ -187,6 +182,7 @@ class Button(Static, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ):
         """Create a Button widget.
 
@@ -197,15 +193,26 @@ class Button(Static, can_focus=True):
             id: The ID of the button in the DOM.
             classes: The CSS classes of the button.
             disabled: Whether the button is disabled or not.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         if label is None:
             label = self.css_identifier_styled
 
-        self.label = self.validate_label(label)
+        self.label = label
+        self.variant = variant
+        self.active_effect_duration = 0.2
+        """Amount of time in seconds the button 'press' animation lasts."""
+        if tooltip is not None:
+            self.tooltip = tooltip
 
-        self.variant = self.validate_variant(variant)
+    def get_content_width(self, container: Size, viewport: Size) -> int:
+        try:
+            return max([cell_len(line) for line in self.label.plain.splitlines()]) + 2
+        except ValueError:
+            # Empty string label
+            return 2
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield from super().__rich_repr__()
@@ -222,26 +229,40 @@ class Button(Static, can_focus=True):
         self.remove_class(f"-{old_variant}")
         self.add_class(f"-{variant}")
 
-    def validate_label(self, label: TextType) -> TextType:
+    def validate_label(self, label: TextType) -> Text:
         """Parse markup for self.label"""
         if isinstance(label, str):
             return Text.from_markup(label)
         return label
 
-    def render(self) -> TextType:
-        label = Text.assemble(" ", self.label, " ")
-        label.stylize(self.text_style)
-        return label
+    def render(self) -> RenderResult:
+        assert isinstance(self.label, Text)
+        label = self.label.copy()
+        label.stylize_before(self.rich_style)
+        return HorizontalPad(
+            label,
+            1,
+            1,
+            self.rich_style,
+            self._get_rich_justify() or "center",
+        )
+
+    def post_render(self, renderable: RenderableType) -> ConsoleRenderable:
+        return cast(ConsoleRenderable, renderable)
 
     async def _on_click(self, event: events.Click) -> None:
         event.stop()
-        self.press()
+        if not self.has_class("-active"):
+            self.press()
 
     def press(self) -> Self:
-        """Respond to a button press.
+        """Animate the button and send the [Pressed][textual.widgets.Button.Pressed] message.
+
+        Can be used to simulate the button being pressed by a user.
 
         Returns:
-            The button instance."""
+            The button instance.
+        """
         if self.disabled or not self.display:
             return self
         # Manage the "active" effect:
@@ -252,14 +273,16 @@ class Button(Static, can_focus=True):
 
     def _start_active_affect(self) -> None:
         """Start a small animation to show the button was clicked."""
-        self.add_class("-active")
-        self.set_timer(
-            self.ACTIVE_EFFECT_DURATION, partial(self.remove_class, "-active")
-        )
+        if self.active_effect_duration > 0:
+            self.add_class("-active")
+            self.set_timer(
+                self.active_effect_duration, partial(self.remove_class, "-active")
+            )
 
     def action_press(self) -> None:
         """Activate a press of the button."""
-        self.press()
+        if not self.has_class("-active"):
+            self.press()
 
     @classmethod
     def success(

@@ -13,6 +13,14 @@ async def test_tab_label():
     assert Tab("Pilot").label_text == "Pilot"
 
 
+async def test_tab_relabel():
+    """It should be possible to relabel a tab."""
+    tab = Tab("Pilot")
+    assert tab.label_text == "Pilot"
+    tab.label = "Aeryn"
+    assert tab.label_text == "Aeryn"
+
+
 async def test_compose_empty_tabs():
     """It should be possible to create an empty Tabs."""
 
@@ -214,25 +222,21 @@ async def test_remove_tabs():
         assert tabs.active_tab.id == "tab-1"
 
         await tabs.remove_tab("tab-1")
-        await pilot.pause()
         assert tabs.tab_count == 3
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-2"
 
         await tabs.remove_tab(tabs.query_one("#tab-2", Tab))
-        await pilot.pause()
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-3"
 
         await tabs.remove_tab("tab-does-not-exist")
-        await pilot.pause()
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-3"
 
         await tabs.remove_tab(None)
-        await pilot.pause()
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-3"
@@ -257,25 +261,21 @@ async def test_remove_tabs_reversed():
         assert tabs.active_tab.id == "tab-1"
 
         await tabs.remove_tab("tab-4")
-        await pilot.pause()
         assert tabs.tab_count == 3
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
 
         await tabs.remove_tab("tab-3")
-        await pilot.pause()
         assert tabs.tab_count == 2
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
 
         await tabs.remove_tab("tab-2")
-        await pilot.pause()
         assert tabs.tab_count == 1
         assert tabs.active_tab is not None
         assert tabs.active_tab.id == "tab-1"
 
         await tabs.remove_tab("tab-1")
-        await pilot.pause()
         assert tabs.tab_count == 0
         assert tabs.active_tab is None
 
@@ -316,15 +316,8 @@ async def test_change_active_from_code():
         assert tabs.active_tab.id == "tab-2"
         assert tabs.active == tabs.active_tab.id
 
-        # TODO: This one is questionable. It seems Tabs has been designed so
-        # that you can set the active tab to an empty string, and it remains
-        # so, and just removes the underline; no other changes. So active
-        # will be an empty string while active_tab will be a tab. This feels
-        # like an oversight. Need to investigate and possibly modify this
-        # behaviour unless there's a good reason for this.
         tabs.active = ""
-        assert tabs.active_tab is not None
-        assert tabs.active_tab.id == "tab-2"
+        assert tabs.active_tab is None
 
 
 async def test_navigate_tabs_with_keyboard():
@@ -447,7 +440,8 @@ async def test_remove_tabs_messages():
         tabs = pilot.app.query_one(Tabs)
         for n in range(4):
             await tabs.remove_tab(f"tab-{n+1}")
-            await pilot.pause()
+
+        await pilot.pause()
         assert pilot.app.intended_handlers == [
             "on_tabs_tab_activated",
             "on_tabs_tab_activated",
@@ -463,7 +457,8 @@ async def test_reverse_remove_tabs_messages():
         tabs = pilot.app.query_one(Tabs)
         for n in reversed(range(4)):
             await tabs.remove_tab(f"tab-{n+1}")
-            await pilot.pause()
+
+        await pilot.pause()
         assert pilot.app.intended_handlers == [
             "on_tabs_tab_activated",
             "on_tabs_cleared",
@@ -496,3 +491,22 @@ async def test_mouse_navigation_messages():
             "on_tabs_tab_activated",
             "on_tabs_tab_activated",
         ]
+
+
+async def test_disabled_tab_is_not_activated_by_clicking_underline():
+    """Regression test for https://github.com/Textualize/textual/issues/4701"""
+
+    class DisabledTabApp(App):
+        def compose(self) -> ComposeResult:
+            yield Tabs(
+                Tab("Enabled", id="enabled"),
+                Tab("Disabled", id="disabled", disabled=True),
+            )
+
+    app = DisabledTabApp()
+    async with app.run_test() as pilot:
+        # Click the underline beneath the disabled tab
+        await pilot.click(Tabs, offset=(14, 2))
+        tabs = pilot.app.query_one(Tabs)
+        assert tabs.active_tab is not None
+        assert tabs.active_tab.id == "enabled"

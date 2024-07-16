@@ -18,7 +18,7 @@ border-title-style: <a href="../../css_types/text_style">&lt;text-style&gt;</a>;
 
 ## CSS
 
-```sass
+```css
 border-title-style: bold underline;
 ```
 

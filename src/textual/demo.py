@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from importlib.metadata import version
 from pathlib import Path
+from typing import cast
 
-from importlib_metadata import version
 from rich import box
 from rich.console import RenderableType
 from rich.json import JSON
 from rich.markdown import Markdown
+from rich.markup import escape
 from rich.pretty import Pretty
 from rich.syntax import Syntax
 from rich.table import Table
@@ -193,8 +195,9 @@ class Welcome(Container):
         yield Button("Start", variant="success")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        self.app.add_note("[b magenta]Start!")
-        self.app.query_one(".location-first").scroll_visible(duration=0.5, top=True)
+        app = cast(DemoApp, self.app)
+        app.add_note("[b magenta]Start!")
+        app.query_one(".location-first").scroll_visible(duration=0.5, top=True)
 
 
 class OptionGroup(Container):
@@ -247,8 +250,9 @@ class LocationLink(Static):
         self.reveal = reveal
 
     def on_click(self) -> None:
-        self.app.query_one(self.reveal).scroll_visible(top=True, duration=0.5)
-        self.app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
+        app = cast(DemoApp, self.app)
+        app.query_one(self.reveal).scroll_visible(top=True, duration=0.5)
+        app.add_note(f"Scrolling to [b]{self.reveal}[/b]")
 
 
 class LoginForm(Container):
@@ -269,23 +273,15 @@ class SubTitle(Static):
     pass
 
 
-class Notification(Static):
-    def on_mount(self) -> None:
-        self.set_timer(3, self.remove)
-
-    def on_click(self) -> None:
-        self.remove()
-
-
 class DemoApp(App[None]):
-    CSS_PATH = "demo.css"
+    CSS_PATH = "demo.tcss"
     TITLE = "Textual Demo"
     BINDINGS = [
         ("ctrl+b", "toggle_sidebar", "Sidebar"),
         ("ctrl+t", "app.toggle_dark", "Toggle Dark mode"),
         ("ctrl+s", "app.screenshot()", "Screenshot"),
         ("f1", "app.toggle_class('RichLog', '-hidden')", "Notes"),
-        Binding("ctrl+c,ctrl+q", "app.quit", "Quit", show=True),
+        Binding("ctrl+q", "app.quit", "Quit", show=True),
     ]
 
     show_sidebar = reactive(False)
@@ -390,9 +386,9 @@ class DemoApp(App[None]):
         """
         self.bell()
         path = self.save_screenshot(filename, path)
-        message = Text.assemble("Screenshot saved to ", (f"'{path}'", "bold green"))
-        self.add_note(message)
-        self.screen.mount(Notification(message))
+        message = f"Screenshot saved to [bold green]'{escape(str(path))}'[/]"
+        self.add_note(Text.from_markup(message))
+        self.notify(message)
 
 
 app = DemoApp()

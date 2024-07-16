@@ -16,12 +16,17 @@ class ListItem(Widget, can_focus=False):
     documentation for more details on use.
     """
 
+    SCOPED_CSS = False
+
     DEFAULT_CSS = """
     ListItem {
         color: $text;
         height: auto;
         background: $panel-lighten-1;
         overflow: hidden hidden;
+    }
+    ListItem > :disabled {
+        background: $panel-darken-1;
     }
     ListItem > Widget :hover {
         background: $boost;

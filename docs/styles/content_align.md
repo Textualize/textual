@@ -11,14 +11,14 @@ content-align-horizontal: <a href="../../css_types/horizontal">&lt;horizontal&gt
 content-align-vertical: <a href="../../css_types/vertical">&lt;vertical&gt;</a>;
 --8<-- "docs/snippets/syntax_block_end.md"
 
-The `content-align` style takes a [`<horizontal>`](../../css_types/horizontal) followed by a [`<vertical>`](../../css_types/vertical).
+The `content-align` style takes a [`<horizontal>`](../css_types/horizontal.md) followed by a [`<vertical>`](../css_types/vertical.md).
 
 You can specify the alignment of content on both the horizontal and vertical axes at the same time,
 or on each of the axis separately.
 To specify content alignment on a single axis, use the respective style and type:
 
- - `content-align-horizontal` takes a [`<horizontal>`](../../css_types/horizontal) and does alignment along the horizontal axis; and
- - `content-align-vertical` takes a [`<vertical>`](../../css_types/vertical) and does alignment along the vertical axis.
+ - `content-align-horizontal` takes a [`<horizontal>`](../css_types/horizontal.md) and does alignment along the horizontal axis; and
+ - `content-align-vertical` takes a [`<vertical>`](../css_types/vertical.md) and does alignment along the vertical axis.
 
 ## Examples
 
@@ -37,10 +37,10 @@ This first example shows three labels stacked vertically, each with different co
     --8<-- "docs/examples/styles/content_align.py"
     ```
 
-=== "content_align.css"
+=== "content_align.tcss"
 
-    ```sass hl_lines="2 7-8 13"
-    --8<-- "docs/examples/styles/content_align.css"
+    ```css hl_lines="2 7-8 13"
+    --8<-- "docs/examples/styles/content_align.tcss"
     ```
 
 ### All content alignments
@@ -59,15 +59,15 @@ Each label has its text aligned differently.
     --8<-- "docs/examples/styles/content_align_all.py"
     ```
 
-=== "content_align_all.css"
+=== "content_align_all.tcss"
 
-    ```sass hl_lines="2 5 8 11 14 17 20 23 26"
-    --8<-- "docs/examples/styles/content_align_all.css"
+    ```css hl_lines="2 5 8 11 14 17 20 23 26"
+    --8<-- "docs/examples/styles/content_align_all.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 /* Align content in the very center of a widget */
 content-align: center middle;
 /* Align content at the top right of a widget */

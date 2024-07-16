@@ -4,9 +4,13 @@ import threading
 
 import pytest
 
-from textual.app import App, ScreenStackError
+from textual import work
+from textual.app import App, ComposeResult, ScreenError, ScreenStackError
+from textual.events import MouseMove
+from textual.geometry import Offset
 from textual.screen import Screen
 from textual.widgets import Button, Input, Label
+from textual.worker import NoActiveWorker
 
 skip_py310 = pytest.mark.skipif(
     sys.version_info.minor == 10 and sys.version_info.major == 3,
@@ -106,7 +110,7 @@ async def test_screens():
     # Check screen stack is empty
     assert app.screen_stack == []
     # Push a screen
-    app.push_screen("screen1")
+    await app.push_screen("screen1")
     # Check it is on the stack
     assert app.screen_stack == [screen1]
     # Check it is current
@@ -115,21 +119,21 @@ async def test_screens():
     assert app.children == (screen1,)
 
     # Switch to another screen
-    app.switch_screen("screen2")
+    await app.switch_screen("screen2")
     # Check it has changed the stack and that it is current
     assert app.screen_stack == [screen2]
     assert app.screen is screen2
     assert app.children == (screen2,)
 
     # Push another screen
-    app.push_screen("screen3")
+    await app.push_screen("screen3")
     assert app.screen_stack == [screen2, screen3]
     assert app.screen is screen3
     # Only the current screen is in children
     assert app.children == (screen3,)
 
     # Pop a screen
-    assert app.pop_screen() is screen3
+    await app.pop_screen()
     assert app.screen is screen2
     assert app.screen_stack == [screen2]
 
@@ -289,15 +293,35 @@ async def test_auto_focus_skips_non_focusable_widgets():
 async def test_dismiss_non_top_screen():
     class MyApp(App[None]):
         async def key_p(self) -> None:
-            self.bottom, top = Screen(), Screen()
+            self.bottom = Screen()
+            top = Screen()
             await self.push_screen(self.bottom)
             await self.push_screen(top)
 
     app = MyApp()
     async with app.run_test() as pilot:
         await pilot.press("p")
-        with pytest.raises(ScreenStackError):
-            app.bottom.dismiss()
+        with pytest.raises(ScreenError):
+            await app.bottom.dismiss()
+
+
+async def test_dismiss_action():
+    class ConfirmScreen(Screen[bool]):
+        BINDINGS = [("y", "dismiss(True)", "Dismiss")]
+
+    class MyApp(App[None]):
+        bingo = False
+
+        def on_mount(self) -> None:
+            self.push_screen(ConfirmScreen(), callback=self.callback)
+
+        def callback(self, result: bool) -> None:
+            self.bingo = result
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.press("y")
+        assert app.bingo
 
 
 async def test_switch_screen_no_op():
@@ -350,3 +374,143 @@ async def test_switch_screen_updates_results_callback_stack():
         app.switch_screen("b")
         assert len(app.screen._result_callbacks) == 1
         assert app.screen._result_callbacks[-1].callback is None
+
+
+async def test_screen_receives_mouse_move_events():
+    class MouseMoveRecordingScreen(Screen):
+        mouse_events = []
+
+        def on_mouse_move(self, event: MouseMove) -> None:
+            MouseMoveRecordingScreen.mouse_events.append(event)
+
+    class SimpleApp(App[None]):
+        SCREENS = {"a": MouseMoveRecordingScreen()}
+
+        def on_mount(self):
+            self.push_screen("a")
+
+    mouse_offset = Offset(1, 1)
+
+    async with SimpleApp().run_test() as pilot:
+        await pilot.hover(None, mouse_offset)
+
+    assert len(MouseMoveRecordingScreen.mouse_events) == 1
+    mouse_event = MouseMoveRecordingScreen.mouse_events[0]
+    assert mouse_event.x, mouse_event.y == mouse_offset
+
+
+async def test_mouse_move_event_bubbles_to_screen_from_widget():
+    class MouseMoveRecordingScreen(Screen):
+        mouse_events = []
+
+        DEFAULT_CSS = """
+        Label {
+            offset: 10 10;
+        }
+        """
+
+        def compose(self) -> ComposeResult:
+            yield Label("Any label")
+
+        def on_mouse_move(self, event: MouseMove) -> None:
+            MouseMoveRecordingScreen.mouse_events.append(event)
+
+    class SimpleApp(App[None]):
+        SCREENS = {"a": MouseMoveRecordingScreen()}
+
+        def on_mount(self):
+            self.push_screen("a")
+
+    label_offset = Offset(10, 10)
+    mouse_offset = Offset(1, 1)
+
+    async with SimpleApp().run_test() as pilot:
+        await pilot.hover(Label, mouse_offset)
+
+    assert len(MouseMoveRecordingScreen.mouse_events) == 1
+    mouse_event = MouseMoveRecordingScreen.mouse_events[0]
+    assert mouse_event.x, mouse_event.y == (
+        label_offset.x + mouse_offset.x,
+        label_offset.y + mouse_offset.y,
+    )
+
+
+async def test_push_screen_wait_for_dismiss() -> None:
+    """Test push_screen returns result."""
+
+    class QuitScreen(Screen[bool]):
+        BINDINGS = [
+            ("y", "quit(True)"),
+            ("n", "quit(False)"),
+        ]
+
+        def action_quit(self, quit: bool) -> None:
+            self.dismiss(quit)
+
+    results: list[bool] = []
+
+    class ScreensApp(App):
+        BINDINGS = [("x", "exit")]
+
+        @work
+        async def action_exit(self) -> None:
+            result = await self.push_screen(QuitScreen(), wait_for_dismiss=True)
+            results.append(result)
+
+    app = ScreensApp()
+    # Press X to exit, then Y to dismiss, expect True result
+    async with app.run_test() as pilot:
+        await pilot.press("x", "y")
+    assert results == [True]
+
+    results.clear()
+    app = ScreensApp()
+    # Press X to exit, then N to dismiss, expect False result
+    async with app.run_test() as pilot:
+        await pilot.press("x", "n")
+    assert results == [False]
+
+
+async def test_push_screen_wait_for_dismiss_no_worker() -> None:
+    """Test wait_for_dismiss raises NoActiveWorker when not using workers."""
+
+    class QuitScreen(Screen[bool]):
+        BINDINGS = [
+            ("y", "quit(True)"),
+            ("n", "quit(False)"),
+        ]
+
+        def action_quit(self, quit: bool) -> None:
+            self.dismiss(quit)
+
+    results: list[bool] = []
+
+    class ScreensApp(App):
+        BINDINGS = [("x", "exit")]
+
+        async def action_exit(self) -> None:
+            result = await self.push_screen(QuitScreen(), wait_for_dismiss=True)
+            results.append(result)
+
+    app = ScreensApp()
+    # using `wait_for_dismiss` outside of a worker should raise NoActiveWorker
+    with pytest.raises(NoActiveWorker):
+        async with app.run_test() as pilot:
+            await pilot.press("x", "y")
+
+
+async def test_default_custom_screen() -> None:
+    """Test we can override the default screen."""
+
+    class CustomScreen(Screen):
+        pass
+
+    class CustomScreenApp(App):
+        def get_default_screen(self) -> Screen:
+            return CustomScreen()
+
+    app = CustomScreenApp()
+    async with app.run_test():
+        assert len(app.screen_stack) == 1
+        assert isinstance(app.screen_stack[0], CustomScreen)
+        assert app.screen is app.screen_stack[0]

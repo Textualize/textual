@@ -1,10 +1,8 @@
 """
-
 An implementation of a classic calculator, with a layout inspired by macOS calculator.
 
-
+Works like a real calculator. Click the buttons or press the equivalent keys.
 """
-
 
 from decimal import Decimal
 
@@ -13,13 +11,13 @@ from textual.app import App, ComposeResult
 from textual.containers import Container
 from textual.css.query import NoMatches
 from textual.reactive import var
-from textual.widgets import Button, Static
+from textual.widgets import Button, Digits
 
 
 class CalculatorApp(App):
     """A working 'desktop' calculator."""
 
-    CSS_PATH = "calculator.css"
+    CSS_PATH = "calculator.tcss"
 
     numbers = var("0")
     show_ac = var(True)
@@ -28,6 +26,7 @@ class CalculatorApp(App):
     value = var("")
     operator = var("plus")
 
+    # Maps button IDs on to the corresponding key name
     NAME_MAP = {
         "asterisk": "multiply",
         "slash": "divide",
@@ -42,7 +41,7 @@ class CalculatorApp(App):
 
     def watch_numbers(self, value: str) -> None:
         """Called when numbers is updated."""
-        self.query_one("#numbers", Static).update(value)
+        self.query_one("#numbers", Digits).update(value)
 
     def compute_show_ac(self) -> bool:
         """Compute switch to show AC or C button"""
@@ -56,7 +55,7 @@ class CalculatorApp(App):
     def compose(self) -> ComposeResult:
         """Add our buttons."""
         with Container(id="calculator"):
-            yield Static(id="numbers")
+            yield Digits(id="numbers")
             yield Button("AC", id="ac", variant="primary")
             yield Button("C", id="c", variant="primary")
             yield Button("+/-", id="plus-minus", variant="primary")
@@ -83,7 +82,6 @@ class CalculatorApp(App):
 
         def press(button_id: str) -> None:
             """Press a button, should it exist."""
-
             try:
                 self.query_one(f"#{button_id}", Button).press()
             except NoMatches:
@@ -170,4 +168,4 @@ class CalculatorApp(App):
 
 
 if __name__ == "__main__":
-    CalculatorApp().run()
+    CalculatorApp().run(inline=True)

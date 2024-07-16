@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import re
-from pathlib import PurePath
-from typing import Iterable
+from typing import TYPE_CHECKING, Iterable
 
-from textual.css.tokenizer import Expect, Token, Tokenizer
+from .tokenizer import Expect, Token, Tokenizer
+
+if TYPE_CHECKING:
+    from .types import CSSLocation
 
 PERCENT = r"-?\d+\.?\d*%"
 DECIMAL = r"-?\d+\.?\d*"
@@ -28,6 +30,19 @@ STRING = r"\".*?\""
 VARIABLE_REF = r"\$[a-zA-Z0-9_\-]+"
 
 IDENTIFIER = r"[a-zA-Z_\-][a-zA-Z0-9_\-]*"
+SELECTOR_TYPE_NAME = r"[A-Z_][a-zA-Z0-9_]*"
+"""Selectors representing Widget type names should start with upper case or '_'.
+
+The fact that a selector starts with an upper case letter or '_' is relevant in the
+context of nested CSS to help determine whether xxx:yyy is a declaration + value or a
+selector + pseudo-class."""
+DECLARATION_NAME = r"[a-z][a-zA-Z0-9_\-]*"
+"""Declaration of TCSS rules start with lowercase.
+
+The fact that a declaration starts with a lower case letter is relevant in the context
+of nested CSS to help determine whether xxx:yyy is a declaration + value or a selector
++ pseudo-class.
+"""
 
 # Values permitted in variable and rule declarations.
 DECLARATION_VALUES = {
@@ -45,19 +60,37 @@ DECLARATION_VALUES = {
 # in the CSS file. At this level we might expect to see selectors, comments,
 # variable definitions etc.
 expect_root_scope = Expect(
+    "selector or end of file",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
     selector_start_id=r"\#" + IDENTIFIER,
     selector_start_class=r"\." + IDENTIFIER,
     selector_start_universal=r"\*",
-    selector_start=IDENTIFIER,
+    selector_start=SELECTOR_TYPE_NAME,
     variable_name=rf"{VARIABLE_REF}:",
+    declaration_set_end=r"\}",
 ).expect_eof(True)
+
+expect_root_nested = Expect(
+    "selector or end of file",
+    whitespace=r"\s+",
+    comment_start=COMMENT_START,
+    comment_line=COMMENT_LINE,
+    declaration_name=DECLARATION_NAME + r"\:",
+    selector_start_id=r"\#" + IDENTIFIER,
+    selector_start_class=r"\." + IDENTIFIER,
+    selector_start_universal=r"\*",
+    selector_start=SELECTOR_TYPE_NAME,
+    variable_name=rf"{VARIABLE_REF}:",
+    declaration_set_end=r"\}",
+    nested=r"\&",
+)
 
 # After a variable declaration e.g. "$warning-text: TOKENS;"
 #              for tokenizing variable value ------^~~~~~~^
 expect_variable_name_continue = Expect(
+    "variable value",
     variable_value_end=r"\n|;",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -66,46 +99,59 @@ expect_variable_name_continue = Expect(
 ).expect_eof(True)
 
 expect_comment_end = Expect(
+    "comment end",
     comment_end=re.escape("*/"),
 )
 
 # After we come across a selector in CSS e.g. ".my-class", we may
 # find other selectors, pseudo-classes... e.g. ".my-class :hover"
 expect_selector_continue = Expect(
+    "selector or {",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
     pseudo_class=r"\:[a-zA-Z_-]+",
-    selector_id=r"\#[a-zA-Z_\-][a-zA-Z0-9_\-]*",
-    selector_class=r"\.[a-zA-Z_\-][a-zA-Z0-9_\-]*",
+    selector_id=r"\#" + IDENTIFIER,
+    selector_class=r"\." + IDENTIFIER,
     selector_universal=r"\*",
-    selector=IDENTIFIER,
+    selector=SELECTOR_TYPE_NAME,
     combinator_child=">",
     new_selector=r",",
     declaration_set_start=r"\{",
-)
+    declaration_set_end=r"\}",
+    nested=r"\&",
+).expect_eof(True)
 
 # A rule declaration e.g. "text: red;"
 #                          ^---^
 expect_declaration = Expect(
+    "rule or selector",
+    nested=r"\&",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
-    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_name=DECLARATION_NAME + r"\:",
     declaration_set_end=r"\}",
+    #
+    selector_start_id=r"\#" + IDENTIFIER,
+    selector_start_class=r"\." + IDENTIFIER,
+    selector_start_universal=r"\*",
+    selector_start=SELECTOR_TYPE_NAME,
 )
 
 expect_declaration_solo = Expect(
+    "rule declaration",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
     comment_line=COMMENT_LINE,
-    declaration_name=r"[a-zA-Z_\-]+\:",
+    declaration_name=DECLARATION_NAME + r"\:",
     declaration_set_end=r"\}",
 ).expect_eof(True)
 
 # The value(s)/content from a rule declaration e.g. "text: red;"
 #                                                         ^---^
 expect_declaration_content = Expect(
+    "rule value or end of declaration",
     declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -117,6 +163,7 @@ expect_declaration_content = Expect(
 )
 
 expect_declaration_content_solo = Expect(
+    "rule value or end of declaration",
     declaration_end=r";",
     whitespace=r"\s+",
     comment_start=COMMENT_START,
@@ -154,14 +201,16 @@ class TokenizerState:
         "declaration_set_start": expect_declaration,
         "declaration_name": expect_declaration_content,
         "declaration_end": expect_declaration,
-        "declaration_set_end": expect_root_scope,
+        "declaration_set_end": expect_root_nested,
+        "nested": expect_selector_continue,
     }
 
-    def __call__(self, code: str, path: str | PurePath) -> Iterable[Token]:
-        tokenizer = Tokenizer(code, path=path)
+    def __call__(self, code: str, read_from: CSSLocation) -> Iterable[Token]:
+        tokenizer = Tokenizer(code, read_from=read_from)
         expect = self.EXPECT
         get_token = tokenizer.get_token
         get_state = self.STATE_MAP.get
+        nest_level = 0
         while True:
             token = get_token(expect)
             name = token.name
@@ -172,6 +221,13 @@ class TokenizerState:
                 continue
             elif name == "eof":
                 break
+            elif name == "declaration_set_start":
+                nest_level += 1
+            elif name == "declaration_set_end":
+                nest_level -= 1
+                expect = expect_declaration if nest_level else expect_root_scope
+                yield token
+                continue
             expect = get_state(name, expect)
             yield token
 
@@ -194,7 +250,7 @@ tokenize_value = ValueTokenizerState()
 
 
 def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
-    """Tokens the values in a dict of strings.
+    """Tokenizes the values in a dict of strings.
 
     Args:
         values: A mapping of CSS variable name on to a value, to be
@@ -204,6 +260,7 @@ def tokenize_values(values: dict[str, str]) -> dict[str, list[Token]]:
         A mapping of name on to a list of tokens,
     """
     value_tokens = {
-        name: list(tokenize_value(value, "__name__")) for name, value in values.items()
+        name: list(tokenize_value(value, ("__name__", "")))
+        for name, value in values.items()
     }
     return value_tokens

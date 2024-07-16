@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from functools import lru_cache
+from functools import lru_cache, partial
 from operator import attrgetter
 from typing import TYPE_CHECKING, Any, Iterable, NamedTuple, cast
 
@@ -11,7 +11,7 @@ from rich.style import Style
 from typing_extensions import TypedDict
 
 from .._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
-from .._types import CallbackType
+from .._types import AnimationLevel, CallbackType
 from ..color import Color
 from ..geometry import Offset, Spacing
 from ._style_properties import (
@@ -22,7 +22,9 @@ from ._style_properties import (
     ColorProperty,
     DockProperty,
     FractionalProperty,
+    HatchProperty,
     IntegerProperty,
+    KeylineProperty,
     LayoutProperty,
     NameListProperty,
     NameProperty,
@@ -30,6 +32,7 @@ from ._style_properties import (
     OverflowProperty,
     ScalarListProperty,
     ScalarProperty,
+    ScrollbarColorProperty,
     SpacingProperty,
     StringEnumProperty,
     StyleFlagsProperty,
@@ -69,6 +72,7 @@ from .types import (
 if TYPE_CHECKING:
     from .._layout import Layout
     from ..dom import DOMNode
+    from .types import CSSLocation
 
 
 class RulesMap(TypedDict, total=False):
@@ -107,6 +111,8 @@ class RulesMap(TypedDict, total=False):
     outline_right: tuple[str, Color]
     outline_bottom: tuple[str, Color]
     outline_left: tuple[str, Color]
+
+    keyline: tuple[str, Color]
 
     box_sizing: BoxSizing
     width: Scalar
@@ -166,10 +172,10 @@ class RulesMap(TypedDict, total=False):
     link_background: Color
     link_style: Style
 
-    link_hover_color: Color
-    auto_link_hover_color: bool
-    link_hover_background: Color
-    link_hover_style: Style
+    link_color_hover: Color
+    auto_link_color_hover: bool
+    link_background_hover: Color
+    link_style_hover: Style
 
     auto_border_title_color: bool
     border_title_color: Color
@@ -180,6 +186,8 @@ class RulesMap(TypedDict, total=False):
     border_subtitle_color: Color
     border_subtitle_background: Color
     border_subtitle_style: Style
+
+    hatch: tuple[str, Color]
 
     overlay: Overlay
     constrain: Constrain
@@ -223,8 +231,8 @@ class StylesBase(ABC):
         "scrollbar_background_active",
         "link_color",
         "link_background",
-        "link_hover_color",
-        "link_hover_background",
+        "link_color_hover",
+        "link_background_hover",
     }
 
     node: DOMNode | None = None
@@ -264,6 +272,8 @@ class StylesBase(ABC):
     outline_bottom = BoxProperty(Color(0, 255, 0))
     outline_left = BoxProperty(Color(0, 255, 0))
 
+    keyline = KeylineProperty()
+
     box_sizing = StringEnumProperty(VALID_BOX_SIZING, "border-box", layout=True)
     width = ScalarProperty(percent_unit=Unit.WIDTH)
     height = ScalarProperty(percent_unit=Unit.HEIGHT)
@@ -282,15 +292,15 @@ class StylesBase(ABC):
     transitions = TransitionsProperty()
 
     tint = ColorProperty("transparent")
-    scrollbar_color = ColorProperty("ansi_bright_magenta")
-    scrollbar_color_hover = ColorProperty("ansi_yellow")
-    scrollbar_color_active = ColorProperty("ansi_bright_yellow")
+    scrollbar_color = ScrollbarColorProperty("ansi_bright_magenta")
+    scrollbar_color_hover = ScrollbarColorProperty("ansi_yellow")
+    scrollbar_color_active = ScrollbarColorProperty("ansi_bright_yellow")
 
-    scrollbar_corner_color = ColorProperty("#666666")
+    scrollbar_corner_color = ScrollbarColorProperty("#666666")
 
-    scrollbar_background = ColorProperty("#555555")
-    scrollbar_background_hover = ColorProperty("#444444")
-    scrollbar_background_active = ColorProperty("black")
+    scrollbar_background = ScrollbarColorProperty("#555555")
+    scrollbar_background_hover = ScrollbarColorProperty("#444444")
+    scrollbar_background_active = ScrollbarColorProperty("black")
 
     scrollbar_gutter = StringEnumProperty(
         VALID_SCROLLBAR_GUTTER, "auto", layout=True, refresh_children=True
@@ -333,10 +343,10 @@ class StylesBase(ABC):
     link_background = ColorProperty("transparent")
     link_style = StyleFlagsProperty()
 
-    link_hover_color = ColorProperty("transparent")
-    auto_link_hover_color = BooleanProperty(False)
-    link_hover_background = ColorProperty("transparent")
-    link_hover_style = StyleFlagsProperty()
+    link_color_hover = ColorProperty("transparent")
+    auto_link_color_hover = BooleanProperty(False)
+    link_background_hover = ColorProperty("transparent")
+    link_style_hover = StyleFlagsProperty()
 
     auto_border_title_color = BooleanProperty(default=False)
     border_title_color = ColorProperty(Color(255, 255, 255, 0))
@@ -347,6 +357,8 @@ class StylesBase(ABC):
     border_subtitle_color = ColorProperty(Color(255, 255, 255, 0))
     border_subtitle_background = ColorProperty(Color(0, 0, 0, 0))
     border_subtitle_style = StyleFlagsProperty()
+
+    hatch = HatchProperty()
 
     overlay = StringEnumProperty(
         VALID_OVERLAY, "none", layout=True, refresh_parent=True
@@ -363,6 +375,7 @@ class StylesBase(ABC):
         speed: float | None,
         easing: EasingFunction,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> ScalarAnimation | None:
         if self.node is None:
             return None
@@ -396,7 +409,12 @@ class StylesBase(ABC):
                 duration=duration,
                 speed=speed,
                 easing=easing,
-                on_complete=on_complete,
+                on_complete=(
+                    partial(self.node.app.call_later, on_complete)
+                    if on_complete is not None
+                    else None
+                ),
+                level=level,
             )
         return None
 
@@ -434,6 +452,18 @@ class StylesBase(ABC):
         """Does the node have a relative width?"""
         height = self.height
         return height is not None and height.unit in (Unit.FRACTION, Unit.PERCENT)
+
+    @property
+    def is_auto_width(self) -> bool:
+        """Does the node have automatic width?"""
+        width = self.width
+        return width is not None and width.unit == Unit.AUTO
+
+    @property
+    def is_auto_height(self) -> bool:
+        """Does the node have automatic height?"""
+        height = self.height
+        return height is not None and height.unit == Unit.AUTO
 
     @abstractmethod
     def has_rule(self, rule: str) -> bool:
@@ -541,12 +571,14 @@ class StylesBase(ABC):
 
     @classmethod
     @lru_cache(maxsize=1024)
-    def parse(cls, css: str, path: str, *, node: DOMNode | None = None) -> Styles:
+    def parse(
+        cls, css: str, read_from: CSSLocation, *, node: DOMNode | None = None
+    ) -> Styles:
         """Parse CSS and return a Styles object.
 
         Args:
             css: Textual CSS.
-            path: Path or string indicating source of CSS.
+            read_from: Location where the CSS was read from.
             node: Node to associate with the Styles.
 
         Returns:
@@ -554,7 +586,7 @@ class StylesBase(ABC):
         """
         from .parse import parse_declarations
 
-        styles = parse_declarations(css, path)
+        styles = parse_declarations(css, read_from)
         styles.node = node
         return styles
 
@@ -635,9 +667,15 @@ class StylesBase(ABC):
             Rich Style object.
         """
         style = Style(
-            color=(self.color.rich_color if self.has_rule("color") else None),
+            color=(
+                self.color.rich_color
+                if self.has_rule("color") and self.color.a > 0
+                else None
+            ),
             bgcolor=(
-                self.background.rich_color if self.has_rule("background") else None
+                self.background.rich_color
+                if self.has_rule("background") and self.background.a > 0
+                else None
             ),
         )
         style += self.text_style
@@ -657,7 +695,11 @@ class Styles(StylesBase):
 
     def copy(self) -> Styles:
         """Get a copy of this Styles object."""
-        return Styles(node=self.node, _rules=self.get_rules(), important=self.important)
+        return Styles(
+            node=self.node,
+            _rules=self.get_rules(),
+            important=self.important,
+        )
 
     def has_rule(self, rule: str) -> bool:
         assert rule in RULE_NAMES_SET, f"no such rule {rule!r}"
@@ -708,13 +750,15 @@ class Styles(StylesBase):
     def refresh(
         self, *, layout: bool = False, children: bool = False, parent: bool = False
     ) -> None:
-        if parent and self.node and self.node.parent:
-            self.node.parent.refresh()
-        if self.node is not None:
-            self.node.refresh(layout=layout)
-            if children:
-                for child in self.node.walk_children(with_self=False, reverse=True):
-                    child.refresh(layout=layout)
+        node = self.node
+        if node is None or not node._is_mounted:
+            return
+        if parent and node._parent is not None:
+            node._parent.refresh()
+        node.refresh(layout=layout)
+        if children:
+            for child in node.walk_children(with_self=False, reverse=True):
+                child.refresh(layout=layout)
 
     def reset(self) -> None:
         """Reset the rules to initial state."""
@@ -752,11 +796,12 @@ class Styles(StylesBase):
             A list containing a tuple of <RULE NAME>, <SPECIFICITY> <RULE VALUE>.
         """
         is_important = self.important.__contains__
-        rules = [
+        default_rules = 0 if is_default_rules else 1
+        rules: list[tuple[str, Specificity6, Any]] = [
             (
                 rule_name,
                 (
-                    0 if is_default_rules else 1,
+                    default_rules,
                     1 if is_important(rule_name) else 0,
                     *specificity,
                     tie_breaker,
@@ -765,6 +810,7 @@ class Styles(StylesBase):
             )
             for rule_name, rule_value in self._rules.items()
         ]
+
         return rules
 
     def __rich_repr__(self) -> rich.repr.Result:
@@ -1018,12 +1064,12 @@ class Styles(StylesBase):
         if "link_style" in rules:
             append_declaration("link-style", str(self.link_style))
 
-        if "link_hover_color" in rules:
-            append_declaration("link-hover-color", self.link_hover_color.css)
-        if "link_hover_background" in rules:
-            append_declaration("link-hover-background", self.link_hover_background.css)
-        if "link_hover_style" in rules:
-            append_declaration("link-hover-style", str(self.link_hover_style))
+        if "link_color_hover" in rules:
+            append_declaration("link-color-hover", self.link_color_hover.css)
+        if "link_background_hover" in rules:
+            append_declaration("link-background-hover", self.link_background_hover.css)
+        if "link_style_hover" in rules:
+            append_declaration("link-style-hover", str(self.link_style_hover))
 
         if "border_title_color" in rules:
             append_declaration("title-color", self.border_title_color.css)
@@ -1044,6 +1090,13 @@ class Styles(StylesBase):
             append_declaration("overlay", str(self.overlay))
         if "constrain" in rules:
             append_declaration("constrain", str(self.constrain))
+        if "keyline" in rules:
+            keyline_type, keyline_color = self.keyline
+            if keyline_type != "none":
+                append_declaration("keyline", f"{keyline_type}, {keyline_color.css}")
+        if "hatch" in rules:
+            hatch_character, hatch_color = self.hatch
+            append_declaration("hatch", f'"{hatch_character}" {hatch_color.css}')
         lines.sort()
         return lines
 
@@ -1125,6 +1178,7 @@ class RenderStyles(StylesBase):
         delay: float = 0.0,
         easing: EasingFunction | str = DEFAULT_EASING,
         on_complete: CallbackType | None = None,
+        level: AnimationLevel = "full",
     ) -> None:
         """Animate an attribute.
 
@@ -1132,11 +1186,12 @@ class RenderStyles(StylesBase):
             attribute: Name of the attribute to animate.
             value: The value to animate to.
             final_value: The final value of the animation. Defaults to `value` if not set.
-            duration: The duration of the animate.
+            duration: The duration (in seconds) of the animation.
             speed: The speed of the animation.
             delay: A delay (in seconds) before the animation starts.
             easing: An easing method.
             on_complete: A callable to invoke when the animation is finished.
+            level: Minimum level required for the animation to take place (inclusive).
         """
         if self._animate is None:
             assert self.node is not None
@@ -1151,9 +1206,11 @@ class RenderStyles(StylesBase):
             delay=delay,
             easing=easing,
             on_complete=on_complete,
+            level=level,
         )
 
     def __rich_repr__(self) -> rich.repr.Result:
+        yield self.node
         for rule_name in RULE_NAMES:
             if self.has_rule(rule_name):
                 yield rule_name, getattr(self, rule_name)

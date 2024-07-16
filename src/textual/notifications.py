@@ -10,8 +10,17 @@ from uuid import uuid4
 from rich.repr import Result
 from typing_extensions import Literal, Self, TypeAlias
 
+from .message import Message
+
 SeverityLevel: TypeAlias = Literal["information", "warning", "error"]
 """The severity level for a notification."""
+
+
+@dataclass
+class Notify(Message, bubble=False):
+    """Message to show a notification."""
+
+    notification: Notification
 
 
 @dataclass
@@ -27,8 +36,8 @@ class Notification:
     severity: SeverityLevel = "information"
     """The severity level for the notification."""
 
-    timeout: float = 3
-    """The timeout for the notification."""
+    timeout: float = 5
+    """The timeout (in seconds) for the notification."""
 
     raised_at: float = field(default_factory=time)
     """The time when the notification was raised (in Unix time)."""

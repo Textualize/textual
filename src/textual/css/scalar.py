@@ -12,15 +12,15 @@ from ..geometry import Offset, Size, clamp
 
 
 class ScalarError(Exception):
-    pass
+    """Base class for exceptions raised by the Scalar class."""
 
 
 class ScalarResolveError(ScalarError):
-    pass
+    """Raised for errors resolving scalars (unlikely to occur in practice)."""
 
 
 class ScalarParseError(ScalarError):
-    pass
+    """Raised when a scalar couldn't be parsed from a string."""
 
 
 @unique
@@ -36,8 +36,6 @@ class Unit(Enum):
     VIEW_HEIGHT = 7
     AUTO = 8
 
-
-UNIT_EXCLUDES_BORDER = {Unit.CELLS, Unit.FRACTION, Unit.VIEW_WIDTH, Unit.VIEW_HEIGHT}
 
 UNIT_SYMBOL = {
     Unit.CELLS: "",
@@ -205,10 +203,6 @@ class Scalar(NamedTuple):
     def is_fraction(self) -> bool:
         """Check if the unit is a fraction."""
         return self.unit == Unit.FRACTION
-
-    @property
-    def excludes_border(self) -> bool:
-        return self.unit in UNIT_EXCLUDES_BORDER
 
     @property
     def cells(self) -> int | None:

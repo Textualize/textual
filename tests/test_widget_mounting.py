@@ -19,7 +19,7 @@ async def test_mount_via_app() -> None:
     # Make a background set of widgets.
     widgets = [Static(id=f"starter-{n}") for n in range(10)]
 
-    async with App().run_test() as pilot:
+    async with App[None]().run_test() as pilot:
         with pytest.raises(WidgetError):
             await pilot.app.mount(SelfOwn())
 
@@ -114,3 +114,10 @@ async def test_mount_via_app() -> None:
         await pilot.app.mount_all(widgets)
         with pytest.raises(TooManyMatches):
             await pilot.app.mount(Static(), before="Static")
+
+
+def test_mount_error() -> None:
+    """Mounting a widget on an un-mounted widget should raise an error."""
+    with pytest.raises(MountError):
+        widget = Widget()
+        widget.mount(Static())

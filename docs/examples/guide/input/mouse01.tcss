@@ -1,0 +1,19 @@
+Screen {
+    layers: log ball;
+}
+
+RichLog {
+    layer: log;
+}
+
+Ball {
+    layer: ball;
+    width: auto;
+    height: 1;
+    background: $secondary;
+    border: tall $secondary;
+    color: $background;
+    box-sizing: content-box;
+    text-style: bold;
+    padding: 0 4;
+}

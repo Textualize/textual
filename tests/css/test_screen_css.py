@@ -16,13 +16,14 @@ class BaseScreen(Screen):
 
 
 class ScreenWithCSS(Screen):
+    SCOPED_CSS = False
     CSS = """
     #screen-css {
         background: #ff0000;
     }
     """
 
-    CSS_PATH = "test_screen_css.css"
+    CSS_PATH = "test_screen_css.tcss"
 
     def compose(self):
         yield Label("Hello, world!", id="app-css")
@@ -209,7 +210,7 @@ async def test_screen_css_switch_screen_type_by_name():
     class MyApp(SwitchBaseApp):
         SCREENS = {"screenwithcss": ScreenWithCSS}
 
-        def key_p(self):
+        async def key_p(self):
             self.switch_screen("screenwithcss")
 
         def key_o(self):

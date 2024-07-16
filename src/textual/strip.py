@@ -3,7 +3,6 @@ A Strip contains the result of rendering a widget.
 See [line API](/guide/widgets#line-api) for how to use Strips.
 """
 
-
 from __future__ import annotations
 
 from itertools import chain
@@ -12,11 +11,12 @@ from typing import Iterable, Iterator, Sequence
 import rich.repr
 from rich.cells import cell_len, set_cell_size
 from rich.console import Console, ConsoleOptions, RenderResult
+from rich.measure import Measurement
 from rich.segment import Segment
 from rich.style import Style, StyleType
 
-from ._cache import FIFOCache
 from ._segment_tools import index_to_cell_position
+from .cache import FIFOCache
 from .color import Color
 from .constants import DEBUG
 from .filter import LineFilter
@@ -38,8 +38,9 @@ def get_line_length(segments: Iterable[Segment]) -> int:
 class StripRenderable:
     """A renderable which renders a list of strips in to lines."""
 
-    def __init__(self, strips: list[Strip]) -> None:
+    def __init__(self, strips: list[Strip], width: int | None = None) -> None:
         self._strips = strips
+        self._width = width
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -48,6 +49,15 @@ class StripRenderable:
         for strip in self._strips:
             yield from strip
             yield new_line
+
+    def __rich_measure__(
+        self, console: "Console", options: "ConsoleOptions"
+    ) -> Measurement:
+        if self._width is None:
+            width = max(strip.cell_length for strip in self._strips)
+        else:
+            width = self._width
+        return Measurement(width, width)
 
 
 @rich.repr.auto
@@ -188,7 +198,7 @@ class Strip:
         return strip
 
     def __bool__(self) -> bool:
-        return bool(self._segments)
+        return not not self._segments  # faster than bool(...)
 
     def __iter__(self) -> Iterator[Segment]:
         return iter(self._segments)
@@ -346,7 +356,7 @@ class Strip:
         cached_result = self._crop_extend_cache.get(cache_key)
         if cached_result is not None:
             return cached_result
-        strip = self.extend_cell_length(end).crop(start, end)
+        strip = self.extend_cell_length(end, style).crop(start, end)
         self._crop_extend_cache[cache_key] = strip
         return strip
 
@@ -374,7 +384,7 @@ class Strip:
         add_segment = output_segments.append
         iter_segments = iter(self._segments)
         segment: Segment | None = None
-        if start > self.cell_length:
+        if start >= self.cell_length:
             strip = Strip([], 0)
         else:
             for segment in iter_segments:

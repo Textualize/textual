@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import asyncio
+import re
+from functools import partial
 from pathlib import Path, PurePath
-from typing import Callable, Iterable
+from typing import Callable, Iterable, Optional
+from urllib.parse import unquote
 
 from markdown_it import MarkdownIt
 from markdown_it.token import Token
@@ -12,15 +16,21 @@ from rich.table import Table
 from rich.text import Text
 from typing_extensions import TypeAlias
 
+from .._slug import TrackedSlugs
 from ..app import ComposeResult
+from ..await_complete import AwaitComplete
 from ..containers import Horizontal, Vertical, VerticalScroll
 from ..events import Mount
 from ..message import Message
 from ..reactive import reactive, var
-from ..widget import AwaitMount, Widget
+from ..widget import Widget
 from ..widgets import Static, Tree
 
 TableOfContentsType: TypeAlias = "list[tuple[int, str, str | None]]"
+"""Information about the table of contents of a markdown document.
+
+The triples encode the level, the label, and the optional block id of each heading.
+"""
 
 
 class Navigator:
@@ -41,6 +51,16 @@ class Navigator:
             return Path(".")
         return self.stack[self.index]
 
+    @property
+    def start(self) -> bool:
+        """Is the current location at the start of the stack?"""
+        return self.index == 0
+
+    @property
+    def end(self) -> bool:
+        """Is the current location at the end of the stack?"""
+        return self.index >= len(self.stack) - 1
+
     def go(self, path: str | PurePath) -> Path:
         """Go to a new document.
 
@@ -50,6 +70,10 @@ class Navigator:
         Returns:
             New location.
         """
+        location, anchor = Markdown.sanitize_location(str(path))
+        if location == Path(".") and anchor:
+            current_file, _ = Markdown.sanitize_location(str(self.location))
+            path = f"{current_file}#{anchor}"
         new_path = self.location.parent / Path(path)
         self.stack = self.stack[: self.index + 1]
         new_path = new_path.absolute()
@@ -93,6 +117,7 @@ class MarkdownBlock(Static):
         self._markdown: Markdown = markdown
         """A reference to the Markdown document that contains this block."""
         self._text = Text()
+        self._token: Token | None = None
         self._blocks: list[MarkdownBlock] = []
         super().__init__(*args, **kwargs)
 
@@ -108,6 +133,100 @@ class MarkdownBlock(Static):
         """Called on link click."""
         self.post_message(Markdown.LinkClicked(self._markdown, href))
 
+    def notify_style_update(self) -> None:
+        """If CSS was reloaded, try to rebuild this block from its token."""
+        super().notify_style_update()
+        self.rebuild()
+
+    def rebuild(self) -> None:
+        """Rebuild the content of the block if we have a source token."""
+        if self._token is not None:
+            self.build_from_token(self._token)
+
+    def build_from_token(self, token: Token) -> None:
+        """Build the block content from its source token.
+
+        This method allows the block to be rebuilt on demand, which is useful
+        when the styles assigned to the
+        [Markdown.COMPONENT_CLASSES][textual.widgets.Markdown.COMPONENT_CLASSES]
+        change.
+
+        See https://github.com/Textualize/textual/issues/3464 for more information.
+
+        Args:
+            token: The token from which this block is built.
+        """
+
+        self._token = token
+        style_stack: list[Style] = [Style()]
+        content = Text()
+        if token.children:
+            for child in token.children:
+                if child.type == "text":
+                    content.append(
+                        # Ensure repeating spaces and/or tabs get squashed
+                        # down to a single space.
+                        re.sub(r"\s+", " ", child.content),
+                        style_stack[-1],
+                    )
+                if child.type == "hardbreak":
+                    content.append("\n")
+                if child.type == "softbreak":
+                    content.append(" ", style_stack[-1])
+                elif child.type == "code_inline":
+                    content.append(
+                        child.content,
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style(
+                            "code_inline", partial=True
+                        ),
+                    )
+                elif child.type == "em_open":
+                    style_stack.append(
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style("em", partial=True)
+                    )
+                elif child.type == "strong_open":
+                    style_stack.append(
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style(
+                            "strong", partial=True
+                        )
+                    )
+                elif child.type == "s_open":
+                    style_stack.append(
+                        style_stack[-1]
+                        + self._markdown.get_component_rich_style("s", partial=True)
+                    )
+                elif child.type == "link_open":
+                    href = child.attrs.get("href", "")
+                    action = f"link({href!r})"
+                    style_stack.append(
+                        style_stack[-1] + Style.from_meta({"@click": action})
+                    )
+                elif child.type == "image":
+                    href = child.attrs.get("src", "")
+                    alt = child.attrs.get("alt", "")
+
+                    action = f"link({href!r})"
+                    style_stack.append(
+                        style_stack[-1] + Style.from_meta({"@click": action})
+                    )
+
+                    content.append("🖼  ", style_stack[-1])
+                    if alt:
+                        content.append(f"({alt})", style_stack[-1])
+                    if child.children is not None:
+                        for grandchild in child.children:
+                            content.append(grandchild.content, style_stack[-1])
+
+                    style_stack.pop()
+
+                elif child.type.endswith("_close"):
+                    style_stack.pop()
+
+        self.set_content(content)
+
 
 class MarkdownHeader(MarkdownBlock):
     """Base class for a Markdown header."""
@@ -115,6 +234,8 @@ class MarkdownHeader(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownHeader {
         color: $text;
+        margin: 2 0 1 0;
+
     }
     """
 
@@ -125,13 +246,10 @@ class MarkdownH1(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH1 {
-        background: $accent-darken-2;
-        border: wide $background;
         content-align: center middle;
-
-        padding: 1;
         text-style: bold;
-        color: $text;
+        color: $success;
+        &:light {color: $primary;}
     }
     """
 
@@ -142,13 +260,9 @@ class MarkdownH2(MarkdownHeader):
     DEFAULT_CSS = """
 
     MarkdownH2 {
-        background: $panel;
-        border: wide $background;
-        text-align: center;
         text-style: underline;
-        color: $text;
-        padding: 1;
-        text-style: bold;
+        color: $success;
+        &:light {color: $primary;}
     }
     """
 
@@ -158,11 +272,11 @@ class MarkdownH3(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH3 {
-        background: $surface;
         text-style: bold;
-        color: $text;
-        border-bottom: wide $foreground;
+        color: $success;
+        margin: 1 0;
         width: auto;
+        &:light {color: $primary;}
     }
     """
 
@@ -172,8 +286,9 @@ class MarkdownH4(MarkdownHeader):
 
     DEFAULT_CSS = """
     MarkdownH4 {
-        text-style: underline;
+        text-style: bold underline;
         margin: 1 0;
+        color: $text;
     }
     """
 
@@ -186,6 +301,7 @@ class MarkdownH5(MarkdownHeader):
         text-style: bold;
         color: $text;
         margin: 1 0;
+
     }
     """
 
@@ -218,6 +334,7 @@ class MarkdownHorizontalRule(MarkdownBlock):
 class MarkdownParagraph(MarkdownBlock):
     """A paragraph Markdown block."""
 
+    SCOPED_CSS = False
     DEFAULT_CSS = """
     Markdown > MarkdownParagraph {
          margin: 0 0 1 0;
@@ -231,9 +348,12 @@ class MarkdownBlockQuote(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownBlockQuote {
         background: $boost;
-        border-left: outer $success;
+        border-left: outer $success-darken-2;
         margin: 1 0;
         padding: 0 1;
+    }
+    MarkdownBlockQuote:light {
+        border-left: outer $primary;
     }
     MarkdownBlockQuote > BlockQuote {
         margin-left: 2;
@@ -368,6 +488,11 @@ class MarkdownTableContent(Widget):
                 table.add_row(*row)
         return table
 
+    async def action_link(self, href: str) -> None:
+        """Pass a link action on to the MarkdownTable parent."""
+        if isinstance(self.parent, MarkdownTable):
+            await self.parent.action_link(href)
+
 
 class MarkdownTable(MarkdownBlock):
     """A Table markdown Block."""
@@ -375,9 +500,7 @@ class MarkdownTable(MarkdownBlock):
     DEFAULT_CSS = """
     MarkdownTable {
         width: 100%;
-        margin: 1 0;
         background: $panel;
-        border: wide $background;
     }
     """
 
@@ -430,10 +553,13 @@ class MarkdownBullet(Widget):
         width: auto;
         color: $success;
         text-style: bold;
+        &:light {
+            color: $primary;
+        }
     }
     """
 
-    symbol = reactive("\u25CF")
+    symbol = reactive("\u25cf")
     """The symbol for the bullet."""
 
     def render(self) -> Text:
@@ -480,6 +606,8 @@ class MarkdownFence(MarkdownBlock):
         height: auto;
         max-height: 20;
         color: rgb(210,210,210);
+
+
     }
 
     MarkdownFence > * {
@@ -488,20 +616,41 @@ class MarkdownFence(MarkdownBlock):
     """
 
     def __init__(self, markdown: Markdown, code: str, lexer: str) -> None:
+        super().__init__(markdown)
         self.code = code
         self.lexer = lexer
-        super().__init__(markdown)
+        self.theme = (
+            self._markdown.code_dark_theme
+            if self.app.dark
+            else self._markdown.code_light_theme
+        )
+
+    def _block(self) -> Syntax:
+        return Syntax(
+            self.code,
+            lexer=self.lexer,
+            word_wrap=False,
+            indent_guides=True,
+            padding=(1, 2),
+            theme=self.theme,
+        )
+
+    def _on_mount(self, _: Mount) -> None:
+        """Watch app theme switching."""
+        self.watch(self.app, "dark", self._retheme)
+
+    def _retheme(self) -> None:
+        """Rerender when the theme changes."""
+        self.theme = (
+            self._markdown.code_dark_theme
+            if self.app.dark
+            else self._markdown.code_light_theme
+        )
+        self.get_child_by_type(Static).update(self._block())
 
     def compose(self) -> ComposeResult:
         yield Static(
-            Syntax(
-                self.code,
-                lexer=self.lexer,
-                word_wrap=False,
-                indent_guides=True,
-                padding=(1, 2),
-                theme="material",
-            ),
+            self._block(),
             expand=True,
             shrink=False,
         )
@@ -523,8 +672,10 @@ class Markdown(Widget):
     DEFAULT_CSS = """
     Markdown {
         height: auto;
-        margin: 0 4 1 4;
+        margin: 0 2 1 2;
         layout: vertical;
+        color: $text;
+        overflow-y: auto;
     }
     .em {
         text-style: italic;
@@ -539,9 +690,27 @@ class Markdown(Widget):
         text-style: bold dim;
     }
     """
-    COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
 
-    BULLETS = ["\u25CF ", "▪ ", "‣ ", "• ", "⭑ "]
+    COMPONENT_CLASSES = {"em", "strong", "s", "code_inline"}
+    """
+    These component classes target standard inline markdown styles.
+    Changing these will potentially break the standard markdown formatting.
+
+    | Class | Description |
+    | :- | :- |
+    | `code_inline` | Target text that is styled as inline code. |
+    | `em` | Target text that is emphasized inline. |
+    | `s` | Target text that is styled inline with strykethrough. |
+    | `strong` | Target text that is styled inline with strong. |
+    """
+
+    BULLETS = ["\u25cf ", "▪ ", "‣ ", "• ", "⭑ "]
+
+    code_dark_theme: reactive[str] = reactive("material")
+    """The theme to use for code blocks when in [dark mode][textual.app.App.dark]."""
+
+    code_light_theme: reactive[str] = reactive("material-light")
+    """The theme to use for code blocks when in [light mode][textual.app.App.dark]."""
 
     def __init__(
         self,
@@ -564,8 +733,9 @@ class Markdown(Widget):
         super().__init__(name=name, id=id, classes=classes)
         self._markdown = markdown
         self._parser_factory = parser_factory
+        self._table_of_contents: TableOfContentsType | None = None
 
-    class TableOfContentsUpdated(Message, bubble=True):
+    class TableOfContentsUpdated(Message):
         """The table of contents was updated."""
 
         def __init__(
@@ -586,7 +756,7 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    class TableOfContentsSelected(Message, bubble=True):
+    class TableOfContentsSelected(Message):
         """An item in the TOC was selected."""
 
         def __init__(self, markdown: Markdown, block_id: str) -> None:
@@ -605,14 +775,14 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    class LinkClicked(Message, bubble=True):
+    class LinkClicked(Message):
         """A link in the document was clicked."""
 
         def __init__(self, markdown: Markdown, href: str) -> None:
             super().__init__()
             self.markdown: Markdown = markdown
             """The `Markdown` widget containing the link clicked."""
-            self.href: str = href
+            self.href: str = unquote(href)
             """The link that was selected."""
 
         @property
@@ -624,9 +794,61 @@ class Markdown(Widget):
             """
             return self.markdown
 
-    def _on_mount(self, _: Mount) -> None:
+    async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
-            self.update(self._markdown)
+            await self.update(self._markdown)
+
+    def _watch_code_dark_theme(self) -> None:
+        """React to the dark theme being changed."""
+        if self.app.dark:
+            for block in self.query(MarkdownFence):
+                block._retheme()
+
+    def _watch_code_light_theme(self) -> None:
+        """React to the light theme being changed."""
+        if not self.app.dark:
+            for block in self.query(MarkdownFence):
+                block._retheme()
+
+    @staticmethod
+    def sanitize_location(location: str) -> tuple[Path, str]:
+        """Given a location, break out the path and any anchor.
+
+        Args:
+            location: The location to sanitize.
+
+        Returns:
+            A tuple of the path to the location cleaned of any anchor, plus
+            the anchor (or an empty string if none was found).
+        """
+        location, _, anchor = location.partition("#")
+        return Path(location), anchor
+
+    def goto_anchor(self, anchor: str) -> bool:
+        """Try and find the given anchor in the current document.
+
+        Args:
+            anchor: The anchor to try and find.
+
+        Note:
+            The anchor is found by looking at all of the headings in the
+            document and finding the first one whose slug matches the
+            anchor.
+
+            Note that the slugging method used is similar to that found on
+            GitHub.
+
+        Returns:
+            True when the anchor was found in the current document, False otherwise.
+        """
+        if not self._table_of_contents or not isinstance(self.parent, Widget):
+            return False
+        unique = TrackedSlugs()
+        for _, title, header_id in self._table_of_contents:
+            if unique.slug(title) == anchor:
+                self.query_one(f"#{header_id}").scroll_visible(top=True)
+                return True
+        return False
 
     async def load(self, path: Path) -> None:
         """Load a new Markdown document.
@@ -641,20 +863,26 @@ class Markdown(Widget):
             The exceptions that can be raised by this method are all of
             those that can be raised by calling [`Path.read_text`][pathlib.Path.read_text].
         """
-        await self.update(path.read_text(encoding="utf-8"))
+        path, anchor = self.sanitize_location(str(path))
+        data = await asyncio.get_running_loop().run_in_executor(
+            None, partial(path.read_text, encoding="utf-8")
+        )
+        await self.update(data)
+        if anchor:
+            self.goto_anchor(anchor)
 
     def unhandled_token(self, token: Token) -> MarkdownBlock | None:
         """Process an unhandled token.
 
         Args:
-            token: The token to handle.
+            token: The MarkdownIt token to handle.
 
         Returns:
             Either a widget to be added to the output, or `None`.
         """
         return None
 
-    def update(self, markdown: str) -> AwaitMount:
+    def update(self, markdown: str) -> AwaitComplete:
         """Update the document with new Markdown.
 
         Args:
@@ -663,151 +891,150 @@ class Markdown(Widget):
         Returns:
             An optionally awaitable object. Await this to ensure that all children have been mounted.
         """
-        output: list[MarkdownBlock] = []
-        stack: list[MarkdownBlock] = []
         parser = (
             MarkdownIt("gfm-like")
             if self._parser_factory is None
             else self._parser_factory()
         )
 
-        block_id: int = 0
-        table_of_contents: TableOfContentsType = []
+        table_of_contents = []
 
-        for token in parser.parse(markdown):
-            if token.type == "heading_open":
-                block_id += 1
-                stack.append(HEADINGS[token.tag](self, id=f"block{block_id}"))
-            elif token.type == "hr":
-                output.append(MarkdownHorizontalRule(self))
-            elif token.type == "paragraph_open":
-                stack.append(MarkdownParagraph(self))
-            elif token.type == "blockquote_open":
-                stack.append(MarkdownBlockQuote(self))
-            elif token.type == "bullet_list_open":
-                stack.append(MarkdownBulletList(self))
-            elif token.type == "ordered_list_open":
-                stack.append(MarkdownOrderedList(self))
-            elif token.type == "list_item_open":
-                if token.info:
-                    stack.append(MarkdownOrderedListItem(self, token.info))
-                else:
-                    item_count = sum(
-                        1
-                        for block in stack
-                        if isinstance(block, MarkdownUnorderedListItem)
-                    )
-                    stack.append(
-                        MarkdownUnorderedListItem(
-                            self,
-                            self.BULLETS[item_count % len(self.BULLETS)],
+        def parse_markdown(tokens) -> Iterable[MarkdownBlock]:
+            """Create a stream of MarkdownBlock widgets from markdown.
+
+            Args:
+                tokens: List of tokens
+
+            Yields:
+                Widgets for mounting.
+            """
+
+            stack: list[MarkdownBlock] = []
+            stack_append = stack.append
+            block_id: int = 0
+
+            for token in tokens:
+                token_type = token.type
+                if token_type == "heading_open":
+                    block_id += 1
+                    stack_append(HEADINGS[token.tag](self, id=f"block{block_id}"))
+                elif token_type == "hr":
+                    yield MarkdownHorizontalRule(self)
+                elif token_type == "paragraph_open":
+                    stack_append(MarkdownParagraph(self))
+                elif token_type == "blockquote_open":
+                    stack_append(MarkdownBlockQuote(self))
+                elif token_type == "bullet_list_open":
+                    stack_append(MarkdownBulletList(self))
+                elif token_type == "ordered_list_open":
+                    stack_append(MarkdownOrderedList(self))
+                elif token_type == "list_item_open":
+                    if token.info:
+                        stack_append(MarkdownOrderedListItem(self, token.info))
+                    else:
+                        item_count = sum(
+                            1
+                            for block in stack
+                            if isinstance(block, MarkdownUnorderedListItem)
                         )
-                    )
-
-            elif token.type == "table_open":
-                stack.append(MarkdownTable(self))
-            elif token.type == "tbody_open":
-                stack.append(MarkdownTBody(self))
-            elif token.type == "thead_open":
-                stack.append(MarkdownTHead(self))
-            elif token.type == "tr_open":
-                stack.append(MarkdownTR(self))
-            elif token.type == "th_open":
-                stack.append(MarkdownTH(self))
-            elif token.type == "td_open":
-                stack.append(MarkdownTD(self))
-            elif token.type.endswith("_close"):
-                block = stack.pop()
-                if token.type == "heading_close":
-                    heading = block._text.plain
-                    level = int(token.tag[1:])
-                    table_of_contents.append((level, heading, block.id))
-                if stack:
-                    stack[-1]._blocks.append(block)
+                        stack_append(
+                            MarkdownUnorderedListItem(
+                                self,
+                                self.BULLETS[item_count % len(self.BULLETS)],
+                            )
+                        )
+                elif token_type == "table_open":
+                    stack_append(MarkdownTable(self))
+                elif token_type == "tbody_open":
+                    stack_append(MarkdownTBody(self))
+                elif token_type == "thead_open":
+                    stack_append(MarkdownTHead(self))
+                elif token_type == "tr_open":
+                    stack_append(MarkdownTR(self))
+                elif token_type == "th_open":
+                    stack_append(MarkdownTH(self))
+                elif token_type == "td_open":
+                    stack_append(MarkdownTD(self))
+                elif token_type.endswith("_close"):
+                    block = stack.pop()
+                    if token.type == "heading_close":
+                        heading = block._text.plain
+                        level = int(token.tag[1:])
+                        table_of_contents.append((level, heading, block.id))
+                    if stack:
+                        stack[-1]._blocks.append(block)
+                    else:
+                        yield block
+                elif token_type == "inline":
+                    stack[-1].build_from_token(token)
+                elif token_type in ("fence", "code_block"):
+                    fence = MarkdownFence(self, token.content.rstrip(), token.info)
+                    if stack:
+                        stack[-1]._blocks.append(fence)
+                    else:
+                        yield fence
                 else:
-                    output.append(block)
-            elif token.type == "inline":
-                style_stack: list[Style] = [Style()]
-                content = Text()
-                if token.children:
-                    for child in token.children:
-                        if child.type == "text":
-                            content.append(child.content, style_stack[-1])
-                        if child.type == "hardbreak":
-                            content.append("\n")
-                        if child.type == "softbreak":
-                            content.append(" ", style_stack[-1])
-                        elif child.type == "code_inline":
-                            content.append(
-                                child.content,
-                                style_stack[-1]
-                                + self.get_component_rich_style(
-                                    "code_inline", partial=True
-                                ),
-                            )
-                        elif child.type == "em_open":
-                            style_stack.append(
-                                style_stack[-1]
-                                + self.get_component_rich_style("em", partial=True)
-                            )
-                        elif child.type == "strong_open":
-                            style_stack.append(
-                                style_stack[-1]
-                                + self.get_component_rich_style("strong", partial=True)
-                            )
-                        elif child.type == "s_open":
-                            style_stack.append(
-                                style_stack[-1]
-                                + self.get_component_rich_style("s", partial=True)
-                            )
-                        elif child.type == "link_open":
-                            href = child.attrs.get("href", "")
-                            action = f"link({href!r})"
-                            style_stack.append(
-                                style_stack[-1] + Style.from_meta({"@click": action})
-                            )
-                        elif child.type == "image":
-                            href = child.attrs.get("src", "")
-                            alt = child.attrs.get("alt", "")
+                    external = self.unhandled_token(token)
+                    if external is not None:
+                        if stack:
+                            stack[-1]._blocks.append(external)
+                        else:
+                            yield external
 
-                            action = f"link({href!r})"
-                            style_stack.append(
-                                style_stack[-1] + Style.from_meta({"@click": action})
-                            )
+        markdown_block = self.query("MarkdownBlock")
 
-                            content.append("🖼  ", style_stack[-1])
-                            if alt:
-                                content.append(f"({alt})", style_stack[-1])
-                            if child.children is not None:
-                                for grandchild in child.children:
-                                    content.append(grandchild.content, style_stack[-1])
+        async def await_update() -> None:
+            """Update in batches."""
+            BATCH_SIZE = 200
+            batch: list[MarkdownBlock] = []
+            tokens = await asyncio.get_running_loop().run_in_executor(
+                None, parser.parse, markdown
+            )
 
-                            style_stack.pop()
+            # Lock so that you can't update with more than one document simultaneously
+            async with self.lock:
+                # Remove existing blocks for the first batch only
+                removed: bool = False
 
-                        elif child.type.endswith("_close"):
-                            style_stack.pop()
+                async def mount_batch(batch: list[MarkdownBlock]) -> None:
+                    """Mount a single match of blocks.
 
-                stack[-1].set_content(content)
-            elif token.type in ("fence", "code_block"):
-                (stack[-1]._blocks if stack else output).append(
-                    MarkdownFence(
-                        self,
-                        token.content.rstrip(),
-                        token.info,
-                    )
-                )
-            else:
-                external = self.unhandled_token(token)
-                if external is not None:
-                    (stack[-1]._blocks if stack else output).append(external)
+                    Args:
+                        batch: A list of blocks to mount.
+                    """
+                    nonlocal removed
+                    if removed:
+                        await self.mount_all(batch)
+                    else:
+                        with self.app.batch_update():
+                            await markdown_block.remove()
+                            await self.mount_all(batch)
+                        removed = True
 
-        self.post_message(Markdown.TableOfContentsUpdated(self, table_of_contents))
-        with self.app.batch_update():
-            self.query("MarkdownBlock").remove()
-            return self.mount_all(output)
+                for block in parse_markdown(tokens):
+                    batch.append(block)
+                    if len(batch) == BATCH_SIZE:
+                        await mount_batch(batch)
+                        batch.clear()
+                if batch:
+                    await mount_batch(batch)
+                if not removed:
+                    await markdown_block.remove()
+
+            self._table_of_contents = table_of_contents
+
+            self.post_message(
+                Markdown.TableOfContentsUpdated(
+                    self, self._table_of_contents
+                ).set_sender(self)
+            )
+
+        return AwaitComplete(await_update())
 
 
 class MarkdownTableOfContents(Widget, can_focus_children=True):
+    """Displays a table of contents for a markdown document."""
+
     DEFAULT_CSS = """
     MarkdownTableOfContents {
         width: auto;
@@ -820,7 +1047,8 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
     }
     """
 
-    table_of_contents = reactive["TableOfContentsType | None"](None, init=False)
+    table_of_contents = reactive[Optional[TableOfContentsType]](None, init=False)
+    """Underlying data to populate the table of contents widget."""
 
     def __init__(
         self,
@@ -839,7 +1067,7 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
             classes: The CSS classes for the widget.
             disabled: Whether the widget is disabled or not.
         """
-        self.markdown = markdown
+        self.markdown: Markdown = markdown
         """The Markdown document associated with this table of contents."""
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -853,10 +1081,10 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
 
     def watch_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
         """Triggered when the table of contents changes."""
-        self.set_table_of_contents(table_of_contents)
+        self.rebuild_table_of_contents(table_of_contents)
 
-    def set_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
-        """Set the table of contents.
+    def rebuild_table_of_contents(self, table_of_contents: TableOfContentsType) -> None:
+        """Rebuilds the tree representation of the table of contents data.
 
         Args:
             table_of_contents: Table of contents.
@@ -873,7 +1101,8 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
                     node.allow_expand = True
                 else:
                     node = node.add(NUMERALS[level], expand=True)
-            node.add_leaf(f"[dim]{NUMERALS[level]}[/] {name}", {"block_id": block_id})
+            node_label = Text.assemble((f"{NUMERALS[level]} ", "dim"), name)
+            node.add_leaf(node_label, {"block_id": block_id})
 
     async def _on_tree_node_selected(self, message: Tree.NodeSelected) -> None:
         node_data = message.node.data
@@ -886,6 +1115,8 @@ class MarkdownTableOfContents(Widget, can_focus_children=True):
 
 class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     """A Markdown viewer widget."""
+
+    SCOPED_CSS = False
 
     DEFAULT_CSS = """
     MarkdownViewer {
@@ -910,6 +1141,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     top_block = reactive("")
 
     navigator: var[Navigator] = var(Navigator)
+
+    class NavigatorUpdated(Message):
+        """Navigator has been changed (clicked link etc)."""
 
     def __init__(
         self,
@@ -938,31 +1172,40 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
 
     @property
     def document(self) -> Markdown:
-        """The Markdown document object."""
+        """The [`Markdown`][textual.widgets.Markdown] document widget."""
         return self.query_one(Markdown)
 
     @property
     def table_of_contents(self) -> MarkdownTableOfContents:
-        """The table of contents widget"""
+        """The [table of contents][textual.widgets.markdown.MarkdownTableOfContents] widget."""
         return self.query_one(MarkdownTableOfContents)
 
-    def _on_mount(self, _: Mount) -> None:
+    async def _on_mount(self, _: Mount) -> None:
         if self._markdown is not None:
-            self.document.update(self._markdown)
+            await self.document.update(self._markdown)
 
-    async def go(self, location: str | PurePath) -> bool:
+    async def go(self, location: str | PurePath) -> None:
         """Navigate to a new document path."""
-        return await self.document.load(self.navigator.go(location))
+        path, anchor = self.document.sanitize_location(str(location))
+        if path == Path(".") and anchor:
+            # We've been asked to go to an anchor but with no file specified.
+            self.document.goto_anchor(anchor)
+        else:
+            # We've been asked to go to a file, optionally with an anchor.
+            await self.document.load(self.navigator.go(location))
+            self.post_message(self.NavigatorUpdated())
 
     async def back(self) -> None:
         """Go back one level in the history."""
         if self.navigator.back():
             await self.document.load(self.navigator.location)
+            self.post_message(self.NavigatorUpdated())
 
     async def forward(self) -> None:
         """Go forward one level in the history."""
         if self.navigator.forward():
             await self.document.load(self.navigator.location)
+            self.post_message(self.NavigatorUpdated())
 
     async def _on_markdown_link_clicked(self, message: Markdown.LinkClicked) -> None:
         message.stop()
@@ -979,9 +1222,9 @@ class MarkdownViewer(VerticalScroll, can_focus=True, can_focus_children=True):
     def _on_markdown_table_of_contents_updated(
         self, message: Markdown.TableOfContentsUpdated
     ) -> None:
-        self.query_one(
-            MarkdownTableOfContents
-        ).table_of_contents = message.table_of_contents
+        self.query_one(MarkdownTableOfContents).table_of_contents = (
+            message.table_of_contents
+        )
         message.stop()
 
     def _on_markdown_table_of_contents_selected(

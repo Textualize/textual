@@ -3,18 +3,22 @@
 from __future__ import annotations
 
 from itertools import cycle
-from typing import Iterator
+from typing import TYPE_CHECKING, Iterator
 from weakref import WeakKeyDictionary
 
-from rich.console import RenderableType
 from typing_extensions import Literal, Self
 
-from textual.app import App
-
 from .. import events
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..css._error_tools import friendly_list
 from ..reactive import Reactive, reactive
 from ..widget import Widget
+
+if TYPE_CHECKING:
+    from textual.app import App
 
 PlaceholderVariant = Literal["default", "size", "text"]
 """The different variants of placeholder."""
@@ -69,6 +73,10 @@ class Placeholder(Widget):
         content-align: center middle;
         overflow: hidden;
         color: $text;
+
+        &:disabled {
+            opacity: 0.7;
+        }
     }
     Placeholder.-text {
         padding: 1;
@@ -91,6 +99,7 @@ class Placeholder(Widget):
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
+        disabled: bool = False,
     ) -> None:
         """Create a Placeholder widget.
 
@@ -102,6 +111,7 @@ class Placeholder(Widget):
             id: The ID of the placeholder in the DOM.
             classes: A space separated string with the CSS classes
                 of the placeholder, if any.
+            disabled: Whether the placeholder is disabled or not.
         """
         # Create and cache renderables for all the variants.
         self._renderables = {
@@ -110,7 +120,7 @@ class Placeholder(Widget):
             "text": "\n\n".join(_LOREM_IPSUM_PLACEHOLDER_TEXT for _ in range(5)),
         }
 
-        super().__init__(name=name, id=id, classes=classes)
+        super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
         self.variant = self.validate_variant(variant)
         """The current variant of the placeholder."""
@@ -120,14 +130,14 @@ class Placeholder(Widget):
         while next(self._variants_cycle) != self.variant:
             pass
 
-    def on_mount(self) -> None:
+    async def _on_compose(self, event: events.Compose) -> None:
         """Set the color for this placeholder."""
         colors = Placeholder._COLORS.setdefault(
             self.app, cycle(_PLACEHOLDER_BACKGROUND_COLORS)
         )
         self.styles.background = f"{next(colors)} 50%"
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Render the placeholder.
 
         Returns:

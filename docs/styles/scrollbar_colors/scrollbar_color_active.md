@@ -5,10 +5,10 @@ The `scrollbar-color-active` style sets the color of the scrollbar when the thum
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<a href="./scrollbar_color_active">scrollbar-color-active</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_color_active">scrollbar-color-active</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`scrollbar-color-active` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the color of a scrollbar when its thumb is being dragged.
+`scrollbar-color-active` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the color of a scrollbar when its thumb is being dragged.
 
 ## Example
 
@@ -27,15 +27,15 @@ The `scrollbar-color-active` style sets the color of the scrollbar when the thum
     --8<-- "docs/examples/styles/scrollbars2.py"
     ```
 
-=== "scrollbars2.css"
+=== "scrollbars2.tcss"
 
-    ```sass hl_lines="6"
-    --8<-- "docs/examples/styles/scrollbars2.css"
+    ```css hl_lines="6"
+    --8<-- "docs/examples/styles/scrollbars2.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-color-active: yellow;
 ```
 
@@ -47,6 +47,6 @@ widget.styles.scrollbar_color_active = "yellow"
 
 ## See also
 
- - [`scrollbar-bakcground-active`](./scrollbar_color_active.md) to set the scrollbar bakcground color when the scrollbar is being dragged.
+ - [`scrollbar-background-active`](./scrollbar_color_active.md) to set the scrollbar background color when the scrollbar is being dragged.
  - [`scrollbar-color`](./scrollbar_color.md) to set the color of scrollbars.
  - [`scrollbar-color-hover`](./scrollbar_color_hover.md) to set the scrollbar color when the mouse pointer is over it.

@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from functools import lru_cache
 from math import cos, pi, sin
+from typing import Sequence
 
-from rich.color import Color as RichColor
 from rich.console import Console, ConsoleOptions, RenderResult
 from rich.segment import Segment
 from rich.style import Style
@@ -42,17 +41,23 @@ class VerticalGradient:
 
 
 class LinearGradient:
-    """Render a linear gradient with a rotation."""
+    """Render a linear gradient with a rotation.
 
-    def __init__(self, angle: float, stops: list[tuple[float, Color]]) -> None:
-        """
+    Args:
+        angle: Angle of rotation in degrees.
+        stops: List of stop consisting of pairs of offset (between 0 and 1) and color.
 
-        Args:
-            angle: Angle of rotation in degrees.
-            stops: List of stop consisting of pairs of offset (between 0 and 1) and colors.
-        """
+    """
+
+    def __init__(
+        self, angle: float, stops: Sequence[tuple[float, Color | str]]
+    ) -> None:
         self.angle = angle
-        self._stops = stops[:]
+        self._stops = [
+            (stop, Color.parse(color) if isinstance(color, str) else color)
+            for stop, color in stops
+        ]
+        self._color_gradient = Gradient(*self._stops)
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -69,38 +74,20 @@ class LinearGradient:
 
         new_line = Segment.line()
 
-        color_gradient = Gradient(*self._stops)
-
         _Segment = Segment
-        get_color = color_gradient.get_color
+        get_color = self._color_gradient.get_rich_color
         from_color = Style.from_color
-
-        @lru_cache(maxsize=None)
-        def get_rich_color(color_offset: int) -> RichColor:
-            """Get a Rich color in the gradient.
-
-            Args:
-                color_index: A offset within the color gradient normalized between 0 and 255.
-
-            Returns:
-                A Rich color.
-            """
-            return get_color(color_offset / 255).rich_color
 
         for line_y in range(height):
             point_y = float(line_y) * 2 - center_y
             point_x = 0 - center_x
 
-            x1 = (center_x + (point_x * cos_angle - point_y * sin_angle)) / width * 255
+            x1 = (center_x + (point_x * cos_angle - point_y * sin_angle)) / width
             x2 = (
-                (center_x + (point_x * cos_angle - (point_y + 1.0) * sin_angle))
-                / width
-                * 255
-            )
+                center_x + (point_x * cos_angle - (point_y + 1.0) * sin_angle)
+            ) / width
             point_x = width - center_x
-            end_x1 = (
-                (center_x + (point_x * cos_angle - point_y * sin_angle)) / width * 255
-            )
+            end_x1 = (center_x + (point_x * cos_angle - point_y * sin_angle)) / width
             delta_x = (end_x1 - x1) / width
 
             if abs(delta_x) < 0.0001:
@@ -108,8 +95,8 @@ class LinearGradient:
                 yield _Segment(
                     "▀" * width,
                     from_color(
-                        get_rich_color(int(x1)),
-                        get_rich_color(int(x2)),
+                        get_color(x1),
+                        get_color(x2),
                     ),
                 )
 
@@ -118,8 +105,8 @@ class LinearGradient:
                     _Segment(
                         "▀",
                         from_color(
-                            get_rich_color(int(x1 + x * delta_x)),
-                            get_rich_color(int(x2 + x * delta_x)),
+                            get_color(x1 + x * delta_x),
+                            get_color(x2 + x * delta_x),
                         ),
                     )
                     for x in range(width)

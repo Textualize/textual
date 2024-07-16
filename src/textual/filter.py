@@ -1,3 +1,16 @@
+"""Filter classes.
+
+!!! note
+
+    Filters are used internally, and not recommended for use by Textual app developers.
+
+Filters are used internally to process terminal output after it has been rendered.
+Currently this is used internally to convert the application to monochrome, when the NO_COLOR env var is set.
+
+In the future, this system will be used to implement accessibility features.
+
+"""
+
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -175,7 +188,7 @@ class ANSIToTruecolor(LineFilter):
         Args:
             terminal_theme: A rich terminal theme.
         """
-        self.terminal_theme = terminal_theme
+        self._terminal_theme = terminal_theme
 
     @lru_cache(1024)
     def truecolor_style(self, style: Style) -> Style:
@@ -187,7 +200,7 @@ class ANSIToTruecolor(LineFilter):
         Returns:
             New style.
         """
-        terminal_theme = self.terminal_theme
+        terminal_theme = self._terminal_theme
         color = style.color
         if color is not None and color.is_system_defined:
             color = RichColor.from_rgb(
@@ -198,6 +211,7 @@ class ANSIToTruecolor(LineFilter):
             bgcolor = RichColor.from_rgb(
                 *bgcolor.get_truecolor(terminal_theme, foreground=False)
             )
+
         return style + Style.from_color(color, bgcolor)
 
     def apply(self, segments: list[Segment], background: Color) -> list[Segment]:

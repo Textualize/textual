@@ -1,0 +1,268 @@
+* {
+    transition: background 500ms in_out_cubic, color 500ms in_out_cubic;
+}
+
+Screen {
+    layers: base overlay notes notifications;
+    overflow: hidden;
+    &:inline {
+        height: 50vh;
+    }
+}
+
+
+Notification {
+    dock: bottom;
+    layer: notification;
+    width: auto;
+    margin: 2 4;
+    padding: 1 2;
+    background: $background;
+    color: $text;
+    height: auto;
+
+}
+
+Sidebar {
+    width: 40;
+    background: $panel;
+    transition: offset 500ms in_out_cubic;
+    layer: overlay;
+
+}
+
+Sidebar:focus-within {
+    offset: 0 0 !important;
+}
+
+Sidebar.-hidden {
+    offset-x: -100%;
+}
+
+Sidebar Title {
+    background: $boost;
+    color: $secondary;
+    padding: 2 4;
+    border-right: vkey $background;
+    dock: top;
+    text-align: center;
+    text-style: bold;
+}
+
+
+OptionGroup {
+    background: $boost;
+    color: $text;
+    height: 1fr;
+    border-right: vkey $background;
+}
+
+Option {
+    margin: 1 0 0 1;
+    height: 3;
+    padding: 1 2;
+    background: $boost;
+    border: tall $panel;
+    text-align: center;
+}
+
+Option:hover {
+    background: $primary 20%;
+    color: $text;
+}
+
+Body {
+    height: 100%;
+    overflow-y: scroll;
+    width: 100%;
+    background: $surface;
+
+}
+
+AboveFold {
+    width: 100%;
+    height: 100%;
+    align: center middle;
+}
+
+Welcome {
+    background: $boost;
+    height: auto;
+    max-width: 100;
+    min-width: 40;
+    border: wide $primary;
+    padding: 1 2;
+    margin: 1 2;
+    box-sizing: border-box;
+}
+
+Welcome Button {
+    width: 100%;
+    margin-top: 1;
+}
+
+Column {
+    height: auto;
+    min-height: 100vh;
+    align: center top;
+    overflow: hidden;
+}
+
+
+DarkSwitch {
+    background: $panel;
+    padding: 1;
+    dock: bottom;
+    height: auto;
+    border-right: vkey $background;
+}
+
+DarkSwitch .label {
+    width: 1fr;
+    padding: 1 2;
+    color: $text-muted;
+}
+
+DarkSwitch Switch {
+    background: $boost;
+    dock: left;
+}
+
+
+Screen>Container {
+    height: 100%;
+    overflow: hidden;
+}
+
+RichLog {
+    background: $surface;
+    color: $text;
+    height: 50vh;
+    dock: bottom;
+    layer: notes;
+    border-top: hkey $primary;
+    offset-y: 0;
+    transition: offset 400ms in_out_cubic;
+    padding: 0 1 1 1;
+}
+
+
+RichLog:focus {
+    offset: 0 0 !important;
+}
+
+RichLog.-hidden {
+    offset-y: 100%;
+}
+
+
+
+Section {
+    height: auto;
+    min-width: 40;
+    margin: 1 2 4 2;
+
+}
+
+SectionTitle {
+    padding: 1 2;
+    background: $boost;
+    text-align: center;
+    text-style: bold;
+}
+
+SubTitle {
+    padding-top: 1;
+    border-bottom: heavy $panel;
+    color: $text;
+    text-style: bold;
+}
+
+TextContent {
+    margin: 1 0;
+}
+
+QuickAccess {
+    width: 30;
+    dock: left;
+
+}
+
+LocationLink {
+    margin: 1 0 0 1;
+    height: 1;
+    padding: 1 2;
+    background: $boost;
+    color: $text;
+    box-sizing: content-box;
+    content-align: center middle;
+}
+
+LocationLink:hover {
+    background: $accent;
+    color: $text;
+    text-style: bold;
+}
+
+
+.pad {
+    margin: 1 0;
+}
+
+DataTable {
+    height: 16;
+    max-height: 16;
+}
+
+
+LoginForm {
+    height: auto;
+    margin: 1 0;
+    padding: 1 2;
+    layout: grid;
+    grid-size: 2;
+    grid-rows: 4;
+    grid-columns: 12 1fr;
+    background: $boost;
+    border: wide $background;
+}
+
+LoginForm Button {
+    margin: 0 1;
+    width: 100%;
+}
+
+LoginForm .label {
+    padding: 1 2;
+    text-align: right;
+}
+
+Message {
+    margin: 0 1;
+
+}
+
+
+Tree {
+    margin: 1 0;
+}
+
+
+Window {
+    background: $boost;
+    overflow: auto;
+    height: auto;
+    max-height: 16;
+}
+
+Window>Static {
+    width: auto;
+}
+
+
+Version {
+    color: $text-disabled;
+    dock: bottom;
+    text-align: center;
+    padding: 1;
+}

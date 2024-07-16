@@ -7,24 +7,23 @@ Timer objects are created by [set_interval][textual.message_pump.MessagePump.set
 from __future__ import annotations
 
 import weakref
-from asyncio import CancelledError, Event, Task
-from typing import Awaitable, Callable, Union
+from asyncio import CancelledError, Event, Task, create_task, gather
+from typing import Any, Awaitable, Callable, Iterable, Union
 
 from rich.repr import Result, rich_repr
 
 from . import _time, events
-from ._asyncio import create_task
 from ._callback import invoke
 from ._context import active_app
 from ._time import sleep
 from ._types import MessageTarget
 
-TimerCallback = Union[Callable[[], Awaitable[None]], Callable[[], None]]
+TimerCallback = Union[Callable[[], Awaitable[Any]], Callable[[], Any]]
 """Type of valid callbacks to be used with timers."""
 
 
 class EventTargetGone(Exception):
-    pass
+    """Raised if the timer event target has been deleted prior to the timer event being sent."""
 
 
 @rich_repr
@@ -84,12 +83,47 @@ class Timer:
         """Start the timer."""
         self._task = create_task(self._run_timer(), name=self.name)
 
-    def stop(self) -> None:
-        """Stop the timer."""
-        if self._task is not None:
-            self._active.set()
-            self._task.cancel()
-            self._task = None
+    def stop(self) -> Task:
+        """Stop the timer.
+
+        Returns:
+            A Task object. Await this to wait until the timer has completed.
+
+        """
+        if self._task is None:
+
+            async def noop() -> None:
+                """A dummy task."""
+
+            return create_task(noop())
+
+        self._active.set()
+        self._task.cancel()
+        return self._task
+
+    @classmethod
+    async def _stop_all(cls, timers: Iterable[Timer]) -> None:
+        """Stop a number of timers, and await their completion.
+
+        Args:
+            timers: A number of timers.
+        """
+
+        async def stop_timer(timer: Timer) -> None:
+            """Stop a timer and wait for it to finish.
+
+            Args:
+                timer: A Timer instance.
+            """
+            if timer._task is not None:
+                timer._active.set()
+                timer._task.cancel()
+                try:
+                    await timer._task
+                except CancelledError:
+                    pass
+
+        await gather(*[stop_timer(timer) for timer in list(timers)])
 
     def pause(self) -> None:
         """Pause the timer.

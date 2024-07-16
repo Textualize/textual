@@ -1,0 +1,4 @@
+#page-container {
+    # This hides the scrollbar
+    scrollbar-size: 0 0;
+}

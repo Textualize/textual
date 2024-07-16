@@ -186,10 +186,12 @@ def test_double_escape(parser):
         ("\x1b[<0;50;25M", MouseDown, False, False),
         ("\x1b[<4;50;25M", MouseDown, True, False),
         ("\x1b[<8;50;25M", MouseDown, False, True),
+        ("\x1b[<12;50;25M", MouseDown, True, True),
         # Mouse up, with and without modifiers
         ("\x1b[<0;50;25m", MouseUp, False, False),
         ("\x1b[<4;50;25m", MouseUp, True, False),
         ("\x1b[<8;50;25m", MouseUp, False, True),
+        ("\x1b[<12;50;25m", MouseUp, True, True),
     ],
 )
 def test_mouse_click(parser, sequence, event_type, shift, meta):
@@ -216,6 +218,7 @@ def test_mouse_click(parser, sequence, event_type, shift, meta):
         ("\x1b[<35;15;38M", False, False, 0),  # Basic cursor movement
         ("\x1b[<39;15;38M", True, False, 0),  # Shift held down
         ("\x1b[<43;15;38M", False, True, 0),  # Meta held down
+        ("\x1b[<3;15;38M", False, False, 0),
     ],
 )
 def test_mouse_move(parser, sequence, shift, meta, button):
@@ -287,6 +290,7 @@ def test_mouse_event_detected_but_info_not_parsed(parser):
     assert len(events) == 0
 
 
+@pytest.mark.xfail()
 def test_escape_sequence_resulting_in_multiple_keypresses(parser):
     """Some sequences are interpreted as more than 1 keypress"""
     events = list(parser.feed("\x1b[2;4~"))

@@ -25,15 +25,15 @@ The example below demonstrates how children are arranged inside a container with
     --8<-- "docs/examples/guide/layout/vertical_layout.py"
     ```
 
-=== "vertical_layout.css"
+=== "vertical_layout.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/guide/layout/vertical_layout.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/guide/layout/vertical_layout.tcss"
     ```
 
 Notice that the first widget yielded from the `compose` method appears at the top of the display,
 the second widget appears below it, and so on.
-Inside `vertical_layout.css`, we've assigned `layout: vertical` to `Screen`.
+Inside `vertical_layout.tcss`, we've assigned `layout: vertical` to `Screen`.
 `Screen` is the parent container of the widgets yielded from the `App.compose` method, and can be thought of as the terminal window itself.
 
 !!! note
@@ -90,10 +90,10 @@ The example below shows how we can arrange widgets horizontally, with minimal ch
     --8<-- "docs/examples/guide/layout/horizontal_layout.py"
     ```
 
-=== "horizontal_layout.css"
+=== "horizontal_layout.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/guide/layout/horizontal_layout.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/guide/layout/horizontal_layout.tcss"
     ```
 
 
@@ -123,10 +123,10 @@ To enable horizontal scrolling, we can use the `overflow-x: auto;` declaration:
     --8<-- "docs/examples/guide/layout/horizontal_layout_overflow.py"
     ```
 
-=== "horizontal_layout_overflow.css"
+=== "horizontal_layout_overflow.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/guide/layout/horizontal_layout_overflow.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/guide/layout/horizontal_layout_overflow.tcss"
     ```
 
 With `overflow-x: auto;`, Textual automatically adds a horizontal scrollbar since the width of the children
@@ -152,10 +152,10 @@ In other words, we have a single row containing two columns.
     --8<-- "docs/examples/guide/layout/utility_containers.py"
     ```
 
-=== "utility_containers.css"
+=== "utility_containers.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/guide/layout/utility_containers.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/guide/layout/utility_containers.tcss"
     ```
 
 You may be tempted to use many levels of nested utility containers in order to build advanced, grid-like layouts.
@@ -191,10 +191,10 @@ Let's update the [utility containers](#utility-containers) example to use the co
     --8<-- "docs/examples/guide/layout/utility_containers.py"
     ```
 
-=== "utility_containers.css"
+=== "utility_containers.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/layout/utility_containers.css"
+    ```css
+    --8<-- "docs/examples/guide/layout/utility_containers.tcss"
     ```
 
 === "Output"
@@ -233,10 +233,10 @@ The following example creates a 3 x 2 grid and adds six widgets to it
     --8<-- "docs/examples/guide/layout/grid_layout1.py"
     ```
 
-=== "grid_layout1.css"
+=== "grid_layout1.tcss"
 
-    ```sass hl_lines="2 3"
-    --8<-- "docs/examples/guide/layout/grid_layout1.css"
+    ```css hl_lines="2 3"
+    --8<-- "docs/examples/guide/layout/grid_layout1.tcss"
     ```
 
 
@@ -254,10 +254,10 @@ If we were to yield a seventh widget from our `compose` method, it would not be 
     --8<-- "docs/examples/guide/layout/grid_layout2.py"
     ```
 
-=== "grid_layout2.css"
+=== "grid_layout2.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/guide/layout/grid_layout2.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/guide/layout/grid_layout2.tcss"
     ```
 
 Since we specified that our grid has three columns (`grid-size: 3`), and we've yielded seven widgets in total,
@@ -286,10 +286,10 @@ We'll make the first column take up half of the screen width, with the other two
     --8<-- "docs/examples/guide/layout/grid_layout3_row_col_adjust.py"
     ```
 
-=== "grid_layout3_row_col_adjust.css"
+=== "grid_layout3_row_col_adjust.tcss"
 
-    ```sass hl_lines="4"
-    --8<-- "docs/examples/guide/layout/grid_layout3_row_col_adjust.css"
+    ```css hl_lines="4"
+    --8<-- "docs/examples/guide/layout/grid_layout3_row_col_adjust.tcss"
     ```
 
 
@@ -315,16 +315,43 @@ and the second row to `75%` height (while retaining the `grid-columns` change fr
     --8<-- "docs/examples/guide/layout/grid_layout4_row_col_adjust.py"
     ```
 
-=== "grid_layout4_row_col_adjust.css"
+=== "grid_layout4_row_col_adjust.tcss"
 
-    ```sass hl_lines="5"
-    --8<-- "docs/examples/guide/layout/grid_layout4_row_col_adjust.css"
+    ```css hl_lines="5"
+    --8<-- "docs/examples/guide/layout/grid_layout4_row_col_adjust.tcss"
     ```
 
 
 If you don't specify enough values in a `grid-columns` or `grid-rows` declaration, the values you _have_ provided will be "repeated".
 For example, if your grid has four columns (i.e. `grid-size: 4;`), then `grid-columns: 2 4;` is equivalent to `grid-columns: 2 4 2 4;`.
 If it instead had three columns, then `grid-columns: 2 4;` would be equivalent to `grid-columns: 2 4 2;`.
+
+#### Auto rows / columns
+
+The `grid-columns` and `grid-rows` rules can both accept a value of "auto" in place of any of the dimensions, which tells Textual to calculate an optimal size based on the content.
+
+Let's modify the previous example to make the first column an `auto` column.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/layout/grid_layout_auto.py"}
+    ```
+
+=== "grid_layout_auto.py"
+
+    ```python hl_lines="6 9"
+    --8<-- "docs/examples/guide/layout/grid_layout_auto.py"
+    ```
+
+=== "grid_layout_auto.tcss"
+
+    ```css hl_lines="4"
+    --8<-- "docs/examples/guide/layout/grid_layout_auto.tcss"
+    ```
+
+Notice how the first column is just wide enough to fit the content of each cell.
+The layout will adjust accordingly if you update the content for any widget in that column.
+
 
 ### Cell spans
 
@@ -348,10 +375,10 @@ We'll also add a slight tint using `tint: magenta 40%;` to draw attention to it.
     --8<-- "docs/examples/guide/layout/grid_layout5_col_span.py"
     ```
 
-=== "grid_layout5_col_span.css"
+=== "grid_layout5_col_span.tcss"
 
-    ```sass hl_lines="6-9"
-    --8<-- "docs/examples/guide/layout/grid_layout5_col_span.css"
+    ```css hl_lines="6-9"
+    --8<-- "docs/examples/guide/layout/grid_layout5_col_span.tcss"
     ```
 
 
@@ -381,10 +408,10 @@ We again target widget `#two` in our CSS, and add a `row-span: 2;` declaration t
     --8<-- "docs/examples/guide/layout/grid_layout6_row_span.py"
     ```
 
-=== "grid_layout6_row_span.css"
+=== "grid_layout6_row_span.tcss"
 
-    ```sass hl_lines="8"
-    --8<-- "docs/examples/guide/layout/grid_layout6_row_span.css"
+    ```css hl_lines="8"
+    --8<-- "docs/examples/guide/layout/grid_layout6_row_span.tcss"
     ```
 
 
@@ -413,10 +440,10 @@ Now if we add `grid-gutter: 1;` to our grid, one cell of spacing appears between
     --8<-- "docs/examples/guide/layout/grid_layout7_gutter.py"
     ```
 
-=== "grid_layout7_gutter.css"
+=== "grid_layout7_gutter.tcss"
 
-    ```sass hl_lines="4"
-    --8<-- "docs/examples/guide/layout/grid_layout7_gutter.css"
+    ```css hl_lines="4"
+    --8<-- "docs/examples/guide/layout/grid_layout7_gutter.tcss"
     ```
 
 Notice that gutter only applies _between_ the cells in a grid, pushing them away from each other.
@@ -453,10 +480,10 @@ The code below shows a simple sidebar implementation.
     --8<-- "docs/examples/guide/layout/dock_layout1_sidebar.py"
     ```
 
-=== "dock_layout1_sidebar.css"
+=== "dock_layout1_sidebar.tcss"
 
-    ```sass hl_lines="2"
-    --8<-- "docs/examples/guide/layout/dock_layout1_sidebar.css"
+    ```css hl_lines="2"
+    --8<-- "docs/examples/guide/layout/dock_layout1_sidebar.tcss"
     ```
 
 If we run the app above and scroll down, the body text will scroll but the sidebar does not (note the position of the scrollbar in the output shown above).
@@ -477,10 +504,10 @@ This new sidebar is double the width of the one previous one, and has a `deeppin
     --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.py"
     ```
 
-=== "dock_layout2_sidebar.css"
+=== "dock_layout2_sidebar.tcss"
 
-    ```sass hl_lines="1-6"
-    --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.css"
+    ```css hl_lines="1-6"
+    --8<-- "docs/examples/guide/layout/dock_layout2_sidebar.tcss"
     ```
 
 Notice that the original sidebar (`#sidebar`) appears on top of the newly docked widget.
@@ -501,10 +528,10 @@ We can yield it inside `compose`, and without any additional CSS, we get a heade
     --8<-- "docs/examples/guide/layout/dock_layout3_sidebar_header.py"
     ```
 
-=== "dock_layout3_sidebar_header.css"
+=== "dock_layout3_sidebar_header.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/layout/dock_layout3_sidebar_header.css"
+    ```css
+    --8<-- "docs/examples/guide/layout/dock_layout3_sidebar_header.tcss"
     ```
 
 If we wished for the sidebar to appear below the header, it'd simply be a case of yielding the sidebar before we yield the header.
@@ -544,10 +571,10 @@ However, in this case, both `#box1` and `#box2` are assigned to layers which def
     --8<-- "docs/examples/guide/layout/layers.py"
     ```
 
-=== "layers.css"
+=== "layers.tcss"
 
-    ```sass hl_lines="3 14 19"
-    --8<-- "docs/examples/guide/layout/layers.css"
+    ```css hl_lines="3 14 19"
+    --8<-- "docs/examples/guide/layout/layers.tcss"
     ```
 
 ## Offsets
@@ -585,10 +612,10 @@ The example below shows how an advanced layout can be built by combining the var
     --8<-- "docs/examples/guide/layout/combining_layouts.py"
     ```
 
-=== "combining_layouts.css"
+=== "combining_layouts.tcss"
 
-    ```sass
-    --8<-- "docs/examples/guide/layout/combining_layouts.css"
+    ```css
+    --8<-- "docs/examples/guide/layout/combining_layouts.tcss"
     ```
 
 Textual layouts make it easy to design and build real-life applications with relatively little code.

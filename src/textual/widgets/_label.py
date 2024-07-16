@@ -10,5 +10,6 @@ class Label(Static):
     Label {
         width: auto;
         height: auto;
+        min-height: 1;
     }
     """

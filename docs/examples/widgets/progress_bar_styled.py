@@ -6,7 +6,7 @@ from textual.widgets import Footer, ProgressBar
 
 class StyledProgressBar(App[None]):
     BINDINGS = [("s", "start", "Start")]
-    CSS_PATH = "progress_bar_styled.css"
+    CSS_PATH = "progress_bar_styled.tcss"
 
     progress_timer: Timer
     """Timer to simulate progress happening."""
@@ -18,7 +18,7 @@ class StyledProgressBar(App[None]):
         yield Footer()
 
     def on_mount(self) -> None:
-        """Set up a timer to simulate progess happening."""
+        """Set up a timer to simulate progress happening."""
         self.progress_timer = self.set_interval(1 / 10, self.make_progress, pause=True)
 
     def make_progress(self) -> None:

@@ -34,6 +34,31 @@ A classic checkbox control.
 ```{.textual path="docs/examples/widgets/checkbox.py"}
 ```
 
+## ClassicFooter
+
+The original Footer widget.
+
+!!! warning
+
+    This has been replaced by [`Footer`](#footer), and will be removed in Textual v1.0
+
+[ClassicFooter reference](./widgets/classic_footer.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/classic_footer.py" columns="70" lines="12"}
+```
+
+
+
+## Collapsible
+
+Content that may be toggled on and off by clicking a title.
+
+[Collapsible reference](./widgets/collapsible.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/collapsible.py"}
+```
+
 
 ## ContentSwitcher
 
@@ -50,6 +75,15 @@ A powerful data table, with configurable cursors.
 [DataTable reference](./widgets/data_table.md){ .md-button .md-button--primary }
 
 ```{.textual path="docs/examples/widgets/data_table.py"}
+```
+
+## Digits
+
+Display numbers in tall characters.
+
+[Digits reference](./widgets/digits.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/digits.py"}
 ```
 
 ## DirectoryTree
@@ -69,6 +103,7 @@ A footer to display and interact with key bindings.
 
 ```{.textual path="docs/examples/widgets/footer.py" columns="70" lines="12"}
 ```
+
 
 
 ## Header
@@ -216,6 +251,16 @@ Display and update text in a scrolling panel.
 ```{.textual path="docs/examples/widgets/rich_log.py" press="H,i"}
 ```
 
+## Rule
+
+A rule widget to separate content, similar to a `<hr>` HTML tag.
+
+[Rule reference](./widgets/rule.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/horizontal_rules.py"}
+```
+
 ## Select
 
 Select from a number of possible options.
@@ -252,7 +297,7 @@ Displays simple static content. Typically used as a base class.
 
 ## Switch
 
-A on / off control, inspired by toggle buttons.
+An on / off control, inspired by toggle buttons.
 
 [Switch reference](./widgets/switch.md){ .md-button .md-button--primary }
 
@@ -278,6 +323,14 @@ A Combination of Tabs and ContentSwitcher to navigate static content.
 ```{.textual path="docs/examples/widgets/tabbed_content.py" press="j"}
 ```
 
+## TextArea
+
+A multi-line text area which supports syntax highlighting various languages.
+
+[TextArea reference](./widgets/text_area.md){ .md-button .md-button--primary }
+
+```{.textual path="docs/examples/widgets/text_area_example.py" columns="42" lines="8"}
+```
 
 ## Tree
 

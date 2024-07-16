@@ -94,10 +94,10 @@ The following example shows how focus works in practice.
     --8<-- "docs/examples/guide/input/key03.py"
     ```
 
-=== "key03.css"
+=== "key03.tcss"
 
-    ```python title="key03.css" hl_lines="15-17"
-    --8<-- "docs/examples/guide/input/key03.css"
+    ```css title="key03.tcss" hl_lines="15-17"
+    --8<-- "docs/examples/guide/input/key03.tcss"
     ```
 
 === "Output"
@@ -136,10 +136,10 @@ The following example binds the keys ++r++, ++g++, and ++b++ to an action which 
     --8<-- "docs/examples/guide/input/binding01.py"
     ```
 
-=== "binding01.css"
+=== "binding01.tcss"
 
-    ```python title="binding01.css"
-    --8<-- "docs/examples/guide/input/binding01.css"
+    ```css title="binding01.tcss"
+    --8<-- "docs/examples/guide/input/binding01.tcss"
     ```
 
 === "Output"
@@ -202,14 +202,14 @@ The following example shows mouse movements being used to _attach_ a widget to t
 
 === "mouse01.py"
 
-    ```python title="mouse01.py" hl_lines="11-13"
+    ```python title="mouse01.py" hl_lines="17-19"
     --8<-- "docs/examples/guide/input/mouse01.py"
     ```
 
-=== "mouse01.css"
+=== "mouse01.tcss"
 
-    ```python title="mouse01.css"
-    --8<-- "docs/examples/guide/input/mouse01.css"
+    ```css title="mouse01.tcss"
+    --8<-- "docs/examples/guide/input/mouse01.tcss"
     ```
 
 If you run `mouse01.py` you should find that it logs the mouse move event, and keeps a widget pinned directly under the cursor.
@@ -230,7 +230,7 @@ Textual will send a [MouseCapture](../events/mouse_capture.md) event when the mo
 
 ### Enter and Leave events
 
-Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave) event when the cursor moves off a widget.
+Textual will send a [Enter](../events/enter.md) event to a widget when the mouse cursor first moves over it, and a [Leave](../events/leave.md) event when the cursor moves off a widget.
 
 ### Click events
 
@@ -240,7 +240,7 @@ If you want your app to respond to a mouse click you should prefer the Click eve
 
 ### Scroll events
 
-Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseScrollDown](../events/mouse_scroll_down.md) and [MouseScrollUp](../events/mouse_scroll_up) if you want build your own scrolling functionality.
+Most mice have a scroll wheel which you can use to scroll the window underneath the cursor. Scrollable containers in Textual will handle these automatically, but you can handle [MouseScrollDown](../events/mouse_scroll_down.md) and [MouseScrollUp](../events/mouse_scroll_up.md) if you want build your own scrolling functionality.
 
 !!! information
 

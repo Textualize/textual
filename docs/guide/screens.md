@@ -24,10 +24,10 @@ Let's look at a simple example of writing a screen class to simulate Window's [b
     --8<-- "docs/examples/guide/screens/screen01.py"
     ```
 
-=== "screen01.css"
+=== "screen01.tcss"
 
-    ```sass title="screen01.css"
-    --8<-- "docs/examples/guide/screens/screen01.css"
+    ```css title="screen01.tcss"
+    --8<-- "docs/examples/guide/screens/screen01.tcss"
     ```
 
 === "Output"
@@ -53,10 +53,10 @@ You can also _install_ new named screens dynamically with the [install_screen][t
     --8<-- "docs/examples/guide/screens/screen02.py"
     ```
 
-=== "screen02.css"
+=== "screen02.tcss"
 
-    ```sass title="screen02.css"
-    --8<-- "docs/examples/guide/screens/screen02.css"
+    ```css title="screen02.tcss"
+    --8<-- "docs/examples/guide/screens/screen02.tcss"
     ```
 
 === "Output"
@@ -128,6 +128,7 @@ Like [pop_screen](#pop-screen), if the screen being replaced is not installed it
 You can also switch screens with the `"app.switch_screen"` action which accepts the name of the screen to switch to.
 
 
+
 ## Screen opacity
 
 If a screen has a background color with an *alpha* component, then the background color will be blended with the screen beneath it.
@@ -169,10 +170,10 @@ From the quit screen you can click either Quit to exit the app immediately, or C
     --8<-- "docs/examples/guide/screens/modal01.py"
     ```
 
-=== "modal01.css"
+=== "modal01.tcss"
 
-    ```sass title="modal01.css"
-    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```css title="modal01.tcss"
+    --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
 
@@ -211,10 +212,10 @@ Let's see what happens when we use `ModalScreen`.
     --8<-- "docs/examples/guide/screens/modal02.py"
     ```
 
-=== "modal01.css"
+=== "modal01.tcss"
 
-    ```sass title="modal01.css"
-    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```css title="modal01.tcss"
+    --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
 Now when we press ++q++, the dialog is displayed over the main screen.
@@ -238,10 +239,10 @@ Let's modify the previous example to use `dismiss` rather than an explicit `pop_
 
     1. See below for an explanation of the `[bool]`
 
-=== "modal01.css"
+=== "modal01.tcss"
 
-    ```sass title="modal01.css"
-    --8<-- "docs/examples/guide/screens/modal01.css"
+    ```css title="modal01.tcss"
+    --8<-- "docs/examples/guide/screens/modal01.tcss"
     ```
 
 In the `on_button_pressed` message handler we call `dismiss` with a boolean that indicates if the user has chosen to quit the app.
@@ -256,3 +257,111 @@ Returning data in this way can help keep your code manageable by making it easy 
 
 You may have noticed in the previous example that we changed the base class to `ModalScreen[bool]`.
 The addition of `[bool]` adds typing information that tells the type checker to expect a boolean in the call to `dismiss`, and that any callback set in `push_screen` should also expect the same type. As always, typing is optional in Textual, but this may help you catch bugs.
+
+
+### Waiting for screens
+
+It is also possible to wait on a screen to be dismissed, which can feel like a more natural way of expressing logic than a callback.
+The [`push_screen_wait()`][textual.app.App.push_screen_wait] method will push a screen and wait for its result (the value from [`Screen.dismiss()`][textual.screen.Screen.dismiss]).
+
+This can only be done from a [worker](./workers.md), so that waiting for the screen doesn't prevent your app from updating.
+
+Let's look at an example that uses `push_screen_wait` to ask a question and waits for the user to reply by clicking a button.
+
+
+=== "questions01.py"
+
+    ```python title="questions01.py" hl_lines="35-37"
+    --8<-- "docs/examples/guide/screens/questions01.py"
+    ```
+
+    1. Dismiss with `True` when pressing the Yes button.
+    2. Dismiss with `False` when pressing the No button.
+    3. The `work` decorator will make this method run in a worker (background task).
+    4. Will return a result when the user clicks one of the buttons.
+
+
+=== "questions01.tcss"
+
+    ```css title="questions01.tcss"
+    --8<-- "docs/examples/guide/screens/questions01.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/screens/questions01.py"}
+    ```
+
+The mount handler on the app is decorated with `@work`, which makes the code run in a worker (background task).
+In the mount handler we push the screen with the `push_screen_wait`.
+When the user presses one of the buttons, the screen calls [`dismiss()`][textual.screen.Screen.dismiss] with either `True` or `False`.
+This value is then returned from the `push_screen_wait` method in the mount handler.
+
+
+## Modes
+
+Some apps may benefit from having multiple screen stacks, rather than just one.
+Consider an app with a dashboard screen, a settings screen, and a help screen.
+These are independent in the sense that we don't want to prevent the user from switching between them, even if there are one or more modal screens on the screen stack.
+But we may still want each individual screen to have a navigation stack where we can push and pop screens.
+
+In Textual we can manage this with *modes*.
+A mode is simply a named screen stack, which we can switch between as required.
+When we switch modes, the topmost screen in the new mode becomes the active visible screen.
+
+The following diagram illustrates such an app with modes.
+On startup the app switches to the "dashboard" mode which makes the top of the stack visible.
+
+<div class="excalidraw">
+--8<-- "docs/images/screens/modes1.excalidraw.svg"
+</div>
+
+If we later change the mode to "settings", the top of that mode's screen stack becomes visible.
+
+<div class="excalidraw">
+--8<-- "docs/images/screens/modes2.excalidraw.svg"
+</div>
+
+To add modes to your app, define a [`MODES`][textual.app.App.MODES] class variable in your App class which should be a `dict` that maps the name of the mode on to either a screen object, a callable that returns a screen, or the name of an installed screen.
+However you specify it, the values in `MODES` set the base screen for each mode's screen stack.
+
+You can switch between these screens at any time by calling [`App.switch_mode`][textual.app.App.switch_mode].
+When you switch to a new mode, the topmost screen in the new stack becomes visible.
+Any calls to [`App.push_screen`][textual.app.App.push_screen] or [`App.pop_screen`][textual.app.App.pop_screen] will affect only the active mode.
+
+Let's look at an example with modes:
+
+=== "modes01.py"
+
+    ```python hl_lines="25-29 30-34 37"
+    --8<-- "docs/examples/guide/screens/modes01.py"
+    ```
+
+    1. `switch_mode` is a builtin action to switch modes.
+    2. Associates `DashboardScreen` with the name "dashboard".
+    3. Switches to the dashboard mode.
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/screens/modes01.py"}
+    ```
+
+=== "Output (after pressing S)"
+
+    ```{.textual path="docs/examples/guide/screens/modes01.py", press="s"}
+    ```
+
+Here we have defined three screens.
+One for a dashboard, one for settings, and one for help.
+We've bound keys to each of these screens, so the user can switch between the screens.
+
+Pressing ++d++, ++s++, or ++h++ switches between these modes.
+
+
+## Screen events
+
+Textual will send a [ScreenSuspend](../events/screen_suspend.md) event to screens that have become inactive due to another screen being pushed, or switching via a mode.
+
+When a screen becomes active, Textual will send a [ScreenResume](../events/screen_resume.md) event to the newly active screen.
+
+These events can be useful if you want to disable processing for a screen that is no longer visible, for example.

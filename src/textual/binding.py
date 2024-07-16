@@ -5,11 +5,10 @@ A binding maps a key press on to an action.
 See [bindings](/guide/input#bindings) in the guide for details.
 """
 
-
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, NamedTuple
 
 import rich.repr
 
@@ -17,6 +16,8 @@ from .keys import _character_to_key
 
 if TYPE_CHECKING:
     from typing_extensions import TypeAlias
+
+    from .dom import DOMNode
 
 BindingType: TypeAlias = "Binding | tuple[str, str] | tuple[str, str, str]"
 
@@ -49,6 +50,17 @@ class Binding:
     """How the key should be shown in footer."""
     priority: bool = False
     """Enable priority binding for this key."""
+
+
+class ActiveBinding(NamedTuple):
+    """Information about an active binding (returned from [active_bindings][textual.screen.active_bindings])."""
+
+    node: DOMNode
+    """The node where the binding is defined."""
+    binding: Binding
+    """The binding information."""
+    enabled: bool
+    """Is the binding enabled? (enabled bindings are typically rendered dim)"""
 
 
 @rich.repr.auto

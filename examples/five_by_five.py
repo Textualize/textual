@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 class Help(Screen):
     """The help screen for the application."""
 
-    BINDINGS = [("escape,space,q,question_mark", "pop_screen", "Close")]
+    BINDINGS = [("escape,space,q,question_mark", "app.pop_screen", "Close")]
     """Bindings for the help screen."""
 
     def compose(self) -> ComposeResult:
@@ -159,8 +159,8 @@ class Game(Screen):
 
     BINDINGS = [
         Binding("n", "new_game", "New Game"),
-        Binding("question_mark", "push_screen('help')", "Help", key_display="?"),
-        Binding("q", "quit", "Quit"),
+        Binding("question_mark", "app.push_screen('help')", "Help", key_display="?"),
+        Binding("q", "app.quit", "Quit"),
         Binding("up,w,k", "navigate(-1,0)", "Move Up", False),
         Binding("down,s,j", "navigate(1,0)", "Move Down", False),
         Binding("left,a,h", "navigate(0,-1)", "Move Left", False),
@@ -302,7 +302,7 @@ class Game(Screen):
 class FiveByFive(App[None]):
     """Main 5x5 application class."""
 
-    CSS_PATH = "five_by_five.css"
+    CSS_PATH = "five_by_five.tcss"
     """The name of the stylesheet for the app."""
 
     SCREENS = {"help": Help}

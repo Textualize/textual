@@ -2,7 +2,7 @@ All you need to get started building Textual apps.
 
 ## Requirements
 
-Textual requires Python 3.7 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs.
+Textual requires Python 3.8 or later (if you have a choice, pick the most recent Python). Textual runs on Linux, macOS, Windows and probably any OS where Python also runs.
 
 !!! info inline end "Your platform"
 
@@ -38,7 +38,7 @@ pip install textual-dev
 
 ### From conda-forge
 
-Textual is also available on [conda-forge](https://conda-forge.org/). The preferred package manager for conda-forge is currently [micromamba](https://mamba.readthedocs.io/en/latest/installation.html#micromamba):
+Textual is also available on [conda-forge](https://conda-forge.org/). The preferred package manager for conda-forge is currently [micromamba](https://mamba.readthedocs.io/en/latest/installation/micromamba-installation.html):
 
 ```
 micromamba install -c conda-forge textual
@@ -104,8 +104,9 @@ cd textual/examples/
 python code_browser.py ../
 ```
 
+### Widget examples
 
-
+In addition to the example apps, you can also find the code listings used to generate the screenshots in these docs in the `docs/examples` directory.
 
 ## Need help?
 

@@ -2,12 +2,15 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
-from rich.console import RenderableType
 from rich.text import Text
 
 from .. import on
+
+if TYPE_CHECKING:
+    from ..app import RenderResult
+
 from ..containers import Container
 from ..css.query import NoMatches
 from ..events import Click, Mount
@@ -45,6 +48,12 @@ class Toast(Static, inherit_css=False):
         padding: 1 1;
         background: $panel;
         tint: white 5%;
+        link-background: initial;
+        link-color: $text;
+        link-style: underline;
+        link-background-hover: $accent;
+        link-color-hover: $text;
+        link-style-hover: bold not underline;
     }
 
     .toast--title {
@@ -52,11 +61,11 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast {
-        border-right: wide $background;
+        border-right: outer $background;
     }
 
     Toast.-information {
-        border-left: wide $success;
+        border-left: outer $success;
     }
 
     Toast.-information .toast--title {
@@ -64,7 +73,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-warning {
-        border-left: wide $warning;
+        border-left: outer $warning;
     }
 
     Toast.-warning .toast--title {
@@ -72,7 +81,7 @@ class Toast(Static, inherit_css=False):
     }
 
     Toast.-error {
-        border-left: wide $error;
+        border-left: outer $error;
     }
 
     Toast.-error .toast--title {
@@ -87,6 +96,8 @@ class Toast(Static, inherit_css=False):
     | `toast--title` | Targets the title of the toast. |
     """
 
+    DEFAULT_CLASSES = "-textual-system"
+
     def __init__(self, notification: Notification) -> None:
         """Initialise the toast.
 
@@ -97,7 +108,7 @@ class Toast(Static, inherit_css=False):
         self._notification = notification
         self._timeout = notification.time_left
 
-    def render(self) -> RenderableType:
+    def render(self) -> RenderResult:
         """Render the toast's content.
 
         Returns:
@@ -128,7 +139,7 @@ class Toast(Static, inherit_css=False):
         # the notification that caused us to exist. Note that we tell the
         # app to not bother refreshing the display on our account, we're
         # about to handle that anyway.
-        self.app.unnotify(self._notification, refresh=False)
+        self.app._unnotify(self._notification, refresh=False)
         # Note that we attempt to remove our parent, because we're wrapped
         # inside an alignment container. The testing that we are is as much
         # to keep type checkers happy as anything else.
@@ -152,6 +163,7 @@ class ToastRack(Container, inherit_css=False):
         margin-right: 1;
     }
     """
+    DEFAULT_CLASSES = "-textual-system"
 
     @staticmethod
     def _toast_id(notification: Notification) -> str:
@@ -171,7 +183,6 @@ class ToastRack(Container, inherit_css=False):
         Args:
             notifications: The notifications to show.
         """
-
         # Look for any stale toasts and remove them.
         for toast in self.query(Toast):
             if toast._notification not in notifications:

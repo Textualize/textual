@@ -1,0 +1,18 @@
+Screen {
+    layout: horizontal;
+}
+Label {
+    width: 1fr;
+}
+#lbl1 {
+    background: red 30%;
+    text-style: bold;
+}
+#lbl2 {
+    background: green 30%;
+    text-style: italic;
+}
+#lbl3 {
+    background: blue 30%;
+    text-style: reverse;
+}

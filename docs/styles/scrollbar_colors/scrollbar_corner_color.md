@@ -5,10 +5,10 @@ The `scrollbar-corner-color` style sets the color of the gap between the horizon
 ## Syntax
 
 --8<-- "docs/snippets/syntax_block_start.md"
-<a href="./scrollbar_corner_color">scrollbar-corner-color</a>: <a href="../../css_types/color">&lt;color&gt;</a> [<a href="../../css_types/percentage">&lt;percentage&gt;</a>];
+<a href="./scrollbar_corner_color">scrollbar-corner-color</a>: <a href="../../../css_types/color">&lt;color&gt;</a> [<a href="../../../css_types/percentage">&lt;percentage&gt;</a>];
 --8<-- "docs/snippets/syntax_block_end.md"
 
-`scrollbar-corner-color` accepts a [`<color>`](../../../css_types/color) (with an optional opacity level defined by a [`<percentage>`](../../../css_types/percentage)) that is used to define the color of the gap between the horizontal and vertical scrollbars of a widget.
+`scrollbar-corner-color` accepts a [`<color>`](../../css_types/color.md) (with an optional opacity level defined by a [`<percentage>`](../../css_types/percentage.md)) that is used to define the color of the gap between the horizontal and vertical scrollbars of a widget.
 
 ## Example
 
@@ -25,15 +25,15 @@ The example below sets the scrollbar corner (bottom-right corner of the screen) 
     --8<-- "docs/examples/styles/scrollbar_corner_color.py"
     ```
 
-=== "scrollbar_corner_color.css"
+=== "scrollbar_corner_color.tcss"
 
-    ```sass hl_lines="3"
-    --8<-- "docs/examples/styles/scrollbar_corner_color.css"
+    ```css hl_lines="3"
+    --8<-- "docs/examples/styles/scrollbar_corner_color.tcss"
     ```
 
 ## CSS
 
-```sass
+```css
 scrollbar-corner-color: white;
 ```
 

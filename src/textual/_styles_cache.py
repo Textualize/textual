@@ -9,10 +9,14 @@ from rich.segment import Segment
 from rich.style import Style
 from rich.text import Text
 
+from . import log
+from ._ansi_theme import DEFAULT_TERMINAL_THEME
 from ._border import get_box, render_border_label, render_row
+from ._context import active_app
 from ._opacity import _apply_opacity
-from ._segment_tools import line_pad, line_trim
+from ._segment_tools import apply_hatch, line_pad, line_trim
 from .color import Color
+from .constants import DEBUG
 from .filter import LineFilter
 from .geometry import Region, Size, Spacing
 from .renderables.text_opacity import TextOpacity
@@ -148,10 +152,10 @@ class StylesCache:
                 and hover_style._meta
                 and "@click" in hover_style.meta
             ):
-                link_hover_style = widget.link_hover_style
-                if link_hover_style:
+                link_style_hover = widget.link_style_hover
+                if link_style_hover:
                     strips = [
-                        strip.style_links(hover_style.link_id, link_hover_style)
+                        strip.style_links(hover_style.link_id, link_style_hover)
                         for strip in strips
                     ]
 
@@ -228,10 +232,17 @@ class StylesCache:
                 self._cache[y] = strip
             else:
                 strip = self._cache[y]
+
             if filters:
                 for filter in filters:
                     strip = strip.apply_filter(filter, background)
+
+            if DEBUG:
+                if any([not (segment.control or segment.text) for segment in strip]):
+                    log.warning(f"Strip contains invalid empty Segments: {strip!r}.")
+
             add_strip(strip)
+
         self._dirty_lines.difference_update(crop.line_range)
 
         if crop.column_span != (0, width):
@@ -300,6 +311,17 @@ class StylesCache:
         inner = from_color(bgcolor=(base_background + background).rich_color)
         outer = from_color(bgcolor=base_background.rich_color)
 
+        def line_post(segments: Iterable[Segment]) -> Iterable[Segment]:
+            """Apply effects to segments inside the border."""
+            if styles.has_rule("hatch"):
+                character, color = styles.hatch
+                if character != " " and color.a > 0:
+                    hatch_style = Style.from_color(
+                        (background + color).rich_color, background.rich_color
+                    )
+                    return apply_hatch(segments, character, hatch_style)
+            return segments
+
         def post(segments: Iterable[Segment]) -> Iterable[Segment]:
             """Post process segments to apply opacity and tint.
 
@@ -309,8 +331,15 @@ class StylesCache:
             Returns:
                 New list of segments
             """
+
+            try:
+                app = active_app.get()
+                ansi_theme = app.ansi_theme
+            except LookupError:
+                ansi_theme = DEFAULT_TERMINAL_THEME
+
             if styles.tint.a:
-                segments = Tint.process_segments(segments, styles.tint)
+                segments = Tint.process_segments(segments, styles.tint, ansi_theme)
             if opacity != 1.0:
                 segments = _apply_opacity(segments, base_background, opacity)
             return segments
@@ -338,9 +367,11 @@ class StylesCache:
                         if label_color.a
                         else None
                     ),
-                    (base_label_background + label_background).rich_color
-                    if label_background.a
-                    else None,
+                    (
+                        (base_label_background + label_background).rich_color
+                        if label_background.a
+                        else None
+                    ),
                 )
                 render_label = (label, style)
             # Try to save time with expensive call to `render_border_label`:
@@ -374,7 +405,7 @@ class StylesCache:
                 has_left,
                 has_right,
                 label_segments,
-                label_alignment,
+                label_alignment,  # type: ignore
             )
 
         # Draw padding (B)
@@ -402,6 +433,7 @@ class StylesCache:
                 line = [make_blank(width - 1, background_style), right]
             else:
                 line = [make_blank(width, background_style)]
+            line = line_post(line)
         else:
             # Content with border and padding (C)
             content_y = y - gutter.top
@@ -414,7 +446,7 @@ class StylesCache:
                 line = Segment.apply_style(line, inner)
             if styles.text_opacity != 1.0:
                 line = TextOpacity.process_segments(line, styles.text_opacity)
-            line = line_pad(line, pad_left, pad_right, inner)
+            line = line_post(line_pad(line, pad_left, pad_right, inner))
 
             if border_left or border_right:
                 # Add left / right border

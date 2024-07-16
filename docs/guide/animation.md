@@ -1,6 +1,6 @@
 # Animation
 
-Ths chapter discusses how to use Textual's animation system to create visual effects such as movement, blending, and fading.
+This chapter discusses how to use Textual's animation system to create visual effects such as movement, blending, and fading.
 
 
 ## Animating styles
@@ -16,33 +16,26 @@ The following example app contains a single `Static` widget which is immediately
 --8<-- "docs/examples/guide/animator/animation01.py"
 ```
 
-The animator updates the value of the `opacity` attribute on the `styles` object in small increments over two seconds. Here's what the output will look like after each half a second.
-
+The animator updates the value of the `opacity` attribute on the `styles` object in small increments over two seconds. Here's how the widget will change as time progresses:
 
 === "After 0s"
 
     ```{.textual path="docs/examples/guide/animator/animation01_static.py"}
     ```
 
-=== "After 0.5s"
-
-    ```{.textual path="docs/examples/guide/animator/animation01.py" press="wait:500"}
-    ```
-
-
 === "After 1s"
 
-    ```{.textual path="docs/examples/guide/animator/animation01.py" press="wait:1000"}
+    ```{.textual path="docs/examples/guide/animator/animation01_static.py" press="1"}
     ```
 
 === "After 1.5s"
 
-    ```{.textual path="docs/examples/guide/animator/animation01.py" press="wait:1500"}
+    ```{.textual path="docs/examples/guide/animator/animation01_static.py" press="2"}
     ```
 
 === "After 2s"
 
-    ```{.textual path="docs/examples/guide/animator/animation01.py" press="wait:2000"}
+    ```{.textual path="docs/examples/guide/animator/animation01_static.py" press="3"}
     ```
 
 ## Duration and Speed

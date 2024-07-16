@@ -11,6 +11,7 @@ from rich.style import Style
 from rich.text import Span
 
 import textual.widgets._markdown as MD
+from textual import on
 from textual.app import App, ComposeResult
 from textual.widget import Widget
 from textual.widgets import Markdown
@@ -125,3 +126,92 @@ async def test_load_non_existing_file() -> None:
             await pilot.app.query_one(Markdown).load(
                 Path("---this-does-not-exist---.it.is.not.a.md")
             )
+
+
+@pytest.mark.parametrize(
+    ("anchor", "found"),
+    [
+        ("hello-world", False),
+        ("hello-there", True),
+    ],
+)
+async def test_goto_anchor(anchor: str, found: bool) -> None:
+    """Going to anchors should return a boolean: whether the anchor was found."""
+    document = "# Hello There\n\nGeneral.\n"
+    async with MarkdownApp(document).run_test() as pilot:
+        markdown = pilot.app.query_one(Markdown)
+        assert markdown.goto_anchor(anchor) is found
+
+
+async def test_update_of_document_posts_table_of_content_update_message() -> None:
+    """Updating the document should post a TableOfContentsUpdated message."""
+
+    messages: list[str] = []
+
+    class TableOfContentApp(App[None]):
+        def compose(self) -> ComposeResult:
+            yield Markdown("# One\n\n#Two\n")
+
+        @on(Markdown.TableOfContentsUpdated)
+        def log_table_of_content_update(
+            self, event: Markdown.TableOfContentsUpdated
+        ) -> None:
+            nonlocal messages
+            messages.append(event.__class__.__name__)
+
+    async with TableOfContentApp().run_test() as pilot:
+        assert messages == ["TableOfContentsUpdated"]
+        await pilot.app.query_one(Markdown).update("")
+        await pilot.pause()
+        assert messages == ["TableOfContentsUpdated", "TableOfContentsUpdated"]
+
+
+async def test_link_in_markdown_table_posts_message_when_clicked():
+    """A link inside a markdown table should post a `Markdown.LinkClicked`
+    message when clicked.
+
+    Regression test for https://github.com/Textualize/textual/issues/4683
+    """
+
+    markdown_table = """\
+| Textual Links                                    |
+| ------------------------------------------------ |
+| [GitHub](https://github.com/textualize/textual/) |
+| [Documentation](https://textual.textualize.io/)  |\
+"""
+
+    class MarkdownTableApp(App):
+        messages = []
+
+        def compose(self) -> ComposeResult:
+            yield Markdown(markdown_table)
+
+        @on(Markdown.LinkClicked)
+        def log_markdown_link_clicked(
+            self,
+            event: Markdown.LinkClicked,
+        ) -> None:
+            self.messages.append(event.__class__.__name__)
+
+    app = MarkdownTableApp()
+    async with app.run_test() as pilot:
+        await pilot.click(Markdown, offset=(3, 3))
+        assert app.messages == ["LinkClicked"]
+
+
+async def test_markdown_quoting():
+    # https://github.com/Textualize/textual/issues/3350
+    links = []
+
+    class MyApp(App):
+        def compose(self) -> ComposeResult:
+            self.md = Markdown(markdown="[tété](tété)")
+            yield self.md
+
+        def on_markdown_link_clicked(self, message: Markdown.LinkClicked):
+            links.append(message.href)
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.click(Markdown, offset=(0, 0))
+    assert links == ["tété"]
