@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 - Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
 - Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
+- Added ability to animate `widget.styles.offset` with `tuple` or `str` https://github.com/Textualize/textual/issues/3028
 
 ### Fixed
 
