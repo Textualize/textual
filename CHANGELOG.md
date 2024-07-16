@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 - Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
 - Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
+- Fixed `CommandPalette` not focusing the input when opened when `App.AUTO_FOCUS` doesn't match the input https://github.com/Textualize/textual/pull/4763
 
 ### Changed
 
