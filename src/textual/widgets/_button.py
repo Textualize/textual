@@ -141,9 +141,7 @@ class Button(Widget, can_focus=True):
                 border-bottom: tall $error-lighten-2;
                 border-top: tall $error-darken-2;
             }
-
         }
-
     }
     """
 
