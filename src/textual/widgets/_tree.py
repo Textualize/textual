@@ -839,6 +839,10 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         else:
             self.hover_line = -1
 
+    def _on_leave(self, _: events.Leave) -> None:
+        # Ensure the hover effect doesn't linger after the mouse leaves.
+        self.hover_line = -1
+
     def _new_id(self) -> NodeID:
         """Create a new node ID.
 
