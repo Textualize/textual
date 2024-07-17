@@ -1,8 +1,8 @@
 """
 
-Containers to implement caching.
+Cache classes are dict-like containers used to avoid recalculating expensive operations such as rendering.
 
-These are used in Textual to avoid recalculating expensive operations, such as rendering.
+You can also use them in your own apps if you need them.
 
 """
 

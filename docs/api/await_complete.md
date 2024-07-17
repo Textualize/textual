@@ -3,8 +3,8 @@ title: "textual.await_complete"
 ---
 
 This object is returned by methods that do work in the *background*.
-You can await the return value if you need to know when that work has completed.
-If you ignore it, Textual will wait for the work to be done before handling the next message.
+You can await this object if you need to know when that work has completed.
+Or you can ignore it, and Textual will automatically await the work before handling the next message.
 
 !!! note
 
