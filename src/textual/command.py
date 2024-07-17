@@ -34,8 +34,9 @@ from .binding import Binding, BindingType
 from .containers import Horizontal, Vertical
 from .events import Click, Mount
 from .fuzzy import Matcher
+from .message import Message
 from .reactive import var
-from .screen import Screen, _SystemModalScreen
+from .screen import Screen, SystemModalScreen
 from .timer import Timer
 from .types import CallbackType, IgnoreReturnCallbackType
 from .widget import Widget
@@ -353,7 +354,9 @@ class CommandList(OptionList, can_focus=False):
         border-right: none;
         height: auto;
         max-height: 70vh;
-        background: $panel;
+        background: transparent;
+        padding: 0;
+        text-style: bold;
     }
 
     CommandList:focus {
@@ -369,11 +372,11 @@ class CommandList(OptionList, can_focus=False):
     }
 
     CommandList > .option-list--option-highlighted {
-        background: $accent;
+        background: $primary;
     }
 
     CommandList > .option-list--option {
-        padding-left: 1;
+        padding-left: 2;
     }
     """
 
@@ -409,13 +412,13 @@ class CommandInput(Input):
     CommandInput, CommandInput:focus {
         border: blank;
         width: 1fr;
-        background: $panel;
+        background: transparent;
         padding-left: 0;
     }
     """
 
 
-class CommandPalette(_SystemModalScreen[CallbackType]):
+class CommandPalette(SystemModalScreen[CallbackType]):
     """The Textual command palette."""
 
     COMPONENT_CLASSES: ClassVar[set[str]] = {
@@ -430,18 +433,19 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     """
 
     DEFAULT_CSS = """
+    
+   
     CommandPalette:inline {
         /* If the command palette is invoked in inline mode, we may need additional lines. */
         min-height: 20;
     }
     CommandPalette {
-        background: $background 30%;
-        align-horizontal: center;
+        background: $background 60%;
+        align-horizontal: center;      
     }
 
-    CommandPalette > .command-palette--help-text {
-        background: transparent;
-        color: $text-muted;
+    CommandPalette > .command-palette--help-text {           
+        text-style: dim not bold;       
     }
 
     CommandPalette:dark > .command-palette--highlight {
@@ -454,17 +458,16 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     }
 
     CommandPalette > Vertical {
-        margin-top: 3;
-        width: 90%;
+        margin-top: 3; 
         height: 100%;
         visibility: hidden;
+        background: $primary 20%;      
     }
 
     CommandPalette #--input {
         height: auto;
         visibility: visible;
         border: hkey $primary;
-        background: $panel;
     }
 
     CommandPalette #--input.--list-visible {
@@ -489,7 +492,6 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
     CommandPalette LoadingIndicator {
         height: auto;
         visibility: hidden;
-        background: $panel;
         border-bottom: hkey $primary;
     }
 
@@ -540,6 +542,24 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
     _PALETTE_ID: Final[str] = "--command-palette"
     """The internal ID for the command palette."""
+
+    @dataclass
+    class OptionHighlighted(Message):
+        """Posted to App when an option is highlighted in the command palette."""
+
+        highlighted_event: OptionList.OptionHighlighted
+        """The option highlighted event from the OptionList within the command palette."""
+
+    @dataclass
+    class Opened(Message):
+        """Posted to App when the command palette is opened."""
+
+    @dataclass
+    class Closed(Message):
+        """Posted to App when the command palette is closed."""
+
+        option_selected: bool
+        """True if an option was selected, False if the palette was closed without selecting an option."""
 
     def __init__(self) -> None:
         """Initialise the command palette."""
@@ -605,14 +625,14 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         with Vertical():
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                yield CommandInput(placeholder="Command Palette Search...")
+                yield CommandInput(placeholder="Search for commands…")
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):
                 yield CommandList()
                 yield LoadingIndicator()
 
-    def _on_click(self, event: Click) -> None:
+    def _on_click(self, event: Click) -> None:  # type: ignore[override]
         """Handle the click event.
 
         Args:
@@ -623,10 +643,13 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
         """
         if self.get_widget_at(event.screen_x, event.screen_y)[0] is self:
             self._cancel_gather_commands()
+            self.app.post_message(CommandPalette.Closed(option_selected=False))
             self.dismiss()
 
     def _on_mount(self, _: Mount) -> None:
         """Configure the command palette once the DOM is ready."""
+
+        self.app.post_message(CommandPalette.Opened())
         self._calling_screen = self.app.screen_stack[-2]
 
         match_style = self.get_component_rich_style(
@@ -642,7 +665,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             provider._post_init()
         self._gather_commands("")
 
-    async def _on_unmount(self) -> None:
+    async def _on_unmount(self) -> None:  # type: ignore[override]
         """Shutdown providers when command palette is closed."""
         if self._providers:
             await wait(
@@ -696,7 +719,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
                 command_list = self.query_one(CommandList)
                 command_list.add_option(
                     Option(
-                        Align.center(Text("No matches found")),
+                        Align.center(Text("No matches found", style="not bold")),
                         disabled=True,
                         id=self._NO_MATCHES,
                     )
@@ -831,41 +854,6 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             for search in searches:
                 search.cancel()
 
-    @staticmethod
-    def _sans_background(style: Style) -> Style:
-        """Returns the given style minus the background color.
-
-        Args:
-            style: The style to remove the color from.
-
-        Returns:
-            The given style, minus its background.
-        """
-        # Here we're pulling out all of the styles *minus* the background.
-        # This should probably turn into a utility method on Style
-        # eventually. The reason for this is we want the developer to be
-        # able to style the help text with a component class, but we want
-        # the background to always be the background at any given moment in
-        # the context of an OptionList. At the moment this act of copying
-        # sans bgcolor seems to be the only way to achieve this.
-        return Style(
-            blink2=style.blink2,
-            blink=style.blink,
-            bold=style.bold,
-            color=style.color,
-            conceal=style.conceal,
-            dim=style.dim,
-            encircle=style.encircle,
-            frame=style.frame,
-            italic=style.italic,
-            link=style.link,
-            overline=style.overline,
-            reverse=style.reverse,
-            strike=style.strike,
-            underline2=style.underline2,
-            underline=style.underline,
-        )
-
     def _refresh_command_list(
         self, command_list: CommandList, commands: list[Command], clear_current: bool
     ) -> None:
@@ -877,7 +865,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             clear_current: Should the current content of the list be cleared first?
         """
         # For the moment, this is a fairly naive approach to populating the
-        # command list with a sorted list of commands. Every time we add a
+        # command list with a list of commands. Every time we add a
         # new one we're nuking the list of options and populating them
         # again. If this turns out to not be a great approach, we may try
         # and get a lot smarter with this (ideally OptionList will grow a
@@ -888,7 +876,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             if command_list.highlighted is not None and not clear_current
             else None
         )
-        command_list.clear_options().add_options(sorted(commands, reverse=True))
+        command_list.clear_options().add_options(commands)
         if highlighted is not None and highlighted.id:
             command_list.highlighted = command_list.get_option_index(highlighted.id)
         self._list_visible = bool(command_list.option_count)
@@ -912,8 +900,8 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
 
         # We'll potentially use the help text style a lot so let's grab it
         # the once for use in the loop further down.
-        help_style = self._sans_background(
-            self.get_component_rich_style("command-palette--help-text")
+        help_style = self.get_component_rich_style(
+            "command-palette--help-text", partial=True
         )
 
         # The list to hold on to the commands we've gathered from the
@@ -974,7 +962,9 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             # list of commands that have been gathered so far.
             prompt = hit.prompt
             if hit.help:
-                prompt = Group(prompt, Text(hit.help, style=help_style))
+                help_text = Text(hit.help)
+                help_text.stylize(help_style)
+                prompt = Group(prompt, help_text)
             gathered_commands.append(Command(prompt, hit, id=str(command_id)))
 
             # Before we go making any changes to the UI, we do a quick
@@ -1085,12 +1075,14 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
                 # ...we should return it to the parent screen and let it
                 # decide what to do with it (hopefully it'll run it).
                 self._cancel_gather_commands()
+                self.app.post_message(CommandPalette.Closed(option_selected=True))
                 self.dismiss(self._selected_command.command)
 
     @on(OptionList.OptionHighlighted)
     def _stop_event_leak(self, event: OptionList.OptionHighlighted) -> None:
         """Stop any unused events so they don't leak to the application."""
         event.stop()
+        self.app.post_message(CommandPalette.OptionHighlighted(highlighted_event=event))
 
     def _action_escape(self) -> None:
         """Handle a request to escape out of the command palette."""
@@ -1098,6 +1090,7 @@ class CommandPalette(_SystemModalScreen[CallbackType]):
             self._list_visible = False
         else:
             self._cancel_gather_commands()
+            self.app.post_message(CommandPalette.Closed(option_selected=False))
             self.dismiss()
 
     def _action_command_list(self, action: str) -> None:

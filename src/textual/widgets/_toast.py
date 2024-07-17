@@ -183,7 +183,6 @@ class ToastRack(Container, inherit_css=False):
         Args:
             notifications: The notifications to show.
         """
-
         # Look for any stale toasts and remove them.
         for toast in self.query(Toast):
             if toast._notification not in notifications:

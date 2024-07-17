@@ -735,7 +735,6 @@ async def test_message_sender_from_reactive() -> None:
             message_senders.append(event._sender)
 
     class TestApp(App[None]):
-
         def compose(self) -> ComposeResult:
             yield TestContainer()
 
@@ -744,3 +743,43 @@ async def test_message_sender_from_reactive() -> None:
         pilot.app.query_one(TestWidget).make_reaction()
         await pilot.pause()
         assert message_senders == [pilot.app.query_one(TestWidget)]
+
+
+async def test_mutate_reactive() -> None:
+    """Test explicitly mutating reactives"""
+
+    watched_names: list[list[str]] = []
+
+    class TestWidget(Widget):
+        names: reactive[list[str]] = reactive(list)
+
+        def watch_names(self, names: list[str]) -> None:
+            watched_names.append(names.copy())
+
+    class TestApp(App):
+        def compose(self) -> ComposeResult:
+            yield TestWidget()
+
+    app = TestApp()
+    async with app.run_test():
+        widget = app.query_one(TestWidget)
+        # watch method called on startup
+        assert watched_names == [[]]
+
+        # Mutate the list
+        widget.names.append("Paul")
+        # No changes expected
+        assert watched_names == [[]]
+        # Explicitly mutate the reactive
+        widget.mutate_reactive(TestWidget.names)
+        # Watcher will be invoked
+        assert watched_names == [[], ["Paul"]]
+        # Make further modifications
+        widget.names.append("Jessica")
+        widget.names.remove("Paul")
+        # No change expected
+        assert watched_names == [[], ["Paul"]]
+        # Explicit mutation
+        widget.mutate_reactive(TestWidget.names)
+        # Watcher should be invoked
+        assert watched_names == [[], ["Paul"], ["Jessica"]]

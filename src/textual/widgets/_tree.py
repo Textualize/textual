@@ -9,7 +9,7 @@ import rich.repr
 from rich.style import NULL_STYLE, Style
 from rich.text import Text, TextType
 
-from .. import events
+from .. import events, on
 from .._immutable_sequence_view import ImmutableSequenceView
 from .._loop import loop_last
 from .._segment_tools import line_pad
@@ -70,13 +70,13 @@ class _TreeLine(Generic[TreeDataType]):
             Width in cells.
         """
         if show_root:
-            return 2 + (max(0, len(self.path) - 1)) * guide_depth
+            width = (max(0, len(self.path) - 1)) * guide_depth
         else:
-            guides = 2
+            width = 0
             if len(self.path) > 1:
-                guides += (len(self.path) - 1) * guide_depth
+                width += (len(self.path) - 1) * guide_depth
 
-        return guides
+        return width
 
 
 class TreeNodes(ImmutableSequenceView["TreeNode[TreeDataType]"]):
@@ -495,7 +495,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
     guide_depth = reactive(4, init=False)
     """The indent depth of tree nodes."""
     auto_expand = var(True)
-    """Auto expand tree nodes when clicked."""
+    """Auto expand tree nodes when they are selected."""
 
     LINES: dict[str, tuple[str, str, str, str]] = {
         "default": (
@@ -745,13 +745,30 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
         self.root.data = data
         return self
 
-    def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
+    def move_cursor(self, node: TreeNode[TreeDataType] | None) -> None:
         """Move the cursor to the given node, or reset cursor.
 
         Args:
             node: A tree node, or None to reset cursor.
         """
         self.cursor_line = -1 if node is None else node._line
+
+    def select_node(self, node: TreeNode[TreeDataType] | None) -> None:
+        """Move the cursor to the given node and select it, or reset cursor.
+
+        Args:
+            node: A tree node to move the cursor to and select, or None to reset cursor.
+        """
+        self.move_cursor(node)
+        if node is not None:
+            self.post_message(Tree.NodeSelected(node))
+
+    @on(NodeSelected)
+    def _expand_node_on_select(self, event: NodeSelected[TreeDataType]) -> None:
+        """When the node is selected, expand the node if `auto_expand` is True."""
+        node = event.node
+        if self.auto_expand:
+            self._toggle_node(node)
 
     def get_node_at_line(self, line_no: int) -> TreeNode[TreeDataType] | None:
         """Get the node for a given line.
@@ -1089,6 +1106,8 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             else:
                 line_style = base_style
 
+            line_style += Style(meta={"line": y})
+
             guides = Text(style=line_style)
             guides_append = guides.append
 
@@ -1124,7 +1143,7 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
                 )
 
             label = self.render_label(line.path[-1], line_style, label_style).copy()
-            label.stylize(Style(meta={"node": line.node._id, "line": y}))
+            label.stylize(Style(meta={"node": line.node._id}))
             guides.append(label)
 
             segments = list(guides.render(self.app.console))
@@ -1231,6 +1250,4 @@ class Tree(Generic[TreeDataType], ScrollView, can_focus=True):
             pass
         else:
             node = line.path[-1]
-            if self.auto_expand:
-                self._toggle_node(node)
-            self.post_message(self.NodeSelected(node))
+            self.post_message(Tree.NodeSelected(node))

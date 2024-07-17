@@ -12,6 +12,7 @@ if typing.TYPE_CHECKING:
     from ..widget import Widget
     from ._button import Button
     from ._checkbox import Checkbox
+    from ._classic_footer import ClassicFooter
     from ._collapsible import Collapsible
     from ._content_switcher import ContentSwitcher
     from ._data_table import DataTable
@@ -49,6 +50,7 @@ if typing.TYPE_CHECKING:
 __all__ = [
     "Button",
     "Checkbox",
+    "ClassicFooter",
     "Collapsible",
     "ContentSwitcher",
     "DataTable",
@@ -70,6 +72,7 @@ __all__ = [
     "ProgressBar",
     "RadioButton",
     "RadioSet",
+    "RichLog",
     "Rule",
     "Select",
     "SelectionList",
@@ -81,7 +84,6 @@ __all__ = [
     "TabPane",
     "Tabs",
     "TextArea",
-    "RichLog",
     "Tooltip",
     "Tree",
     "Welcome",

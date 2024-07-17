@@ -486,3 +486,17 @@ def test_size_with_height():
 def test_size_with_width():
     """Test Size.with_width"""
     assert Size(1, 2).with_width(10) == Size(10, 2)
+
+
+def test_offset_clamp():
+    assert Offset(1, 2).clamp(3, 3) == Offset(1, 2)
+    assert Offset(3, 2).clamp(3, 3) == Offset(2, 2)
+    assert Offset(-3, 2).clamp(3, 3) == Offset(0, 2)
+    assert Offset(5, 4).clamp(3, 3) == Offset(2, 2)
+
+
+def test_size_clamp_offset():
+    assert Size(3, 3).clamp_offset(Offset(1, 2)) == Offset(1, 2)
+    assert Size(3, 3).clamp_offset(Offset(3, 2)) == Offset(2, 2)
+    assert Size(3, 3).clamp_offset(Offset(-3, 2)) == Offset(0, 2)
+    assert Size(3, 3).clamp_offset(Offset(5, 4)) == Offset(2, 2)

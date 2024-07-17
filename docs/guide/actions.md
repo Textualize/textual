@@ -118,8 +118,86 @@ Textual supports the following action namespaces:
 
 - `app` invokes actions on the App.
 - `screen` invokes actions on the screen.
+- `focused` invokes actions on the currently focused widget (if there is one).
 
 In the previous example if you wanted a link to set the background on the app rather than the widget, we could set a link to `app.set_background('red')`.
+
+
+## Dynamic actions
+
+!!! tip "Added in version 0.61.0"
+
+There may be situations where an action is temporarily unavailable due to some internal state within your app.
+For instance, consider an app with a fixed number of pages and actions to go to the next and previous page.
+It doesn't make sense to go to the previous page if we are on the first, or the next page when we are on the last page.
+
+We could easily add this logic to the action methods, but the [footer][textual.widgets.Footer] would still display the keys even if they would have no effect.
+The user may wonder why the app is showing keys that don't appear to work.
+
+We can solve this issue by implementing the [`check_action`][textual.dom.DOMNode.check_action] on our app, screen, or widget.
+This method is called with the name of the action and any parameters, prior to running actions or refreshing the footer.
+It should return one of the following values:
+
+- `True` to show the key and run the action as normal.
+- `False` to hide the key and prevent the action running.
+- `None` to disable the key (show dimmed), and prevent the action running.
+
+Let's write an app to put this into practice:
+
+=== "actions06.py"
+
+    ```python title="actions06.py" hl_lines="27 32 35-43"
+    --8<-- "docs/examples/guide/actions/actions06.py"
+    ```
+
+    1. Prompts the footer to refresh, if bindings change.
+    2. Prompts the footer to refresh, if bindings change.
+    3. Guards the actions from running and also what keys are displayed in the footer.
+
+=== "actions06.tcss"
+
+    ```css title="actions06.tcss"
+    --8<-- "docs/examples/guide/actions/actions06.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/actions/actions06.py"}
+    ```
+
+This app has key bindings for ++n++ and ++p++ to navigate the pages.
+Notice how the keys are hidden from the footer when they would have no effect.
+
+The actions above call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings] to prompt Textual to refresh the footer.
+An alternative to doing this manually is to set `bindings=True` on a [reactive](./reactivity.md), which will refresh the bindings if the reactive changes.
+
+Let's make this change.
+We will also demonstrate what the footer will show if we return `None` from `check_action` (rather than `False`):
+
+
+=== "actions07.py"
+
+    ```python title="actions06.py" hl_lines="17 36 38"
+    --8<-- "docs/examples/guide/actions/actions07.py"
+    ```
+
+    1. The `bindings=True` causes the footer to refresh when `page_no` changes.
+    2. Returning `None` disables the key in the footer rather than hides it
+    3. Returning `None` disables the key in the footer rather than hides it.
+
+=== "actions06.tcss"
+
+    ```css title="actions06.tcss"
+    --8<-- "docs/examples/guide/actions/actions06.tcss"
+    ```
+
+=== "Output"
+
+    ```{.textual path="docs/examples/guide/actions/actions07.py"}
+    ```
+
+Note how the logic is the same but we don't need to explicitly call [`refresh_bindings`][textual.dom.DOMNode.refresh_bindings].
+The change to `check_action` also causes the disabled footer keys to be grayed out, indicating they are temporarily unavailable.
 
 
 ## Builtin actions
@@ -129,16 +207,16 @@ Textual supports the following builtin actions which are defined on the app.
 - [action_add_class][textual.app.App.action_add_class]
 - [action_back][textual.app.App.action_back]
 - [action_bell][textual.app.App.action_bell]
-- [action_check_bindings][textual.app.App.action_check_bindings]
-- [action_focus][textual.app.App.action_focus]
 - [action_focus_next][textual.app.App.action_focus_next]
 - [action_focus_previous][textual.app.App.action_focus_previous]
+- [action_focus][textual.app.App.action_focus]
 - [action_pop_screen][textual.app.App.action_pop_screen]
 - [action_push_screen][textual.app.App.action_push_screen]
 - [action_quit][textual.app.App.action_quit]
 - [action_remove_class][textual.app.App.action_remove_class]
 - [action_screenshot][textual.app.App.action_screenshot]
-- [action_switch_screen][textual.app.App.action_switch_screen]
+- [action_simulate_key][textual.app.App.action_simulate_key]
 - [action_suspend_process][textual.app.App.action_suspend_process]
+- [action_switch_screen][textual.app.App.action_switch_screen]
 - [action_toggle_class][textual.app.App.action_toggle_class]
 - [action_toggle_dark][textual.app.App.action_toggle_dark]

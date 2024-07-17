@@ -17,7 +17,8 @@ from rich.style import Style
 from typing_extensions import TypeAlias
 
 from .._border import normalize_border_value
-from ..color import Color, ColorParseError
+from .._cells import cell_len
+from ..color import TRANSPARENT, Color, ColorParseError
 from ..geometry import NULL_SPACING, Spacing, SpacingDimensions, clamp
 from ._error_tools import friendly_list
 from ._help_text import (
@@ -31,7 +32,7 @@ from ._help_text import (
     string_enum_help_text,
     style_flags_property_help_text,
 )
-from .constants import VALID_STYLE_FLAGS
+from .constants import HATCHES, VALID_STYLE_FLAGS
 from .errors import StyleTypeError, StyleValueError
 from .scalar import (
     NULL_SCALAR,
@@ -48,6 +49,7 @@ from .transition import Transition
 if TYPE_CHECKING:
     from ..canvas import CanvasLineType
     from .._layout import Layout
+    from ..widget import Widget
     from .styles import StylesBase
 
 from .types import AlignHorizontal, AlignVertical, DockEdge, EdgeType
@@ -900,7 +902,7 @@ class ColorProperty:
         """
         return cast(Color, obj.get_rule(self.name, self._default_color))
 
-    def __set__(self, obj: StylesBase, color: Color | str | None):
+    def __set__(self, obj: StylesBase, color: Color | str | None) -> None:
         """Set the Color.
 
         Args:
@@ -946,6 +948,27 @@ class ColorProperty:
             raise StyleValueError(f"Invalid color value {color}")
 
 
+class ScrollbarColorProperty(ColorProperty):
+    """A descriptor to set scrollbar color(s)."""
+
+    def __set__(self, obj: StylesBase, color: Color | str | None) -> None:
+        super().__set__(obj, color)
+
+        if obj.node is None:
+            return
+
+        from ..widget import Widget
+
+        if isinstance(obj.node, Widget):
+            widget = obj.node
+
+            if widget.show_horizontal_scrollbar:
+                widget.horizontal_scrollbar.refresh()
+
+            if widget.show_vertical_scrollbar:
+                widget.vertical_scrollbar.refresh()
+
+
 class StyleFlagsProperty:
     """Descriptor for getting and set style flag properties (e.g. ``bold italic underline``)."""
 
@@ -966,7 +989,7 @@ class StyleFlagsProperty:
         """
         return cast(Style, obj.get_rule(self.name, Style.null()))
 
-    def __set__(self, obj: StylesBase, style_flags: Style | str | None):
+    def __set__(self, obj: StylesBase, style_flags: Style | str | None) -> None:
         """Set the style using a style flag string.
 
         Args:
@@ -1117,3 +1140,30 @@ class AlignProperty:
         horizontal, vertical = value
         setattr(obj, self.horizontal, horizontal)
         setattr(obj, self.vertical, vertical)
+
+
+class HatchProperty:
+    """Property to expose hatch style."""
+
+    def __get__(self, obj: StylesBase, type: type[StylesBase]) -> tuple[str, Color]:
+        return cast("tuple[str, Color]", obj.get_rule("hatch", (" ", TRANSPARENT)))
+
+    def __set__(self, obj: StylesBase, value: tuple[str, Color | str] | None) -> None:
+        _rich_traceback_omit = True
+        if value is None:
+            obj.clear_rule("hatch")
+            return
+        character, color = value
+        if len(character) != 1:
+            try:
+                character = HATCHES[character]
+            except KeyError:
+                raise ValueError(
+                    f"Expected a character or hatch value here; found {character!r}"
+                ) from None
+        if cell_len(character) != 1:
+            raise ValueError("Hatch character must have a cell length of 1")
+        if isinstance(color, str):
+            color = Color.parse(color)
+        hatch = (character, color)
+        obj.set_rule("hatch", hatch)

@@ -42,12 +42,11 @@ from rich.color import ColorType
 from rich.color_triplet import ColorTriplet
 from typing_extensions import Final
 
-from textual.css.scalar import percentage_string_to_float
-from textual.css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
-from textual.suggestions import get_suggestion
-
 from ._color_constants import COLOR_NAME_TO_RGB
+from .css.scalar import percentage_string_to_float
+from .css.tokenize import CLOSE_BRACE, COMMA, DECIMAL, OPEN_BRACE, PERCENT
 from .geometry import clamp
+from .suggestions import get_suggestion
 
 _TRUECOLOR = ColorType.TRUECOLOR
 
@@ -224,6 +223,7 @@ class Color(NamedTuple):
         return color
 
     @property
+    @lru_cache(1024)
     def rich_color(self) -> RichColor:
         """This color encoded in Rich's Color class.
 
@@ -551,25 +551,74 @@ class Color(NamedTuple):
 class Gradient:
     """Defines a color gradient."""
 
-    def __init__(self, *stops: tuple[float, Color]) -> None:
+    def __init__(self, *stops: tuple[float, Color | str], quality: int = 200) -> None:
         """Create a color gradient that blends colors to form a spectrum.
 
-        A gradient is defined by a sequence of "stops" consisting of a float and a color.
-        The stop indicate the color at that point on a spectrum between 0 and 1.
+        A gradient is defined by a sequence of "stops" consisting of a tuple containing a float and a color.
+        The stop indicates the color at that point on a spectrum between 0 and 1.
+        Colors may be given as a [Color][textual.color.Color] instance, or a string that
+        can be parsed into a Color (with [Color.parse][textual.color.Color.parse]).
+
+        The quality of the argument defines the number of _steps_ in the gradient.
+        200 was chosen so that there was no obvious banding in [LinearGradient][textual.renderables.gradient.LinearGradient].
+        Higher values are unlikely to yield any benefit, but lower values may result in quicker rendering.
 
         Args:
-            stops: A colors stop.
+            stops: Color stops.
+            quality: The number of steps in the gradient.
 
         Raises:
             ValueError: If any stops are missing (must be at least a stop for 0 and 1).
         """
-        self._stops = sorted(stops)
+        parse = Color.parse
+        self._stops = sorted(
+            [
+                (
+                    (position, parse(color))
+                    if isinstance(color, str)
+                    else (position, color)
+                )
+                for position, color in stops
+            ]
+        )
         if len(stops) < 2:
             raise ValueError("At least 2 stops required.")
         if self._stops[0][0] != 0.0:
             raise ValueError("First stop must be 0.")
         if self._stops[-1][0] != 1.0:
             raise ValueError("Last stop must be 1.")
+        self._quality = quality
+        self._colors: list[Color] | None = None
+        self._rich_colors: list[RichColor] | None = None
+
+    @property
+    def colors(self) -> list[Color]:
+        """A list of colors in the gradient."""
+        position = 0
+        quality = self._quality
+
+        if self._colors is None:
+            colors: list[Color] = []
+            add_color = colors.append
+            (stop1, color1), (stop2, color2) = self._stops[0:2]
+            for step_position in range(quality):
+                step = step_position / (quality - 1)
+                while step > stop2:
+                    position += 1
+                    (stop1, color1), (stop2, color2) = self._stops[
+                        position : position + 2
+                    ]
+                add_color(color1.blend(color2, (step - stop1) / (stop2 - stop1)))
+            self._colors = colors
+        assert len(self._colors) == self._quality
+        return self._colors
+
+    @property
+    def rich_colors(self) -> list[RichColor]:
+        """A list of colors in the gradient (for the Rich library)."""
+        if self._rich_colors is None:
+            self._rich_colors = [color.rich_color for color in self.colors]
+        return self._rich_colors
 
     def get_color(self, position: float) -> Color:
         """Get a color from the gradient at a position between 0 and 1.
@@ -580,17 +629,26 @@ class Gradient:
             position: A number between 0 and 1, where 0 is the first stop, and 1 is the last.
 
         Returns:
-            A color.
+            A Textual color.
         """
-        # TODO: consider caching
-        position = clamp(position, 0.0, 1.0)
-        for (stop1, color1), (stop2, color2) in zip(self._stops, self._stops[1:]):
-            if stop2 >= position >= stop1:
-                return color1.blend(
-                    color2,
-                    (position - stop1) / (stop2 - stop1),
-                )
-        raise AssertionError("Can't get here if `_stops` is valid")
+        quality = self._quality - 1
+        color_index = int(clamp(position * quality, 0, quality))
+        return self.colors[color_index]
+
+    def get_rich_color(self, position: float) -> RichColor:
+        """Get a (Rich) color from the gradient at a position between 0 and 1.
+
+        Positions that are between stops will return a blended color.
+
+        Args:
+            position: A number between 0 and 1, where 0 is the first stop, and 1 is the last.
+
+        Returns:
+            A (Rich) color.
+        """
+        quality = self._quality - 1
+        color_index = int(clamp(position * quality, 0, quality))
+        return self.rich_colors[color_index]
 
 
 # Color constants
@@ -598,6 +656,8 @@ WHITE: Final = Color(255, 255, 255)
 """A constant for pure white."""
 BLACK: Final = Color(0, 0, 0)
 """A constant for pure black."""
+TRANSPARENT: Final = Color.parse("transparent")
+"""A constant for transparent."""
 
 
 def rgb_to_lab(rgb: Color) -> Lab:

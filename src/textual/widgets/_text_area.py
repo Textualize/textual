@@ -8,6 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import TYPE_CHECKING, ClassVar, Iterable, Optional, Sequence, Tuple
 
+from rich.console import RenderableType
 from rich.style import Style
 from rich.text import Text
 from typing_extensions import Literal
@@ -300,6 +301,9 @@ TextArea {
 
     Changing this value will immediately re-render the `TextArea`."""
 
+    line_number_start: Reactive[int] = reactive(1, init=False)
+    """The line number the first line should be."""
+
     indent_width: Reactive[int] = reactive(4, init=False)
     """The width of tabs or the multiple of spaces to align to on pressing the `tab` key.
 
@@ -369,11 +373,13 @@ TextArea {
         tab_behavior: Literal["focus", "indent"] = "focus",
         read_only: bool = False,
         show_line_numbers: bool = False,
+        line_number_start: int = 1,
         max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Construct a new `TextArea`.
 
@@ -385,11 +391,13 @@ TextArea {
             tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             read_only: Enable read-only mode. This prevents edits using the keyboard.
             show_line_numbers: Show line numbers on the left edge.
+            line_number_start: What line number to start on.
             max_checkpoints: The maximum number of undo history checkpoints to retain.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -452,11 +460,15 @@ TextArea {
         self.set_reactive(TextArea.soft_wrap, soft_wrap)
         self.set_reactive(TextArea.read_only, read_only)
         self.set_reactive(TextArea.show_line_numbers, show_line_numbers)
+        self.set_reactive(TextArea.line_number_start, line_number_start)
 
         self.tab_behavior = tab_behavior
 
         # When `app.dark` is toggled, reset the theme (since it caches values).
         self.watch(self.app, "dark", self._app_dark_toggled, init=False)
+
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     @classmethod
     def code_editor(
@@ -469,11 +481,13 @@ TextArea {
         tab_behavior: Literal["focus", "indent"] = "indent",
         read_only: bool = False,
         show_line_numbers: bool = True,
+        line_number_start: int = 1,
         max_checkpoints: int = 50,
         name: str | None = None,
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> TextArea:
         """Construct a new `TextArea` with sensible defaults for editing code.
 
@@ -487,10 +501,12 @@ TextArea {
             soft_wrap: Enable soft wrapping.
             tab_behavior: If 'focus', pressing tab will switch focus. If 'indent', pressing tab will insert a tab.
             show_line_numbers: Show line numbers on the left edge.
+            line_number_start: What line number to start on.
             name: The name of the `TextArea` widget.
             id: The ID of the widget, used to refer to it from Textual CSS.
             classes: One or more Textual CSS compatible class names separated by spaces.
             disabled: True if the widget is disabled.
+            tooltip: Optional tooltip
         """
         return cls(
             text,
@@ -500,11 +516,13 @@ TextArea {
             tab_behavior=tab_behavior,
             read_only=read_only,
             show_line_numbers=show_line_numbers,
+            line_number_start=line_number_start,
             max_checkpoints=max_checkpoints,
             name=name,
             id=id,
             classes=classes,
             disabled=disabled,
+            tooltip=tooltip,
         )
 
     @staticmethod
@@ -679,6 +697,11 @@ TextArea {
 
     def _watch_show_line_numbers(self) -> None:
         """The line number gutter contributes to virtual size, so recalculate."""
+        self._rewrap_and_refresh_virtual_size()
+        self.scroll_cursor_visible()
+
+    def _watch_line_number_start(self) -> None:
+        """The line number gutter max size might change and contributes to virtual size, so recalculate."""
         self._rewrap_and_refresh_virtual_size()
         self.scroll_cursor_visible()
 
@@ -969,6 +992,21 @@ TextArea {
             width, height = self.document.get_size(self.indent_width)
             self.virtual_size = Size(width + self.gutter_width + 1, height)
 
+    def get_line(self, line_index: int) -> Text:
+        """Retrieve the line at the given line index.
+
+        You can stylize the Text object returned here to apply additional
+        styling to TextArea content.
+
+        Args:
+            line_index: The index of the line.
+
+        Returns:
+            A `rich.Text` object containing the requested line.
+        """
+        line_string = self.document.get_line(line_index)
+        return Text(line_string, end="")
+
     def render_line(self, y: int) -> Strip:
         """Render a single line of the TextArea. Called by Textual.
 
@@ -982,7 +1020,6 @@ TextArea {
         if theme:
             theme.apply_css(self)
 
-        document = self.document
         wrapped_document = self.wrapped_document
         scroll_x, scroll_y = self.scroll_offset
 
@@ -1006,9 +1043,7 @@ TextArea {
 
         line_index, section_offset = line_info
 
-        # Get the line from the Document.
-        line_string = document.get_line(line_index)
-        line = Text(line_string, end="")
+        line = self.get_line(line_index)
         line_character_count = len(line)
         line.tab_size = self.indent_width
         line.set_length(line_character_count + 1)  # space at end for cursor
@@ -1058,7 +1093,7 @@ TextArea {
 
         highlights = self._highlights
         if highlights and theme:
-            line_bytes = _utf8_encode(line_string)
+            line_bytes = _utf8_encode(line.plain)
             byte_to_codepoint = build_byte_to_codepoint_dict(line_bytes)
             get_highlight_from_theme = theme.syntax_styles.get
             line_highlights = highlights[line_index]
@@ -1121,7 +1156,9 @@ TextArea {
                 gutter_style = theme.gutter_style
 
             gutter_width_no_margin = gutter_width - 2
-            gutter_content = str(line_index + 1) if section_offset == 0 else ""
+            gutter_content = (
+                str(line_index + self.line_number_start) if section_offset == 0 else ""
+            )
             gutter = Text(
                 f"{gutter_content:>{gutter_width_no_margin}}  ",
                 style=gutter_style or "",
@@ -1446,7 +1483,8 @@ TextArea {
         # The longest number in the gutter plus two extra characters: `│ `.
         gutter_margin = 2
         gutter_width = (
-            len(str(self.document.line_count)) + gutter_margin
+            len(str(self.document.line_count - 1 + self.line_number_start))
+            + gutter_margin
             if self.show_line_numbers
             else 0
         )
@@ -1501,17 +1539,18 @@ TextArea {
 
     def _end_mouse_selection(self) -> None:
         """Finalize the selection that has been made using the mouse."""
-        self._selecting = False
-        self.release_mouse()
-        self.record_cursor_width()
-        self._restart_blink()
+        if self._selecting:
+            self._selecting = False
+            self.release_mouse()
+            self.record_cursor_width()
+            self._restart_blink()
 
     async def _on_mouse_up(self, event: events.MouseUp) -> None:
         """Finalize the selection that has been made using the mouse."""
         self._end_mouse_selection()
 
     async def _on_hide(self, event: events.Hide) -> None:
-        """Finalize the selection that has been made using the mouse when thew widget is hidden."""
+        """Finalize the selection that has been made using the mouse when the widget is hidden."""
         self._end_mouse_selection()
 
     async def _on_paste(self, event: events.Paste) -> None:

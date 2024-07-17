@@ -10,16 +10,15 @@ async def test_issue_4248() -> None:
     bumps = 0
 
     class ActionApp(App[None]):
-
         def compose(self) -> ComposeResult:
             yield Label("[@click]click me and crash[/]", id="nothing")
             yield Label("[@click=]click me and crash[/]", id="no-params")
             yield Label("[@click=()]click me and crash[/]", id="empty-params")
             yield Label("[@click=foobar]click me[/]", id="unknown-sans-parens")
             yield Label("[@click=foobar()]click me[/]", id="unknown-with-parens")
-            yield Label("[@click=bump]click me[/]", id="known-sans-parens")
-            yield Label("[@click=bump()]click me[/]", id="known-empty-parens")
-            yield Label("[@click=bump(100)]click me[/]", id="known-with-param")
+            yield Label("[@click=app.bump]click me[/]", id="known-sans-parens")
+            yield Label("[@click=app.bump()]click me[/]", id="known-empty-parens")
+            yield Label("[@click=app.bump(100)]click me[/]", id="known-with-param")
 
         def action_bump(self, by_value: int = 1) -> None:
             nonlocal bumps

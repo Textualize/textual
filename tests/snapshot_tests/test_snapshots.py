@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 
 from tests.snapshot_tests.language_snippets import SNIPPETS
+from textual.pilot import Pilot
 from textual.widgets.text_area import Selection, BUILTIN_LANGUAGES
 from textual.widgets import RichLog, TextArea, Input, Button
 from textual.widgets.text_area import TextAreaTheme
@@ -1000,6 +1001,12 @@ def test_text_area_wrapping_and_folding(snap_compare):
     )
 
 
+def test_text_area_line_number_start(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "text_area_line_number_start.py", terminal_size=(32, 8)
+    )
+
+
 def test_digits(snap_compare) -> None:
     assert snap_compare(SNAPSHOT_APPS_DIR / "digits.py")
 
@@ -1188,7 +1195,7 @@ def test_example_color_command(snap_compare):
     """Test the color_command example."""
     assert snap_compare(
         EXAMPLES_DIR / "color_command.py",
-        press=["ctrl+backslash", "r", "e", "d", "down", "down", "enter"],
+        press=["ctrl+backslash", "r", "e", "d", "down", "enter"],
     )
 
 
@@ -1236,7 +1243,7 @@ def test_example_pride(snap_compare):
     """Test the pride example."""
     assert snap_compare(EXAMPLES_DIR / "pride.py")
 
-    
+
 def test_button_with_console_markup(snap_compare):
     """Regression test for https://github.com/Textualize/textual/issues/4328"""
     assert snap_compare(SNAPSHOT_APPS_DIR / "button_markup.py")
@@ -1249,3 +1256,124 @@ def test_width_100(snap_compare):
 
 def test_button_with_multiline_label(snap_compare):
     assert snap_compare(SNAPSHOT_APPS_DIR / "button_multiline_label.py")
+
+
+def test_margin_multiple(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "margin_multiple.py")
+
+
+def test_dynamic_bindings(snap_compare):
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "dynamic_bindings.py", press=["a", "b", "c"]
+    )
+
+
+def test_grid_gutter(snap_compare):
+    # https://github.com/Textualize/textual/issues/4522
+    assert snap_compare(SNAPSHOT_APPS_DIR / "grid_gutter.py")
+
+
+def test_multi_keys(snap_compare):
+    # https://github.com/Textualize/textual/issues/4542
+    assert snap_compare(SNAPSHOT_APPS_DIR / "multi_keys.py")
+
+
+def test_data_table_in_tabs(snap_compare):
+    assert snap_compare(SNAPSHOT_APPS_DIR / "data_table_tabs.py")
+
+
+def test_auto_tab_active(snap_compare):
+    # https://github.com/Textualize/textual/issues/4593
+    assert snap_compare(SNAPSHOT_APPS_DIR / "auto_tab_active.py", press=["space"])
+
+
+def test_hatch(snap_compare):
+    """Test hatch styles."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "hatch.py")
+
+
+def test_rules(snap_compare):
+    """Test rules."""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "rules.py")
+
+
+def test_grid_auto(snap_compare):
+    """Test grid with keyline and auto-dimension."""
+    # https://github.com/Textualize/textual/issues/4678
+    assert snap_compare(SNAPSHOT_APPS_DIR / "grid_auto.py")
+
+
+def test_footer_compact(snap_compare):
+    """Test Footer in the compact style"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_toggle_compact.py")
+
+
+def test_footer_compact_with_hover(snap_compare):
+    """Test Footer in the compact style when the mouse is hovering over a keybinding"""
+
+    async def run_before(pilot) -> None:
+        await pilot.hover("Footer", offset=(0, 0))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", run_before=run_before
+    )
+
+
+def test_footer_standard_after_reactive_change(snap_compare):
+    """Test Footer in the standard style after `compact` reactive change"""
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", press=["ctrl+t"]
+    )
+
+
+def test_footer_standard_with_hover(snap_compare):
+    """Test Footer in the standard style when the mouse is hovering over a keybinding"""
+
+    async def run_before(pilot) -> None:
+        await pilot.press("ctrl+t")
+        await pilot.hover("Footer", offset=(0, 0))
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "footer_toggle_compact.py", run_before=run_before
+    )
+
+
+def test_footer_classic_styling(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4557"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "footer_classic_styling.py")
+
+
+def test_option_list_scrolling_with_multiline_options(snap_compare):
+    # https://github.com/Textualize/textual/issues/4705
+    assert snap_compare(WIDGET_EXAMPLES_DIR / "option_list_tables.py", press=["up"])
+
+
+def test_bindings_screen_overrides_show(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/4382"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "bindings_screen_overrides_show.py")
+
+
+def test_scroll_visible_with_margin(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/2181"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "scroll_visible_margin.py", press=["x"])
+
+
+def test_programmatic_disable_button(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3130"""
+
+    async def run_before(pilot: Pilot) -> None:
+        await pilot.hover("#disable-btn")
+        await pilot.press("space")
+
+    assert snap_compare(
+        SNAPSHOT_APPS_DIR / "programmatic_disable_button.py", run_before=run_before
+    )
+
+def test_toggle_style_order(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3421"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "toggle_style_order.py")
+
+def test_component_text_opacity(snap_compare):
+    """Regression test for https://github.com/Textualize/textual/issues/3413"""
+    assert snap_compare(SNAPSHOT_APPS_DIR / "component_text_opacity.py")
+

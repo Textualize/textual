@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING, Any
 import rich.repr
 
 from .. import events
+from .._loop import loop_last
+from .._parser import ParseError
 from .._xterm_parser import XTermParser
 from ..driver import Driver
 from ..geometry import Size
@@ -46,6 +48,7 @@ class LinuxDriver(Driver):
         super().__init__(app, debug=debug, mouse=mouse, size=size)
         self._file = sys.__stderr__
         self.fileno = sys.__stdin__.fileno()
+        self.input_tty = sys.__stdin__.isatty()
         self.attrs_before: list[Any] | None = None
         self.exit_event = Event()
         self._key_thread: Thread | None = None
@@ -115,6 +118,7 @@ class LinuxDriver(Driver):
         """Enable reporting of mouse events."""
         if not self._mouse:
             return
+
         write = self.write
         write("\x1b[?1000h")  # SET_VT200_MOUSE
         write("\x1b[?1003h")  # SET_ANY_EVENT_MOUSE
@@ -192,7 +196,7 @@ class LinuxDriver(Driver):
 
         loop = asyncio.get_running_loop()
 
-        def send_size_event():
+        def send_size_event() -> None:
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
@@ -234,16 +238,23 @@ class LinuxDriver(Driver):
             # defaults to ASCII EOT = Ctrl-D = 4.)
             newattr[tty.CC][termios.VMIN] = 1
 
-            termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
+            try:
+                termios.tcsetattr(self.fileno, termios.TCSANOW, newattr)
+            except termios.error:
+                pass
 
         self.write("\x1b[?25l")  # Hide cursor
-        self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[?1004h")  # Enable FocusIn/FocusOut.
+        self.write("\x1b[>1u")  # https://sw.kovidgoyal.net/kitty/keyboard-protocol/
         self.flush()
         self._key_thread = Thread(target=self._run_input_thread)
         send_size_event()
         self._key_thread.start()
         self._request_terminal_sync_mode_support()
         self._enable_bracketed_paste()
+
+        # Appears to fix an issue enabling mouse support in iTerm 3.5.0
+        self._enable_mouse_support()
 
         # If we need to ask the app to signal that we've come back from a
         # SIGTSTP...
@@ -259,6 +270,8 @@ class LinuxDriver(Driver):
         # Terminals should ignore this sequence if not supported.
         # Apple terminal doesn't, and writes a single 'p' in to the terminal,
         # so we will make a special case for Apple terminal (which doesn't support sync anyway).
+        if not self.input_tty:
+            return
         if os.environ.get("TERM_PROGRAM", "") != "Apple_Terminal":
             self.write("\033[?2026$p")
             self.flush()
@@ -304,8 +317,11 @@ class LinuxDriver(Driver):
                 if self._key_thread is not None:
                     self._key_thread.join()
                 self.exit_event.clear()
-                termios.tcflush(self.fileno, termios.TCIFLUSH)
-        except Exception as error:
+                try:
+                    termios.tcflush(self.fileno, termios.TCIFLUSH)
+                except termios.error:
+                    pass
+        except Exception:
             # TODO: log this
             pass
 
@@ -320,10 +336,14 @@ class LinuxDriver(Driver):
             except termios.error:
                 pass
 
-            # Alt screen false, show cursor
-            self.write("\x1b[?1049l" + "\x1b[?25h")
-            self.write("\033[?1004l")  # Disable FocusIn/FocusOut.
-            self.flush()
+        # Alt screen false, show cursor
+        self.write("\x1b[?1049l")
+        self.write("\x1b[?25h")
+        self.write("\x1b[?1004l")  # Disable FocusIn/FocusOut.
+        self.write(
+            "\x1b[<u"
+        )  # Disable https://sw.kovidgoyal.net/kitty/keyboard-protocol/
+        self.flush()
 
     def close(self) -> None:
         """Perform cleanup."""
@@ -356,8 +376,8 @@ class LinuxDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.01):
-                if events & EVENT_READ:
+            for _key, selector_events in selector.select(0.1):
+                if selector_events & EVENT_READ:
                     return True
             return False
 
@@ -368,15 +388,36 @@ class LinuxDriver(Driver):
         decode = utf8_decoder
         read = os.read
 
+        def process_selector_events(
+            selector_events: list[tuple[selectors.SelectorKey, int]],
+            final: bool = False,
+        ) -> None:
+            """Process events from selector.
+
+            Args:
+                selector_events: List of selector events.
+                final: True if this is the last call.
+
+            """
+            for last, (_selector_key, mask) in loop_last(selector_events):
+                if mask & EVENT_READ:
+                    unicode_data = decode(read(fileno, 1024 * 4), final=final and last)
+                    if not unicode_data:
+                        # This can occur if the stdin is piped
+                        break
+                    for event in feed(unicode_data):
+                        self.process_event(event)
+
         try:
             while not self.exit_event.is_set():
-                selector_events = selector.select(0.1)
-                for _selector_key, mask in selector_events:
-                    if mask & EVENT_READ:
-                        unicode_data = decode(
-                            read(fileno, 1024), final=self.exit_event.is_set()
-                        )
-                        for event in feed(unicode_data):
-                            self.process_event(event)
+                process_selector_events(selector.select(0.1))
+
+            process_selector_events(selector.select(0.1), final=True)
+
         finally:
             selector.close()
+            try:
+                for event in feed(""):
+                    pass
+            except ParseError:
+                pass

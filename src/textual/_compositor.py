@@ -1000,12 +1000,17 @@ class Compositor:
                     )
 
     def render_update(
-        self, full: bool = False, screen_stack: list[Screen] | None = None
+        self,
+        full: bool = False,
+        screen_stack: list[Screen] | None = None,
+        simplify: bool = False,
     ) -> RenderableType | None:
         """Render an update renderable.
 
         Args:
+            full: Perform a full update if `True`, otherwise a partial update.
             screen_stack: Screen stack list. Defaults to None.
+            simplify: Simplify segments.
 
         Returns:
             A renderable for the update, or `None` if no update was required.
@@ -1014,7 +1019,7 @@ class Compositor:
         visible_screen_stack.set([] if screen_stack is None else screen_stack)
         screen_region = self.size.region
         if full or screen_region in self._dirty_regions:
-            return self.render_full_update()
+            return self.render_full_update(simplify=simplify)
         else:
             return self.render_partial_update()
 
@@ -1038,8 +1043,11 @@ class Compositor:
         strips = self.render_strips(size)
         return InlineUpdate(strips, clear=clear)
 
-    def render_full_update(self) -> LayoutUpdate:
+    def render_full_update(self, simplify: bool = False) -> LayoutUpdate:
         """Render a full update.
+
+        Args:
+            simplify: Simplify the segments (combine contiguous segments).
 
         Returns:
             A LayoutUpdate renderable.
@@ -1048,7 +1056,11 @@ class Compositor:
         self._dirty_regions.clear()
         crop = screen_region
         chops = self._render_chops(crop, lambda y: True)
-        render_strips = [Strip.join(chop.values()) for chop in chops]
+        if simplify:
+            render_strips = [Strip.join(chop.values()).simplify() for chop in chops]
+        else:
+            render_strips = [Strip.join(chop.values()) for chop in chops]
+
         return LayoutUpdate(render_strips, screen_region)
 
     def render_partial_update(self) -> ChopsUpdate | None:

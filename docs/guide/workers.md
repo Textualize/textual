@@ -10,6 +10,9 @@ There are many interesting uses for Textual which require reading data from an i
 When an app requests data from the network it is important that it doesn't prevent the user interface from updating.
 In other words, the requests should be concurrent (happen at the same time) as the UI updates.
 
+This is also true for anything that could take a significant time (more than a few milliseconds) to complete.
+For instance, reading from a [subprocess](https://docs.python.org/3/library/asyncio-subprocess.html#asyncio-subprocess) or doing compute heavy work.
+
 Managing this concurrency is a tricky topic, in any language or framework.
 Even for experienced developers, there are gotchas which could make your app lock up or behave oddly.
 Textual's Worker API makes concurrency far less error prone and easier to reason about.

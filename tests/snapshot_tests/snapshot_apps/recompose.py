@@ -7,7 +7,6 @@ from textual.widgets import Digits, ProgressBar
 
 
 class Numbers(Vertical):
-
     DEFAULT_CSS = """
     Digits {
         border: red;
@@ -25,7 +24,6 @@ class Numbers(Vertical):
 
 
 class Progress(Horizontal):
-
     progress = reactive(0, recompose=True)
 
     def compose(self) -> ComposeResult:
@@ -35,7 +33,6 @@ class Progress(Horizontal):
 
 
 class RecomposeApp(App):
-
     start = reactive(0, recompose=True)
     end = reactive(5, recompose=True)
     progress: reactive[int] = reactive(0, recompose=True)

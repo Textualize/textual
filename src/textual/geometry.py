@@ -151,6 +151,19 @@ class Offset(NamedTuple):
         distance: float = ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ** 0.5
         return distance
 
+    def clamp(self, width: int, height: int) -> Offset:
+        """Clamp the offset to fit within a rectangle of width x height.
+
+        Args:
+            width: Width to clamp.
+            height: Height to clamp.
+
+        Returns:
+            A new offset.
+        """
+        x, y = self
+        return Offset(clamp(x, 0, width - 1), clamp(y, 0, height - 1))
+
 
 class Size(NamedTuple):
     """The dimensions (width and height) of a rectangular region.
@@ -267,6 +280,17 @@ class Size(NamedTuple):
             )
         width, height = self
         return width > x >= 0 and height > y >= 0
+
+    def clamp_offset(self, offset: Offset) -> Offset:
+        """Clamp an offset to fit within the width x height.
+
+        Args:
+            offset: An offset.
+
+        Returns:
+            A new offset that will fit inside the dimensions defined in the Size.
+        """
+        return offset.clamp(self.width, self.height)
 
 
 class Region(NamedTuple):
@@ -982,7 +1006,7 @@ class Region(NamedTuple):
 
 
 class Spacing(NamedTuple):
-    """The spacing around a renderable, such as padding and border.
+    """Stores spacing around a widget, such as padding and border.
 
     Spacing is defined by four integers for the space at the top, right, bottom, and left of a region.
 

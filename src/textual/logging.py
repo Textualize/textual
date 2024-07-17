@@ -20,7 +20,7 @@ class TextualHandler(Handler):
 
         Args:
             stderr: Log to stderr when there is no active app.
-            stdout: Log to stdout when there is not active app.
+            stdout: Log to stdout when there is no active app.
         """
         super().__init__()
         self._stderr = stderr

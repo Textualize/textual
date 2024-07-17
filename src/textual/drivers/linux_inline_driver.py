@@ -108,7 +108,7 @@ class LinuxInlineDriver(Driver):
         """
         try:
             self.run_input_thread()
-        except BaseException as error:
+        except BaseException:
             import rich.traceback
 
             self._app.call_later(
@@ -127,7 +127,7 @@ class LinuxInlineDriver(Driver):
         def more_data() -> bool:
             """Check if there is more data to parse."""
 
-            for _key, events in selector.select(0.01):
+            for _key, events in selector.select(0.1):
                 if events & EVENT_READ:
                     return True
             return False
@@ -158,22 +158,32 @@ class LinuxInlineDriver(Driver):
     def start_application_mode(self) -> None:
         loop = asyncio.get_running_loop()
 
-        def send_size_event() -> None:
+        def send_size_event(clear: bool = False) -> None:
+            """Send the resize event, optionally clearing the screen.
+
+            Args:
+                clear: Clear the screen.
+            """
             terminal_size = self._get_terminal_size()
             width, height = terminal_size
             textual_size = Size(width, height)
             event = events.Resize(textual_size, textual_size)
+
+            async def update_size() -> None:
+                """Update the screen size."""
+                if clear:
+                    self.write("\x1b[2J")
+                await self._app._post_message(event)
+
             asyncio.run_coroutine_threadsafe(
-                self._app._post_message(event),
+                update_size(),
                 loop=loop,
             )
 
-            def on_terminal_resize(signum, stack) -> None:
-                self.write("\x1b[2J")
-                self.flush()
-                send_size_event()
+        def on_terminal_resize(signum, stack) -> None:
+            send_size_event(clear=True)
 
-            signal.signal(signal.SIGWINCH, on_terminal_resize)
+        signal.signal(signal.SIGWINCH, on_terminal_resize)
 
         self.write("\x1b[?25l")  # Hide cursor
         self.write("\033[?1004h")  # Enable FocusIn/FocusOut.
@@ -265,6 +275,10 @@ class LinuxInlineDriver(Driver):
         except Exception as error:
             # TODO: log this
             pass
+
+    def flush(self):
+        """Flush any buffered data."""
+        self._file.flush()
 
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""

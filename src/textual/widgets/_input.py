@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar, Iterable
 
 from rich.cells import cell_len, get_character_cell_size
-from rich.console import Console, ConsoleOptions
+from rich.console import Console, ConsoleOptions, RenderableType
 from rich.console import RenderResult as RichRenderResult
 from rich.highlighter import Highlighter
 from rich.segment import Segment
@@ -257,6 +257,7 @@ class Input(Widget, can_focus=True):
         id: str | None = None,
         classes: str | None = None,
         disabled: bool = False,
+        tooltip: RenderableType | None = None,
     ) -> None:
         """Initialise the `Input` widget.
 
@@ -279,6 +280,7 @@ class Input(Widget, can_focus=True):
             id: Optional ID for the widget.
             classes: Optional initial classes for the widget.
             disabled: Whether the input is disabled or not.
+            tooltip: Optional tooltip.
         """
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
 
@@ -335,6 +337,8 @@ class Input(Widget, can_focus=True):
 
         if value is not None:
             self.value = value
+        if tooltip is not None:
+            self.tooltip = tooltip
 
     def _position_to_cell(self, position: int) -> int:
         """Convert an index within the value to cell position."""

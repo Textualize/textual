@@ -192,11 +192,11 @@ async def test_cursor_movement_with_home_pagedown_etc(show_header):
         await pilot.pause()
         assert table.cursor_coordinate == Coordinate(0, 1)
 
-        await pilot.press("end")
-        await pilot.pause()
-        assert table.cursor_coordinate == Coordinate(2, 1)
-
         await pilot.press("home")
+        await pilot.pause()
+        assert table.cursor_coordinate == Coordinate(0, 0)
+
+        await pilot.press("end")
         await pilot.pause()
         assert table.cursor_coordinate == Coordinate(0, 1)
 
@@ -253,6 +253,16 @@ async def test_add_row_duplicate_key():
         table.add_row("1", key="1")
         with pytest.raises(DuplicateKey):
             table.add_row("2", key="1")  # Duplicate row key
+
+
+async def test_add_row_too_many_values():
+    app = DataTableApp()
+    async with app.run_test():
+        table = app.query_one(DataTable)
+        table.add_column("A")
+        table.add_row("1", key="1")
+        with pytest.raises(ValueError):
+            table.add_row("1", "2")
 
 
 async def test_add_column_duplicate_key():
@@ -1438,7 +1448,7 @@ async def test_clicking_border_link_doesnt_crash():
 
         def on_mount(self) -> None:
             table = self.query_one(DataTable)
-            table.border_title = "[@click=test_link]Border Link[/]"
+            table.border_title = "[@click=app.test_link]Border Link[/]"
 
         def action_test_link(self) -> None:
             self.link_clicked = True
