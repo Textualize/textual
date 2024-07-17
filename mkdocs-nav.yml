@@ -208,6 +208,7 @@ nav:
       - "api/screen.md"
       - "api/scrollbar.md"
       - "api/scroll_view.md"
+      - "api/signal.md"
       - "api/strip.md"
       - "api/suggester.md"
       - "api/system_commands_source.md"
