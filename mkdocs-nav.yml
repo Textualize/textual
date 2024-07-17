@@ -187,7 +187,6 @@ nav:
       - "api/command.md"
       - "api/constants.md"
       - "api/containers.md"
-      - "api/content_switcher.md"
       - "api/coordinate.md"
       - "api/dom_node.md"
       - "api/events.md"

@@ -1,3 +1,7 @@
+---
+title: "textual.app"
+---
+
 ::: textual.app
     options:
         filters:

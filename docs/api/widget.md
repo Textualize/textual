@@ -1,3 +1,8 @@
+---
+title: "textual.widget"
+---
+
+
 ::: textual.widget
     options:
         filters:
