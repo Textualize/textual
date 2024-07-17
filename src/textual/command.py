@@ -421,6 +421,8 @@ class CommandInput(Input):
 class CommandPalette(SystemModalScreen[CallbackType]):
     """The Textual command palette."""
 
+    AUTO_FOCUS = "CommandInput"
+
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "command-palette--help-text",
         "command-palette--highlight",
@@ -625,9 +627,7 @@ class CommandPalette(SystemModalScreen[CallbackType]):
         with Vertical():
             with Horizontal(id="--input"):
                 yield SearchIcon()
-                input = CommandInput(placeholder="Search for commands…")
-                input.focus()
-                yield input
+                yield CommandInput(placeholder="Search for commands…")
                 if not self.run_on_select:
                     yield Button("\u25b6")
             with Vertical(id="--results"):
