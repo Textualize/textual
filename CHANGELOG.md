@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 - Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
 - Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
+- `SelectionList.SelectionToggled` will now be sent for each option when a bulk toggle is performed (e.g. `toggle_all`). Previously no messages were sent at all. https://github.com/Textualize/textual/pull/4759
 
 ### Changed
 
