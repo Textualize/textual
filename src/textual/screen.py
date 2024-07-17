@@ -705,8 +705,8 @@ class Screen(Generic[ScreenResultType], Widget):
             # No focus, so blur currently focused widget if it exists
             if self.focused is not None:
                 self.focused.post_message(events.Blur())
-                self.focused = None
                 blurred = self.focused
+                self.focused = None
             self.log.debug("focus was removed")
         elif widget.focusable:
             if self.focused != widget:
