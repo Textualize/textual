@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `TreeNodeSelected` messages are now posted before `TreeNodeExpanded` messages
 when an expandable node is selected https://github.com/Textualize/textual/pull/4753
 - `Markdown.LinkClicked.href` is now automatically unquoted https://github.com/Textualize/textual/pull/4749
+- The mouse cursor hover effect of `Tree` and `DirectoryTree` will no longer linger after the mouse leaves the widget https://github.com/Textualize/textual/pull/4766
 
 
 ## [0.72.0] - 2024-07-09
