@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 - Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
 - Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
+- Fixed message handlers not working when using message types as class variables https://github.com/Textualize/textual/pull/3940
 
 ### Changed
 
@@ -656,7 +657,6 @@ when an expandable node is selected https://github.com/Textualize/textual/pull/4
 - `Widget.move_child` would break if `before`/`after` is set to the index of the widget in `child` https://github.com/Textualize/textual/issues/1743
 - Fixed auto width text not processing markup https://github.com/Textualize/textual/issues/3918
 - Fixed `Tree.clear` not retaining the root's expanded state https://github.com/Textualize/textual/issues/3557
-- Fixed message handlers sometimes not working when using message types as class variables https://github.com/Textualize/textual/pull/3940
 
 ### Changed
 
