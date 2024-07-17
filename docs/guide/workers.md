@@ -100,7 +100,7 @@ You can also create workers which will *not* immediately exit on exception, by s
 
 ### Worker lifetime
 
-Workers are managed by a single [WorkerManager][textual._worker_manager.WorkerManager] instance, which you can access via `app.workers`.
+Workers are managed by a single [WorkerManager][textual.worker_manager.WorkerManager] instance, which you can access via `app.workers`.
 This is a container-like object which you iterate over to see your active workers.
 
 Workers are tied to the DOM node (widget, screen, or app) where they are created.
