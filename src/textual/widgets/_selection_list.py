@@ -202,6 +202,16 @@ class SelectionList(Generic[SelectionType], OptionList):
     class SelectionToggled(SelectionMessage[MessageSelectionType]):
         """Message sent when a selection is toggled.
 
+        This is only sent when the value is *explicitly* toggled e.g.
+        via `toggle` or `toggle_all`, or via user interaction.
+        If you programmatically set a value to be selected, this message will
+        not be sent, even if it happens to be the opposite of what was
+        originally selected (i.e. setting a True to a False or vice-versa).
+
+        Since this message indicates a toggle occurring at a per-option level,
+        a message will be sent for each option that is toggled, even when a
+        bulk action is performed (e.g. via `toggle_all`).
+
         Can be handled using `on_selection_list_selection_toggled` in a subclass of
         [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
         """
@@ -209,6 +219,13 @@ class SelectionList(Generic[SelectionType], OptionList):
     @dataclass
     class SelectedChanged(Generic[MessageSelectionType], Message):
         """Message sent when the collection of selected values changes.
+
+        This is sent regardless of whether the change occurred via user interaction
+        or programmatically the the `SelectionList` API.
+
+        When a bulk change occurs, such as through `select_all` or `deselect_all`,
+        only a single `SelectedChanged` message will be sent (rather than one per
+        option).
 
         Can be handled using `on_selection_list_selected_changed` in a subclass of
         [`SelectionList`][textual.widgets.SelectionList] or in a parent node in the DOM.
@@ -316,10 +333,10 @@ class SelectionList(Generic[SelectionType], OptionList):
         # Keep track of if anything changed.
         changed = False
 
-        # Next we run through everything and apply the change, preventing
-        # the toggled and changed messages because the caller really isn't
-        # going to be expecting a message storm from this.
-        with self.prevent(self.SelectedChanged, self.SelectionToggled):
+        # Apply the state change function to all options.
+        # We don't send a SelectedChanged for each option, and instead
+        # send a single SelectedChanged afterwards if any values change.
+        with self.prevent(self.SelectedChanged):
             for selection in self._options:
                 changed = (
                     state_change(cast(Selection[SelectionType], selection).value)

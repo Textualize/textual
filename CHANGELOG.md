@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Added `TextArea.line_number_start` reactive attribute https://github.com/Textualize/textual/pull/4471
+- Added `TextArea.matching_bracket_location` property https://github.com/Textualize/textual/pull/4764
 - Added `DOMNode.mutate_reactive` https://github.com/Textualize/textual/pull/4731
 - Added "quality" parameter to `textual.color.Gradient` https://github.com/Textualize/textual/pull/4739
 - Added `textual.color.Gradient.get_rich_color` https://github.com/Textualize/textual/pull/4739
@@ -17,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Raise `ValueError` with improved error message when number of cells inserted using `DataTable.add_row` doesn't match the number of columns in the table https://github.com/Textualize/textual/pull/4742
 - Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
 - Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
+- `StringKey` is now exported from `data_table` https://github.com/Textualize/textual/pull/4760
 
 ### Fixed
 
@@ -27,7 +29,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed `Tree` and `DirectoryTree` horizontal scrolling off-by-2 https://github.com/Textualize/textual/pull/4744
 - Fixed text-opacity in component styles https://github.com/Textualize/textual/pull/4747
 - Ensure `Tree.select_node` sends `NodeSelected` message https://github.com/Textualize/textual/pull/4753
-- Fixed message handlers not working when using message types as class variables https://github.com/Textualize/textual/pull/3940
+- Fixed message handlers not working when message types are assigned as the value of class vars https://github.com/Textualize/textual/pull/3940
+- Fixed `CommandPalette` not focusing the input when opened when `App.AUTO_FOCUS` doesn't match the input https://github.com/Textualize/textual/pull/4763
+- `SelectionList.SelectionToggled` will now be sent for each option when a bulk toggle is performed (e.g. `toggle_all`). Previously no messages were sent at all. https://github.com/Textualize/textual/pull/4759
 
 ### Changed
 
@@ -35,6 +39,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - `TreeNodeSelected` messages are now posted before `TreeNodeExpanded` messages
 when an expandable node is selected https://github.com/Textualize/textual/pull/4753
 - `Markdown.LinkClicked.href` is now automatically unquoted https://github.com/Textualize/textual/pull/4749
+- The mouse cursor hover effect of `Tree` and `DirectoryTree` will no longer linger after the mouse leaves the widget https://github.com/Textualize/textual/pull/4766
 
 
 ## [0.72.0] - 2024-07-09

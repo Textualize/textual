@@ -421,6 +421,8 @@ class CommandInput(Input):
 class CommandPalette(SystemModalScreen[CallbackType]):
     """The Textual command palette."""
 
+    AUTO_FOCUS = "CommandInput"
+
     COMPONENT_CLASSES: ClassVar[set[str]] = {
         "command-palette--help-text",
         "command-palette--highlight",
