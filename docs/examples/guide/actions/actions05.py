@@ -3,9 +3,9 @@ from textual.widgets import Static
 
 TEXT = """
 [b]Set your background[/b]
-[@click=set_background('cyan')]Cyan[/]
-[@click=set_background('magenta')]Magenta[/]
-[@click=set_background('yellow')]Yellow[/]
+[@click=app.set_background('cyan')]Cyan[/]
+[@click=app.set_background('magenta')]Magenta[/]
+[@click=app.set_background('yellow')]Yellow[/]
 """
 
 
