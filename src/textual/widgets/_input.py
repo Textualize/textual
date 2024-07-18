@@ -394,6 +394,9 @@ class Input(Widget, can_focus=True):
                 self._cursor_visible = True
                 self._blink_timer.pause()
 
+    def watch__cursor_visible(self, cursor_visible: bool) -> None:
+        self.refresh()
+
     @property
     def cursor_screen_offset(self) -> Offset:
         """The offset of the cursor of this input in screen-space. (x, y)/(column, row)"""
@@ -505,6 +508,7 @@ class Input(Widget, can_focus=True):
     def _toggle_cursor(self) -> None:
         """Toggle visibility of cursor."""
         self._cursor_visible = not self._cursor_visible
+        self.refresh()
 
     def _on_mount(self, _: Mount) -> None:
         self._blink_timer = self.set_interval(
@@ -526,8 +530,8 @@ class Input(Widget, can_focus=True):
         self._suggestion = ""
 
     async def _on_key(self, event: events.Key) -> None:
-        self._cursor_visible = True
         if self.cursor_blink:
+            self._cursor_visible = True
             self._blink_timer.reset()
 
         if event.is_printable:
@@ -543,6 +547,7 @@ class Input(Widget, can_focus=True):
         event.stop()
 
     async def _on_click(self, event: events.Click) -> None:
+        print("click!")
         offset = event.get_content_offset(self)
         if offset is None:
             return
@@ -558,6 +563,17 @@ class Input(Widget, can_focus=True):
             cell_offset += cell_width
         else:
             self.cursor_position = len(self.value)
+
+    async def _on_mouse_down(self, event: events.MouseDown) -> None:
+        print("mouse down!")
+        self._cursor_visible = True
+        if self.cursor_blink and self._blink_timer:
+            self._blink_timer.pause()
+
+    async def _on_mouse_up(self, event: events.MouseUp) -> None:
+        print("mouse up!")
+        if self.cursor_blink and self._blink_timer:
+            self._blink_timer.reset()
 
     async def _on_suggestion_ready(self, event: SuggestionReady) -> None:
         """Handle suggestion messages and set the suggestion when relevant."""
