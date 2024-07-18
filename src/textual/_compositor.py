@@ -559,6 +559,8 @@ class Compositor:
         map: CompositorMap = {}
         widgets: set[Widget] = set()
         add_new_widget = widgets.add
+        invisible_widgets: set[Widget] = set()
+        add_new_invisible_widget = invisible_widgets.add
         layer_order: int = 0
 
         no_clip = size.region
@@ -595,6 +597,8 @@ class Compositor:
 
             if visible:
                 add_new_widget(widget)
+            else:
+                add_new_invisible_widget(widget)
             styles_offset = styles.offset
             layout_offset = (
                 styles_offset.resolve(region.size, clip.size)
@@ -740,6 +744,7 @@ class Compositor:
             True,
             NULL_SPACING,
         )
+        widgets -= invisible_widgets
         return map, widgets
 
     @property
