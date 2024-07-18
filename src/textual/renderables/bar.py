@@ -114,6 +114,9 @@ def _apply_gradient(text: Text, gradient: Gradient, width: int) -> None:
         gradient: A Textual gradient.
         width: Width of gradient.
     """
+    if not width:
+        return
+    assert width > 0
     from_color = Style.from_color
     get_rich_color = gradient.get_rich_color
 
