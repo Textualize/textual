@@ -78,6 +78,8 @@ plugins:
           separate_signature: true
           signature_crossrefs: true
           merge_init_into_class: true
+          parameter_headings: true
+          show_root_heading: false
           docstring_options:
             ignore_init_summary: true
           show_source: false
