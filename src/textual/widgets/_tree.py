@@ -50,6 +50,10 @@ class UnknownNodeID(Exception):
     """Exception raised when referring to an unknown [`TreeNode`][textual.widgets.tree.TreeNode] ID."""
 
 
+class AddNodeError(Exception):
+    """Exception raised when there is an error with a request to add a node."""
+
+
 @dataclass
 class _TreeLine(Generic[TreeDataType]):
     path: list[TreeNode[TreeDataType]]
@@ -322,6 +326,8 @@ class TreeNode(Generic[TreeDataType]):
         label: TextType,
         data: TreeDataType | None = None,
         *,
+        before: int | TreeNode[TreeDataType] | None = None,
+        after: int | TreeNode[TreeDataType] | None = None,
         expand: bool = False,
         allow_expand: bool = True,
     ) -> TreeNode[TreeDataType]:
@@ -330,34 +336,101 @@ class TreeNode(Generic[TreeDataType]):
         Args:
             label: The new node's label.
             data: Data associated with the new node.
+            before: Optional index or `TreeNode` to add the node before.
+            after: Optional index or `TreeNode` to add the node after.
             expand: Node should be expanded.
             allow_expand: Allow use to expand the node via keyboard or mouse.
 
         Returns:
             A new Tree node
+
+        Raises:
+            AddNodeError: If there is a problem with the addition request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `AddNodeError` will be raised.
         """
+        if before is not None and after is not None:
+            raise AddNodeError("Unable to add a node both before and after a node")
+
+        insert_index: int = len(self.children)
+
+        if before is not None:
+            if isinstance(before, int):
+                insert_index = before
+            elif isinstance(before, TreeNode):
+                try:
+                    insert_index = self.children.index(before)
+                except ValueError:
+                    raise AddNodeError(
+                        "The node specified for `before` is not a child of this node"
+                    )
+            else:
+                raise TypeError(
+                    "`before` argument must be an index or a TreeNode object to add before"
+                )
+
+        if after is not None:
+            if isinstance(after, int):
+                insert_index = after + 1
+                if after < 0:
+                    insert_index += len(self.children)
+            elif isinstance(after, TreeNode):
+                try:
+                    insert_index = self.children.index(after) + 1
+                except ValueError:
+                    raise AddNodeError(
+                        "The node specified for `after` is not a child of this node"
+                    )
+            else:
+                raise TypeError(
+                    "`after` argument must be an index or a TreeNode object to add after"
+                )
+
         text_label = self._tree.process_label(label)
         node = self._tree._add_node(self, text_label, data)
         node._expanded = expand
         node._allow_expand = allow_expand
         self._updates += 1
-        self._children.append(node)
+        self._children.insert(insert_index, node)
         self._tree._invalidate()
         return node
 
     def add_leaf(
-        self, label: TextType, data: TreeDataType | None = None
+        self,
+        label: TextType,
+        data: TreeDataType | None = None,
+        *,
+        before: int | TreeNode[TreeDataType] | None = None,
+        after: int | TreeNode[TreeDataType] | None = None,
     ) -> TreeNode[TreeDataType]:
         """Add a 'leaf' node (a node that can not expand).
 
         Args:
             label: Label for the node.
             data: Optional data.
+            before: Optional index or `TreeNode` to add the node before.
+            after: Optional index or `TreeNode` to add the node after.
 
         Returns:
             New node.
+
+        Raises:
+            AddNodeError: If there is a problem with the addition request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `AddNodeError` will be raised.
         """
-        node = self.add(label, data, expand=False, allow_expand=False)
+        node = self.add(
+            label,
+            data,
+            before=before,
+            after=after,
+            expand=False,
+            allow_expand=False,
+        )
         return node
 
     def _remove_children(self) -> None:
