@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [0.73.0] - 2024-07-18
 
 ### Added
 
@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
 - `StringKey` is now exported from `data_table` https://github.com/Textualize/textual/pull/4760
 - `TreeNode.add` and `TreeNode.add_leaf` now accepts `before` and `after` arguments to position a new node https://github.com/Textualize/textual/pull/4772
+- Added a `gradient` parameter to the `ProgressBar` widget https://github.com/Textualize/textual/pull/4774
 
 ### Fixed
 
@@ -2219,6 +2220,7 @@ https://textual.textualize.io/blog/2022/11/08/version-040/#version-040
 - New handler system for messages that doesn't require inheritance
 - Improved traceback handling
 
+[0.73.0]: https://github.com/Textualize/textual/compare/v0.72.0...v0.73.0
 [0.72.0]: https://github.com/Textualize/textual/compare/v0.71.0...v0.72.0
 [0.71.0]: https://github.com/Textualize/textual/compare/v0.70.0...v0.71.0
 [0.70.0]: https://github.com/Textualize/textual/compare/v0.69.0...v0.70.0
