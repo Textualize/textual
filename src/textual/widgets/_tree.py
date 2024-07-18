@@ -343,6 +343,13 @@ class TreeNode(Generic[TreeDataType]):
 
         Returns:
             A new Tree node
+
+        Raises:
+            AddNodeError: If there is a problem with the addition request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `AddNodeError` will be raised.
         """
         if before is not None and after is not None:
             raise AddNodeError("Unable to add a node both before and after a node")
