@@ -86,7 +86,7 @@ class Bar:
         if half_end:
             highlight_bar.append(Text(half_bar_right, style=highlight_style, end=""))
 
-        if self.gradient:
+        if self.gradient is not None:
             _apply_gradient(highlight_bar, self.gradient, width)
         output_bar.append(highlight_bar)
 
@@ -112,13 +112,14 @@ def _apply_gradient(text: Text, gradient: Gradient, width: int) -> None:
     Args:
         text: A Text object.
         gradient: A Textual gradient.
-        width: Width to apply gradient to, or None for full width.
+        width: Width of gradient.
     """
     from_color = Style.from_color
     get_rich_color = gradient.get_rich_color
 
     max_width = width - 1
     if not max_width:
+        text.stylize(from_color(gradient.get_color(0).rich_color))
         return
     text_length = len(text)
     for offset in range(text_length):
