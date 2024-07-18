@@ -326,8 +326,8 @@ class TreeNode(Generic[TreeDataType]):
         label: TextType,
         data: TreeDataType | None = None,
         *,
-        before: int | None = None,
-        after: int | None = None,
+        before: int | TreeNode[TreeDataType] | None = None,
+        after: int | TreeNode[TreeDataType] | None = None,
         expand: bool = False,
         allow_expand: bool = True,
     ) -> TreeNode[TreeDataType]:
@@ -346,12 +346,22 @@ class TreeNode(Generic[TreeDataType]):
             raise AddNodeError("Unable to add a node both before and after a node")
 
         insert_index: int
-        if before is not None:
+        if isinstance(before, int):
             insert_index = before
-        elif after is not None:
+        elif isinstance(after, int):
             insert_index = after + 1
             if after < 0:
                 insert_index += len(self.children)
+        elif isinstance(before, TreeNode):
+            try:
+                insert_index = self.children.index(before)
+            except ValueError:
+                raise AddNodeError("Unknown node to add before")
+        elif isinstance(after, TreeNode):
+            try:
+                insert_index = self.children.index(after) + 1
+            except ValueError:
+                raise AddNodeError("Unknown node to add after")
         else:
             insert_index = len(self.children)
 
