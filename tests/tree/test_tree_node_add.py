@@ -10,6 +10,15 @@ def test_tree_node_add_before_and_after_raises_exception():
         tree.root.add("error", before=99, after=0)
 
 
+def test_tree_node_add_before_or_after_with_invalid_type_raises_exception():
+    tree = Tree[None]("root")
+    tree.root.add("node")
+    with pytest.raises(TypeError):
+        tree.root.add("before node", before="node")
+    with pytest.raises(TypeError):
+        tree.root.add("after node", after="node")
+
+
 def test_tree_node_add_before_index():
     tree = Tree[None]("root")
     tree.root.add("node")

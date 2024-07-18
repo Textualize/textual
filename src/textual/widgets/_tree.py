@@ -345,29 +345,39 @@ class TreeNode(Generic[TreeDataType]):
         if before is not None and after is not None:
             raise AddNodeError("Unable to add a node both before and after a node")
 
-        insert_index: int
-        if isinstance(before, int):
-            insert_index = before
-        elif isinstance(after, int):
-            insert_index = after + 1
-            if after < 0:
-                insert_index += len(self.children)
-        elif isinstance(before, TreeNode):
-            try:
-                insert_index = self.children.index(before)
-            except ValueError:
-                raise AddNodeError(
-                    "Request to add before an unknown node that is not a child of this node"
+        insert_index: int = len(self.children)
+
+        if before is not None:
+            if isinstance(before, int):
+                insert_index = before
+            elif isinstance(before, TreeNode):
+                try:
+                    insert_index = self.children.index(before)
+                except ValueError:
+                    raise AddNodeError(
+                        "Request to add before an unknown node that is not a child of this node"
+                    )
+            else:
+                raise TypeError(
+                    "`before` argument must be an index or a TreeNode object to add before"
                 )
-        elif isinstance(after, TreeNode):
-            try:
-                insert_index = self.children.index(after) + 1
-            except ValueError:
-                raise AddNodeError(
-                    "Request to add after an unknown node that is not a child of this node"
+
+        if after is not None:
+            if isinstance(after, int):
+                insert_index = after + 1
+                if after < 0:
+                    insert_index += len(self.children)
+            elif isinstance(after, TreeNode):
+                try:
+                    insert_index = self.children.index(after) + 1
+                except ValueError:
+                    raise AddNodeError(
+                        "Request to add after an unknown node that is not a child of this node"
+                    )
+            else:
+                raise TypeError(
+                    "`after` argument must be an index or a TreeNode object to add after"
                 )
-        else:
-            insert_index = len(self.children)
 
         text_label = self._tree.process_label(label)
         node = self._tree._add_node(self, text_label, data)
