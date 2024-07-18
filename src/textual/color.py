@@ -600,8 +600,10 @@ class Gradient:
             quality: The number of steps in the gradient.
 
         Returns:
-            _type_: _description_
+            A new Gradient instance.
         """
+        if len(colors) < 2:
+            raise ValueError("Two or more colors required.")
         stops = [(i / (len(colors) - 1), Color.parse(c)) for i, c in enumerate(colors)]
         return cls(*stops, quality=quality)
 
