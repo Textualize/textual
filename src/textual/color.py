@@ -551,7 +551,7 @@ class Color(NamedTuple):
 class Gradient:
     """Defines a color gradient."""
 
-    def __init__(self, *stops: tuple[float, Color | str], quality: int = 200) -> None:
+    def __init__(self, *stops: tuple[float, Color | str], quality: int = 50) -> None:
         """Create a color gradient that blends colors to form a spectrum.
 
         A gradient is defined by a sequence of "stops" consisting of a tuple containing a float and a color.
@@ -559,9 +559,9 @@ class Gradient:
         Colors may be given as a [Color][textual.color.Color] instance, or a string that
         can be parsed into a Color (with [Color.parse][textual.color.Color.parse]).
 
-        The quality of the argument defines the number of _steps_ in the gradient.
-        200 was chosen so that there was no obvious banding in [LinearGradient][textual.renderables.gradient.LinearGradient].
-        Higher values are unlikely to yield any benefit, but lower values may result in quicker rendering.
+        The `quality` argument defines the number of _steps_ in the gradient. Intermediate colors are
+        interpolated from the two nearest colors. Increasing `quality` can generate a smoother looking gradient,
+        at the expense of a little extra work to pre-calculate the colors.
 
         Args:
             stops: Color stops.
@@ -591,6 +591,20 @@ class Gradient:
         self._colors: list[Color] | None = None
         self._rich_colors: list[RichColor] | None = None
 
+    @classmethod
+    def from_colors(cls, *colors: Color | str, quality: int = 50) -> Gradient:
+        """Construct a gradient form a sequence of colors, where the stops are evenly spaced.
+
+        Args:
+            *colors: Positional arguments may be Color instances or strings to parse into a color.
+            quality: The number of steps in the gradient.
+
+        Returns:
+            _type_: _description_
+        """
+        stops = [(i / (len(colors) - 1), Color.parse(c)) for i, c in enumerate(colors)]
+        return cls(*stops, quality=quality)
+
     @property
     def colors(self) -> list[Color]:
         """A list of colors in the gradient."""
@@ -613,13 +627,6 @@ class Gradient:
         assert len(self._colors) == self._quality
         return self._colors
 
-    @property
-    def rich_colors(self) -> list[RichColor]:
-        """A list of colors in the gradient (for the Rich library)."""
-        if self._rich_colors is None:
-            self._rich_colors = [color.rich_color for color in self.colors]
-        return self._rich_colors
-
     def get_color(self, position: float) -> Color:
         """Get a color from the gradient at a position between 0 and 1.
 
@@ -631,9 +638,16 @@ class Gradient:
         Returns:
             A Textual color.
         """
-        quality = self._quality - 1
-        color_index = int(clamp(position * quality, 0, quality))
-        return self.colors[color_index]
+
+        if position <= 0:
+            return self.colors[0]
+        if position >= 1:
+            return self.colors[-1]
+
+        color_position = position * (self._quality - 1)
+        color_index = int(color_position)
+        color1, color2 = self.colors[color_index : color_index + 2]
+        return color1.blend(color2, color_position % 1)
 
     def get_rich_color(self, position: float) -> RichColor:
         """Get a (Rich) color from the gradient at a position between 0 and 1.
@@ -646,9 +660,7 @@ class Gradient:
         Returns:
             A (Rich) color.
         """
-        quality = self._quality - 1
-        color_index = int(clamp(position * quality, 0, quality))
-        return self.rich_colors[color_index]
+        return self.get_color(position).rich_color
 
 
 # Color constants
