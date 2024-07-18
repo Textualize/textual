@@ -1,5 +1,5 @@
 """
-Constants that we might want to expose via the public API.
+This module contains constants, which may be set in environment variables.
 """
 
 from __future__ import annotations

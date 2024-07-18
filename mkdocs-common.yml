@@ -67,14 +67,19 @@ plugins:
   search:
   autorefs:
   mkdocstrings:
-    custom_templates: docs/_templates
     default_handler: python
     handlers:
       python:
         options:
+          modernize_annotations: false
+          show_symbol_type_heading: true
+          show_symbol_type_toc: true
           show_signature_annotations: false
           separate_signature: true
+          signature_crossrefs: true
           merge_init_into_class: true
+          parameter_headings: true
+          show_root_heading: false
           docstring_options:
             ignore_init_summary: true
           show_source: false

@@ -31,7 +31,6 @@ from rich.tree import Tree
 from ._context import NoActiveAppError, active_message_pump
 from ._node_list import NodeList
 from ._types import WatchCallbackType
-from ._worker_manager import WorkerManager
 from .binding import Binding, BindingType, _Bindings
 from .color import BLACK, WHITE, Color
 from .css._error_tools import friendly_list
@@ -44,6 +43,7 @@ from .message_pump import MessagePump
 from .reactive import Reactive, ReactiveError, _watch
 from .timer import Timer
 from .walk import walk_breadth_first, walk_depth_first
+from .worker_manager import WorkerManager
 
 if TYPE_CHECKING:
     from typing_extensions import Self, TypeAlias

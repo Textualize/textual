@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed message handlers not working when message types are assigned as the value of class vars https://github.com/Textualize/textual/pull/3940
 - Fixed `CommandPalette` not focusing the input when opened when `App.AUTO_FOCUS` doesn't match the input https://github.com/Textualize/textual/pull/4763
 - `SelectionList.SelectionToggled` will now be sent for each option when a bulk toggle is performed (e.g. `toggle_all`). Previously no messages were sent at all. https://github.com/Textualize/textual/pull/4759
+- Fixed focus styles not being updated on blur https://github.com/Textualize/textual/pull/4771
 
 ### Changed
 
