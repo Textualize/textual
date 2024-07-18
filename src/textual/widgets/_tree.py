@@ -364,7 +364,7 @@ class TreeNode(Generic[TreeDataType]):
                     insert_index = self.children.index(before)
                 except ValueError:
                     raise AddNodeError(
-                        "Request to add before an unknown node that is not a child of this node"
+                        "The node specified for `before` is not a child of this node"
                     )
             else:
                 raise TypeError(
@@ -381,7 +381,7 @@ class TreeNode(Generic[TreeDataType]):
                     insert_index = self.children.index(after) + 1
                 except ValueError:
                     raise AddNodeError(
-                        "Request to add after an unknown node that is not a child of this node"
+                        "The node specified for `after` is not a child of this node"
                     )
             else:
                 raise TypeError(
