@@ -76,7 +76,6 @@ class Bar(Widget, can_focus=False):
         """Create a bar for a [`ProgressBar`][textual.widgets.ProgressBar]."""
         self._clock = (clock or Clock()).clone()
         super().__init__(name=name, id=id, classes=classes, disabled=disabled)
-        self.gradient = gradient
         self.set_reactive(Bar.gradient, gradient)
 
     def _validate_percentage(self, percentage: float | None) -> float | None:
