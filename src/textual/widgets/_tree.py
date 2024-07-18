@@ -398,18 +398,39 @@ class TreeNode(Generic[TreeDataType]):
         return node
 
     def add_leaf(
-        self, label: TextType, data: TreeDataType | None = None
+        self,
+        label: TextType,
+        data: TreeDataType | None = None,
+        *,
+        before: int | TreeNode[TreeDataType] | None = None,
+        after: int | TreeNode[TreeDataType] | None = None,
     ) -> TreeNode[TreeDataType]:
         """Add a 'leaf' node (a node that can not expand).
 
         Args:
             label: Label for the node.
             data: Optional data.
+            before: Optional index or `TreeNode` to add the pane before.
+            after: Optional index or `TreeNode` to add the pane after.
 
         Returns:
             New node.
+
+        Raises:
+            AddNodeError: If there is a problem with the addition request.
+
+        Note:
+            Only one of `before` or `after` can be provided. If both are
+            provided a `AddNodeError` will be raised.
         """
-        node = self.add(label, data, expand=False, allow_expand=False)
+        node = self.add(
+            label,
+            data,
+            before=before,
+            after=after,
+            expand=False,
+            allow_expand=False,
+        )
         return node
 
     def _remove_children(self) -> None:

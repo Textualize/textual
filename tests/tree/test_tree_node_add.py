@@ -103,3 +103,18 @@ def test_tree_node_add_after_node():
     assert str(tree.root.children[4].label) == "after node"
     assert str(tree.root.children[5].label) == "before last"
     assert str(tree.root.children[6].label) == "last"
+
+
+def test_tree_node_add_leaf_before_or_after():
+    tree = Tree[None]("root")
+    leaf = tree.root.add_leaf("leaf")
+    tree.root.add_leaf("before leaf", before=leaf)
+    tree.root.add_leaf("after leaf", after=leaf)
+    tree.root.add_leaf("first", before=0)
+    tree.root.add_leaf("last", after=-1)
+
+    assert str(tree.root.children[0].label) == "first"
+    assert str(tree.root.children[1].label) == "before leaf"
+    assert str(tree.root.children[2].label) == "leaf"
+    assert str(tree.root.children[3].label) == "after leaf"
+    assert str(tree.root.children[4].label) == "last"
