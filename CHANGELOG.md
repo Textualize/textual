@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Add `Tree.move_cursor` to programmatically move the cursor without selecting the node https://github.com/Textualize/textual/pull/4753
 - Added `Footer` component style handling of padding for the key/description https://github.com/Textualize/textual/pull/4651
 - `StringKey` is now exported from `data_table` https://github.com/Textualize/textual/pull/4760
+- `TreeNode.add` and `TreeNode.add_leaf` now accepts `before` and `after` arguments to position a new node https://github.com/Textualize/textual/pull/4772
 
 ### Fixed
 
