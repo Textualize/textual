@@ -51,7 +51,7 @@ class UnknownNodeID(Exception):
 
 
 class AddNodeError(Exception):
-    """Exception raised relating to adding a node."""
+    """Exception raised when there is an error with a request to add a node."""
 
 
 @dataclass
@@ -356,12 +356,16 @@ class TreeNode(Generic[TreeDataType]):
             try:
                 insert_index = self.children.index(before)
             except ValueError:
-                raise AddNodeError("Unknown node to add before")
+                raise AddNodeError(
+                    "Request to add before an unknown node that is not a child of this node"
+                )
         elif isinstance(after, TreeNode):
             try:
                 insert_index = self.children.index(after) + 1
             except ValueError:
-                raise AddNodeError("Unknown node to add after")
+                raise AddNodeError(
+                    "Request to add after an unknown node that is not a child of this node"
+                )
         else:
             insert_index = len(self.children)
 
