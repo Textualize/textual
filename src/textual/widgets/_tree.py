@@ -336,8 +336,8 @@ class TreeNode(Generic[TreeDataType]):
         Args:
             label: The new node's label.
             data: Data associated with the new node.
-            before: Optional index or `TreeNode` to add the pane before.
-            after: Optional index or `TreeNode` to add the pane after.
+            before: Optional index or `TreeNode` to add the node before.
+            after: Optional index or `TreeNode` to add the node after.
             expand: Node should be expanded.
             allow_expand: Allow use to expand the node via keyboard or mouse.
 
@@ -410,8 +410,8 @@ class TreeNode(Generic[TreeDataType]):
         Args:
             label: Label for the node.
             data: Optional data.
-            before: Optional index or `TreeNode` to add the pane before.
-            after: Optional index or `TreeNode` to add the pane after.
+            before: Optional index or `TreeNode` to add the node before.
+            after: Optional index or `TreeNode` to add the node after.
 
         Returns:
             New node.
