@@ -50,6 +50,10 @@ class UnknownNodeID(Exception):
     """Exception raised when referring to an unknown [`TreeNode`][textual.widgets.tree.TreeNode] ID."""
 
 
+class AddNodeError(Exception):
+    """Exception raised relating to adding a node."""
+
+
 @dataclass
 class _TreeLine(Generic[TreeDataType]):
     path: list[TreeNode[TreeDataType]]
@@ -322,6 +326,8 @@ class TreeNode(Generic[TreeDataType]):
         label: TextType,
         data: TreeDataType | None = None,
         *,
+        before: int | None = None,
+        after: int | None = None,
         expand: bool = False,
         allow_expand: bool = True,
     ) -> TreeNode[TreeDataType]:
@@ -336,12 +342,25 @@ class TreeNode(Generic[TreeDataType]):
         Returns:
             A new Tree node
         """
+        if before is not None and after is not None:
+            raise AddNodeError("Unable to add a node both before and after a node")
+
+        insert_index: int
+        if before is not None:
+            insert_index = before
+        elif after is not None:
+            insert_index = after + 1
+            if after < 0:
+                insert_index += len(self.children)
+        else:
+            insert_index = len(self.children)
+
         text_label = self._tree.process_label(label)
         node = self._tree._add_node(self, text_label, data)
         node._expanded = expand
         node._allow_expand = allow_expand
         self._updates += 1
-        self._children.append(node)
+        self._children.insert(insert_index, node)
         self._tree._invalidate()
         return node
 
