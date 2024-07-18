@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from rich.console import Console, ConsoleOptions, RenderResult
-from rich.style import StyleType
+from rich.style import Style, StyleType
 from rich.text import Text
+
+from textual.color import Gradient
 
 
 class Bar:
@@ -12,7 +14,8 @@ class Bar:
         highlight_range: The range to highlight.
         highlight_style: The style of the highlighted range of the bar.
         background_style: The style of the non-highlighted range(s) of the bar.
-        width: The width of the bar, or ``None`` to fill available width.
+        width: The width of the bar, or `None` to fill available width.
+        gradient. Optional gradient object.
     """
 
     def __init__(
@@ -22,12 +25,14 @@ class Bar:
         background_style: StyleType = "grey37",
         clickable_ranges: dict[str, tuple[int, int]] | None = None,
         width: int | None = None,
+        gradient: Gradient | None = None,
     ) -> None:
         self.highlight_range = highlight_range
         self.highlight_style = highlight_style
         self.background_style = background_style
         self.clickable_ranges = clickable_ranges or {}
         self.width = width
+        self.gradient = gradient
 
     def __rich_console__(
         self, console: Console, options: ConsoleOptions
@@ -67,18 +72,23 @@ class Bar:
         if not half_start and start > 0:
             output_bar.append(Text(half_bar_right, style=background_style, end=""))
 
+        highlight_bar = Text("", end="")
         # The highlighted portion
         bar_width = int(end) - int(start)
         if half_start:
-            output_bar.append(
+            highlight_bar.append(
                 Text(
                     half_bar_left + bar * (bar_width - 1), style=highlight_style, end=""
                 )
             )
         else:
-            output_bar.append(Text(bar * bar_width, style=highlight_style, end=""))
+            highlight_bar.append(Text(bar * bar_width, style=highlight_style, end=""))
         if half_end:
-            output_bar.append(Text(half_bar_right, style=highlight_style, end=""))
+            highlight_bar.append(Text(half_bar_right, style=highlight_style, end=""))
+
+        if self.gradient is not None:
+            _apply_gradient(highlight_bar, self.gradient, width)
+        output_bar.append(highlight_bar)
 
         # The non-highlighted tail
         if not half_end and end - width != 0:
@@ -96,45 +106,29 @@ class Bar:
         yield output_bar
 
 
-if __name__ == "__main__":
-    import random
-    from time import sleep
+def _apply_gradient(text: Text, gradient: Gradient, width: int) -> None:
+    """Apply a gradient to a Rich Text instance.
 
-    from rich.color import ANSI_COLOR_NAMES
+    Args:
+        text: A Text object.
+        gradient: A Textual gradient.
+        width: Width of gradient.
+    """
+    if not width:
+        return
+    assert width > 0
+    from_color = Style.from_color
+    get_rich_color = gradient.get_rich_color
 
-    console = Console()
-
-    def frange(start, end, step):
-        current = start
-        while current < end:
-            yield current
-            current += step
-
-        while current >= 0:
-            yield current
-            current -= step
-
-    step = 0.1
-    start_range = frange(0.5, 10.5, step)
-    end_range = frange(10, 20, step)
-    ranges = zip(start_range, end_range)
-
-    console.print(Bar(width=20), f"   (.0, .0)")
-
-    for range in ranges:
-        color = random.choice(list(ANSI_COLOR_NAMES.keys()))
-        console.print(
-            Bar(range, highlight_style=color, width=20),
-            f"   {range}",
+    max_width = width - 1
+    if not max_width:
+        text.stylize(from_color(gradient.get_color(0).rich_color))
+        return
+    text_length = len(text)
+    for offset in range(text_length):
+        bar_offset = text_length - offset
+        text.stylize(
+            from_color(get_rich_color(bar_offset / max_width)),
+            offset,
+            offset + 1,
         )
-
-    from rich.live import Live
-
-    bar = Bar(highlight_range=(0, 4.5), width=80)
-    with Live(bar, refresh_per_second=60) as live:
-        while True:
-            bar.highlight_range = (
-                bar.highlight_range[0] + 0.1,
-                bar.highlight_range[1] + 0.1,
-            )
-            sleep(0.005)

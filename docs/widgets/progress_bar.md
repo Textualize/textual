@@ -71,6 +71,27 @@ The example below shows a simple app with a progress bar that is keeping track o
     --8<-- "docs/examples/widgets/progress_bar.tcss"
     ```
 
+### Gradient Bars
+
+Progress bars support an optional `gradient` parameter, which renders a smooth gradient rather than a solid bar.
+To use a gradient, create and set a [Gradient][textual.color.Gradient] object on the ProgressBar widget.
+
+!!! note
+
+    Setting a gradient will override styles set in CSS.
+
+Here's an example:
+
+=== "Output"
+
+    ```{.textual path="docs/examples/widgets/progress_bar_gradient.py"}
+    ```
+
+=== "progress_bar_gradient.py"
+
+    ```python hl_lines="11-23 27"
+    --8<-- "docs/examples/widgets/progress_bar_gradient.py"
+    ```
 
 ### Custom Styling
 
