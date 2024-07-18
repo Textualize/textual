@@ -76,7 +76,6 @@ from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
 from ._wait import wait_for_idle
-from ._worker_manager import WorkerManager
 from .actions import ActionParseResult, SkipAction
 from .await_complete import AwaitComplete
 from .await_remove import AwaitRemove
@@ -115,12 +114,12 @@ from .timer import Timer
 from .widget import AwaitMount, Widget
 from .widgets._toast import ToastRack
 from .worker import NoActiveWorker, get_current_worker
+from .worker_manager import WorkerManager
 
 if TYPE_CHECKING:
     from textual_dev.client import DevtoolsClient
     from typing_extensions import Coroutine, Literal, Self, TypeAlias
 
-    from ._system_commands import SystemCommands
     from ._types import MessageTarget
 
     # Unused & ignored imports are needed for the docs to link to these objects:
@@ -128,6 +127,7 @@ if TYPE_CHECKING:
     from .filter import LineFilter
     from .message import Message
     from .pilot import Pilot
+    from .system_commands import SystemCommands
     from .widget import MountError  # type: ignore  # noqa: F401
 
 WINDOWS = sys.platform == "win32"
@@ -177,7 +177,7 @@ def get_system_commands() -> type[SystemCommands]:
     Returns:
         System commands class.
     """
-    from ._system_commands import SystemCommands
+    from .system_commands import SystemCommands
 
     return SystemCommands
 

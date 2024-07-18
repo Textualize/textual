@@ -1,3 +1,6 @@
-::: textual.containers
+---
+title: "textual.containers"
+---
 
-::: textual.widgets.ContentSwitcher
+
+::: textual.containers
