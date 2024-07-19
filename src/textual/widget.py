@@ -1,5 +1,6 @@
 """
-The base class for widgets.
+This module contains the `Widget` class, the base class for all widgets.
+
 """
 
 from __future__ import annotations

@@ -1,6 +1,9 @@
 """
 
+This module contains the `Screen` class and related objects.
+
 The `Screen` class is a special widget which represents the content in the terminal. See [Screens](/guide/screens/) for details.
+
 """
 
 from __future__ import annotations

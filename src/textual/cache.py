@@ -2,7 +2,7 @@
 
 Cache classes are dict-like containers used to avoid recalculating expensive operations such as rendering.
 
-You can also use them in your own apps if you need them.
+You can also use them in your own apps for similar reasons.
 
 """
 

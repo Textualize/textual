@@ -1,4 +1,6 @@
 """
+This module contains the `DOMQuery` class and related objects.s
+
 A DOMQuery is a set of DOM nodes returned by [query][textual.dom.DOMNode.query].
 
 The set of nodes may be further refined with [filter][textual.css.query.DOMQuery.filter] and [exclude][textual.css.query.DOMQuery.exclude].

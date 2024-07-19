@@ -1,7 +1,14 @@
-"""A command palette command provider for Textual system commands.
+"""
+
+This module contains `SystemCommands`, a command palette command provider for Textual system commands.
 
 This is a simple command provider that makes the most obvious application
 actions available via the [command palette][textual.command.CommandPalette].
+
+!!! note
+
+    The App base class installs this automatically.
+
 """
 
 from __future__ import annotations

@@ -1,4 +1,5 @@
-"""The Textual command palette.
+"""
+This module contains classes for working with Textual's command palette.
 
 See the guide on the [Command Palette](../guide/command_palette.md) for full details.
 

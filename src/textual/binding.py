@@ -1,6 +1,6 @@
 """
 
-A binding maps a key press on to an action.
+This module contains the `Binding` class and related objects.
 
 See [bindings](/guide/input#bindings) in the guide for details.
 """

@@ -1,6 +1,7 @@
 """
-A DOMNode is a base class for any object within the Textual Document Object Model,
+The module contains `DOMNode`, the base class for any object within the Textual Document Object Model,
 which includes all Widgets, Screens, and Apps.
+
 """
 
 from __future__ import annotations

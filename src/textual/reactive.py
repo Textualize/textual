@@ -1,6 +1,6 @@
 """
 
-The `Reactive` class implements [reactivity](/guide/reactivity/).
+This module contains the `Reactive` class which implements [reactivity](/guide/reactivity/).
 """
 
 from __future__ import annotations

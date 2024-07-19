@@ -1,7 +1,10 @@
 """
-Implements the scrollbar-related widgets for internal use.
+Contains the widgets that manage Textual scrollbars.
 
-You will not need to use the widgets defined in this module.
+!!! note
+
+    You will not typically need this for most apps.
+
 """
 
 from __future__ import annotations

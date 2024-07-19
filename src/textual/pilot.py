@@ -1,6 +1,6 @@
 """
 
-The pilot object is used by [App.run_test][textual.app.App.run_test] to programmatically operate an app.
+This module contains the `Pilot` class used by [App.run_test][textual.app.App.run_test] to programmatically operate an app.
 
 See the guide on how to [test Textual apps](/guide/testing).
 
