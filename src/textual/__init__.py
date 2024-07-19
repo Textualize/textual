@@ -25,7 +25,6 @@ __all__ = [
     "__version__",  # type: ignore
     "log",
     "on",
-    "panic",
     "work",
 ]
 
