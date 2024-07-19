@@ -6516,7 +6516,7 @@ window.onload = async (event) => {
   <span class="md-ellipsis">
     
   
-    textual.Logger
+    textual
   
 
     
@@ -7966,16 +7966,17 @@ more responsive.</p>
 <p>Making a widget lazy is beneficial for widgets which start out invisible, such as tab panes.</p>
 <p>Note that since lazy widgets aren't mounted immediately (by definition), they will not appear
 in queries for a brief interval until they are mounted. Your code should take this in to account.</p>
-<p>Example:</p>
-<div class="highlight"><pre><span></span><code>```python
-def compose(self) -&gt; ComposeResult:
-    yield Footer()
-    with ColorTabs(&quot;Theme Colors&quot;, &quot;Named Colors&quot;):
-        yield Content(ThemeColorButtons(), ThemeColorsView(), id=&quot;theme&quot;)
-        yield Lazy(NamedColorsView())
-```
-</code></pre></div>
 
+
+<details class="example" open>
+  <summary>Example</summary>
+  <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ComposeResult</span><span class="p">:</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">yield</span> <span class="n">Footer</span><span class="p">()</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">with</span> <span class="n">ColorTabs</span><span class="p">(</span><span class="s2">&quot;Theme Colors&quot;</span><span class="p">,</span> <span class="s2">&quot;Named Colors&quot;</span><span class="p">):</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>        <span class="k">yield</span> <span class="n">Content</span><span class="p">(</span><span class="n">ThemeColorButtons</span><span class="p">(),</span> <span class="n">ThemeColorsView</span><span class="p">(),</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;theme&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>        <span class="k">yield</span> <span class="n">Lazy</span><span class="p">(</span><span class="n">NamedColorsView</span><span class="p">())</span>
+</code></pre></div>
+</details>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -8109,13 +8110,13 @@ def compose(self) -&gt; ComposeResult:
         
         
           
-          <a href="../logger/" class="md-footer__link md-footer__link--next" aria-label="Next: textual.Logger">
+          <a href="../logger/" class="md-footer__link md-footer__link--next" aria-label="Next: textual">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                textual.Logger
+                textual
               </div>
             </div>
             <div class="md-footer__button md-icon">
