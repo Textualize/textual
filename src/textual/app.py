@@ -3284,10 +3284,6 @@ class App(Generic[ReturnType], DOMNode):
         if not (await self._check_bindings(event.key)):
             await self.dispatch_key(event)
 
-    async def _on_shutdown_request(self, event: events.ShutdownRequest) -> None:
-        log.system("shutdown request")
-        await self._close_messages()
-
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
         self.screen.post_message(event)

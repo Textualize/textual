@@ -39,20 +39,17 @@ class Event(Message):
 
 @rich.repr.auto
 class Callback(Event, bubble=False, verbose=True):
+    """Sent by Textual to invoke a callback
+    (see [call_next][textual.message_pump.MessagePump.call_next] and
+    [call_later][textual.message_pump.MessagePump.call_later]).
+    """
+
     def __init__(self, callback: CallbackType) -> None:
         self.callback = callback
         super().__init__()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield "callback", self.callback
-
-
-class ShutdownRequest(Event):
-    pass
-
-
-class Shutdown(Event):
-    pass
 
 
 @dataclass
