@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
+
 ## [0.73.0] - 2024-07-18
 
 ### Added
