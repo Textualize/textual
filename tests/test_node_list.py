@@ -16,6 +16,16 @@ def test_add_one():
     assert len(nodes) == 1
 
 
+def test_length_hint():
+    """Check length hint dunder method."""
+    nodes = NodeList()
+    assert nodes.__length_hint__() == 0
+    nodes._append(Widget())
+    nodes._append(Widget())
+    nodes._append(Widget())
+    assert nodes.__length_hint__() == 3
+
+
 def test_repeat_add_one():
     """Does adding the same item to the node list ignore the additional adds?"""
     nodes = NodeList()
