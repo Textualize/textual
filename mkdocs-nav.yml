@@ -158,6 +158,7 @@ nav:
           - "widgets/log.md"
           - "widgets/markdown_viewer.md"
           - "widgets/markdown.md"
+          - "widgets/masked_input.md"
           - "widgets/option_list.md"
           - "widgets/placeholder.md"
           - "widgets/pretty.md"

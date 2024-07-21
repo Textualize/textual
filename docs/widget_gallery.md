@@ -182,6 +182,16 @@ Display a markdown document.
 ```{.textual path="docs/examples/widgets/markdown.py"}
 ```
 
+## MaskedInput
+
+A control to enter input according to a template mask.
+
+[MaskedInput reference](./widgets/masked_input.md){ .md-button .md-button--primary }
+
+
+```{.textual path="docs/examples/widgets/masked_input.py"}
+```
+
 ## OptionList
 
 Display a vertical list of options (options may be Rich renderables).

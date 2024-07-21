@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+- Added `MaskedInput` widget
+
 ### Fixed
 
 - Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
