@@ -4,13 +4,8 @@ from rich.measure import Measurement
 from rich.segment import Segment
 
 if TYPE_CHECKING:
-    from rich.console import (
-        Console,
-        ConsoleOptions,
-        RenderableType,
-        RenderResult,
-        StyleType,
-    )
+    from rich.console import Console, ConsoleOptions, RenderableType, RenderResult
+    from rich.style import StyleType
 
 
 class Styled:
