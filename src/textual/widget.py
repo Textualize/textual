@@ -50,6 +50,7 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
+from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -3775,7 +3776,7 @@ class Widget(DOMNode):
         await self.handle_key(event)
 
     async def handle_key(self, event: events.Key) -> bool:
-        return await self.dispatch_key(event)
+        return await dispatch_key(self, event)
 
     async def _on_compose(self, event: events.Compose) -> None:
         _rich_traceback_omit = True

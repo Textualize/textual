@@ -36,7 +36,6 @@ from ._context import prevent_message_types_stack
 from ._on import OnNoWidget
 from ._time import time
 from .css.match import match
-from .errors import DuplicateKeyHandlers
 from .events import Event
 from .message import Message
 from .reactive import Reactive, TooManyComputesError
@@ -802,54 +801,6 @@ class MessagePump(metaclass=_MessagePumpMeta):
             return
         await invoke(event.callback)
 
-    # TODO: Does dispatch_key belong on message pump?
-    async def dispatch_key(self, event: events.Key) -> bool:
-        """Dispatch a key event to method.
-
-        This method will call the method named 'key_<event.key>' if it exists.
-        Some keys have aliases. The first alias found will be invoked if it exists.
-        If multiple handlers exist that match the key, an exception is raised.
-
-        Args:
-            event: A key event.
-
-        Returns:
-            True if key was handled, otherwise False.
-
-        Raises:
-            DuplicateKeyHandlers: When there's more than 1 handler that could handle this key.
-        """
-
-        def get_key_handler(pump: MessagePump, key: str) -> Callable | None:
-            """Look for the public and private handler methods by name on self."""
-            public_handler_name = f"key_{key}"
-            public_handler = getattr(pump, public_handler_name, None)
-
-            private_handler_name = f"_key_{key}"
-            private_handler = getattr(pump, private_handler_name, None)
-
-            return public_handler or private_handler
-
-        handled = False
-        invoked_method = None
-        key_name = event.name
-        if not key_name:
-            return False
-
-        for key_method_name in event.name_aliases:
-            key_method = get_key_handler(self, key_method_name)
-            if key_method is not None:
-                if invoked_method:
-                    _raise_duplicate_key_handlers_error(
-                        key_name, invoked_method.__name__, key_method.__name__
-                    )
-                # If key handlers return False, then they are not considered handled
-                # This allows key handlers to do some conditional logic
-                handled = (await invoke(key_method, event)) is not False
-                invoked_method = key_method
-
-        return handled
-
     async def on_timer(self, event: events.Timer) -> None:
         if not self.app._running:
             return
@@ -862,15 +813,3 @@ class MessagePump(metaclass=_MessagePumpMeta):
                 raise CallbackError(
                     f"unable to run callback {event.callback!r}; {error}"
                 )
-
-
-def _raise_duplicate_key_handlers_error(
-    key_name: str, first_handler: str, second_handler: str
-) -> None:
-    """Raise exception for case where user presses a key and there are multiple candidate key handler methods for it."""
-    raise DuplicateKeyHandlers(
-        f"Multiple handlers for key press {key_name!r}.\n"
-        f"We found both {first_handler!r} and {second_handler!r}, "
-        f"and didn't know which to call.\n"
-        f"Consider combining them into a single handler.",
-    )

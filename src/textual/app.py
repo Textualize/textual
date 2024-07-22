@@ -72,6 +72,7 @@ from ._compose import compose
 from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
+from ._dispatch_key import dispatch_key
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
@@ -3282,7 +3283,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_key(self, event: events.Key) -> None:
         if not (await self._check_bindings(event.key)):
-            await self.dispatch_key(event)
+            await dispatch_key(self, event)
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
