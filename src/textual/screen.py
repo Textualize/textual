@@ -1237,19 +1237,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
         !!! note
 
-            Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
-            this method will raise a `ScreenError`.
+            Only the active screen may be dismissed. This method will produce a warning in the logs if
+            called on an inactive screen (but otherwise have no effect).
 
         If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
 
         Args:
             result: The optional result to be passed to the result callback.
-
-        Raises:
-            ScreenError: If the screen being dismissed is not active.
-            ScreenStackError: If trying to dismiss a screen that is not at the top of
-                the stack.
 
         """
         if not self.is_active:

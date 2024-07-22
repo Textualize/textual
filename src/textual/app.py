@@ -801,7 +801,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_inline
 
     @property
-    def screen_stack(self) -> Sequence[Screen[Any]]:
+    def screen_stack(self) -> list[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:

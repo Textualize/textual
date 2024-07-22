@@ -45,10 +45,12 @@ async def dispatch_key(node: DOMNode, event: events.Key) -> bool:
             f"Consider combining them into a single handler.",
         )
 
-    screen = node.screen
+    try:
+        screen = node.screen
+    except Exception:
+        screen = None
     for key_method_name in event.name_aliases:
-        key_method = get_key_handler(node, key_method_name)
-        if key_method is not None:
+        if (key_method := get_key_handler(node, key_method_name)) is not None:
             if invoked_method:
                 _raise_duplicate_key_handlers_error(
                     key_name, invoked_method.__name__, key_method.__name__
@@ -56,7 +58,7 @@ async def dispatch_key(node: DOMNode, event: events.Key) -> bool:
             # If key handlers return False, then they are not considered handled
             # This allows key handlers to do some conditional logic
 
-            if not screen.is_active:
+            if screen is not None and not screen.is_active:
                 break
             handled = (await invoke(key_method, event)) is not False
             invoked_method = key_method
