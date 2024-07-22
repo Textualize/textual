@@ -278,6 +278,12 @@ class _PrintCapture:
 class App(Generic[ReturnType], DOMNode):
     """The base class for Textual Applications."""
 
+    CONFIG_PATH: str | None = None
+    """Path to app config, or `None` for no app config."""
+
+    APP_ID: str | None = None
+    """A unique identifier used in the config system, or `None` to use the name of the App sub-class."""
+
     CSS: ClassVar[str] = ""
     """Inline CSS, useful for quick scripts. This is loaded after CSS_PATH,
     and therefore takes priority in the event of a specificity clash."""

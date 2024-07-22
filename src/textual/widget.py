@@ -834,7 +834,7 @@ class Widget(DOMNode):
             A text object.
         """
         text = (
-            Text.from_markup(text_content)
+            Text.from_markup(text_content, end="")
             if isinstance(text_content, str)
             else text_content
         )
