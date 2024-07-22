@@ -50,13 +50,13 @@ jobs:
       - name: Install dependencies for 3.12 # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: poetry install --no-interaction
         if: ${{ matrix.python-version == '3.12' }}
-      - name: Test with pytest
+      - name: Test with pytest (xdist)
         run: |
-          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing
+          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -n 16 --dist=loadgroup
         if: ${{ matrix.python-version != '3.12' }}
       - name: Test with pytest for 3.12 # https://github.com/Textualize/textual/issues/3491#issuecomment-1854156476
         run: |
-          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax'
+          poetry run pytest tests -v --cov=./src/textual --cov-report=xml:./coverage.xml --cov-report term-missing -m 'not syntax' -n 16 --dist=loadgroup
         if: ${{ matrix.python-version == '3.12' }}
       - name: Upload snapshot report
         if: always()
