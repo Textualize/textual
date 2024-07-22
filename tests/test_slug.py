@@ -3,6 +3,7 @@ import pytest
 from textual._slug import TrackedSlugs, slug
 
 
+@pytest.mark.xdist_group("group1")
 @pytest.mark.parametrize(
     "text, expected",
     [
@@ -36,6 +37,7 @@ def tracker() -> TrackedSlugs:
     return TrackedSlugs()
 
 
+@pytest.mark.xdist_group("group2")
 @pytest.mark.parametrize(
     "text, expected",
     [
