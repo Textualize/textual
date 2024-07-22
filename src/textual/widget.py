@@ -49,6 +49,7 @@ from . import constants, errors, events, messages
 from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
+from ._compose import recompose as recompose_node
 from ._context import NoActiveAppError, active_app
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -1151,9 +1152,11 @@ class Widget(DOMNode):
             return
 
         async with self.batch():
-            await self.query("*").exclude(".-textual-system").remove()
+            new_children, remove_children = recompose_node(self)
+            if remove_children:
+                await self.app._remove_nodes(list(remove_children), self)
             if self.is_attached:
-                await self.mount_all(compose(self))
+                await self.mount_all(new_children)
 
     def _post_register(self, app: App) -> None:
         """Called when the instance is registered.

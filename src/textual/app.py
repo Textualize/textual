@@ -69,6 +69,7 @@ from ._ansi_sequences import SYNC_END, SYNC_START
 from ._ansi_theme import ALABASTER, MONOKAI
 from ._callback import invoke
 from ._compose import compose
+from ._compose import recompose as recompose_node
 from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
@@ -2657,12 +2658,17 @@ class App(Generic[ReturnType], DOMNode):
 
         Recomposing will remove children and call `self.compose` again to remount.
         """
+
         if self._exit:
             return
+
         try:
-            async with self.screen.batch():
-                await self.screen.query("*").exclude(".-textual-system").remove()
-                await self.screen.mount_all(compose(self))
+            screen = self.screen
+            new_children, remove_children = recompose_node(screen, self)
+            async with screen.batch():
+                await self.app._remove_nodes(list(remove_children), self.screen)
+                if self.screen.is_attached:
+                    await self.screen.mount_all(new_children)
         except ScreenStackError:
             pass
 
@@ -2755,7 +2761,9 @@ class App(Generic[ReturnType], DOMNode):
             widget._pruning = False
             if not isinstance(widget, Widget):
                 raise AppError(f"Can't register {widget!r}; expected a Widget instance")
-            if widget not in self._registry:
+            if widget in self._registry:
+                parent._nodes._move_to_end(widget)
+            else:
                 self._register_child(parent, widget, before, after)
                 if widget._nodes:
                     self._register(widget, *widget._nodes, cache=cache)

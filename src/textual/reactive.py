@@ -122,6 +122,7 @@ class Reactive(Generic[ReactiveType]):
         compute: bool = True,
         recompose: bool = False,
         bindings: bool = False,
+        state: bool = True,
     ) -> None:
         self._default = default
         self._layout = layout
@@ -132,6 +133,7 @@ class Reactive(Generic[ReactiveType]):
         self._recompose = recompose
         self._bindings = bindings
         self._owner: Type[MessageTarget] | None = None
+        self.state = state
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._default
@@ -141,6 +143,7 @@ class Reactive(Generic[ReactiveType]):
         yield "always_update", self._always_update
         yield "compute", self._run_compute
         yield "recompose", self._recompose
+        yield "state", self.state
 
     @property
     def owner(self) -> Type[MessageTarget]:
@@ -384,6 +387,7 @@ class reactive(Reactive[ReactiveType]):
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
         bindings: Refresh bindings when the reactive changes.
+        state: Include this value in `copy_state`.
     """
 
     def __init__(
@@ -396,6 +400,7 @@ class reactive(Reactive[ReactiveType]):
         always_update: bool = False,
         recompose: bool = False,
         bindings: bool = False,
+        state: bool = True,
     ) -> None:
         super().__init__(
             default,
@@ -405,6 +410,7 @@ class reactive(Reactive[ReactiveType]):
             always_update=always_update,
             recompose=recompose,
             bindings=bindings,
+            state=state,
         )
 
 
@@ -416,6 +422,7 @@ class var(Reactive[ReactiveType]):
         init: Call watchers on initialize (post mount).
         always_update: Call watchers even when the new value equals the old value.
         bindings: Refresh bindings when the reactive changes.
+        state: Include this value in `copy_state`.
     """
 
     def __init__(
@@ -424,6 +431,7 @@ class var(Reactive[ReactiveType]):
         init: bool = True,
         always_update: bool = False,
         bindings: bool = False,
+        state: bool = True,
     ) -> None:
         super().__init__(
             default,
@@ -432,6 +440,7 @@ class var(Reactive[ReactiveType]):
             init=init,
             always_update=always_update,
             bindings=bindings,
+            state=state,
         )
 
 
