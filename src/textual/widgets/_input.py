@@ -34,10 +34,9 @@ InputValidationOn = Literal["blur", "changed", "submitted"]
 _POSSIBLE_VALIDATE_ON_VALUES = {"blur", "changed", "submitted"}
 """Set literal with the legal values for the type `InputValidationOn`."""
 
-
 _RESTRICT_TYPES = {
-    "integer": r"[-+]?\d*",
-    "number": r"[-+]?\d*\.?\d*[eE]?[-+]?\d*",
+    "integer": r"[-+]?(?:\d*|\d+_)*",
+    "number": r"[-+]?(?:\d*|\d+_)*\.?(?:\d*|\d+_)*(?:\d[eE]?[-+]?(?:\d*|\d+_)*)?",
     "text": None,
 }
 InputType = Literal["integer", "number", "text"]
