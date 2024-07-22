@@ -1253,12 +1253,14 @@ class Screen(Generic[ScreenResultType], Widget):
 
         """
         if not self.is_active:
-            from .app import ScreenError
-
-            raise ScreenError("Screen is not active")
+            self.log.warning("Can't dismiss inactive screen")
+            return AwaitComplete()
         if result is not self._NoResult and self._result_callbacks:
             self._result_callbacks[-1](cast(ScreenResultType, result))
         await_pop = self.app.pop_screen()
+        if asyncio.current_task() is self._task:
+            self.log.warning("Can't await dismiss from a screen's own message handler")
+            return AwaitComplete()
         return await_pop
 
     async def action_dismiss(
