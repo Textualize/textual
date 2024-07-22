@@ -496,6 +496,7 @@ class Select(Generic[SelectType], Vertical, can_focus=True):
         try:
             overlay = self.query_one(SelectOverlay)
         except NoMatches:
+            # The widget has likely been removed
             return
         self.set_class(expanded, "-expanded")
         if expanded:
