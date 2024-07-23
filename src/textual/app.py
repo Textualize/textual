@@ -3048,7 +3048,7 @@ class App(Generic[ReturnType], DOMNode):
             else self.screen._modal_binding_chain
         ):
             binding = bindings.keys.get(key)
-            if binding is not None and binding.priority == priority:
+            if binding is not None:
                 if await self.run_action(binding.action, namespace):
                     return True
         return False

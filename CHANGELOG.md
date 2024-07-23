@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
+- Fixed `Footer` items not being clickable when their `priority` is set to `True`
 
 ## [0.73.0] - 2024-07-18
 
