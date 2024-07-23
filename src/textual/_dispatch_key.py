@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Callable
 
 from . import events
@@ -10,7 +12,7 @@ from .message_pump import MessagePump
 async def dispatch_key(node: DOMNode, event: events.Key) -> bool:
     """Dispatch a key event to method.
 
-    This method will call the method named 'key_<event.key>' if it exists.
+    This function will call the method named 'key_<event.key>' on a node if it exists.
     Some keys have aliases. The first alias found will be invoked if it exists.
     If multiple handlers exist that match the key, an exception is raised.
 
