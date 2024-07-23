@@ -1242,7 +1242,7 @@ class Screen(Generic[ScreenResultType], Widget):
 
             Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
             message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
-            call `self.dimiss()` _without_ awaiting.
+            call `self.dismiss()` _without_ awaiting.
 
         If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
