@@ -35,6 +35,9 @@ class AwaitComplete:
     def set_pre_await_callback(self, pre_await: CallbackType | None) -> None:
         """Set a callback to run prior to awaiting.
 
+        This is used by Textual, mainly to check for possible deadlocks.
+        You are unlikely to need to call this method in an app.
+
         Args:
             pre_await: A callback.
         """
