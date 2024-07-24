@@ -50,9 +50,9 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
+from ._debug import get_caller_file_and_line
 from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
-from ._inspection import get_caller_file_and_line
 from ._layout import Layout
 from ._segment_tools import align_lines
 from ._styles_cache import StylesCache
