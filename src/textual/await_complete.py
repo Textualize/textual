@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Generator
 import rich.repr
 from typing_extensions import Self
 
+from ._debug import get_caller_file_and_line
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:
@@ -27,10 +28,12 @@ class AwaitComplete:
         self._awaitables = awaitables
         self._future: Future[Any] = gather(*awaitables)
         self._pre_await: CallbackType | None = pre_await
+        self._caller = get_caller_file_and_line()
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield self._awaitables
         yield "pre_await", self._pre_await, None
+        yield "caller", self._caller, None
 
     def set_pre_await_callback(self, pre_await: CallbackType | None) -> None:
         """Set a callback to run prior to awaiting.

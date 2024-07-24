@@ -50,6 +50,7 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
+from ._debug import get_caller_file_and_line
 from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
@@ -114,6 +115,7 @@ _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Le
 _MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
+@rich.repr.auto
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
@@ -126,6 +128,12 @@ class AwaitMount:
     def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
         self._parent = parent
         self._widgets = widgets
+        self._caller = get_caller_file_and_line()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "parent", self._parent
+        yield "widgets", self._widgets
+        yield "caller", self._caller, None
 
     async def __call__(self) -> None:
         """Allows awaiting via a call operation."""

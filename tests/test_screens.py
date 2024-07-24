@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 import sys
 import threading
@@ -324,6 +326,25 @@ async def test_dismiss_action():
     async with app.run_test() as pilot:
         await pilot.press("y")
         assert app.bingo
+
+
+async def test_dismiss_action_no_argument():
+    class ConfirmScreen(Screen[bool]):
+        BINDINGS = [("y", "dismiss", "Dismiss")]
+
+    class MyApp(App[None]):
+        bingo = False
+
+        def on_mount(self) -> None:
+            self.push_screen(ConfirmScreen(), callback=self.callback)
+
+        def callback(self, result: bool | None) -> None:
+            self.bingo = result
+
+    app = MyApp()
+    async with app.run_test() as pilot:
+        await pilot.press("y")
+        assert app.bingo is None
 
 
 async def test_switch_screen_no_op():

@@ -8,10 +8,14 @@ import asyncio
 from asyncio import Task, gather
 from typing import Generator
 
+import rich.repr
+
 from ._callback import invoke
+from ._debug import get_caller_file_and_line
 from ._types import CallbackType
 
 
+@rich.repr.auto
 class AwaitRemove:
     """An awaitable that waits for nodes to be removed."""
 
@@ -20,6 +24,12 @@ class AwaitRemove:
     ) -> None:
         self._tasks = tasks
         self._post_remove = post_remove
+        self._caller = get_caller_file_and_line()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "tasks", self._tasks
+        yield "post_remove", self._post_remove
+        yield "caller", self._caller, None
 
     async def __call__(self) -> None:
         await self

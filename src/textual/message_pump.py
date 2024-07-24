@@ -446,6 +446,7 @@ class MessagePump(metaclass=_MessagePumpMeta):
             *args: Positional arguments to pass to the callable.
             **kwargs: Keyword arguments to pass to the callable.
         """
+        assert callback is not None, "Callback must not be None"
         callback_message = events.Callback(callback=partial(callback, *args, **kwargs))
         callback_message._prevent.update(self._get_prevented_messages())
         self._next_callbacks.append(callback_message)
