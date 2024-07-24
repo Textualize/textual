@@ -2,6 +2,8 @@
 Functions related to debugging.
 """
 
+from __future__ import annotations
+
 from . import constants
 
 
@@ -11,10 +13,11 @@ def get_caller_file_and_line() -> str | None:
     Returns:
         Path and file if `constants.DEBUG==True`
     """
-    import inspect
 
     if not constants.DEBUG:
         return None
+    import inspect
+
     try:
         current_frame = inspect.currentframe()
         caller_frame = inspect.getframeinfo(current_frame.f_back.f_back)
