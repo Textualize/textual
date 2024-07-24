@@ -3029,7 +3029,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             key: Key to simulate. May also be the name of a key, e.g. "space".
         """
-        self.call_later(self._check_bindings, key)
+        self.post_message(events.Key(key, None))
 
     async def _check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
