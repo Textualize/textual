@@ -618,11 +618,8 @@ class MessagePump(metaclass=_MessagePumpMeta):
         """Invoke pending callbacks in next callbacks queue."""
         callbacks = self._next_callbacks.copy()
         self._next_callbacks.clear()
-        from rich import print
 
-        print(callbacks)
         for callback in callbacks:
-            print(callback.callback)
             try:
                 with self.prevent(*callback._prevent):
                     await invoke(callback.callback)
