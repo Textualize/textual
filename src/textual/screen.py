@@ -68,7 +68,8 @@ ScreenResultType = TypeVar("ScreenResultType")
 """The result type of a screen."""
 
 ScreenResultCallbackType = Union[
-    Callable[[ScreenResultType], None], Callable[[ScreenResultType], Awaitable[None]]
+    Callable[[ScreenResultType | None], None],
+    Callable[[ScreenResultType | None], Awaitable[None]],
 ]
 """Type of a screen result callback function."""
 
@@ -1244,8 +1245,7 @@ class Screen(Generic[ScreenResultType], Widget):
             message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
             call `self.dismiss()` _without_ awaiting.
 
-        If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
-        the callback will be invoked with `result`.
+        If `result` is not supplied, then the callback will be invoked with `None`.
 
         Args:
             result: The optional result to be passed to the result callback.
@@ -1255,8 +1255,10 @@ class Screen(Generic[ScreenResultType], Widget):
         if not self.is_active:
             self.log.warning("Can't dismiss inactive screen")
             return AwaitComplete()
-        if result is not self._NoResult and self._result_callbacks:
-            self._result_callbacks[-1](cast(ScreenResultType, result))
+        if self._result_callbacks:
+            self._result_callbacks[-1](
+                cast(ScreenResultType, None if result is self._NoResult else result)
+            )
         await_pop = self.app.pop_screen()
 
         def pre_await() -> None:
