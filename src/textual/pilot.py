@@ -342,6 +342,7 @@ class Pilot(Generic[ReturnType]):
             # E.g., the click event is preceded by MouseDown/MouseUp to emulate how
             # the driver works and emits a click event.
             widget_at, _ = app.get_widget_at(*offset)
+            print(widget_at)
             event = mouse_event_cls(**message_arguments)
             # Bypass event processing in App.on_event. Because App.on_event
             # is responsible for updating App.mouse_position, and because

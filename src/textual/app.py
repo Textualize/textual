@@ -3029,14 +3029,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             key: Key to simulate. May also be the name of a key, e.g. "space".
         """
-        event = events.Key(key, None)
-        self.post_message(event)
-
-        # async def dispatch_simulated_key() -> None:
-        #     if not (await self._check_bindings(event.key, priority=True)):
-        #         await dispatch_key(self, event)
-
-        # self.call_later(dispatch_simulated_key)
+        self.post_message(events.Key(key, None))
 
     async def _check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
