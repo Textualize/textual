@@ -1235,10 +1235,14 @@ class Screen(Generic[ScreenResultType], Widget):
     ) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
 
-        !!! note
+        Only the active screen may be dismissed. This method will produce a warning in the logs if
+        called on an inactive screen (but otherwise have no effect).
 
-            Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
-            this method will raise a `ScreenError`.
+        !!! warning
+
+            Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
+            message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
+            call `self.dismiss()` _without_ awaiting.
 
         If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
         the callback will be invoked with `result`.
@@ -1246,19 +1250,27 @@ class Screen(Generic[ScreenResultType], Widget):
         Args:
             result: The optional result to be passed to the result callback.
 
-        Raises:
-            ScreenError: If the screen being dismissed is not active.
-            ScreenStackError: If trying to dismiss a screen that is not at the top of
-                the stack.
-
         """
+        _rich_traceback_omit = True
         if not self.is_active:
-            from .app import ScreenError
-
-            raise ScreenError("Screen is not active")
+            self.log.warning("Can't dismiss inactive screen")
+            return AwaitComplete()
         if result is not self._NoResult and self._result_callbacks:
             self._result_callbacks[-1](cast(ScreenResultType, result))
         await_pop = self.app.pop_screen()
+
+        def pre_await() -> None:
+            """Called by the AwaitComplete object."""
+            _rich_traceback_omit = True
+            if active_message_pump.get() is self:
+                from textual.app import ScreenError
+
+                raise ScreenError(
+                    "Can't await screen.dismiss() from the screen's message handler; try removing the await keyword."
+                )
+
+        await_pop.set_pre_await_callback(pre_await)
+
         return await_pop
 
     async def action_dismiss(
