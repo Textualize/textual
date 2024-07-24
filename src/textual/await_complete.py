@@ -6,8 +6,7 @@ from typing import TYPE_CHECKING, Any, Awaitable, Generator
 import rich.repr
 from typing_extensions import Self
 
-from textual._inspection import get_caller_file_and_line
-
+from ._debug import get_caller_file_and_line
 from .message_pump import MessagePump
 
 if TYPE_CHECKING:

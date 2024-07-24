@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
 - Fixed exception when removing Selects https://github.com/Textualize/textual/pull/4786
 
+### Changed
+
+- Calling `Screen.dismiss` with no arguments, will invoke the screen callback with `None` (previously the callback wasn't invoke at all). https://github.com/Textualize/textual/pull/4795
+
 ## [0.73.0] - 2024-07-18
 
 ### Added
