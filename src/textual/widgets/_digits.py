@@ -33,7 +33,8 @@ class Digits(Widget):
         classes: str | None = None,
         disabled: bool = False,
     ) -> None:
-        """
+        """Initialize a Digits widget.
+
         Args:
             value: Value to display in widget.
             name: The name of the widget.
