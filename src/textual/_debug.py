@@ -1,5 +1,5 @@
 """
-Function related to debugging.
+Functions related to debugging.
 """
 
 from . import constants
