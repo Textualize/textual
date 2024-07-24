@@ -3599,7 +3599,7 @@ class App(Generic[ReturnType], DOMNode):
     def action_command_palette(self) -> None:
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
-            self.push_screen(CommandPalette(), callback=self.call_next)
+            self.push_screen(CommandPalette())
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""
