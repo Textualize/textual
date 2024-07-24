@@ -106,7 +106,6 @@ class ResultCallback(Generic[ScreenResultType]):
         Note:
             If the requested or the callback are `None` this will be a no-op.
         """
-        print("callback", self.callback)
         if self.future is not None:
             self.future.set_result(result)
         if self.requester is not None and self.callback is not None:
@@ -1232,7 +1231,7 @@ class Screen(Generic[ScreenResultType], Widget):
     def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
 
-        Additionally, any callback provided in [push_screen][textual.app.push_screen] will be invoked.
+        Any callback provided in [push_screen][textual.app.push_screen] will be invoked with the supplied result.
 
         Only the active screen may be dismissed. This method will produce a warning in the logs if
         called on an inactive screen (but otherwise have no effect).
@@ -1242,8 +1241,6 @@ class Screen(Generic[ScreenResultType], Widget):
             Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
             message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
             call `self.dismiss()` _without_ awaiting.
-
-        If `result` is not supplied, then the callback will be invoked with `None`.
 
         Args:
             result: The optional result to be passed to the result callback.
