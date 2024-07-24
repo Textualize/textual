@@ -895,7 +895,7 @@ class Screen(Generic[ScreenResultType], Widget):
             future: A Future to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[ScreenResultType | None](requester, callback, future)
+            ResultCallback[Optional[ScreenResultType]](requester, callback, future)
         )
 
     def _pop_result_callback(self) -> None:
