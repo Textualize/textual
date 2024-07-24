@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from textual.app import App, ComposeResult
 from textual.containers import Grid
 from textual.screen import ModalScreen
