@@ -425,6 +425,15 @@ class MouseEvent(InputEvent, bubble=True):
     def style(self, style: Style) -> None:
         self._style = style
 
+    @property
+    def has_modifier(self) -> bool:
+        """Check if any modifier keys are pressed.
+
+        Returns:
+            True if any modifier keys are pressed.
+        """
+        return self.shift or self.meta or self.ctrl
+
     def get_content_offset(self, widget: Widget) -> Offset | None:
         """Get offset within a widget's content area, or None if offset is not in content (i.e. padding or border).
 

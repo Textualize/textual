@@ -32,6 +32,7 @@ class DataTableApp(App):
         "CellSelected",
         "RowHighlighted",
         "RowSelected",
+        "RowsSelected",
         "ColumnHighlighted",
         "ColumnSelected",
         "HeaderSelected",
@@ -813,8 +814,63 @@ async def test_click_row_cursor():
         assert row_highlighted.cursor_row == 1
 
         row_selected: DataTable.RowSelected = app.messages[2]
+
         assert row_selected.row_key == row_key
-        assert row_highlighted.cursor_row == 1
+        assert row_selected.cursor_row == 1
+
+
+async def test_click_multirow_cursor():
+    """When the row cursor is used, and we click with a modifier, we emit a RowHighlighted
+    *and* a RowSelected message for each row in the range."""
+    app = DataTableApp()
+    async with app.run_test() as pilot:
+        table = app.query_one(DataTable)
+        table.cursor_type = "row"
+        table.add_column("ABC")
+        row_keys = [table.add_row(n) for n in range(8)]
+
+        first_row = 2
+        last_row = 4
+        # clicks are at + 1 because the first row is the 'ABC' column header
+        await pilot.click(offset=Offset(1, first_row + 1))
+        await pilot.click(offset=Offset(1, last_row + 1), shift=True)
+        assert app.message_names == [
+            "RowHighlighted",  # initial add_row
+            "RowHighlighted",  # first click
+            "RowSelected",  # row 2
+            "RowHighlighted",  # second (shift) click
+            "RowSelected",  # row 2
+            "RowSelected",  # row 3
+            "RowSelected",  # row 4
+            "RowsSelected",
+        ]
+
+        # initial click
+        row_highlighted: DataTable.RowHighlighted = app.messages[1]
+
+        assert row_highlighted.row_key == row_keys[first_row]
+        assert row_highlighted.cursor_row == first_row
+
+        row_selected: DataTable.RowSelected = app.messages[2]
+
+        assert row_selected.row_key == row_keys[first_row]
+        assert row_selected.cursor_row == first_row
+
+        # second (shift) click
+        row_highlighted: DataTable.RowHighlighted = app.messages[3]
+
+        assert row_highlighted.row_key == row_keys[last_row]
+        assert row_highlighted.cursor_row == last_row
+
+        for n, row in zip(range(4, 10), range(first_row, last_row)):
+            row_selected: DataTable.RowSelected = app.messages[n]
+
+            assert row_selected.row_key == row_keys[row]
+            assert row_selected.cursor_row == row
+
+        rows_selected: DataTable.RowsSelected = app.messages[-1]
+        assert rows_selected.rows == range(2, 5)
+        assert rows_selected.row_keys == row_keys[first_row : last_row + 1]
 
 
 async def test_click_column_cursor():
@@ -1190,10 +1246,20 @@ async def test_move_cursor():
 
         table.move_cursor(row=4, column=6)
         assert table.cursor_coordinate == Coordinate(4, 6)
+        assert table.row_range_coordinates == None
+
         table.move_cursor(row=3)
         assert table.cursor_coordinate == Coordinate(3, 6)
+        assert table.row_range_coordinates == None
+
         table.move_cursor(column=3)
         assert table.cursor_coordinate == Coordinate(3, 3)
+        assert table.row_range_coordinates == None
+
+        table.cursor_type = "row"
+        table.move_cursor(row=range(2, 4))
+        assert table.cursor_coordinate == Coordinate(4, 3)
+        assert table.row_range_coordinates == range(2, 4)
 
 
 async def test_unset_hover_highlight_when_no_table_cell_under_mouse():
