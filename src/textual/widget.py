@@ -3473,17 +3473,17 @@ class Widget(DOMNode):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if not self._is_mounted:
-            self._repaint_required = True
-            self.check_idle()
-            return self
-
         if recompose:
             self._recompose_required = True
             self.call_next(self._check_recompose)
             return self
 
-        elif repaint:
+        if not self._is_mounted:
+            self._repaint_required = True
+            self.check_idle()
+            return self
+
+        if repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()
             self._rich_style_cache.clear()
