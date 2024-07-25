@@ -88,7 +88,7 @@ from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode, NoScreen
 from .driver import Driver
-from .errors import NoWidget, UrlOpenError
+from .errors import NoWidget
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .filter import ANSIToTruecolor, DimFilter, Monochrome
@@ -3682,8 +3682,5 @@ class App(Generic[ReturnType], DOMNode):
 
     def open_url(self, url: str) -> None:
         """Open a URL in the default web browser."""
-        import webbrowser
-
-        result = webbrowser.open(url)
-        if not result:
-            raise UrlOpenError(f"Failed to open URL: {url!r}")
+        if self._driver is not None:
+            self._driver.open_url(url)

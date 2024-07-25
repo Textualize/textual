@@ -216,3 +216,6 @@ class WebDriver(Driver):
             self._app.post_message(messages.ExitApp())
         elif packet_type == "exit":
             raise _ExitInput()
+
+    def open_url(self, url: str) -> None:
+        """Open a URL in the default web browser."""

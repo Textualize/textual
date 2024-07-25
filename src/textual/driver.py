@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from typing import TYPE_CHECKING, Iterator
 
+from textual.errors import UrlOpenError
+
 from . import events
 from .events import MouseUp
 
@@ -145,6 +147,14 @@ class Driver(ABC):
     @abstractmethod
     def stop_application_mode(self) -> None:
         """Stop application mode, restore state."""
+
+    def open_url(self, url: str) -> None:
+        """Open a URL in the default web browser."""
+        import webbrowser
+
+        result = webbrowser.open(url)
+        if not result:
+            raise UrlOpenError(f"Failed to open URL: {url!r}")
 
     def suspend_application_mode(self) -> None:
         """Suspend application mode.
