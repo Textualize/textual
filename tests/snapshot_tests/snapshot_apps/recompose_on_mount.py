@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from textual.app import App, ComposeResult
 from textual.screen import Screen
 from textual.widgets import Header, Footer, Static, RadioSet
