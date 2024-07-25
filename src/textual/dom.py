@@ -1134,6 +1134,16 @@ class DOMNode(MessagePump):
         return cast("list[DOMNode]", nodes)
 
     @property
+    def widget_ancestors(self) -> Iterable[Widget]:
+        import itertools
+
+        from textual.widget import Widget
+
+        return itertools.takewhile(
+            lambda node: isinstance(node, Widget), self.ancestors_with_self[1:]
+        )
+
+    @property
     def displayed_children(self) -> list[Widget]:
         """The child nodes which will be displayed.
 
