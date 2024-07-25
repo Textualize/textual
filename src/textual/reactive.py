@@ -132,15 +132,18 @@ class Reactive(Generic[ReactiveType]):
         self._recompose = recompose
         self._bindings = bindings
         self._owner: Type[MessageTarget] | None = None
+        self.name: str | None = None
 
     def __rich_repr__(self) -> rich.repr.Result:
-        yield self._default
-        yield "layout", self._layout
-        yield "repaint", self._repaint
-        yield "init", self._init
-        yield "always_update", self._always_update
-        yield "compute", self._run_compute
-        yield "recompose", self._recompose
+        yield None, self._default
+        yield "layout", self._layout, False
+        yield "repaint", self._repaint, True
+        yield "init", self._init, False
+        yield "always_update", self._always_update, False
+        yield "compute", self._run_compute, True
+        yield "recompose", self._recompose, False
+        yield "bindings", self._bindings, False
+        yield "name", self.name, None
 
     @property
     def owner(self) -> Type[MessageTarget]:
