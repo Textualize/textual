@@ -50,6 +50,8 @@ from ._animator import DEFAULT_EASING, Animatable, BoundAnimator, EasingFunction
 from ._arrange import DockArrangeResult, arrange
 from ._compose import compose
 from ._context import NoActiveAppError, active_app
+from ._debug import get_caller_file_and_line
+from ._dispatch_key import dispatch_key
 from ._easing import DEFAULT_SCROLL_EASING
 from ._layout import Layout
 from ._segment_tools import align_lines
@@ -113,6 +115,7 @@ _MOUSE_EVENTS_DISALLOW_IF_DISABLED = (events.MouseEvent, events.Enter, events.Le
 _MOUSE_EVENTS_ALLOW_IF_DISABLED = (events.MouseScrollDown, events.MouseScrollUp)
 
 
+@rich.repr.auto
 class AwaitMount:
     """An *optional* awaitable returned by [mount][textual.widget.Widget.mount] and [mount_all][textual.widget.Widget.mount_all].
 
@@ -125,6 +128,12 @@ class AwaitMount:
     def __init__(self, parent: Widget, widgets: Sequence[Widget]) -> None:
         self._parent = parent
         self._widgets = widgets
+        self._caller = get_caller_file_and_line()
+
+    def __rich_repr__(self) -> rich.repr.Result:
+        yield "parent", self._parent
+        yield "widgets", self._widgets
+        yield "caller", self._caller, None
 
     async def __call__(self) -> None:
         """Allows awaiting via a call operation."""
@@ -3464,17 +3473,17 @@ class Widget(DOMNode):
                     break
                 ancestor._clear_arrangement_cache()
 
-        if not self._is_mounted:
-            self._repaint_required = True
-            self.check_idle()
-            return self
-
         if recompose:
             self._recompose_required = True
             self.call_next(self._check_recompose)
             return self
 
-        elif repaint:
+        if not self._is_mounted:
+            self._repaint_required = True
+            self.check_idle()
+            return self
+
+        if repaint:
             self._set_dirty(*regions)
             self.clear_cached_dimensions()
             self._rich_style_cache.clear()
@@ -3775,7 +3784,7 @@ class Widget(DOMNode):
         await self.handle_key(event)
 
     async def handle_key(self, event: events.Key) -> bool:
-        return await self.dispatch_key(event)
+        return await dispatch_key(self, event)
 
     async def _on_compose(self, event: events.Compose) -> None:
         _rich_traceback_omit = True

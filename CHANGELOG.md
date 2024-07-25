@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed issues in Kitty terminal after exiting app https://github.com/Textualize/textual/issues/4779
+- Fixed exception when removing Selects https://github.com/Textualize/textual/pull/4786
+- Fixed issue with non-clickable Footer keys https://github.com/Textualize/textual/pull/4798
+- Fixed issue with recompose not working from Mount handler https://github.com/Textualize/textual/pull/4802
+
+### Changed
+
+- Calling `Screen.dismiss` with no arguments will invoke the screen callback with `None` (previously the callback wasn't invoke at all). https://github.com/Textualize/textual/pull/4795
 
 ## [0.73.0] - 2024-07-18
 

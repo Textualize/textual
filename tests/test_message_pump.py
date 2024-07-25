@@ -1,5 +1,6 @@
 import pytest
 
+from textual._dispatch_key import dispatch_key
 from textual.app import App, ComposeResult
 from textual.errors import DuplicateKeyHandlers
 from textual.events import Key
@@ -20,7 +21,7 @@ class ValidWidget(Widget):
 
 async def test_dispatch_key_valid_key():
     widget = ValidWidget()
-    result = await widget.dispatch_key(Key(key="x", character="x"))
+    result = await dispatch_key(widget, Key(key="x", character="x"))
     assert result is True
     assert widget.called_by == widget.key_x
 
@@ -29,7 +30,7 @@ async def test_dispatch_key_valid_key_alias():
     """When you press tab or ctrl+i, it comes through as a tab key event, but handlers for
     tab and ctrl+i are both considered valid."""
     widget = ValidWidget()
-    result = await widget.dispatch_key(Key(key="tab", character="\t"))
+    result = await dispatch_key(widget, Key(key="tab", character="\t"))
     assert result is True
     assert widget.called_by == widget.key_ctrl_i
 
@@ -55,7 +56,7 @@ async def test_dispatch_key_raises_when_conflicting_handler_aliases():
     In the terminal, they're the same thing, so we fail fast via exception here."""
     widget = DuplicateHandlersWidget()
     with pytest.raises(DuplicateKeyHandlers):
-        await widget.dispatch_key(Key(key="tab", character="\t"))
+        await dispatch_key(widget, Key(key="tab", character="\t"))
     assert widget.called_by == widget.key_tab
 
 

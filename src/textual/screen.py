@@ -20,10 +20,9 @@ from typing import (
     Generic,
     Iterable,
     Iterator,
-    Type,
+    Optional,
     TypeVar,
     Union,
-    cast,
 )
 
 import rich.repr
@@ -68,7 +67,8 @@ ScreenResultType = TypeVar("ScreenResultType")
 """The result type of a screen."""
 
 ScreenResultCallbackType = Union[
-    Callable[[ScreenResultType], None], Callable[[ScreenResultType], Awaitable[None]]
+    Callable[[Optional[ScreenResultType]], None],
+    Callable[[Optional[ScreenResultType]], Awaitable[None]],
 ]
 """Type of a screen result callback function."""
 
@@ -110,6 +110,7 @@ class ResultCallback(Generic[ScreenResultType]):
             self.future.set_result(result)
         if self.requester is not None and self.callback is not None:
             self.requester.call_next(self.callback, result)
+        self.callback = None
 
 
 @rich.repr.auto
@@ -209,7 +210,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self._dirty_widgets: set[Widget] = set()
         self.__update_timer: Timer | None = None
         self._callbacks: list[tuple[CallbackType, MessagePump]] = []
-        self._result_callbacks: list[ResultCallback[ScreenResultType]] = []
+        self._result_callbacks: list[ResultCallback[ScreenResultType | None]] = []
 
         self._tooltip_widget: Widget | None = None
         self._tooltip_timer: Timer | None = None
@@ -884,7 +885,7 @@ class Screen(Generic[ScreenResultType], Widget):
         self,
         requester: MessagePump,
         callback: ScreenResultCallbackType[ScreenResultType] | None,
-        future: asyncio.Future[ScreenResultType] | None = None,
+        future: asyncio.Future[ScreenResultType | None] | None = None,
     ) -> None:
         """Add a result callback to the screen.
 
@@ -894,7 +895,7 @@ class Screen(Generic[ScreenResultType], Widget):
             future: A Future to hold the result.
         """
         self._result_callbacks.append(
-            ResultCallback[ScreenResultType](requester, callback, future)
+            ResultCallback[Optional[ScreenResultType]](requester, callback, future)
         )
 
     def _pop_result_callback(self) -> None:
@@ -1227,43 +1228,48 @@ class Screen(Generic[ScreenResultType], Widget):
         else:
             self.post_message(event)
 
-    class _NoResult:
-        """Class used to mark that there is no result."""
-
-    def dismiss(
-        self, result: ScreenResultType | Type[_NoResult] = _NoResult
-    ) -> AwaitComplete:
+    def dismiss(self, result: ScreenResultType | None = None) -> AwaitComplete:
         """Dismiss the screen, optionally with a result.
 
-        !!! note
+        Any callback provided in [push_screen][textual.app.push_screen] will be invoked with the supplied result.
 
-            Only the active screen may be dismissed. If you try to dismiss a screen that isn't active,
-            this method will raise a `ScreenError`.
+        Only the active screen may be dismissed. This method will produce a warning in the logs if
+        called on an inactive screen (but otherwise have no effect).
 
-        If `result` is provided and a callback was set when the screen was [pushed][textual.app.App.push_screen], then
-        the callback will be invoked with `result`.
+        !!! warning
+
+            Textual will raise a [`ScreenError`][textual.app.ScreenError] if you await the return value from a
+            message handler on the Screen being dismissed. If you want to dismiss the current screen, you can
+            call `self.dismiss()` _without_ awaiting.
 
         Args:
             result: The optional result to be passed to the result callback.
 
-        Raises:
-            ScreenError: If the screen being dismissed is not active.
-            ScreenStackError: If trying to dismiss a screen that is not at the top of
-                the stack.
-
         """
+        _rich_traceback_omit = True
         if not self.is_active:
-            from .app import ScreenError
-
-            raise ScreenError("Screen is not active")
-        if result is not self._NoResult and self._result_callbacks:
-            self._result_callbacks[-1](cast(ScreenResultType, result))
+            self.log.warning("Can't dismiss inactive screen")
+            return AwaitComplete()
+        if self._result_callbacks:
+            callback = self._result_callbacks[-1]
+            callback(result)
         await_pop = self.app.pop_screen()
+
+        def pre_await() -> None:
+            """Called by the AwaitComplete object."""
+            _rich_traceback_omit = True
+            if active_message_pump.get() is self:
+                from textual.app import ScreenError
+
+                raise ScreenError(
+                    "Can't await screen.dismiss() from the screen's message handler; try removing the await keyword."
+                )
+
+        await_pop.set_pre_await_callback(pre_await)
+
         return await_pop
 
-    async def action_dismiss(
-        self, result: ScreenResultType | Type[_NoResult] = _NoResult
-    ) -> None:
+    async def action_dismiss(self, result: ScreenResultType | None = None) -> None:
         """A wrapper around [`dismiss`][textual.screen.Screen.dismiss] that can be called as an action.
 
         Args:

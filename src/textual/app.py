@@ -72,6 +72,7 @@ from ._compose import compose
 from ._compositor import CompositorUpdate
 from ._context import active_app, active_message_pump
 from ._context import message_hook as message_hook_context_var
+from ._dispatch_key import dispatch_key
 from ._event_broker import NoHandler, extract_handler_actions
 from ._path import CSSPathType, _css_path_type_as_list, _make_path_object_relative
 from ._types import AnimationLevel
@@ -800,7 +801,7 @@ class App(Generic[ReturnType], DOMNode):
         return False if self._driver is None else self._driver.is_inline
 
     @property
-    def screen_stack(self) -> Sequence[Screen[Any]]:
+    def screen_stack(self) -> list[Screen[Any]]:
         """A snapshot of the current screen stack.
 
         Returns:
@@ -3028,7 +3029,7 @@ class App(Generic[ReturnType], DOMNode):
         Args:
             key: Key to simulate. May also be the name of a key, e.g. "space".
         """
-        self.call_later(self._check_bindings, key)
+        self.post_message(events.Key(key, None))
 
     async def _check_bindings(self, key: str, priority: bool = False) -> bool:
         """Handle a key press.
@@ -3282,7 +3283,7 @@ class App(Generic[ReturnType], DOMNode):
 
     async def _on_key(self, event: events.Key) -> None:
         if not (await self._check_bindings(event.key)):
-            await self.dispatch_key(event)
+            await dispatch_key(self, event)
 
     async def _on_resize(self, event: events.Resize) -> None:
         event.stop()
@@ -3598,7 +3599,7 @@ class App(Generic[ReturnType], DOMNode):
     def action_command_palette(self) -> None:
         """Show the Textual command palette."""
         if self.use_command_palette and not CommandPalette.is_open(self):
-            self.push_screen(CommandPalette(), callback=self.call_next)
+            self.push_screen(CommandPalette())
 
     def _suspend_signal(self) -> None:
         """Signal that the application is being suspended."""
