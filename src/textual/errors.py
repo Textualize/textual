@@ -24,3 +24,7 @@ class DuplicateKeyHandlers(TextualError):
     For example, if the handlers `key_ctrl_i` and `key_tab` were defined on the same
     widget, then this error would be raised.
     """
+
+
+class UrlOpenError(TextualError):
+    """Could not open the specified URL."""

@@ -88,7 +88,7 @@ from .css.stylesheet import RulesMap, Stylesheet
 from .design import ColorSystem
 from .dom import DOMNode, NoScreen
 from .driver import Driver
-from .errors import NoWidget
+from .errors import NoWidget, UrlOpenError
 from .features import FeatureFlag, parse_features
 from .file_monitor import FileMonitor
 from .filter import ANSIToTruecolor, DimFilter, Monochrome
@@ -3679,3 +3679,11 @@ class App(Generic[ReturnType], DOMNode):
             # NOTE: There is no call to publish the resume signal here, this
             # will be handled by the driver posting a SignalResume event
             # (see the event handler on App._resume_signal) above.
+
+    def open_url(self, url: str) -> None:
+        """Open a URL in the default web browser."""
+        import webbrowser
+
+        result = webbrowser.open(url)
+        if not result:
+            raise UrlOpenError(f"Failed to open URL: {url!r}")
