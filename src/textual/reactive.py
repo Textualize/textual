@@ -132,7 +132,7 @@ class Reactive(Generic[ReactiveType]):
         self._recompose = recompose
         self._bindings = bindings
         self._owner: Type[MessageTarget] | None = None
-        self.name: str | None = None
+        self.name: str
 
     def __rich_repr__(self) -> rich.repr.Result:
         yield None, self._default
@@ -143,7 +143,7 @@ class Reactive(Generic[ReactiveType]):
         yield "compute", self._run_compute, True
         yield "recompose", self._recompose, False
         yield "bindings", self._bindings, False
-        yield "name", self.name, None
+        yield "name", getattr(self, "name", None), None
 
     @property
     def owner(self) -> Type[MessageTarget]:
