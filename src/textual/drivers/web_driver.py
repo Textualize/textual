@@ -219,3 +219,4 @@ class WebDriver(Driver):
 
     def open_url(self, url: str) -> None:
         """Open a URL in the default web browser."""
+        self.write_meta({"type": "open_url", "url": url})
