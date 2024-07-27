@@ -514,7 +514,7 @@ class DOMNode(MessagePump):
         """Get a "component" styles object (must be defined in COMPONENT_CLASSES classvar).
 
         Args:
-            name: Name of the component.
+            names: Names of the components.
 
         Raises:
             KeyError: If the component class doesn't exist.
@@ -1537,7 +1537,7 @@ class DOMNode(MessagePump):
 
         Args:
             action: The name of an action.
-            action_parameters: A tuple of any action parameters.
+            parameters: A tuple of any action parameters.
 
         Returns:
             `True` if the action is enabled+visible,

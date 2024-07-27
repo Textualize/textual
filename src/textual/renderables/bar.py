@@ -15,7 +15,7 @@ class Bar:
         highlight_style: The style of the highlighted range of the bar.
         background_style: The style of the non-highlighted range(s) of the bar.
         width: The width of the bar, or `None` to fill available width.
-        gradient. Optional gradient object.
+        gradient: Optional gradient object.
     """
 
     def __init__(
