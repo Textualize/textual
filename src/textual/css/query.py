@@ -1,5 +1,5 @@
 """
-This module contains the `DOMQuery` class and related objects.s
+This module contains the `DOMQuery` class and related objects.
 
 A DOMQuery is a set of DOM nodes returned by [query][textual.dom.DOMNode.query].
 
