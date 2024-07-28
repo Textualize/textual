@@ -806,7 +806,7 @@ class Widget(DOMNode):
         """Get a *Rich* style for a component.
 
         Args:
-            name: Name of component.
+            names: Names of components.
             partial: Return a partial style (not combined with parent).
 
         Returns:
