@@ -544,7 +544,13 @@ class Widget(DOMNode):
 
     @property
     def is_mouse_over(self) -> bool:
-        """Is the mouse currently over this widget?"""
+        """Is the mouse currently over this widget?
+
+        Note this will be `True` if the mouse pointer is within the widget's region, even if
+        the mouse pointer is not directly over the widget (there could be another widget between
+        the mouse pointer and self).
+
+        """
         if not self.screen.is_active:
             return False
         for widget, _ in self.screen.get_widgets_at(*self.app.mouse_position):
