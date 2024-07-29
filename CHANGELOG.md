@@ -9,12 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Added `Widget.is_mouse_over`
-- Added node attribute to `events.Enter` and `events.Leave`
+- Added `Widget.is_mouse_over` https://github.com/Textualize/textual/pull/4818
+- Added node attribute to `events.Enter` and `events.Leave` https://github.com/Textualize/textual/pull/4818
 
 ### Changed
 
-- `events.Enter` and `events.Leave` events now bubble.
+- `events.Enter` and `events.Leave` events now bubble. https://github.com/Textualize/textual/pull/4818
 
 ## [0.74.0] - 2024-07-25
 
