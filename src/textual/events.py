@@ -554,7 +554,7 @@ class Enter(Event, bubble=True, verbose=True):
 
     Note that this event bubbles, so a widget may receive this event when the mouse
     moves over a child widget. Check the `node` attribute for the widget directly under
-    tne mouse.
+    the mouse.
 
     - [X] Bubbles
     - [X] Verbose
