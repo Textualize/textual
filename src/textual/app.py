@@ -3681,6 +3681,10 @@ class App(Generic[ReturnType], DOMNode):
             # (see the event handler on App._resume_signal) above.
 
     def open_url(self, url: str) -> None:
-        """Open a URL in the default web browser."""
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+        """
         if self._driver is not None:
             self._driver.open_url(url)
