@@ -428,7 +428,7 @@ class Widget(DOMNode):
     has_focus: Reactive[bool] = Reactive(False, repaint=False)
     """Does this widget have focus? Read only."""
 
-    mouse_over: Reactive[bool] = Reactive(False, repaint=False)
+    mouse_hover: Reactive[bool] = Reactive(False, repaint=False)
     """Is the mouse over this widget? Read only."""
 
     scroll_x: Reactive[float] = Reactive(0.0, repaint=False, layout=False)
@@ -541,6 +541,22 @@ class Widget(DOMNode):
     def is_anchored(self) -> bool:
         """Is this widget anchored?"""
         return self._parent is not None and self._parent is self
+
+    @property
+    def is_mouse_over(self) -> bool:
+        """Is the mouse currently over this widget?
+
+        Note this will be `True` if the mouse pointer is within the widget's region, even if
+        the mouse pointer is not directly over the widget (there could be another widget between
+        the mouse pointer and self).
+
+        """
+        if not self.screen.is_active:
+            return False
+        for widget, _ in self.screen.get_widgets_at(*self.app.mouse_position):
+            if widget is self:
+                return True
+        return False
 
     def anchor(self, *, animate: bool = False) -> None:
         """Anchor the widget, which scrolls it into view (like [scroll_visible][textual.widget.Widget.scroll_visible]),
@@ -3156,7 +3172,7 @@ class Widget(DOMNode):
         Returns:
             Names of the pseudo classes.
         """
-        if self.mouse_over:
+        if self.mouse_hover:
             yield "hover"
         if self.has_focus:
             yield "focus"
@@ -3204,7 +3220,7 @@ class Widget(DOMNode):
 
         pseudo_classes = PseudoClasses(
             enabled=not disabled,
-            hover=self.mouse_over,
+            hover=self.mouse_hover,
             focus=self.has_focus,
         )
         return pseudo_classes
@@ -3248,7 +3264,7 @@ class Widget(DOMNode):
 
         return renderable
 
-    def watch_mouse_over(self, value: bool) -> None:
+    def watch_mouse_hover(self, value: bool) -> None:
         """Update from CSS if mouse over state changes."""
         if self._has_hover_style:
             self._update_styles()
@@ -3261,9 +3277,9 @@ class Widget(DOMNode):
         """Update the styles of the widget and its children when disabled is toggled."""
         from .app import ScreenStackError
 
-        if disabled and self.mouse_over:
+        if disabled and self.mouse_hover and self.app.mouse_over is not None:
             # Ensure widget gets a Leave if it is disabled while hovered
-            self._message_queue.put_nowait(events.Leave())
+            self._message_queue.put_nowait(events.Leave(self.app.mouse_over))
         try:
             screen = self.screen
             if (
@@ -3832,11 +3848,11 @@ class Widget(DOMNode):
             self.show_horizontal_scrollbar = True
 
     def _on_leave(self, event: events.Leave) -> None:
-        self.mouse_over = False
+        self.mouse_hover = False
         self.hover_style = Style()
 
     def _on_enter(self, event: events.Enter) -> None:
-        self.mouse_over = True
+        self.mouse_hover = True
 
     def _on_focus(self, event: events.Focus) -> None:
         self.has_focus = True
