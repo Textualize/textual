@@ -220,5 +220,9 @@ class WebDriver(Driver):
             raise _ExitInput()
 
     def open_url(self, url: str) -> None:
-        """Open a URL in the default web browser."""
+        """Open a URL in the default web browser.
+
+        Args:
+            url: The URL to open.
+        """
         self.write_meta({"type": "open_url", "url": url})
